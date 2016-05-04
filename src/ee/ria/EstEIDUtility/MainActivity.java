@@ -6,6 +6,7 @@ import java.util.Arrays;
 import com.acs.smartcard.Reader;
 import com.acs.smartcard.ReaderException;
 import com.identive.libs.SCard;
+import com.identive.libs.WinDefs;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -23,21 +24,13 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 	private static final String ACTION_USB_PERMISSION = "ee.ria.EstEIDUtil.USB_PERMISSION";
 	private TextView content;
-	private ACS acs;
-	private Identive identive;
+	private SMInterface sminterface = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		content = (TextView) findViewById(R.id.content);
-		acs = new ACS(this) {
-			@Override
-			protected void connected() {
-				read();
-			}
-		};
-		identive = new Identive(getApplicationContext());
 	}
 
 	@Override
@@ -50,7 +43,26 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_read) {
+			sminterface = null;
+
+			Identive identive = new Identive(getApplicationContext()) {
+				@Override
+				protected void connected() {
+					read();
+				}
+			};
+			if (identive.hasSupportedReader()) {
+				sminterface = identive;
+				identive.connect();
+			}
+			ACS acs = new ACS(this) {
+				@Override
+				protected void connected() {
+					read();
+				}
+			};
 			if (acs.hasSupportedReader()) {
+				sminterface = acs;
 				acs.connect();
 			}
 			return true;
@@ -68,7 +80,7 @@ public class MainActivity extends Activity {
 				byte[] data = send(new byte[] { 0x00, (byte) 0xB2, i, 0x04, 0x00 });
 				result += new String(data, "Windows-1252") + "\n";
 			}
-			acs.close();
+			sminterface.close();
 		} catch (Exception e) {
 			result += e.getMessage();
 			e.printStackTrace();
@@ -77,12 +89,12 @@ public class MainActivity extends Activity {
 	}
 
 	private byte[] send(byte[] apdu) throws Exception {
-		byte[] recv = acs.transmit(apdu);
+		byte[] recv = sminterface.transmit(apdu);
 		byte sw1 = recv[recv.length - 2];
 		byte sw2 = recv[recv.length - 1];
 		recv = Arrays.copyOf(recv, recv.length - 2);
 		if (sw1 == 0x61) {
-			recv = concat(recv, acs.transmit(new byte[] { 0x00, (byte) 0xC0, 0x00, 0x00, sw2 }));
+			recv = concat(recv, sminterface.transmit(new byte[] { 0x00, (byte) 0xC0, 0x00, 0x00, sw2 }));
 		} else if (sw1 != (byte) 0x90 && sw2 != (byte) 0x00) {
 			throw new ReaderException("SW != 9000");
 		}
@@ -111,15 +123,22 @@ public class MainActivity extends Activity {
 		return sb.toString();
 	}
 
-	private class ACS {
+	private abstract class SMInterface {
+		abstract byte[] transmit(byte[] apdu) throws Exception;
+		abstract void connect();
+		abstract void connected();
+		abstract void close();
+	}
+
+	private class ACS extends SMInterface {
 		private PendingIntent permissionIntent;
 		private UsbManager manager;
-		private Reader acs;
+		private Reader ctx;
 		private int slot = 0;
 
 		ACS(Context context) {
 			manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-			acs = new Reader(manager);
+			ctx = new Reader(manager);
 
 			permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
 			registerReceiver(new BroadcastReceiver() {
@@ -131,10 +150,9 @@ public class MainActivity extends Activity {
 							UsbDevice device = (UsbDevice)intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 							if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false) && device != null) {
 								try {
-									int slot = 0;
-									acs.open(device);
-									byte[] atr = acs.power(slot, Reader.CARD_WARM_RESET);
-									acs.setProtocol(slot, Reader.PROTOCOL_T0 | Reader.PROTOCOL_T1);
+									ctx.open(device);
+									byte[] atr = ctx.power(slot, Reader.CARD_WARM_RESET);
+									ctx.setProtocol(slot, Reader.PROTOCOL_T0 | Reader.PROTOCOL_T1);
 									connected();
 								} catch(Exception e) {
 									e.printStackTrace();
@@ -148,52 +166,91 @@ public class MainActivity extends Activity {
 
 		boolean hasSupportedReader() {
 			for (final UsbDevice device: manager.getDeviceList().values()) {
-				if (acs.isSupported(device)) {
+				if (ctx.isSupported(device)) {
 					return true;
 				}
 			}
 			return false;
 		}
 
+		@Override
 		void connect() {
 			for (final UsbDevice device: manager.getDeviceList().values()) {
-				if (acs.isSupported(device)) {
+				if (ctx.isSupported(device)) {
 					manager.requestPermission(device, permissionIntent);
 				}
 			}
 		}
 
-		protected void connected() {}
-
+		@Override
 		void close() {
-			acs.close();
+			ctx.close();
 		}
 
+		@Override
 		byte[] transmit(byte[] apdu) throws Exception {
 			byte[] recv = new byte[1024];
-			int len = acs.transmit(slot, apdu, apdu.length, recv, recv.length);
+			int len = ctx.transmit(slot, apdu, apdu.length, recv, recv.length);
 			return Arrays.copyOf(recv, len);
 		}
+
+		@Override
+		protected void connected() {}
 	}
 
-	private class Identive {
-		private SCard identive;
+	private class Identive extends SMInterface {
+		private SCard ctx;
 
 		Identive(Context context) {
-			identive = new SCard();
-			identive.SCardEstablishContext(getApplicationContext());
+			ctx = new SCard();
+			ctx.SCardEstablishContext(getApplicationContext());
+		}
+
+		@Override
+		public void close() {
+			ctx.SCardDisconnect(WinDefs.SCARD_LEAVE_CARD);
+			ctx.SCardReleaseContext();
 		}
 
 		boolean hasSupportedReader() {
 			try {
 				ArrayList<String> deviceList = new ArrayList<String>();
-				identive.USBRequestPermission(getApplicationContext());
-				identive.SCardListReaders(getApplicationContext(), deviceList);
+				ctx.USBRequestPermission(getApplicationContext());
+				ctx.SCardListReaders(getApplicationContext(), deviceList);
 				return deviceList.size() > 0;
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
 			return false;
 		}
+
+		@Override
+		void connect() {
+			ArrayList<String> deviceList = new ArrayList<String>();
+			ctx.SCardListReaders(getApplicationContext(), deviceList);
+			ctx.SCardConnect(deviceList.get(0), WinDefs.SCARD_SHARE_EXCLUSIVE,
+					(int) (WinDefs.SCARD_PROTOCOL_T0 | WinDefs.SCARD_PROTOCOL_T1));
+			connected();
+		}
+
+		@Override
+		byte[] transmit(byte[] apdu) throws Exception {
+			byte[] recv = new byte[1024];
+			int len = 0;
+			SCard.SCardIOBuffer io = ctx.new SCardIOBuffer();
+			io.setAbyInBuffer(apdu);
+			io.setnBytesReturned(apdu.length);
+			io.setAbyOutBuffer(recv);
+			io.setnOutBufferSize(recv.length);
+			io.setnBytesReturned(len);
+			ctx.SCardTransmit(io);
+			if (len == 0) {
+				throw new Exception("Failed to send apdu");
+			}
+			return Arrays.copyOf(recv, len);
+		}
+
+		@Override
+		protected void connected() {}
 	}
 }
