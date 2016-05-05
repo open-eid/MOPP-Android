@@ -8,6 +8,7 @@
         android:minSdkVersion="19"
         android:targetSdkVersion="22" />
     <uses-feature android:name="android.hardware.usb.host"/>
+    <uses-permission android:name="com.hidglobal.ia.omnikey.service.permission.SMARTCARDIO" />
 
     <application
         android:allowBackup="true"

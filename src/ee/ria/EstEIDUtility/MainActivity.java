@@ -17,6 +17,13 @@ import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
+import android.smartcardio.Card;
+import android.smartcardio.CardException;
+import android.smartcardio.CommandAPDU;
+import android.smartcardio.ResponseAPDU;
+import android.smartcardio.TerminalFactory;
+import android.smartcardio.ipc.CardService;
+import android.smartcardio.ipc.ICardService;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -25,12 +32,33 @@ public class MainActivity extends Activity {
 	private static final String ACTION_USB_PERMISSION = "ee.ria.EstEIDUtil.USB_PERMISSION";
 	private TextView content;
 	private SMInterface sminterface = null;
+	Identive identive;
+	ACS acs;
+	Omnikey omnikey;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		content = (TextView) findViewById(R.id.content);
+		identive = new Identive(getApplicationContext()) {
+			@Override
+			protected void connected() {
+				read();
+			}
+		};
+		acs = new ACS(this) {
+			@Override
+			protected void connected() {
+				read();
+			}
+		};
+		omnikey = new Omnikey(this) {
+			@Override
+			protected void connected() {
+				read();
+			}
+		};
 	}
 
 	@Override
@@ -40,30 +68,29 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		acs.close();
+		identive.close();
+		omnikey.close();
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_read) {
 			sminterface = null;
-
-			Identive identive = new Identive(getApplicationContext()) {
-				@Override
-				protected void connected() {
-					read();
-				}
-			};
 			if (identive.hasSupportedReader()) {
 				sminterface = identive;
 				identive.connect();
 			}
-			ACS acs = new ACS(this) {
-				@Override
-				protected void connected() {
-					read();
-				}
-			};
 			if (acs.hasSupportedReader()) {
 				sminterface = acs;
 				acs.connect();
+			}
+			if (omnikey.hasSupportedReader()) {
+				sminterface = omnikey;
+				omnikey.connect();
 			}
 			return true;
 		}
@@ -73,7 +100,7 @@ public class MainActivity extends Activity {
 	private void read() {
 		String result = "";
 		try {
-			send(new byte[] { 0x00, (byte) 0xA4, 0x00, 0x0C });
+			send(new byte[] { 0x00, (byte) 0xA4, 0x00, 0x0C, 0x00 });
 			send(new byte[] { 0x00, (byte) 0xA4, 0x01, 0x0C, 0x02, (byte) 0xEE, (byte) 0xEE });
 			send(new byte[] { 0x00, (byte) 0xA4, 0x02, 0x0C, 0x02, (byte) 0x50, (byte) 0x44 });
 			for (byte i = 1; i <= 16; ++i) {
@@ -235,22 +262,90 @@ public class MainActivity extends Activity {
 
 		@Override
 		byte[] transmit(byte[] apdu) throws Exception {
-			byte[] recv = new byte[1024];
-			int len = 0;
 			SCard.SCardIOBuffer io = ctx.new SCardIOBuffer();
 			io.setAbyInBuffer(apdu);
 			io.setnBytesReturned(apdu.length);
-			io.setAbyOutBuffer(recv);
-			io.setnOutBufferSize(recv.length);
-			io.setnBytesReturned(len);
+			io.setAbyOutBuffer(new byte[0x8000]);
+			io.setnOutBufferSize(0x8000);
 			ctx.SCardTransmit(io);
-			if (len == 0) {
+			if (io.getnBytesReturned() == 0) {
 				throw new Exception("Failed to send apdu");
 			}
-			return Arrays.copyOf(recv, len);
+			String rstr = "";
+			for(int k = 0; k < io.getnBytesReturned(); k++){
+       			int temp = io.getAbyOutBuffer()[k] & 0xFF;
+       			if(temp < 16){
+       				rstr = rstr.toUpperCase() + "0" + Integer.toHexString(io.getAbyOutBuffer()[k]) ;
+       			}else{
+       				rstr = rstr.toUpperCase() + Integer.toHexString(temp) ;
+       			}
+       		}
+
+			return Arrays.copyOf(io.getAbyOutBuffer(), io.getnBytesReturned());
 		}
 
 		@Override
 		protected void connected() {}
+	}
+
+	private class Omnikey extends SMInterface {
+		private ICardService mService;
+		private TerminalFactory mFactory;
+		private Card card;
+
+		Omnikey(Context context) {
+			try {
+				Intent serviceIntent = new Intent("com.theobroma.cardreadermanager.backendipc.BroadcastRecord");
+				serviceIntent.setPackage("com.theobroma.cardreadermanager.backendipc");
+				if (context.getPackageManager().queryIntentServices(serviceIntent, 0).isEmpty()) {
+					//context.bindService(serviceIntent, conn, Context.BIND_AUTO_CREATE);
+					context.startService(serviceIntent);
+				}
+				mService = CardService.getInstance(context.getApplicationContext());
+				mFactory = mService.getTerminalFactory();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		boolean hasSupportedReader() {
+			try {
+				return mFactory.terminals().list().size() > 0;
+			} catch (CardException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
+		@Override
+		byte[] transmit(byte[] apdu) throws Exception {
+			ResponseAPDU response = card.getBasicChannel().transmit(new CommandAPDU(apdu));
+			return response.getBytes();
+		}
+
+		@Override
+		void connect() {
+			try {
+				card = mFactory.terminals().list().get(0).connect("T=0");
+				connected();
+			} catch (CardException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		void connected() {}
+
+		@Override
+		void close() {
+			if (card != null) {
+				try {
+					card.disconnect(true);
+				} catch (CardException e) {
+					e.printStackTrace();
+				}
+			}
+			mService.releaseService();
+		}
 	}
 }
