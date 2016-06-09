@@ -6,6 +6,6 @@
         android:id="@+id/action_read"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/action_read" />
-
+        android:title="@string/settings" />
+    
 </menu>

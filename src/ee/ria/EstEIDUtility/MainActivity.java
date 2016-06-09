@@ -1,64 +1,35 @@
 package ee.ria.EstEIDUtility;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import com.acs.smartcard.Reader;
-import com.acs.smartcard.ReaderException;
-import com.identive.libs.SCard;
-import com.identive.libs.WinDefs;
+import java.io.ByteArrayOutputStream;
+import java.security.PublicKey;
+import java.security.Signature;
 
 import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
 import android.os.Bundle;
-import android.smartcardio.Card;
-import android.smartcardio.CardException;
-import android.smartcardio.CommandAPDU;
-import android.smartcardio.ResponseAPDU;
-import android.smartcardio.TerminalFactory;
-import android.smartcardio.ipc.CardService;
-import android.smartcardio.ipc.ICardService;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import ee.ria.EstEIDUtility.EstEIDUtil.PinType;
+import ee.ria.EstEIDUtility.R.id;
+import ee.ria.EstEIDUtility.SMInterface.Connected;
 
 public class MainActivity extends Activity {
-	private static final String ACTION_USB_PERMISSION = "ee.ria.EstEIDUtil.USB_PERMISSION";
 	private TextView content;
 	private SMInterface sminterface = null;
-	Identive identive;
-	ACS acs;
-	Omnikey omnikey;
+	byte[] signCert, signedBytes;
+	EditText currentPinPuk, newPinPuk, textToSign;
+	PublicKey pubKey;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		content = (TextView) findViewById(R.id.content);
-		identive = new Identive(getApplicationContext()) {
-			@Override
-			protected void connected() {
-				read();
-			}
-		};
-		acs = new ACS(this) {
-			@Override
-			protected void connected() {
-				read();
-			}
-		};
-		omnikey = new Omnikey(this) {
-			@Override
-			protected void connected() {
-				read();
-			}
-		};
+		enableButtons(false);
+		findViewById(id.button_verify).setEnabled(false);
+		sminterface = SMInterface.getInstance(this, SMInterface.ACS);
 	}
 
 	@Override
@@ -70,282 +41,152 @@ public class MainActivity extends Activity {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		acs.close();
-		identive.close();
-		omnikey.close();
+		if (sminterface != null) {
+			sminterface.close();
+		}
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
-		if (id == R.id.action_read) {
-			sminterface = null;
-			if (identive.hasSupportedReader()) {
-				sminterface = identive;
-				identive.connect();
-			}
-			if (acs.hasSupportedReader()) {
-				sminterface = acs;
-				acs.connect();
-			}
-			if (omnikey.hasSupportedReader()) {
-				sminterface = omnikey;
-				omnikey.connect();
-			}
-			return true;
-		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void read() {
-		String result = "";
+
+	public void loginBtnPin1(View view) {
+		currentPinPuk = (EditText)findViewById(id.insert_pin);
 		try {
-			send(new byte[] { 0x00, (byte) 0xA4, 0x00, 0x0C, 0x00 });
-			send(new byte[] { 0x00, (byte) 0xA4, 0x01, 0x0C, 0x02, (byte) 0xEE, (byte) 0xEE });
-			send(new byte[] { 0x00, (byte) 0xA4, 0x02, 0x0C, 0x02, (byte) 0x50, (byte) 0x44 });
-			for (byte i = 1; i <= 16; ++i) {
-				byte[] data = send(new byte[] { 0x00, (byte) 0xB2, i, 0x04, 0x00 });
-				result += new String(data, "Windows-1252") + "\n";
-			}
-			sminterface.close();
+			boolean status = EstEIDUtil.login(PinType.PIN1, currentPinPuk.getText().toString().getBytes(), sminterface);
+			content.setText(status ? "PIN1 Login success" : "PIN1 Login failed");
 		} catch (Exception e) {
-			result += e.getMessage();
+			e.printStackTrace();
+			content.setText(e.getMessage());
+		}
+	}
+
+	public void loginBtnPin2(View view) {
+		currentPinPuk = (EditText)findViewById(id.insert_pin);
+		try {
+			boolean status = EstEIDUtil.login(PinType.PIN2, currentPinPuk.getText().toString().getBytes(), sminterface);
+			content.setText(status ? "PIN2 Login success" : "PIN2 Login failed");
+		} catch (Exception e) {
+			e.printStackTrace();
+			content.setText(e.getMessage());
+		}
+	}
+
+	public void signText(View view){
+		textToSign = (EditText)findViewById(id.edit_text);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		try {
+			byte[] textDigest = Util.digest(textToSign.getText().toString().getBytes());
+			outputStream.write(new byte[]{0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x0E, 0x03, 0x02, 0x1A, 0x05, 0x00, 0x04, 0x14}); // SHA1 OID
+			outputStream.write(textDigest);
+			signedBytes = EstEIDUtil.sign(outputStream.toByteArray(), PinType.PIN2,  sminterface);
+			content.setText(Util.toHex(signedBytes));
+			findViewById(id.button_verify).setEnabled(signCert != null && signedBytes != null);
+		} catch (Exception e) {
+			content.setText("Sign failed" + e.getMessage());
 			e.printStackTrace();
 		}
-		content.setText(result);
 	}
 
-	private byte[] send(byte[] apdu) throws Exception {
-		byte[] recv = sminterface.transmit(apdu);
-		byte sw1 = recv[recv.length - 2];
-		byte sw2 = recv[recv.length - 1];
-		recv = Arrays.copyOf(recv, recv.length - 2);
-		if (sw1 == 0x61) {
-			recv = concat(recv, sminterface.transmit(new byte[] { 0x00, (byte) 0xC0, 0x00, 0x00, sw2 }));
-		} else if (sw1 != (byte) 0x90 && sw2 != (byte) 0x00) {
-			throw new ReaderException("SW != 9000");
+	public void internalAuth(View view){
+		try {
+			byte[] TLSchallenge = new byte[] {0x3F, 0x4B ,(byte) 0xE6 ,0x4B ,(byte) 0xC9 ,0x06 ,0x6F ,0x14 ,(byte) 0x8A ,0x39 ,0x21 ,(byte) 0xD8 ,0x7C ,(byte) 0x94 ,0x41 ,0x40 ,(byte) 0x99 ,0x72 ,0x4B ,0x58 ,0x75 ,(byte) 0xA1 ,0x15 ,0x78 };
+			byte[] TLSchallengeBytes = EstEIDUtil.sign(TLSchallenge, PinType.PIN1,  sminterface);
+			content.setText(Util.toHex(TLSchallengeBytes));
+		} catch (Exception e) {
+			content.setText("Auth. failed" + e.getMessage());
+			e.printStackTrace();
 		}
-		return recv;
 	}
 
-	private static byte[] concat(byte[]...arrays) {
-		int size = 0;
-		for (byte[] array: arrays) {
-			size += array.length;
+	public void verify(View view){
+		try{
+			Signature sig = Signature.getInstance("SHA1withRSA");
+			sig.initVerify(Util.getPublicKey(signCert));
+			sig.update(textToSign.getText().toString().getBytes());
+			content.setText("Signature verify: " + sig.verify(signedBytes));
+		}catch (Exception e){
+			e.printStackTrace();
+			content.setText("Signature verify: failed\n" + e.getMessage());
 		}
-		byte[] result = new byte[size];
-		int pos = 0;
-		for (byte[] array: arrays) {
-			System.arraycopy(array, 0, result, pos, array.length);
-			pos += array.length;
-		}
-		return result;
 	}
 
-	private static String toHex(byte[] data) {
-		StringBuilder sb = new StringBuilder();
-		for (byte b : data) {
-			sb.append(String.format("%02X ", b));
+	public void displayPersonalData(View view){
+		try {
+			content.setText("Personal data:\n" + EstEIDUtil.readPersonalFile(sminterface));
+		} catch (Exception e) {
+			e.printStackTrace();
+			content.setText(e.getMessage());
 		}
-		return sb.toString();
 	}
 
-	private abstract class SMInterface {
-		abstract byte[] transmit(byte[] apdu) throws Exception;
-		abstract void connect();
-		abstract void connected();
-		abstract void close();
+	public void displayCertInfo(View view){
+		try {
+			signCert = EstEIDUtil.readCert(EstEIDUtil.CertType.CertSign, sminterface);
+			content.setText("Cert common name: " + Util.getCommonName(signCert, sminterface));
+			findViewById(id.button_verify).setEnabled(signCert != null && signedBytes != null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			content.setText(e.getMessage());
+		}
 	}
 
-	private class ACS extends SMInterface {
-		private PendingIntent permissionIntent;
-		private UsbManager manager;
-		private Reader ctx;
-		private int slot = 0;
-
-		ACS(Context context) {
-			manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-			ctx = new Reader(manager);
-
-			permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
-			registerReceiver(new BroadcastReceiver() {
-				@Override
-				public void onReceive(Context context, Intent intent) {
-					String action = intent.getAction();
-					if (ACTION_USB_PERMISSION.equals(action)) {
-						synchronized (this) {
-							UsbDevice device = (UsbDevice)intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-							if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false) && device != null) {
-								try {
-									ctx.open(device);
-									byte[] atr = ctx.power(slot, Reader.CARD_WARM_RESET);
-									ctx.setProtocol(slot, Reader.PROTOCOL_T0 | Reader.PROTOCOL_T1);
-									connected();
-								} catch(Exception e) {
-									e.printStackTrace();
-								}
-							}
-						}
-					}
-				}
-			}, new IntentFilter(ACTION_USB_PERMISSION));
-		}
-
-		boolean hasSupportedReader() {
-			for (final UsbDevice device: manager.getDeviceList().values()) {
-				if (ctx.isSupported(device)) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		void connect() {
-			for (final UsbDevice device: manager.getDeviceList().values()) {
-				if (ctx.isSupported(device)) {
-					manager.requestPermission(device, permissionIntent);
-				}
-			}
-		}
-
-		@Override
-		void close() {
-			ctx.close();
-		}
-
-		@Override
-		byte[] transmit(byte[] apdu) throws Exception {
-			byte[] recv = new byte[1024];
-			int len = ctx.transmit(slot, apdu, apdu.length, recv, recv.length);
-			return Arrays.copyOf(recv, len);
-		}
-
-		@Override
-		protected void connected() {}
+	public void enableButtons( boolean enable) {
+		findViewById(id.button_read_personal).setEnabled(enable);
+		findViewById(id.button_read_cert).setEnabled(enable);
+		findViewById(id.insert_pin).setEnabled(enable);
+		findViewById(id.button_login_pin1).setEnabled(enable);
+		findViewById(id.button_login_pin2).setEnabled(enable);
+		findViewById(id.edit_text).setEnabled(enable);
+		findViewById(id.button_sign).setEnabled(enable);
+		findViewById(id.button_auth).setEnabled(enable);
+		findViewById(id.button_change_puk).setEnabled(enable);
+		findViewById(id.button_change_pin1).setEnabled(enable);
+		findViewById(id.button_change_pin2).setEnabled(enable);
+		findViewById(id.button_unblock_pin1).setEnabled(enable);
+		//findViewById(id.button_verify).setEnabled(enable);
 	}
 
-	private class Identive extends SMInterface {
-		private SCard ctx;
-
-		Identive(Context context) {
-			ctx = new SCard();
-			ctx.SCardEstablishContext(getApplicationContext());
-		}
-
-		@Override
-		public void close() {
-			ctx.SCardDisconnect(WinDefs.SCARD_LEAVE_CARD);
-			ctx.SCardReleaseContext();
-		}
-
-		boolean hasSupportedReader() {
-			try {
-				ArrayList<String> deviceList = new ArrayList<String>();
-				ctx.USBRequestPermission(getApplicationContext());
-				ctx.SCardListReaders(getApplicationContext(), deviceList);
-				return deviceList.size() > 0;
-			} catch(Exception e) {
-				e.printStackTrace();
+	public void connectReader(View view) {
+		sminterface.connect(new Connected() {
+			@Override
+			public void connected() {
+				enableButtons(sminterface != null);
 			}
-			return false;
-		}
-
-		@Override
-		void connect() {
-			ArrayList<String> deviceList = new ArrayList<String>();
-			ctx.SCardListReaders(getApplicationContext(), deviceList);
-			ctx.SCardConnect(deviceList.get(0), WinDefs.SCARD_SHARE_EXCLUSIVE,
-					(int) (WinDefs.SCARD_PROTOCOL_T0 | WinDefs.SCARD_PROTOCOL_T1));
-			connected();
-		}
-
-		@Override
-		byte[] transmit(byte[] apdu) throws Exception {
-			SCard.SCardIOBuffer io = ctx.new SCardIOBuffer();
-			io.setAbyInBuffer(apdu);
-			io.setnBytesReturned(apdu.length);
-			io.setAbyOutBuffer(new byte[0x8000]);
-			io.setnOutBufferSize(0x8000);
-			ctx.SCardTransmit(io);
-			if (io.getnBytesReturned() == 0) {
-				throw new Exception("Failed to send apdu");
-			}
-			String rstr = "";
-			for(int k = 0; k < io.getnBytesReturned(); k++){
-       			int temp = io.getAbyOutBuffer()[k] & 0xFF;
-       			if(temp < 16){
-       				rstr = rstr.toUpperCase() + "0" + Integer.toHexString(io.getAbyOutBuffer()[k]) ;
-       			}else{
-       				rstr = rstr.toUpperCase() + Integer.toHexString(temp) ;
-       			}
-       		}
-
-			return Arrays.copyOf(io.getAbyOutBuffer(), io.getnBytesReturned());
-		}
-
-		@Override
-		protected void connected() {}
+		});
 	}
 
-	private class Omnikey extends SMInterface {
-		private ICardService mService;
-		private TerminalFactory mFactory;
-		private Card card;
-
-		Omnikey(Context context) {
-			try {
-				Intent serviceIntent = new Intent("com.theobroma.cardreadermanager.backendipc.BroadcastRecord");
-				serviceIntent.setPackage("com.theobroma.cardreadermanager.backendipc");
-				if (context.getPackageManager().queryIntentServices(serviceIntent, 0).isEmpty()) {
-					//context.bindService(serviceIntent, conn, Context.BIND_AUTO_CREATE);
-					context.startService(serviceIntent);
-				}
-				mService = CardService.getInstance(context.getApplicationContext());
-				mFactory = mService.getTerminalFactory();
-			} catch (Exception e) {
-				e.printStackTrace();
+	public void changePin(View view) {
+		currentPinPuk = (EditText)findViewById(id.insert_pin);
+		newPinPuk = (EditText)findViewById(id.new_pin_puk);
+		try {
+			PinType type = null;
+			switch (view.getId()) {
+			case id.button_change_pin1: type = PinType.PIN1; break;
+			case id.button_change_pin2: type = PinType.PIN2; break;
+			case id.button_change_puk: type = PinType.PUK; break;
 			}
+			boolean status = EstEIDUtil.changePin(currentPinPuk.getText().toString().getBytes(),
+					newPinPuk.getText().toString().getBytes(),
+					type, sminterface);
+			content.setText(status ? "PIN change success" : "PIN change failed");
+		} catch (Exception e) {
+			e.printStackTrace();
+			content.setText(e.getMessage());
 		}
+	}
 
-		boolean hasSupportedReader() {
-			try {
-				return mFactory.terminals().list().size() > 0;
-			} catch (CardException e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-
-		@Override
-		byte[] transmit(byte[] apdu) throws Exception {
-			ResponseAPDU response = card.getBasicChannel().transmit(new CommandAPDU(apdu));
-			return response.getBytes();
-		}
-
-		@Override
-		void connect() {
-			try {
-				card = mFactory.terminals().list().get(0).connect("T=0");
-				connected();
-			} catch (CardException e) {
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		void connected() {}
-
-		@Override
-		void close() {
-			if (card != null) {
-				try {
-					card.disconnect(true);
-				} catch (CardException e) {
-					e.printStackTrace();
-				}
-			}
-			mService.releaseService();
+	public void unblockPin1(View view) {
+		currentPinPuk = (EditText)findViewById(id.insert_pin);
+		try {
+			boolean status = EstEIDUtil.unblockPin(currentPinPuk.getText().toString().getBytes(), PinType.PIN1, sminterface);
+			content.setText(status ? "PIN unblock success" : "PIN unblock failed");
+		} catch (Exception e) {
+			e.printStackTrace();
+			content.setText(e.getMessage());
 		}
 	}
 }

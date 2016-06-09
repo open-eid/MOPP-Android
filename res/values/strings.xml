@@ -2,6 +2,12 @@
 <resources>
 
     <string name="app_name">EstEIDUtility</string>
-    <string name="action_read">Read</string>
+    <string name="action_read">Read personal data</string>
+    <string name="action_read_cert">Read cert</string>
+    <string name="action_read_personal">Read personal data</string>
+    <string name="action_sign">Sign</string>
+    <string name="edit_text">Edit text</string>
+    <string name="insert_pin_puk">Insert PIN/PUK</string>
+    <string name="settings">Settings</string>
 
 </resources>
