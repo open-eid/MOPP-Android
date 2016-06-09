@@ -1,7 +1,7 @@
 package ee.ria.EstEIDUtility;
 
 import java.io.ByteArrayOutputStream;
-import java.security.PublicKey;
+import java.security.MessageDigest;
 import java.security.Signature;
 
 import android.app.Activity;
@@ -19,8 +19,6 @@ public class MainActivity extends Activity {
 	private TextView content;
 	private SMInterface sminterface = null;
 	byte[] signCert, signedBytes;
-	EditText currentPinPuk, newPinPuk, textToSign;
-	PublicKey pubKey;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +52,7 @@ public class MainActivity extends Activity {
 
 
 	public void loginBtnPin1(View view) {
-		currentPinPuk = (EditText)findViewById(id.insert_pin);
+		EditText currentPinPuk = (EditText)findViewById(id.insert_pin);
 		try {
 			boolean status = EstEIDUtil.login(PinType.PIN1, currentPinPuk.getText().toString().getBytes(), sminterface);
 			content.setText(status ? "PIN1 Login success" : "PIN1 Login failed");
@@ -65,7 +63,7 @@ public class MainActivity extends Activity {
 	}
 
 	public void loginBtnPin2(View view) {
-		currentPinPuk = (EditText)findViewById(id.insert_pin);
+		EditText currentPinPuk = (EditText)findViewById(id.insert_pin);
 		try {
 			boolean status = EstEIDUtil.login(PinType.PIN2, currentPinPuk.getText().toString().getBytes(), sminterface);
 			content.setText(status ? "PIN2 Login success" : "PIN2 Login failed");
@@ -76,10 +74,11 @@ public class MainActivity extends Activity {
 	}
 
 	public void signText(View view){
-		textToSign = (EditText)findViewById(id.edit_text);
+		EditText textToSign = (EditText)findViewById(id.edit_text);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		try {
-			byte[] textDigest = Util.digest(textToSign.getText().toString().getBytes());
+			byte[] textDigest = MessageDigest.getInstance("SHA-1").digest(
+					textToSign.getText().toString().getBytes());
 			outputStream.write(new byte[]{0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x0E, 0x03, 0x02, 0x1A, 0x05, 0x00, 0x04, 0x14}); // SHA1 OID
 			outputStream.write(textDigest);
 			signedBytes = EstEIDUtil.sign(outputStream.toByteArray(), PinType.PIN2,  sminterface);
@@ -103,9 +102,10 @@ public class MainActivity extends Activity {
 	}
 
 	public void verify(View view){
+		EditText textToSign = (EditText)findViewById(id.edit_text);
 		try{
 			Signature sig = Signature.getInstance("SHA1withRSA");
-			sig.initVerify(Util.getPublicKey(signCert));
+			sig.initVerify(Util.getX509Certificate(signCert).getPublicKey());
 			sig.update(textToSign.getText().toString().getBytes());
 			content.setText("Signature verify: " + sig.verify(signedBytes));
 		}catch (Exception e){
@@ -126,7 +126,7 @@ public class MainActivity extends Activity {
 	public void displayCertInfo(View view){
 		try {
 			signCert = EstEIDUtil.readCert(EstEIDUtil.CertType.CertSign, sminterface);
-			content.setText("Cert common name: " + Util.getCommonName(signCert, sminterface));
+			content.setText("Cert common name: " + Util.getCommonName(signCert));
 			findViewById(id.button_verify).setEnabled(signCert != null && signedBytes != null);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -160,8 +160,8 @@ public class MainActivity extends Activity {
 	}
 
 	public void changePin(View view) {
-		currentPinPuk = (EditText)findViewById(id.insert_pin);
-		newPinPuk = (EditText)findViewById(id.new_pin_puk);
+		EditText currentPinPuk = (EditText)findViewById(id.insert_pin);
+		EditText newPinPuk = (EditText)findViewById(id.new_pin_puk);
 		try {
 			PinType type = null;
 			switch (view.getId()) {
@@ -180,7 +180,7 @@ public class MainActivity extends Activity {
 	}
 
 	public void unblockPin1(View view) {
-		currentPinPuk = (EditText)findViewById(id.insert_pin);
+		EditText currentPinPuk = (EditText)findViewById(id.insert_pin);
 		try {
 			boolean status = EstEIDUtil.unblockPin(currentPinPuk.getText().toString().getBytes(), PinType.PIN1, sminterface);
 			content.setText(status ? "PIN unblock success" : "PIN unblock failed");

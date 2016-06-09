@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import android.util.SparseArray;
 
 public class EstEIDUtil {
-	static String[] personalData;
 	public enum CertType {
 		CertAuth((byte)0xAA),
 		CertSign((byte)0xDD);
