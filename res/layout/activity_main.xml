@@ -39,16 +39,18 @@
 	        android:onClick="displayCertInfo"
 	        android:text="@string/action_read_cert"
 	        android:textSize="15sp" />
-	
+			
+	    	
 	    	<EditText
-	        android:id="@+id/insert_pin"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_below="@+id/button_read_cert"
-	        android:ems="10"
-	        android:hint="Current PIN/PUK"
-	        android:inputType="numberPassword" />
+	    	    android:id="@+id/insert_pin"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+	    	    android:layout_alignParentLeft="true"
+	    	    android:layout_below="@+id/button_read_cert"
+	    	    android:ems="10"
+	    	    android:hint="Current PIN/PUK"
+	    	    android:inputType="numberPassword"
+	    	    android:visibility="visible" />
 	
 	    	<TextView
 	        android:id="@+id/content"
@@ -79,17 +81,6 @@
 	        android:inputType="numberPassword" />
 	
 	    	<Button
-	        android:id="@+id/button_login_pin1"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_below="@+id/new_pin_puk"
-	        android:minHeight="30dp"
-	        android:onClick="loginBtnPin1"
-	        android:text="Login PIN1"
-	        android:textSize="15sp" />
-	
-	    	<Button
 	        android:id="@+id/button_sign"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -97,7 +88,7 @@
 	        android:layout_alignParentStart="true"
 	        android:layout_below="@+id/edit_text"
 	        android:minHeight="30dp"
-	        android:onClick="signText"
+	        android:onClick="createDialog"
 	        android:text="@string/action_sign"
 	        android:textSize="15sp" />
 	
@@ -106,27 +97,12 @@
 	    	    android:layout_width="wrap_content"
 	    	    android:layout_height="wrap_content"
 	    	    android:layout_alignParentLeft="true"
-	    	    android:layout_alignRight="@+id/button_login_pin1"
-	    	    android:layout_below="@+id/button_login_pin1"
+	    	    android:layout_below="@+id/new_pin_puk"
 	    	    android:minHeight="30dp"
 	    	    android:onClick="changePin"
 	    	    android:paddingLeft="2dp"
 	    	    android:paddingRight="2dp"
 	    	    android:text="Change PIN1"
-	    	    android:textSize="15sp" />
-	
-	    	<Button
-	    	    android:id="@+id/button_change_pin2"
-	    	    android:layout_width="wrap_content"
-	    	    android:layout_height="wrap_content"
-	    	    android:layout_alignLeft="@+id/button_login_pin2"
-	    	    android:layout_alignRight="@+id/button_login_pin2"
-	    	    android:layout_below="@+id/button_login_pin2"
-	    	    android:minHeight="30dp"
-	    	    android:onClick="changePin"
-	    	    android:paddingLeft="2dp"
-	    	    android:paddingRight="2dp"
-	    	    android:text="Change PIN2"
 	    	    android:textSize="15sp" />
 	
 	    	<Button
@@ -148,7 +124,7 @@
 	        android:layout_above="@+id/button_verify"
 	        android:layout_toRightOf="@+id/button_sign"
 	        android:minHeight="30dp"
-	        android:onClick="internalAuth"
+	        android:onClick="createDialog"
 	        android:text="Auth"
 	        android:textSize="15sp" />
 	
@@ -165,26 +141,17 @@
 	        android:textSize="15sp" />
 	
 	    	<Button
-	        android:id="@+id/button_unblock_pin1"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_below="@+id/button_change_pin1"
-	        android:minHeight="30dp"
-	        android:onClick="unblockPin1"
-	        android:text="Unblock PIN1"
-	        android:textSize="15sp" />
-	
-	    	<Button
-	        android:id="@+id/button_login_pin2"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_above="@+id/button_change_pin1"
-	        android:layout_toRightOf="@+id/button_auth"
-	        android:minHeight="30dp"
-	        android:onClick="loginBtnPin2"
-	        android:text="Login PIN2"
-	        android:textSize="15sp" />
+	    	    android:id="@+id/button_unblock_pin1"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+	    	    android:layout_alignParentLeft="true"
+	    	    android:layout_below="@+id/button_change_pin1"
+	    	    android:minHeight="30dp"
+	    	    android:onClick="unblockPin"
+	    	    android:paddingLeft="3dp"
+	    	    android:paddingRight="3dp"
+	    	    android:text="Unblock PIN1"
+	    	    android:textSize="15sp" />
 	
 	    	<EditText
 	        android:id="@+id/edit_text"
@@ -195,6 +162,33 @@
 	        android:ems="10"
 	        android:hint="Text to sign"
 	        android:text="Hello world" />
+
+	    	<Button
+	    	    android:id="@+id/button_change_pin2"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+	    	    android:layout_alignRight="@+id/button_change_puk"
+	    	    android:layout_below="@+id/new_pin_puk"
+	    	    android:minHeight="30dp"
+	    	    android:onClick="changePin"
+	    	    android:paddingLeft="2dp"
+	    	    android:paddingRight="2dp"
+	    	    android:text="Change PIN2"
+	    	    android:textSize="15sp" />
+
+	    	<Button
+	    	    android:id="@+id/button_unblock_pin2"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+	    	    android:layout_above="@+id/edit_text"
+	    	    android:layout_alignLeft="@+id/button_change_pin2"
+	    	    android:minHeight="30dp"
+	    	    android:onClick="unblockPin"
+	    	    android:paddingLeft="3dp"
+	    	    android:paddingRight="3dp"
+	    	    android:text="Unblock PIN2"
+	    	    android:textSize="15sp" />
+
 		</RelativeLayout>
 		
 	    <RelativeLayout

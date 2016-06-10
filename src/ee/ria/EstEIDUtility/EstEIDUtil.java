@@ -33,7 +33,6 @@ public class EstEIDUtil {
 			byte[] data = sminterface.transmitExtended(new byte[] { 0x00, (byte)0xB0, i, 0x00, 0x00 });
 			byteStream.write(data);
 		}
-		//byteStream.write(sminterface.transmit(new byte[]{0x00, (byte) 0xB0, 0x00, 0x00, 0x00, 0x06, 0x00}));
 		return byteStream.toByteArray();
 	}
 
@@ -77,7 +76,7 @@ public class EstEIDUtil {
 	public static boolean unblockPin (byte[] currentPuk, PinType pinType, SMInterface sminterface) throws Exception {
 		if (!login(PinType.PUK, currentPuk, sminterface))
 			return false;
-		byte[] recv = sminterface.transmitExtended(new byte[] {0x00, 0x2C, 0x03, pinType.value, 0x00});
+		byte[] recv = sminterface.transmit(new byte[] {0x00, 0x2C, 0x03, pinType.value, 0x00});
 		return SMInterface.checkSW(recv);
 	}
 }
