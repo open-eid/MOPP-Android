@@ -3,7 +3,7 @@
     tools:context="ee.ria.EstEIDUtility.MainActivity" >
 
     <item
-        android:id="@+id/action_read"
+        android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/settings" />

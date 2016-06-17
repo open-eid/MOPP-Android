@@ -30,23 +30,22 @@
 	        android:textSize="15sp" />
 	
 	    	<Button
-	        android:id="@+id/button_read_cert"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentStart="true"
-	        android:layout_below="@+id/button_read_personal"
-	        android:minHeight="30dp"
-	        android:onClick="displayCertInfo"
-	        android:text="@string/action_read_cert"
-	        android:textSize="15sp" />
-			
+	    	    android:id="@+id/button_read_cert_ID"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+	    	    android:layout_alignParentStart="true"
+	    	    android:layout_below="@+id/button_read_personal"
+	    	    android:minHeight="30dp"
+	    	    android:onClick="displayCertInfo"
+	    	    android:text="@string/action_read_cert"
+	    	    android:textSize="15sp" />
 	    	
 	    	<EditText
 	    	    android:id="@+id/insert_pin"
 	    	    android:layout_width="wrap_content"
 	    	    android:layout_height="wrap_content"
 	    	    android:layout_alignParentLeft="true"
-	    	    android:layout_below="@+id/button_read_cert"
+	    	    android:layout_below="@+id/button_read_cert_ID"
 	    	    android:ems="10"
 	    	    android:hint="Current PIN/PUK"
 	    	    android:inputType="numberPassword"
@@ -63,7 +62,7 @@
 	        android:id="@+id/button_connect"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_above="@+id/button_read_cert"
+	        android:layout_above="@+id/button_read_cert_ID"
 	        android:layout_alignParentRight="true"
 	        android:minHeight="30dp"
 	        android:onClick="connectReader"
@@ -109,9 +108,9 @@
 	    	    android:id="@+id/button_change_puk"
 	    	    android:layout_width="wrap_content"
 	    	    android:layout_height="wrap_content"
-	    	    android:layout_alignBaseline="@+id/button_read_cert"
-	    	    android:layout_alignBottom="@+id/button_read_cert"
-	    	    android:layout_toRightOf="@+id/button_read_cert"
+	    	    android:layout_alignBaseline="@+id/button_read_cert_ID"
+	    	    android:layout_alignBottom="@+id/button_read_cert_ID"
+	    	    android:layout_toRightOf="@+id/button_read_cert_ID"
 	    	    android:minHeight="30dp"
 	    	    android:onClick="changePin"
 	    	    android:text="Change PUK"
@@ -217,12 +216,27 @@
 	        android:layout_alignParentStart="true"
 	        android:layout_below="@+id/button_read_personal_mID"
 	        android:minHeight="30dp"
-	        
+	        android:onClick="displayCertInfo"
 	        android:text="@string/action_read_cert"
 	        android:textSize="15sp" />
-	
-	    	
-		</RelativeLayout>
 
-</LinearLayout>
+	    	<Button
+	    	    android:id="@+id/button_sign_mID"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+	    	    android:layout_below="@+id/button_read_cert_mID"
+	    	    android:minHeight="30dp"
+	    	    android:onClick="mobileSign"
+	    	    android:text="@string/action_sign"
+	    	    android:textSize="15sp" />
+
+	    	<TextView
+	    	    android:id="@+id/content_mID"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+	    	    android:layout_alignParentLeft="true"
+	    	    android:layout_below="@id/button_sign_mID" />
+
+		</RelativeLayout>
+	</LinearLayout>
 </ScrollView>
