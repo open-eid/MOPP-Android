@@ -1,8 +1,11 @@
 package ee.ria.EstEIDUtility;
 
+import android.util.SparseArray;
+
 public abstract class Token {
 	public static CertListener certListener;
 	public static SignListener signListener;
+	public static PersonalFileListener personalFileListener;
 
 	public enum CertType {
 		CertAuth((byte)0xAA),
@@ -28,17 +31,17 @@ public abstract class Token {
 		public abstract void onCertificateError(String msg);
 	}
 
-	public static interface SignListener {
-		public abstract void onSignResponse(byte[] signature);
-		public abstract void onSignError(String msg);
-	}
-
 	public void setCertListener(CertListener listener) {
 		Token.certListener = listener;
 	}
 
 	public CertListener getCertListener() {
 		return certListener;
+	}
+
+	public static interface SignListener {
+		public abstract void onSignResponse(byte[] signature);
+		public abstract void onSignError(String msg);
 	}
 
 	public void setSignListener(SignListener listener) {
@@ -49,6 +52,20 @@ public abstract class Token {
 		return signListener;
 	}
 
+	public static interface PersonalFileListener {
+		public abstract void onPersonalFileResponse(SparseArray<String> result);
+		public abstract void onPersonalFileError(String msg);
+	}
+
+	public void setPersonalFileListener(PersonalFileListener listener) {
+		Token.personalFileListener = listener;
+	}
+
+	public PersonalFileListener getPersonalFileListener () {
+		return personalFileListener;
+	}
+
 	public abstract void readCert(CertType certType);
 	public abstract void sign(PinType type, byte[] data);
+	public abstract void readPersonalFile();
 }

@@ -1,5 +1,6 @@
 package ee.ria.EstEIDUtility;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -15,6 +16,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.nfc.Tag;
+import android.nfc.tech.IsoDep;
 import android.smartcardio.Card;
 import android.smartcardio.CardException;
 import android.smartcardio.CommandAPDU;
@@ -138,8 +141,7 @@ public abstract class SMInterface {
 		}
 
 		@Override
-		public
-		void close() {
+		public	void close() {
 			ctx.close();
 		}
 
@@ -270,6 +272,39 @@ public abstract class SMInterface {
 				}
 			}
 			mService.releaseService();
+		}
+	}
+
+	public static class NFC extends SMInterface {
+		private IsoDep nfc;
+
+		NFC(Tag tag) {
+			nfc = IsoDep.get(tag);
+		}
+
+		@Override
+		public byte[] transmit(byte[] apdu) throws Exception {
+			return nfc.transceive(apdu);
+		}
+
+		@Override
+		public void connect(Connected connected) {
+			try {
+				nfc.connect();
+				nfc.setTimeout(5000);
+				connected.connected();
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void close() {
+			try {
+				nfc.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

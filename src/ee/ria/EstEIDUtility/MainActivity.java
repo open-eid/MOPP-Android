@@ -7,13 +7,18 @@ import java.security.Signature;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,21 +29,25 @@ import ee.ria.EstEIDUtility.R.id;
 import ee.ria.EstEIDUtility.SMInterface.Connected;
 import ee.ria.EstEIDUtility.Token.CertListener;
 import ee.ria.EstEIDUtility.Token.CertType;
+import ee.ria.EstEIDUtility.Token.PersonalFileListener;
 import ee.ria.EstEIDUtility.Token.PinType;
 import ee.ria.EstEIDUtility.Token.SignListener;
 
 public class MainActivity extends Activity  {
 	TextView content, contentmID;
 	private SMInterface sminterface = null;
-	byte[] signCert, authCert, signedBytes;
-	EditText dialogPinPuk;
-	EstEIDToken eidToken;
-	MobileIDToken midToken;
+	byte[] signCert, signedBytes;
+	private EstEIDToken eidToken;
+	private MobileIDToken midToken;
+	private NfcAdapter nfcAdapter;
+	private PendingIntent pendingIntent;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+		pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 		content = (TextView) findViewById(R.id.content);
 		contentmID = (TextView) findViewById(R.id.content_mID);
 		enableButtons(false);
@@ -52,6 +61,39 @@ public class MainActivity extends Activity  {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+
+	@Override
+	protected void onResume () {
+		super.onResume();
+		if (nfcAdapter != null) {
+			nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (nfcAdapter != null) {
+			nfcAdapter.disableForegroundDispatch(this);
+		}
+	}
+
+	@Override
+	public void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setIntent(intent);
+		if (nfcAdapter == null) {
+			return;
+		}
+		sminterface = new SMInterface.NFC((Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG));
+		sminterface.connect(new Connected() {
+			@Override
+			public void connected() {
+				enableButtons(sminterface != null);
+			}
+		});
+		eidToken = new EstEIDToken(sminterface, this);
 	}
 
 	@Override
@@ -87,97 +129,70 @@ public class MainActivity extends Activity  {
 	}
 
 	public void displayPersonalData(View view){
-		try {
-			content.setText("Personal data:\n" + eidToken.readPersonalFile());
-		} catch (Exception e) {
-			e.printStackTrace();
-			content.setText(e.getMessage());
-		}
+		eidToken.setPersonalFileListener(new PersonalFileListener() {
+			@Override
+			public void onPersonalFileResponse(SparseArray<String> result) {
+				content.setText("Personal data:\n" + result);
+			}
+			@Override
+			public void onPersonalFileError(String msg) {
+				content.setText(msg);
+			}
+		});
+		eidToken.readPersonalFile();
 	}
 
 	public void displayCertInfo(View view){
-		try {
-			switch (view.getId()) {
-				case R.id.button_read_cert_ID:
-					eidToken.setCertListener(new CertListener() {
-						@Override
-						public void onCertificateResponse(CertType type, byte[] cert) {
-							switch (type) {
-								case CertAuth:
-									contentmID.setText("Cert common name: " + Util.getCommonName(cert));
-									break;
-								case CertSign:
-									content.setText("Cert common name: " + Util.getCommonName(cert));
-									signCert = cert;
-									break;
-							}
-						}
-
-						@Override
-						public void onCertificateError(String msg) {
-							new AlertDialog.Builder(MainActivity.this)
-							.setTitle(R.string.cert_read_failed)
-							.setMessage(msg)
-							.setNegativeButton("Close", new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									dialog.cancel();
-								}
-							}).show();
-						}
-					});
-					eidToken.readCert(EstEIDToken.CertType.CertSign);
-					break;
-				case R.id.button_read_cert_mID:
-					midToken.setCertListener(new CertListener() {
-						@Override
-						public void onCertificateResponse(CertType type, byte[] cert) {
-							switch (type) {
-								case CertAuth:
-									contentmID.setText("Cert common name: " + Util.getCommonName(cert));
-									authCert = cert;
-									break;
-								case CertSign:
-									content.setText("Cert common name: " + Util.getCommonName(cert));
-									break;
-							}
-						}
-
-						@Override
-						public void onCertificateError(String msg) {
-							new AlertDialog.Builder(MainActivity.this)
-							.setTitle(R.string.cert_read_failed)
-							.setMessage(msg)
-							.setNegativeButton("Close", new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									dialog.cancel();
-								}
-							}).show();
-						}
-					});
-					midToken.readCert(EstEIDToken.CertType.CertAuth);
-					break;
+		Token token = eidToken != null ? eidToken : midToken;
+		token.setCertListener(new CertListener() {
+			@Override
+			public void onCertificateResponse(CertType type, byte[] cert) {
+				switch (type) {
+					case CertAuth:
+						contentmID.setText("Cert common name: " + Util.getCommonName(cert));
+						break;
+					case CertSign:
+						content.setText("Cert common name: " + Util.getCommonName(signCert = cert));
+						findViewById(R.id.button_verify).setEnabled(signCert != null && signedBytes != null);
+						break;
+				}
 			}
-			findViewById(R.id.button_verify).setEnabled(signCert != null && signedBytes != null);
-		} catch (Exception e) {
-			switch (view.getId()) {
-				case R.id.button_read_cert_ID:
-					content.setText(e.getMessage());
-					break;
-				case R.id.button_read_cert_mID:
-					contentmID.setText(e.getMessage());
-					break;
+
+			@Override
+			public void onCertificateError(String msg) {
+				new AlertDialog.Builder(MainActivity.this)
+				.setTitle(R.string.cert_read_failed)
+				.setMessage(msg)
+				.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				}).show();
 			}
-			e.printStackTrace();
+		});
+		if (eidToken != null) {
+			eidToken.setCertListener(token.getCertListener());
 		}
+		if (midToken != null) {
+			midToken.setCertListener(token.getCertListener());
+		}
+		switch (view.getId()) {
+		case R.id.button_read_cert_ID:
+			eidToken.readCert(EstEIDToken.CertType.CertSign);
+			break;
+		case R.id.button_read_cert_mID:
+			midToken.readCert(EstEIDToken.CertType.CertAuth);
+			break;
+		}
+		findViewById(R.id.button_verify).setEnabled(signCert != null && signedBytes != null);
 	}
 
 	public void enableButtons( boolean enable) {
 		findViewById(R.id.button_read_personal).setEnabled(enable);
 		findViewById(R.id.button_read_cert_ID).setEnabled(enable);
 		findViewById(R.id.edit_text).setEnabled(enable);
-		findViewById(R.id.button_sign).setEnabled(enable);
+		findViewById(R.id.button_cert).setEnabled(enable);
 		findViewById(R.id.button_auth).setEnabled(enable);
 		findViewById(R.id.button_change_puk).setEnabled(enable);
 		findViewById(R.id.button_change_pin1).setEnabled(enable);
@@ -204,14 +219,14 @@ public class MainActivity extends Activity  {
 	}
 
 	public void changePin(View view) {
-		EditText currentPinPuk = (EditText)findViewById(id.insert_pin);
+		EditText currentPinPuk = (EditText)findViewById(id.current_pin_puk);
 		EditText newPinPuk = (EditText)findViewById(id.new_pin_puk);
 		try {
 			PinType type = null;
 			switch (view.getId()) {
-				case R.id.button_change_pin1: type = PinType.PIN1; break;
-				case R.id.button_change_pin2: type = PinType.PIN2; break;
-				case R.id.button_change_puk: type = PinType.PUK; break;
+			case R.id.button_change_pin1: type = PinType.PIN1; break;
+			case R.id.button_change_pin2: type = PinType.PIN2; break;
+			case R.id.button_change_puk: type = PinType.PUK; break;
 			}
 			boolean status = eidToken.changePin(currentPinPuk.getText().toString().getBytes(),
 					newPinPuk.getText().toString().getBytes(),
@@ -224,12 +239,12 @@ public class MainActivity extends Activity  {
 	}
 
 	public void unblockPin(View view) {
-		EditText currentPinPuk = (EditText)findViewById(R.id.insert_pin);
+		EditText currentPinPuk = (EditText)findViewById(R.id.current_pin_puk);
 		try {
 			PinType type = null;
 			switch (view.getId()) {
-				case R.id.button_unblock_pin1: type = PinType.PIN1; break;
-				case R.id.button_unblock_pin2: type = PinType.PIN2; break;
+			case R.id.button_unblock_pin1: type = PinType.PIN1; break;
+			case R.id.button_unblock_pin2: type = PinType.PIN2; break;
 			}
 			boolean status = eidToken.unblockPin(currentPinPuk.getText().toString().getBytes(), type);
 			content.setText(status ? type.name() + " unblock success" : type.name() + " unblock failed");
@@ -243,8 +258,7 @@ public class MainActivity extends Activity  {
 		eidToken.setSignListener(new SignListener() {
 			@Override
 			public void onSignResponse(byte[] signature) {
-				signedBytes = signature;
-				content.setText(Util.toHex(signature));
+				content.setText(Util.toHex(signedBytes = signature));
 				findViewById(R.id.button_verify).setEnabled(signCert != null && signature != null);
 			}
 
@@ -254,7 +268,7 @@ public class MainActivity extends Activity  {
 			}
 		});
 
-		if (view.getId() == R.id.button_sign) {
+		if (view.getId() == R.id.button_cert) {
 			try {
 				EditText textToSign = (EditText)findViewById(R.id.edit_text);
 				byte[] textDigest = MessageDigest.getInstance("SHA-1").digest(

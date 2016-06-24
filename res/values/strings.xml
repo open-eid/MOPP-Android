@@ -10,5 +10,15 @@
     <string name="insert_pin_puk">Insert PIN/PUK</string>
     <string name="settings">Settings</string>
     <string name="cert_read_failed">Cert read failed</string>
+    <string name="current_pin_puk">Current PIN/PUK</string>
+    <string name="connect">Connect</string>
+    <string name="new_pin_puk">New PIN/PUK</string>
+    <string name="change_puk">Change PUK</string>
+    <string name="change_pin">Change PIN</string>
+    <string name="unblock_pin1">Unblock PIN1</string>
+    <string name="change_pin2">Change PIN2</string>
+    <string name="unblock_pin2">Unblock PIN2</string>
+    <string name="auth">Auth</string>
+    <string name="verify">Verify</string>
 
 </resources>

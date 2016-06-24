@@ -300,4 +300,9 @@ public class MobileIDToken extends Token {
 				parent.getSharedPreferences("Settings", 0).getString("personalCode", ""),
 				parent.getSharedPreferences("Settings", 0).getString("mobileNR", ""));
 	}
+
+	@Override
+	public void readPersonalFile() {
+		// TODO Auto-generated method stub
+	}
 }

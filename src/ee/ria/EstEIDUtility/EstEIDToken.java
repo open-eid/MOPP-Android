@@ -40,16 +40,21 @@ public class EstEIDToken extends Token {
 		}
 	}
 
-	public SparseArray<String> readPersonalFile() throws Exception {
-		sminterface.transmitExtended(new byte[] { 0x00, (byte) 0xA4, 0x00, 0x0C, 0x00 });
-		sminterface.transmitExtended(new byte[] { 0x00, (byte) 0xA4, 0x01, 0x0C, 0x02, (byte) 0xEE, (byte) 0xEE });
-		sminterface.transmitExtended(new byte[] { 0x00, (byte) 0xA4, 0x02, 0x0C, 0x02, (byte) 0x50, (byte) 0x44 });
-		SparseArray<String> result = new SparseArray<String>();
-		for (byte i = 1; i <= 16; ++i) {
-			byte[] data = sminterface.transmitExtended(new byte[] { 0x00, (byte) 0xB2, i, 0x04, 0x00 });
-			result.put(i, new String(data, "Windows-1252"));
+	@Override
+	public void readPersonalFile() {
+		try {
+			sminterface.transmitExtended(new byte[] { 0x00, (byte) 0xA4, 0x00, 0x0C, 0x00 });
+			sminterface.transmitExtended(new byte[] { 0x00, (byte) 0xA4, 0x01, 0x0C, 0x02, (byte) 0xEE, (byte) 0xEE });
+			sminterface.transmitExtended(new byte[] { 0x00, (byte) 0xA4, 0x02, 0x0C, 0x02, (byte) 0x50, (byte) 0x44 });
+			SparseArray<String> result = new SparseArray<String>();
+			for (byte i = 1; i <= 16; ++i) {
+				byte[] data = sminterface.transmitExtended(new byte[] { 0x00, (byte) 0xB2, i, 0x04, 0x00 });
+				result.put(i, new String(data, "Windows-1252"));
+			}
+			personalFileListener.onPersonalFileResponse(result);
+		} catch (Exception e) {
+			personalFileListener.onPersonalFileError(e.getMessage());
 		}
-		return result;
 	}
 
 	@Override

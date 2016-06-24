@@ -1,242 +1,229 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="5dp"
-    android:scrollbarStyle="outsideOverlay"
-    tools:context="ee.ria.EstEIDUtility.MainActivity" >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:padding="5dp"
+	android:scrollbarStyle="outsideOverlay"
+	tools:context="ee.ria.EstEIDUtility.MainActivity">
 
 	<LinearLayout
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:orientation="vertical" >
-	    
-	    <RelativeLayout
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_marginBottom="10dp"
-	        android:background="@color/grey"
-	        android:padding="5dp" >
-	        
-	    	<Button
-	        android:id="@+id/button_read_personal"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentStart="true"
-	        android:layout_alignWithParentIfMissing="false"
-	        android:minHeight="30dp"
-	        android:onClick="displayPersonalData"
-	        android:text="@string/action_read_personal"
-	        android:textSize="15sp" />
-	
-	    	<Button
-	    	    android:id="@+id/button_read_cert_ID"
-	    	    android:layout_width="wrap_content"
-	    	    android:layout_height="wrap_content"
-	    	    android:layout_alignParentStart="true"
-	    	    android:layout_below="@+id/button_read_personal"
-	    	    android:minHeight="30dp"
-	    	    android:onClick="displayCertInfo"
-	    	    android:text="@string/action_read_cert"
-	    	    android:textSize="15sp" />
-	    	
-	    	<EditText
-	    	    android:id="@+id/insert_pin"
-	    	    android:layout_width="wrap_content"
-	    	    android:layout_height="wrap_content"
-	    	    android:layout_alignParentLeft="true"
-	    	    android:layout_below="@+id/button_read_cert_ID"
-	    	    android:ems="10"
-	    	    android:hint="Current PIN/PUK"
-	    	    android:inputType="numberPassword"
-	    	    android:visibility="visible" />
-	
-	    	<TextView
-	        android:id="@+id/content"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_below="@+id/button_verify" />
-	
-	    	<Button
-	        android:id="@+id/button_connect"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_above="@+id/button_read_cert_ID"
-	        android:layout_alignParentRight="true"
-	        android:minHeight="30dp"
-	        android:onClick="connectReader"
-	        android:text="Connect"
-	        android:textSize="15sp" />
-	
-	    	<EditText
-	        android:id="@+id/new_pin_puk"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_below="@+id/insert_pin"
-	        android:ems="10"
-	        android:hint="New PIN/PUK"
-	        android:inputType="numberPassword" />
-	
-	    	<Button
-	        android:id="@+id/button_sign"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignParentStart="true"
-	        android:layout_below="@+id/edit_text"
-	        android:minHeight="30dp"
-	        android:onClick="createDialog"
-	        android:text="@string/action_sign"
-	        android:textSize="15sp" />
-	
-	    	<Button
-	    	    android:id="@+id/button_change_pin1"
-	    	    android:layout_width="wrap_content"
-	    	    android:layout_height="wrap_content"
-	    	    android:layout_alignParentLeft="true"
-	    	    android:layout_below="@+id/new_pin_puk"
-	    	    android:minHeight="30dp"
-	    	    android:onClick="changePin"
-	    	    android:paddingLeft="2dp"
-	    	    android:paddingRight="2dp"
-	    	    android:text="Change PIN1"
-	    	    android:textSize="15sp" />
-	
-	    	<Button
-	    	    android:id="@+id/button_change_puk"
-	    	    android:layout_width="wrap_content"
-	    	    android:layout_height="wrap_content"
-	    	    android:layout_alignBaseline="@+id/button_read_cert_ID"
-	    	    android:layout_alignBottom="@+id/button_read_cert_ID"
-	    	    android:layout_toRightOf="@+id/button_read_cert_ID"
-	    	    android:minHeight="30dp"
-	    	    android:onClick="changePin"
-	    	    android:text="Change PUK"
-	    	    android:textSize="15sp" />
-		
-	    	<Button
-	        android:id="@+id/button_auth"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_above="@+id/button_verify"
-	        android:layout_toRightOf="@+id/button_sign"
-	        android:minHeight="30dp"
-	        android:onClick="createDialog"
-	        android:text="Auth"
-	        android:textSize="15sp" />
-	
-	    	<Button
-	        android:id="@+id/button_verify"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignParentStart="true"
-	        android:layout_below="@+id/button_sign"
-	        android:minHeight="30dp"
-	        android:onClick="verify"
-	        android:text="Verify"
-	        android:textSize="15sp" />
-	
-	    	<Button
-	    	    android:id="@+id/button_unblock_pin1"
-	    	    android:layout_width="wrap_content"
-	    	    android:layout_height="wrap_content"
-	    	    android:layout_alignParentLeft="true"
-	    	    android:layout_below="@+id/button_change_pin1"
-	    	    android:minHeight="30dp"
-	    	    android:onClick="unblockPin"
-	    	    android:paddingLeft="3dp"
-	    	    android:paddingRight="3dp"
-	    	    android:text="Unblock PIN1"
-	    	    android:textSize="15sp" />
-	
-	    	<EditText
-	        android:id="@+id/edit_text"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_below="@+id/button_unblock_pin1"
-	        android:ems="10"
-	        android:hint="Text to sign"
-	        android:text="Hello world" />
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
 
-	    	<Button
-	    	    android:id="@+id/button_change_pin2"
-	    	    android:layout_width="wrap_content"
-	    	    android:layout_height="wrap_content"
-	    	    android:layout_alignRight="@+id/button_change_puk"
-	    	    android:layout_below="@+id/new_pin_puk"
-	    	    android:minHeight="30dp"
-	    	    android:onClick="changePin"
-	    	    android:paddingLeft="2dp"
-	    	    android:paddingRight="2dp"
-	    	    android:text="Change PIN2"
-	    	    android:textSize="15sp" />
+		<RelativeLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp"
+			android:background="@color/grey"
+			android:padding="5dp">
 
-	    	<Button
-	    	    android:id="@+id/button_unblock_pin2"
-	    	    android:layout_width="wrap_content"
-	    	    android:layout_height="wrap_content"
-	    	    android:layout_above="@+id/edit_text"
-	    	    android:layout_alignLeft="@+id/button_change_pin2"
-	    	    android:minHeight="30dp"
-	    	    android:onClick="unblockPin"
-	    	    android:paddingLeft="3dp"
-	    	    android:paddingRight="3dp"
-	    	    android:text="Unblock PIN2"
-	    	    android:textSize="15sp" />
+			<Button
+				android:id="@+id/button_read_personal"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentStart="false"
+				android:layout_alignWithParentIfMissing="false"
+				android:minHeight="30dp"
+				android:onClick="displayPersonalData"
+				android:text="@string/action_read_personal"
+				android:textSize="15sp"/>
+			
+			<Button
+				android:id="@+id/button_read_cert_ID"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/button_read_personal"
+				android:minHeight="30dp"
+				android:onClick="displayCertInfo"
+				android:text="@string/action_read_cert"
+				android:textSize="15sp"/>
+			
+			<EditText
+				android:id="@+id/current_pin_puk"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/button_read_cert_ID"
+				android:ems="10"
+				android:hint="@string/current_pin_puk"
+				android:inputType="numberPassword"
+				android:visibility="visible"/>
+			
+			<TextView
+				android:id="@+id/content"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentStart="true"
+				android:layout_below="@+id/button_verify"/>
+			
+			<Button
+				android:id="@+id/button_connect"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_above="@+id/button_read_cert_ID"
+				android:layout_alignParentEnd="true"
+				android:minHeight="30dp"
+				android:onClick="connectReader"
+				android:text="@string/connect"
+				android:textSize="15sp"/>
+			
+			<EditText
+				android:id="@+id/new_pin_puk"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentStart="true"
+				android:layout_below="@+id/current_pin_puk"
+				android:ems="10"
+				android:hint="@string/new_pin_puk"
+				android:inputType="numberPassword"/>
+			
+			<Button
+				android:id="@+id/button_cert"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentStart="true"
+				android:layout_below="@+id/edit_text"
+				android:minHeight="30dp"
+				android:onClick="createDialog"
+				android:text="@string/action_sign"
+				android:textSize="15sp"/>
+			
+			<Button
+				android:id="@+id/button_change_pin1"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentStart="true"
+				android:layout_below="@+id/new_pin_puk"
+				android:minHeight="30dp"
+				android:onClick="changePin"
+				android:text="@string/change_pin"
+				android:textSize="15sp"/>
+				
+			<Button
+				android:id="@+id/button_change_puk"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignBaseline="@+id/button_read_cert_ID"
+				android:layout_alignBottom="@+id/button_read_cert_ID"
+				android:layout_toEndOf="@+id/button_read_cert_ID"
+				android:minHeight="30dp"
+				android:onClick="changePin"
+				android:text="@string/change_puk"
+				android:textSize="15sp"/>
+			
+			<Button
+				android:id="@+id/button_auth"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_above="@+id/button_verify"
+				android:layout_toEndOf="@+id/button_cert"
+				android:minHeight="30dp"
+				android:onClick="createDialog"
+				android:text="@string/auth"
+				android:textSize="15sp"/>
+			
+			<Button
+				android:id="@+id/button_verify"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentStart="true"
+				android:layout_below="@+id/button_cert"
+				android:minHeight="30dp"
+				android:onClick="verify"
+				android:text="@string/verify"
+				android:textSize="15sp"/>
+			
+			<Button
+				android:id="@+id/button_unblock_pin1"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentStart="true"
+				android:layout_below="@+id/button_change_pin1"
+				android:minHeight="30dp"
+				android:onClick="unblockPin"
+				android:text="@string/unblock_pin1"
+				android:textSize="15sp"/>
+			
+			<EditText
+				android:id="@+id/edit_text"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentStart="true"
+				android:layout_below="@+id/button_unblock_pin1"
+				android:ems="10"
+				android:hint="Text to sign"
+				android:text="Hello world"/>
 
+			<Button
+				android:id="@+id/button_change_pin2"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/new_pin_puk"
+				android:layout_toEndOf="@id/button_change_pin1"
+				android:minHeight="30dp"
+				android:onClick="changePin"
+				android:text="@string/change_pin2"
+				android:textSize="15sp"/>
+			
+			<Button
+				android:id="@+id/button_unblock_pin2"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_above="@+id/edit_text"
+				android:layout_toEndOf="@id/button_unblock_pin1"
+				android:minHeight="30dp"
+				android:onClick="unblockPin"
+				android:text="@string/unblock_pin2"
+				android:textSize="15sp"/>
+			
 		</RelativeLayout>
 		
-	    <RelativeLayout
-	        android:id="@+id/mID"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_marginBottom="10dp"
-	        android:background="@color/grey"
-	        android:padding="5dp" >
-	        
-	    	<Button
-	        android:id="@+id/button_read_personal_mID"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentStart="true"
-	        android:layout_alignWithParentIfMissing="false"
-	        android:minHeight="30dp"
-	        
-	        android:text="@string/action_read_personal"
-	        android:textSize="15sp" />
-	    	
-	    	<Button
-	        android:id="@+id/button_read_cert_mID"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentStart="true"
-	        android:layout_below="@+id/button_read_personal_mID"
-	        android:minHeight="30dp"
-	        android:onClick="displayCertInfo"
-	        android:text="@string/action_read_cert"
-	        android:textSize="15sp" />
-
-	    	<Button
-	    	    android:id="@+id/button_sign_mID"
-	    	    android:layout_width="wrap_content"
-	    	    android:layout_height="wrap_content"
-	    	    android:layout_below="@+id/button_read_cert_mID"
-	    	    android:minHeight="30dp"
-	    	    android:onClick="mobileSign"
-	    	    android:text="@string/action_sign"
-	    	    android:textSize="15sp" />
-
-	    	<TextView
-	    	    android:id="@+id/content_mID"
-	    	    android:layout_width="wrap_content"
-	    	    android:layout_height="wrap_content"
-	    	    android:layout_alignParentLeft="true"
-	    	    android:layout_below="@id/button_sign_mID" />
-
+		<RelativeLayout
+			android:id="@+id/mID"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp"
+			android:background="@color/grey"
+			android:padding="5dp">
+		
+			<Button
+				android:id="@+id/button_read_personal_mID"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentStart="true"
+				android:layout_alignWithParentIfMissing="false"
+				android:minHeight="30dp"
+				android:text="@string/action_read_personal"
+				android:textSize="15sp"/>
+			
+			<Button
+				android:id="@+id/button_read_cert_mID"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentStart="true"
+				android:layout_below="@+id/button_read_personal_mID"
+				android:minHeight="30dp"
+				android:onClick="displayCertInfo"
+				android:text="@string/action_read_cert"
+				android:textSize="15sp"/>
+				
+			<Button
+				android:id="@+id/button_sign_mID"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/button_read_cert_mID"
+				android:minHeight="30dp"
+				android:onClick="mobileSign"
+				android:text="@string/action_sign"
+				android:textSize="15sp"/>
+			
+			<TextView
+				android:id="@+id/content_mID"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentStart="true"
+				android:layout_below="@id/button_sign_mID"/>
+			
 		</RelativeLayout>
 	</LinearLayout>
 </ScrollView>
