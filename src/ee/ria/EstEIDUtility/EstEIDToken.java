@@ -1,6 +1,10 @@
 package ee.ria.EstEIDUtility;
 
 import java.io.ByteArrayOutputStream;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
+
+import javax.crypto.Cipher;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,6 +16,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.SparseArray;
 import android.widget.EditText;
+import ee.ria.EstEIDUtility.SMInterface.NFC;
 
 public class EstEIDToken extends Token {
 	private SMInterface sminterface;
@@ -22,19 +27,23 @@ public class EstEIDToken extends Token {
 		this.parent = parent;
 	}
 
+	private byte[] readCertData(CertType type) throws Exception {
+		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+		sminterface.transmitExtended(new byte[] {0x00, (byte) 0xA4, 0x00, 0x0C, 0x00});
+		sminterface.transmitExtended(new byte[] {0x00, (byte) 0xA4, 0x01, 0x04, 0x02, (byte) 0xEE, (byte) 0xEE });
+		sminterface.transmitExtended(new byte[] {0x00, (byte) 0xA4, 0x02, 0x04, 0x02, type.value, (byte) 0xCE });
+
+		for (byte i = 0; i <= 5; ++i) {
+			byte[] data = sminterface.transmitExtended(new byte[] { 0x00, (byte)0xB0, i, 0x00, 0x00 });
+			byteStream.write(data);
+		}
+		return byteStream.toByteArray();
+	}
+
 	@Override
 	public void readCert(CertType type) {
 		try {
-			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-			sminterface.transmitExtended(new byte[] {0x00, (byte) 0xA4, 0x00, 0x0C, 0x00});
-			sminterface.transmitExtended(new byte[] {0x00, (byte) 0xA4, 0x01, 0x04, 0x02, (byte) 0xEE, (byte) 0xEE });
-			sminterface.transmitExtended(new byte[] {0x00, (byte) 0xA4, 0x02, 0x04, 0x02, type.value, (byte) 0xCE });
-
-			for (byte i = 0; i <= 5; ++i) {
-				byte[] data = sminterface.transmitExtended(new byte[] { 0x00, (byte)0xB0, i, 0x00, 0x00 });
-				byteStream.write(data);
-			}
-			certListener.onCertificateResponse(type, byteStream.toByteArray());
+			certListener.onCertificateResponse(type, readCertData(type));
 		} catch (Exception e) {
 			certListener.onCertificateError(e.getMessage());
 		}
@@ -125,16 +134,34 @@ public class EstEIDToken extends Token {
 	}
 
 	private boolean login(PinType pinType, byte[] pin) throws Exception {
-		byte[] recv = sminterface.transmit(Util.concat(new byte[] { 0x00, 0x20, 0x00, pinType.value, (byte) pin.length}, pin ));
+		byte[] recv = null;
+		if (sminterface instanceof NFC) {
+			X509Certificate x509 = Util.getX509Certificate(readCertData(pinType == PinType.PIN1 ? CertType.CertAuth : CertType.CertSign));
+			Cipher cipher = Cipher.getInstance("RSA/None/PKCS1Padding");
+			cipher.init(Cipher.ENCRYPT_MODE, x509.getPublicKey());
+			byte[] challenge = sminterface.transmitExtended(new byte[] { 0x00, (byte) 0x84, 0x00, 0x00, 0x00 });
+			byte[] encoded = cipher.doFinal(Util.concat(challenge, pin));
+			// sminterface.transmit(Util.concat(new byte[] { (byte) 0x80, 0x20, 0x00, 0x02, 0x00, 0x01, 0x00 }, encoded)); // Extended APDU
+			sminterface.transmitExtended(Util.concat(new byte[] { (byte) 0x90, 0x20, 0x00, 0x02, (byte) 0xFF }, Arrays.copyOf(encoded, 0xFF)));
+			recv = sminterface.transmit(Util.concat(new byte[] { (byte) 0x80, 0x20, 0x00, 0x02, (byte) (encoded.length - 0xFF) }, Arrays.copyOfRange(encoded, 0xFF, encoded.length)));
+		} else {
+			recv = sminterface.transmit(Util.concat(new byte[] { 0x00, 0x20, 0x00, pinType.value, (byte) pin.length}, pin ));
+		}
 		return SMInterface.checkSW(recv);
 	}
 
 	public boolean changePin(byte[] currentPin, byte[] newPin, PinType pinType) throws Exception {
+		if (sminterface instanceof NFC) {
+			throw new Exception("PIN replace is not allowed over NFC");
+		}
 		byte[] recv = sminterface.transmit(Util.concat(new byte[] {0x00 ,0x24, 0x00, pinType.value, (byte) (currentPin.length + newPin.length)}, currentPin, newPin));
 		return SMInterface.checkSW(recv);
 	}
 
 	public boolean unblockPin(byte[] currentPuk, PinType pinType) throws Exception {
+		if (sminterface instanceof NFC) {
+			throw new Exception("PIN replace is not allowed over NFC");
+		}
 		if (!login(PinType.PUK, currentPuk))
 			return false;
 		byte[] recv = sminterface.transmit(new byte[] {0x00, 0x2C, 0x03, pinType.value, 0x00});
