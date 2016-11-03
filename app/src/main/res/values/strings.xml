@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">EstEIDUtility</string>
+    <string name="app_name">RIA DigiDoc</string>
     <string name="action_read">Read personal data</string>
     <string name="action_read_cert">Read cert</string>
     <string name="action_read_personal">Read personal data</string>
@@ -14,11 +14,14 @@
     <string name="connect">Connect</string>
     <string name="new_pin_puk">New PIN/PUK</string>
     <string name="change_puk">Change PUK</string>
-    <string name="change_pin">Change PIN</string>
+    <string name="change_pin">Change PIN1</string>
     <string name="unblock_pin1">Unblock PIN1</string>
     <string name="change_pin2">Change PIN2</string>
     <string name="unblock_pin2">Unblock PIN2</string>
     <string name="auth">Auth</string>
     <string name="verify">Verify</string>
+    <string name="title_activity_signing">Allkirjastamine</string>
+    <string name="title_activity_manage_eids">Minu eID-d</string>
+    <string name="title_activity_pin_utilities">PIN-i toimingud</string>
 
 </resources>

@@ -57,7 +57,7 @@
 				android:layout_below="@+id/button_verify"/>
 			
 			<Button
-				android:id="@+id/button_connect"
+				android:id="@+id/eids_connect"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_above="@+id/button_read_cert_ID"

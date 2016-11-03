@@ -1,10 +1,5 @@
 package ee.ria.EstEIDUtility;
 
-import java.io.ByteArrayOutputStream;
-import java.security.MessageDigest;
-import java.security.Signature;
-
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
@@ -14,6 +9,7 @@ import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -25,6 +21,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.io.ByteArrayOutputStream;
+import java.security.MessageDigest;
+import java.security.Signature;
+
 import ee.ria.EstEIDUtility.R.id;
 import ee.ria.EstEIDUtility.SMInterface.Connected;
 import ee.ria.EstEIDUtility.Token.CertListener;
@@ -33,7 +34,7 @@ import ee.ria.EstEIDUtility.Token.PersonalFileListener;
 import ee.ria.EstEIDUtility.Token.PinType;
 import ee.ria.EstEIDUtility.Token.SignListener;
 
-public class MainActivity extends Activity  {
+public class MainActivity extends AppCompatActivity {
 	TextView content, contentmID;
 	private SMInterface sminterface = null;
 	byte[] signCert, signedBytes;
@@ -207,14 +208,12 @@ public class MainActivity extends Activity  {
 			content.setText("No readers connected");
 			return;
 		}
-
 		sminterface.connect(new Connected() {
 			@Override
 			public void connected() {
 				enableButtons(sminterface != null);
 			}
 		});
-
 		eidToken = new EstEIDToken(sminterface, this);
 	}
 

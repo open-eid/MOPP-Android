@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_dashboard_menu"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="ee.ria.EstEIDUtility.DashboardMenuActivity"
+    tools:showIn="@layout/activity_dashboard_menu">
+
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline_vertical"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline_horizontal"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.35" />
+
+    <ImageView
+        app:srcCompat="@drawable/menu_item"
+        android:id="@+id/imageView_sign"
+        app:layout_constraintBottom_toTopOf="@+id/textView_sign"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintRight_toLeftOf="@+id/guideline_vertical"
+        android:layout_marginEnd="16dp"
+        android:onClick="startSign"
+        style="@style/menuButtonImage" />
+
+    <TextView
+        android:text="Allkirjastamine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_sign"
+        app:layout_constraintLeft_toLeftOf="@+id/imageView_sign"
+        app:layout_constraintRight_toRightOf="@+id/imageView_sign"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal"
+        android:layout_marginTop="8dp" />
+
+    <ImageView
+        app:srcCompat="@drawable/menu_item"
+        android:id="@+id/imageView_signed"
+        app:layout_constraintBottom_toTopOf="@+id/textView_signed"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintLeft_toRightOf="@+id/guideline_vertical"
+        android:layout_marginStart="16dp"
+        style="@style/menuButtonImage" />
+
+    <TextView
+        android:text="Allkirjastatud"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_signed"
+        app:layout_constraintLeft_toLeftOf="@+id/imageView_signed"
+        app:layout_constraintRight_toRightOf="@+id/imageView_signed"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal"
+        android:layout_marginTop="8dp" />
+
+    <ImageView
+        app:srcCompat="@drawable/menu_item"
+        android:id="@+id/imageView_my_eids"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toTopOf="@+id/guideline_horizontal"
+        app:layout_constraintRight_toLeftOf="@+id/guideline_vertical"
+        android:layout_marginEnd="16dp"
+        style="@style/menuButtonImage"
+        android:onClick="startMyEids" />
+
+    <TextView
+        android:text="Minu eID-d"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_my_eids"
+        app:layout_constraintLeft_toLeftOf="@+id/imageView_my_eids"
+        app:layout_constraintRight_toRightOf="@+id/imageView_my_eids"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_my_eids"
+        android:layout_marginTop="8dp" />
+
+    <ImageView
+        app:srcCompat="@drawable/menu_item"
+        android:id="@+id/imageView_pin_activities"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toTopOf="@+id/guideline_horizontal"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline_vertical"
+        style="@style/menuButtonImage"
+        android:onClick="startPinUtilities"/>
+
+    <TextView
+        android:text="PIN-i toimingud"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_pin_activities"
+        app:layout_constraintLeft_toLeftOf="@+id/imageView_pin_activities"
+        app:layout_constraintRight_toRightOf="@+id/imageView_pin_activities"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_pin_activities"
+        android:layout_marginTop="8dp" />
+
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_manage_eids"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="ee.ria.EstEIDUtility.ManageEidsActivity"
+    tools:showIn="@layout/activity_manage_eids">
+
+    <Button
+        android:text="@string/connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/eids_connect"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:onClick="connectReader"/>
+
+    <Button
+        android:text="@string/action_read_cert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/read_cert"
+        app:layout_constraintLeft_toLeftOf="@+id/eids_connect"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/eids_connect"
+        android:onClick="displayCertInfo"/>
+
+    <Button
+        android:text="@string/action_read_personal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/read_personal_data"
+        android:layout_marginStart="8dp"
+        app:layout_constraintLeft_toRightOf="@+id/read_cert"
+        app:layout_constraintTop_toTopOf="@+id/read_cert"
+        android:onClick="displayPersonalData"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="21dp"
+        android:id="@+id/eids_content"
+        app:layout_constraintLeft_toLeftOf="@+id/read_cert"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@+id/read_cert" />
+</android.support.constraint.ConstraintLayout>
