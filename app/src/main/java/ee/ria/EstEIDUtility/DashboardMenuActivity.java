@@ -30,6 +30,10 @@ public class DashboardMenuActivity extends AppCompatActivity {
         startActivity(PinUtilitiesActivity.class);
     }
 
+    public void startContainerBrowse(View view) {
+        startActivity(BrowseContainersActivity.class);
+    }
+
     private void startActivity(Class<?> signingActivityClass) {
         Intent intent = new Intent(this, signingActivityClass);
         startActivity(intent);

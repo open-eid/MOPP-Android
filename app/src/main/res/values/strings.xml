@@ -23,5 +23,6 @@
     <string name="title_activity_signing">Allkirjastamine</string>
     <string name="title_activity_manage_eids">Minu eID-d</string>
     <string name="title_activity_pin_utilities">PIN-i toimingud</string>
+    <string name="title_activity_browse_containers">BrowseContainersActivity</string>
 
 </resources>

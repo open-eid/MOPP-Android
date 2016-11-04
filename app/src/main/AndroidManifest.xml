@@ -91,6 +91,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ee.ria.EstEIDUtility.DashboardMenuActivity" />
         </activity>
+        <activity
+            android:name=".BrowseContainersActivity"
+            android:label="@string/title_activity_browse_containers"
+            android:parentActivityName=".DashboardMenuActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ee.ria.EstEIDUtility.DashboardMenuActivity" />
+        </activity>
     </application>
 
 </manifest>

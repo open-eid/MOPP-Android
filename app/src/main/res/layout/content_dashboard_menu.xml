@@ -51,7 +51,8 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintLeft_toRightOf="@+id/guideline_vertical"
         android:layout_marginStart="16dp"
-        style="@style/menuButtonImage" />
+        style="@style/menuButtonImage"
+        android:onClick="startContainerBrowse"/>
 
     <TextView
         android:text="Allkirjastatud"
