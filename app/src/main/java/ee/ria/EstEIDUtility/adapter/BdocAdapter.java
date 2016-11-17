@@ -1,27 +1,35 @@
-package ee.ria.EstEIDUtility;
+package ee.ria.EstEIDUtility.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import ee.ria.EstEIDUtility.domain.BdocItem;
+import ee.ria.EstEIDUtility.R;
+
 public class BdocAdapter extends ArrayAdapter<BdocItem> implements Filterable {
 
-    List<BdocItem> bdocs;
-    List<BdocItem> filteredData;
+    private List<BdocItem> bdocs;
+    private List<BdocItem> filteredData;
     private BdocFilter bdocFilter = new BdocFilter();
+    private AlertDialog confirmDialog;
 
-    static class ViewHolder {
+    private static class ViewHolder {
         TextView fileName;
         TextView fileCreated;
+        ImageView removeBdoc;
     }
 
     public BdocAdapter(Context context, List<BdocItem> bdocs) {
@@ -40,7 +48,7 @@ public class BdocAdapter extends ArrayAdapter<BdocItem> implements Filterable {
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
@@ -48,15 +56,44 @@ public class BdocAdapter extends ArrayAdapter<BdocItem> implements Filterable {
 
             viewHolder.fileName = (TextView) convertView.findViewById(R.id.listDocName);
             viewHolder.fileCreated = (TextView) convertView.findViewById(R.id.listDocTime);
+            viewHolder.removeBdoc = (ImageView) convertView.findViewById(R.id.removeBdoc);
 
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        BdocItem dboc = getItem(position);
+        final BdocItem dboc = getItem(position);
         viewHolder.fileName.setText(dboc.getName());
         viewHolder.fileCreated.setText(dboc.getCreated());
+
+        viewHolder.removeBdoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(R.string.bdoc_remove_confirm_title);
+
+                String confirmMessage = getContext().getResources().getString(R.string.bdoc_remove_confirm_message);
+                confirmMessage = String.format(confirmMessage, dboc.getName());
+
+                builder.setMessage(confirmMessage);
+
+                builder.setPositiveButton(R.string.confirm_button, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        BdocItem item = getItem(position);
+                        getContext().deleteFile(item.getName());
+
+                        filteredData.remove(item);
+                        notifyDataSetChanged();
+                    }
+                });
+
+                builder.setNegativeButton(R.string.cancel_button, null);
+                confirmDialog = builder.create();
+                confirmDialog.show();
+            }
+        });
 
         return convertView;
     }

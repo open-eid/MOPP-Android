@@ -28,5 +28,29 @@
     <string name="action_settings">Settings</string>
     <string name="activity_browse_containers_yesterday">Eile</string>
     <string name="search">Otsi</string>
+    <string name="title_activity_manage_container">Konteiner</string>
+    <string name="files">Failid</string>
+    <string name="addFile">Lisa</string>
+    <string name="save">Salvesta</string>
+    <string name="bdoc_detail_title">Konteiner</string>
+    <string name="cancel_button">Ei</string>
+    <string name="confirm_button">Jah</string>
+    <string name="bdoc_remove_confirm_title">Kustutamine</string>
+    <string name="bdoc_remove_confirm_message">Kas oled kindel, et soovid kustutada %s fail?</string>
+    <string name="signatures_title">Allkirjad</string>
+    <string name="file_location">Asukoht: </string>
+    <string name="file_info">Vorming: %1$s | Suurus: %2$s kb</string>
+    <string name="file_size">Suurus: %s kb</string>
+    <string name="files_title">Failid</string>
+    <string name="create_new">Loo uus</string>
+    <string name="send">Saada</string>
+    <string name="signature_remove_confirm_message">Kas oled kindel, et soovid kustutada %s allkiri?</string>
+    <string name="signature_valid">kehtiv</string>
+    <string name="signature_invalid">expired</string>
+    <string name="close_button">Sulge</string>
+    <string name="upload_to_dropbox">Saada Dropboxi</string>
+    <string name="upload_to_dropbox_auth_failed">Failed to authenticate to Dropbox</string>
+    <string name="upload_to_dropbox_success">on saadetud Dropboxi.</string>
+    <string name="upload_to_dropbox_fail">Upload to Dropbox failed.</string>
 
 </resources>

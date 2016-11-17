@@ -22,7 +22,7 @@ public class EstEIDToken extends Token {
 	private SMInterface sminterface;
 	private Activity parent;
 
-	EstEIDToken(SMInterface sminterface, Activity parent) {
+	public EstEIDToken(SMInterface sminterface, Activity parent) {
 		this.sminterface = sminterface;
 		this.parent = parent;
 	}

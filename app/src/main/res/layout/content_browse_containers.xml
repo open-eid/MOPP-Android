@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/content_browse_containers"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="ee.ria.EstEIDUtility.BrowseContainersActivity"
-        tools:showIn="@layout/activity_browse_containers"
-        android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_browse_containers"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="ee.ria.EstEIDUtility.activity.BrowseContainersActivity"
+    tools:showIn="@layout/activity_browse_containers">
 
     <SearchView
         android:id="@+id/listSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:queryHint="@string/search">
-    </SearchView>
+        android:queryHint="@string/search"></SearchView>
 
     <fragment
         android:id="@+id/browseContainersListFragment"
-        android:name="ee.ria.EstEIDUtility.BrowseContainersListFragment"
+        android:name="ee.ria.EstEIDUtility.fragment.BrowseContainersListFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

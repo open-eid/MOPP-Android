@@ -1,0 +1,45 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context="ee.ria.EstEIDUtility.fragment.BdocFilesFragment">
+
+    <ImageView
+        android:id="@+id/attachmentImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="9dp"
+        android:src="@drawable/ic_attachment_black_24dp" />
+
+    <TextView
+        android:id="@+id/fileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/attachmentImage"
+        android:layout_toRightOf="@+id/attachmentImage"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="Tooleping, mis on vaga pika nimega.doc"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/fileSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/fileName"
+        android:layout_marginBottom="15dp"
+        android:layout_toEndOf="@+id/attachmentImage"
+        android:layout_toRightOf="@+id/attachmentImage"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Suurus: 400 KB" />
+
+</RelativeLayout>

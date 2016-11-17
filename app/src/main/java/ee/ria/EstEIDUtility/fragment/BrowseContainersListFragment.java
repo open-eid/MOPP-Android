@@ -1,35 +1,55 @@
-package ee.ria.EstEIDUtility;
+package ee.ria.EstEIDUtility.fragment;
 
 import android.app.ListFragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.SearchView;
 
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ee.ria.EstEIDUtility.R;
+import ee.ria.EstEIDUtility.activity.BdocDetailActivity;
+import ee.ria.EstEIDUtility.activity.BrowseContainersActivity;
+import ee.ria.EstEIDUtility.adapter.BdocAdapter;
+import ee.ria.EstEIDUtility.domain.BdocItem;
+import ee.ria.EstEIDUtility.util.DateUtils;
+
 public class BrowseContainersListFragment extends ListFragment {
 
     private static final String BDOC_EXTENSION = "bdoc";
-    private static final SimpleDateFormat TODAY_FORMAT = new SimpleDateFormat("HH:mm");
-    private static final SimpleDateFormat CURRENT_YEAR_FORMAT = new SimpleDateFormat("dd.MMM");
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
     private SearchView searchView;
-    List<BdocItem> bdocs;
-    BdocAdapter bdocAdapter;
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+
+        launchBdocDetailActivity(position);
+    }
+
+    private void launchBdocDetailActivity(int position) {
+        BdocItem bdocItem = (BdocItem) getListAdapter().getItem(position);
+
+        Intent intent = new Intent(getActivity(), BdocDetailActivity.class);
+        intent.putExtra(BrowseContainersActivity.BDOC_NAME, bdocItem.getName());
+
+        startActivity(intent);
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        bdocs = createBdocs();
+        List<BdocItem> bdocs = getBdocFiles();
 
-        bdocAdapter = new BdocAdapter(getActivity(), bdocs);
+        final BdocAdapter bdocAdapter = new BdocAdapter(getActivity(), bdocs);
         setListAdapter(bdocAdapter);
 
         searchView = (SearchView) getActivity().findViewById(R.id.listSearch);
@@ -47,10 +67,9 @@ public class BrowseContainersListFragment extends ListFragment {
         });
 
         registerForContextMenu(getListView());
-
     }
 
-    private List<BdocItem> createBdocs() {
+    private List<BdocItem> getBdocFiles() {
         List<BdocItem> bdocs = new ArrayList<>();
 
         List<String> bdocFiles = getBdocContainers();
@@ -70,14 +89,14 @@ public class BrowseContainersListFragment extends ListFragment {
             return null;
         }
         if (DateUtils.isToday(fileModified)) {
-            return TODAY_FORMAT.format(fileModified);
+            return DateUtils.TODAY_FORMAT.format(fileModified);
         } else if (DateUtils.isYesterday(fileModified)) {
             return getResources().getString(R.string.activity_browse_containers_yesterday);
         } else if (DateUtils.isCurrentYear(fileModified)) {
-            return CURRENT_YEAR_FORMAT.format(fileModified);
+            return DateUtils.CURRENT_YEAR_FORMAT.format(fileModified);
         }
 
-        return DATE_FORMAT.format(fileModified);
+        return DateUtils.DATE_FORMAT.format(fileModified);
     }
 
     private List<String> getBdocContainers() {
