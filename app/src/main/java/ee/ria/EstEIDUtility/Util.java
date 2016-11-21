@@ -28,6 +28,15 @@ public class Util {
 		return sb.toString();
 	}
 
+	static byte[] fromHex(String hexData) {
+		int len = hexData.length();
+		byte[] data = new byte[len/2];
+		for(int i = 0; i < len; i+=2) {
+			data[i/2] = (byte) ((Character.digit(hexData.charAt(i), 16) << 4) + Character.digit(hexData.charAt(i+1), 16));
+		}
+		return data;
+	}
+
 	static X509Certificate getX509Certificate(byte[] certificate) throws CertificateException {
 		CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
 		return (X509Certificate) certFactory.generateCertificate(

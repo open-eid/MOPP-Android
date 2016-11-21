@@ -59,8 +59,7 @@
         android:id="@+id/sign_content"
         app:layout_constraintLeft_toLeftOf="@+id/button_sign"
         app:layout_constraintTop_toBottomOf="@+id/button_sign"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp" />
+        android:layout_marginTop="16dp" />
 
     <Button
         android:text="Connect"
@@ -71,6 +70,16 @@
         app:layout_constraintLeft_toLeftOf="@+id/textToSign"
         android:layout_marginTop="16dp"
         android:onClick="connectReader"/>
+
+    <Button
+        android:text="New"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sign_new_container"
+        android:layout_marginStart="8dp"
+        android:onClick="createNewContainer"
+        app:layout_constraintLeft_toRightOf="@+id/eids_connect"
+        app:layout_constraintTop_toTopOf="@+id/eids_connect" />
 
 
 </android.support.constraint.ConstraintLayout>

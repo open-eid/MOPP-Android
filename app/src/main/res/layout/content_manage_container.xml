@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="ee.ria.EstEIDUtility.ManageContainerActivity"
+    tools:showIn="@layout/activity_manage_container">
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        >
+
+        <fragment android:name="ee.ria.EstEIDUtility.ContainerInfoFragment"
+            android:id="@+id/container_info_fragment"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:text="@string/files"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView"
+                android:padding="16dp" />
+
+            <Button
+                android:text="@string/addFile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/container_add_file"
+                android:onClick="addFile"/>
+
+        </LinearLayout>
+
+        <fragment android:name="ee.ria.EstEIDUtility.FileItemFragment"
+            android:id="@+id/container_file_list_fragment"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <Button
+            android:text="@string/save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/container_sign"
+            android:onClick="signContainer"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/container_debug"
+            android:layout_marginTop="32dp" />
+
+        <Button
+            android:text="@string/save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/container_save"
+            android:onClick="saveContainer"/>
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

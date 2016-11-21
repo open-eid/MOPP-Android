@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -129,12 +131,12 @@ public class SigningActivity extends AppCompatActivity {
 
     public void verify(View view){
         EditText textToSign = (EditText)findViewById(R.id.textToSign);
-        try{
+        try {
             Signature sig = Signature.getInstance("SHA1withRSA");
             sig.initVerify(Util.getX509Certificate(signCert).getPublicKey());
             sig.update(textToSign.getText().toString().getBytes());
             content.setText("Signature verify: " + sig.verify(signedBytes));
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
             content.setText("Signature verify: failed\n" + e.getMessage());
         }
@@ -145,6 +147,11 @@ public class SigningActivity extends AppCompatActivity {
         findViewById(R.id.button_sign).setEnabled(enable);
         findViewById(R.id.button_auth).setEnabled(enable);
         findViewById(R.id.button_verify).setEnabled(enable);
+    }
+
+    public void createNewContainer(View view) {
+        Intent intent = new Intent(this, ManageContainerActivity.class);
+        startActivity(intent);
     }
 
 }

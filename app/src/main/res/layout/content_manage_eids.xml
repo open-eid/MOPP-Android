@@ -10,25 +10,15 @@
     tools:showIn="@layout/activity_manage_eids">
 
     <Button
-        android:text="@string/connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/eids_connect"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:onClick="connectReader"/>
-
-    <Button
         android:text="@string/action_read_cert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/read_cert"
-        app:layout_constraintLeft_toLeftOf="@+id/eids_connect"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/eids_connect"
-        android:onClick="displayCertInfo"/>
+        android:onClick="displayCertInfo"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="16dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <Button
         android:text="@string/action_read_personal"
@@ -43,7 +33,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="21dp"
         android:id="@+id/eids_content"
         app:layout_constraintLeft_toLeftOf="@+id/read_cert"
         android:layout_marginTop="32dp"
