@@ -7,5 +7,4 @@
     tools:context="ee.ria.EstEIDUtility.activity.BdocDetailActivity"
     android:orientation="vertical">
 
-
 </LinearLayout>

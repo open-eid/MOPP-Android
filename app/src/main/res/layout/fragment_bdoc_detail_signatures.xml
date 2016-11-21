@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context="ee.ria.EstEIDUtility.fragment.BdocSignaturesFragment">
+    tools:context="ee.ria.EstEIDUtility.fragment.BdocSignaturesFragment"
+    android:id="@+id/signaturesLayout">
 
     <ImageView
         android:id="@+id/signatureImage"

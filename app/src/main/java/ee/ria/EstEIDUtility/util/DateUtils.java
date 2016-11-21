@@ -7,12 +7,12 @@ import java.util.Date;
 
 public class DateUtils {
 
-    public static final SimpleDateFormat SIGNATURE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    public static final SimpleDateFormat APP_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm");
-
     public static final SimpleDateFormat TODAY_FORMAT = new SimpleDateFormat("HH:mm");
     public static final SimpleDateFormat CURRENT_YEAR_FORMAT = new SimpleDateFormat("dd.MMM");
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
+
+    private static final SimpleDateFormat SIGNATURE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private static final SimpleDateFormat APP_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm");
 
     public static String formatSignedDate(String trustedSigningTime) {
         try {

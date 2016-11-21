@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "ee.ria.EstEIDUtility"
         minSdkVersion 19
-        targetSdkVersion 23
+        targetSdkVersion 22
     }
 
     buildTypes {
@@ -33,4 +33,8 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.4.0'
 
     compile project(':tokenaidllibrary')
+    compile 'com.madgag.spongycastle:pkix:1.54.0.0'
+    compile 'com.madgag.spongycastle:core:1.54.0.0'
+
+
 }

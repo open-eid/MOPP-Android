@@ -13,6 +13,8 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.spongycastle.asn1.ASN1ObjectIdentifier;
+import org.spongycastle.asn1.x500.style.BCStyle;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
@@ -56,13 +58,13 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        final Signature signature = getItem(position);
+        Signature signature = getItem(position);
 
         X509Cert x509Cert = new X509Cert(signature.signingCertificateDer());
 
-        String surname = x509Cert.getSubjectName(X509Cert.SubjectName.SURNAME);
-        String name = x509Cert.getSubjectName(X509Cert.SubjectName.GIVENNAME);
-        String serialNumber = x509Cert.getSubjectName(X509Cert.SubjectName.SERIALNUMBER);
+        String surname = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SURNAME));
+        String name = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.GIVENNAME));
+        String serialNumber = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SERIALNUMBER));
 
         final String personInfo = String.format("%s %s (%s)", name, surname, serialNumber);
         viewHolder.name.setText(personInfo);
@@ -93,11 +95,8 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Signature sign = getItem(position);
-
                         //TODO: remove signature
-                        container.removeSignature(0);
-                        sign.delete();
-
+                        container.removeSignature(1);
                         remove(sign);
                         notifyDataSetChanged();
                     }
@@ -110,7 +109,5 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
 
         return convertView;
     }
-
-
 
 }

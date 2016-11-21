@@ -25,7 +25,6 @@ public class BrowseContainersListFragment extends ListFragment {
 
     private static final String BDOC_EXTENSION = "bdoc";
 
-    private SearchView searchView;
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
@@ -52,7 +51,7 @@ public class BrowseContainersListFragment extends ListFragment {
         final BdocAdapter bdocAdapter = new BdocAdapter(getActivity(), bdocs);
         setListAdapter(bdocAdapter);
 
-        searchView = (SearchView) getActivity().findViewById(R.id.listSearch);
+        SearchView searchView = (SearchView) getActivity().findViewById(R.id.listSearch);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -65,8 +64,6 @@ public class BrowseContainersListFragment extends ListFragment {
                 return false;
             }
         });
-
-        registerForContextMenu(getListView());
     }
 
     private List<BdocItem> getBdocFiles() {
@@ -85,9 +82,6 @@ public class BrowseContainersListFragment extends ListFragment {
         File file = getActivity().getFileStreamPath(fileName);
         Date fileModified = new Date(file.lastModified());
 
-        if (fileModified == null) {
-            return null;
-        }
         if (DateUtils.isToday(fileModified)) {
             return DateUtils.TODAY_FORMAT.format(fileModified);
         } else if (DateUtils.isYesterday(fileModified)) {

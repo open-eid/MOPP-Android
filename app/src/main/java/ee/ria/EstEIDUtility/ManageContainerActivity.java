@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.apache.commons.io.IOUtils;
+import org.spongycastle.asn1.ASN1ObjectIdentifier;
+import org.spongycastle.asn1.x500.style.BCStyle;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -124,10 +126,9 @@ public class ManageContainerActivity extends AppCompatActivity
         try {
             signature.setSignatureValue(signatureValue);
             X509Cert x509Cert = new X509Cert(signature.signingCertificateDer());
-
-            String surname = x509Cert.getSubjectName(X509Cert.SubjectName.SURNAME);
-            String name = x509Cert.getSubjectName(X509Cert.SubjectName.GIVENNAME);
-            String serialNumber = x509Cert.getSubjectName(X509Cert.SubjectName.SERIALNUMBER);
+            String surname = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SURNAME));
+            String name = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.GIVENNAME));
+            String serialNumber = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SERIALNUMBER));
             appendDebug("SIGNED_BY: ", name + " " + surname + " " + serialNumber);
         } catch (Exception e) {
             appendDebug("ERROR_ADDING_SIGNATURE_TO_CONTAINER", e.getMessage());

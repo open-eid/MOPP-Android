@@ -52,5 +52,6 @@
     <string name="upload_to_dropbox_auth_failed">Failed to authenticate to Dropbox</string>
     <string name="upload_to_dropbox_success">on saadetud Dropboxi.</string>
     <string name="upload_to_dropbox_fail">Upload to Dropbox failed.</string>
+    <string name="addSignature">Lisa Allkiri</string>
 
 </resources>

@@ -2,15 +2,20 @@ package ee.ria.EstEIDUtility.domain;
 
 import android.util.Log;
 
+import org.spongycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.spongycastle.asn1.ASN1ObjectIdentifier;
+import org.spongycastle.asn1.x500.RDN;
+import org.spongycastle.asn1.x500.X500Name;
+import org.spongycastle.asn1.x500.style.IETFUtils;
+
 import java.io.ByteArrayInputStream;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class X509Cert {
 
@@ -18,22 +23,8 @@ public class X509Cert {
 
     private X509Certificate certificate;
 
-    public enum SubjectName {
-        SERIALNUMBER,
-        GIVENNAME,
-        SURNAME
-    }
-
     public X509Cert(byte[] signingCertificateDer) {
         certificate = getSignatureCertificate(signingCertificateDer);
-    }
-
-    public String getSubjectName(SubjectName part) {
-        Map<String, String> subjectNamePartMap = loadSubjectNameParts();
-
-        String subjectName = subjectNamePartMap.get(part.name());
-
-        return subjectName;
     }
 
     public boolean isValid() {
@@ -47,18 +38,20 @@ public class X509Cert {
         return true;
     }
 
-    private Map<String, String> loadSubjectNameParts() {
-        //TODO: the keys seem to be different in different android versions: probably different certificate providers?
-        String[] parts = certificate.getSubjectX500Principal().toString().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-        Map<String, String> partMap = new HashMap<>();
-        for (String part : parts) {
-            String[] strings = part.split("=(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-            String key = strings[0].trim();
-            String value = strings[1].trim();
-            partMap.put(key, value);
+    public String getValueByObjectIdentifier(ASN1ObjectIdentifier identifier) {
+        X500Name x500name = null;
+        try {
+            x500name = new JcaX509CertificateHolder(certificate).getSubject();
+        } catch (CertificateEncodingException e) {
+            Log.e(TAG, "getValueByObjectIdentifier: ", e);
         }
-        return partMap;
+        if (x500name == null) {
+            return null;
+        }
+        RDN c = x500name.getRDNs(identifier)[0];
+        return IETFUtils.valueToString(c.getFirst().getValue());
     }
+
 
     private X509Certificate getSignatureCertificate(byte[] signingCertificateDer) {
         try {
