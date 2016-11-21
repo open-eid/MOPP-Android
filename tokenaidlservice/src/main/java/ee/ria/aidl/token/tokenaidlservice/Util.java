@@ -1,5 +1,7 @@
 package ee.ria.aidl.token.tokenaidlservice;
 
+import org.spongycastle.util.encoders.Hex;
+
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -21,20 +23,11 @@ public class Util {
 	}
 
 	static String toHex(byte[] data) {
-		StringBuilder sb = new StringBuilder();
-		for (byte b : data) {
-			sb.append(String.format("%02X ", b));
-		}
-		return sb.toString();
+		return Hex.toHexString(data);
 	}
 
 	static byte[] fromHex(String hexData) {
-		int len = hexData.length();
-		byte[] data = new byte[len/2];
-		for(int i = 0; i < len; i+=2){
-			data[i/2] = (byte) ((Character.digit(hexData.charAt(i), 16) << 4) + Character.digit(hexData.charAt(i+1), 16));
-		}
-		return data;
+		return Hex.decode(hexData);
 	}
 
 	static X509Certificate getX509Certificate(byte[] certificate) throws CertificateException {
