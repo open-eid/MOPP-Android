@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +25,7 @@ public class PinUtilitiesActivity extends AppCompatActivity {
     private TokenAidlInterface service;
     private RemoteServiceConnection serviceConnection;
     private boolean serviceBound = false;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +35,7 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         content = (TextView) findViewById(R.id.pin_util_content);
-        connectService();
+        handler = new Handler(Looper.getMainLooper());
     }
 
     @Override
@@ -138,12 +141,21 @@ public class PinUtilitiesActivity extends AppCompatActivity {
 
         @Override
         public void onPinActionSuccessful() throws RemoteException {
-            content.setText(pinType.name() + " change success");
+            showResultOnUiThread(pinType.name() + " change success");
         }
 
         @Override
-        public void onPinActionFailed(String reason) throws RemoteException {
-            content.setText(pinType.name() + " change failed" + "reason: " + reason);
+        public void onPinActionFailed(final String reason) throws RemoteException {
+            showResultOnUiThread(pinType.name() + " change failed" + "reason: " + reason);
+        }
+
+        private void showResultOnUiThread(final String result) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    content.setText(result);
+                }
+            });
         }
     }
 

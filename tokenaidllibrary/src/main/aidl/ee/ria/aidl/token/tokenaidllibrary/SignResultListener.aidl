@@ -2,6 +2,6 @@
 package ee.ria.aidl.token.tokenaidllibrary;
 
 interface SignResultListener {
-    void onSignSuccess(String signatureInHex);
-    void onSignFailed(String reason);
+    oneway void onSignSuccess(String signatureInHex);
+    oneway void onSignFailed(String reason);
 }

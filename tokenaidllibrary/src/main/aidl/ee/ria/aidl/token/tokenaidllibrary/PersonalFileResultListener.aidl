@@ -2,6 +2,6 @@
 package ee.ria.aidl.token.tokenaidllibrary;
 
 interface PersonalFileResultListener {
-	void onPersonalFileResponse(String personalFile);
-	void onPersonalFileError(String reason);
+	oneway void onPersonalFileResponse(String personalFile);
+	oneway void onPersonalFileError(String reason);
 }

@@ -2,6 +2,6 @@
 package ee.ria.aidl.token.tokenaidllibrary;
 
 interface PinActionsListener {
-    void onPinActionSuccessful();
-    void onPinActionFailed(String reason);
+    oneway void onPinActionSuccessful();
+    oneway void onPinActionFailed(String reason);
 }

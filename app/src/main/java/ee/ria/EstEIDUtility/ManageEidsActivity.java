@@ -7,7 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -25,6 +27,7 @@ public class ManageEidsActivity extends AppCompatActivity {
     private TokenAidlInterface service;
     private ManageEidsActivity.RemoteServiceConnection serviceConnection;
     private boolean serviceBound = false;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,7 @@ public class ManageEidsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         content = (TextView) findViewById(R.id.eids_content);
+        handler = new Handler(Looper.getMainLooper());
         enableButtons(false);
     }
 
@@ -63,25 +67,45 @@ public class ManageEidsActivity extends AppCompatActivity {
         service.readPersonalFile(new PersonalFileResultListener.Stub() {
             @Override
             public void onPersonalFileResponse(String personalFile) throws RemoteException {
-                content.setText("Personal data:\n" + personalFile);
+                showResult("Personal data:\n" + personalFile);
             }
 
             @Override
             public void onPersonalFileError(String reason) throws RemoteException {
-                content.setText(reason);
+                showResult(reason);
             }
         });
     }
 
     public void displayCertInfo(View view) throws RemoteException {
+
+
         service.readSignCertificateInHex(new CertificateResultListener.Stub() {
             @Override
             public void onCertifiacteRequestSuccess(String certificateInHex) throws RemoteException {
-                content.setText("Cert common name: " + Util.getCommonName(Util.fromHex(certificateInHex)));
+                showResult("Cert common name: " + Util.getCommonName(Util.fromHex(certificateInHex)));
             }
 
             @Override
             public void onCertifiacteRequestFailed(String reason) throws RemoteException {
+                showErrorDialog(reason);
+            }
+        });
+    }
+
+    private void showResult(final String textToShow) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                content.setText(textToShow);
+            }
+        });
+    }
+
+    private void showErrorDialog(final String reason) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
                 new AlertDialog.Builder(ManageEidsActivity.this)
                         .setTitle(R.string.cert_read_failed)
                         .setMessage(reason)
