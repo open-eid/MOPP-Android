@@ -10,18 +10,17 @@
     tools:showIn="@layout/activity_signing">
 
     <EditText
+        android:id="@+id/textToSign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="text"
-        android:text="Hello World"
-        android:ems="10"
-        android:id="@+id/textToSign"
-        android:hint="Text to sign"
-        android:enabled="true"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:enabled="true"
+        android:hint="Enter file name"
+        android:inputType="text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:text="@string/action_sign"
@@ -72,14 +71,13 @@
         android:onClick="connectReader"/>
 
     <Button
-        android:text="New"
+        android:text="Add container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/sign_new_container"
-        android:layout_marginStart="8dp"
-        android:onClick="createNewContainer"
+        android:id="@+id/add_container"
+        app:layout_constraintTop_toBottomOf="@+id/textToSign"
         app:layout_constraintLeft_toRightOf="@+id/eids_connect"
-        app:layout_constraintTop_toTopOf="@+id/eids_connect" />
-
+        android:layout_marginTop="16dp"
+        android:onClick="createNewContainer"/>
 
 </android.support.constraint.ConstraintLayout>

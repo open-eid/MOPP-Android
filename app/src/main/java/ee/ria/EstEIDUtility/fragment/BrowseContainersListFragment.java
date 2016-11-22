@@ -16,9 +16,9 @@ import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.activity.BdocDetailActivity;
-import ee.ria.EstEIDUtility.activity.BrowseContainersActivity;
 import ee.ria.EstEIDUtility.adapter.BdocAdapter;
 import ee.ria.EstEIDUtility.domain.BdocItem;
+import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.DateUtils;
 
 public class BrowseContainersListFragment extends ListFragment {
@@ -37,7 +37,7 @@ public class BrowseContainersListFragment extends ListFragment {
         BdocItem bdocItem = (BdocItem) getListAdapter().getItem(position);
 
         Intent intent = new Intent(getActivity(), BdocDetailActivity.class);
-        intent.putExtra(BrowseContainersActivity.BDOC_NAME, bdocItem.getName());
+        intent.putExtra(Constants.BDOC_NAME, bdocItem.getName());
 
         startActivity(intent);
     }
@@ -97,7 +97,7 @@ public class BrowseContainersListFragment extends ListFragment {
         String[] files = getActivity().fileList();
         List<String> bdocs = new ArrayList<>();
         for (String fileName : files) {
-            if (FilenameUtils.getExtension(fileName).equals(BDOC_EXTENSION)) {
+            if (FilenameUtils.getExtension(fileName).equals(Constants.BDOC_EXTENSION)) {
                 bdocs.add(fileName);
             }
         }

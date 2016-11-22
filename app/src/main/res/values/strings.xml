@@ -52,6 +52,9 @@
     <string name="upload_to_dropbox_auth_failed">Failed to authenticate to Dropbox</string>
     <string name="upload_to_dropbox_success">on saadetud Dropboxi.</string>
     <string name="upload_to_dropbox_fail">Upload to Dropbox failed.</string>
-    <string name="addSignature">Lisa Allkiri</string>
+    <string name="empty_container_files" >Ühtegi faili ei ole lisatud. Igal digiallkirjastatud dokumendil peab olema sisu. Faili või failide lisamiseks tippige nuppu \"Lisa\".</string>
+    <string name="empty_container_signatures" >Ühtegi allkirja ei ole lisatud. Allkirja saab alles pärast failide lisamist lisada.</string>
+    <string name="add_file_remove_signatures">Failide lisamiseks konteiner peab olema allkirjastamata</string>
+    <string name="file_exists_message">Fail sama nimega on juba olemas</string>
 
 </resources>

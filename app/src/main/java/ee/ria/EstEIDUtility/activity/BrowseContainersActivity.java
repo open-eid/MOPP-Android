@@ -14,23 +14,15 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import ee.ria.EstEIDUtility.R;
-import ee.ria.libdigidocpp.digidoc;
 
 public class BrowseContainersActivity extends AppCompatActivity {
 
-    static {
-        System.loadLibrary("digidoc_java");
-    }
-
     private static final String TAG = "BrowseContainersActivity";
 
-    public static final String BDOC_NAME = "ee.ria.EstEIDUtility.bdocName";
-    public static final String FILE_NAME = "ee.ria.EstEIDUtility.fileName";
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -52,7 +44,6 @@ public class BrowseContainersActivity extends AppCompatActivity {
     }
 
     private void initLibraryConfiguration() {
-        digidoc.initJava(getFilesDir().getAbsolutePath());
         try (ZipInputStream zis = new ZipInputStream(getResources().openRawResource(R.raw.schema))) {
             ZipEntry ze;
             while ((ze = zis.getNextEntry()) != null) {
@@ -67,19 +58,6 @@ public class BrowseContainersActivity extends AppCompatActivity {
             }
         } catch (IOException e) {
             Log.e(TAG, "initLibraryConfiguration: ", e);
-        }
-
-        try (InputStream in = getResources().openRawResource(R.raw.test);
-             FileOutputStream out = openFileOutput("testing.bdoc", Context.MODE_PRIVATE)) {
-            byte[] buffer = new byte[1024];
-            int count;
-            while ((count = in.read(buffer)) != -1) {
-                out.write(buffer, 0, count);
-            }
-            in.close();
-            out.close();
-        } catch (IOException e) {
-            Log.e(TAG, "createDummyFiles: ", e);
         }
     }
 

@@ -19,28 +19,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ee.ria.EstEIDUtility.activity.BrowseContainersActivity;
+import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.adapter.DataFilesAdapter;
+import ee.ria.EstEIDUtility.util.Constants;
+import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFile;
 import ee.ria.libdigidocpp.DataFiles;
 
 public class BdocFilesFragment extends ListFragment {
 
-    private static final String TAG = "BdocFilesFragment";
+    public static final String TAG = "BDOC_DETAIL_FILES_FRAGMENT";
 
     private DataFilesAdapter filesAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getActivity().getIntent();
-        String bdocName = intent.getExtras().getString(BrowseContainersActivity.BDOC_NAME);
-
-        Container container = Container.open(getActivity().getFilesDir().getAbsolutePath() + "/" + bdocName);
-
+        String bdocName = getArguments().getString(Constants.BDOC_NAME);
+        Container container = FileUtils.getContainer(getActivity().getFilesDir().getAbsolutePath(), bdocName);
         List<DataFile> dataFiles = extractDataFiles(container);
-
         filesAdapter = new DataFilesAdapter(getActivity(), dataFiles);
         setListAdapter(filesAdapter);
     }
@@ -48,7 +46,12 @@ public class BdocFilesFragment extends ListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setFragmentHeight();
+    }
+
+    private void setFragmentHeight() {
         ListView listView = getListView();
+
         int totalHeight = 0;
 
         for (int i = 0; i < filesAdapter.getCount(); i++) {
@@ -61,6 +64,9 @@ public class BdocFilesFragment extends ListFragment {
         params.height = totalHeight + (listView.getDividerHeight() * (filesAdapter.getCount() - 1));
         listView.setLayoutParams(params);
         listView.requestLayout();
+
+        String emptyText = getResources().getString(R.string.empty_container_files);
+        setEmptyText(emptyText);
     }
 
     @Override
@@ -69,6 +75,10 @@ public class BdocFilesFragment extends ListFragment {
         launchFileContentActivity(position);
     }
 
+    public void addFile(DataFile dataFile) {
+        filesAdapter.add(dataFile);
+        setFragmentHeight();
+    }
     private List<DataFile> extractDataFiles(Container container) {
         if (container == null) {
             return Collections.emptyList();

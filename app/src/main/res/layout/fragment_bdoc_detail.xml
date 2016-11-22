@@ -102,14 +102,34 @@
                         android:textAppearance="?android:panelTextAppearance"
                         android:textSize="20sp" />
 
+                    <Button
+                        android:id="@+id/addFile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_toRightOf="@+id/bdocFilesTitle"
+                        android:minHeight="0dp"
+                        android:minWidth="0dp"
+                        android:text="@string/addFile"
+                        android:textAppearance="?android:textAppearanceSmall"/>
+
                     <View
                         android:id="@+id/infoSeparator"
                         android:layout_width="wrap_content"
                         android:layout_height="2dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="20dp"
-                        android:layout_toRightOf="@+id/bdocFilesTitle"
+                        android:layout_toRightOf="@+id/addFile"
                         android:background="#c0c0c0" />
+
+                    <TextView android:id="@id/android:empty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#FF0000"
+                        android:visibility="invisible"
+                        android:layout_below="@+id/bdocFilesTitle"
+                        android:text="No data"/>
+
                 </RelativeLayout>
             </LinearLayout>
 
@@ -134,13 +154,24 @@
                         android:textAppearance="?android:panelTextAppearance"
                         android:textSize="20sp" />
 
+                    <Button
+                        android:id="@+id/addSignature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_toRightOf="@+id/bdocSignaturesTitle"
+                        android:minHeight="0dp"
+                        android:minWidth="0dp"
+                        android:text="@string/addFile"
+                        android:textAppearance="?android:textAppearanceSmall" />
+
                     <View
                         android:id="@+id/filesSeparator"
                         android:layout_width="wrap_content"
                         android:layout_height="2dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="20dp"
-                        android:layout_toRightOf="@+id/bdocSignaturesTitle"
+                        android:layout_toRightOf="@+id/addSignature"
                         android:background="#c0c0c0" />
                 </RelativeLayout>
             </LinearLayout>
@@ -157,10 +188,11 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/saveContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/create_new" />
+            android:text="@string/save" />
 
         <Button
             android:id="@+id/sendButton"

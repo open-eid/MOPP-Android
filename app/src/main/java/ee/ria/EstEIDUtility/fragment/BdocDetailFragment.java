@@ -7,18 +7,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
@@ -31,10 +28,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import ee.ria.EstEIDUtility.activity.BrowseContainersActivity;
+import ee.ria.EstEIDUtility.activity.BdocDetailActivity;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.adapter.AlertItemAdapter;
+import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
+import ee.ria.EstEIDUtility.util.NotificationUtil;
+import ee.ria.libdigidocpp.Container;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -43,7 +43,7 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class BdocDetailFragment extends Fragment {
 
-    private static final String TAG = "BdocDetailFragment";
+    public static final String TAG = "BDOC_DETAIL_FRAGMENT";
 
     private static final String APP_KEY = "APP_KEY";
     private static final String APP_SECRET = "APP_SECRET_KEY";
@@ -59,17 +59,48 @@ public class BdocDetailFragment extends Fragment {
 
     private String fileName;
     boolean saveToDropboxClicked;
+    private File bdocFile;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        fileName = getArguments().getString(Constants.BDOC_NAME);
+        createFilesListFragment();
+        createSignatureListFragment();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup containerView,
                              Bundle savedInstanceState) {
-        View fragLayout = inflater.inflate(R.layout.fragment_bdoc_detail, container, false);
+        View fragLayout = inflater.inflate(R.layout.fragment_bdoc_detail, containerView, false);
 
         title = (TextView) fragLayout.findViewById(R.id.listDocName);
         body = (TextView) fragLayout.findViewById(R.id.listDocLocation);
         fileInfoTextView = (TextView) fragLayout.findViewById(R.id.dbocInfo);
 
+        Button addFileButton = (Button) fragLayout.findViewById(R.id.addFile);
+
+        bdocFile = new File(getActivity().getFilesDir().getAbsolutePath() + "/" + fileName);
+
         createSendDialog();
+
+        addFileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Container container = FileUtils.getContainer(getActivity().getFilesDir().getAbsolutePath(), fileName);
+                if (container.signatures().size() > 0) {
+                    NotificationUtil.showNotification(getActivity(),
+                            getResources().getString(R.string.add_file_remove_signatures), NotificationUtil.NotificationType.ERROR);
+                    return;
+                }
+                Intent intent = new Intent()
+                        .setType("*/*")
+                        .setAction(Intent.ACTION_GET_CONTENT)
+                        .addCategory(Intent.CATEGORY_OPENABLE)
+                        .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+                getActivity().startActivityForResult(intent.createChooser(intent, "Select File to Add"), BdocDetailActivity.CHOOSE_FILE_REQUEST);
+            }
+        });
 
         Button sendButton = (Button) fragLayout.findViewById(R.id.sendButton);
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -97,18 +128,6 @@ public class BdocDetailFragment extends Fragment {
 
         mDBApi = new DropboxAPI<>(session);
 
-        if (savedInstanceState != null) {
-            fileName = savedInstanceState.getString(BrowseContainersActivity.BDOC_NAME);
-        } else {
-            Intent intent = getActivity().getIntent();
-            fileName = intent.getExtras().getString(BrowseContainersActivity.BDOC_NAME);
-        }
-
-        File bdocFile = new File(getActivity().getFilesDir().getAbsolutePath() + "/" + fileName);
-
-        createFilesLstFragment();
-        createSignatureLstFragment();
-
         sendDialog.setTitle(fileName);
 
         String fileInfo = getContext().getResources().getString(R.string.file_info);
@@ -122,6 +141,7 @@ public class BdocDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         if (mDBApi.getSession().authenticationSuccessful()) {
             try {
                 mDBApi.getSession().finishAuthentication();
@@ -140,7 +160,7 @@ public class BdocDetailFragment extends Fragment {
             saveToDropboxClicked = false;
         } else if (saveToDropboxClicked) {
             String message = getContext().getResources().getString(R.string.upload_to_dropbox_auth_failed);
-            showNotification(message, NotificationType.ERROR);
+            NotificationUtil.showNotification(getActivity(), message, NotificationUtil.NotificationType.ERROR);
             saveToDropboxClicked = false;
         }
     }
@@ -154,7 +174,7 @@ public class BdocDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(BrowseContainersActivity.BDOC_NAME, fileName);
+        outState.putString(Constants.BDOC_NAME, fileName);
     }
 
     private void createSendDialog() {
@@ -179,19 +199,35 @@ public class BdocDetailFragment extends Fragment {
         sendDialog = builder.create();
     }
 
-    private void createFilesLstFragment() {
-        FragmentManager fragmentManager = getChildFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        BdocFilesFragment filesFragment = new BdocFilesFragment();
-        fragmentTransaction.add(R.id.filesListLayout, filesFragment, "BDOC_DETAIL_FILES_FRAGMENT");
+    private void createFilesListFragment() {
+        BdocFilesFragment filesFragment = (BdocFilesFragment) getChildFragmentManager().findFragmentByTag(BdocFilesFragment.TAG);
+        if (filesFragment != null) {
+            return;
+        }
+        FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.BDOC_NAME, fileName);
+
+        filesFragment = new BdocFilesFragment();
+        filesFragment.setArguments(bundle);
+        fragmentTransaction.add(R.id.filesListLayout, filesFragment, BdocFilesFragment.TAG);
         fragmentTransaction.commit();
     }
 
-    private void createSignatureLstFragment() {
-        FragmentManager fragmentManager = getChildFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        BdocSignaturesFragment signaturesFragment = new BdocSignaturesFragment();
-        fragmentTransaction.add(R.id.signaturesListLayout, signaturesFragment, "BDOC_DETAIL_SIGNATURES_FRAGMENT");
+    private void createSignatureListFragment() {
+        BdocSignaturesFragment signaturesFragment = (BdocSignaturesFragment) getChildFragmentManager().findFragmentByTag(BdocSignaturesFragment.TAG);
+        if (signaturesFragment != null) {
+            return;
+        }
+        FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.BDOC_NAME, fileName);
+
+        signaturesFragment = new BdocSignaturesFragment();
+        signaturesFragment.setArguments(bundle);
+        fragmentTransaction.add(R.id.signaturesListLayout, signaturesFragment, BdocSignaturesFragment.TAG);
         fragmentTransaction.commit();
     }
 
@@ -219,38 +255,12 @@ public class BdocDetailFragment extends Fragment {
         protected void onPostExecute(Boolean result) {
             if (result) {
                 String message = getContext().getResources().getString(R.string.upload_to_dropbox_success);
-                showNotification(fileName + " " + message, NotificationType.SUCCESS);
+                NotificationUtil.showNotification(getActivity(), fileName + " " + message, NotificationUtil.NotificationType.SUCCESS);
             } else {
                 String message = getContext().getResources().getString(R.string.upload_to_dropbox_fail);
-                showNotification(message, NotificationType.ERROR);
+                NotificationUtil.showNotification(getActivity(), message, NotificationUtil.NotificationType.ERROR);
             }
         }
-    }
-
-    private void showNotification(String message, NotificationType toastType) {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View layout = null;
-        switch (toastType) {
-            case SUCCESS:
-                layout = inflater.inflate(R.layout.success_toast, (ViewGroup) getActivity().findViewById(R.id.success_toast_container));
-                break;
-            case ERROR:
-                layout = inflater.inflate(R.layout.fail_toast, (ViewGroup) getActivity().findViewById(R.id.fail_toast_container));
-                break;
-        }
-
-        TextView text = (TextView) layout.findViewById(R.id.text);
-        text.setText(message);
-
-        Toast toast = new Toast(getActivity());
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(layout);
-        toast.show();
-    }
-
-    private enum NotificationType {
-        SUCCESS, ERROR
     }
 
 }

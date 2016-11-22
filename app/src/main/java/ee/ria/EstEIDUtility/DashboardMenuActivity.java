@@ -7,12 +7,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import ee.ria.EstEIDUtility.activity.BrowseContainersActivity;
+import ee.ria.libdigidocpp.digidoc;
 
 public class DashboardMenuActivity extends AppCompatActivity {
+
+    static {
+        System.loadLibrary("digidoc_java");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        digidoc.initJava(getFilesDir().getAbsolutePath());
         setContentView(R.layout.activity_dashboard_menu);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

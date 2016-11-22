@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,21 +16,18 @@ import android.widget.TextView;
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.style.BCStyle;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.domain.X509Cert;
 import ee.ria.EstEIDUtility.util.DateUtils;
+import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.Signature;
 
 public class SignatureAdapter extends ArrayAdapter<Signature> implements Filterable {
 
     private AlertDialog confirmDialog;
-    private Container container;
     private String bdocFileName;
     private Context context;
 
@@ -46,7 +42,6 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
         super(context, 0, signatures);
         this.context = context;
         this.bdocFileName = bdocFileName;
-        container = Container.open(context.getFilesDir().getAbsolutePath() + "/" + bdocFileName);
     }
 
     @NonNull
@@ -104,6 +99,7 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Signature sign = getItem(position);
+                        Container container = FileUtils.getContainer(context.getFilesDir().getAbsolutePath(), bdocFileName);
                         container.removeSignature(position);
                         container.save(context.getFilesDir().getAbsolutePath() + "/" + bdocFileName);
                         remove(sign);

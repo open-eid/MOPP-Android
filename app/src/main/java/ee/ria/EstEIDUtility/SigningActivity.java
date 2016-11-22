@@ -13,9 +13,17 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
 import java.security.Signature;
+
+import ee.ria.EstEIDUtility.activity.BdocDetailActivity;
+import ee.ria.EstEIDUtility.activity.BrowseContainersActivity;
+import ee.ria.EstEIDUtility.util.Constants;
+import ee.ria.EstEIDUtility.util.FileUtils;
+import ee.ria.EstEIDUtility.util.NotificationUtil;
 
 public class SigningActivity extends AppCompatActivity {
 
@@ -38,6 +46,7 @@ public class SigningActivity extends AppCompatActivity {
         pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         content = (TextView) findViewById(R.id.sign_content);
         enableButtons(false);
+
     }
 
     @Override
@@ -143,14 +152,27 @@ public class SigningActivity extends AppCompatActivity {
     }
 
     public void enableButtons(boolean enable) {
-        findViewById(R.id.textToSign).setEnabled(enable);
         findViewById(R.id.button_sign).setEnabled(enable);
         findViewById(R.id.button_auth).setEnabled(enable);
         findViewById(R.id.button_verify).setEnabled(enable);
     }
 
     public void createNewContainer(View view) {
-        Intent intent = new Intent(this, ManageContainerActivity.class);
+        EditText containerName = (EditText) findViewById(R.id.textToSign);
+
+        if (!FilenameUtils.getExtension(containerName.getText().toString()).equals(Constants.BDOC_EXTENSION)) {
+            containerName.append(".");
+            containerName.append(Constants.BDOC_EXTENSION);
+            containerName.setText(containerName.getText().toString());
+        }
+        String bdocFileName = containerName.getText().toString();
+        if (FileUtils.fileExists(getFilesDir().getAbsolutePath(), bdocFileName)) {
+            NotificationUtil.showNotification(this, getResources().getString(R.string.file_exists_message), NotificationUtil.NotificationType.WARNING);
+            return;
+        }
+
+        Intent intent = new Intent(this, BdocDetailActivity.class);
+        intent.putExtra(Constants.BDOC_NAME, bdocFileName);
         startActivity(intent);
     }
 

@@ -52,7 +52,7 @@
             android:layout_height="0dp" />
 
         <Button
-            android:text="@string/addSignature"
+            android:text="Lisa Allkiri"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/container_sign"
