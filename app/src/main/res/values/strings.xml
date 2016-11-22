@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="app_key">APP_KEY</string>
+
     <string name="app_name">RIA DigiDoc</string>
     <string name="action_read">Read personal data</string>
     <string name="action_read_cert">Read cert</string>
@@ -50,11 +52,12 @@
     <string name="close_button">Sulge</string>
     <string name="upload_to_dropbox">Saada Dropboxi</string>
     <string name="upload_to_dropbox_auth_failed">Failed to authenticate to Dropbox</string>
-    <string name="upload_to_dropbox_success">on saadetud Dropboxi.</string>
+    <string name="upload_to_dropbox_success">%1$s (%2$s kb) on saadetud Dropboxi.</string>
     <string name="upload_to_dropbox_fail">Upload to Dropbox failed.</string>
     <string name="empty_container_files" >Ühtegi faili ei ole lisatud. Igal digiallkirjastatud dokumendil peab olema sisu. Faili või failide lisamiseks tippige nuppu \"Lisa\".</string>
     <string name="empty_container_signatures" >Ühtegi allkirja ei ole lisatud. Allkirja saab alles pärast failide lisamist lisada.</string>
     <string name="add_file_remove_signatures">Failide lisamiseks konteiner peab olema allkirjastamata</string>
     <string name="file_exists_message">Fail sama nimega on juba olemas</string>
-
+    <string name="file_name_empty_message">Fail ei tohi olla tühja nimega</string>
+    <string name="select_file">Select File to Add</string>
 </resources>

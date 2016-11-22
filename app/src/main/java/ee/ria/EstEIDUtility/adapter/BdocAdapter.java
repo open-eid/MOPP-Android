@@ -63,9 +63,9 @@ public class BdocAdapter extends ArrayAdapter<BdocItem> implements Filterable {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        final BdocItem dboc = getItem(position);
-        viewHolder.fileName.setText(dboc.getName());
-        viewHolder.fileCreated.setText(dboc.getCreated());
+        final BdocItem bdoc = getItem(position);
+        viewHolder.fileName.setText(bdoc.getName());
+        viewHolder.fileCreated.setText(bdoc.getCreated());
 
         viewHolder.removeBdoc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +74,7 @@ public class BdocAdapter extends ArrayAdapter<BdocItem> implements Filterable {
                 builder.setTitle(R.string.bdoc_remove_confirm_title);
 
                 String confirmMessage = getContext().getResources().getString(R.string.bdoc_remove_confirm_message);
-                confirmMessage = String.format(confirmMessage, dboc.getName());
+                confirmMessage = String.format(confirmMessage, bdoc.getName());
 
                 builder.setMessage(confirmMessage);
 

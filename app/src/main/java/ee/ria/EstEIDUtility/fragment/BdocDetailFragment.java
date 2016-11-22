@@ -3,13 +3,11 @@ package ee.ria.EstEIDUtility.fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,45 +15,33 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.dropbox.client2.DropboxAPI;
-import com.dropbox.client2.android.AndroidAuthSession;
-import com.dropbox.client2.exception.DropboxException;
-import com.dropbox.client2.session.AppKeyPair;
+import com.dropbox.core.android.Auth;
+import com.dropbox.core.v2.files.FileMetadata;
 
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 import ee.ria.EstEIDUtility.activity.BdocDetailActivity;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.adapter.AlertItemAdapter;
 import ee.ria.EstEIDUtility.util.Constants;
+import ee.ria.EstEIDUtility.util.DropboxClientFactory;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
+import ee.ria.EstEIDUtility.util.UploadFileTask;
 import ee.ria.libdigidocpp.Container;
 
 import static android.content.Context.MODE_PRIVATE;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class BdocDetailFragment extends Fragment {
 
     public static final String TAG = "BDOC_DETAIL_FRAGMENT";
-
-    private static final String APP_KEY = "APP_KEY";
-    private static final String APP_SECRET = "APP_SECRET_KEY";
-    private static final String DROPBOX_PREFS = "dropbox_prefs";
-    private static final String DROPBOX_ACCESS_TOKEN = "dropbox_token";
 
     private TextView title;
     private TextView body;
     private TextView fileInfoTextView;
     private AlertDialog sendDialog;
-
-    private DropboxAPI<AndroidAuthSession> mDBApi;
 
     private String fileName;
     boolean saveToDropboxClicked;
@@ -98,7 +84,9 @@ public class BdocDetailFragment extends Fragment {
                         .setAction(Intent.ACTION_GET_CONTENT)
                         .addCategory(Intent.CATEGORY_OPENABLE)
                         .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
-                getActivity().startActivityForResult(intent.createChooser(intent, "Select File to Add"), BdocDetailActivity.CHOOSE_FILE_REQUEST);
+                getActivity().startActivityForResult(
+                        Intent.createChooser(intent, getResources().getString(R.string.select_file)),
+                        BdocDetailActivity.CHOOSE_FILE_REQUEST);
             }
         });
 
@@ -116,18 +104,6 @@ public class BdocDetailFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
-        AndroidAuthSession session = new AndroidAuthSession(appKeys);
-
-        SharedPreferences settings = getActivity().getSharedPreferences(DROPBOX_PREFS, MODE_PRIVATE);
-        String token = settings.getString(DROPBOX_ACCESS_TOKEN, null);
-        if (token != null) {
-            session.setOAuth2AccessToken(token);
-        }
-
-        mDBApi = new DropboxAPI<>(session);
-
         sendDialog.setTitle(fileName);
 
         String fileInfo = getContext().getResources().getString(R.string.file_info);
@@ -142,33 +118,34 @@ public class BdocDetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if (mDBApi.getSession().authenticationSuccessful()) {
-            try {
-                mDBApi.getSession().finishAuthentication();
+        if (saveToDropboxClicked) {
+            SharedPreferences prefs = getActivity().getSharedPreferences(Constants.DROPBOX_PREFS, MODE_PRIVATE);
+            String accessToken = prefs.getString(Constants.DROPBOX_ACCESS_TOKEN, null);
+            if (accessToken == null) {
+                accessToken = Auth.getOAuth2Token();
+                if (accessToken != null) {
+                    prefs.edit().putString(Constants.DROPBOX_ACCESS_TOKEN, accessToken).apply();
+                    DropboxClientFactory.init(accessToken);
+                } else {
+                    String message = getContext().getResources().getString(R.string.upload_to_dropbox_auth_failed);
+                    NotificationUtil.showNotification(getActivity(), message, NotificationUtil.NotificationType.ERROR);
+                    saveToDropboxClicked = false;
+                }
+            } else {
+                DropboxClientFactory.init(accessToken);
+                new UploadFileTask(getContext(), DropboxClientFactory.getClient(), fileName, new UploadFileTask.Callback() {
+                    @Override
+                    public void onUploadComplete(FileMetadata result) {
+                        dropBoxUploadSuccess(result.getSize());
+                    }
 
-                String accessToken = mDBApi.getSession().getOAuth2AccessToken();
-
-                SharedPreferences.Editor editor = getActivity().getSharedPreferences(DROPBOX_PREFS, MODE_PRIVATE).edit();
-                editor.putString(DROPBOX_ACCESS_TOKEN, accessToken);
-                editor.commit();
-            } catch (IllegalStateException e) {
-                Log.i(TAG, "Error authenticating", e);
+                    @Override
+                    public void onError(Exception e) {
+                        dropBoxUploadFail(e);
+                    }
+                }).execute();
             }
         }
-        if (mDBApi.getSession().authenticationSuccessful() && saveToDropboxClicked) {
-            new UploadFileTask(fileName).execute();
-            saveToDropboxClicked = false;
-        } else if (saveToDropboxClicked) {
-            String message = getContext().getResources().getString(R.string.upload_to_dropbox_auth_failed);
-            NotificationUtil.showNotification(getActivity(), message, NotificationUtil.NotificationType.ERROR);
-            saveToDropboxClicked = false;
-        }
-    }
-
-    @Override
-    public void onStop() {
-        mDBApi.getSession().unlink();
-        super.onStop();
     }
 
     @Override
@@ -188,12 +165,26 @@ public class BdocDetailFragment extends Fragment {
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (mDBApi.getSession().getOAuth2AccessToken() != null) {
-                    new UploadFileTask(fileName).execute();
+                SharedPreferences prefs = getActivity().getSharedPreferences(Constants.DROPBOX_PREFS, MODE_PRIVATE);
+                String accessToken = prefs.getString(Constants.DROPBOX_ACCESS_TOKEN, null);
+                if (accessToken != null) {
+                    DropboxClientFactory.init(accessToken);
+                    new UploadFileTask(getContext(), DropboxClientFactory.getClient(), fileName, new UploadFileTask.Callback() {
+                        @Override
+                        public void onUploadComplete(FileMetadata result) {
+                            dropBoxUploadSuccess(result.getSize());
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            dropBoxUploadFail(e);
+                        }
+                    }).execute();
                 } else {
-                    mDBApi.getSession().startOAuth2Authentication(getActivity());
+                    Auth.startOAuth2Authentication(getActivity(), getString(R.string.app_key));
                     saveToDropboxClicked = true;
                 }
+
             }
         }).setNegativeButton(R.string.close_button, null);
         sendDialog = builder.create();
@@ -231,36 +222,20 @@ public class BdocDetailFragment extends Fragment {
         fragmentTransaction.commit();
     }
 
-    private class UploadFileTask extends AsyncTask<Void, Void, Boolean> {
-
-        String fileName;
-
-        UploadFileTask(String fileName) {
-            this.fileName = fileName;
+    private void dropBoxUploadFail(Exception e) {
+        if (e != null) {
+            String message = e.getMessage();
+            NotificationUtil.showNotification(getActivity(), message, NotificationUtil.NotificationType.ERROR);
+        } else {
+            String message = getContext().getResources().getString(R.string.upload_to_dropbox_fail);
+            NotificationUtil.showNotification(getActivity(), message, NotificationUtil.NotificationType.ERROR);
         }
+    }
 
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            try (FileInputStream inputStream = getContext().openFileInput(fileName)) {
-                File file = new File(getContext().getFilesDir(), fileName);
-                DropboxAPI.Entry response = mDBApi.putFile(fileName, inputStream, file.length(), null, null);
-                Log.i(TAG, "The uploaded file's rev is: " + response.rev + " Size:" + response.size);
-                return true;
-            } catch (IOException | DropboxException e) {
-                Log.e(TAG, "doInBackground: ", e);
-            }
-            return false;
-        }
-
-        protected void onPostExecute(Boolean result) {
-            if (result) {
-                String message = getContext().getResources().getString(R.string.upload_to_dropbox_success);
-                NotificationUtil.showNotification(getActivity(), fileName + " " + message, NotificationUtil.NotificationType.SUCCESS);
-            } else {
-                String message = getContext().getResources().getString(R.string.upload_to_dropbox_fail);
-                NotificationUtil.showNotification(getActivity(), message, NotificationUtil.NotificationType.ERROR);
-            }
-        }
+    private void dropBoxUploadSuccess(long size) {
+        String message = getContext().getResources().getString(R.string.upload_to_dropbox_success);
+        message = String.format(message, fileName, FileUtils.getKilobytes(size));
+        NotificationUtil.showNotification(getActivity(), message, NotificationUtil.NotificationType.SUCCESS);
     }
 
 }

@@ -160,6 +160,12 @@ public class SigningActivity extends AppCompatActivity {
     public void createNewContainer(View view) {
         EditText containerName = (EditText) findViewById(R.id.textToSign);
 
+        String fileName = containerName.getText().toString();
+        if (fileName == null || fileName.isEmpty()) {
+            NotificationUtil.showNotification(this, getResources().getString(R.string.file_name_empty_message), NotificationUtil.NotificationType.WARNING);
+            return;
+        }
+
         if (!FilenameUtils.getExtension(containerName.getText().toString()).equals(Constants.BDOC_EXTENSION)) {
             containerName.append(".");
             containerName.append(Constants.BDOC_EXTENSION);

@@ -29,7 +29,7 @@ import ee.ria.libdigidocpp.DataFiles;
 
 public class BdocFilesFragment extends ListFragment {
 
-    public static final String TAG = "BDOC_DETAIL_FILES_FRAGMENT";
+    public static final String TAG = "BDOC_FILES_FRAGMENT";
 
     private DataFilesAdapter filesAdapter;
 
@@ -61,7 +61,7 @@ public class BdocFilesFragment extends ListFragment {
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (filesAdapter.getCount() - 1));
+        params.height = totalHeight + (listView.getDividerHeight() * (filesAdapter.getCount()));
         listView.setLayoutParams(params);
         listView.requestLayout();
 
