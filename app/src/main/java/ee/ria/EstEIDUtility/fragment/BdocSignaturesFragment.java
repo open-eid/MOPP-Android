@@ -7,17 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.adapter.SignatureAdapter;
 import ee.ria.EstEIDUtility.util.Constants;
+import ee.ria.EstEIDUtility.util.ContainerUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.Signature;
-import ee.ria.libdigidocpp.Signatures;
 
 public class BdocSignaturesFragment extends ListFragment {
 
@@ -29,7 +27,8 @@ public class BdocSignaturesFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         String bdocFileName = getArguments().getString(Constants.BDOC_NAME);
 
-        List<Signature> signatures = extractSignatures(bdocFileName);
+        Container container = FileUtils.getContainer(getActivity().getFilesDir().getAbsolutePath(), bdocFileName);
+        List<Signature> signatures = ContainerUtils.extractSignatures(container);
 
         signatureAdapter = new SignatureAdapter(getActivity(), signatures, bdocFileName);
         setListAdapter(signatureAdapter);
@@ -55,19 +54,6 @@ public class BdocSignaturesFragment extends ListFragment {
         setEmptyText(emptyText);
 
         super.onViewCreated(view, savedInstanceState);
-    }
-
-    private List<Signature> extractSignatures(String bdocName) {
-        Container container = FileUtils.getContainer(getActivity().getFilesDir().getAbsolutePath(), bdocName);
-        if (container == null) {
-            return Collections.emptyList();
-        }
-        Signatures signatures = container.signatures();
-        List<Signature> signatureItems = new ArrayList<>();
-        for (int i = 0; i < signatures.size(); i++) {
-            signatureItems.add(signatures.get(i));
-        }
-        return signatureItems;
     }
 
 }

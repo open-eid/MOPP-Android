@@ -60,4 +60,7 @@
     <string name="file_exists_message">Fail sama nimega on juba olemas</string>
     <string name="file_name_empty_message">Fail ei tohi olla tühja nimega</string>
     <string name="select_file">Select File to Add</string>
+    <string name="container_has_file_with_same_name">Konteineris on juba olemas sama nimega fail</string>
+    <string name="file_saved">Fail salvestatud</string>
+    <string name="file_save_failed">Faili salvestamine ebaõnnestus</string>
 </resources>

@@ -23,9 +23,6 @@ import ee.ria.EstEIDUtility.util.DateUtils;
 
 public class BrowseContainersListFragment extends ListFragment {
 
-    private static final String BDOC_EXTENSION = "bdoc";
-
-
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);

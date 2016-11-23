@@ -171,9 +171,10 @@ public class SigningActivity extends AppCompatActivity {
             containerName.append(Constants.BDOC_EXTENSION);
             containerName.setText(containerName.getText().toString());
         }
+
         String bdocFileName = containerName.getText().toString();
         if (FileUtils.fileExists(getFilesDir().getAbsolutePath(), bdocFileName)) {
-            NotificationUtil.showNotification(this, getResources().getString(R.string.file_exists_message), NotificationUtil.NotificationType.WARNING);
+            NotificationUtil.showNotification(this, R.string.file_exists_message, NotificationUtil.NotificationType.WARNING);
             return;
         }
 

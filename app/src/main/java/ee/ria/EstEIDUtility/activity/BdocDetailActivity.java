@@ -15,7 +15,9 @@ import ee.ria.EstEIDUtility.fragment.BdocDetailFragment;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.fragment.BdocFilesFragment;
 import ee.ria.EstEIDUtility.util.Constants;
+import ee.ria.EstEIDUtility.util.ContainerUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
+import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFile;
 
@@ -48,19 +50,22 @@ public class BdocDetailActivity extends AppCompatActivity {
         }
         Container container = FileUtils.getContainer(getFilesDir().getAbsolutePath(), bdocFileName);
 
-        MimeTypeMap myMime = MimeTypeMap.getSingleton();
-        String mimeType = myMime.getMimeTypeFromExtension(FilenameUtils.getExtension(fileItem.getName()));
+        String attachedName = fileItem.getName();
+        if (ContainerUtils.hasDataFile(container.dataFiles(), attachedName)) {
+            NotificationUtil.showNotification(this, R.string.container_has_file_with_same_name, NotificationUtil.NotificationType.WARNING);
+            return;
+        }
 
-        container.addDataFile(getFilesDir().getAbsolutePath() + "/" + fileItem.getName(), mimeType);
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(attachedName));
+
+        container.addDataFile(getFilesDir().getAbsolutePath() + "/" + attachedName, mimeType);
         container.save(getFilesDir().getAbsolutePath() + "/" + bdocFileName);
 
-        for (int i = 0; i < container.dataFiles().size(); i++) {
-            DataFile dataFile = container.dataFiles().get(i);
-            if (dataFile.fileName().equals(fileItem.getName())) {
-                BdocDetailFragment bdocDetailFragment = (BdocDetailFragment) getSupportFragmentManager().findFragmentByTag(BdocDetailFragment.TAG);
-                BdocFilesFragment bdocFilesFragment = (BdocFilesFragment) bdocDetailFragment.getChildFragmentManager().findFragmentByTag(BdocFilesFragment.TAG);
-                bdocFilesFragment.addFile(dataFile);
-            }
+        DataFile dataFile = ContainerUtils.getDataFile(container.dataFiles(), attachedName);
+        if (dataFile != null) {
+            BdocDetailFragment bdocDetailFragment = (BdocDetailFragment) getSupportFragmentManager().findFragmentByTag(BdocDetailFragment.TAG);
+            BdocFilesFragment bdocFilesFragment = (BdocFilesFragment) bdocDetailFragment.getChildFragmentManager().findFragmentByTag(BdocFilesFragment.TAG);
+            bdocFilesFragment.addFile(dataFile);
         }
     }
 

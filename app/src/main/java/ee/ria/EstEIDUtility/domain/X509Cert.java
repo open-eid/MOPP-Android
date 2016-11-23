@@ -56,8 +56,7 @@ public class X509Cert {
     private X509Certificate getSignatureCertificate(byte[] signingCertificateDer) {
         try {
             CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
-            X509Certificate cert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(signingCertificateDer));
-            return cert;
+            return (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(signingCertificateDer));
         } catch (CertificateException e) {
             Log.e(TAG, "CertificateFactory: ", e);
         }

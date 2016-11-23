@@ -1,6 +1,5 @@
 package ee.ria.EstEIDUtility.domain;
 
-
 public class BdocItem {
 
     private String name;
@@ -15,15 +14,8 @@ public class BdocItem {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getCreated() {
         return created;
     }
 
-    public void setCreated(String created) {
-        this.created = created;
-    }
 }

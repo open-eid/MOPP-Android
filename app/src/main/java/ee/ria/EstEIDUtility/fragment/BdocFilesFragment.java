@@ -15,17 +15,15 @@ import android.widget.ListView;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.adapter.DataFilesAdapter;
 import ee.ria.EstEIDUtility.util.Constants;
+import ee.ria.EstEIDUtility.util.ContainerUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFile;
-import ee.ria.libdigidocpp.DataFiles;
 
 public class BdocFilesFragment extends ListFragment {
 
@@ -38,7 +36,7 @@ public class BdocFilesFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         String bdocName = getArguments().getString(Constants.BDOC_NAME);
         Container container = FileUtils.getContainer(getActivity().getFilesDir().getAbsolutePath(), bdocName);
-        List<DataFile> dataFiles = extractDataFiles(container);
+        List<DataFile> dataFiles = ContainerUtils.extractDataFiles(container);
         filesAdapter = new DataFilesAdapter(getActivity(), dataFiles);
         setListAdapter(filesAdapter);
     }
@@ -78,17 +76,6 @@ public class BdocFilesFragment extends ListFragment {
     public void addFile(DataFile dataFile) {
         filesAdapter.add(dataFile);
         setFragmentHeight();
-    }
-    private List<DataFile> extractDataFiles(Container container) {
-        if (container == null) {
-            return Collections.emptyList();
-        }
-        DataFiles containerDataFiles = container.dataFiles();
-        List<DataFile> dataFiles = new ArrayList<>();
-        for (int i = 0; i < containerDataFiles.size(); i++) {
-            dataFiles.add(containerDataFiles.get(i));
-        }
-        return dataFiles;
     }
 
     private void launchFileContentActivity(int position) {

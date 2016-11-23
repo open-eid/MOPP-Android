@@ -31,7 +31,7 @@
             android:paddingRight="5dp"
             android:src="@drawable/ic_mode_edit_black_18dp" />
 
-        <TextView
+        <EditText
             android:id="@+id/listDocName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -39,8 +39,9 @@
             android:layout_toEndOf="@+id/bdocImg"
             android:layout_toLeftOf="@+id/editBdoc"
             android:layout_toRightOf="@+id/bdocImg"
-            android:ellipsize="end"
+            android:padding="2dp"
             android:maxLines="1"
+            android:inputType="none"
             android:text="File name.bdoc"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
