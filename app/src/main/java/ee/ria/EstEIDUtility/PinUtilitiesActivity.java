@@ -98,7 +98,7 @@ public class PinUtilitiesActivity extends AppCompatActivity {
             UnblockPinCallback callback = new UnblockPinTaskCallback(type);
             tokenService.unblockPin(type, currentPinPuk.getText().toString(), callback);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "unblockPin: ", e);
             content.setText(e.getMessage());
         }
     }

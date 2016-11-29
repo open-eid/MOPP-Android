@@ -17,6 +17,7 @@ import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
 import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.token.tokenservice.Token;
 import ee.ria.token.tokenservice.TokenService;
+import ee.ria.token.tokenservice.Util;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
 
@@ -100,7 +101,7 @@ public class ManageEidsActivity extends AppCompatActivity {
         Log.d(TAG, "displayCertInfo: " + tokenService);
 
         CertificateInfoCallback callback = new CertificateInfoCallback();
-        tokenService.readCertificateInHex(Token.CertType.CertSign, callback);
+        tokenService.readCert(Token.CertType.CertSign, callback);
     }
 
     class CertificateInfoCallback implements CertCallback {

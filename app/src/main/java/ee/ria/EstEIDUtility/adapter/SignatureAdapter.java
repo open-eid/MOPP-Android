@@ -16,6 +16,7 @@ import android.widget.TextView;
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.style.BCStyle;
 
+import java.io.File;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
@@ -99,9 +100,12 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Signature sign = getItem(position);
-                        Container container = FileUtils.getContainer(context.getFilesDir().getAbsolutePath(), bdocFileName);
+
+                        Container container = FileUtils.getContainer(context.getFilesDir(), bdocFileName);
                         container.removeSignature(position);
-                        container.save(context.getFilesDir().getAbsolutePath() + "/" + bdocFileName);
+
+                        File bdocFile = FileUtils.getBdocFile(context.getFilesDir(), bdocFileName);
+                        container.save(bdocFile.getAbsolutePath());
                         remove(sign);
                         notifyDataSetChanged();
                     }

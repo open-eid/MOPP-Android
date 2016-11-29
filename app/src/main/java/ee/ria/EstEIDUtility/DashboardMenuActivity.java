@@ -1,6 +1,5 @@
 package ee.ria.EstEIDUtility;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,12 +7,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import ee.ria.EstEIDUtility.activity.BrowseContainersActivity;
+import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.libdigidocpp.digidoc;
 
 public class DashboardMenuActivity extends AppCompatActivity {
@@ -27,7 +30,8 @@ public class DashboardMenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        digidoc.initJava(getFilesDir().getAbsolutePath());
+        File schemaPath = FileUtils.getSchemaPath(getFilesDir());
+        digidoc.initJava(schemaPath.getAbsolutePath());
         setContentView(R.layout.activity_dashboard_menu);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -36,18 +40,28 @@ public class DashboardMenuActivity extends AppCompatActivity {
     }
 
     private void initLibraryConfiguration() {
-        try (ZipInputStream zis = new ZipInputStream(getResources().openRawResource(R.raw.schema))) {
+        //FileUtils.removeAllFiles(getFilesDir());
+        //FileUtils.showAllFiles(getFilesDir());
+
+        File bdocsFilesPath = FileUtils.getBdocsFilesPath(getFilesDir());
+        if (!bdocsFilesPath.exists()) {
+            boolean mkdirs = bdocsFilesPath.mkdirs();
+            if (mkdirs) {
+                Log.d(TAG, "initLibraryConfiguration: created bdocs and bdocs/files directories");
+            }
+        }
+
+        File schemaPath = FileUtils.getSchemaPath(getFilesDir());
+        try {
+            ZipInputStream zis = new ZipInputStream(getResources().openRawResource(R.raw.schema));
             ZipEntry ze;
             while ((ze = zis.getNextEntry()) != null) {
-                try (FileOutputStream out = openFileOutput(ze.getName(), Context.MODE_PRIVATE)) {
-                    byte[] buffer = new byte[1024];
-                    int count;
-                    while ((count = zis.read(buffer)) != -1) {
-                        out.write(buffer, 0, count);
-                    }
-                    zis.closeEntry();
-                }
+                File entryFile = new File(schemaPath, ze.getName());
+                FileOutputStream out = new FileOutputStream(entryFile);
+                IOUtils.copy(zis, out);
+                out.close();
             }
+            zis.close();
         } catch (IOException e) {
             Log.e(TAG, "initLibraryConfiguration: ", e);
         }

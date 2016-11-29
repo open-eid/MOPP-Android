@@ -1,5 +1,7 @@
 package ee.ria.EstEIDUtility.util;
 
+import android.util.Log;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -7,6 +9,7 @@ import java.util.Date;
 
 public class DateUtils {
 
+    private static final String TAG = "DateUtils";
     public static final SimpleDateFormat TODAY_FORMAT = new SimpleDateFormat("HH:mm");
     public static final SimpleDateFormat CURRENT_YEAR_FORMAT = new SimpleDateFormat("dd.MMM");
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
@@ -19,7 +22,7 @@ public class DateUtils {
             Date signedDate = SIGNATURE_FORMAT.parse(trustedSigningTime);
             return APP_FORMAT.format(signedDate);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.e(TAG, "formatSignedDate: ", e);
         }
         return null;
     }

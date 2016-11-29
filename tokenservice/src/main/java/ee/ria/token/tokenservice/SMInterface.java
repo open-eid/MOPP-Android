@@ -27,6 +27,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.acs.smartcard.Reader;
+import com.acs.smartcard.ReaderException;
+import com.identive.libs.SCard;
+import com.identive.libs.WinDefs;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public abstract class SMInterface {
 	private static final String TAG = "";
 	private static final String ACTION_USB_PERMISSION = "ee.ria.token.tokenservice.USB_PERMISSION";
@@ -85,7 +94,7 @@ public abstract class SMInterface {
 		return recv;
 	}
 
-	static boolean checkSW(byte[] resp) {
+	public static boolean checkSW(byte[] resp) {
 		byte sw1 = resp[resp.length - 2];
 		byte sw2 = resp[resp.length - 1];
 		return sw1 == (byte) 0x90 && sw2 == (byte) 0x00;
@@ -120,7 +129,7 @@ public abstract class SMInterface {
 									ctx.setProtocol(slot, Reader.PROTOCOL_T0 | Reader.PROTOCOL_T1);
 									connected.connected();
 								} catch (Exception e) {
-									e.printStackTrace();
+									Log.e(TAG, "onReceive: ", e);
 								}
 							}
 						}
@@ -185,7 +194,7 @@ public abstract class SMInterface {
 				ctx.SCardListReaders(context, deviceList);
 				return deviceList.size() > 0;
 			} catch(Exception e) {
-				e.printStackTrace();
+				Log.e(TAG, "hasSupportedReader: ", e);
 			}
 			return false;
 		}
@@ -240,7 +249,7 @@ public abstract class SMInterface {
 				mService = CardService.getInstance(context.getApplicationContext());
 				mFactory = mService.getTerminalFactory();
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.e(TAG, "Omnikey: ", e);
 			}
 		}
 
@@ -248,7 +257,7 @@ public abstract class SMInterface {
 			try {
 				return mFactory.terminals().list().size() > 0;
 			} catch (CardException e) {
-				e.printStackTrace();
+				Log.e(TAG, "hasSupportedReader: ", e);
 				return false;
 			}
 		}
@@ -266,7 +275,7 @@ public abstract class SMInterface {
 				card = mFactory.terminals().list().get(0).connect("T=0");
 				connected.connected();
 			} catch (CardException e) {
-				e.printStackTrace();
+				Log.e(TAG, "connect: ", e);
 			}
 		}
 
@@ -277,7 +286,7 @@ public abstract class SMInterface {
 				try {
 					card.disconnect(true);
 				} catch (CardException e) {
-					e.printStackTrace();
+					Log.e(TAG, "close: ", e);
 				}
 			}
 			mService.releaseService();
@@ -303,7 +312,7 @@ public abstract class SMInterface {
 				nfc.setTimeout(5000);
 				connected.connected();
 			} catch(IOException e) {
-				e.printStackTrace();
+				Log.e(TAG, "connect: ", e);
 			}
 		}
 
@@ -312,7 +321,7 @@ public abstract class SMInterface {
 			try {
 				nfc.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				Log.e(TAG, "close: ", e);
 			}
 		}
 	}

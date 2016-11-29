@@ -10,6 +10,8 @@ import android.webkit.MimeTypeMap;
 
 import org.apache.commons.io.FilenameUtils;
 
+import java.io.File;
+
 import ee.ria.EstEIDUtility.FileItem;
 import ee.ria.EstEIDUtility.fragment.BdocDetailFragment;
 import ee.ria.EstEIDUtility.R;
@@ -44,11 +46,14 @@ public class BdocDetailActivity extends AppCompatActivity {
     }
 
     private void addToFileList(Uri uri) {
-        FileItem fileItem = FileUtils.resolveFileItemFromUri(uri, getContentResolver(), getFilesDir().getAbsolutePath());
+        File bdocsFilesPath = FileUtils.getBdocsFilesPath(getFilesDir());
+
+        FileItem fileItem = FileUtils.resolveFileItemFromUri(uri, getContentResolver(), bdocsFilesPath.getAbsolutePath());
         if (fileItem == null) {
             return;
         }
-        Container container = FileUtils.getContainer(getFilesDir().getAbsolutePath(), bdocFileName);
+
+        Container container = FileUtils.getContainer(getFilesDir(), bdocFileName);
 
         String attachedName = fileItem.getName();
         if (ContainerUtils.hasDataFile(container.dataFiles(), attachedName)) {
@@ -58,8 +63,11 @@ public class BdocDetailActivity extends AppCompatActivity {
 
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(attachedName));
 
-        container.addDataFile(getFilesDir().getAbsolutePath() + "/" + attachedName, mimeType);
-        container.save(getFilesDir().getAbsolutePath() + "/" + bdocFileName);
+        File bdocFile = FileUtils.getBdocFile(getFilesDir(), bdocFileName);
+        File attachedFile = new File(bdocsFilesPath, attachedName);
+
+        container.addDataFile(attachedFile.getAbsolutePath(), mimeType);
+        container.save(bdocFile.getAbsolutePath());
 
         DataFile dataFile = ContainerUtils.getDataFile(container.dataFiles(), attachedName);
         if (dataFile != null) {

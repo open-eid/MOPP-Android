@@ -2,74 +2,38 @@ package ee.ria.token.tokenservice;
 
 import android.util.SparseArray;
 
-import ee.ria.token.tokenservice.callback.CertCallback;
-import ee.ria.token.tokenservice.callback.SignCallback;
+public interface Token {
 
-public abstract class Token {
+	//public abstract byte[] readCert(CertType type) throws Exception;
+	//public abstract byte[] sign(PinType type, byte[] data, String pin) throws Exception;
+	//public abstract SparseArray<String> readPersonalFile() throws Exception;
 
-	public abstract byte[] readCert(CertType type) throws Exception;
-	public abstract void sign(PinType type, byte[] data, String pin, SignCallback callback);
-	public abstract SparseArray<String> readPersonalFile() throws Exception;
+	byte[] sign(PinType type, String pin, byte[] data) throws Exception;
+	SparseArray<String> readPersonalFile() throws Exception;
+	boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin) throws Exception;
+	boolean unblockPin(PinType pinType, byte[] puk) throws Exception;
+	byte[] readCert(CertType type) throws Exception;
 
-	public enum CertType {
+	SMInterface getSMInterface();
+
+
+	enum CertType {
 		CertAuth((byte)0xAA),
 		CertSign((byte)0xDD);
-		byte value;
+		public byte value;
 		CertType(byte value) {
 			this.value = value;
 		}
 	}
 
-	public enum PinType {
+	enum PinType {
 		PIN1((byte)0x01),
 		PIN2((byte)0x02),
 		PUK((byte)0x00);
-		byte value;
+		public byte value;
 		PinType(byte value) {
 			this.value = value;
 		}
 	}
 
-	//public static CertListener certListener;
-	//public static SignListener signListener;
-	//public static PersonalFileListener personalFileListener;
-
-	/*public interface CertListener {
-		void onCertificateResponse(CertType type, byte[] cert);
-		void onCertificateError(String msg);
-	}
-
-	public void setCertListener(CertListener listener) {
-		Token.certListener = listener;
-	}
-
-	public CertListener getCertListener() {
-		return certListener;
-	}*/
-
-	/*public interface SignListener {
-		void onSignResponse(byte[] signature);
-		void onSignError(String msg);
-	}*/
-
-	/*public void setSignListener(SignListener listener) {
-		Token.signListener = listener;
-	}
-
-	public SignListener getSignListener() {
-		return signListener;
-	}*/
-
-	/*public interface PersonalFileListener {
-		void onPersonalFileResponse(SparseArray<String> result);
-		void onPersonalFileError(String msg);
-	}
-
-	public void setPersonalFileListener(PersonalFileListener listener) {
-		Token.personalFileListener = listener;
-	}
-
-	public PersonalFileListener getPersonalFileListener () {
-		return personalFileListener;
-	}*/
 }

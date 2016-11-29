@@ -11,6 +11,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -20,22 +21,20 @@ import ee.ria.EstEIDUtility.adapter.BdocAdapter;
 import ee.ria.EstEIDUtility.domain.BdocItem;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.DateUtils;
+import ee.ria.EstEIDUtility.util.FileUtils;
 
 public class BrowseContainersListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-
         launchBdocDetailActivity(position);
     }
 
     private void launchBdocDetailActivity(int position) {
         BdocItem bdocItem = (BdocItem) getListAdapter().getItem(position);
-
         Intent intent = new Intent(getActivity(), BdocDetailActivity.class);
         intent.putExtra(Constants.BDOC_NAME, bdocItem.getName());
-
         startActivity(intent);
     }
 
@@ -66,17 +65,16 @@ public class BrowseContainersListFragment extends ListFragment {
     private List<BdocItem> getBdocFiles() {
         List<BdocItem> bdocs = new ArrayList<>();
 
-        List<String> bdocFiles = getBdocContainers();
-        for (String fileName : bdocFiles) {
-            String fileCreated = getFileLastModified(fileName);
-            bdocs.add(new BdocItem(fileName, fileCreated));
+        List<File> bdocFiles = getBdocContainers();
+        for (File file : bdocFiles) {
+            String fileCreated = getFileLastModified(file);
+            bdocs.add(new BdocItem(file.getName(), fileCreated));
         }
 
         return bdocs;
     }
 
-    private String getFileLastModified(String fileName) {
-        File file = getActivity().getFileStreamPath(fileName);
+    private String getFileLastModified(File file) {
         Date fileModified = new Date(file.lastModified());
 
         if (DateUtils.isToday(fileModified)) {
@@ -90,12 +88,18 @@ public class BrowseContainersListFragment extends ListFragment {
         return DateUtils.DATE_FORMAT.format(fileModified);
     }
 
-    private List<String> getBdocContainers() {
-        String[] files = getActivity().fileList();
-        List<String> bdocs = new ArrayList<>();
-        for (String fileName : files) {
-            if (FilenameUtils.getExtension(fileName).equals(Constants.BDOC_EXTENSION)) {
-                bdocs.add(fileName);
+    private List<File> getBdocContainers() {
+        File bdocsPath = FileUtils.getBdocsPath(getActivity().getFilesDir());
+        File[] bdocFiles = bdocsPath.listFiles();
+
+        if (bdocFiles == null) {
+            return Collections.emptyList();
+        }
+
+        List<File> bdocs = new ArrayList<>();
+        for (File bdoc : bdocFiles) {
+            if (FilenameUtils.getExtension(bdoc.getName()).equals(Constants.BDOC_EXTENSION)) {
+                bdocs.add(bdoc);
             }
         }
         return bdocs;

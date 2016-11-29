@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_key">APP_KEY</string>
+    <string name="app_key">f76r4i3037de9zt</string>
 
     <string name="app_name">RIA DigiDoc</string>
     <string name="action_read">Read personal data</string>
@@ -63,4 +63,5 @@
     <string name="container_has_file_with_same_name">Konteineris on juba olemas sama nimega fail</string>
     <string name="file_saved">Fail salvestatud</string>
     <string name="file_save_failed">Faili salvestamine ebaõnnestus</string>
+    <string name="file_handler_error">No handler for this type of file</string>
 </resources>

@@ -19,14 +19,10 @@ public class TokenService extends Service {
 
     private static final String TAG = "TokenService";
 
-    private EstEIDToken eidToken;
     private final IBinder mBinder = new LocalBinder();
     private SMInterface sminterface;
 
-    public void sign(Token.PinType pinType, String pin, byte[] hashToSignHex, SignCallback callback) {
-        Log.d(TAG, "sign: with pin: " + pin);
-        eidToken.sign(pinType, hashToSignHex, pin, callback);
-    }
+    Token token;
 
     public class LocalBinder extends Binder {
         public TokenService getService() {
@@ -37,20 +33,35 @@ public class TokenService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        connectToReader();
+        TokenFactory tokenFactory = new TokenFactory(this);
+        token = tokenFactory.getTokenImpl();
+        sminterface = token.getSMInterface();
         return mBinder;
+    }
+
+    public void sign(Token.PinType pinType, String pin, byte[] data, SignCallback callback) {
+        Log.d(TAG, "sign: with pin: " + pin);
+        try {
+            byte[] sign = token.sign(pinType, pin, data);
+            callback.onSignResponse(sign);
+        } catch (Exception e) {
+            Log.e(TAG, "sign: ", e);
+            callback.onSignError(e.getMessage());
+        }
     }
 
     @Override
     public void onDestroy() {
-        this.unregisterReceiver(sminterface.getReciever());
-        Toast.makeText(this, "Service destroyed, unregisterreceiver called", Toast.LENGTH_LONG).show();
+        if (sminterface != null) {
+            this.unregisterReceiver(sminterface.getReciever());
+            Toast.makeText(this, "Service destroyed, unregisterreceiver called", Toast.LENGTH_LONG).show();
+        }
         super.onDestroy();
     }
 
     public void readPersonalFile(PersonalFileCallback callback) {
         try {
-            SparseArray<String> result = eidToken.readPersonalFile();
+            SparseArray<String> result = token.readPersonalFile();
             callback.onPersonalFileResponse(result);
         } catch (Exception e) {
             Log.e(TAG, "readPersonalFile: ", e);
@@ -58,9 +69,9 @@ public class TokenService extends Service {
         }
     }
 
-    public void changePin(Token.PinType pinType, String oldPin, String newPin, ChangePinCallback callback) {
+    public void changePin(Token.PinType pinType, String currentPin, String newPin, ChangePinCallback callback) {
         try {
-            boolean changed = eidToken.changePin(oldPin.getBytes(), newPin.getBytes(), pinType);
+            boolean changed = token.changePin(pinType, currentPin.getBytes(), newPin.getBytes());
             if (changed) {
                 callback.success();
             } else {
@@ -74,7 +85,7 @@ public class TokenService extends Service {
 
     public void unblockPin(Token.PinType pinType, String puk, UnblockPinCallback callback) {
         try {
-            boolean unblocked = eidToken.unblockPin(puk.getBytes(), pinType);
+            boolean unblocked = token.unblockPin(pinType, puk.getBytes());
             if (unblocked) {
                 callback.success();
             } else {
@@ -86,28 +97,13 @@ public class TokenService extends Service {
         }
     }
 
-    public void readCertificateInHex(Token.CertType type, CertCallback certCallback) {
+    public void readCert(Token.CertType type, CertCallback certCallback) {
         try {
-            byte[] certBytes = eidToken.readCert(type);
+            byte[] certBytes = token.readCert(type);
             certCallback.onCertificateResponse(certBytes);
         } catch (Exception e) {
             Log.e(TAG, "readCertificateInHex: ", e);
             certCallback.onCertificateError(e.getMessage());
         }
     }
-
-    private void connectToReader() {
-        sminterface = SMInterface.getInstance(this, SMInterface.ACS);
-        if (sminterface == null) {
-            return;
-        }
-        sminterface.connect(new SMInterface.Connected() {
-            @Override
-            public void connected() {
-                Log.i("SIMINTERFACE_CONNECT", "connected!");
-            }
-        });
-        eidToken = new EstEIDToken(sminterface);
-    }
-
 }

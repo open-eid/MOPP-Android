@@ -25,6 +25,7 @@ import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.token.tokenservice.Token;
 import ee.ria.token.tokenservice.TokenService;
+import ee.ria.token.tokenservice.Util;
 import ee.ria.token.tokenservice.callback.SignCallback;
 
 public class SigningActivity extends AppCompatActivity {
@@ -102,7 +103,7 @@ public class SigningActivity extends AppCompatActivity {
 
                 tokenService.sign(Token.PinType.PIN2, pin, outputStream.toByteArray(), callback);
             } catch(Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "signText: ", e);
                 content.setText(e.getMessage());
             }
         } else {
@@ -127,14 +128,14 @@ public class SigningActivity extends AppCompatActivity {
     }
 
     public void verify(View view){
-        EditText textToSign = (EditText)findViewById(R.id.textToSign);
+        String textToSign = "Some text please";
         try {
             Signature sig = Signature.getInstance("SHA1withRSA");
             sig.initVerify(Util.getX509Certificate(signCert).getPublicKey());
-            sig.update(textToSign.getText().toString().getBytes());
+            sig.update(textToSign.getBytes());
             content.setText("Signature verify: " + sig.verify(signedBytes));
         } catch (Exception e){
-            e.printStackTrace();
+            Log.e(TAG, "verify: ", e);
             content.setText("Signature verify: failed\n" + e.getMessage());
         }
     }
@@ -161,7 +162,7 @@ public class SigningActivity extends AppCompatActivity {
         }
 
         String bdocFileName = containerName.getText().toString();
-        if (FileUtils.fileExists(getFilesDir().getAbsolutePath(), bdocFileName)) {
+        if (FileUtils.bdocExists(getFilesDir(), bdocFileName)) {
             NotificationUtil.showNotification(this, R.string.file_exists_message, NotificationUtil.NotificationType.WARNING);
             return;
         }

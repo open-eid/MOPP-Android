@@ -60,6 +60,7 @@ public class BdocDetailFragment extends Fragment {
         View fragLayout = inflater.inflate(R.layout.fragment_bdoc_detail, containerView, false);
 
         fileName = getArguments().getString(Constants.BDOC_NAME);
+
         bdocFile = new File(getActivity().getFilesDir().getAbsolutePath() + "/" + fileName);
 
         createFilesListFragment();
@@ -190,7 +191,8 @@ public class BdocDetailFragment extends Fragment {
     private class AddFileButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Container container = FileUtils.getContainer(getActivity().getFilesDir().getAbsolutePath(), fileName);
+            //Container container = FileUtils.getContainer(getActivity().getFilesDir().getAbsolutePath(), fileName);
+            Container container = FileUtils.getContainer(getContext().getFilesDir(), fileName);
             if (container.signatures().size() > 0) {
                 NotificationUtil.showNotification(getActivity(), R.string.add_file_remove_signatures, NotificationUtil.NotificationType.ERROR);
                 return;

@@ -27,7 +27,8 @@ public class BdocSignaturesFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         String bdocFileName = getArguments().getString(Constants.BDOC_NAME);
 
-        Container container = FileUtils.getContainer(getActivity().getFilesDir().getAbsolutePath(), bdocFileName);
+        //Container container = FileUtils.getContainer(getActivity().getFilesDir().getAbsolutePath(), bdocFileName);
+        Container container = FileUtils.getContainer(getContext().getFilesDir(), bdocFileName);
         List<Signature> signatures = ContainerUtils.extractSignatures(container);
 
         signatureAdapter = new SignatureAdapter(getActivity(), signatures, bdocFileName);

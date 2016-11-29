@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +18,13 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.util.List;
 
+import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.adapter.DataFilesAdapter;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.ContainerUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
+import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFile;
 
@@ -35,7 +38,9 @@ public class BdocFilesFragment extends ListFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String bdocName = getArguments().getString(Constants.BDOC_NAME);
-        Container container = FileUtils.getContainer(getActivity().getFilesDir().getAbsolutePath(), bdocName);
+
+        Container container = FileUtils.getContainer(getContext().getFilesDir(), bdocName);
+
         List<DataFile> dataFiles = ContainerUtils.extractDataFiles(container);
         filesAdapter = new DataFilesAdapter(getActivity(), dataFiles);
         setListAdapter(filesAdapter);
@@ -80,21 +85,24 @@ public class BdocFilesFragment extends ListFragment {
 
     private void launchFileContentActivity(int position) {
         DataFile file = (DataFile) getListAdapter().getItem(position);
-
         String fileName = file.fileName();
 
-        file.saveAs(getActivity().getFilesDir().getAbsolutePath() + "/" + fileName);
+        File bdocsFilesPath = FileUtils.getBdocsFilesPath(getContext().getFilesDir());
+        File attachment = new File(bdocsFilesPath, fileName);
 
-        MimeTypeMap myMime = MimeTypeMap.getSingleton();
+        Uri contentUri = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, attachment);
+        getContext().grantUriPermission(BuildConfig.APPLICATION_ID, contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        String mimeType = myMime.getMimeTypeFromExtension(FilenameUtils.getExtension(fileName));
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(fileName));
+        intent.setDataAndType(contentUri, mimeType);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-        File f = new File(getActivity().getFilesDir().getAbsolutePath() + "/" + fileName);
-        intent.setDataAndType(Uri.fromFile(f), mimeType);
         try {
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Log.e(TAG, "launchFileContentActivity: no handler for this type of file ", e);
+            NotificationUtil.showNotification(getActivity(), R.string.file_handler_error, NotificationUtil.NotificationType.ERROR);
         }
     }
 
