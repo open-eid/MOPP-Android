@@ -30,7 +30,7 @@ dependencies {
     compile 'com.dropbox.core:dropbox-core-sdk:2.1.1'
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
     compile 'com.android.support:recyclerview-v7:23.4.0'
-    compile project(':tokenaidllibrary')
+    compile project(':tokenservice')
     compile 'com.madgag.spongycastle:pkix:1.54.0.0'
     compile 'com.madgag.spongycastle:core:1.54.0.0'
 

@@ -1,13 +1,4 @@
-package ee.ria.EstEIDUtility;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import com.acs.smartcard.Reader;
-import com.acs.smartcard.ReaderException;
-import com.identive.libs.SCard;
-import com.identive.libs.WinDefs;
+package ee.ria.token.tokenservice;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -25,16 +16,33 @@ import android.smartcardio.ResponseAPDU;
 import android.smartcardio.TerminalFactory;
 import android.smartcardio.ipc.CardService;
 import android.smartcardio.ipc.ICardService;
+import android.util.Log;
+
+import com.acs.smartcard.Reader;
+import com.acs.smartcard.ReaderException;
+import com.identive.libs.SCard;
+import com.identive.libs.WinDefs;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class SMInterface {
-	private static final String ACTION_USB_PERMISSION = "ee.ria.EstEIDUtil.USB_PERMISSION";
+	private static final String TAG = "";
+	private static final String ACTION_USB_PERMISSION = "ee.ria.token.tokenservice.USB_PERMISSION";
 	public static final String ACS = "ACS";
 	public static final String Identive = "Identive";
 	public static final String Omnikey = "Omnikey";
 
+	BroadcastReceiver reciever;
+
 	public abstract byte[] transmit(byte[] apdu) throws Exception;
 	public abstract void connect(Connected connected);
 	public abstract void close();
+
+	public BroadcastReceiver getReciever() {
+		return reciever;
+	}
 
 	public static abstract class Connected {
 		public abstract void connected();
@@ -83,8 +91,6 @@ public abstract class SMInterface {
 		return sw1 == (byte) 0x90 && sw2 == (byte) 0x00;
 	}
 
-
-
 	private static class ACS extends SMInterface {
 		private PendingIntent permissionIntent;
 		private UsbManager manager;
@@ -97,28 +103,31 @@ public abstract class SMInterface {
 			ctx = new Reader(manager);
 
 			permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
-			context.registerReceiver(new BroadcastReceiver() {
+			reciever = new BroadcastReceiver() {
 				@Override
 				public void onReceive(Context context, Intent intent) {
 					String action = intent.getAction();
+					Log.d(TAG, "onReceive: " + action + " " + ACTION_USB_PERMISSION);
 					if (ACTION_USB_PERMISSION.equals(action)) {
 						synchronized (this) {
-							UsbDevice device = (UsbDevice)intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+							UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 							if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false) && device != null) {
 								try {
 									ctx.open(device);
 									Thread.sleep(200); // HACK: card is not ready for power on
 									byte[] atr = ctx.power(slot, Reader.CARD_WARM_RESET);
+									Log.d(TAG, "onReceive: " + atr);
 									ctx.setProtocol(slot, Reader.PROTOCOL_T0 | Reader.PROTOCOL_T1);
 									connected.connected();
-								} catch(Exception e) {
+								} catch (Exception e) {
 									e.printStackTrace();
 								}
 							}
 						}
 					}
 				}
-			}, new IntentFilter(ACTION_USB_PERMISSION));
+			};
+			context.registerReceiver(reciever, new IntentFilter(ACTION_USB_PERMISSION));
 		}
 
 		boolean hasSupportedReader() {
@@ -278,7 +287,7 @@ public abstract class SMInterface {
 	public static class NFC extends SMInterface {
 		private IsoDep nfc;
 
-		NFC(Tag tag) {
+		public NFC(Tag tag) {
 			nfc = IsoDep.get(tag);
 		}
 

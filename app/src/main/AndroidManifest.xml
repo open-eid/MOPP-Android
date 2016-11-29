@@ -20,6 +20,15 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
 
+        <service
+            android:name="ee.ria.token.tokenservice.TokenService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="ee.ria.token.tokenservice.TokenService" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".DashboardMenuActivity"
             android:label="@string/app_name"

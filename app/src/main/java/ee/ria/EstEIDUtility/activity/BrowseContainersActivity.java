@@ -37,28 +37,9 @@ public class BrowseContainersActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        initLibraryConfiguration();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-    }
-
-    private void initLibraryConfiguration() {
-        try (ZipInputStream zis = new ZipInputStream(getResources().openRawResource(R.raw.schema))) {
-            ZipEntry ze;
-            while ((ze = zis.getNextEntry()) != null) {
-                try (FileOutputStream out = openFileOutput(ze.getName(), Context.MODE_PRIVATE)) {
-                    byte[] buffer = new byte[1024];
-                    int count;
-                    while ((count = zis.read(buffer)) != -1) {
-                        out.write(buffer, 0, count);
-                    }
-                    zis.closeEntry();
-                }
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "initLibraryConfiguration: ", e);
-        }
     }
 
     /**

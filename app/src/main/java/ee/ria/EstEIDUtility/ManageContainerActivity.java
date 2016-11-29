@@ -1,17 +1,26 @@
 package ee.ria.EstEIDUtility;
 
 import android.app.AlertDialog;
+import android.app.Service;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.OpenableColumns;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.commons.io.IOUtils;
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
@@ -31,94 +40,151 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import ee.ria.EstEIDUtility.domain.X509Cert;
+import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
+import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.Signature;
 import ee.ria.libdigidocpp.digidoc;
+import ee.ria.token.tokenservice.*;
+import ee.ria.token.tokenservice.callback.CertCallback;
+import ee.ria.token.tokenservice.callback.SignCallback;
 
 public class ManageContainerActivity extends AppCompatActivity
         implements ContainerInfoFragment.OnFragmentInteractionListener, FileItemFragment.OnListFragmentInteractionListener {
 
+    private static final String TAG = "ManageContainerActivity";
     private static final int CHOOSE_FILE_REQUEST = 1;
 
     private Signature signature;
     private Container container;
-    private SMInterface sminterface = null;
-    private EstEIDToken eidToken;
     private TextView debug;
 
-    private void connectReader() {
-        sminterface = SMInterface.getInstance(this, SMInterface.ACS);
-        if (sminterface == null) {
-            return;
-        }
-        sminterface.connect(new SMInterface.Connected() {
-            @Override
-            public void connected() {
-                appendDebug("SMINTERFACE_CONNECTED", "true");
-            }
-        });
-        eidToken = new EstEIDToken(sminterface, this);
+    private TokenService tokenService;
+    private TokenServiceConnection tokenServiceConnection;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ServiceCreatedCallback callback = new TokenServiceCreatedCallback();
+        tokenServiceConnection = new TokenServiceConnection(this, callback);
+        tokenServiceConnection.connectService();
     }
 
-    private void prepareSignature(){
-        if (eidToken != null) {
-            eidToken.setCertListener(new Token.CertListener() {
-                @Override
-                public void onCertificateResponse(Token.CertType type, byte[] cert) {
-                    appendDebug("GOT_CERT", "true");
-                    signature = container.prepareWebSignature(cert);
-                    signContainer(signature.dataToSign());
-                }
+    class TokenServiceCreatedCallback implements ServiceCreatedCallback {
 
-                @Override
-                public void onCertificateError(String msg) {
-                    new AlertDialog.Builder(ManageContainerActivity.this)
-                            .setTitle(R.string.cert_read_failed)
-                            .setMessage(msg)
-                            .setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            }).show();
-                }
-            });
-            eidToken.readCert(EstEIDToken.CertType.CertSign);
+        @Override
+        public void created(Service service) {
+            tokenService = (TokenService) service;
+            Toast.makeText(ManageContainerActivity.this, "Service connected", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void failed() {
+            Log.e(TAG, "failed: ", null);
+        }
+
+        @Override
+        public void disconnected() {
+            tokenService = null;
+            Toast.makeText(ManageContainerActivity.this, "Service disconnected", Toast.LENGTH_LONG).show();
+        }
+    }
+    /*private void connectService() {
+        ServiceConnection tokenServiceConnection = new TokenServiceConnection();
+        Intent intent = new Intent(this, TokenService.class);
+        bindService(intent, tokenServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    class TokenServiceConnection implements ServiceConnection {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            TokenService.LocalBinder binder = (TokenService.LocalBinder) service;
+            tokenService = binder.getService();
+            Toast.makeText(ManageContainerActivity.this, "Service connected", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            tokenService = null;
+            Toast.makeText(ManageContainerActivity.this, "Service disconnected", Toast.LENGTH_LONG).show();
+        }
+    }*/
+
+    private void prepareSignature() {
+        CertCallback certCallback = new CertReadCallback(Token.CertType.CertSign);
+        tokenService.readCertificateInHex(Token.CertType.CertSign, certCallback);
+    }
+
+    class CertReadCallback implements CertCallback {
+
+        Token.CertType type;
+
+        public CertReadCallback(Token.CertType type) {
+            this.type = type;
+        }
+
+        @Override
+        public void onCertificateResponse(byte[] cert) {
+            appendDebug("GOT_CERT", "true");
+            Log.d(TAG, "onCertificateResponse: " + type);
+            signature = container.prepareWebSignature(cert);
+            signContainer(signature.dataToSign());
+        }
+
+        @Override
+        public void onCertificateError(String msg) {
+            new AlertDialog.Builder(ManageContainerActivity.this)
+                    .setTitle(R.string.cert_read_failed)
+                    .setMessage(msg)
+                    .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    }).show();
         }
     }
 
     private void signContainer(byte[] hashToSign) {
         appendDebug("HASH_TO_SIGN", String.valueOf(hashToSign.length));
-        eidToken.setSignListener(new Token.SignListener() {
-            @Override
-            public void onSignResponse(byte[] signature) {
-                appendDebug("SIGN_RESULT", "true");
-                addSignatureToContainer(signature);
-            }
+        final EditText pin = new EditText(this);
+        pin.setFilters(new InputFilter[]{new InputFilter.LengthFilter(8)});
+        pin.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
 
-            @Override
-            public void onSignError(String msg) {
-                appendDebug("SIGN_ERROR", msg);
-                File dir = new File(getCacheDir().getPath());
-                if (dir.exists()) {
-                    for (File f : dir.listFiles()) {
-                        if (f.getName().equalsIgnoreCase("digidocpp.log")) {
-                            String log = readAllText(f);
-                            appendDebug("NATIVE_LOG", log);
-                        }
+
+        SignCallback callback = new SignTaskCallback();
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            outputStream.write(new byte[] { 0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, (byte) 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20 }); // SHA256 OID
+            outputStream.write(hashToSign);
+
+            tokenService.sign(Token.PinType.PIN2, pin.getText().toString(), outputStream.toByteArray(), callback);
+        } catch(Exception e) {
+            Log.e(TAG, "signContainer: ", e);
+            appendDebug("SIGN_EXCEPTION", e.getMessage());
+        }
+    }
+
+    class SignTaskCallback implements SignCallback {
+
+        @Override
+        public void onSignResponse(byte[] signature) {
+            appendDebug("SIGN_RESULT", "true");
+            addSignatureToContainer(signature);
+        }
+
+        @Override
+        public void onSignError(String msg) {
+            appendDebug("SIGN_ERROR", msg);
+            File dir = new File(getCacheDir().getPath());
+            if (dir.exists()) {
+                for (File f : dir.listFiles()) {
+                    if (f.getName().equalsIgnoreCase("digidocpp.log")) {
+                        String log = readAllText(f);
+                        appendDebug("NATIVE_LOG", log);
                     }
                 }
             }
-        });
-
-        try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            outputStream.write(new byte[] { 0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, (byte) 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20 }); // SHA256 OID
-            outputStream.write(hashToSign);
-            eidToken.sign(Token.PinType.PIN2, outputStream.toByteArray());
-        } catch(Exception e) {
-            e.printStackTrace();
-            appendDebug("SIGN_EXCEPTION", e.getMessage());
         }
     }
 
@@ -154,15 +220,19 @@ public class ManageContainerActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         debug = (TextView) findViewById(R.id.container_debug);
         loadLibDigidocpp();
-        connectReader();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (tokenServiceConnection != null) {
+            unbindService(tokenServiceConnection);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (sminterface != null) {
-            sminterface.close();
-        }
     }
 
     private void appendDebug(String event, String text) {

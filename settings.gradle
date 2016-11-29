@@ -1,1 +1,1 @@
-include ':app', ':tokenaidllibrary', ':tokenaidlservice'
+include ':app', ':tokenaidllibrary', ':tokenaidlservice', ':tokenservice'

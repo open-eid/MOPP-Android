@@ -1,31 +1,30 @@
 package ee.ria.EstEIDUtility;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.app.Service;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Looper;
-import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ee.ria.aidl.token.tokenaidllibrary.PinActionsListener;
-import ee.ria.aidl.token.tokenaidllibrary.TokenAidlInterface;
+import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
+import ee.ria.EstEIDUtility.service.TokenServiceConnection;
+import ee.ria.token.tokenservice.Token;
+import ee.ria.token.tokenservice.TokenService;
+import ee.ria.token.tokenservice.callback.ChangePinCallback;
+import ee.ria.token.tokenservice.callback.UnblockPinCallback;
 
 public class PinUtilitiesActivity extends AppCompatActivity {
 
+    private static final String TAG = "PinUtilitiesActivity";
+
     TextView content;
-    private TokenAidlInterface service;
-    private RemoteServiceConnection serviceConnection;
+    private TokenService tokenService;
+    private TokenServiceConnection tokenServiceConnection;
     private boolean serviceBound = false;
-    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,29 +34,48 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         content = (TextView) findViewById(R.id.pin_util_content);
-        handler = new Handler(Looper.getMainLooper());
     }
+
 
     @Override
     protected void onStart() {
         super.onStart();
-        connectService();
+        ServiceCreatedCallback callback = new TokenServiceCreatedCallback();
+        tokenServiceConnection = new TokenServiceConnection(this, callback);
+        tokenServiceConnection.connectService();
+    }
+
+    class TokenServiceCreatedCallback implements ServiceCreatedCallback {
+
+        @Override
+        public void created(Service service) {
+            tokenService = (TokenService) service;
+            enableButtons(true);
+            serviceBound = true;
+            Toast.makeText(PinUtilitiesActivity.this, "Service connected", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void failed() {
+            Log.e(TAG, "failed: ", null);
+        }
+
+        @Override
+        public void disconnected() {
+            tokenService = null;
+            serviceBound = false;
+            enableButtons(false);
+            Toast.makeText(PinUtilitiesActivity.this, "Service disconnected", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         if (serviceBound) {
-            unbindService(serviceConnection);
+            unbindService(tokenServiceConnection);
             serviceBound = false;
         }
-    }
-
-    private void connectService() {
-        serviceConnection = new RemoteServiceConnection();
-        Intent i = new Intent("ee.ria.aidl.token.tokenaidlservice.TokenService");
-        i.setPackage("ee.ria.aidl.token.tokenaidlservice");
-        bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void changePin(View view) {
@@ -65,13 +83,10 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         EditText newPinPuk = (EditText)findViewById(R.id.pin_util_new);
         try {
             Token.PinType type = getPinType(view.getId());
-            switch (view.getId()) {
-                case R.id.pin_util_change1: service.changePin1(new ServiceCallbackStub(type), currentPinPuk.getText().toString(), newPinPuk.getText().toString()); break;
-                case R.id.pin_util_change2: service.changePin2(new ServiceCallbackStub(type), currentPinPuk.getText().toString(), newPinPuk.getText().toString()); break;
-                case R.id.pin_util_change_puk: service.changePuk(new ServiceCallbackStub(type), currentPinPuk.getText().toString(), newPinPuk.getText().toString()); break;
-            }
+            ChangePinCallback callback = new ChangePinTaskCallback(type);
+            tokenService.changePin(type, currentPinPuk.getText().toString(), newPinPuk.getText().toString(), callback);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "changePin: ", e);
             content.setText(e.getMessage());
         }
     }
@@ -80,28 +95,71 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         EditText currentPinPuk = (EditText)findViewById(R.id.pin_util_current);
         try {
             Token.PinType type = getPinType(view.getId());
-            switch (view.getId()) {
-                case R.id.pin_util_unblock1: service.unblockPin1(new ServiceCallbackStub(type), currentPinPuk.getText().toString()); break;
-                case R.id.pin_util_unblock2: service.unblockPin2(new ServiceCallbackStub(type), currentPinPuk.getText().toString()); break;
-            }
+            UnblockPinCallback callback = new UnblockPinTaskCallback(type);
+            tokenService.unblockPin(type, currentPinPuk.getText().toString(), callback);
         } catch (Exception e) {
             e.printStackTrace();
             content.setText(e.getMessage());
         }
     }
 
-    private Token.PinType getPinType(int id) {
-        switch (id) {
-            case R.id.pin_util_change1: return Token.PinType.PIN1;
-            case R.id.pin_util_change2: return Token.PinType.PIN2;
-            case R.id.pin_util_unblock1: return Token.PinType.PIN1;
-            case R.id.pin_util_unblock2: return Token.PinType.PIN2;
-            case R.id.pin_util_change_puk: return Token.PinType.PUK;
+    //TODO: callback behaviour impl
+    private class ChangePinTaskCallback implements ChangePinCallback {
+        private Token.PinType pinType;
+
+        ChangePinTaskCallback(Token.PinType pinType) {
+            this.pinType = pinType;
         }
-        return null;
+
+        @Override
+        public void success() {
+            Log.d(TAG, "success: ");
+            String text = pinType.name() + "change success";
+            content.setText(text);
+        }
+
+        @Override
+        public void error(Exception e) {
+            String text;
+            if (e != null) {
+                Log.e(TAG, "error: ", e);
+                text = pinType.name() + " change failed. Reason: " + e.getMessage();
+            } else {
+                text = pinType.name() + " change failed for unknown reason";
+            }
+            content.setText(text);
+        }
     }
 
-    public void enableButtons( boolean enable) {
+    //TODO: callback behaviour impl
+    private class UnblockPinTaskCallback implements UnblockPinCallback {
+        private Token.PinType pinType;
+
+        UnblockPinTaskCallback(Token.PinType pinType) {
+            this.pinType = pinType;
+        }
+
+        @Override
+        public void success() {
+            String text = pinType.name() + "unblocked.";
+            Log.d(TAG, "success: " + text);
+            content.setText(text);
+        }
+
+        @Override
+        public void error(Exception e) {
+            String text;
+            if (e != null) {
+                Log.e(TAG, "error: ", e);
+                text = pinType.name() + " unblocking failed. Reason: " + e.getMessage();
+            } else {
+                text = pinType.name() + " unblocking failed for unknown reason";
+            }
+            content.setText(text);
+        }
+    }
+
+    public void enableButtons(boolean enable) {
         findViewById(R.id.pin_util_current).setEnabled(enable);
         findViewById(R.id.pin_util_new).setEnabled(enable);
         findViewById(R.id.pin_util_change1).setEnabled(enable);
@@ -111,52 +169,20 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         findViewById(R.id.pin_util_unblock2).setEnabled(enable);
     }
 
-    class RemoteServiceConnection implements ServiceConnection {
-        public void onServiceConnected(ComponentName name, IBinder boundService) {
-            service = TokenAidlInterface.Stub.asInterface((IBinder) boundService);
-            serviceBound = true;
-            enableButtons(true);
-            Toast.makeText(PinUtilitiesActivity.this, "Service connected", Toast.LENGTH_LONG)
-                    .show();
+    private Token.PinType getPinType(int id) {
+        switch (id) {
+            case R.id.pin_util_change1:
+                return Token.PinType.PIN1;
+            case R.id.pin_util_change2:
+                return Token.PinType.PIN2;
+            case R.id.pin_util_unblock1:
+                return Token.PinType.PIN1;
+            case R.id.pin_util_unblock2:
+                return Token.PinType.PIN2;
+            case R.id.pin_util_change_puk:
+                return Token.PinType.PUK;
         }
-
-        public void onServiceDisconnected(ComponentName name) {
-            service = null;
-            serviceBound = false;
-            enableButtons(false);
-            Toast.makeText(PinUtilitiesActivity.this, "Service disconnected", Toast.LENGTH_LONG)
-                    .show();
-        }
-
-    }
-
-    private class ServiceCallbackStub extends PinActionsListener.Stub {
-
-        private Token.PinType pinType;
-
-        public ServiceCallbackStub(Token.PinType pinType) {
-            super();
-            this.pinType = pinType;
-        }
-
-        @Override
-        public void onPinActionSuccessful() throws RemoteException {
-            showResultOnUiThread(pinType.name() + " change success");
-        }
-
-        @Override
-        public void onPinActionFailed(final String reason) throws RemoteException {
-            showResultOnUiThread(pinType.name() + " change failed" + "reason: " + reason);
-        }
-
-        private void showResultOnUiThread(final String result) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    content.setText(result);
-                }
-            });
-        }
+        return null;
     }
 
 }

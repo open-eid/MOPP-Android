@@ -1,5 +1,7 @@
 package ee.ria.EstEIDUtility;
 
+import android.util.Log;
+
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.ByteArrayInputStream;
@@ -8,6 +10,9 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 public class Util {
+
+	private static final String TAG = "Util";
+
 	static byte[] concat(byte[]...arrays) {
 		int size = 0;
 		for (byte[] array: arrays) {
@@ -47,7 +52,7 @@ public class Util {
 			}
 			return cert.getSubjectDN().getName();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(TAG, "getCommonName: ", e);
 		}
 		return "";
 	}
