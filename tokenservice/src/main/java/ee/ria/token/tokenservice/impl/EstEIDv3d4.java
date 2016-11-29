@@ -86,11 +86,6 @@ public class EstEIDv3d4 implements Token {
         return byteStream.toByteArray();
     }
 
-    @Override
-    public SMInterface getSMInterface() {
-        return sminterface;
-    }
-
     private boolean login(PinType pinType, byte[] pin) throws Exception {
         byte[] recv = sminterface.transmit(Util.concat(new byte[]{0x00, 0x20, 0x00, pinType.value, (byte) pin.length}, pin));
         return SMInterface.checkSW(recv);

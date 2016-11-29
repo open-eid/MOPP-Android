@@ -14,15 +14,16 @@ import ee.ria.token.tokenservice.callback.ChangePinCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
 import ee.ria.token.tokenservice.callback.SignCallback;
 import ee.ria.token.tokenservice.callback.UnblockPinCallback;
+import ee.ria.token.tokenservice.util.TokenFactory;
 
 public class TokenService extends Service {
 
     private static final String TAG = "TokenService";
 
     private final IBinder mBinder = new LocalBinder();
-    private SMInterface sminterface;
 
-    Token token;
+    private Token token;
+    private SMInterface sminterface;
 
     public class LocalBinder extends Binder {
         public TokenService getService() {
@@ -30,13 +31,38 @@ public class TokenService extends Service {
         }
     }
 
+    class SMConnected extends SMInterface.Connected {
+
+        @Override
+        public void connected() {
+            Log.i("SIMINTERFACE_CONNECT", "connected!");
+
+            try {
+                sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x00, 0x0C});
+                byte[] versionBytes = sminterface.transmitExtended(new byte[]{0x00, (byte) 0xCA, 0x01, 0x00, 0x03});
+                token = TokenFactory.getTokenImpl(versionBytes, sminterface);
+            } catch (Exception e) {
+                Log.e(TAG, "getTokenImpl: ", e);
+            }
+        }
+    }
+
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        TokenFactory tokenFactory = new TokenFactory(this);
-        token = tokenFactory.getTokenImpl();
-        sminterface = token.getSMInterface();
+        SMConnected callback = new SMConnected();
+        sminterface = getSIMInterface(callback);
         return mBinder;
+    }
+
+    private SMInterface getSIMInterface(SMConnected callback) {
+        final SMInterface sminterface = SMInterface.getInstance(this, SMInterface.ACS);
+        if (sminterface == null) {
+            return null;
+        }
+        sminterface.connect(callback);
+        return sminterface;
     }
 
     public void sign(Token.PinType pinType, String pin, byte[] data, SignCallback callback) {
