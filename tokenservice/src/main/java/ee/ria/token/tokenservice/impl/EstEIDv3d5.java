@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 
 import ee.ria.token.tokenservice.SMInterface;
 import ee.ria.token.tokenservice.Token;
+import ee.ria.token.tokenservice.util.AlgorithmUtils;
 import ee.ria.token.tokenservice.util.Util;
 
 public class EstEIDv3d5 implements Token {
@@ -32,7 +33,8 @@ public class EstEIDv3d5 implements Token {
                 case PIN1:
                     return sminterface.transmitExtended(Util.concat(new byte[]{0x00, (byte) 0x88, 0x00, 0x00, (byte) data.length}, data));
                 case PIN2:
-                    return sminterface.transmitExtended(Util.concat(new byte[]{0x00, 0x2A, (byte) 0x9E, (byte) 0x9A, (byte) data.length}, data));
+                    byte[] padded = AlgorithmUtils.addPadding(data);
+                    return sminterface.transmitExtended(Util.concat(new byte[]{0x00, 0x2A, (byte) 0x9E, (byte) 0x9A, (byte) padded.length}, padded));
                 default:
                     throw new Exception("Unsuported");
             }

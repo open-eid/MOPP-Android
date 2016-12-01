@@ -13,8 +13,8 @@ import android.widget.Toast;
 
 import org.apache.commons.io.FilenameUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 
 import ee.ria.EstEIDUtility.R;
@@ -25,10 +25,10 @@ import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.token.tokenservice.Token;
 import ee.ria.token.tokenservice.TokenService;
-import ee.ria.token.tokenservice.util.Util;
 import ee.ria.token.tokenservice.callback.SignCallback;
 import ee.ria.token.tokenservice.exception.PinVerificationException;
-import ee.ria.token.tokenservice.util.SHA;
+import ee.ria.token.tokenservice.util.AlgorithmUtils;
+import ee.ria.token.tokenservice.util.Util;
 
 public class SigningActivity extends AppCompatActivity {
 
@@ -90,24 +90,13 @@ public class SigningActivity extends AppCompatActivity {
         }
     }
 
-    public void signText(final View view) {
+    public void signText(final View view) throws NoSuchAlgorithmException {
         EditText textToSign = (EditText)findViewById(R.id.textToSign);
         String pin = textToSign.getText().toString();
-
         SignCallback callback = new SignTaskCallback();
-
         if (view.getId() == R.id.button_sign) {
-            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-
-                byte[] textDigest = MessageDigest.getInstance("SHA-1").digest(textToSign.getText().toString().getBytes());
-                outputStream.write(SHA.SHA_1.value);
-                outputStream.write(textDigest);
-
-                tokenService.sign(Token.PinType.PIN2, pin, outputStream.toByteArray(), callback);
-            } catch(Exception e) {
-                Log.e(TAG, "signText: ", e);
-                content.setText(e.getMessage());
-            }
+            byte[] textDigest = MessageDigest.getInstance("SHA-1").digest(textToSign.getText().toString().getBytes());
+            tokenService.sign(Token.PinType.PIN2, pin, AlgorithmUtils.addPadding(textDigest), callback);
         } else {
             tokenService.sign(Token.PinType.PIN1, pin,
                     new byte[]{0x3F, 0x4B, (byte) 0xE6, 0x4B, (byte) 0xC9, 0x06, 0x6F, 0x14, (byte) 0x8A, 0x39, 0x21, (byte) 0xD8, 0x7C, (byte) 0x94, 0x41, 0x40, (byte) 0x99, 0x72, 0x4B, 0x58, 0x75, (byte) 0xA1, 0x15, 0x78},
