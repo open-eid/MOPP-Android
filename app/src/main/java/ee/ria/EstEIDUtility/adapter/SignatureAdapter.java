@@ -28,7 +28,6 @@ import ee.ria.libdigidocpp.Signature;
 
 public class SignatureAdapter extends ArrayAdapter<Signature> implements Filterable {
 
-    private AlertDialog confirmDialog;
     private String bdocFileName;
     private Context context;
 
@@ -71,7 +70,7 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
         String name = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.GIVENNAME));
         String serialNumber = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SERIALNUMBER));
 
-        final String personInfo = String.format("%s %s (%s)", name, surname, serialNumber);
+        String personInfo = String.format("%s %s (%s)", name, surname, serialNumber);
         viewHolder.name.setText(personInfo);
         viewHolder.signed.setText(DateUtils.formatSignedDate(signature.trustedSigningTime()));
 
@@ -85,38 +84,46 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
             viewHolder.isSigned.setTextColor(Color.RED);
         }
 
-        viewHolder.removeSignature.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle(R.string.bdoc_remove_confirm_title);
-
-                String confirmMessage = getContext().getResources().getString(R.string.signature_remove_confirm_message);
-                confirmMessage = String.format(confirmMessage, personInfo);
-
-                builder.setMessage(confirmMessage);
-
-                builder.setPositiveButton(R.string.confirm_button, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Signature sign = getItem(position);
-
-                        Container container = FileUtils.getContainer(context.getFilesDir(), bdocFileName);
-                        container.removeSignature(position);
-
-                        File bdocFile = FileUtils.getBdocFile(context.getFilesDir(), bdocFileName);
-                        container.save(bdocFile.getAbsolutePath());
-                        remove(sign);
-                        notifyDataSetChanged();
-                    }
-                }).setNegativeButton(R.string.cancel_button, null);
-
-                confirmDialog = builder.create();
-                confirmDialog.show();
-            }
-        });
-
+        viewHolder.removeSignature.setOnClickListener(new RemoveSignatureListener(position, personInfo));
         return convertView;
     }
 
+    private class RemoveSignatureListener implements View.OnClickListener {
+
+        private int position;
+        private String personInfo;
+
+        RemoveSignatureListener(int position, String personInfo) {
+            this.position = position;
+            this.personInfo = personInfo;
+        }
+
+        @Override
+        public void onClick(View v) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(R.string.bdoc_remove_confirm_title);
+
+            String confirmMessage = getContext().getResources().getString(R.string.signature_remove_confirm_message);
+            confirmMessage = String.format(confirmMessage, personInfo);
+
+            builder.setMessage(confirmMessage);
+
+            builder.setPositiveButton(R.string.confirm_button, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Signature sign = getItem(position);
+
+                    Container container = FileUtils.getContainer(context.getFilesDir(), bdocFileName);
+                    container.removeSignature(position);
+
+                    File bdocFile = FileUtils.getBdocFile(context.getFilesDir(), bdocFileName);
+                    container.save(bdocFile.getAbsolutePath());
+                    remove(sign);
+                    notifyDataSetChanged();
+                }
+            }).setNegativeButton(R.string.cancel_button, null);
+
+            builder.create().show();
+        }
+    }
 }

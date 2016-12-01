@@ -1,4 +1,4 @@
-package ee.ria.token.tokenservice;
+package ee.ria.token.tokenservice.util;
 
 import android.util.Log;
 

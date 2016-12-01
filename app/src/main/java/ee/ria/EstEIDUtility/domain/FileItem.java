@@ -1,4 +1,4 @@
-package ee.ria.EstEIDUtility;
+package ee.ria.EstEIDUtility.domain;
 
 
 public class FileItem {

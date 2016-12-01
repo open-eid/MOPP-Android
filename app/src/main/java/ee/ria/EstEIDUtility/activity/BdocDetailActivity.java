@@ -12,7 +12,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 
-import ee.ria.EstEIDUtility.FileItem;
+import ee.ria.EstEIDUtility.domain.FileItem;
 import ee.ria.EstEIDUtility.fragment.BdocDetailFragment;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.fragment.BdocFilesFragment;

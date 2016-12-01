@@ -12,8 +12,10 @@ import android.widget.Toast;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.ChangePinCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
+import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.SignCallback;
 import ee.ria.token.tokenservice.callback.UnblockPinCallback;
+import ee.ria.token.tokenservice.exception.PinVerificationException;
 import ee.ria.token.tokenservice.util.TokenFactory;
 
 public class TokenService extends Service {
@@ -27,7 +29,10 @@ public class TokenService extends Service {
 
     public class LocalBinder extends Binder {
         public TokenService getService() {
-            return TokenService.this;
+            if (sminterface != null) {
+                return TokenService.this;
+            }
+            return null;
         }
     }
 
@@ -65,14 +70,25 @@ public class TokenService extends Service {
         return sminterface;
     }
 
+    public void readRetryCounter(Token.PinType pinType, RetryCounterCallback callback) {
+        try {
+            byte counterByte = token.readRetryCounter(pinType);
+            callback.onCounterRead(counterByte);
+        } catch (Exception e) {
+            Log.e(TAG, "readRetryCounter: ", e);
+        }
+    }
+
     public void sign(Token.PinType pinType, String pin, byte[] data, SignCallback callback) {
-        Log.d(TAG, "sign: with pin: " + pin);
         try {
             byte[] sign = token.sign(pinType, pin, data);
             callback.onSignResponse(sign);
+        } catch (PinVerificationException e) {
+            Log.e(TAG, "sign: ", e);
+            callback.onSignError(null, e);
         } catch (Exception e) {
             Log.e(TAG, "sign: ", e);
-            callback.onSignError(e.getMessage());
+            callback.onSignError(e, null);
         }
     }
 
@@ -115,7 +131,7 @@ public class TokenService extends Service {
             if (unblocked) {
                 callback.success();
             } else {
-                callback.error(null);
+                callback.error(new Exception("PIN change failed"));
             }
         } catch (Exception e) {
             Log.e(TAG, "unblockPin: ", e);

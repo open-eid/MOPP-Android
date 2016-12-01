@@ -6,10 +6,13 @@ import java.io.ByteArrayOutputStream;
 
 import ee.ria.token.tokenservice.SMInterface;
 import ee.ria.token.tokenservice.Token;
-import ee.ria.token.tokenservice.Util;
+import ee.ria.token.tokenservice.util.Util;
+import ee.ria.token.tokenservice.exception.PinVerificationException;
+import ee.ria.token.tokenservice.util.SHA;
 
 public class EstEIDv3d4 implements Token {
 
+    private static final String TAG = "EstEIDv3d4";
     private SMInterface sminterface;
 
     public EstEIDv3d4(SMInterface sminterface) {
@@ -18,19 +21,24 @@ public class EstEIDv3d4 implements Token {
 
     @Override
     public byte[] sign(PinType type, String pin, byte[] data) throws Exception {
+        if (!verifyPin(type, pin.getBytes())) {
+            throw new PinVerificationException(type == PinType.PIN2 ? "PIN2 login failed" : "PIN1 login failed");
+        }
         try {
-            if (!login(type, pin.getBytes())) {
-                throw new Exception(type == PinType.PIN2 ? "PIN2 login failed" : "PIN1 login failed");
-            }
-            sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x00, 0x0C, 0x00});
+            sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x00, 0x0C});
             sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x01, 0x0C, 0x02, (byte) 0xEE, (byte) 0xEE});
-            sminterface.transmitExtended(new byte[]{0x00, 0x22, (byte) 0xF3, 0x01, 0x00});
-            sminterface.transmitExtended(new byte[]{0x00, 0x22, 0x41, (byte) 0xB8, 0x02, (byte) 0x83, 0x00});
+            sminterface.transmitExtended(new byte[]{0x00, 0x22, (byte) 0xF3, 0x01});
             switch (type) {
                 case PIN1:
-                    return sminterface.transmitExtended(Util.concat(new byte[]{0x00, (byte) 0x88, 0x00, 0x00, (byte) data.length}, data));
+                    //TODO: challenge to use?
+                    byte[] challenge = {0x3F, 0x4B, (byte) 0xE6, 0x4B, (byte) 0xC9, 0x06, 0x6F, 0x14, (byte) 0x8A, 0x39, 0x21, (byte) 0xD8, 0x7C, (byte) 0x94, 0x41, 0x40, (byte) 0x99, 0x72, 0x4B, 0x58, 0x75, (byte) 0xA1, 0x15, 0x78};
+                    return sminterface.transmitExtended(Util.concat(new byte[]{0x00, (byte) 0x88, 0x00, 0x00, 0x24}, challenge));
                 case PIN2:
-                    return sminterface.transmitExtended(Util.concat(new byte[]{0x00, 0x2A, (byte) 0x9E, (byte) 0x9A, (byte) data.length}, data));
+                    try (ByteArrayOutputStream toSign = new ByteArrayOutputStream()) {
+                        toSign.write(SHA.SHA_256.value);
+                        toSign.write(data);
+                        return sminterface.transmitExtended(Util.concat(new byte[]{0x00, 0x2A, (byte) 0x9E, (byte) 0x9A, 0x23}, toSign.toByteArray()));
+                    }
                 default:
                     throw new Exception("Unsuported");
             }
@@ -40,10 +48,18 @@ public class EstEIDv3d4 implements Token {
     }
 
     @Override
+    public byte readRetryCounter(PinType pinType) throws Exception {
+        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x00, 0x0C});
+        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x0C, 0x02, 0x00, 0x16});
+        byte[] bytes = sminterface.transmitExtended(new byte[]{0x00, (byte) 0xB2, pinType.retryValue, 0x04, 0x00});
+        return bytes[5];
+    }
+
+    @Override
     public SparseArray<String> readPersonalFile() throws Exception {
-        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x00, 0x0C, 0x00});
+        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x00, 0x0C});
         sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x01, 0x0C, 0x02, (byte) 0xEE, (byte) 0xEE});
-        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x0C, 0x02, (byte) 0x50, (byte) 0x44});
+        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x04, 0x02, (byte) 0x50, (byte) 0x44});
         SparseArray<String> result = new SparseArray<>();
         for (byte i = 1; i <= 16; ++i) {
             byte[] data = sminterface.transmitExtended(new byte[]{0x00, (byte) 0xB2, i, 0x04, 0x00});
@@ -53,11 +69,8 @@ public class EstEIDv3d4 implements Token {
     }
 
     @Override
-    public boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin) throws Exception {
-        if (sminterface instanceof SMInterface.NFC) {
-            throw new Exception("PIN replace is not allowed over NFC");
-        }
-        byte[] recv = sminterface.transmit(Util.concat(new byte[]{0x00, 0x24, 0x00, pinType.value, (byte) (currentPin.length + newPin.length)}, currentPin, newPin));
+    public boolean changePin(PinType pinType, byte[] previousPin, byte[] newPin) throws Exception {
+        byte[] recv = sminterface.transmit(Util.concat(new byte[]{0x00, 0x24, 0x00, pinType.value, (byte) (previousPin.length + newPin.length)}, previousPin, newPin));
         return SMInterface.checkSW(recv);
     }
 
@@ -66,18 +79,19 @@ public class EstEIDv3d4 implements Token {
         if (sminterface instanceof SMInterface.NFC) {
             throw new Exception("PIN replace is not allowed over NFC");
         }
-        if (!login(PinType.PUK, puk))
-            return false;
-        byte[] recv = sminterface.transmit(new byte[]{0x00, 0x2C, 0x03, pinType.value, 0x00});
+        if (!verifyPin(PinType.PUK, puk)) {
+            throw new Exception("PUK is incorrect");
+        }
+        byte[] recv = sminterface.transmit(new byte[]{0x00, 0x2C, 0x03, pinType.value});
         return SMInterface.checkSW(recv);
     }
 
     @Override
     public byte[] readCert(CertType type) throws Exception {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x00, 0x0C, 0x00});
-        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x01, 0x04, 0x02, (byte) 0xEE, (byte) 0xEE});
-        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x04, 0x02, type.value, (byte) 0xCE});
+        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x00, 0x0C});
+        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x01, 0x0C, 0x02, (byte) 0xEE, (byte) 0xEE});
+        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x04, 0x02, (byte) 0xAA, (byte) 0xCE});
 
         for (byte i = 0; i <= 5; ++i) {
             byte[] data = sminterface.transmitExtended(new byte[]{0x00, (byte) 0xB0, i, 0x00, 0x00});
@@ -86,8 +100,8 @@ public class EstEIDv3d4 implements Token {
         return byteStream.toByteArray();
     }
 
-    private boolean login(PinType pinType, byte[] pin) throws Exception {
-        byte[] recv = sminterface.transmit(Util.concat(new byte[]{0x00, 0x20, 0x00, pinType.value, (byte) pin.length}, pin));
+    private boolean verifyPin(PinType type, byte[] pin) throws Exception {
+        byte[] recv = sminterface.transmit(Util.concat(new byte[]{0x00, 0x20, 0x00, type.value, (byte) pin.length}, pin));
         return SMInterface.checkSW(recv);
     }
 

@@ -27,14 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.acs.smartcard.Reader;
-import com.acs.smartcard.ReaderException;
-import com.identive.libs.SCard;
-import com.identive.libs.WinDefs;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import ee.ria.token.tokenservice.util.Util;
 
 public abstract class SMInterface {
 	private static final String TAG = "";

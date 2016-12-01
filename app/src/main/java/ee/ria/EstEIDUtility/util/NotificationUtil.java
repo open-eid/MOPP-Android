@@ -17,9 +17,9 @@ public class NotificationUtil {
     }
 
     public enum NotificationDuration {
-        SHORT(1), MEDIUM(3), LONG(5);
+        SHORT(2), MEDIUM(3), LONG(5);
 
-        int duration;
+        public int duration;
 
         NotificationDuration(int duration) {
             this.duration = duration;

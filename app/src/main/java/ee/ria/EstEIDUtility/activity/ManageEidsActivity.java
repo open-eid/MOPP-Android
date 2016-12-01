@@ -1,4 +1,4 @@
-package ee.ria.EstEIDUtility;
+package ee.ria.EstEIDUtility.activity;
 
 import android.app.AlertDialog;
 import android.app.Service;
@@ -13,11 +13,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
 import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.token.tokenservice.Token;
 import ee.ria.token.tokenservice.TokenService;
-import ee.ria.token.tokenservice.Util;
+import ee.ria.token.tokenservice.util.Util;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
 

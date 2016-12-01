@@ -9,6 +9,7 @@ import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.WriteMode;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -46,7 +47,9 @@ public class UploadFileTask extends AsyncTask<Void, Void, FileMetadata> {
 
     @Override
     protected FileMetadata doInBackground(Void... params) {
-        try (FileInputStream inputStream = context.openFileInput(fileName)) {
+        File bdocsPath = FileUtils.getBdocsPath(context.getFilesDir());
+        File filePath = new File(bdocsPath, fileName);
+        try (FileInputStream inputStream = new FileInputStream(filePath)) {
             FileMetadata fileMetadata = dbxClient.files().uploadBuilder("/" + fileName)
                     .withMode(WriteMode.OVERWRITE)
                     .uploadAndFinish(inputStream);

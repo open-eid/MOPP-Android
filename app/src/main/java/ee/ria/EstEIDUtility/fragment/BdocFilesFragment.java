@@ -48,7 +48,6 @@ public class BdocFilesFragment extends ListFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         setFragmentHeight();
     }
 

@@ -1,4 +1,4 @@
-package ee.ria.EstEIDUtility;
+package ee.ria.EstEIDUtility.activity;
 
 import android.app.Service;
 import android.content.Intent;
@@ -17,7 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
 import java.security.Signature;
 
-import ee.ria.EstEIDUtility.activity.BdocDetailActivity;
+import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
 import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.EstEIDUtility.util.Constants;
@@ -25,8 +25,10 @@ import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.token.tokenservice.Token;
 import ee.ria.token.tokenservice.TokenService;
-import ee.ria.token.tokenservice.Util;
+import ee.ria.token.tokenservice.util.Util;
 import ee.ria.token.tokenservice.callback.SignCallback;
+import ee.ria.token.tokenservice.exception.PinVerificationException;
+import ee.ria.token.tokenservice.util.SHA;
 
 public class SigningActivity extends AppCompatActivity {
 
@@ -98,7 +100,7 @@ public class SigningActivity extends AppCompatActivity {
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
                 byte[] textDigest = MessageDigest.getInstance("SHA-1").digest(textToSign.getText().toString().getBytes());
-                outputStream.write(new byte[]{0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x0E, 0x03, 0x02, 0x1A, 0x05, 0x00, 0x04, 0x14});
+                outputStream.write(SHA.SHA_1.value);
                 outputStream.write(textDigest);
 
                 tokenService.sign(Token.PinType.PIN2, pin, outputStream.toByteArray(), callback);
@@ -108,7 +110,7 @@ public class SigningActivity extends AppCompatActivity {
             }
         } else {
             tokenService.sign(Token.PinType.PIN1, pin,
-                    new byte[] {0x3F, 0x4B ,(byte) 0xE6 ,0x4B ,(byte) 0xC9 ,0x06 ,0x6F ,0x14 ,(byte) 0x8A ,0x39 ,0x21 ,(byte) 0xD8 ,0x7C ,(byte) 0x94 ,0x41 ,0x40 ,(byte) 0x99 ,0x72 ,0x4B ,0x58 ,0x75 ,(byte) 0xA1 ,0x15 ,0x78 },
+                    new byte[]{0x3F, 0x4B, (byte) 0xE6, 0x4B, (byte) 0xC9, 0x06, 0x6F, 0x14, (byte) 0x8A, 0x39, 0x21, (byte) 0xD8, 0x7C, (byte) 0x94, 0x41, 0x40, (byte) 0x99, 0x72, 0x4B, 0x58, 0x75, (byte) 0xA1, 0x15, 0x78},
                     callback);
         }
     }
@@ -122,8 +124,13 @@ public class SigningActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onSignError(String msg) {
-            content.setText(msg);
+        public void onSignError(Exception e, PinVerificationException pinVerificationException) {
+            if (pinVerificationException != null) {
+                content.setText(pinVerificationException.getMessage());
+            } else {
+                content.setText(e.getMessage());
+            }
+
         }
     }
 

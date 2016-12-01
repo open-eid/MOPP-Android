@@ -1,4 +1,4 @@
-package ee.ria.EstEIDUtility;
+package ee.ria.EstEIDUtility.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import ee.ria.EstEIDUtility.activity.BrowseContainersActivity;
+import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.libdigidocpp.digidoc;
 

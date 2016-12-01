@@ -1,4 +1,4 @@
-package ee.ria.EstEIDUtility;
+package ee.ria.EstEIDUtility.activity;
 
 import android.app.Service;
 import android.os.Bundle;
@@ -10,11 +10,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
 import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.token.tokenservice.Token;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.ChangePinCallback;
+import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.UnblockPinCallback;
 
 public class PinUtilitiesActivity extends AppCompatActivity {
@@ -78,6 +80,37 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         }
     }
 
+
+    public void readPIN1RetryCounter(View view) {
+        try {
+            RetryCounterCallback callback = new RetryCounterTaskCallback();
+            tokenService.readRetryCounter(Token.PinType.PIN1, callback);
+        } catch (Exception e) {
+            Log.e(TAG, "changePin: ", e);
+            content.setText(e.getMessage());
+        }
+    }
+
+    public void readPIN2RetryCounter(View view) {
+        try {
+            RetryCounterCallback callback = new RetryCounterTaskCallback();
+            tokenService.readRetryCounter(Token.PinType.PIN2, callback);
+        } catch (Exception e) {
+            Log.e(TAG, "changePin: ", e);
+            content.setText(e.getMessage());
+        }
+    }
+
+    public void readPUKRetryCounter(View view) {
+        try {
+            RetryCounterCallback callback = new RetryCounterTaskCallback();
+            tokenService.readRetryCounter(Token.PinType.PUK, callback);
+        } catch (Exception e) {
+            Log.e(TAG, "changePin: ", e);
+            content.setText(e.getMessage());
+        }
+    }
+
     public void changePin(View view) {
         EditText currentPinPuk = (EditText)findViewById(R.id.pin_util_current);
         EditText newPinPuk = (EditText)findViewById(R.id.pin_util_new);
@@ -103,6 +136,14 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         }
     }
 
+    private class RetryCounterTaskCallback implements RetryCounterCallback {
+        @Override
+        public void onCounterRead(byte counterByte) {
+            Log.d(TAG, "onCounterRead: " + counterByte);
+            content.setText("retries left: " + counterByte);
+        }
+    }
+
     //TODO: callback behaviour impl
     private class ChangePinTaskCallback implements ChangePinCallback {
         private Token.PinType pinType;
@@ -114,7 +155,7 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         @Override
         public void success() {
             Log.d(TAG, "success: ");
-            String text = pinType.name() + "change success";
+            String text = pinType.name() + " change success";
             content.setText(text);
         }
 
@@ -141,7 +182,7 @@ public class PinUtilitiesActivity extends AppCompatActivity {
 
         @Override
         public void success() {
-            String text = pinType.name() + "unblocked.";
+            String text = pinType.name() + " unblocked.";
             Log.d(TAG, "success: " + text);
             content.setText(text);
         }

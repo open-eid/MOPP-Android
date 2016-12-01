@@ -1,7 +1,7 @@
 package ee.ria.token.tokenservice.util;
 
 public enum TokenVersion {
-    v3d5("0305"), v3d4("0304");
+    V3D5("0305"), V3D4("0304"), V3D0("0300");
 
     private String version;
     TokenVersion(String version) {

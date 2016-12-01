@@ -1,6 +1,8 @@
 package ee.ria.EstEIDUtility.fragment;
 
 import android.app.Activity;
+import android.app.Service;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,15 +10,21 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dropbox.core.android.Auth;
 import com.dropbox.core.v2.files.FileMetadata;
@@ -25,14 +33,24 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 
-import ee.ria.EstEIDUtility.activity.BdocDetailActivity;
 import ee.ria.EstEIDUtility.R;
+import ee.ria.EstEIDUtility.activity.BdocDetailActivity;
+import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
+import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.DropboxClientFactory;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.EstEIDUtility.util.UploadFileTask;
 import ee.ria.libdigidocpp.Container;
+import ee.ria.libdigidocpp.Signature;
+import ee.ria.token.tokenservice.Token;
+import ee.ria.token.tokenservice.TokenService;
+import ee.ria.token.tokenservice.util.Util;
+import ee.ria.token.tokenservice.callback.CertCallback;
+import ee.ria.token.tokenservice.callback.RetryCounterCallback;
+import ee.ria.token.tokenservice.callback.SignCallback;
+import ee.ria.token.tokenservice.exception.PinVerificationException;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -44,8 +62,12 @@ public class BdocDetailFragment extends Fragment {
     private TextView body;
     private TextView fileInfoTextView;
     private AlertDialog sendDialog;
+    private AlertDialog pinDialog;
+    private EditText pinText;
+    private TextView enterPinText;
 
     private Button addFileButton;
+    private Button addSignatureButton;
     private Button sendButton;
     private Button saveButton;
     private ImageView editBdoc;
@@ -54,9 +76,31 @@ public class BdocDetailFragment extends Fragment {
     boolean saveToDropboxClicked;
     private File bdocFile;
 
+    private TokenService tokenService;
+    private TokenServiceConnection tokenServiceConnection;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup containerView,
-                             Bundle savedInstanceState) {
+    public void onStart() {
+        super.onStart();
+        connectTokenService();
+    }
+
+    private void connectTokenService() {
+        ServiceCreatedCallback callback = new TokenServiceCreatedCallback();
+        tokenServiceConnection = new TokenServiceConnection(getActivity(), callback);
+        tokenServiceConnection.connectService();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (tokenServiceConnection != null) {
+            getActivity().unbindService(tokenServiceConnection);
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup containerView, Bundle savedInstanceState) {
         View fragLayout = inflater.inflate(R.layout.fragment_bdoc_detail, containerView, false);
 
         fileName = getArguments().getString(Constants.BDOC_NAME);
@@ -76,8 +120,10 @@ public class BdocDetailFragment extends Fragment {
 
         editBdoc = (ImageView) fragLayout.findViewById(R.id.editBdoc);
         addFileButton = (Button) fragLayout.findViewById(R.id.addFile);
+        addSignatureButton = (Button) fragLayout.findViewById(R.id.addSignature);
         sendButton = (Button) fragLayout.findViewById(R.id.sendButton);
         createSendDialog();
+        createPinDialog();
 
         return fragLayout;
     }
@@ -89,6 +135,7 @@ public class BdocDetailFragment extends Fragment {
 
         saveButton.setOnClickListener(new SaveButtonListener());
         addFileButton.setOnClickListener(new AddFileButtonListener());
+        addSignatureButton.setOnClickListener(new AddSignatureButtonListener());
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,10 +180,90 @@ public class BdocDetailFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(Constants.BDOC_NAME, fileName);
+    class CertificateInfoCallback implements CertCallback {
+        @Override
+        public void onCertificateResponse(byte[] cert) {
+            String pin2 = pinText.getText().toString();
+            Container container = FileUtils.getContainer(getContext().getFilesDir(), fileName);
+            Signature signature = container.prepareWebSignature(cert);
+            byte[] dataToSign = signature.dataToSign();
+            SignCallback callback = new SignTaskCallback(container, signature);
+            tokenService.sign(Token.PinType.PIN2, pin2, dataToSign, callback);
+        }
+
+        @Override
+        public void onCertificateError(String reason) {
+            //TODO: implement behaviour
+            Toast.makeText(getActivity(), reason, NotificationUtil.NotificationDuration.SHORT.duration).show();
+        }
+    }
+
+    class SignTaskCallback implements SignCallback {
+        Signature signature;
+        Container container;
+
+        SignTaskCallback(Container container, Signature signature) {
+            this.signature = signature;
+            this.container = container;
+        }
+
+        @Override
+        public void onSignResponse(byte[] signatureBytes) {
+            Log.d(TAG, "onSignResponse: " + Util.toHex(signatureBytes));
+            signature.setSignatureValue(signatureBytes);
+            container.save();
+            BdocDetailFragment bdocDetailFragment = (BdocDetailFragment) getActivity().getSupportFragmentManager().findFragmentByTag(BdocDetailFragment.TAG);
+            BdocSignaturesFragment bdocSignaturesFragment = (BdocSignaturesFragment) bdocDetailFragment.getChildFragmentManager().findFragmentByTag(BdocSignaturesFragment.TAG);
+            bdocSignaturesFragment.addSignature(signature);
+        }
+
+        @Override
+        public void onSignError(Exception e, PinVerificationException pinVerificationException) {
+            if (pinVerificationException != null) {
+                NotificationUtil.showNotification(getActivity(), R.string.pin_verification_failed, NotificationUtil.NotificationType.ERROR);
+                pinText.setText("");
+                RetryCounterCallback callback =  new RetryCounterTaskCallback();
+                tokenService.readRetryCounter(Token.PinType.PIN2, callback);
+            } else {
+                Toast.makeText(getActivity(), e.getMessage(), NotificationUtil.NotificationDuration.SHORT.duration).show();
+            }
+        }
+    }
+
+    private class RetryCounterTaskCallback implements RetryCounterCallback {
+        @Override
+        public void onCounterRead(byte counterByte) {
+            String text = enterPinText.getText().toString();
+            String result = text + " (" + String.format(getResources().getString(R.string.pin_retries_left), String.valueOf(counterByte)) + ")";
+            enterPinText.setText(result);
+        }
+    }
+
+    private class AddSignatureButtonListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            pinDialog.show();
+            pinDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+            final Button positiveButton = pinDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positiveButton.setEnabled(false);
+            pinText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (pinText.getText().length() == 5) {
+                        positiveButton.setEnabled(true);
+                    } else if (positiveButton.isEnabled()) {
+                        positiveButton.setEnabled(false);
+                    }
+                }
+            });
+        }
     }
 
     private void createSendDialog() {
@@ -157,6 +284,7 @@ public class BdocDetailFragment extends Fragment {
                 if (accessToken != null) {
                     DropboxClientFactory.init(accessToken);
                     uploadToDropbox();
+                    sendDialog.hide();
                 } else {
                     Auth.startOAuth2Authentication(getActivity(), getString(R.string.app_key));
                     saveToDropboxClicked = true;
@@ -191,7 +319,6 @@ public class BdocDetailFragment extends Fragment {
     private class AddFileButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            //Container container = FileUtils.getContainer(getActivity().getFilesDir().getAbsolutePath(), fileName);
             Container container = FileUtils.getContainer(getContext().getFilesDir(), fileName);
             if (container.signatures().size() > 0) {
                 NotificationUtil.showNotification(getActivity(), R.string.add_file_remove_signatures, NotificationUtil.NotificationType.ERROR);
@@ -275,6 +402,48 @@ public class BdocDetailFragment extends Fragment {
     private void saveTokenToPrefs(String accessToken) {
         SharedPreferences prefs = getActivity().getSharedPreferences(Constants.DROPBOX_PREFS, MODE_PRIVATE);
         prefs.edit().putString(Constants.DROPBOX_ACCESS_TOKEN, accessToken).apply();
+    }
+
+    private void createPinDialog() {
+        View view = getActivity().getLayoutInflater().inflate(R.layout.enter_pin, null);
+
+        enterPinText = (TextView) view.findViewById(R.id.enterPin);
+        pinText = (EditText) view.findViewById(R.id.pin);
+        pinText.setHint(Token.PinType.PIN2.name());
+        InputFilter[] inputFilters = {new InputFilter.LengthFilter(5)};
+        pinText.setFilters(inputFilters);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setPositiveButton(R.string.sign_button, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                CertCallback callback = new CertificateInfoCallback();
+                tokenService.readCert(Token.CertType.CertSign, callback);
+            }
+        }).setNegativeButton(R.string.cancel, null);
+        builder.setView(view);
+        pinDialog = builder.create();
+    }
+
+    class TokenServiceCreatedCallback implements ServiceCreatedCallback {
+
+        @Override
+        public void created(Service service) {
+            tokenService = (TokenService) service;
+            addSignatureButton.setEnabled(true);
+        }
+
+        @Override
+        public void failed() {
+            Log.d(TAG, "failed to bind toke service");
+            addSignatureButton.setEnabled(false);
+        }
+
+        @Override
+        public void disconnected() {
+            tokenService = null;
+            addSignatureButton.setEnabled(false);
+        }
     }
 
 }

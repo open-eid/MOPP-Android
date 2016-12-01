@@ -37,11 +37,11 @@ public class DateUtils {
         return isSameDay(cal1);
     }
 
-    public static boolean isSameDay(Calendar cal1) {
+    private static boolean isSameDay(Calendar cal1) {
         Date today = Calendar.getInstance().getTime();
         Calendar cal2 = Calendar.getInstance();
         cal2.setTime(today);
-        if (cal1 == null || cal2 == null) {
+        if (cal1 == null) {
             throw new IllegalArgumentException("The dates must not be null");
         }
         return (cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) &&

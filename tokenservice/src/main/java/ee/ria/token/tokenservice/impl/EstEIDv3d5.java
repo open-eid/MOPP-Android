@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream;
 
 import ee.ria.token.tokenservice.SMInterface;
 import ee.ria.token.tokenservice.Token;
-import ee.ria.token.tokenservice.Util;
+import ee.ria.token.tokenservice.util.Util;
 
 public class EstEIDv3d5 implements Token {
 
@@ -19,10 +19,12 @@ public class EstEIDv3d5 implements Token {
     @Override
     public byte[] sign(PinType type, String pin, byte[] data) throws Exception {
         try {
-            if (!login(type, pin.getBytes())) {
+            if (!verifyPin(type, pin.getBytes())) {
                 throw new Exception(type == PinType.PIN2 ? "PIN2 login failed" : "PIN1 login failed");
             }
             sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x00, 0x0C, 0x00});
+
+            //TODO: 0x0C should be 0x04?
             sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x01, 0x0C, 0x02, (byte) 0xEE, (byte) 0xEE});
             sminterface.transmitExtended(new byte[]{0x00, 0x22, (byte) 0xF3, 0x01, 0x00});
             sminterface.transmitExtended(new byte[]{0x00, 0x22, 0x41, (byte) 0xB8, 0x02, (byte) 0x83, 0x00});
@@ -66,8 +68,9 @@ public class EstEIDv3d5 implements Token {
         if (sminterface instanceof SMInterface.NFC) {
             throw new Exception("PIN replace is not allowed over NFC");
         }
-        if (!login(PinType.PUK, puk))
-            return false;
+        if (!verifyPin(PinType.PUK, puk)) {
+            throw new Exception("PUK is incorrect");
+        }
         byte[] recv = sminterface.transmit(new byte[]{0x00, 0x2C, 0x03, pinType.value, 0x00});
         return SMInterface.checkSW(recv);
     }
@@ -86,7 +89,16 @@ public class EstEIDv3d5 implements Token {
         return byteStream.toByteArray();
     }
 
-    private boolean login(PinType pinType, byte[] pin) throws Exception {
+    @Override
+    public byte readRetryCounter(PinType pinType) throws Exception {
+        //TODO:
+        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x00, 0x0C, 0x00});
+        sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x0C, 0x02, 0x00, 0x16});
+        byte[] bytes = sminterface.transmitExtended(new byte[]{0x00, (byte) 0xB2, pinType.value, 0x04, 0x00});
+        return bytes[5];
+    }
+
+    private boolean verifyPin(PinType pinType, byte[] pin) throws Exception {
         byte[] recv = sminterface.transmit(Util.concat(new byte[]{0x00, 0x20, 0x00, pinType.value, (byte) pin.length}, pin));
         return SMInterface.checkSW(recv);
     }

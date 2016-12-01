@@ -49,7 +49,7 @@
         </service>
 
         <activity
-            android:name=".DashboardMenuActivity"
+            android:name=".activity.DashboardMenuActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -59,40 +59,40 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SigningActivity"
+            android:name=".activity.SigningActivity"
             android:label="@string/title_activity_signing"
-            android:parentActivityName=".DashboardMenuActivity"
+            android:parentActivityName=".activity.DashboardMenuActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ee.ria.EstEIDUtility.DashboardMenuActivity" />
+                android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />
         </activity>
         <activity
-            android:name=".ManageEidsActivity"
+            android:name=".activity.ManageEidsActivity"
             android:label="@string/title_activity_manage_eids"
-            android:parentActivityName=".DashboardMenuActivity"
+            android:parentActivityName=".activity.DashboardMenuActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ee.ria.EstEIDUtility.DashboardMenuActivity" />
+                android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />
         </activity>
         <activity
-            android:name=".PinUtilitiesActivity"
+            android:name=".activity.PinUtilitiesActivity"
             android:label="@string/title_activity_pin_utilities"
-            android:parentActivityName=".DashboardMenuActivity"
+            android:parentActivityName=".activity.DashboardMenuActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ee.ria.EstEIDUtility.DashboardMenuActivity" />
+                android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />
         </activity>
         <activity
             android:name=".activity.BrowseContainersActivity"
             android:label="@string/title_activity_browse_containers"
-            android:parentActivityName=".DashboardMenuActivity"
+            android:parentActivityName=".activity.DashboardMenuActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ee.ria.EstEIDUtility.DashboardMenuActivity" />
+                android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />
         </activity>
         <activity android:name=".activity.BdocDetailActivity"
             android:label="@string/bdoc_detail_title"

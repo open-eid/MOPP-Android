@@ -27,7 +27,6 @@ public class BdocSignaturesFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         String bdocFileName = getArguments().getString(Constants.BDOC_NAME);
 
-        //Container container = FileUtils.getContainer(getActivity().getFilesDir().getAbsolutePath(), bdocFileName);
         Container container = FileUtils.getContainer(getContext().getFilesDir(), bdocFileName);
         List<Signature> signatures = ContainerUtils.extractSignatures(container);
 
@@ -37,6 +36,10 @@ public class BdocSignaturesFragment extends ListFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        setFragmentHeight();
+    }
+
+    private void setFragmentHeight() {
         ListView listView = getListView();
         int totalHeight = 0;
 
@@ -53,8 +56,10 @@ public class BdocSignaturesFragment extends ListFragment {
 
         String emptyText = getResources().getString(R.string.empty_container_signatures);
         setEmptyText(emptyText);
-
-        super.onViewCreated(view, savedInstanceState);
     }
 
+    public void addSignature(Signature signature) {
+        signatureAdapter.add(signature);
+        setFragmentHeight();
+    }
 }
