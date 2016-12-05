@@ -63,4 +63,7 @@ public class X509Cert {
         return null;
     }
 
+    public X509Certificate getCertificate() {
+        return certificate;
+    }
 }

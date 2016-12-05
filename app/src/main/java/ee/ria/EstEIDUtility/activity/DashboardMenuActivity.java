@@ -36,24 +36,28 @@ public class DashboardMenuActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        initLibraryConfiguration();
+        initConfigurations();
     }
 
-    private void initLibraryConfiguration() {
-        //FileUtils.removeAllFiles(getFilesDir());
-        //FileUtils.showAllFiles(getFilesDir());
+    private void initConfigurations() {
+        File cachePath = FileUtils.getCachePath(getCacheDir());
+        if (!cachePath.exists()) {
+            boolean mkdir = cachePath.mkdir();
+            if (mkdir) {
+                Log.d(TAG, "initLibraryConfiguration: created cache/mopp directory");
+            }
+        }
 
-        File bdocsFilesPath = FileUtils.getBdocsFilesPath(getFilesDir());
-        if (!bdocsFilesPath.exists()) {
-            boolean mkdirs = bdocsFilesPath.mkdirs();
-            if (mkdirs) {
-                Log.d(TAG, "initLibraryConfiguration: created bdocs and bdocs/files directories");
+        File bdocsPath = FileUtils.getBdocsPath(getFilesDir());
+        if (!bdocsPath.exists()) {
+            boolean mkdir = bdocsPath.mkdir();
+            if (mkdir) {
+                Log.d(TAG, "initLibraryConfiguration: created bdocs directory");
             }
         }
 
         File schemaPath = FileUtils.getSchemaPath(getFilesDir());
-        try {
-            ZipInputStream zis = new ZipInputStream(getResources().openRawResource(R.raw.schema));
+        try (ZipInputStream zis = new ZipInputStream(getResources().openRawResource(R.raw.schema))) {
             ZipEntry ze;
             while ((ze = zis.getNextEntry()) != null) {
                 File entryFile = new File(schemaPath, ze.getName());
@@ -61,7 +65,6 @@ public class DashboardMenuActivity extends AppCompatActivity {
                 IOUtils.copy(zis, out);
                 out.close();
             }
-            zis.close();
         } catch (IOException e) {
             Log.e(TAG, "initLibraryConfiguration: ", e);
         }

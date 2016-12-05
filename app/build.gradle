@@ -32,4 +32,5 @@ dependencies {
     compile 'com.madgag.spongycastle:core:1.54.0.0'
 
 
+    compile 'org.jetbrains:annotations-java5:15.0'
 }

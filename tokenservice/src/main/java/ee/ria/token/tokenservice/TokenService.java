@@ -7,7 +7,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
-import android.widget.Toast;
 
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.ChangePinCallback;
@@ -15,6 +14,7 @@ import ee.ria.token.tokenservice.callback.PersonalFileCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.SignCallback;
 import ee.ria.token.tokenservice.callback.UnblockPinCallback;
+import ee.ria.token.tokenservice.reader.CardReader;
 import ee.ria.token.tokenservice.exception.PinVerificationException;
 import ee.ria.token.tokenservice.util.TokenFactory;
 
@@ -25,27 +25,24 @@ public class TokenService extends Service {
     private final IBinder mBinder = new LocalBinder();
 
     private Token token;
-    private SMInterface sminterface;
+    private CardReader cardReader;
 
     public class LocalBinder extends Binder {
         public TokenService getService() {
-            if (sminterface != null) {
+            if (cardReader != null) {
                 return TokenService.this;
             }
             return null;
         }
     }
 
-    class SMConnected extends SMInterface.Connected {
+    class SMConnected extends CardReader.Connected {
 
         @Override
         public void connected() {
             Log.i("SIMINTERFACE_CONNECT", "connected!");
-
             try {
-                sminterface.transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x00, 0x0C});
-                byte[] versionBytes = sminterface.transmitExtended(new byte[]{0x00, (byte) 0xCA, 0x01, 0x00, 0x03});
-                token = TokenFactory.getTokenImpl(versionBytes, sminterface);
+                token = TokenFactory.getTokenImpl(cardReader);
             } catch (Exception e) {
                 Log.e(TAG, "getTokenImpl: ", e);
             }
@@ -57,17 +54,17 @@ public class TokenService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         SMConnected callback = new SMConnected();
-        sminterface = getSIMInterface(callback);
+        cardReader = getSmartCard(callback);
         return mBinder;
     }
 
-    private SMInterface getSIMInterface(SMConnected callback) {
-        final SMInterface sminterface = SMInterface.getInstance(this, SMInterface.ACS);
-        if (sminterface == null) {
+    private CardReader getSmartCard(SMConnected callback) {
+        final CardReader cardReader = CardReader.getInstance(this, CardReader.ACS);
+        if (cardReader == null) {
             return null;
         }
-        sminterface.connect(callback);
-        return sminterface;
+        cardReader.connect(callback);
+        return cardReader;
     }
 
     public void readRetryCounter(Token.PinType pinType, RetryCounterCallback callback) {
@@ -94,9 +91,8 @@ public class TokenService extends Service {
 
     @Override
     public void onDestroy() {
-        if (sminterface != null) {
-            this.unregisterReceiver(sminterface.getReciever());
-            Toast.makeText(this, "Service destroyed, unregisterreceiver called", Toast.LENGTH_LONG).show();
+        if (cardReader != null) {
+            this.unregisterReceiver(cardReader.getReciever());
         }
         super.onDestroy();
     }

@@ -14,9 +14,15 @@ import android.webkit.MimeTypeMap;
 import android.widget.ListView;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
@@ -33,11 +39,12 @@ public class BdocFilesFragment extends ListFragment {
     public static final String TAG = "BDOC_FILES_FRAGMENT";
 
     private DataFilesAdapter filesAdapter;
+    private String bdocName;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String bdocName = getArguments().getString(Constants.BDOC_NAME);
+        bdocName = getArguments().getString(Constants.BDOC_NAME);
 
         Container container = FileUtils.getContainer(getContext().getFilesDir(), bdocName);
 
@@ -86,8 +93,29 @@ public class BdocFilesFragment extends ListFragment {
         DataFile file = (DataFile) getListAdapter().getItem(position);
         String fileName = file.fileName();
 
-        File bdocsFilesPath = FileUtils.getBdocsFilesPath(getContext().getFilesDir());
-        File attachment = new File(bdocsFilesPath, fileName);
+        File attachment = null;
+        File bdocFile = FileUtils.getBdocFile(getContext().getFilesDir(), bdocName);
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(bdocFile))) {
+            ZipEntry ze;
+            while ((ze = zis.getNextEntry()) != null) {
+                if (fileName.equals(ze.getName())) {
+                    File cacheDir = FileUtils.getCachePath(getContext().getCacheDir());
+                    attachment = File.createTempFile(FilenameUtils.removeExtension(fileName), "." + FilenameUtils.getExtension(fileName), cacheDir);
+                    try (FileOutputStream out = new FileOutputStream(attachment)) {
+                        IOUtils.copy(zis, out);
+                    }
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "launchFileContentActivity: ", e);
+        }
+
+        if (attachment == null) {
+            //TODO: respond to the user
+            Log.e(TAG, "launchFileContentActivity: ", new Exception("Couldn't get attachment from bdoc"));
+            return;
+        }
 
         Uri contentUri = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, attachment);
         getContext().grantUriPermission(BuildConfig.APPLICATION_ID, contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);

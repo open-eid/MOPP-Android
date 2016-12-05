@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import ee.ria.libdigidocpp.Signature;
 
 public class SignatureAdapter extends ArrayAdapter<Signature> implements Filterable {
 
+    private static final String TAG = "SignatureAdapter";
     private String bdocFileName;
     private Context context;
 
@@ -74,11 +76,13 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
         viewHolder.name.setText(personInfo);
         viewHolder.signed.setText(DateUtils.formatSignedDate(signature.trustedSigningTime()));
 
-        if (x509Cert.isValid()) {
+        try {
+            signature.validate();
             String t = getContext().getResources().getString(R.string.signature_valid);
             viewHolder.isSigned.setText(t);
             viewHolder.isSigned.setTextColor(Color.GREEN);
-        } else {
+        } catch (Exception e) {
+            Log.e(TAG, "Siganture invalid: ", e);
             String t = getContext().getResources().getString(R.string.signature_invalid);
             viewHolder.isSigned.setText(t);
             viewHolder.isSigned.setTextColor(Color.RED);

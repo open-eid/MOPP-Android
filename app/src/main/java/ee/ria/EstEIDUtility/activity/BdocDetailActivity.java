@@ -45,10 +45,16 @@ public class BdocDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void addToFileList(Uri uri) {
-        File bdocsFilesPath = FileUtils.getBdocsFilesPath(getFilesDir());
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FileUtils.clearCacheDir(getCacheDir());
+    }
 
-        FileItem fileItem = FileUtils.resolveFileItemFromUri(uri, getContentResolver(), bdocsFilesPath.getAbsolutePath());
+    private void addToFileList(Uri uri) {
+        File cacheDir = FileUtils.getCachePath(getCacheDir());
+
+        FileItem fileItem = FileUtils.resolveFileItemFromUri(uri, getContentResolver(), cacheDir.getAbsolutePath());
         if (fileItem == null) {
             return;
         }
@@ -64,7 +70,7 @@ public class BdocDetailActivity extends AppCompatActivity {
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(attachedName));
 
         File bdocFile = FileUtils.getBdocFile(getFilesDir(), bdocFileName);
-        File attachedFile = new File(bdocsFilesPath, attachedName);
+        File attachedFile = new File(cacheDir, attachedName);
 
         container.addDataFile(attachedFile.getAbsolutePath(), mimeType);
         container.save(bdocFile.getAbsolutePath());

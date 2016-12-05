@@ -9,7 +9,6 @@ import android.util.Log;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,25 +50,19 @@ public class FileUtils {
             OutputStream output = new FileOutputStream(file);
             IOUtils.copy(input, output);
             return new FileItem(fileName, file.getPath(), 1);
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "resolveFileItemFromUri: ", e);
         } catch (IOException e) {
             Log.e(TAG, "resolveFileItemFromUri: ", e);
         }
         return null;
     }
 
-    public static String resolveFileName(Uri uri, ContentResolver contentResolver) {
+    private static String resolveFileName(Uri uri, ContentResolver contentResolver) {
         String uriString = uri.toString();
         if (uriString.startsWith("content://")) {
-            Cursor cursor = null;
-            try {
-                cursor = contentResolver.query(uri, null, null, null, null);
+            try (Cursor cursor = contentResolver.query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
                     return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                 }
-            } finally {
-                cursor.close();
             }
         } else if (uriString.startsWith("file://")) {
             return new File(uriString).getName();
@@ -85,14 +78,22 @@ public class FileUtils {
         return new File(filesDir, Constants.BDOCS_PATH);
     }
 
-    public static File getBdocsFilesPath(File filesDir) {
-        File bdocsPath = getBdocsPath(filesDir);
-        return new File(bdocsPath, Constants.BDOCS_FILES_PATH);
+    public static File getCachePath(File cacheDir) {
+        return new File(cacheDir, Constants.CACHE_PATH);
     }
 
     public static File getBdocFile(File filesDir, String bdocFileName) {
         File bdocsPath = getBdocsPath(filesDir);
         return new File(bdocsPath, bdocFileName);
+    }
+
+    public static void clearCacheDir(File cacheDir) {
+        File cachePath = getCachePath(cacheDir);
+        if (cachePath.isDirectory()) {
+            for (File child : cachePath.listFiles()) {
+                child.delete();
+            }
+        }
     }
 
 }

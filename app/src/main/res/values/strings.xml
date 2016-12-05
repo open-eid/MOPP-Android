@@ -51,7 +51,7 @@
     <string name="send">Saada</string>
     <string name="signature_remove_confirm_message">Kas oled kindel, et soovid kustutada %s allkiri?</string>
     <string name="signature_valid">kehtiv</string>
-    <string name="signature_invalid">expired</string>
+    <string name="signature_invalid">kehtetu</string>
     <string name="close_button">Sulge</string>
     <string name="upload_to_dropbox">Saada Dropboxi</string>
     <string name="upload_to_dropbox_auth_failed">Failed to authenticate to Dropbox</string>
@@ -70,6 +70,7 @@
     <string name="enter_pin">Sisesta pin:</string>
     <string name="sign_button">OK</string>
     <string name="cancel">Cancel</string>
-    <string name="pin_retries_left">Jäänud katsed: %s</string>
+    <string name="enter_pin_retries_left">Sisesta pin: (Jäänud katsed: %s)</string>
     <string name="pin_verification_failed">PIN on vale</string>
+    <string name="already_signed_by_person">Teie allkiri on juba olemas</string>
 </resources>

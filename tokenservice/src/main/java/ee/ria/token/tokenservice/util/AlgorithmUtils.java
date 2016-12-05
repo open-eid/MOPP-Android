@@ -26,8 +26,7 @@ public class AlgorithmUtils {
     }
 
     public static byte[] addPadding(byte[] hash) {
-        ByteArrayOutputStream toSign = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream toSign = new ByteArrayOutputStream()) {
             toSign.write(getAlgorithm(hash.length).padding);
             toSign.write(hash);
             return toSign.toByteArray();

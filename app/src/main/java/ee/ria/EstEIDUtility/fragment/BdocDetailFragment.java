@@ -35,6 +35,7 @@ import java.io.File;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.activity.BdocDetailActivity;
+import ee.ria.EstEIDUtility.domain.X509Cert;
 import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
 import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.EstEIDUtility.util.Constants;
@@ -44,9 +45,9 @@ import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.EstEIDUtility.util.UploadFileTask;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.Signature;
+import ee.ria.libdigidocpp.Signatures;
 import ee.ria.token.tokenservice.Token;
 import ee.ria.token.tokenservice.TokenService;
-import ee.ria.token.tokenservice.util.Util;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.SignCallback;
@@ -69,7 +70,6 @@ public class BdocDetailFragment extends Fragment {
     private Button addFileButton;
     private Button addSignatureButton;
     private Button sendButton;
-    private Button saveButton;
     private ImageView editBdoc;
 
     private String fileName;
@@ -86,8 +86,7 @@ public class BdocDetailFragment extends Fragment {
     }
 
     private void connectTokenService() {
-        ServiceCreatedCallback callback = new TokenServiceCreatedCallback();
-        tokenServiceConnection = new TokenServiceConnection(getActivity(), callback);
+        tokenServiceConnection = new TokenServiceConnection(getActivity(), new TokenServiceCreatedCallback());
         tokenServiceConnection.connectService();
     }
 
@@ -113,8 +112,6 @@ public class BdocDetailFragment extends Fragment {
         title = (EditText) fragLayout.findViewById(R.id.listDocName);
         title.setKeyListener(null);
 
-        saveButton = (Button) fragLayout.findViewById(R.id.saveContainer);
-
         body = (TextView) fragLayout.findViewById(R.id.listDocLocation);
         fileInfoTextView = (TextView) fragLayout.findViewById(R.id.dbocInfo);
 
@@ -133,9 +130,13 @@ public class BdocDetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         sendDialog.setTitle(fileName);
 
-        saveButton.setOnClickListener(new SaveButtonListener());
         addFileButton.setOnClickListener(new AddFileButtonListener());
-        addSignatureButton.setOnClickListener(new AddSignatureButtonListener());
+        addSignatureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tokenService.readCert(Token.CertType.CertSign, new SameSignatureCallback());
+            }
+        });
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -180,24 +181,6 @@ public class BdocDetailFragment extends Fragment {
         }
     }
 
-    class CertificateInfoCallback implements CertCallback {
-        @Override
-        public void onCertificateResponse(byte[] cert) {
-            String pin2 = pinText.getText().toString();
-            Container container = FileUtils.getContainer(getContext().getFilesDir(), fileName);
-            Signature signature = container.prepareWebSignature(cert);
-            byte[] dataToSign = signature.dataToSign();
-            SignCallback callback = new SignTaskCallback(container, signature);
-            tokenService.sign(Token.PinType.PIN2, pin2, dataToSign, callback);
-        }
-
-        @Override
-        public void onCertificateError(String reason) {
-            //TODO: implement behaviour
-            Toast.makeText(getActivity(), reason, NotificationUtil.NotificationDuration.SHORT.duration).show();
-        }
-    }
-
     class SignTaskCallback implements SignCallback {
         Signature signature;
         Container container;
@@ -209,12 +192,13 @@ public class BdocDetailFragment extends Fragment {
 
         @Override
         public void onSignResponse(byte[] signatureBytes) {
-            Log.d(TAG, "onSignResponse: " + Util.toHex(signatureBytes));
             signature.setSignatureValue(signatureBytes);
             container.save();
             BdocDetailFragment bdocDetailFragment = (BdocDetailFragment) getActivity().getSupportFragmentManager().findFragmentByTag(BdocDetailFragment.TAG);
             BdocSignaturesFragment bdocSignaturesFragment = (BdocSignaturesFragment) bdocDetailFragment.getChildFragmentManager().findFragmentByTag(BdocSignaturesFragment.TAG);
             bdocSignaturesFragment.addSignature(signature);
+            enterPinText.setText(getResources().getString(R.string.enter_pin));
+            pinText.setText("");
         }
 
         @Override
@@ -222,8 +206,7 @@ public class BdocDetailFragment extends Fragment {
             if (pinVerificationException != null) {
                 NotificationUtil.showNotification(getActivity(), R.string.pin_verification_failed, NotificationUtil.NotificationType.ERROR);
                 pinText.setText("");
-                RetryCounterCallback callback =  new RetryCounterTaskCallback();
-                tokenService.readRetryCounter(Token.PinType.PIN2, callback);
+                tokenService.readRetryCounter(pinVerificationException.getPinType(), new RetryCounterTaskCallback());
             } else {
                 Toast.makeText(getActivity(), e.getMessage(), NotificationUtil.NotificationDuration.SHORT.duration).show();
             }
@@ -233,36 +216,7 @@ public class BdocDetailFragment extends Fragment {
     private class RetryCounterTaskCallback implements RetryCounterCallback {
         @Override
         public void onCounterRead(byte counterByte) {
-            String text = enterPinText.getText().toString();
-            String result = text + " (" + String.format(getResources().getString(R.string.pin_retries_left), String.valueOf(counterByte)) + ")";
-            enterPinText.setText(result);
-        }
-    }
-
-    private class AddSignatureButtonListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            pinDialog.show();
-            pinDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-
-            final Button positiveButton = pinDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positiveButton.setEnabled(false);
-            pinText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    if (pinText.getText().length() == 5) {
-                        positiveButton.setEnabled(true);
-                    } else if (positiveButton.isEnabled()) {
-                        positiveButton.setEnabled(false);
-                    }
-                }
-            });
+            enterPinText.setText(String.format(getResources().getString(R.string.enter_pin_retries_left), String.valueOf(counterByte)));
         }
     }
 
@@ -296,24 +250,6 @@ public class BdocDetailFragment extends Fragment {
 
         builder.setNegativeButton(R.string.close_button, null);
         sendDialog = builder.create();
-    }
-
-    //TODO: think through save button behaviour
-    private class SaveButtonListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            String newFileName = title.getText().toString();
-            if (!bdocFile.getName().equals(newFileName)) {
-                File to = new File(getActivity().getFilesDir().getAbsolutePath() + "/" + newFileName);
-                if (to.exists()) {
-                    NotificationUtil.showNotification(getActivity(), R.string.file_exists_message, NotificationUtil.NotificationType.WARNING);
-                } else {
-                    boolean renamed = bdocFile.renameTo(to);
-                    NotificationUtil.showNotification(getActivity(), renamed ? R.string.file_saved : R.string.file_save_failed,
-                            renamed ? NotificationUtil.NotificationType.SUCCESS : NotificationUtil.NotificationType.ERROR);
-                }
-            }
-        }
     }
 
     private class AddFileButtonListener implements View.OnClickListener {
@@ -417,8 +353,7 @@ public class BdocDetailFragment extends Fragment {
         builder.setPositiveButton(R.string.sign_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                CertCallback callback = new CertificateInfoCallback();
-                tokenService.readCert(Token.CertType.CertSign, callback);
+                tokenService.readCert(Token.CertType.CertSign, new CertificateInfoCallback());
             }
         }).setNegativeButton(R.string.cancel, null);
         builder.setView(view);
@@ -435,7 +370,7 @@ public class BdocDetailFragment extends Fragment {
 
         @Override
         public void failed() {
-            Log.d(TAG, "failed to bind toke service");
+            Log.d(TAG, "failed to bind token service");
             addSignatureButton.setEnabled(false);
         }
 
@@ -444,6 +379,72 @@ public class BdocDetailFragment extends Fragment {
             tokenService = null;
             addSignatureButton.setEnabled(false);
         }
+    }
+
+    class CertificateInfoCallback implements CertCallback {
+        @Override
+        public void onCertificateResponse(byte[] cert) {
+            Container container = FileUtils.getContainer(getContext().getFilesDir(), fileName);
+            Signature signature = container.prepareWebSignature(cert);
+            byte[] dataToSign = signature.dataToSign();
+            String pin2 = pinText.getText().toString();
+            tokenService.sign(Token.PinType.PIN2, pin2, dataToSign, new SignTaskCallback(container, signature));
+        }
+
+        @Override
+        public void onCertificateError(String reason) {
+            Toast.makeText(getActivity(), reason, NotificationUtil.NotificationDuration.SHORT.duration).show();
+        }
+
+    }
+
+    class SameSignatureCallback implements CertCallback {
+        @Override
+        public void onCertificateResponse(byte[] cert) {
+            Container container = FileUtils.getContainer(getContext().getFilesDir(), fileName);
+            if (isSignedByPerson(container.signatures(), container, cert)) {
+                NotificationUtil.showNotification(getActivity(), R.string.already_signed_by_person, NotificationUtil.NotificationType.WARNING);
+                return;
+            }
+
+            pinDialog.show();
+            pinDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            final Button positiveButton = pinDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positiveButton.setEnabled(false);
+            pinText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (pinText.getText().length() == 5) {
+                        positiveButton.setEnabled(true);
+                    } else if (positiveButton.isEnabled()) {
+                        positiveButton.setEnabled(false);
+                    }
+                }
+            });
+        }
+
+        private boolean isSignedByPerson(Signatures signatures, Container container, byte[] cert) {
+            Signature signature = container.prepareWebSignature(cert);
+            X509Cert x509Cert = new X509Cert(signature.signingCertificateDer());
+            for (int i = 0; i < signatures.size(); i++) {
+                Signature s = signatures.get(i);
+                X509Cert c = new X509Cert(s.signingCertificateDer());
+                if (c.getCertificate().equals(x509Cert.getCertificate())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public void onCertificateError(String reason) {}
+
     }
 
 }
