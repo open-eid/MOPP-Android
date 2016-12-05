@@ -104,8 +104,8 @@ public class BdocDetailFragment extends Fragment {
 
         fileName = getArguments().getString(Constants.BDOC_NAME);
 
-        bdocFile = new File(getActivity().getFilesDir().getAbsolutePath() + "/" + fileName);
-
+        bdocFile = FileUtils.getBdocFile(getContext().getFilesDir(), fileName);
+        
         createFilesListFragment();
         createSignatureListFragment();
 
