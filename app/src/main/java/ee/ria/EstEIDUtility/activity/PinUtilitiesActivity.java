@@ -13,7 +13,7 @@ import android.widget.Toast;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
 import ee.ria.EstEIDUtility.service.TokenServiceConnection;
-import ee.ria.token.tokenservice.Token;
+import ee.ria.token.tokenservice.token.Token;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.ChangePinCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;

@@ -3,8 +3,6 @@ package ee.ria.token.tokenservice.reader;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 
-import com.acs.smartcard.ReaderException;
-
 import java.util.Arrays;
 
 import ee.ria.token.tokenservice.reader.impl.ACS;
@@ -12,9 +10,11 @@ import ee.ria.token.tokenservice.reader.impl.Identive;
 import ee.ria.token.tokenservice.reader.impl.Omnikey;
 import ee.ria.token.tokenservice.util.Util;
 
-public abstract class CardReader implements ScardComChannel {
-	protected static final String TAG = "SmartCard";
+public abstract class CardReader implements SmartCardComChannel {
+
+	protected static final String TAG = "CardReader";
 	protected static final String ACTION_USB_PERMISSION = "ee.ria.token.tokenservice.USB_PERMISSION";
+
 	public static final String ACS = "ACS";
 	public static final String Identive = "Identive";
 	public static final String Omnikey = "Omnikey";
@@ -57,7 +57,7 @@ public abstract class CardReader implements ScardComChannel {
 	}
 
 	@Override
-	public byte[] transmitExtended(byte[] apdu) throws Exception {
+	public byte[] transmitExtended(byte[] apdu) {
 		byte[] recv = transmit(apdu);
 		byte sw1 = recv[recv.length - 2];
 		byte sw2 = recv[recv.length - 1];
@@ -65,7 +65,7 @@ public abstract class CardReader implements ScardComChannel {
 		if (sw1 == 0x61) {
 			recv = Util.concat(recv, transmit(new byte[] { 0x00, (byte) 0xC0, 0x00, 0x00, sw2 }));
 		} else if (!(sw1 == (byte) 0x90 && sw2 == (byte) 0x00)) {
-			throw new ReaderException("SW != 9000");
+			throw new ScardOperationUnsuccessfulException("SW != 9000");
 		}
 		return recv;
 	}

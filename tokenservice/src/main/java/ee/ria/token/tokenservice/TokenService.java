@@ -15,8 +15,8 @@ import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.SignCallback;
 import ee.ria.token.tokenservice.callback.UnblockPinCallback;
 import ee.ria.token.tokenservice.reader.CardReader;
-import ee.ria.token.tokenservice.exception.PinVerificationException;
-import ee.ria.token.tokenservice.util.TokenFactory;
+import ee.ria.token.tokenservice.token.PinVerificationException;
+import ee.ria.token.tokenservice.token.Token;
 
 public class TokenService extends Service {
 
@@ -49,16 +49,15 @@ public class TokenService extends Service {
         }
     }
 
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         SMConnected callback = new SMConnected();
-        cardReader = getSmartCard(callback);
+        cardReader = getCardReader(callback);
         return mBinder;
     }
 
-    private CardReader getSmartCard(SMConnected callback) {
+    private CardReader getCardReader(SMConnected callback) {
         final CardReader cardReader = CardReader.getInstance(this, CardReader.ACS);
         if (cardReader == null) {
             return null;

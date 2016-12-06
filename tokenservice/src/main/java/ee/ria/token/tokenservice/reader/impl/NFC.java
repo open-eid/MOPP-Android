@@ -8,6 +8,7 @@ import android.util.Log;
 import java.io.IOException;
 
 import ee.ria.token.tokenservice.reader.CardReader;
+import ee.ria.token.tokenservice.reader.SmartCardCommunicationException;
 
 public class NFC extends CardReader {
     private IsoDep nfc;
@@ -17,8 +18,17 @@ public class NFC extends CardReader {
     }
 
     @Override
-    public byte[] transmit(byte[] apdu) throws Exception {
-        return nfc.transceive(apdu);
+    public boolean isSecureChannel() {
+        return false;
+    }
+
+    @Override
+    public byte[] transmit(byte[] apdu) {
+        try {
+            return nfc.transceive(apdu);
+        } catch (IOException e) {
+            throw new SmartCardCommunicationException(e);
+        }
     }
 
     @Override

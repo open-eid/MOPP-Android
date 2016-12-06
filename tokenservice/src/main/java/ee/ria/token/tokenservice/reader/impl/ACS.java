@@ -10,10 +10,12 @@ import android.hardware.usb.UsbManager;
 import android.util.Log;
 
 import com.acs.smartcard.Reader;
+import com.acs.smartcard.ReaderException;
 
 import java.util.Arrays;
 
 import ee.ria.token.tokenservice.reader.CardReader;
+import ee.ria.token.tokenservice.reader.SmartCardCommunicationException;
 
 public class ACS extends CardReader {
 
@@ -82,9 +84,19 @@ public class ACS extends CardReader {
     }
 
     @Override
-    public byte[] transmit(byte[] apdu) throws Exception {
+    public boolean isSecureChannel() {
+        return true;
+    }
+
+    @Override
+    public byte[] transmit(byte[] apdu) {
         byte[] recv = new byte[1024];
-        int len = ctx.transmit(slot, apdu, apdu.length, recv, recv.length);
+        int len = 0;
+        try {
+            len = ctx.transmit(slot, apdu, apdu.length, recv, recv.length);
+        } catch (ReaderException e) {
+            throw new SmartCardCommunicationException(e);
+        }
         return Arrays.copyOf(recv, len);
     }
 }

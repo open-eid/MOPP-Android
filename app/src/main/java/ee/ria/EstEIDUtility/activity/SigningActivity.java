@@ -23,10 +23,10 @@ import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
-import ee.ria.token.tokenservice.Token;
+import ee.ria.token.tokenservice.token.Token;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.SignCallback;
-import ee.ria.token.tokenservice.exception.PinVerificationException;
+import ee.ria.token.tokenservice.token.PinVerificationException;
 import ee.ria.token.tokenservice.util.AlgorithmUtils;
 import ee.ria.token.tokenservice.util.Util;
 

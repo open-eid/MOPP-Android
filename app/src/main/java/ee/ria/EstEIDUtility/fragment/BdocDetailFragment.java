@@ -46,12 +46,12 @@ import ee.ria.EstEIDUtility.util.UploadFileTask;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.Signature;
 import ee.ria.libdigidocpp.Signatures;
-import ee.ria.token.tokenservice.Token;
+import ee.ria.token.tokenservice.token.Token;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.SignCallback;
-import ee.ria.token.tokenservice.exception.PinVerificationException;
+import ee.ria.token.tokenservice.token.PinVerificationException;
 
 import static android.content.Context.MODE_PRIVATE;
 

@@ -5,13 +5,13 @@ import android.content.Intent;
 import android.smartcardio.Card;
 import android.smartcardio.CardException;
 import android.smartcardio.CommandAPDU;
-import android.smartcardio.ResponseAPDU;
 import android.smartcardio.TerminalFactory;
 import android.smartcardio.ipc.CardService;
 import android.smartcardio.ipc.ICardService;
 import android.util.Log;
 
 import ee.ria.token.tokenservice.reader.CardReader;
+import ee.ria.token.tokenservice.reader.SmartCardCommunicationException;
 
 public class Omnikey extends CardReader {
     private ICardService mService;
@@ -42,9 +42,17 @@ public class Omnikey extends CardReader {
     }
 
     @Override
-    public byte[] transmit(byte[] apdu) throws Exception {
-        ResponseAPDU response = card.getBasicChannel().transmit(new CommandAPDU(apdu));
-        return response.getBytes();
+    public boolean isSecureChannel() {
+        return true;
+    }
+
+    @Override
+    public byte[] transmit(byte[] apdu) {
+        try {
+            return card.getBasicChannel().transmit(new CommandAPDU(apdu)).getBytes();
+        } catch (CardException e) {
+            throw new SmartCardCommunicationException(e);
+        }
     }
 
     @Override

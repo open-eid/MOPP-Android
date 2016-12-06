@@ -1,16 +1,15 @@
-package ee.ria.token.tokenservice;
+package ee.ria.token.tokenservice.token;
 
 import android.util.SparseArray;
 
 public interface Token {
 
-	byte[] sign(PinType type, String pin, byte[] data) throws Exception;
-	SparseArray<String> readPersonalFile() throws Exception;
-	boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin) throws Exception;
-	boolean unblockPin(PinType pinType, byte[] puk) throws Exception;
-	byte[] readCert(CertType type) throws Exception;
-
-    byte readRetryCounter(PinType pinType) throws Exception;
+	byte[] sign(PinType type, String pin, byte[] data);
+	SparseArray<String> readPersonalFile();
+	boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin);
+	boolean unblockPin(PinType pinType, byte[] puk);
+	byte[] readCert(CertType type);
+    byte readRetryCounter(PinType pinType);
 
     enum CertType {
         CertAuth((byte) 0xAA),

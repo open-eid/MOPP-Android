@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import ee.ria.token.tokenservice.reader.CardReader;
+import ee.ria.token.tokenservice.reader.SmartCardCommunicationException;
 
 public class Identive extends CardReader {
 
@@ -50,7 +51,12 @@ public class Identive extends CardReader {
     }
 
     @Override
-    public byte[] transmit(byte[] apdu) throws Exception {
+    public boolean isSecureChannel() {
+        return true;
+    }
+
+    @Override
+    public byte[] transmit(byte[] apdu) {
         SCard.SCardIOBuffer io = ctx.new SCardIOBuffer();
         io.setAbyInBuffer(apdu);
         io.setnBytesReturned(apdu.length);
@@ -58,7 +64,7 @@ public class Identive extends CardReader {
         io.setnOutBufferSize(0x8000);
         ctx.SCardTransmit(io);
         if (io.getnBytesReturned() == 0) {
-            throw new Exception("Failed to send apdu");
+            throw new SmartCardCommunicationException("Failed to send apdu");
         }
         String rstr = "";
         for (int k = 0; k < io.getnBytesReturned(); k++) {

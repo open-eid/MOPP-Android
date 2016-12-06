@@ -1,25 +1,27 @@
-package ee.ria.token.tokenservice.impl;
+package ee.ria.token.tokenservice.token;
 
 import android.util.SparseArray;
 
-import ee.ria.token.tokenservice.reader.ScardComChannel;
+import java.io.UnsupportedEncodingException;
+
+import ee.ria.token.tokenservice.reader.SmartCardComChannel;
 import ee.ria.token.tokenservice.util.Util;
 
 import static ee.ria.token.tokenservice.util.AlgorithmUtils.addPadding;
 
 public class EstEIDv3d4 extends EstEIDToken {
 
-    public EstEIDv3d4(ScardComChannel comChannel) {
+    public EstEIDv3d4(SmartCardComChannel comChannel) {
         super(comChannel);
     }
 
     @Override
-    public byte[] sign(PinType type, String pin, byte[] data) throws Exception {
+    public byte[] sign(PinType type, String pin, byte[] data) {
         verifyPin(type, pin.getBytes());
         try {
             selectMasterFile();
             selectCatalogue();
-            transmitExtended(new byte[]{0x00, 0x22, (byte) 0xF3, 0x01});
+            manageSecurityEnvironment();
             switch (type) {
                 case PIN1:
                     //TODO: check challenge
@@ -31,33 +33,40 @@ public class EstEIDv3d4 extends EstEIDToken {
                     throw new Exception("Unsupported");
             }
         } catch (Exception e) {
-            throw new Exception(type == PinType.PIN2 ? "Sign failed " + e.getMessage() : "Auth. failed " + e.getMessage());
+            throw new SignOperationFailedException(type, e);
         }
     }
 
     @Override
-    public SparseArray<String> readPersonalFile() throws Exception {
+    public SparseArray<String> readPersonalFile() {
         selectMasterFile();
         selectCatalogue();
-        transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x04, 0x02, (byte) 0x50, (byte) 0x44});
+        selectPersonalDataFile();
         SparseArray<String> result = new SparseArray<>();
         for (byte i = 1; i <= 16; ++i) {
-            byte[] data = transmitExtended(new byte[]{0x00, (byte) 0xB2, i, 0x04, 0x00});
-            result.put(i, new String(data, "Windows-1252"));
+            byte[] data = readRecord(i);
+            try {
+                result.put(i, new String(data, "Windows-1252"));
+            } catch (UnsupportedEncodingException e) {
+                throw new TokenException(e);
+            }
         }
         return result;
     }
 
     @Override
-    public boolean changePin(PinType pinType, byte[] previousPin, byte[] newPin) throws Exception {
+    public boolean changePin(PinType pinType, byte[] previousPin, byte[] newPin){
+        if (isSecureChannel()) {
+            throw new SecureOperationOverUnsecureChannelException("PIN replace is not allowed");
+        }
         byte[] recv = transmit(Util.concat(new byte[]{0x00, 0x24, 0x00, pinType.value, (byte) (previousPin.length + newPin.length)}, previousPin, newPin));
         return checkSW(recv);
     }
 
     @Override
-    public boolean unblockPin(PinType pinType, byte[] puk) throws Exception {
-        if (isNfcComChannel()) {
-            throw new Exception("PIN replace is not allowed over NFC");
+    public boolean unblockPin(PinType pinType, byte[] puk) {
+        if (isSecureChannel()) {
+            throw new SecureOperationOverUnsecureChannelException("PIN unblock is not allowed");
         }
         verifyPin(PinType.PUK, puk);
         byte[] recv = transmit(new byte[]{0x00, 0x2C, 0x03, pinType.value});
@@ -65,21 +74,32 @@ public class EstEIDv3d4 extends EstEIDToken {
     }
 
     @Override
-    public byte[] readCert(CertType type) throws Exception {
+    public byte[] readCert(CertType type) {
         selectMasterFile();
         selectCatalogue();
         transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x04, 0x02, (byte) 0xAA, (byte) 0xCE});
         return readCertRecords();
+
     }
 
     @Override
-    void selectMasterFile() throws Exception {
+    void selectMasterFile() {
         transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x00, 0x0C});
     }
 
     @Override
-    void selectCatalogue() throws Exception {
+    void selectCatalogue() {
         transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x01, 0x0C, 0x02, (byte) 0xEE, (byte) 0xEE});
+    }
+
+    @Override
+    void manageSecurityEnvironment() {
+        transmitExtended(new byte[]{0x00, 0x22, (byte) 0xF3, 0x01});
+    }
+
+    @Override
+    void selectPersonalDataFile() {
+        transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x04, 0x02, (byte) 0x50, (byte) 0x44});
     }
 
 }
