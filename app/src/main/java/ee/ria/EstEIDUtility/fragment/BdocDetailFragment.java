@@ -4,11 +4,12 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -26,23 +27,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dropbox.core.android.Auth;
-import com.dropbox.core.v2.files.FileMetadata;
-
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 
+import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.activity.BdocDetailActivity;
 import ee.ria.EstEIDUtility.domain.X509Cert;
 import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
 import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.EstEIDUtility.util.Constants;
-import ee.ria.EstEIDUtility.util.DropboxClientFactory;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
-import ee.ria.EstEIDUtility.util.UploadFileTask;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.Signature;
 import ee.ria.libdigidocpp.Signatures;
@@ -53,8 +50,6 @@ import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.SignCallback;
 import ee.ria.token.tokenservice.token.PinVerificationException;
 
-import static android.content.Context.MODE_PRIVATE;
-
 public class BdocDetailFragment extends Fragment {
 
     public static final String TAG = "BDOC_DETAIL_FRAGMENT";
@@ -62,7 +57,6 @@ public class BdocDetailFragment extends Fragment {
     private EditText title;
     private TextView body;
     private TextView fileInfoTextView;
-    private AlertDialog sendDialog;
     private AlertDialog pinDialog;
     private EditText pinText;
     private TextView enterPinText;
@@ -73,11 +67,20 @@ public class BdocDetailFragment extends Fragment {
     private ImageView editBdoc;
 
     private String fileName;
-    boolean saveToDropboxClicked;
     private File bdocFile;
 
     private TokenService tokenService;
     private TokenServiceConnection tokenServiceConnection;
+
+    private boolean tokenServiceBound;
+
+    private void unBindTokenService() {
+        addSignatureButton.setEnabled(false);
+        if (tokenServiceConnection != null && tokenServiceBound) {
+            getActivity().unbindService(tokenServiceConnection);
+            tokenServiceBound = false;
+        }
+    }
 
     @Override
     public void onStart() {
@@ -88,14 +91,13 @@ public class BdocDetailFragment extends Fragment {
     private void connectTokenService() {
         tokenServiceConnection = new TokenServiceConnection(getActivity(), new TokenServiceCreatedCallback());
         tokenServiceConnection.connectService();
+        tokenServiceBound = true;
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (tokenServiceConnection != null) {
-            getActivity().unbindService(tokenServiceConnection);
-        }
+        unBindTokenService();
     }
 
     @Override
@@ -119,7 +121,6 @@ public class BdocDetailFragment extends Fragment {
         addFileButton = (Button) fragLayout.findViewById(R.id.addFile);
         addSignatureButton = (Button) fragLayout.findViewById(R.id.addSignature);
         sendButton = (Button) fragLayout.findViewById(R.id.sendButton);
-        createSendDialog();
         createPinDialog();
 
         return fragLayout;
@@ -128,7 +129,6 @@ public class BdocDetailFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        sendDialog.setTitle(fileName);
 
         addFileButton.setOnClickListener(new AddFileButtonListener());
         addSignatureButton.setOnClickListener(new View.OnClickListener() {
@@ -140,7 +140,13 @@ public class BdocDetailFragment extends Fragment {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendDialog.show();
+
+                Uri uriToFile = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, bdocFile);
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, uriToFile);
+                shareIntent.setType("application/zip");
+                startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.upload_to)));
             }
         });
         editBdoc.setOnClickListener(new View.OnClickListener() {
@@ -158,27 +164,6 @@ public class BdocDetailFragment extends Fragment {
         fileInfoTextView.setText(fileInfo);
         title.setText(fileName);
         body.setText(fileName);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (saveToDropboxClicked) {
-            String accessToken = getTokenFromPrefs();
-            if (accessToken == null) {
-                accessToken = Auth.getOAuth2Token();
-                if (accessToken != null) {
-                    saveTokenToPrefs(accessToken);
-                    DropboxClientFactory.init(accessToken);
-                } else {
-                    NotificationUtil.showNotification(getActivity(), R.string.upload_to_dropbox_auth_failed, NotificationUtil.NotificationType.ERROR);
-                    saveToDropboxClicked = false;
-                }
-            } else {
-                DropboxClientFactory.init(accessToken);
-                uploadToDropbox();
-            }
-        }
     }
 
     class SignTaskCallback implements SignCallback {
@@ -218,38 +203,6 @@ public class BdocDetailFragment extends Fragment {
         public void onCounterRead(byte counterByte) {
             enterPinText.setText(String.format(getResources().getString(R.string.enter_pin_retries_left), String.valueOf(counterByte)));
         }
-    }
-
-    private void createSendDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(fileName);
-
-        View view = getActivity().getLayoutInflater().inflate(R.layout.send_action_row, null);
-        TextView name = (TextView) view.findViewById(R.id.sendText);
-        ImageView image = (ImageView) view.findViewById(R.id.sendImg);
-
-        name.setText(getResources().getString(R.string.upload_to_dropbox));
-        image.setImageResource(R.drawable.dropbox_android);
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String accessToken = getTokenFromPrefs();
-                if (accessToken != null) {
-                    DropboxClientFactory.init(accessToken);
-                    uploadToDropbox();
-                    sendDialog.hide();
-                } else {
-                    Auth.startOAuth2Authentication(getActivity(), getString(R.string.app_key));
-                    saveToDropboxClicked = true;
-                }
-            }
-        });
-
-        builder.setView(view);
-
-        builder.setNegativeButton(R.string.close_button, null);
-        sendDialog = builder.create();
     }
 
     private class AddFileButtonListener implements View.OnClickListener {
@@ -303,43 +256,6 @@ public class BdocDetailFragment extends Fragment {
         fragmentTransaction.commit();
     }
 
-    private void dropBoxUploadFail(Exception e) {
-        if (e != null) {
-            NotificationUtil.showNotification(getActivity(), e.getMessage(), NotificationUtil.NotificationType.ERROR);
-        } else {
-            NotificationUtil.showNotification(getActivity(), R.string.upload_to_dropbox_fail, NotificationUtil.NotificationType.ERROR);
-        }
-    }
-
-    private void dropBoxUploadSuccess(long size) {
-        String message = getContext().getResources().getString(R.string.upload_to_dropbox_success);
-        message = String.format(message, fileName, FileUtils.getKilobytes(size));
-        NotificationUtil.showNotification(getActivity(), message, NotificationUtil.NotificationType.SUCCESS);
-    }
-
-    private void uploadToDropbox() {
-        new UploadFileTask(getContext(), DropboxClientFactory.getClient(), fileName, new UploadFileTask.Callback() {
-            @Override
-            public void onUploadComplete(FileMetadata result) {
-                dropBoxUploadSuccess(result.getSize());
-            }
-            @Override
-            public void onError(Exception e) {
-                dropBoxUploadFail(e);
-            }
-        }).execute();
-    }
-
-    private String getTokenFromPrefs() {
-        SharedPreferences prefs = getActivity().getSharedPreferences(Constants.DROPBOX_PREFS, MODE_PRIVATE);
-        return prefs.getString(Constants.DROPBOX_ACCESS_TOKEN, null);
-    }
-
-    private void saveTokenToPrefs(String accessToken) {
-        SharedPreferences prefs = getActivity().getSharedPreferences(Constants.DROPBOX_PREFS, MODE_PRIVATE);
-        prefs.edit().putString(Constants.DROPBOX_ACCESS_TOKEN, accessToken).apply();
-    }
-
     private void createPinDialog() {
         View view = getActivity().getLayoutInflater().inflate(R.layout.enter_pin, null);
 
@@ -376,7 +292,7 @@ public class BdocDetailFragment extends Fragment {
 
         @Override
         public void disconnected() {
-            tokenService = null;
+            Log.d(TAG, "token service disconnected");
             addSignatureButton.setEnabled(false);
         }
     }
@@ -392,8 +308,8 @@ public class BdocDetailFragment extends Fragment {
         }
 
         @Override
-        public void onCertificateError(String reason) {
-            Toast.makeText(getActivity(), reason, NotificationUtil.NotificationDuration.SHORT.duration).show();
+        public void onCertificateError(Exception e) {
+            Toast.makeText(getActivity(), e.getMessage(), NotificationUtil.NotificationDuration.SHORT.duration).show();
         }
 
     }
@@ -443,7 +359,7 @@ public class BdocDetailFragment extends Fragment {
         }
 
         @Override
-        public void onCertificateError(String reason) {}
+        public void onCertificateError(Exception e) {}
 
     }
 

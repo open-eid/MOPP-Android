@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.acs.smartcard.CommunicationErrorException;
+
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.ChangePinCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
@@ -47,6 +49,7 @@ public class TokenService extends Service {
                 Log.e(TAG, "getTokenImpl: ", e);
             }
         }
+
     }
 
     @Nullable
@@ -91,7 +94,8 @@ public class TokenService extends Service {
     @Override
     public void onDestroy() {
         if (cardReader != null) {
-            this.unregisterReceiver(cardReader.getReciever());
+            this.unregisterReceiver(cardReader.reciever);
+            this.unregisterReceiver(cardReader.usbAttachReceiver);
         }
         super.onDestroy();
     }
@@ -140,7 +144,7 @@ public class TokenService extends Service {
             certCallback.onCertificateResponse(certBytes);
         } catch (Exception e) {
             Log.e(TAG, "readCertificateInHex: ", e);
-            certCallback.onCertificateError(e.getMessage());
+            certCallback.onCertificateError(e);
         }
     }
 }

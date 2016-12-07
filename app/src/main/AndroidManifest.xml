@@ -9,10 +9,10 @@
     <uses-permission android:name="com.hidglobal.ia.omnikey.service.permission.SMARTCARDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.NFC" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!--Do we need this?-->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -36,7 +36,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
 
         <service
@@ -94,26 +94,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />
         </activity>
-        <activity android:name=".activity.BdocDetailActivity"
+        <activity
+            android:name=".activity.BdocDetailActivity"
             android:label="@string/bdoc_detail_title"
             android:launchMode="singleTop"
-            android:parentActivityName=".activity.BrowseContainersActivity"
-            />
+            android:parentActivityName=".activity.BrowseContainersActivity" />
 
         <activity
-            android:name="com.dropbox.core.android.AuthActivity"
-            android:configChanges="orientation|keyboard"
-            android:launchMode="singleTask" >
-            <intent-filter>
+            android:name=".activity.PinChangeActivity"
+            android:parentActivityName=".activity.PinUtilitiesActivity">
 
-                <data android:scheme="db-f76r4i3037de9zt" />
-
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

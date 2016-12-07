@@ -113,10 +113,10 @@ public class ManageEidsActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onCertificateError(String reason) {
+        public void onCertificateError(Exception e) {
             new AlertDialog.Builder(ManageEidsActivity.this)
                     .setTitle(R.string.cert_read_failed)
-                    .setMessage(reason)
+                    .setMessage(e.getMessage())
                     .setNegativeButton("Close", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

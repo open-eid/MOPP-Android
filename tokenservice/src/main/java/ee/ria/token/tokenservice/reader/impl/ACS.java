@@ -31,12 +31,24 @@ public class ACS extends CardReader {
         manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         ctx = new Reader(manager);
 
+        usbAttachReceiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
+                    Log.d(TAG, "onReceive mUsbAttachReceiver: " + action);
+                    askPermission();
+                }
+            }
+        };
+
+        context.registerReceiver(usbAttachReceiver , new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED));
+
         permissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
         reciever = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
-                Log.d(TAG, "onReceive: " + action + " " + ACTION_USB_PERMISSION);
+                Log.d(TAG, "onReceive: " + action);
                 if (ACTION_USB_PERMISSION.equals(action)) {
                     synchronized (this) {
                         UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
@@ -59,6 +71,14 @@ public class ACS extends CardReader {
         context.registerReceiver(reciever, new IntentFilter(ACTION_USB_PERMISSION));
     }
 
+    void askPermission() {
+        for (final UsbDevice device: manager.getDeviceList().values()) {
+            if (ctx.isSupported(device)) {
+                manager.requestPermission(device, permissionIntent);
+            }
+        }
+    }
+
     public boolean hasSupportedReader() {
         for (final UsbDevice device: manager.getDeviceList().values()) {
             if (ctx.isSupported(device)) {
@@ -71,11 +91,10 @@ public class ACS extends CardReader {
     @Override
     public void connect(Connected connected) {
         this.connected = connected;
-        for (final UsbDevice device: manager.getDeviceList().values()) {
-            if (ctx.isSupported(device)) {
-                manager.requestPermission(device, permissionIntent);
-            }
+        if (!hasSupportedReader()) {
+            return;
         }
+        askPermission();
     }
 
     @Override

@@ -35,7 +35,7 @@
         style="@style/menuButtonImage" />
 
     <TextView
-        android:text="Allkirjastamine"
+        android:text="@string/title_activity_signing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView_sign"
@@ -55,7 +55,7 @@
         android:onClick="startContainerBrowse"/>
 
     <TextView
-        android:text="Allkirjastatud"
+        android:text="@string/title_activity_browse_containers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView_signed"
@@ -75,7 +75,7 @@
         android:onClick="startMyEids" />
 
     <TextView
-        android:text="Minu eID-d"
+        android:text="@string/title_activity_manage_eids"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView_my_eids"
@@ -95,7 +95,7 @@
         android:onClick="startPinUtilities"/>
 
     <TextView
-        android:text="PIN-i toimingud"
+        android:text="@string/title_activity_pin_utilities"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView_pin_activities"

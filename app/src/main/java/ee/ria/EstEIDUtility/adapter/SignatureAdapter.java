@@ -78,13 +78,11 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
 
         try {
             signature.validate();
-            String t = getContext().getResources().getString(R.string.signature_valid);
-            viewHolder.isSigned.setText(t);
+            viewHolder.isSigned.setText(getContext().getResources().getString(R.string.signature_valid));
             viewHolder.isSigned.setTextColor(Color.GREEN);
         } catch (Exception e) {
-            Log.e(TAG, "Siganture invalid: ", e);
-            String t = getContext().getResources().getString(R.string.signature_invalid);
-            viewHolder.isSigned.setText(t);
+            //Log.e(TAG, "Siganture invalid: ", e);
+            viewHolder.isSigned.setText(getContext().getResources().getString(R.string.signature_invalid));
             viewHolder.isSigned.setTextColor(Color.RED);
         }
 

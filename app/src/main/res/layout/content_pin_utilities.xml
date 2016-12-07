@@ -1,15 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_pin_utilities"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="ee.ria.EstEIDUtility.activity.PinUtilitiesActivity"
-    tools:showIn="@layout/activity_pin_utilities">
+    android:orientation="vertical"
+    tools:context="ee.ria.EstEIDUtility.activity.PinUtilitiesActivity">
 
-    <EditText
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/changePin1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <ImageView
+            android:id="@+id/icon1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_sim_card_black_36dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/icon1"
+            android:layout_alignTop="@+id/icon1"
+            android:layout_marginLeft="5dp"
+            android:layout_toLeftOf="@+id/arrow1"
+            android:layout_toRightOf="@+id/icon1"
+            android:gravity="center_vertical"
+            android:hint="@string/change_pin"
+            android:textAppearance="?android:textAppearanceLarge" />
+
+        <ImageView
+            android:id="@+id/arrow1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/icon1"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/icon1"
+            android:gravity="center_vertical"
+            android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/changePin2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <ImageView
+            android:id="@+id/icon2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_sim_card_black_36dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/icon2"
+            android:layout_alignTop="@+id/icon2"
+            android:layout_marginLeft="5dp"
+            android:layout_toLeftOf="@+id/arrow2"
+            android:layout_toRightOf="@+id/icon2"
+            android:gravity="center_vertical"
+            android:hint="@string/change_pin2"
+            android:textAppearance="?android:textAppearanceLarge" />
+
+        <ImageView
+            android:id="@+id/arrow2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/icon2"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/icon2"
+            android:gravity="center_vertical"
+            android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
+    </RelativeLayout>
+
+    <!--<EditText
         android:id="@+id/pin_util_current"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,8 +103,7 @@
         android:ems="10"
         android:hint="@string/current_pin_puk"
         android:inputType="numberPassword"
-        app:layout_constraintLeft_toLeftOf="@+id/pin_util_connect"
-        app:layout_constraintTop_toBottomOf="@+id/pin_util_connect" />
+        />
 
     <EditText
         android:id="@+id/pin_util_new"
@@ -28,8 +113,7 @@
         android:ems="10"
         android:hint="@string/new_pin_puk"
         android:inputType="numberPassword"
-        app:layout_constraintLeft_toLeftOf="@+id/pin_util_current"
-        app:layout_constraintTop_toBottomOf="@+id/pin_util_current" />
+        />
 
     <Button
         android:id="@+id/pin_util_connect"
@@ -39,8 +123,7 @@
         android:layout_marginTop="16dp"
         android:onClick="connectReader"
         android:text="@string/connect"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        />
 
     <Button
         android:id="@+id/pin_util_change1"
@@ -49,8 +132,7 @@
         android:layout_marginTop="8dp"
         android:onClick="changePin"
         android:text="@string/change_pin"
-        app:layout_constraintLeft_toLeftOf="@+id/pin_util_new"
-        app:layout_constraintTop_toBottomOf="@+id/pin_util_new" />
+        />
 
     <Button
         android:id="@+id/pin_util_change2"
@@ -59,8 +141,7 @@
         android:layout_marginStart="8dp"
         android:onClick="changePin"
         android:text="@string/change_pin2"
-        app:layout_constraintLeft_toRightOf="@+id/pin_util_change1"
-        app:layout_constraintTop_toTopOf="@+id/pin_util_change1" />
+        />
 
     <Button
         android:id="@+id/pin_util_change_puk"
@@ -69,8 +150,7 @@
         android:layout_marginStart="8dp"
         android:onClick="changePin"
         android:text="@string/change_puk"
-        app:layout_constraintLeft_toRightOf="@+id/pin_util_connect"
-        app:layout_constraintTop_toTopOf="@+id/pin_util_connect" />
+        />
 
     <Button
         android:id="@+id/pin_util_unblock1"
@@ -79,8 +159,7 @@
         android:layout_marginTop="8dp"
         android:onClick="unblockPin"
         android:text="@string/unblock_pin1"
-        app:layout_constraintLeft_toLeftOf="@+id/pin_util_change1"
-        app:layout_constraintTop_toBottomOf="@+id/pin_util_change1" />
+        />
 
     <Button
         android:id="@+id/pin_util_unblock2"
@@ -89,8 +168,7 @@
         android:layout_marginStart="8dp"
         android:onClick="unblockPin"
         android:text="@string/unblock_pin2"
-        app:layout_constraintLeft_toRightOf="@+id/pin_util_unblock1"
-        app:layout_constraintTop_toTopOf="@+id/pin_util_unblock1" />
+        />
 
     <Button
         android:id="@+id/counter_pin1"
@@ -99,8 +177,7 @@
         android:layout_marginTop="8dp"
         android:onClick="readPIN1RetryCounter"
         android:text="@string/counter_pin1"
-        app:layout_constraintLeft_toLeftOf="@+id/pin_util_unblock1"
-        app:layout_constraintTop_toBottomOf="@+id/pin_util_unblock1" />
+        />
 
     <Button
         android:id="@+id/counter_pin2"
@@ -109,8 +186,7 @@
         android:layout_marginStart="8dp"
         android:onClick="readPIN2RetryCounter"
         android:text="@string/counter_pin2"
-        app:layout_constraintLeft_toRightOf="@+id/counter_pin1"
-        app:layout_constraintTop_toTopOf="@+id/counter_pin1" />
+        />
 
     <Button
         android:id="@+id/counter_puk"
@@ -119,14 +195,12 @@
         android:layout_marginStart="8dp"
         android:onClick="readPUKRetryCounter"
         android:text="@string/counter_puk"
-        app:layout_constraintLeft_toRightOf="@+id/counter_pin2"
-        app:layout_constraintTop_toTopOf="@+id/counter_pin1" />
+        />
 
     <TextView
         android:id="@+id/pin_util_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        app:layout_constraintLeft_toLeftOf="@+id/counter_pin1"
-        app:layout_constraintTop_toBottomOf="@+id/counter_pin1" />
-</android.support.constraint.ConstraintLayout>
+        />-->
+</LinearLayout>

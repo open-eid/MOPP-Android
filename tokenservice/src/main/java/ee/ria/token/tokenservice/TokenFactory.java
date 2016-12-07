@@ -25,7 +25,6 @@ public class TokenFactory {
         if (cardVersion == null) {
             return null;
         }
-        Log.d(TAG, "getTokenImpl: " + cardVersion);
         Token token = null;
         if (cardVersion.startsWith(TokenVersion.V3D5.getVersion())) {
             token = new EstEIDv3d5(cardReader);

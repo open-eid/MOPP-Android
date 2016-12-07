@@ -19,14 +19,11 @@ public abstract class CardReader implements SmartCardComChannel {
 	public static final String Identive = "Identive";
 	public static final String Omnikey = "Omnikey";
 
-	protected BroadcastReceiver reciever;
+	public static BroadcastReceiver reciever;
+	public static BroadcastReceiver usbAttachReceiver;
 
 	public abstract void connect(Connected connected);
 	public abstract void close();
-
-	public BroadcastReceiver getReciever() {
-		return reciever;
-	}
 
 	public static abstract class Connected {
 		public abstract void connected();
@@ -35,9 +32,7 @@ public abstract class CardReader implements SmartCardComChannel {
 	public static CardReader getInstance(Context context, String provider) {
 		if (provider.equals(ACS)) {
 			ACS acs = new ACS(context);
-			if (acs.hasSupportedReader()) {
-				return acs;
-			}
+			return acs;
 		}
 
 		if (provider.equals(Identive)) {

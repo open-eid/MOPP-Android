@@ -1,29 +1,34 @@
 package ee.ria.EstEIDUtility.activity;
 
 import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
 import ee.ria.EstEIDUtility.service.TokenServiceConnection;
-import ee.ria.token.tokenservice.token.Token;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.ChangePinCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.UnblockPinCallback;
+import ee.ria.token.tokenservice.token.Token;
 
 public class PinUtilitiesActivity extends AppCompatActivity {
 
+    public enum FragmentToLaunch {PIN1, PIN2}
+
+    public static final String PIN_FRAGMENT_TO_LAUNCH = "ee.ria.EstEIDUtility.activity.PIN_Fragment_To_Launch";
+
     private static final String TAG = "PinUtilitiesActivity";
 
-    TextView content;
+    private TextView content;
     private TokenService tokenService;
     private TokenServiceConnection tokenServiceConnection;
     private boolean serviceBound = false;
@@ -35,9 +40,33 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        content = (TextView) findViewById(R.id.pin_util_content);
+
+        View changePin1 = findViewById(R.id.changePin1);
+        changePin1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchPinChangeActivity(FragmentToLaunch.PIN1);
+            }
+        });
+
+        View changePin2 = findViewById(R.id.changePin2);
+        changePin2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchPinChangeActivity(FragmentToLaunch.PIN2);
+            }
+        });
     }
 
+    private void launchPinChangeActivity(FragmentToLaunch fragmentToLaunch) {
+        Intent intent = new Intent(this, PinChangeActivity.class);
+        intent.putExtra(PinUtilitiesActivity.PIN_FRAGMENT_TO_LAUNCH, fragmentToLaunch);
+        startActivity(intent);
+    }
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+        return super.onCreateView(parent, name, context, attrs);
+    }
 
     @Override
     protected void onStart() {
@@ -52,9 +81,7 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         @Override
         public void created(Service service) {
             tokenService = (TokenService) service;
-            enableButtons(true);
             serviceBound = true;
-            Toast.makeText(PinUtilitiesActivity.this, "Service connected", Toast.LENGTH_LONG).show();
         }
 
         @Override
@@ -66,8 +93,6 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         public void disconnected() {
             tokenService = null;
             serviceBound = false;
-            enableButtons(false);
-            Toast.makeText(PinUtilitiesActivity.this, "Service disconnected", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -112,12 +137,12 @@ public class PinUtilitiesActivity extends AppCompatActivity {
     }
 
     public void changePin(View view) {
-        EditText currentPinPuk = (EditText)findViewById(R.id.pin_util_current);
-        EditText newPinPuk = (EditText)findViewById(R.id.pin_util_new);
+        String currentPinPuk = null;
+        String newPinPuk = null;
         try {
-            Token.PinType type = getPinType(view.getId());
+            Token.PinType type = Token.PinType.PIN1;
             ChangePinCallback callback = new ChangePinTaskCallback(type);
-            tokenService.changePin(type, currentPinPuk.getText().toString(), newPinPuk.getText().toString(), callback);
+            tokenService.changePin(type, currentPinPuk, newPinPuk, callback);
         } catch (Exception e) {
             Log.e(TAG, "changePin: ", e);
             content.setText(e.getMessage());
@@ -125,11 +150,13 @@ public class PinUtilitiesActivity extends AppCompatActivity {
     }
 
     public void unblockPin(View view) {
-        EditText currentPinPuk = (EditText)findViewById(R.id.pin_util_current);
+        //EditText currentPinPuk = (EditText)findViewById(R.id.pin_util_current);
+        String currentPin = null;
         try {
-            Token.PinType type = getPinType(view.getId());
+            //Token.PinType type = getPinType(view.getId());
+            Token.PinType type = Token.PinType.PIN1;
             UnblockPinCallback callback = new UnblockPinTaskCallback(type);
-            tokenService.unblockPin(type, currentPinPuk.getText().toString(), callback);
+            tokenService.unblockPin(type, currentPin, callback);
         } catch (Exception e) {
             Log.e(TAG, "unblockPin: ", e);
             content.setText(e.getMessage());
@@ -200,7 +227,7 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         }
     }
 
-    public void enableButtons(boolean enable) {
+    /*public void enableButtons(boolean enable) {
         findViewById(R.id.pin_util_current).setEnabled(enable);
         findViewById(R.id.pin_util_new).setEnabled(enable);
         findViewById(R.id.pin_util_change1).setEnabled(enable);
@@ -224,6 +251,6 @@ public class PinUtilitiesActivity extends AppCompatActivity {
                 return Token.PinType.PUK;
         }
         return null;
-    }
+    }*/
 
 }
