@@ -62,6 +62,26 @@ public class EstEIDv3d5 extends EstEIDToken {
     }
 
     @Override
+    public boolean unblockAndChangePin(PinType pinType, byte[] puk, byte[] newPin) {
+        if (!isSecureChannel()) {
+            throw new SecureOperationOverUnsecureChannelException("PIN replace is not allowed");
+        }
+        verifyPin(PinType.PUK, puk);
+        byte[] recv = new byte[0];
+        switch (pinType) {
+            case PIN1:
+                //PIN1 = 00hex 2Chex 00hex 01hex 0Chex 3132333435363738hex || 34333221hex
+                recv = transmit(Util.concat(new byte[]{0x00, 0x2C, 0x00, pinType.value, 0x0C}, puk, newPin));
+                break;
+            case PIN2:
+                //PIN2 = 00hex 2Chex 00hex 02hex 0Dhex 3132333435363738hex || 3534333221hex
+                recv = transmit(Util.concat(new byte[]{0x00, 0x2C, 0x00, pinType.value, 0x0D}, puk, newPin));
+                break;
+        }
+        return checkSW(recv);
+    }
+
+    @Override
     public boolean unblockPin(PinType pinType, byte[] puk) {
         if (!isSecureChannel()) {
             throw new SecureOperationOverUnsecureChannelException("PIN unblock is not allowed");

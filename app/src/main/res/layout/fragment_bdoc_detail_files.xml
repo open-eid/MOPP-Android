@@ -13,6 +13,7 @@
         android:layout_marginEnd="15dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="9dp"
+        android:contentDescription="@android:string/unknownName"
         android:src="@drawable/ic_attachment_black_24dp" />
 
     <TextView
@@ -23,10 +24,10 @@
         android:layout_marginBottom="2dp"
         android:layout_marginTop="5dp"
         android:layout_toEndOf="@+id/attachmentImage"
-        android:layout_toRightOf="@+id/attachmentImage"
+        android:layout_toStartOf="@+id/removeFile"
         android:ellipsize="end"
-        android:maxLines="2"
-        android:text="Tooleping, mis on vaga pika nimega.doc"
+        android:maxLines="1"
+        android:text="@android:string/unknownName"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -35,11 +36,21 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/fileName"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="10dp"
         android:layout_toEndOf="@+id/attachmentImage"
-        android:layout_toRightOf="@+id/attachmentImage"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="Suurus: 400 KB" />
+        android:text="@android:string/unknownName" />
+
+    <ImageView
+        android:id="@+id/removeFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="7dp"
+        android:contentDescription="@android:string/unknownName"
+        android:paddingEnd="5dp"
+        android:paddingStart="2dp"
+        android:src="@drawable/ic_clear_black_24dp" />
 
 </RelativeLayout>

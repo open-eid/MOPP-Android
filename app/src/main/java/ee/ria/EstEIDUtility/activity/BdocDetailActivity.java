@@ -63,7 +63,7 @@ public class BdocDetailActivity extends AppCompatActivity {
 
         String attachedName = fileItem.getName();
         if (ContainerUtils.hasDataFile(container.dataFiles(), attachedName)) {
-            NotificationUtil.showNotification(this, R.string.container_has_file_with_same_name, NotificationUtil.NotificationType.WARNING);
+            NotificationUtil.showWarning(this, R.string.container_has_file_with_same_name, NotificationUtil.NotificationDuration.LONG);
             return;
         }
 

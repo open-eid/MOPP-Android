@@ -49,7 +49,6 @@ public abstract class EstEIDToken implements Token {
 
     protected byte[] transmit(byte[] apdu) {
         return comChannel.transmit(apdu);
-
     }
 
     protected byte[] transmitExtended(byte[] apdu) {

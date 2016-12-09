@@ -73,7 +73,7 @@ public class BdocAdapter extends ArrayAdapter<BdocItem> implements Filterable {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle(R.string.bdoc_remove_confirm_title);
 
-                String confirmMessage = getContext().getResources().getString(R.string.bdoc_remove_confirm_message);
+                String confirmMessage = getContext().getString(R.string.bdoc_remove_confirm_message);
                 confirmMessage = String.format(confirmMessage, bdoc.getName());
 
                 builder.setMessage(confirmMessage);

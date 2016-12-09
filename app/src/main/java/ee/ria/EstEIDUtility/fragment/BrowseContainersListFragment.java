@@ -80,7 +80,7 @@ public class BrowseContainersListFragment extends ListFragment {
         if (DateUtils.isToday(fileModified)) {
             return DateUtils.TODAY_FORMAT.format(fileModified);
         } else if (DateUtils.isYesterday(fileModified)) {
-            return getResources().getString(R.string.activity_browse_containers_yesterday);
+            return getString(R.string.activity_browse_containers_yesterday);
         } else if (DateUtils.isCurrentYear(fileModified)) {
             return DateUtils.CURRENT_YEAR_FORMAT.format(fileModified);
         }

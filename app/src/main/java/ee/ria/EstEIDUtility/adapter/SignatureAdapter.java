@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +16,11 @@ import android.widget.TextView;
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.style.BCStyle;
 
-import java.io.File;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.domain.X509Cert;
+import ee.ria.EstEIDUtility.fragment.BdocSignaturesFragment;
 import ee.ria.EstEIDUtility.util.DateUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.libdigidocpp.Container;
@@ -32,6 +31,7 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
     private static final String TAG = "SignatureAdapter";
     private String bdocFileName;
     private Context context;
+    private BdocSignaturesFragment bdocSignaturesFragment;
 
     private static class ViewHolder {
         TextView name;
@@ -40,10 +40,11 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
         TextView isSigned;
     }
 
-    public SignatureAdapter(Context context, List<Signature> signatures, String bdocFileName) {
+    public SignatureAdapter(Context context, List<Signature> signatures, String bdocFileName, BdocSignaturesFragment bdocSignaturesFragment) {
         super(context, 0, signatures);
         this.context = context;
         this.bdocFileName = bdocFileName;
+        this.bdocSignaturesFragment = bdocSignaturesFragment;
     }
 
     @NonNull
@@ -78,11 +79,10 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
 
         try {
             signature.validate();
-            viewHolder.isSigned.setText(getContext().getResources().getString(R.string.signature_valid));
+            viewHolder.isSigned.setText(getContext().getText(R.string.signature_valid));
             viewHolder.isSigned.setTextColor(Color.GREEN);
         } catch (Exception e) {
-            //Log.e(TAG, "Siganture invalid: ", e);
-            viewHolder.isSigned.setText(getContext().getResources().getString(R.string.signature_invalid));
+            viewHolder.isSigned.setText(getContext().getText(R.string.signature_invalid));
             viewHolder.isSigned.setTextColor(Color.RED);
         }
 
@@ -105,7 +105,7 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle(R.string.bdoc_remove_confirm_title);
 
-            String confirmMessage = getContext().getResources().getString(R.string.signature_remove_confirm_message);
+            String confirmMessage = getContext().getString(R.string.signature_remove_confirm_message);
             confirmMessage = String.format(confirmMessage, personInfo);
 
             builder.setMessage(confirmMessage);
@@ -117,11 +117,10 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
 
                     Container container = FileUtils.getContainer(context.getFilesDir(), bdocFileName);
                     container.removeSignature(position);
-
-                    File bdocFile = FileUtils.getBdocFile(context.getFilesDir(), bdocFileName);
-                    container.save(bdocFile.getAbsolutePath());
+                    container.save();
                     remove(sign);
                     notifyDataSetChanged();
+                    bdocSignaturesFragment.calculateFragmentHeight();
                 }
             }).setNegativeButton(R.string.cancel_button, null);
 

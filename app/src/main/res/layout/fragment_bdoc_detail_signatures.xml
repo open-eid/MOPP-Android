@@ -8,6 +8,7 @@
     android:id="@+id/signaturesLayout">
 
     <ImageView
+        android:contentDescription="@android:string/unknownName"
         android:id="@+id/signatureImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,10 +26,9 @@
         android:layout_marginBottom="2dp"
         android:layout_marginTop="5dp"
         android:layout_toEndOf="@+id/signatureImage"
-        android:layout_toLeftOf="@+id/removeSignature"
-        android:layout_toRightOf="@+id/signatureImage"
+        android:layout_toStartOf="@+id/removeSignature"
         android:maxLines="1"
-        android:text="Name Surname"
+        android:text="@android:string/unknownName"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -40,7 +40,7 @@
         android:layout_marginBottom="2dp"
         android:layout_toEndOf="@+id/signatureImage"
         android:maxLines="1"
-        android:text="Allkirjustatud 14 oktoober 2015" />
+        android:text="@android:string/unknownName" />
 
     <TextView
         android:id="@+id/signed"
@@ -49,9 +49,8 @@
         android:layout_below="@+id/fileSize"
         android:layout_marginBottom="15dp"
         android:layout_toEndOf="@+id/signatureImage"
-        android:layout_toRightOf="@+id/signatureImage"
         android:maxLines="1"
-        android:text="Allkiri on " />
+        android:text="@string/signature_is" />
 
     <TextView
         android:id="@+id/isSigned"
@@ -60,17 +59,18 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/fileSize"
         android:layout_marginBottom="15dp"
-        android:layout_toRightOf="@+id/signed"
+        android:layout_toEndOf="@+id/signed"
         android:maxLines="1"/>
 
     <ImageView
+        android:contentDescription="@android:string/unknownName"
         android:id="@+id/removeSignature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="7dp"
-        android:paddingLeft="2dp"
-        android:paddingRight="5dp"
+        android:paddingStart="2dp"
+        android:paddingEnd="5dp"
         android:src="@drawable/ic_clear_black_24dp" />
 
 </RelativeLayout>

@@ -11,6 +11,8 @@ public interface Token {
 	byte[] readCert(CertType type);
     byte readRetryCounter(PinType pinType);
 
+    boolean unblockAndChangePin(PinType pinType, byte[] puk, byte[] newPin);
+
     enum CertType {
         CertAuth((byte) 0xAA),
         CertSign((byte) 0xDD);

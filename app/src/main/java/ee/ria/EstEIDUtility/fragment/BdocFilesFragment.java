@@ -9,7 +9,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ListView;
 
@@ -30,6 +29,7 @@ import ee.ria.EstEIDUtility.adapter.DataFilesAdapter;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.ContainerUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
+import ee.ria.EstEIDUtility.util.LayoutUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFile;
@@ -49,33 +49,18 @@ public class BdocFilesFragment extends ListFragment {
         Container container = FileUtils.getContainer(getContext().getFilesDir(), bdocName);
 
         List<DataFile> dataFiles = ContainerUtils.extractDataFiles(container);
-        filesAdapter = new DataFilesAdapter(getActivity(), dataFiles);
+        filesAdapter = new DataFilesAdapter(getActivity(), dataFiles, bdocName, BdocFilesFragment.this);
         setListAdapter(filesAdapter);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        setFragmentHeight();
+        calculateFragmentHeight();
+        setEmptyText(getText(R.string.empty_container_files));
     }
 
-    private void setFragmentHeight() {
-        ListView listView = getListView();
-
-        int totalHeight = 0;
-
-        for (int i = 0; i < filesAdapter.getCount(); i++) {
-            View mView = filesAdapter.getView(i, null, listView);
-            mView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-            totalHeight += mView.getMeasuredHeight();
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (filesAdapter.getCount()));
-        listView.setLayoutParams(params);
-        listView.requestLayout();
-
-        String emptyText = getResources().getString(R.string.empty_container_files);
-        setEmptyText(emptyText);
+    public void calculateFragmentHeight() {
+        LayoutUtils.calculateFragmentHeight(getListView());
     }
 
     @Override
@@ -86,7 +71,7 @@ public class BdocFilesFragment extends ListFragment {
 
     public void addFile(DataFile dataFile) {
         filesAdapter.add(dataFile);
-        setFragmentHeight();
+        calculateFragmentHeight();
     }
 
     private void launchFileContentActivity(int position) {
@@ -129,7 +114,7 @@ public class BdocFilesFragment extends ListFragment {
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Log.e(TAG, "launchFileContentActivity: no handler for this type of file ", e);
-            NotificationUtil.showNotification(getActivity(), R.string.file_handler_error, NotificationUtil.NotificationType.ERROR);
+            NotificationUtil.showError(getActivity(), R.string.file_handler_error, NotificationUtil.NotificationDuration.LONG);
         }
     }
 

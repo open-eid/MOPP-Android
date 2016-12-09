@@ -147,7 +147,7 @@ public class SigningActivity extends AppCompatActivity {
 
         String fileName = containerName.getText().toString();
         if (fileName == null || fileName.isEmpty()) {
-            NotificationUtil.showNotification(this, getResources().getString(R.string.file_name_empty_message), NotificationUtil.NotificationType.WARNING);
+            NotificationUtil.showWarning(this, R.string.file_name_empty_message, null);
             return;
         }
 
@@ -159,7 +159,7 @@ public class SigningActivity extends AppCompatActivity {
 
         String bdocFileName = containerName.getText().toString();
         if (FileUtils.bdocExists(getFilesDir(), bdocFileName)) {
-            NotificationUtil.showNotification(this, R.string.file_exists_message, NotificationUtil.NotificationType.WARNING);
+            NotificationUtil.showWarning(this, R.string.file_exists_message, NotificationUtil.NotificationDuration.LONG);
             return;
         }
 

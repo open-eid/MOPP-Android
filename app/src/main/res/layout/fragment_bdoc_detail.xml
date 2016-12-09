@@ -21,14 +21,18 @@
             android:layout_height="35dp"
             android:layout_marginEnd="15dp"
             android:layout_marginStart="12dp"
+            android:contentDescription="@android:string/unknownName"
             android:src="@drawable/digidoc" />
 
         <ImageView
             android:id="@+id/editBdoc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:paddingRight="5dp"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@android:string/unknownName"
+            android:labelFor="@+id/listDocName"
+            android:paddingEnd="5dp"
+            android:paddingStart="0dp"
             android:src="@drawable/ic_mode_edit_black_18dp" />
 
         <EditText
@@ -37,12 +41,11 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="2dp"
             android:layout_toEndOf="@+id/bdocImg"
-            android:layout_toLeftOf="@+id/editBdoc"
-            android:layout_toRightOf="@+id/bdocImg"
-            android:padding="2dp"
-            android:maxLines="1"
+            android:layout_toStartOf="@+id/editBdoc"
             android:inputType="none"
-            android:text="File name.bdoc"
+            android:maxLines="1"
+            android:padding="2dp"
+            android:text="@android:string/unknownName"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -52,20 +55,19 @@
             android:layout_below="@+id/listDocName"
             android:layout_marginBottom="3dp"
             android:layout_toEndOf="@+id/bdocImg"
-            android:layout_toRightOf="@+id/bdocImg"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Asukoht: " />
+            android:text="@string/location" />
 
         <TextView
             android:id="@+id/dbocInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/listDocLocation"
-            android:layout_toRightOf="@+id/bdocImg"
+            android:layout_toEndOf="@+id/bdocImg"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Vorming: BDOC | Suurus: 700 kb" />
+            android:text="@android:string/unknownName" />
 
     </RelativeLayout>
 
@@ -79,103 +81,103 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="3dp">
+            android:paddingEnd="2dp"
+            android:paddingStart="3dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/bdocFilesTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/files_title"
+                    android:textAppearance="?android:panelTextAppearance"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/addFile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/bdocFilesTitle"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:text="@string/addFile"
+                    android:textAppearance="?android:textAppearanceSmall" />
+
+                <View
+                    android:id="@+id/infoSeparator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="2dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_toEndOf="@+id/addFile"
+                    android:background="#c0c0c0" />
+
+                <TextView
+                    android:id="@id/android:empty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/bdocFilesTitle"
+                    android:background="#FF0000"
+                    android:visibility="invisible" />
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/filesListLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/bdocFilesTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/files_title"
-                        android:textAppearance="?android:panelTextAppearance"
-                        android:textSize="20sp" />
+                <TextView
+                    android:id="@+id/bdocSignaturesTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/signatures_title"
+                    android:textAppearance="?android:panelTextAppearance"
+                    android:textSize="20sp" />
 
-                    <Button
-                        android:id="@+id/addFile"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_toRightOf="@+id/bdocFilesTitle"
-                        android:minHeight="0dp"
-                        android:minWidth="0dp"
-                        android:text="@string/addFile"
-                        android:textAppearance="?android:textAppearanceSmall"/>
+                <Button
+                    android:id="@+id/addSignature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/bdocSignaturesTitle"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:text="@string/addFile"
+                    android:textAppearance="?android:textAppearanceSmall" />
 
-                    <View
-                        android:id="@+id/infoSeparator"
-                        android:layout_width="wrap_content"
-                        android:layout_height="2dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_toRightOf="@+id/addFile"
-                        android:background="#c0c0c0" />
-
-                    <TextView android:id="@id/android:empty"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="#FF0000"
-                        android:visibility="invisible"
-                        android:layout_below="@+id/bdocFilesTitle"
-                        android:text="No data"/>
-
-                </RelativeLayout>
-            </LinearLayout>
+                <View
+                    android:id="@+id/filesSeparator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="2dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_toEndOf="@+id/addSignature"
+                    android:background="#c0c0c0" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/signaturesListLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingLeft="3dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:id="@+id/bdocSignaturesTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/signatures_title"
-                        android:textAppearance="?android:panelTextAppearance"
-                        android:textSize="20sp" />
-
-                    <Button
-                        android:id="@+id/addSignature"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_toRightOf="@+id/bdocSignaturesTitle"
-                        android:minHeight="0dp"
-                        android:minWidth="0dp"
-                        android:text="@string/addFile"
-                        android:textAppearance="?android:textAppearanceSmall" />
-
-                    <View
-                        android:id="@+id/filesSeparator"
-                        android:layout_width="wrap_content"
-                        android:layout_height="2dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_toRightOf="@+id/addSignature"
-                        android:background="#c0c0c0" />
-                </RelativeLayout>
-            </LinearLayout>
+                android:paddingEnd="2dp"
+                android:paddingStart="3dp" />
 
         </LinearLayout>
     </ScrollView>
@@ -190,6 +192,7 @@
 
         <Button
             android:id="@+id/saveContainer"
+            style="?android:attr/buttonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -197,6 +200,7 @@
 
         <Button
             android:id="@+id/sendButton"
+            style="?android:attr/buttonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

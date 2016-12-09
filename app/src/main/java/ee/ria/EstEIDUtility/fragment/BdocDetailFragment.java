@@ -43,12 +43,12 @@ import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.Signature;
 import ee.ria.libdigidocpp.Signatures;
-import ee.ria.token.tokenservice.token.Token;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.SignCallback;
 import ee.ria.token.tokenservice.token.PinVerificationException;
+import ee.ria.token.tokenservice.token.Token;
 
 public class BdocDetailFragment extends Fragment {
 
@@ -107,7 +107,7 @@ public class BdocDetailFragment extends Fragment {
         fileName = getArguments().getString(Constants.BDOC_NAME);
 
         bdocFile = FileUtils.getBdocFile(getContext().getFilesDir(), fileName);
-        
+
         createFilesListFragment();
         createSignatureListFragment();
 
@@ -121,6 +121,7 @@ public class BdocDetailFragment extends Fragment {
         addFileButton = (Button) fragLayout.findViewById(R.id.addFile);
         addSignatureButton = (Button) fragLayout.findViewById(R.id.addSignature);
         sendButton = (Button) fragLayout.findViewById(R.id.sendButton);
+
         createPinDialog();
 
         return fragLayout;
@@ -158,7 +159,7 @@ public class BdocDetailFragment extends Fragment {
             }
         });
 
-        String fileInfo = getContext().getResources().getString(R.string.file_info);
+        String fileInfo = getContext().getString(R.string.file_info);
         fileInfo = String.format(fileInfo, FilenameUtils.getExtension(fileName).toUpperCase(), FileUtils.getKilobytes(bdocFile.length()));
 
         fileInfoTextView.setText(fileInfo);
@@ -182,14 +183,14 @@ public class BdocDetailFragment extends Fragment {
             BdocDetailFragment bdocDetailFragment = (BdocDetailFragment) getActivity().getSupportFragmentManager().findFragmentByTag(BdocDetailFragment.TAG);
             BdocSignaturesFragment bdocSignaturesFragment = (BdocSignaturesFragment) bdocDetailFragment.getChildFragmentManager().findFragmentByTag(BdocSignaturesFragment.TAG);
             bdocSignaturesFragment.addSignature(signature);
-            enterPinText.setText(getResources().getString(R.string.enter_pin));
+            enterPinText.setText(getText(R.string.enter_pin));
             pinText.setText("");
         }
 
         @Override
         public void onSignError(Exception e, PinVerificationException pinVerificationException) {
             if (pinVerificationException != null) {
-                NotificationUtil.showNotification(getActivity(), R.string.pin_verification_failed, NotificationUtil.NotificationType.ERROR);
+                NotificationUtil.showError(getActivity(), R.string.pin_verification_failed, null);
                 pinText.setText("");
                 tokenService.readRetryCounter(pinVerificationException.getPinType(), new RetryCounterTaskCallback());
             } else {
@@ -201,7 +202,12 @@ public class BdocDetailFragment extends Fragment {
     private class RetryCounterTaskCallback implements RetryCounterCallback {
         @Override
         public void onCounterRead(byte counterByte) {
-            enterPinText.setText(String.format(getResources().getString(R.string.enter_pin_retries_left), String.valueOf(counterByte)));
+            enterPinText.setText(String.format(getText(R.string.enter_pin_retries_left).toString(), String.valueOf(counterByte)));
+        }
+
+        @Override
+        public void cardNotProvided() {
+            //TODO: implement behaviour
         }
     }
 
@@ -210,7 +216,7 @@ public class BdocDetailFragment extends Fragment {
         public void onClick(View v) {
             Container container = FileUtils.getContainer(getContext().getFilesDir(), fileName);
             if (container.signatures().size() > 0) {
-                NotificationUtil.showNotification(getActivity(), R.string.add_file_remove_signatures, NotificationUtil.NotificationType.ERROR);
+                NotificationUtil.showError(getActivity(), R.string.add_file_remove_signatures, null);
                 return;
             }
             Intent intent = new Intent()
@@ -219,7 +225,7 @@ public class BdocDetailFragment extends Fragment {
                     .addCategory(Intent.CATEGORY_OPENABLE)
                     .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
             getActivity().startActivityForResult(
-                    Intent.createChooser(intent, getResources().getString(R.string.select_file)),
+                    Intent.createChooser(intent, getText(R.string.select_file)),
                     BdocDetailActivity.CHOOSE_FILE_REQUEST);
         }
     }
@@ -319,7 +325,7 @@ public class BdocDetailFragment extends Fragment {
         public void onCertificateResponse(byte[] cert) {
             Container container = FileUtils.getContainer(getContext().getFilesDir(), fileName);
             if (isSignedByPerson(container.signatures(), container, cert)) {
-                NotificationUtil.showNotification(getActivity(), R.string.already_signed_by_person, NotificationUtil.NotificationType.WARNING);
+                NotificationUtil.showWarning(getActivity(), R.string.already_signed_by_person, null);
                 return;
             }
 
@@ -329,10 +335,12 @@ public class BdocDetailFragment extends Fragment {
             positiveButton.setEnabled(false);
             pinText.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
                 @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
 
                 @Override
                 public void afterTextChanged(Editable s) {
@@ -359,7 +367,8 @@ public class BdocDetailFragment extends Fragment {
         }
 
         @Override
-        public void onCertificateError(Exception e) {}
+        public void onCertificateError(Exception e) {
+        }
 
     }
 

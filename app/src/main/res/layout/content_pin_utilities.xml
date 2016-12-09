@@ -27,12 +27,14 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
+        android:layout_marginRight="10dp"
+        android:padding="10dp">
 
         <ImageView
             android:id="@+id/icon1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@android:string/unknownName"
             android:src="@drawable/ic_sim_card_black_36dp" />
 
         <TextView
@@ -40,9 +42,9 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/icon1"
             android:layout_alignTop="@+id/icon1"
-            android:layout_marginLeft="5dp"
-            android:layout_toLeftOf="@+id/arrow1"
-            android:layout_toRightOf="@+id/icon1"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/icon1"
+            android:layout_toStartOf="@+id/arrow1"
             android:gravity="center_vertical"
             android:hint="@string/change_pin"
             android:textAppearance="?android:textAppearanceLarge" />
@@ -52,8 +54,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/icon1"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/icon1"
+            android:contentDescription="@android:string/unknownName"
             android:gravity="center_vertical"
             android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
     </RelativeLayout>
@@ -64,12 +67,14 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
+        android:layout_marginRight="10dp"
+        android:padding="10dp">
 
         <ImageView
             android:id="@+id/icon2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@android:string/unknownName"
             android:src="@drawable/ic_sim_card_black_36dp" />
 
         <TextView
@@ -77,9 +82,9 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/icon2"
             android:layout_alignTop="@+id/icon2"
-            android:layout_marginLeft="5dp"
-            android:layout_toLeftOf="@+id/arrow2"
-            android:layout_toRightOf="@+id/icon2"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/icon2"
+            android:layout_toStartOf="@+id/arrow2"
             android:gravity="center_vertical"
             android:hint="@string/change_pin2"
             android:textAppearance="?android:textAppearanceLarge" />
@@ -89,118 +94,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/icon2"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/icon2"
+            android:contentDescription="@android:string/unknownName"
             android:gravity="center_vertical"
             android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
     </RelativeLayout>
 
-    <!--<EditText
-        android:id="@+id/pin_util_current"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="@string/current_pin_puk"
-        android:inputType="numberPassword"
-        />
-
-    <EditText
-        android:id="@+id/pin_util_new"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="@string/new_pin_puk"
-        android:inputType="numberPassword"
-        />
-
-    <Button
-        android:id="@+id/pin_util_connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:onClick="connectReader"
-        android:text="@string/connect"
-        />
-
-    <Button
-        android:id="@+id/pin_util_change1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:onClick="changePin"
-        android:text="@string/change_pin"
-        />
-
-    <Button
-        android:id="@+id/pin_util_change2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:onClick="changePin"
-        android:text="@string/change_pin2"
-        />
-
-    <Button
-        android:id="@+id/pin_util_change_puk"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:onClick="changePin"
-        android:text="@string/change_puk"
-        />
-
-    <Button
-        android:id="@+id/pin_util_unblock1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:onClick="unblockPin"
-        android:text="@string/unblock_pin1"
-        />
-
-    <Button
-        android:id="@+id/pin_util_unblock2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:onClick="unblockPin"
-        android:text="@string/unblock_pin2"
-        />
-
-    <Button
-        android:id="@+id/counter_pin1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:onClick="readPIN1RetryCounter"
-        android:text="@string/counter_pin1"
-        />
-
-    <Button
-        android:id="@+id/counter_pin2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:onClick="readPIN2RetryCounter"
-        android:text="@string/counter_pin2"
-        />
-
-    <Button
-        android:id="@+id/counter_puk"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:onClick="readPUKRetryCounter"
-        android:text="@string/counter_puk"
-        />
-
-    <TextView
-        android:id="@+id/pin_util_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        />-->
 </LinearLayout>

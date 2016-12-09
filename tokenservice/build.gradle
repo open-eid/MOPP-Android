@@ -33,4 +33,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.madgag.spongycastle:pkix:1.54.0.0'
     compile 'com.madgag.spongycastle:core:1.54.0.0'
+    compile 'org.jetbrains:annotations-java5:15.0'
 }

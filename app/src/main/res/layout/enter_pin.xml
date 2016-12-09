@@ -10,7 +10,7 @@
         android:id="@+id/enterPin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:labelFor="@+id/editTextDialogUserInput"
+        android:labelFor="@+id/pin"
         android:text="@string/enter_pin"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -25,9 +25,6 @@
         android:backgroundTint="@android:color/darker_gray"
         android:inputType="numberPassword"
         android:maxLines="1"
-        android:textAppearance="?android:textAppearanceMedium">
-
-        <!--<requestFocus />-->
-    </EditText>
+        android:textAppearance="?android:textAppearanceMedium" />
 
 </LinearLayout>

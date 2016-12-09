@@ -4,4 +4,5 @@ public interface RetryCounterCallback {
 
     void onCounterRead(byte counterByte);
 
+    void cardNotProvided();
 }

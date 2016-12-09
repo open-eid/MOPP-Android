@@ -87,4 +87,23 @@
     <string name="valid_pin_1">Kehtiv PIN1 kood:</string>
     <string name="valid_puk">Kehtiv PUK kood:</string>
     <string name="valid_puk_hint">PUK</string>
+    <string name="pin1_blocked"><b>PIN1 on blokeeritud.</b>\nPIN1 avamiseks/muutmiseks peate kasutama PUK koodi.</string>
+    <string name="pin1_change_failed">PIN1 muutmine ebaõnnestunud</string>
+    <string name="pin1_change_success">PIN1 muutmine oli edukas</string>
+    <string name="new_pin1_length_short">Uus PIN 1 on liiga lühike (%o tähemärki).\nMinimaalne PIN1 tähemärkide arv on 4.</string>
+    <string name="pin1_no_match">\"Uus PIN1\" ja \"Uus PIN1 uuesti\" on erinevad.</string>
+    <string name="pin1_too_easy">PIN sisaldab lihtsasti äraarvatavat kombinatsiooni. PIN1 ei tohi olla 0000 või 1234. Samuti ei tohi PIN1 osaliselt ega täielikult kattuda sinu isikukoodiga.</string>
+    <string name="valid_pin_2">Kehtiv PIN2 kood:</string>
+    <string name="valid_pin_2_hint">PIN2</string>
+    <string name="pin2_change_failed">PIN2 muutmine ebaõnnestunud</string>
+    <string name="pin2_too_easy">PIN sisaldab lihtsasti äraarvatavat kombinatsiooni. PIN2 ei tohi olla 00000 või 12345. Samuti ei tohi PIN2 osaliselt ega täielikult kattuda sinu isikukoodiga.</string>
+    <string name="pin2_no_match">\"Uus PIN2\" ja \"Uus PIN2 uuesti\" on erinevad.</string>
+    <string name="new_pin2_length_short">Uus PIN2 on liiga lühike (%o tähemärki). Minimaalne PIN2 tähemärkide arv on 5.</string>
+    <string name="pin2_blocked"><b>PIN2 on blokeeritud.</b>\nPIN2 avamiseks/muutmiseks peate kasutama PUK koodi.</string>
+    <string name="card_not_provided">Card is not provided or there is some other problem with a card</string>
+    <string name="file_remove_confirm_message">Are you sure you want to delete %s file from the container?</string>
+    <string name="datafile_delete_not_allowed_signed">Can not remove document from container which has signatures, remove all signatures before removing document.</string>
+    <string name="datafile_delete_not_allowed_empty">Can not remove last file from container.</string>
+    <string name="signature_is">Allkiri on\u0020</string>
+    <string name="location">Asukoht:</string>
 </resources>

@@ -17,5 +17,4 @@ public class BdocItem {
     public String getCreated() {
         return created;
     }
-
 }

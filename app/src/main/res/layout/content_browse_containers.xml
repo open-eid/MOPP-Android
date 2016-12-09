@@ -14,7 +14,7 @@
         android:id="@+id/listSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:queryHint="@string/search"></SearchView>
+        android:queryHint="@string/search"/>
 
     <fragment
         android:id="@+id/browseContainersListFragment"

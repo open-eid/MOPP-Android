@@ -8,8 +8,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.acs.smartcard.CommunicationErrorException;
-
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.ChangePinCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
@@ -70,6 +68,10 @@ public class TokenService extends Service {
     }
 
     public void readRetryCounter(Token.PinType pinType, RetryCounterCallback callback) {
+        if (token == null) {
+            callback.cardNotProvided();
+            return;
+        }
         try {
             byte counterByte = token.readRetryCounter(pinType);
             callback.onCounterRead(counterByte);
@@ -120,6 +122,20 @@ public class TokenService extends Service {
             }
         } catch (Exception e) {
             Log.e(TAG, "changePin: ", e);
+            callback.error(e);
+        }
+    }
+
+    public void unblockAndChangePin(Token.PinType pinType, String puk, String newPin, ChangePinCallback callback) {
+        try {
+            boolean changed = token.unblockAndChangePin(pinType, puk.getBytes(), newPin.getBytes());
+            if (changed) {
+                callback.success();
+            } else {
+                callback.error(null);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "unblockAndChangePin: ", e);
             callback.error(e);
         }
     }

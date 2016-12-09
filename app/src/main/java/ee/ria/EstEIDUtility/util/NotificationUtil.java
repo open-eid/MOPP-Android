@@ -1,6 +1,7 @@
 package ee.ria.EstEIDUtility.util;
 
 import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,7 @@ import ee.ria.EstEIDUtility.R;
 
 public class NotificationUtil {
 
-    public enum NotificationType {
+    private enum NotificationType {
         SUCCESS, ERROR, WARNING
     }
 
@@ -26,29 +27,35 @@ public class NotificationUtil {
         }
     }
 
-    public static void showNotification(Activity activity, int resourceId, NotificationType toastType) {
-        View layout = getLayout(activity, toastType);
-
-        String message = activity.getResources().getString(resourceId);
-        TextView text = (TextView) layout.findViewById(R.id.text);
-        text.setText(message);
-
-        createAndShowToast(activity, layout);
+    public static void showSuccess(Activity activity, int resourceId, NotificationDuration duration) {
+        showNotification(activity, resourceId, duration, NotificationType.SUCCESS);
     }
 
-    public static void showNotification(Activity activity, String message, NotificationType toastType) {
+    public static void showWarning(Activity activity, int resourceId, NotificationDuration duration) {
+        showNotification(activity, resourceId, duration, NotificationType.WARNING);
+    }
+
+    public static void showError(FragmentActivity activity, int resourceId, NotificationDuration duration) {
+        showNotification(activity, resourceId, duration, NotificationType.ERROR);
+    }
+
+    private static void showNotification(Activity activity, int resourceId, NotificationDuration duration, NotificationType toastType) {
         View layout = getLayout(activity, toastType);
 
         TextView text = (TextView) layout.findViewById(R.id.text);
-        text.setText(message);
+        text.setText(activity.getText(resourceId));
 
-        createAndShowToast(activity, layout);
+        createAndShowToast(activity, layout, duration);
     }
 
-    private static void createAndShowToast(Activity activity, View layout) {
+    private static void createAndShowToast(Activity activity, View layout, NotificationDuration duration) {
         Toast toast = new Toast(activity);
         toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.setDuration(NotificationDuration.MEDIUM.duration);
+        if (duration == null) {
+            toast.setDuration(NotificationDuration.MEDIUM.duration);
+        } else {
+            toast.setDuration(duration.duration);
+        }
         toast.setView(layout);
         toast.show();
     }
