@@ -106,4 +106,6 @@
     <string name="datafile_delete_not_allowed_empty">Can not remove last file from container.</string>
     <string name="signature_is">Allkiri on\u0020</string>
     <string name="location">Asukoht:</string>
+    <string name="attachment_extract_failed">Failed to extract attachment from the container</string>
+    <string name="file_unsharable">File of a current type can not be shared.</string>
 </resources>

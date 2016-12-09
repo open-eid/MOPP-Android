@@ -10,6 +10,7 @@ import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.apache.commons.io.FilenameUtils;
@@ -57,6 +58,7 @@ public class BdocFilesFragment extends ListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         calculateFragmentHeight();
         setEmptyText(getText(R.string.empty_container_files));
+        getListView().setOnItemLongClickListener(new FileLongClickListener());
     }
 
     public void calculateFragmentHeight() {
@@ -74,10 +76,7 @@ public class BdocFilesFragment extends ListFragment {
         calculateFragmentHeight();
     }
 
-    private void launchFileContentActivity(int position) {
-        DataFile file = (DataFile) getListAdapter().getItem(position);
-        String fileName = file.fileName();
-
+    private File extractAttachment(String fileName) {
         File attachment = null;
         File bdocFile = FileUtils.getBdocFile(getContext().getFilesDir(), bdocName);
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(bdocFile))) {
@@ -93,12 +92,19 @@ public class BdocFilesFragment extends ListFragment {
                 }
             }
         } catch (IOException e) {
-            Log.e(TAG, "launchFileContentActivity: ", e);
+            Log.e(TAG, "extractAttachment: ", e);
         }
+        return attachment;
+    }
+
+    private void launchFileContentActivity(int position) {
+        DataFile file = (DataFile) getListAdapter().getItem(position);
+        String fileName = file.fileName();
+
+        File attachment = extractAttachment(fileName);
 
         if (attachment == null) {
-            //TODO: respond to the user
-            Log.e(TAG, "launchFileContentActivity: ", new Exception("Couldn't get attachment from bdoc"));
+            NotificationUtil.showWarning(getActivity(), R.string.attachment_extract_failed, NotificationUtil.NotificationDuration.LONG);
             return;
         }
 
@@ -115,6 +121,37 @@ public class BdocFilesFragment extends ListFragment {
         } catch (ActivityNotFoundException e) {
             Log.e(TAG, "launchFileContentActivity: no handler for this type of file ", e);
             NotificationUtil.showError(getActivity(), R.string.file_handler_error, NotificationUtil.NotificationDuration.LONG);
+        }
+    }
+
+    class FileLongClickListener implements AdapterView.OnItemLongClickListener {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            DataFile file = (DataFile) getListAdapter().getItem(position);
+            String fileName = file.fileName();
+
+            File attachment = extractAttachment(fileName);
+
+            if (attachment == null) {
+                NotificationUtil.showWarning(getActivity(), R.string.attachment_extract_failed, NotificationUtil.NotificationDuration.LONG);
+                return false;
+            }
+
+            Uri contentUri = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, attachment);
+            getContext().grantUriPermission(BuildConfig.APPLICATION_ID, contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(fileName));
+            if (mimeType == null) {
+                NotificationUtil.showWarning(getActivity(), R.string.file_unsharable, NotificationUtil.NotificationDuration.LONG);
+                return false;
+            }
+
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            shareIntent.setType(mimeType);
+            startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.upload_to)));
+            return true;
         }
     }
 
