@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 
+import java.io.File;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
@@ -16,20 +17,21 @@ import ee.ria.EstEIDUtility.util.LayoutUtils;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.Signature;
 
-public class BdocSignaturesFragment extends ListFragment {
+public class ContainerSignaturesFragment extends ListFragment {
 
-    public static final String TAG = "BDOC_DETAIL_SIGNATURES_FRAGMENT";
+    public static final String TAG = "CONT_SIGNATURES_FRAGMENT";
     private SignatureAdapter signatureAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String bdocFileName = getArguments().getString(Constants.BDOC_NAME);
+        String containerFileName = getArguments().getString(Constants.CONTAINER_NAME_KEY);
+        String containerPath = getArguments().getString(Constants.CONTAINER_WORKING_PATH_KEY);
 
-        Container container = FileUtils.getContainer(getContext().getFilesDir(), bdocFileName);
+        Container container = FileUtils.getContainer(getContext().getFilesDir(), containerFileName);
         List<Signature> signatures = ContainerUtils.extractSignatures(container);
 
-        signatureAdapter = new SignatureAdapter(getActivity(), signatures, bdocFileName, BdocSignaturesFragment.this);
+        signatureAdapter = new SignatureAdapter(getActivity(), signatures, FileUtils.getFile(containerPath, containerFileName), ContainerSignaturesFragment.this);
         setListAdapter(signatureAdapter);
     }
 

@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,14 +34,16 @@ import java.io.File;
 
 import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
-import ee.ria.EstEIDUtility.activity.BdocDetailActivity;
+import ee.ria.EstEIDUtility.domain.FileItem;
 import ee.ria.EstEIDUtility.domain.X509Cert;
 import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
 import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.EstEIDUtility.util.Constants;
+import ee.ria.EstEIDUtility.util.ContainerUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.libdigidocpp.Container;
+import ee.ria.libdigidocpp.DataFile;
 import ee.ria.libdigidocpp.Signature;
 import ee.ria.libdigidocpp.Signatures;
 import ee.ria.token.tokenservice.TokenService;
@@ -50,9 +53,12 @@ import ee.ria.token.tokenservice.callback.SignCallback;
 import ee.ria.token.tokenservice.token.PinVerificationException;
 import ee.ria.token.tokenservice.token.Token;
 
-public class BdocDetailFragment extends Fragment {
+import static android.app.Activity.RESULT_OK;
 
-    public static final String TAG = "BDOC_DETAIL_FRAGMENT";
+public class ContainerDetailsFragment extends Fragment {
+
+    public static final String TAG = "CONTAINER_DETAILS_FRAG";
+    private static final int CHOOSE_FILE_REQUEST_ID = 1;
 
     private EditText title;
     private TextView body;
@@ -67,7 +73,10 @@ public class BdocDetailFragment extends Fragment {
     private ImageView editBdoc;
 
     private String fileName;
-    private File bdocFile;
+    private String containerWorkingPath;
+    private String containerSavePath;
+
+    private File containerFile;
 
     private TokenService tokenService;
     private TokenServiceConnection tokenServiceConnection;
@@ -102,11 +111,13 @@ public class BdocDetailFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup containerView, Bundle savedInstanceState) {
-        View fragLayout = inflater.inflate(R.layout.fragment_bdoc_detail, containerView, false);
+        View fragLayout = inflater.inflate(R.layout.fragment_container_details, containerView, false);
 
-        fileName = getArguments().getString(Constants.BDOC_NAME);
+        fileName = getArguments().getString(Constants.CONTAINER_NAME_KEY);
+        containerWorkingPath = getArguments().getString(Constants.CONTAINER_WORKING_PATH_KEY, FileUtils.getBdocsPath(getContext().getFilesDir()).getAbsolutePath());
+        containerSavePath = getArguments().getString(Constants.CONTAINER_SAVE_PATH_KEY);
 
-        bdocFile = FileUtils.getBdocFile(getContext().getFilesDir(), fileName);
+        containerFile = getContainerFile();
 
         createFilesListFragment();
         createSignatureListFragment();
@@ -142,7 +153,7 @@ public class BdocDetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Uri uriToFile = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, bdocFile);
+                Uri uriToFile = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, containerFile);
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.putExtra(Intent.EXTRA_STREAM, uriToFile);
@@ -160,11 +171,15 @@ public class BdocDetailFragment extends Fragment {
         });
 
         String fileInfo = getContext().getString(R.string.file_info);
-        fileInfo = String.format(fileInfo, FilenameUtils.getExtension(fileName).toUpperCase(), FileUtils.getKilobytes(bdocFile.length()));
+        fileInfo = String.format(fileInfo, FilenameUtils.getExtension(fileName).toUpperCase(), FileUtils.getKilobytes(containerFile.length()));
 
         fileInfoTextView.setText(fileInfo);
         title.setText(fileName);
         body.setText(fileName);
+    }
+
+    public void addDataFile(DataFile dataFile) {
+        findDataFilesFragment().addFile(dataFile);
     }
 
     class SignTaskCallback implements SignCallback {
@@ -180,9 +195,7 @@ public class BdocDetailFragment extends Fragment {
         public void onSignResponse(byte[] signatureBytes) {
             signature.setSignatureValue(signatureBytes);
             container.save();
-            BdocDetailFragment bdocDetailFragment = (BdocDetailFragment) getActivity().getSupportFragmentManager().findFragmentByTag(BdocDetailFragment.TAG);
-            BdocSignaturesFragment bdocSignaturesFragment = (BdocSignaturesFragment) bdocDetailFragment.getChildFragmentManager().findFragmentByTag(BdocSignaturesFragment.TAG);
-            bdocSignaturesFragment.addSignature(signature);
+            findSignaturesFragment().addSignature(signature);
             enterPinText.setText(getText(R.string.enter_pin));
             pinText.setText("");
         }
@@ -211,54 +224,105 @@ public class BdocDetailFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CHOOSE_FILE_REQUEST_ID && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            addToFileList(data.getData());
+        }
+    }
+
+    private void browseForFiles() {
+        Intent intent = new Intent()
+                .setType("*/*")
+                .setAction(Intent.ACTION_GET_CONTENT)
+                .addCategory(Intent.CATEGORY_OPENABLE)
+                .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+        startActivityForResult(
+                Intent.createChooser(intent, getText(R.string.select_file)),
+                CHOOSE_FILE_REQUEST_ID);
+    }
+
+    private void addToFileList(Uri uri) {
+        File cacheDir = FileUtils.getCachePath(getContext().getCacheDir());
+
+        FileItem fileItem = FileUtils.resolveFileItemFromUri(uri, getContext().getContentResolver(), cacheDir.getAbsolutePath());
+        if (fileItem == null) {
+            return;
+        }
+
+        Container container = getContainer();
+
+        String attachedName = fileItem.getName();
+        if (ContainerUtils.hasDataFile(container.dataFiles(), attachedName)) {
+            NotificationUtil.showWarning(getActivity(), R.string.container_has_file_with_same_name, NotificationUtil.NotificationDuration.LONG);
+            return;
+        }
+
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(attachedName));
+
+        File attachedFile = new File(cacheDir, attachedName);
+
+        container.addDataFile(attachedFile.getAbsolutePath(), mimeType);
+        container.save(getContainerFile().getAbsolutePath());
+
+        DataFile dataFile = ContainerUtils.getDataFile(container.dataFiles(), attachedName);
+        if (dataFile != null) {
+            addDataFile(dataFile);
+        }
+    }
+
+    private Container getContainer() {
+        return FileUtils.getContainer(containerWorkingPath, fileName);
+    }
+
+    private File getContainerFile() {
+        return FileUtils.getFile(containerWorkingPath, fileName);
+    }
+
     private class AddFileButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Container container = FileUtils.getContainer(getContext().getFilesDir(), fileName);
+            Container container = getContainer();
             if (container.signatures().size() > 0) {
                 NotificationUtil.showError(getActivity(), R.string.add_file_remove_signatures, null);
                 return;
             }
-            Intent intent = new Intent()
-                    .setType("*/*")
-                    .setAction(Intent.ACTION_GET_CONTENT)
-                    .addCategory(Intent.CATEGORY_OPENABLE)
-                    .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
-            getActivity().startActivityForResult(
-                    Intent.createChooser(intent, getText(R.string.select_file)),
-                    BdocDetailActivity.CHOOSE_FILE_REQUEST);
+            browseForFiles();
         }
     }
 
     private void createFilesListFragment() {
-        BdocFilesFragment filesFragment = (BdocFilesFragment) getChildFragmentManager().findFragmentByTag(BdocFilesFragment.TAG);
+        ContainerDataFilesFragment filesFragment = findDataFilesFragment();
         if (filesFragment != null) {
             return;
         }
         FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
 
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.BDOC_NAME, fileName);
+        bundle.putString(Constants.CONTAINER_NAME_KEY, fileName);
+        bundle.putString(Constants.CONTAINER_WORKING_PATH_KEY, containerWorkingPath);
 
-        filesFragment = new BdocFilesFragment();
+        filesFragment = new ContainerDataFilesFragment();
         filesFragment.setArguments(bundle);
-        fragmentTransaction.add(R.id.filesListLayout, filesFragment, BdocFilesFragment.TAG);
+        fragmentTransaction.add(R.id.filesListLayout, filesFragment, ContainerDataFilesFragment.TAG);
         fragmentTransaction.commit();
     }
 
     private void createSignatureListFragment() {
-        BdocSignaturesFragment signaturesFragment = (BdocSignaturesFragment) getChildFragmentManager().findFragmentByTag(BdocSignaturesFragment.TAG);
+        ContainerSignaturesFragment signaturesFragment = findSignaturesFragment();
         if (signaturesFragment != null) {
             return;
         }
         FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
 
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.BDOC_NAME, fileName);
+        bundle.putString(Constants.CONTAINER_NAME_KEY, fileName);
+        bundle.putString(Constants.CONTAINER_WORKING_PATH_KEY, containerWorkingPath);
 
-        signaturesFragment = new BdocSignaturesFragment();
+        signaturesFragment = new ContainerSignaturesFragment();
         signaturesFragment.setArguments(bundle);
-        fragmentTransaction.add(R.id.signaturesListLayout, signaturesFragment, BdocSignaturesFragment.TAG);
+        fragmentTransaction.add(R.id.signaturesListLayout, signaturesFragment, ContainerSignaturesFragment.TAG);
         fragmentTransaction.commit();
     }
 
@@ -306,7 +370,7 @@ public class BdocDetailFragment extends Fragment {
     class CertificateInfoCallback implements CertCallback {
         @Override
         public void onCertificateResponse(byte[] cert) {
-            Container container = FileUtils.getContainer(getContext().getFilesDir(), fileName);
+            Container container = getContainer();
             Signature signature = container.prepareWebSignature(cert);
             byte[] dataToSign = signature.dataToSign();
             String pin2 = pinText.getText().toString();
@@ -323,7 +387,7 @@ public class BdocDetailFragment extends Fragment {
     class SameSignatureCallback implements CertCallback {
         @Override
         public void onCertificateResponse(byte[] cert) {
-            Container container = FileUtils.getContainer(getContext().getFilesDir(), fileName);
+            Container container = getContainer();
             if (isSignedByPerson(container.signatures(), container, cert)) {
                 NotificationUtil.showWarning(getActivity(), R.string.already_signed_by_person, null);
                 return;
@@ -370,6 +434,14 @@ public class BdocDetailFragment extends Fragment {
         public void onCertificateError(Exception e) {
         }
 
+    }
+
+    private ContainerDataFilesFragment findDataFilesFragment() {
+        return (ContainerDataFilesFragment) getChildFragmentManager().findFragmentByTag(ContainerDataFilesFragment.TAG);
+    }
+
+    private ContainerSignaturesFragment findSignaturesFragment() {
+        return (ContainerSignaturesFragment) getChildFragmentManager().findFragmentByTag(ContainerSignaturesFragment.TAG);
     }
 
 }

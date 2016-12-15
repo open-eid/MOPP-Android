@@ -11,10 +11,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
-import ee.ria.EstEIDUtility.fragment.BdocFilesFragment;
+import ee.ria.EstEIDUtility.fragment.ContainerDataFilesFragment;
 import ee.ria.EstEIDUtility.util.ContainerUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
@@ -25,8 +26,8 @@ import ee.ria.libdigidocpp.Signature;
 public class DataFilesAdapter extends ArrayAdapter<DataFile> {
 
     private final Activity context;
-    private final String bdocFileName;
-    private BdocFilesFragment bdocFilesFragment;
+    private final File containerFile;
+    private ContainerDataFilesFragment containerDataFilesFragment;
 
     private static class ViewHolder {
         TextView fileName;
@@ -34,11 +35,11 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
         ImageView removeFile;
     }
 
-    public DataFilesAdapter(Activity context, List<DataFile> dataFiles, String bdocFileName, BdocFilesFragment bdocFilesFragment) {
+    public DataFilesAdapter(Activity context, List<DataFile> dataFiles, File containerFile, ContainerDataFilesFragment containerDataFilesFragment) {
         super(context, 0, dataFiles);
         this.context = context;
-        this.bdocFileName = bdocFileName;
-        this.bdocFilesFragment = bdocFilesFragment;
+        this.containerFile = containerFile;
+        this.containerDataFilesFragment = containerDataFilesFragment;
     }
 
     @NonNull
@@ -47,7 +48,7 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_bdoc_detail_files, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_container_datafiles, parent, false);
 
             viewHolder.fileSize = (TextView) convertView.findViewById(R.id.fileSize);
             viewHolder.fileName = (TextView) convertView.findViewById(R.id.fileName);
@@ -81,7 +82,7 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
 
         @Override
         public void onClick(View v) {
-            final Container container = FileUtils.getContainer(context.getFilesDir(), bdocFileName);
+            final Container container = FileUtils.getContainer(containerFile);
             List<Signature> signatures = ContainerUtils.extractSignatures(container);
             if (!signatures.isEmpty()) {
                 NotificationUtil.showWarning(context, R.string.datafile_delete_not_allowed_signed, NotificationUtil.NotificationDuration.LONG);
@@ -109,7 +110,7 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
                     DataFile dataFile = getItem(position);
                     remove(dataFile);
                     notifyDataSetChanged();
-                    bdocFilesFragment.calculateFragmentHeight();
+                    containerDataFilesFragment.calculateFragmentHeight();
                 }
             }).setNegativeButton(R.string.cancel_button, null);
 

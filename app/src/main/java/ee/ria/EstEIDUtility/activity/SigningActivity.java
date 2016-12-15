@@ -158,13 +158,13 @@ public class SigningActivity extends AppCompatActivity {
         }
 
         String bdocFileName = containerName.getText().toString();
-        if (FileUtils.bdocExists(getFilesDir(), bdocFileName)) {
+        if (FileUtils.containerExists(getFilesDir(), bdocFileName)) {
             NotificationUtil.showWarning(this, R.string.file_exists_message, NotificationUtil.NotificationDuration.LONG);
             return;
         }
 
-        Intent intent = new Intent(this, BdocDetailActivity.class);
-        intent.putExtra(Constants.BDOC_NAME, bdocFileName);
+        Intent intent = new Intent(this, ContainerDetailsActivity.class);
+        intent.putExtra(Constants.CONTAINER_NAME_KEY, bdocFileName);
         startActivity(intent);
     }
 

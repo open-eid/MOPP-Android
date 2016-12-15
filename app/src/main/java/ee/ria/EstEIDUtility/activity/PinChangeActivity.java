@@ -69,7 +69,7 @@ public class PinChangeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pinType = (Token.PinType) getIntent().getSerializableExtra(Constants.PIN_TYPE);
+        pinType = (Token.PinType) getIntent().getSerializableExtra(Constants.PIN_TYPE_KEY);
         setLayoutTitle();
         setContentView(R.layout.pin_change);
 

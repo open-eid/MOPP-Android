@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context="ee.ria.EstEIDUtility.fragment.BdocSignaturesFragment"
+    tools:context="ee.ria.EstEIDUtility.fragment.ContainerSignaturesFragment"
     android:paddingEnd="10dp"
     android:paddingStart="12dp"
     android:id="@+id/signaturesLayout">

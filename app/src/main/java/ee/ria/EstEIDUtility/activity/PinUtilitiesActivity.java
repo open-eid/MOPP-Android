@@ -42,7 +42,7 @@ public class PinUtilitiesActivity extends AppCompatActivity {
 
     private void launchPinChangeActivity(Token.PinType pinType) {
         Intent intent = new Intent(this, PinChangeActivity.class);
-        intent.putExtra(Constants.PIN_TYPE, pinType);
+        intent.putExtra(Constants.PIN_TYPE_KEY, pinType);
         startActivity(intent);
         overridePendingTransition(R.anim.enter, R.anim.leave);
     }

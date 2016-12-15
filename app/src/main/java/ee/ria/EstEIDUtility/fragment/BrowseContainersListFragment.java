@@ -16,9 +16,9 @@ import java.util.Date;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
-import ee.ria.EstEIDUtility.activity.BdocDetailActivity;
-import ee.ria.EstEIDUtility.adapter.BdocAdapter;
-import ee.ria.EstEIDUtility.domain.BdocItem;
+import ee.ria.EstEIDUtility.activity.ContainerDetailsActivity;
+import ee.ria.EstEIDUtility.adapter.ContainerListAdapter;
+import ee.ria.EstEIDUtility.domain.ContainerInfo;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.DateUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
@@ -32,9 +32,9 @@ public class BrowseContainersListFragment extends ListFragment {
     }
 
     private void launchBdocDetailActivity(int position) {
-        BdocItem bdocItem = (BdocItem) getListAdapter().getItem(position);
-        Intent intent = new Intent(getActivity(), BdocDetailActivity.class);
-        intent.putExtra(Constants.BDOC_NAME, bdocItem.getName());
+        ContainerInfo containerInfo = (ContainerInfo) getListAdapter().getItem(position);
+        Intent intent = new Intent(getActivity(), ContainerDetailsActivity.class);
+        intent.putExtra(Constants.CONTAINER_NAME_KEY, containerInfo.getName());
         startActivity(intent);
     }
 
@@ -42,10 +42,10 @@ public class BrowseContainersListFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        List<BdocItem> bdocs = getBdocFiles();
+        List<ContainerInfo> bdocs = getBdocFiles();
 
-        final BdocAdapter bdocAdapter = new BdocAdapter(getActivity(), bdocs);
-        setListAdapter(bdocAdapter);
+        final ContainerListAdapter containerListAdapter = new ContainerListAdapter(getActivity(), bdocs);
+        setListAdapter(containerListAdapter);
 
         SearchView searchView = (SearchView) getActivity().findViewById(R.id.listSearch);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -56,19 +56,19 @@ public class BrowseContainersListFragment extends ListFragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                bdocAdapter.getFilter().filter(newText);
+                containerListAdapter.getFilter().filter(newText);
                 return false;
             }
         });
     }
 
-    private List<BdocItem> getBdocFiles() {
-        List<BdocItem> bdocs = new ArrayList<>();
+    private List<ContainerInfo> getBdocFiles() {
+        List<ContainerInfo> bdocs = new ArrayList<>();
 
         List<File> bdocFiles = getBdocContainers();
         for (File file : bdocFiles) {
             String fileCreated = getFileLastModified(file);
-            bdocs.add(new BdocItem(file.getName(), fileCreated));
+            bdocs.add(new ContainerInfo(file.getName(), fileCreated));
         }
 
         return bdocs;

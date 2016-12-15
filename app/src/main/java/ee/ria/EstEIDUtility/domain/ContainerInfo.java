@@ -1,11 +1,11 @@
 package ee.ria.EstEIDUtility.domain;
 
-public class BdocItem {
+public class ContainerInfo {
 
     private String name;
     private String created;
 
-    public BdocItem(String name, String created) {
+    public ContainerInfo(String name, String created) {
         this.name = name;
         this.created = created;
     }

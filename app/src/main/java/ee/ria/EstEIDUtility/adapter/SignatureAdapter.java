@@ -16,11 +16,12 @@ import android.widget.TextView;
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.style.BCStyle;
 
+import java.io.File;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.domain.X509Cert;
-import ee.ria.EstEIDUtility.fragment.BdocSignaturesFragment;
+import ee.ria.EstEIDUtility.fragment.ContainerSignaturesFragment;
 import ee.ria.EstEIDUtility.util.DateUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.libdigidocpp.Container;
@@ -29,9 +30,8 @@ import ee.ria.libdigidocpp.Signature;
 public class SignatureAdapter extends ArrayAdapter<Signature> implements Filterable {
 
     private static final String TAG = "SignatureAdapter";
-    private String bdocFileName;
-    private Context context;
-    private BdocSignaturesFragment bdocSignaturesFragment;
+    private File containerFile;
+    private ContainerSignaturesFragment containerSignaturesFragment;
 
     private static class ViewHolder {
         TextView name;
@@ -40,11 +40,10 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
         TextView isSigned;
     }
 
-    public SignatureAdapter(Context context, List<Signature> signatures, String bdocFileName, BdocSignaturesFragment bdocSignaturesFragment) {
+    public SignatureAdapter(Context context, List<Signature> signatures, File containerFile, ContainerSignaturesFragment containerSignaturesFragment) {
         super(context, 0, signatures);
-        this.context = context;
-        this.bdocFileName = bdocFileName;
-        this.bdocSignaturesFragment = bdocSignaturesFragment;
+        this.containerFile = containerFile;
+        this.containerSignaturesFragment = containerSignaturesFragment;
     }
 
     @NonNull
@@ -53,7 +52,7 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_bdoc_detail_signatures, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_container_signatures, parent, false);
 
             viewHolder.name = (TextView) convertView.findViewById(R.id.personName);
             viewHolder.signed = (TextView) convertView.findViewById(R.id.fileSize);
@@ -115,12 +114,12 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
                 public void onClick(DialogInterface dialog, int which) {
                     Signature sign = getItem(position);
 
-                    Container container = FileUtils.getContainer(context.getFilesDir(), bdocFileName);
+                    Container container = FileUtils.getContainer(containerFile);
                     container.removeSignature(position);
                     container.save();
                     remove(sign);
                     notifyDataSetChanged();
-                    bdocSignaturesFragment.calculateFragmentHeight();
+                    containerSignaturesFragment.calculateFragmentHeight();
                 }
             }).setNegativeButton(R.string.cancel_button, null);
 

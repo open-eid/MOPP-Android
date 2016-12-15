@@ -35,22 +35,23 @@ import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFile;
 
-public class BdocFilesFragment extends ListFragment {
+public class ContainerDataFilesFragment extends ListFragment {
 
-    public static final String TAG = "BDOC_FILES_FRAGMENT";
+    public static final String TAG = "DATAFILES_FRAGMENT";
 
     private DataFilesAdapter filesAdapter;
-    private String bdocName;
+    private String containerName;
+    private String containerWorkingPath;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bdocName = getArguments().getString(Constants.BDOC_NAME);
-
-        Container container = FileUtils.getContainer(getContext().getFilesDir(), bdocName);
+        containerName = getArguments().getString(Constants.CONTAINER_NAME_KEY);
+        containerWorkingPath = getArguments().getString(Constants.CONTAINER_WORKING_PATH_KEY);
+        Container container = FileUtils.getContainer(containerWorkingPath, containerName);
 
         List<DataFile> dataFiles = ContainerUtils.extractDataFiles(container);
-        filesAdapter = new DataFilesAdapter(getActivity(), dataFiles, bdocName, BdocFilesFragment.this);
+        filesAdapter = new DataFilesAdapter(getActivity(), dataFiles, FileUtils.getFile(containerWorkingPath, containerName), ContainerDataFilesFragment.this);
         setListAdapter(filesAdapter);
     }
 
@@ -78,7 +79,7 @@ public class BdocFilesFragment extends ListFragment {
 
     private File extractAttachment(String fileName) {
         File attachment = null;
-        File bdocFile = FileUtils.getBdocFile(getContext().getFilesDir(), bdocName);
+        File bdocFile = FileUtils.getFile(containerWorkingPath, containerName);
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(bdocFile))) {
             ZipEntry ze;
             while ((ze = zis.getNextEntry()) != null) {

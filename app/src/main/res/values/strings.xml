@@ -50,8 +50,8 @@
     <string name="signature_valid">valid</string>
     <string name="signature_invalid">not valid</string>
     <string name="close_button">Close</string>
-    <string name="empty_container_files" >There are no files added. Each digitally signed document must have content. To add files press \"Add\" button.</string>
-    <string name="empty_container_signatures" >There are no signatures added. You can add signature after at least one file is added.</string>
+    <string name="empty_container_files">There are no files added. Each digitally signed document must have content. To add files press \"Add\" button.</string>
+    <string name="empty_container_signatures">There are no signatures added. You can add signature after at least one file is added.</string>
     <string name="add_file_remove_signatures">To be able to add files container must be unsigned</string>
     <string name="file_exists_message">File with same name already exists</string>
     <string name="file_name_empty_message">File can\'t be with empty name</string>
@@ -110,4 +110,8 @@
     <string name="location">Asukoht:\u0020</string>
     <string name="attachment_extract_failed">Failed to extract attachment from the container</string>
     <string name="file_unsharable">File of a current type can not be shared.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="openingFileFailed">Opening File Failed</string>
 </resources>

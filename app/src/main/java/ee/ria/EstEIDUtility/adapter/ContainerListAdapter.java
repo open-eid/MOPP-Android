@@ -16,34 +16,34 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import ee.ria.EstEIDUtility.domain.BdocItem;
 import ee.ria.EstEIDUtility.R;
+import ee.ria.EstEIDUtility.domain.ContainerInfo;
 
-public class BdocAdapter extends ArrayAdapter<BdocItem> implements Filterable {
+public class ContainerListAdapter extends ArrayAdapter<ContainerInfo> implements Filterable {
 
-    private List<BdocItem> bdocs;
-    private List<BdocItem> filteredData;
-    private BdocFilter bdocFilter = new BdocFilter();
+    private List<ContainerInfo> allContainers ;
+    private List<ContainerInfo> filteredContainers;
+    private ContainerFilter containerFilter = new ContainerFilter();
     private AlertDialog confirmDialog;
 
     private static class ViewHolder {
         TextView fileName;
         TextView fileCreated;
-        ImageView removeBdoc;
+        ImageView removeContainer;
     }
 
-    public BdocAdapter(Context context, List<BdocItem> bdocs) {
-        super(context, 0, bdocs);
-        this.bdocs = bdocs;
-        this.filteredData = bdocs;
+    public ContainerListAdapter(Context context, List<ContainerInfo> allContainers) {
+        super(context, 0, allContainers);
+        this.allContainers = allContainers;
+        this.filteredContainers = allContainers;
     }
 
     public int getCount() {
-        return filteredData.size();
+        return filteredContainers.size();
     }
 
-    public BdocItem getItem(int position) {
-        return filteredData.get(position);
+    public ContainerInfo getItem(int position) {
+        return filteredContainers.get(position);
     }
 
     @NonNull
@@ -52,39 +52,39 @@ public class BdocAdapter extends ArrayAdapter<BdocItem> implements Filterable {
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.bdoc_list_row, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.container_list_row, parent, false);
 
             viewHolder.fileName = (TextView) convertView.findViewById(R.id.listDocName);
             viewHolder.fileCreated = (TextView) convertView.findViewById(R.id.listDocTime);
-            viewHolder.removeBdoc = (ImageView) convertView.findViewById(R.id.removeBdoc);
+            viewHolder.removeContainer = (ImageView) convertView.findViewById(R.id.removeContainer);
 
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        final BdocItem bdoc = getItem(position);
-        viewHolder.fileName.setText(bdoc.getName());
-        viewHolder.fileCreated.setText(bdoc.getCreated());
+        final ContainerInfo containerInfo = getItem(position);
+        viewHolder.fileName.setText(containerInfo.getName());
+        viewHolder.fileCreated.setText(containerInfo.getCreated());
 
-        viewHolder.removeBdoc.setOnClickListener(new View.OnClickListener() {
+        viewHolder.removeContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle(R.string.bdoc_remove_confirm_title);
 
                 String confirmMessage = getContext().getString(R.string.bdoc_remove_confirm_message);
-                confirmMessage = String.format(confirmMessage, bdoc.getName());
+                confirmMessage = String.format(confirmMessage, containerInfo.getName());
 
                 builder.setMessage(confirmMessage);
 
                 builder.setPositiveButton(R.string.confirm_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        BdocItem item = getItem(position);
+                        ContainerInfo item = getItem(position);
                         getContext().deleteFile(item.getName());
 
-                        filteredData.remove(item);
+                        filteredContainers.remove(item);
                         notifyDataSetChanged();
                     }
                 });
@@ -99,40 +99,37 @@ public class BdocAdapter extends ArrayAdapter<BdocItem> implements Filterable {
     }
 
     public Filter getFilter() {
-        return bdocFilter;
+        return containerFilter;
     }
 
-    private class BdocFilter extends Filter {
+    private class ContainerFilter extends Filter {
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            constraint = constraint.toString().toLowerCase();
-
             FilterResults results = new FilterResults();
 
-            final List<BdocItem> list = bdocs;
+            final List<ContainerInfo> all = allContainers;
+            final List<ContainerInfo> filtered = new ArrayList<>();
 
-            int count = list.size();
-            final List<BdocItem> result = new ArrayList<>(count);
-
-            BdocItem filterableBdoc;
-
-            for (int i = 0; i < count; i++) {
-                filterableBdoc = list.get(i);
-                if (filterableBdoc.getName().toLowerCase().contains(constraint)) {
-                    result.add(filterableBdoc);
+            for (ContainerInfo ci : all) {
+                if (matchesConstraintIgnoreCase(ci.getName(), constraint)) {
+                    filtered.add(ci);
                 }
             }
 
-            results.values = result;
-            results.count = result.size();
+            results.values = filtered;
+            results.count = filtered.size();
 
             return results;
         }
 
+        private boolean matchesConstraintIgnoreCase(String containerName, CharSequence constraint) {
+            return containerName.toLowerCase().contains(constraint.toString().toLowerCase());
+        }
+
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredData = (ArrayList<BdocItem>) results.values;
+            filteredContainers = (ArrayList<ContainerInfo>) results.values;
             notifyDataSetChanged();
         }
     }
