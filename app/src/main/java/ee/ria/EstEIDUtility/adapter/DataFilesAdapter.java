@@ -11,22 +11,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.File;
-import java.util.List;
-
 import ee.ria.EstEIDUtility.R;
+import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.fragment.ContainerDataFilesFragment;
-import ee.ria.EstEIDUtility.util.ContainerUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
-import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFile;
-import ee.ria.libdigidocpp.Signature;
 
 public class DataFilesAdapter extends ArrayAdapter<DataFile> {
 
     private final Activity context;
-    private final File containerFile;
+    private final ContainerFacade containerFacade;
     private ContainerDataFilesFragment containerDataFilesFragment;
 
     private static class ViewHolder {
@@ -35,10 +30,10 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
         ImageView removeFile;
     }
 
-    public DataFilesAdapter(Activity context, List<DataFile> dataFiles, File containerFile, ContainerDataFilesFragment containerDataFilesFragment) {
-        super(context, 0, dataFiles);
+    public DataFilesAdapter(Activity context, ContainerFacade containerFacade, ContainerDataFilesFragment containerDataFilesFragment) {
+        super(context, 0, containerFacade.getDataFiles());
         this.context = context;
-        this.containerFile = containerFile;
+        this.containerFacade = containerFacade;
         this.containerDataFilesFragment = containerDataFilesFragment;
     }
 
@@ -82,9 +77,7 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
 
         @Override
         public void onClick(View v) {
-            final Container container = FileUtils.getContainer(containerFile);
-            List<Signature> signatures = ContainerUtils.extractSignatures(container);
-            if (!signatures.isEmpty()) {
+            if (containerFacade.isSigned()) {
                 NotificationUtil.showWarning(context, R.string.datafile_delete_not_allowed_signed, NotificationUtil.NotificationDuration.LONG);
                 return;
             }
@@ -105,8 +98,8 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
             builder.setPositiveButton(R.string.confirm_button, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    container.removeDataFile(position);
-                    container.save();
+                    containerFacade.removeDataFile(position);
+                    containerFacade.save();
                     DataFile dataFile = getItem(position);
                     remove(dataFile);
                     notifyDataSetChanged();

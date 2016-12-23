@@ -18,17 +18,21 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 
 import ee.ria.EstEIDUtility.R;
+import ee.ria.EstEIDUtility.container.ContainerBuilder;
+import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
 import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
-import ee.ria.token.tokenservice.token.Token;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.SignCallback;
 import ee.ria.token.tokenservice.token.PinVerificationException;
+import ee.ria.token.tokenservice.token.Token;
 import ee.ria.token.tokenservice.util.AlgorithmUtils;
 import ee.ria.token.tokenservice.util.Util;
+
+import static ee.ria.EstEIDUtility.container.ContainerBuilder.ContainerLocation.STORAGE;
 
 public class SigningActivity extends AppCompatActivity {
 
@@ -157,15 +161,26 @@ public class SigningActivity extends AppCompatActivity {
             containerName.setText(containerName.getText().toString());
         }
 
-        String bdocFileName = containerName.getText().toString();
-        if (FileUtils.containerExists(getFilesDir(), bdocFileName)) {
+        String containerFileName = containerName.getText().toString();
+        if (containerExists(containerFileName)) {
             NotificationUtil.showWarning(this, R.string.file_exists_message, NotificationUtil.NotificationDuration.LONG);
             return;
         }
 
+        ContainerFacade containerFacade = ContainerBuilder.aContainer(this)
+                .withContainerLocation(STORAGE)
+                .withContainerName(containerFileName)
+                .build();
+
         Intent intent = new Intent(this, ContainerDetailsActivity.class);
-        intent.putExtra(Constants.CONTAINER_NAME_KEY, bdocFileName);
+        intent.putExtra(Constants.CONTAINER_NAME_KEY, containerFacade.getName());
+        intent.putExtra(Constants.CONTAINER_PATH_KEY, containerFacade.getAbsolutePath());
+        intent.putExtra(Constants.CONTAINER_SAVE_DIRECTORY_KEY, FileUtils.getContainersDirectory(this).getAbsolutePath());
         startActivity(intent);
+    }
+
+    private boolean containerExists(String containerFileName) {
+        return FileUtils.getContainerFile(this, containerFileName).exists();
     }
 
 }

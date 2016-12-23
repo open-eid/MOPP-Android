@@ -5,16 +5,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 
-import java.io.File;
-import java.util.List;
-
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.adapter.SignatureAdapter;
+import ee.ria.EstEIDUtility.container.ContainerBuilder;
+import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.util.Constants;
-import ee.ria.EstEIDUtility.util.ContainerUtils;
-import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.LayoutUtils;
-import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.Signature;
 
 public class ContainerSignaturesFragment extends ListFragment {
@@ -25,13 +21,9 @@ public class ContainerSignaturesFragment extends ListFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String containerFileName = getArguments().getString(Constants.CONTAINER_NAME_KEY);
-        String containerPath = getArguments().getString(Constants.CONTAINER_WORKING_PATH_KEY);
-
-        Container container = FileUtils.getContainer(getContext().getFilesDir(), containerFileName);
-        List<Signature> signatures = ContainerUtils.extractSignatures(container);
-
-        signatureAdapter = new SignatureAdapter(getActivity(), signatures, FileUtils.getFile(containerPath, containerFileName), ContainerSignaturesFragment.this);
+        String containerPath = getArguments().getString(Constants.CONTAINER_PATH_KEY);
+        ContainerFacade containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerPath).build();;
+        signatureAdapter = new SignatureAdapter(getActivity(), containerFacade, this);
         setListAdapter(signatureAdapter);
     }
 

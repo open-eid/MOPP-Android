@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
+import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.domain.X509Cert;
 import ee.ria.EstEIDUtility.fragment.ContainerSignaturesFragment;
 import ee.ria.EstEIDUtility.util.DateUtils;
@@ -30,7 +31,7 @@ import ee.ria.libdigidocpp.Signature;
 public class SignatureAdapter extends ArrayAdapter<Signature> implements Filterable {
 
     private static final String TAG = "SignatureAdapter";
-    private File containerFile;
+    private ContainerFacade containerFacade;
     private ContainerSignaturesFragment containerSignaturesFragment;
 
     private static class ViewHolder {
@@ -40,9 +41,9 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
         TextView isSigned;
     }
 
-    public SignatureAdapter(Context context, List<Signature> signatures, File containerFile, ContainerSignaturesFragment containerSignaturesFragment) {
-        super(context, 0, signatures);
-        this.containerFile = containerFile;
+    public SignatureAdapter(Context context, ContainerFacade containerFacade, ContainerSignaturesFragment containerSignaturesFragment) {
+        super(context, 0, containerFacade.getSignatures());
+        this.containerFacade = containerFacade;
         this.containerSignaturesFragment = containerSignaturesFragment;
     }
 
@@ -113,10 +114,8 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Signature sign = getItem(position);
-
-                    Container container = FileUtils.getContainer(containerFile);
-                    container.removeSignature(position);
-                    container.save();
+                    containerFacade.removeSignature(position);
+                    containerFacade.save();
                     remove(sign);
                     notifyDataSetChanged();
                     containerSignaturesFragment.calculateFragmentHeight();

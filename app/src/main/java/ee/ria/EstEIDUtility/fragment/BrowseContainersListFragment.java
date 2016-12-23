@@ -35,6 +35,8 @@ public class BrowseContainersListFragment extends ListFragment {
         ContainerInfo containerInfo = (ContainerInfo) getListAdapter().getItem(position);
         Intent intent = new Intent(getActivity(), ContainerDetailsActivity.class);
         intent.putExtra(Constants.CONTAINER_NAME_KEY, containerInfo.getName());
+        intent.putExtra(Constants.CONTAINER_PATH_KEY, containerInfo.getPath().getAbsolutePath());
+        intent.putExtra(Constants.CONTAINER_SAVE_DIRECTORY_KEY, containerInfo.getPath().getAbsolutePath());
         startActivity(intent);
     }
 
@@ -64,13 +66,11 @@ public class BrowseContainersListFragment extends ListFragment {
 
     private List<ContainerInfo> getBdocFiles() {
         List<ContainerInfo> bdocs = new ArrayList<>();
-
         List<File> bdocFiles = getBdocContainers();
         for (File file : bdocFiles) {
             String fileCreated = getFileLastModified(file);
-            bdocs.add(new ContainerInfo(file.getName(), fileCreated));
+            bdocs.add(new ContainerInfo(file, fileCreated));
         }
-
         return bdocs;
     }
 
@@ -89,15 +89,15 @@ public class BrowseContainersListFragment extends ListFragment {
     }
 
     private List<File> getBdocContainers() {
-        File bdocsPath = FileUtils.getBdocsPath(getActivity().getFilesDir());
-        File[] bdocFiles = bdocsPath.listFiles();
+        File containersPath = FileUtils.getContainersDirectory(getActivity());
+        File[] containerFiles = containersPath.listFiles();
 
-        if (bdocFiles == null) {
+        if (containerFiles == null) {
             return Collections.emptyList();
         }
 
         List<File> bdocs = new ArrayList<>();
-        for (File bdoc : bdocFiles) {
+        for (File bdoc : containerFiles) {
             if (FilenameUtils.getExtension(bdoc.getName()).equals(Constants.BDOC_EXTENSION)) {
                 bdocs.add(bdoc);
             }

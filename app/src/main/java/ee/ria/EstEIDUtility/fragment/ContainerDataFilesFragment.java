@@ -20,19 +20,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.adapter.DataFilesAdapter;
+import ee.ria.EstEIDUtility.container.ContainerBuilder;
+import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.util.Constants;
-import ee.ria.EstEIDUtility.util.ContainerUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.LayoutUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
-import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFile;
 
 public class ContainerDataFilesFragment extends ListFragment {
@@ -40,18 +39,16 @@ public class ContainerDataFilesFragment extends ListFragment {
     public static final String TAG = "DATAFILES_FRAGMENT";
 
     private DataFilesAdapter filesAdapter;
-    private String containerName;
-    private String containerWorkingPath;
+    private ContainerFacade containerFacade;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        containerName = getArguments().getString(Constants.CONTAINER_NAME_KEY);
-        containerWorkingPath = getArguments().getString(Constants.CONTAINER_WORKING_PATH_KEY);
-        Container container = FileUtils.getContainer(containerWorkingPath, containerName);
+        String containerWorkingPath = getArguments().getString(Constants.CONTAINER_PATH_KEY);
+        containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerWorkingPath).build();
 
-        List<DataFile> dataFiles = ContainerUtils.extractDataFiles(container);
-        filesAdapter = new DataFilesAdapter(getActivity(), dataFiles, FileUtils.getFile(containerWorkingPath, containerName), ContainerDataFilesFragment.this);
+
+        filesAdapter = new DataFilesAdapter(getActivity(), containerFacade, this);
         setListAdapter(filesAdapter);
     }
 
@@ -79,12 +76,12 @@ public class ContainerDataFilesFragment extends ListFragment {
 
     private File extractAttachment(String fileName) {
         File attachment = null;
-        File bdocFile = FileUtils.getFile(containerWorkingPath, containerName);
-        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(bdocFile))) {
+        File containerFile = containerFacade.getContainerFile();
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(containerFile))) {
             ZipEntry ze;
             while ((ze = zis.getNextEntry()) != null) {
                 if (fileName.equals(ze.getName())) {
-                    File cacheDir = FileUtils.getCachePath(getContext().getCacheDir());
+                    File cacheDir = FileUtils.getDataFilesCacheDirectory(getContext());
                     attachment = File.createTempFile(FilenameUtils.removeExtension(fileName), "." + FilenameUtils.getExtension(fileName), cacheDir);
                     try (FileOutputStream out = new FileOutputStream(attachment)) {
                         IOUtils.copy(zis, out);

@@ -1,6 +1,7 @@
 package ee.ria.EstEIDUtility.util;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
@@ -15,9 +16,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 
-import ee.ria.EstEIDUtility.domain.FileItem;
-import ee.ria.libdigidocpp.Container;
-
 public class FileUtils {
 
     private static final String TAG = "FileUtils";
@@ -27,43 +25,50 @@ public class FileUtils {
         return new DecimalFormat("##.##").format(kilobytes);
     }
 
-    public static boolean containerExists(File filesDir, String fileName) {
-        File bdocsPath = getBdocsPath(filesDir);
-        File bdoc = new File(bdocsPath, fileName);
-        return bdoc.exists();
+    public static File cacheUriAsDataFile(Context context, Uri uri, String fileName) {
+        File directory = getDataFilesCacheDirectory(context);
+        return writeUriDataToDirectory(directory, uri, fileName, context.getContentResolver());
     }
 
-    public static Container getContainer(File containerFile) {
-        if (containerFile.exists()) {
-            return Container.open(containerFile.getAbsolutePath());
+    public static File cacheUriAsDataFile(Context context, Uri uri) {
+        String fileName = resolveFileName(uri, context.getContentResolver());
+        return cacheUriAsDataFile(context, uri, fileName);
+    }
+
+    public static File cacheUriAsContainerFile(Context context, Uri uri, String fileName) {
+        File directory = getContainerCacheDirectory(context);
+        return writeUriDataToDirectory(directory, uri, fileName, context.getContentResolver());
+    }
+
+    public static File cacheUriAsContainerFile(Context context, Uri uri) {
+        String fileName = resolveFileName(uri, context.getContentResolver());
+        return cacheUriAsContainerFile(context, uri, fileName);
+    }
+
+    private static File writeUriDataToDirectory(File directory, Uri uri, String filename, ContentResolver contentResolver) {
+        File destination = new File(directory, filename);
+        try {
+            InputStream inputStream = contentResolver.openInputStream(uri);
+            return writeToFile(destination, inputStream);
+        } catch (Exception e) {
+            Log.e(TAG, "failed to cache URI data", e);
+            throw new FailedToCacheUriDataException(e);
         }
-        Log.d(TAG, "getContainer: " + containerFile.getAbsolutePath());
-        return Container.create(containerFile.getAbsolutePath());
     }
 
-    public static Container getContainer(String path, String containerName) {
-        return getContainer(new File(path, containerName));
-    }
-
-    public static Container getContainer(File filesDir, String containerName) {
-        File bdocsPath = getBdocsPath(filesDir);
-        return getContainer(new File(bdocsPath, containerName));
-    }
-
-    public static FileItem resolveFileItemFromUri(Uri uri, ContentResolver contentResolver, String path) {
-        try (InputStream input = contentResolver.openInputStream(uri)) {
-            String fileName = FileUtils.resolveFileName(uri, contentResolver);
-            File file = new File(path, fileName);
-            OutputStream output = new FileOutputStream(file);
+    private static File writeToFile(File destinationFile, InputStream input) throws IOException {
+        OutputStream output = null;
+        try {
+            output = new FileOutputStream(destinationFile);
             IOUtils.copy(input, output);
-            return new FileItem(fileName, file.getPath(), 1);
-        } catch (IOException e) {
-            Log.e(TAG, "resolveFileItemFromUri: ", e);
+        } finally {
+            IOUtils.closeQuietly(input);
+            IOUtils.closeQuietly(output);
         }
-        return null;
+        return destinationFile;
     }
 
-    private static String resolveFileName(Uri uri, ContentResolver contentResolver) {
+    public static String resolveFileName(Uri uri, ContentResolver contentResolver) {
         String uriString = uri.toString();
         if (isContentUri(uriString)) {
             try (Cursor cursor = contentResolver.query(uri, null, null, null, null)) {
@@ -77,30 +82,68 @@ public class FileUtils {
         return null;
     }
 
-    public static File getSchemaPath(File filesDir) {
-        return new File(filesDir, Constants.SCHEMA_DIRECTORY);
+    public static File getContainerCacheDirectory(Context context) {
+        return new File(getCacheDir(context), Constants.CONTAINERS_DIRECTORY);
     }
 
-    public static File getBdocsPath(File filesDir) {
-        return new File(filesDir, Constants.CONTAINERS_DIRECTORY);
+    public static File getDataFilesCacheDirectory(Context context) {
+        return new File(getCacheDir(context), Constants.DATA_FILES_DIRECTORY);
     }
 
-    public static File getCachePath(File cacheDir) {
-        return new File(cacheDir, Constants.CACHE_DIRECTORY);
+    public static File getSchemaCacheDirectory(Context context) {
+        return new File(getCacheDir(context), Constants.SCHEMA_DIRECTORY);
     }
 
-    public static File getBdocFile(File filesDir, String fileName) {
-        File bdocsPath = getBdocsPath(filesDir);
-        return new File(bdocsPath, fileName);
+    public static File getContainersDirectory(Context context) {
+        return new File(getFilesDir(context), Constants.CONTAINERS_DIRECTORY);
     }
 
-    public static void clearCacheDir(File cacheDir) {
-        File cachePath = getCachePath(cacheDir);
-        if (cachePath.isDirectory()) {
-            for (File child : cachePath.listFiles()) {
+    public static File getDataFilesDirectory(Context context) {
+        return new File(getFilesDir(context), Constants.DATA_FILES_DIRECTORY);
+    }
+
+    public static File getSchemaDirectory(Context context) {
+        return new File(getFilesDir(context), Constants.SCHEMA_DIRECTORY);
+    }
+
+    public static File getContainerFileFromCache(Context context, String fileName) {
+        return new File(getContainerCacheDirectory(context), fileName);
+    }
+
+    public static File getDataFileFromCache(Context context, String fileName) {
+        return new File(getDataFilesCacheDirectory(context), fileName);
+    }
+
+    public static File getContainerFile(Context context, String fileName) {
+        return new File(getContainersDirectory(context), fileName);
+    }
+
+    public static File getDataFile(Context context, String fileName) {
+        return new File(getDataFilesDirectory(context), fileName);
+    }
+
+    public static void clearDataFileCache(Context context) {
+        clearDirectory(getDataFilesCacheDirectory(context));
+    }
+
+    public static void clearContainerCache(Context context) {
+        clearDirectory(getContainerCacheDirectory(context));
+    }
+
+    private static void clearDirectory(File directory) {
+        if (directory.isDirectory()) {
+            for (File child : directory.listFiles()) {
                 child.delete();
             }
         }
+    }
+
+    private static File getCacheDir(Context context) {
+        return context.getApplicationContext().getCacheDir();
+    }
+
+    private static File getFilesDir(Context context) {
+        return context.getApplicationContext().getFilesDir();
     }
 
     private static boolean isContentUri(String uriString) {

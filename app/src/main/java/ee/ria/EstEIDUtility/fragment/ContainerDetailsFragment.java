@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -34,18 +33,16 @@ import java.io.File;
 
 import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
-import ee.ria.EstEIDUtility.domain.FileItem;
-import ee.ria.EstEIDUtility.domain.X509Cert;
+import ee.ria.EstEIDUtility.container.ContainerBuilder;
+import ee.ria.EstEIDUtility.container.ContainerFacade;
+import ee.ria.EstEIDUtility.container.DataFileFacade;
 import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
 import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.EstEIDUtility.util.Constants;
-import ee.ria.EstEIDUtility.util.ContainerUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.libdigidocpp.Container;
-import ee.ria.libdigidocpp.DataFile;
 import ee.ria.libdigidocpp.Signature;
-import ee.ria.libdigidocpp.Signatures;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
@@ -72,35 +69,19 @@ public class ContainerDetailsFragment extends Fragment {
     private Button sendButton;
     private ImageView editBdoc;
 
-    private String fileName;
-    private String containerWorkingPath;
     private String containerSavePath;
 
-    private File containerFile;
+    private ContainerFacade containerFacade;
 
     private TokenService tokenService;
     private TokenServiceConnection tokenServiceConnection;
 
     private boolean tokenServiceBound;
 
-    private void unBindTokenService() {
-        addSignatureButton.setEnabled(false);
-        if (tokenServiceConnection != null && tokenServiceBound) {
-            getActivity().unbindService(tokenServiceConnection);
-            tokenServiceBound = false;
-        }
-    }
-
     @Override
     public void onStart() {
         super.onStart();
         connectTokenService();
-    }
-
-    private void connectTokenService() {
-        tokenServiceConnection = new TokenServiceConnection(getActivity(), new TokenServiceCreatedCallback());
-        tokenServiceConnection.connectService();
-        tokenServiceBound = true;
     }
 
     @Override
@@ -113,11 +94,13 @@ public class ContainerDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup containerView, Bundle savedInstanceState) {
         View fragLayout = inflater.inflate(R.layout.fragment_container_details, containerView, false);
 
-        fileName = getArguments().getString(Constants.CONTAINER_NAME_KEY);
-        containerWorkingPath = getArguments().getString(Constants.CONTAINER_WORKING_PATH_KEY, FileUtils.getBdocsPath(getContext().getFilesDir()).getAbsolutePath());
-        containerSavePath = getArguments().getString(Constants.CONTAINER_SAVE_PATH_KEY);
+        String containerWorkingPath = getArguments().getString(Constants.CONTAINER_PATH_KEY);
+        containerSavePath = getArguments().getString(Constants.CONTAINER_SAVE_DIRECTORY_KEY);
 
-        containerFile = getContainerFile();
+        containerFacade = ContainerBuilder
+                .aContainer(getContext())
+                .fromExistingContainer(containerWorkingPath)
+                .build();
 
         createFilesListFragment();
         createSignatureListFragment();
@@ -153,7 +136,7 @@ public class ContainerDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Uri uriToFile = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, containerFile);
+                Uri uriToFile = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, containerFacade.getContainerFile());
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.putExtra(Intent.EXTRA_STREAM, uriToFile);
@@ -170,16 +153,30 @@ public class ContainerDetailsFragment extends Fragment {
             }
         });
 
-        String fileInfo = getContext().getString(R.string.file_info);
-        fileInfo = String.format(fileInfo, FilenameUtils.getExtension(fileName).toUpperCase(), FileUtils.getKilobytes(containerFile.length()));
-
-        fileInfoTextView.setText(fileInfo);
-        title.setText(fileName);
-        body.setText(fileName);
+        fileInfoTextView.setText(getFormattedFileInfo());
+        title.setText(containerFacade.getName());
+        body.setText(containerFacade.getName());
     }
 
-    public void addDataFile(DataFile dataFile) {
-        findDataFilesFragment().addFile(dataFile);
+    private String getFormattedFileInfo() {
+        String format = getContext().getString(R.string.file_info);
+        String extension = FilenameUtils.getExtension(containerFacade.getName()).toUpperCase();
+        String sizeInKb = FileUtils.getKilobytes(containerFacade.fileSize());
+        return String.format(format, extension, sizeInKb);
+    }
+
+    private void connectTokenService() {
+        tokenServiceConnection = new TokenServiceConnection(getActivity(), new TokenServiceCreatedCallback());
+        tokenServiceConnection.connectService();
+        tokenServiceBound = true;
+    }
+
+    private void unBindTokenService() {
+        addSignatureButton.setEnabled(false);
+        if (tokenServiceConnection != null && tokenServiceBound) {
+            getActivity().unbindService(tokenServiceConnection);
+            tokenServiceBound = false;
+        }
     }
 
     class SignTaskCallback implements SignCallback {
@@ -244,46 +241,24 @@ public class ContainerDetailsFragment extends Fragment {
     }
 
     private void addToFileList(Uri uri) {
-        File cacheDir = FileUtils.getCachePath(getContext().getCacheDir());
-
-        FileItem fileItem = FileUtils.resolveFileItemFromUri(uri, getContext().getContentResolver(), cacheDir.getAbsolutePath());
-        if (fileItem == null) {
+        File cachedDataFile = FileUtils.cacheUriAsDataFile(getContext(), uri);
+        if (cachedDataFile == null) {
             return;
         }
-
-        Container container = getContainer();
-
-        String attachedName = fileItem.getName();
-        if (ContainerUtils.hasDataFile(container.dataFiles(), attachedName)) {
+        try {
+            containerFacade.addDataFile(cachedDataFile);
+        } catch (ContainerFacade.DataFileWithSameNameAlreadyExistsException e) {
             NotificationUtil.showWarning(getActivity(), R.string.container_has_file_with_same_name, NotificationUtil.NotificationDuration.LONG);
             return;
         }
-
-        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(attachedName));
-
-        File attachedFile = new File(cacheDir, attachedName);
-
-        container.addDataFile(attachedFile.getAbsolutePath(), mimeType);
-        container.save(getContainerFile().getAbsolutePath());
-
-        DataFile dataFile = ContainerUtils.getDataFile(container.dataFiles(), attachedName);
-        if (dataFile != null) {
-            addDataFile(dataFile);
-        }
-    }
-
-    private Container getContainer() {
-        return FileUtils.getContainer(containerWorkingPath, fileName);
-    }
-
-    private File getContainerFile() {
-        return FileUtils.getFile(containerWorkingPath, fileName);
+        DataFileFacade dataFileFacade = containerFacade.getDataFile(cachedDataFile.getName());
+        findDataFilesFragment().addFile(dataFileFacade.getContainerDataFile());
     }
 
     private class AddFileButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Container container = getContainer();
+            Container container = containerFacade.getContainer();
             if (container.signatures().size() > 0) {
                 NotificationUtil.showError(getActivity(), R.string.add_file_remove_signatures, null);
                 return;
@@ -300,8 +275,8 @@ public class ContainerDetailsFragment extends Fragment {
         FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
 
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.CONTAINER_NAME_KEY, fileName);
-        bundle.putString(Constants.CONTAINER_WORKING_PATH_KEY, containerWorkingPath);
+        bundle.putString(Constants.CONTAINER_NAME_KEY, containerFacade.getName());
+        bundle.putString(Constants.CONTAINER_PATH_KEY, containerFacade.getAbsolutePath());
 
         filesFragment = new ContainerDataFilesFragment();
         filesFragment.setArguments(bundle);
@@ -317,8 +292,8 @@ public class ContainerDetailsFragment extends Fragment {
         FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
 
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.CONTAINER_NAME_KEY, fileName);
-        bundle.putString(Constants.CONTAINER_WORKING_PATH_KEY, containerWorkingPath);
+        bundle.putString(Constants.CONTAINER_NAME_KEY, containerFacade.getName());
+        bundle.putString(Constants.CONTAINER_PATH_KEY, containerFacade.getAbsolutePath());
 
         signaturesFragment = new ContainerSignaturesFragment();
         signaturesFragment.setArguments(bundle);
@@ -370,7 +345,7 @@ public class ContainerDetailsFragment extends Fragment {
     class CertificateInfoCallback implements CertCallback {
         @Override
         public void onCertificateResponse(byte[] cert) {
-            Container container = getContainer();
+            Container container = containerFacade.getContainer();
             Signature signature = container.prepareWebSignature(cert);
             byte[] dataToSign = signature.dataToSign();
             String pin2 = pinText.getText().toString();
@@ -387,8 +362,7 @@ public class ContainerDetailsFragment extends Fragment {
     class SameSignatureCallback implements CertCallback {
         @Override
         public void onCertificateResponse(byte[] cert) {
-            Container container = getContainer();
-            if (isSignedByPerson(container.signatures(), container, cert)) {
+            if (containerFacade.isSignedBy(cert)) {
                 NotificationUtil.showWarning(getActivity(), R.string.already_signed_by_person, null);
                 return;
             }
@@ -417,23 +391,9 @@ public class ContainerDetailsFragment extends Fragment {
             });
         }
 
-        private boolean isSignedByPerson(Signatures signatures, Container container, byte[] cert) {
-            Signature signature = container.prepareWebSignature(cert);
-            X509Cert x509Cert = new X509Cert(signature.signingCertificateDer());
-            for (int i = 0; i < signatures.size(); i++) {
-                Signature s = signatures.get(i);
-                X509Cert c = new X509Cert(s.signingCertificateDer());
-                if (c.getCertificate().equals(x509Cert.getCertificate())) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         @Override
         public void onCertificateError(Exception e) {
         }
-
     }
 
     private ContainerDataFilesFragment findDataFilesFragment() {
