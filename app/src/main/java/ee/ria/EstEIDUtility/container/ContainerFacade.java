@@ -24,7 +24,7 @@ public class ContainerFacade {
     private File containerFile;
     private Map<String, File> dataFileLocations = new HashMap<>();
 
-    public ContainerFacade(Container container, File containerFile) {
+    ContainerFacade(Container container, File containerFile) {
         this.container = container;
         this.containerFile = containerFile;
     }
@@ -80,29 +80,6 @@ public class ContainerFacade {
         return signatureItems;
     }
 
-    private DataFile getContainerDataFile(String filename) {
-        DataFiles containerDataFiles = container.dataFiles();
-        DataFile dataFile = null;
-        for (int i = 0; i < containerDataFiles.size(); i++) {
-            dataFile = containerDataFiles.get(i);
-            if (dataFile.fileName() != null && dataFile.fileName().equals(filename)) {
-                break;
-            }
-        }
-        return dataFile;
-    }
-
-    private boolean hasDataFile(String attachedName) {
-        DataFiles containerDataFiles = container.dataFiles();
-        for (int i = 0; i < containerDataFiles.size(); i++) {
-            DataFile dataFile = containerDataFiles.get(i);
-            if (dataFile.fileName().equals(attachedName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public String getName() {
         return containerFile.getName();
     }
@@ -116,7 +93,12 @@ public class ContainerFacade {
     }
 
     public void save() {
-        container.save(containerFile.getAbsolutePath());
+        save(containerFile);
+    }
+
+    public void save(File filePath) {
+        container.save(filePath.getAbsolutePath());
+        containerFile = filePath;
     }
 
     public void save(String absolutePath) {
@@ -141,6 +123,33 @@ public class ContainerFacade {
         for (Signature signature : getSignatures()) {
             X509Cert c = new X509Cert(signature.signingCertificateDer());
             if (c.getCertificate().equals(x509Cert.getCertificate())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasDataFiles() {
+        return !getDataFiles().isEmpty();
+    }
+
+    private DataFile getContainerDataFile(String filename) {
+        DataFiles containerDataFiles = container.dataFiles();
+        DataFile dataFile = null;
+        for (int i = 0; i < containerDataFiles.size(); i++) {
+            dataFile = containerDataFiles.get(i);
+            if (dataFile.fileName() != null && dataFile.fileName().equals(filename)) {
+                break;
+            }
+        }
+        return dataFile;
+    }
+
+    private boolean hasDataFile(String attachedName) {
+        DataFiles containerDataFiles = container.dataFiles();
+        for (int i = 0; i < containerDataFiles.size(); i++) {
+            DataFile dataFile = containerDataFiles.get(i);
+            if (dataFile.fileName().equals(attachedName)) {
                 return true;
             }
         }

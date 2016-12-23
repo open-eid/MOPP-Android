@@ -67,9 +67,8 @@ public class ContainerDetailsFragment extends Fragment {
     private Button addFileButton;
     private Button addSignatureButton;
     private Button sendButton;
+    private Button saveButton;
     private ImageView editBdoc;
-
-    private String containerSavePath;
 
     private ContainerFacade containerFacade;
 
@@ -95,7 +94,6 @@ public class ContainerDetailsFragment extends Fragment {
         View fragLayout = inflater.inflate(R.layout.fragment_container_details, containerView, false);
 
         String containerWorkingPath = getArguments().getString(Constants.CONTAINER_PATH_KEY);
-        containerSavePath = getArguments().getString(Constants.CONTAINER_SAVE_DIRECTORY_KEY);
 
         containerFacade = ContainerBuilder
                 .aContainer(getContext())
@@ -115,7 +113,7 @@ public class ContainerDetailsFragment extends Fragment {
         addFileButton = (Button) fragLayout.findViewById(R.id.addFile);
         addSignatureButton = (Button) fragLayout.findViewById(R.id.addSignature);
         sendButton = (Button) fragLayout.findViewById(R.id.sendButton);
-
+        saveButton = (Button) fragLayout.findViewById(R.id.saveContainer);
         createPinDialog();
 
         return fragLayout;
@@ -142,6 +140,30 @@ public class ContainerDetailsFragment extends Fragment {
                 shareIntent.putExtra(Intent.EXTRA_STREAM, uriToFile);
                 shareIntent.setType("application/zip");
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.upload_to)));
+            }
+        });
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!containerFacade.hasDataFiles()) {
+                    NotificationUtil.showWarning(getActivity(), R.string.save_container_no_files, null);
+                    return;
+                }
+                String fileName = title.getText().toString();
+                if (fileName == null || fileName.isEmpty()) {
+                    NotificationUtil.showWarning(getActivity(), R.string.file_name_empty_message, null);
+                    return;
+                }
+                File savePath = FileUtils.getContainerFile(getContext(), fileName);
+                if (savePath.getAbsolutePath().equals(containerFacade.getAbsolutePath())) {
+                    containerFacade.save();
+                } else {
+                    if (savePath.exists()) {
+                        NotificationUtil.showWarning(getActivity(), R.string.file_exists_message, NotificationUtil.NotificationDuration.LONG);
+                        return;
+                    }
+                    containerFacade.save(savePath);
+                }
             }
         });
         editBdoc.setOnClickListener(new View.OnClickListener() {

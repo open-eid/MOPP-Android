@@ -23,7 +23,6 @@ public class ContainerBuilder {
     private Context context;
     private ContainerLocation containerLocation;
     private String containerName;
-    private Container container;
     private File containerFile;
     private List<Uri> dataFileUris = new ArrayList<>();
 
@@ -33,7 +32,7 @@ public class ContainerBuilder {
         if (containerFile == null) {
             containerFile = resolveContainerFile();
         }
-        container = getContainer();
+        Container container = getContainer();
         for (Uri uri : dataFileUris) {
             File file = FileUtils.cacheUriAsDataFile(context, uri);
             container.addDataFile(file.getAbsolutePath(), resolveMimeType(file));

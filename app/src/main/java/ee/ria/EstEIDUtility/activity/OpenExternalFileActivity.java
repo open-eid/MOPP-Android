@@ -75,7 +75,6 @@ public class OpenExternalFileActivity extends EntryPointActivity {
 
         extras.putString(Constants.CONTAINER_NAME_KEY, container.getName());
         extras.putString(Constants.CONTAINER_PATH_KEY, container.getAbsolutePath());
-        extras.putString(Constants.CONTAINER_SAVE_DIRECTORY_KEY, FileUtils.getContainersDirectory(this).getAbsolutePath());
 
         containerDetailsFragment = new ContainerDetailsFragment();
         setTitle(R.string.bdoc_detail_title);

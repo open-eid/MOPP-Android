@@ -36,7 +36,6 @@ public class BrowseContainersListFragment extends ListFragment {
         Intent intent = new Intent(getActivity(), ContainerDetailsActivity.class);
         intent.putExtra(Constants.CONTAINER_NAME_KEY, containerInfo.getName());
         intent.putExtra(Constants.CONTAINER_PATH_KEY, containerInfo.getPath().getAbsolutePath());
-        intent.putExtra(Constants.CONTAINER_SAVE_DIRECTORY_KEY, containerInfo.getPath().getAbsolutePath());
         startActivity(intent);
     }
 

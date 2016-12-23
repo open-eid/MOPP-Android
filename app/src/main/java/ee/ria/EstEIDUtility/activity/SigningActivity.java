@@ -32,7 +32,7 @@ import ee.ria.token.tokenservice.token.Token;
 import ee.ria.token.tokenservice.util.AlgorithmUtils;
 import ee.ria.token.tokenservice.util.Util;
 
-import static ee.ria.EstEIDUtility.container.ContainerBuilder.ContainerLocation.STORAGE;
+import static ee.ria.EstEIDUtility.container.ContainerBuilder.ContainerLocation.CACHE;
 
 public class SigningActivity extends AppCompatActivity {
 
@@ -123,7 +123,6 @@ public class SigningActivity extends AppCompatActivity {
             } else {
                 content.setText(e.getMessage());
             }
-
         }
     }
 
@@ -147,6 +146,7 @@ public class SigningActivity extends AppCompatActivity {
     }
 
     public void createNewContainer(View view) {
+        FileUtils.clearContainerCache(this);
         EditText containerName = (EditText) findViewById(R.id.textToSign);
 
         String fileName = containerName.getText().toString();
@@ -162,25 +162,16 @@ public class SigningActivity extends AppCompatActivity {
         }
 
         String containerFileName = containerName.getText().toString();
-        if (containerExists(containerFileName)) {
-            NotificationUtil.showWarning(this, R.string.file_exists_message, NotificationUtil.NotificationDuration.LONG);
-            return;
-        }
 
         ContainerFacade containerFacade = ContainerBuilder.aContainer(this)
-                .withContainerLocation(STORAGE)
+                .withContainerLocation(CACHE)
                 .withContainerName(containerFileName)
                 .build();
 
         Intent intent = new Intent(this, ContainerDetailsActivity.class);
         intent.putExtra(Constants.CONTAINER_NAME_KEY, containerFacade.getName());
         intent.putExtra(Constants.CONTAINER_PATH_KEY, containerFacade.getAbsolutePath());
-        intent.putExtra(Constants.CONTAINER_SAVE_DIRECTORY_KEY, FileUtils.getContainersDirectory(this).getAbsolutePath());
         startActivity(intent);
-    }
-
-    private boolean containerExists(String containerFileName) {
-        return FileUtils.getContainerFile(this, containerFileName).exists();
     }
 
 }
