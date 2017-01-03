@@ -104,5 +104,4 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView_pin_activities"
         android:layout_marginTop="8dp" />
 
-
 </android.support.constraint.ConstraintLayout>
