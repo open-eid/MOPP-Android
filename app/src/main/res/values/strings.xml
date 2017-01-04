@@ -112,5 +112,34 @@
     <string name="file_unsharable">File of a current type can not be shared.</string>
     <string name="openingFileFailed">Opening File Failed</string>
     <string name="save_container_no_files">Container needs to have atleast 1 data file to save</string>
+    <string name="title_activity_settings">Settings</string>
+
+
+    <!-- Strings related to Settings -->
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+    <string name="pref_general_title_online_tsl_check">Online TSL digest check</string>
+
+
+    <!-- Settings for Signing -->
+    <string name="pref_header_signing">Signing</string>
+    <string name="pref_signing_title_file_type">Default file type</string>
+    <string-array name="pref_signing_file_type_names">
+        <item>BDOC</item>
+        <item>ASiC-E</item>
+    </string-array>
+    <string-array name="pref_signing_file_type_values">
+        <item>bdoc</item>
+        <item>asice</item>
+    </string-array>
+    <string name="pref_title_signing_role">Role</string>
+    <string name="pref_title_signing_resolution">Resolution</string>
+    <string name="pref_title_signing_city">City</string>
+    <string name="pref_title_signing_state">State</string>
+    <string name="pref_title_signing_country">Country</string>
+    <string name="pref_title_signing_zip">Zip</string>
+    <string name="pref_title_signing_save_last_used">Always save the last used role, resolution and location</string>
 
 </resources>
