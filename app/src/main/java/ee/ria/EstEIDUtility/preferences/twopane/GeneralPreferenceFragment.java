@@ -10,10 +10,7 @@ import android.view.MenuItem;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.preferences.SettingsActivity;
 
-/**
- * This fragment shows general preferences only. It is used when the
- * activity is showing a two-pane settings UI.
- */
+
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class GeneralPreferenceFragment extends PreferenceFragment {
     @Override
