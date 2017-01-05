@@ -55,8 +55,8 @@ public class Container {
     return new DataFiles(digidocJNI.Container_dataFiles(swigCPtr, this), true);
   }
 
-  public void removeDataFile(long id) {
-    digidocJNI.Container_removeDataFile(swigCPtr, this, id);
+  public void removeDataFile(long index) {
+    digidocJNI.Container_removeDataFile(swigCPtr, this, index);
   }
 
   public void addAdESSignature(byte[] signature) {
@@ -72,8 +72,8 @@ public class Container {
     return new Signatures(digidocJNI.Container_signatures(swigCPtr, this), true);
   }
 
-  public void removeSignature(long id) {
-    digidocJNI.Container_removeSignature(swigCPtr, this, id);
+  public void removeSignature(long index) {
+    digidocJNI.Container_removeSignature(swigCPtr, this, index);
   }
 
   public Signature sign(Signer signer) {

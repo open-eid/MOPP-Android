@@ -115,6 +115,10 @@ public class Signature {
     return digidocJNI.Signature_ArchiveTimeStampTime(swigCPtr, this);
   }
 
+  public String streetAddress() {
+    return digidocJNI.Signature_streetAddress(swigCPtr, this);
+  }
+
   public byte[] signingCertificateDer() {
     return digidocJNI.Signature_signingCertificateDer(swigCPtr, this);
   }

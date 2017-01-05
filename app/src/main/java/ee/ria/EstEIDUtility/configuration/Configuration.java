@@ -20,6 +20,12 @@ public class Configuration {
     private static final String TAG = "Configuration";
 
     static {
+
+        System.loadLibrary("c++_shared");
+        System.loadLibrary("xerces-c-3.1");
+        System.loadLibrary("xalanMsg");
+        System.loadLibrary("xalan-c");
+        System.loadLibrary("xml-security-c");
         System.loadLibrary("digidoc_java");
     }
 
@@ -53,7 +59,7 @@ public class Configuration {
     }
 
     private static void initLibDigidoc(Context context) {
-        digidoc.initJava(FileUtils.getSchemaCacheDirectory(context).getAbsolutePath());
+        digidoc.initializeLib("libdigidoc Android", FileUtils.getSchemaCacheDirectory(context).getAbsolutePath());
     }
 
     private static void createDirectory(File dir) {
