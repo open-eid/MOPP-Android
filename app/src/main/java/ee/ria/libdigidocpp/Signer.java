@@ -47,8 +47,16 @@ public class Signer {
     return digidocJNI.Signer_profile(swigCPtr, this);
   }
 
+  public boolean usingENProfile() {
+    return digidocJNI.Signer_usingENProfile(swigCPtr, this);
+  }
+
   public String city() {
     return digidocJNI.Signer_city(swigCPtr, this);
+  }
+
+  public String streetAddress() {
+    return digidocJNI.Signer_streetAddress(swigCPtr, this);
   }
 
   public String stateOrProvince() {
@@ -75,8 +83,16 @@ public class Signer {
     digidocJNI.Signer_setProfile(swigCPtr, this, profile);
   }
 
+  public void setENProfile(boolean enable) {
+    digidocJNI.Signer_setENProfile(swigCPtr, this, enable);
+  }
+
   public void setSignatureProductionPlace(String city, String stateOrProvince, String postalCode, String countryName) {
     digidocJNI.Signer_setSignatureProductionPlace(swigCPtr, this, city, stateOrProvince, postalCode, countryName);
+  }
+
+  public void setSignatureProductionPlaceV2(String city, String streetAddress, String stateOrProvince, String postalCode, String countryName) {
+    digidocJNI.Signer_setSignatureProductionPlaceV2(swigCPtr, this, city, streetAddress, stateOrProvince, postalCode, countryName);
   }
 
   public void setSignerRoles(StringVector signerRoles) {

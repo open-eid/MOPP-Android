@@ -9,10 +9,6 @@
 package ee.ria.libdigidocpp;
 
 public class digidoc {
-  public static void initJava(String arg0) {
-    digidocJNI.initJava(arg0);
-  }
-
   public static String appInfo() {
     return digidocJNI.appInfo();
   }
@@ -23,6 +19,10 @@ public class digidoc {
 
   public static String version() {
     return digidocJNI.version();
+  }
+
+  public static void initializeLib(String appName, String path) {
+    digidocJNI.initializeLib(appName, path);
   }
 
 }

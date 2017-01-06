@@ -213,6 +213,7 @@ public class ContainerDetailsFragment extends Fragment {
         @Override
         public void onSignResponse(byte[] signatureBytes) {
             signature.setSignatureValue(signatureBytes);
+            //signature.extendSignatureProfile("time-mark"); //TODO: extending doesn't work
             container.save();
             findSignaturesFragment().addSignature(signature);
             enterPinText.setText(getText(R.string.enter_pin));

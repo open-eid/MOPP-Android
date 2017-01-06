@@ -9,7 +9,6 @@
 package ee.ria.libdigidocpp;
 
 public class digidocJNI {
-  public final static native void initJava(String jarg1);
   public final static native long new_Conf();
   public final static native void delete_Conf(long jarg1);
   public final static native void Conf_init(long jarg1, Conf jarg1_);
@@ -97,6 +96,7 @@ public class digidocJNI {
   public final static native byte[] Signature_OCSPNonce(long jarg1, Signature jarg1_);
   public final static native String Signature_TimeStampTime(long jarg1, Signature jarg1_);
   public final static native String Signature_ArchiveTimeStampTime(long jarg1, Signature jarg1_);
+  public final static native String Signature_streetAddress(long jarg1, Signature jarg1_);
   public final static native byte[] Signature_signingCertificateDer(long jarg1, Signature jarg1_);
   public final static native byte[] Signature_OCSPCertificateDer(long jarg1, Signature jarg1_);
   public final static native byte[] Signature_TimeStampCertificateDer(long jarg1, Signature jarg1_);
@@ -176,14 +176,18 @@ public class digidocJNI {
   public final static native byte[] Signer_sign(long jarg1, Signer jarg1_, String jarg2, byte[] jarg3);
   public final static native String Signer_method(long jarg1, Signer jarg1_);
   public final static native String Signer_profile(long jarg1, Signer jarg1_);
+  public final static native boolean Signer_usingENProfile(long jarg1, Signer jarg1_);
   public final static native String Signer_city(long jarg1, Signer jarg1_);
+  public final static native String Signer_streetAddress(long jarg1, Signer jarg1_);
   public final static native String Signer_stateOrProvince(long jarg1, Signer jarg1_);
   public final static native String Signer_postalCode(long jarg1, Signer jarg1_);
   public final static native String Signer_countryName(long jarg1, Signer jarg1_);
   public final static native long Signer_signerRoles(long jarg1, Signer jarg1_);
   public final static native void Signer_setMethod(long jarg1, Signer jarg1_, String jarg2);
   public final static native void Signer_setProfile(long jarg1, Signer jarg1_, String jarg2);
+  public final static native void Signer_setENProfile(long jarg1, Signer jarg1_, boolean jarg2);
   public final static native void Signer_setSignatureProductionPlace(long jarg1, Signer jarg1_, String jarg2, String jarg3, String jarg4, String jarg5);
+  public final static native void Signer_setSignatureProductionPlaceV2(long jarg1, Signer jarg1_, String jarg2, String jarg3, String jarg4, String jarg5, String jarg6);
   public final static native void Signer_setSignerRoles(long jarg1, Signer jarg1_, long jarg2, StringVector jarg2_);
   public final static native long new_PKCS12Signer(String jarg1, String jarg2);
   public final static native void delete_PKCS12Signer(long jarg1);
@@ -224,6 +228,7 @@ public class digidocJNI {
   public final static native long Signatures_get(long jarg1, Signatures jarg1_, int jarg2);
   public final static native void Signatures_set(long jarg1, Signatures jarg1_, int jarg2, long jarg3, Signature jarg3_);
   public final static native void delete_Signatures(long jarg1);
+  public final static native void initializeLib(String jarg1, String jarg2);
   public final static native long ConfV2_SWIGUpcast(long jarg1);
   public final static native long XmlConf_SWIGUpcast(long jarg1);
   public final static native long XmlConfV2_SWIGUpcast(long jarg1);
