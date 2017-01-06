@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:fitsSystemWindows="true"
-    tools:context="ee.ria.EstEIDUtility.activity.DashboardMenuActivity"
-    android:background="@android:color/white">
+    tools:context="ee.ria.EstEIDUtility.activity.DashboardMenuActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -26,9 +26,9 @@
 
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="150dp"
+        android:layout_height="80dp"
         android:layout_gravity="bottom"
         android:layout_marginBottom="10dp"
-        android:src="@drawable/eu_structural_h_bw" />
+        android:src="@drawable/eu_structural_h" />
 
 </android.support.design.widget.CoordinatorLayout>

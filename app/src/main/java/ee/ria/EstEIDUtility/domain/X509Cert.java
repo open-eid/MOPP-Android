@@ -48,7 +48,11 @@ public class X509Cert {
         if (x500name == null) {
             return null;
         }
-        RDN c = x500name.getRDNs(identifier)[0];
+        RDN[] rdNs = x500name.getRDNs(identifier);
+        if (rdNs.length == 0) {
+            return null;
+        }
+        RDN c = rdNs[0];
         return IETFUtils.valueToString(c.getFirst().getValue());
     }
 

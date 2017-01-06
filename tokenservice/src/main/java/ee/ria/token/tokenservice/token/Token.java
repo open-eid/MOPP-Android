@@ -10,6 +10,7 @@ public interface Token {
 	boolean unblockPin(PinType pinType, byte[] puk);
 	byte[] readCert(CertType type);
     byte readRetryCounter(PinType pinType);
+    int readUseCounter(CertType certType);
 
     boolean unblockAndChangePin(PinType pinType, byte[] puk, byte[] newPin);
 

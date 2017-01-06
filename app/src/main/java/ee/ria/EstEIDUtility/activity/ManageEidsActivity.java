@@ -1,45 +1,77 @@
 package ee.ria.EstEIDUtility.activity;
 
-import android.app.AlertDialog;
 import android.app.Service;
-import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.security.cert.CertificateParsingException;
+import java.text.ParseException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
 import ee.ria.EstEIDUtility.R;
+import ee.ria.EstEIDUtility.domain.X509Cert;
 import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
 import ee.ria.EstEIDUtility.service.TokenServiceConnection;
-import ee.ria.token.tokenservice.token.Token;
+import ee.ria.EstEIDUtility.util.DateUtils;
 import ee.ria.token.tokenservice.TokenService;
-import ee.ria.token.tokenservice.util.Util;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
+import ee.ria.token.tokenservice.callback.UseCounterCallback;
+import ee.ria.token.tokenservice.token.Token;
 
 public class ManageEidsActivity extends AppCompatActivity {
 
     private static final String TAG = "ManageEidsActivity";
 
-    TextView content;
     private TokenService tokenService;
     private TokenServiceConnection tokenServiceConnection;
     private boolean serviceBound;
+
+    private TextView givenNames;
+    private TextView surnameView;
+    private TextView documentNumberView;
+    private TextView cardValidity;
+    private TextView cardValidityTime;
+    private TextView certValidity;
+    private TextView certValidityTime;
+    private TextView certUsedView;
+    private TextView personIdCode;
+    private TextView dateOfBirth;
+    private TextView nationalityView;
+    private TextView emailView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_eids);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        content = (TextView) findViewById(R.id.eids_content);
-        enableButtons(false);
+
+        TextView info = (TextView) findViewById(R.id.info);
+        info.setText(Html.fromHtml(getString(R.string.eid_info)));
+        info.setMovementMethod(LinkMovementMethod.getInstance());
+
+        givenNames = (TextView) findViewById(R.id.givenNames);
+        surnameView = (TextView) findViewById(R.id.surname);
+        documentNumberView = (TextView) findViewById(R.id.document_number);
+        cardValidity = (TextView) findViewById(R.id.card_validity);
+        cardValidityTime = (TextView) findViewById(R.id.card_valid_value);
+
+        certValidity = (TextView) findViewById(R.id.cert_validity);
+        certValidityTime = (TextView) findViewById(R.id.cert_valid_value);
+        certUsedView = (TextView) findViewById(R.id.cert_used);
+
+        personIdCode = (TextView) findViewById(R.id.person_id);
+        dateOfBirth = (TextView) findViewById(R.id.date_of_birth);
+        nationalityView = (TextView) findViewById(R.id.nationality);
+        emailView = (TextView) findViewById(R.id.email);
 
         ServiceCreatedCallback callback = new TokenServiceCreatedCallback();
         tokenServiceConnection = new TokenServiceConnection(this, callback);
@@ -51,9 +83,9 @@ public class ManageEidsActivity extends AppCompatActivity {
         @Override
         public void created(Service service) {
             tokenService = (TokenService) service;
-            enableButtons(true);
             serviceBound = true;
-            Toast.makeText(ManageEidsActivity.this, "Service connected", Toast.LENGTH_LONG).show();
+            readPersonalData();
+            readCertInfo();
         }
 
         @Override
@@ -65,9 +97,8 @@ public class ManageEidsActivity extends AppCompatActivity {
         public void disconnected() {
             tokenService = null;
             serviceBound = false;
-            enableButtons(false);
-            Toast.makeText(ManageEidsActivity.this, "Service disconnected", Toast.LENGTH_LONG).show();
         }
+
     }
 
     @Override
@@ -79,15 +110,48 @@ public class ManageEidsActivity extends AppCompatActivity {
         }
     }
 
-    public void displayPersonalData(View view) throws RemoteException {
-
-        Log.d(TAG, "displayPersonalData: " + tokenService);
-
+    public void readPersonalData() {
         PersonalFileCallback callback = new PersonalFileCallback() {
             @Override
             public void onPersonalFileResponse(SparseArray<String> result) {
-                Log.d(TAG, "onPersonalFileResponse: " + result);
-                content.setText("Cert common name: " + result);
+                String surname = result.get(1);
+                String firstName = result.get(2);
+                String firstName2 = result.get(3);
+
+                String expiryDate = result.get(9);
+                String identificationCode = result.get(7);
+                String birthDate = result.get(6);
+                String nationality = result.get(5);
+
+                String documentNumber = result.get(8);
+
+                givenNames.setText(firstName);
+                givenNames.append(firstName2);
+                surnameView.setText(surname);
+
+                documentNumberView.setText(documentNumber);
+
+                certValidityTime.setText(expiryDate);
+                cardValidityTime.setText(expiryDate);
+                personIdCode.setText(identificationCode);
+                dateOfBirth.setText(birthDate);
+                nationalityView.setText(nationality);
+
+                try {
+                    Date expiry = DateUtils.DATE_FORMAT.parse(expiryDate);
+                    if (!expiry.before(new Date()) && expiry.after(new Date())) {
+                        cardValidity.setText(getText(R.string.eid_valid));
+                        cardValidity.setTextColor(Color.GREEN);
+                        cardValidityTime.setTextColor(Color.GREEN);
+                    } else {
+                        cardValidity.setText(getText(R.string.eid_invalid));
+                        cardValidity.setTextColor(Color.RED);
+                        cardValidityTime.setTextColor(Color.RED);
+                    }
+                } catch (ParseException e) {
+                    Log.e(TAG, "onPersonalFileResponse: ", e);
+                }
+
             }
 
             @Override
@@ -98,37 +162,79 @@ public class ManageEidsActivity extends AppCompatActivity {
         tokenService.readPersonalFile(callback);
     }
 
-    public void displayCertInfo(View view) throws RemoteException {
-        Log.d(TAG, "displayCertInfo: " + tokenService);
-
-        CertificateInfoCallback callback = new CertificateInfoCallback();
+    public void readCertInfo() {
+        SignCertificateCallback callback = new SignCertificateCallback();
         tokenService.readCert(Token.CertType.CertSign, callback);
+
+        AuthCertificateCallback authCertificateCallback = new AuthCertificateCallback();
+        tokenService.readCert(Token.CertType.CertAuth, authCertificateCallback);
     }
 
-    class CertificateInfoCallback implements CertCallback {
+    private class UseCounterTaskCallback implements UseCounterCallback {
+        @Override
+        public void onCounterRead(int counterByte) {
+            certUsedView.setText(String.valueOf(counterByte));
+        }
+
+        @Override
+        public void cardNotProvided() {
+            Log.e(TAG, "cardNotProvided: ", new Exception("Why?"));
+        }
+    }
+
+    class SignCertificateCallback implements CertCallback {
+
         @Override
         public void onCertificateResponse(byte[] cert) {
-            String certificateInHex = Util.toHex(cert);
-            content.setText("Cert common name: " + Util.getCommonName(Util.fromHex(certificateInHex)));
+            X509Cert x509Cert = new X509Cert(cert);
+
+            tokenService.readUseCounter(Token.CertType.CertSign, new UseCounterTaskCallback());
+
+            if (x509Cert.isValid()) {
+                certValidity.setText(getText(R.string.eid_valid));
+                certValidity.setTextColor(Color.GREEN);
+                certValidityTime.setTextColor(Color.GREEN);
+            } else {
+                certValidity.setText(getText(R.string.eid_invalid));
+                certValidity.setTextColor(Color.RED);
+                certValidityTime.setTextColor(Color.RED);
+            }
         }
 
         @Override
         public void onCertificateError(Exception e) {
-            new AlertDialog.Builder(ManageEidsActivity.this)
-                    .setTitle(R.string.cert_read_failed)
-                    .setMessage(e.getMessage())
-                    .setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    }).show();
+            Toast.makeText(ManageEidsActivity.this, getText(R.string.cert_read_failed) + " " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+
     }
 
-    private void enableButtons(boolean enable) {
-        findViewById(R.id.read_cert).setEnabled(enable);
-        findViewById(R.id.read_personal_data).setEnabled(enable);
+    class AuthCertificateCallback implements CertCallback {
+
+        @Override
+        public void onCertificateResponse(byte[] cert) {
+            X509Cert x509Cert = new X509Cert(cert);
+            try {
+                Collection<List<?>> subjectAlternativeNames = x509Cert.getCertificate().getSubjectAlternativeNames();
+                if (subjectAlternativeNames == null) {
+                    Log.d(TAG, "Couldn't read email");
+                    return;
+                }
+                for (List subjectAlternativeName : subjectAlternativeNames) {
+                    if ((Integer) subjectAlternativeName.get(0) == 1) {
+                        emailView.setText((CharSequence) subjectAlternativeName.get(1));
+                    }
+                }
+            } catch (CertificateParsingException e) {
+                Log.e(TAG, "onCertificateResponse: ", e);
+            }
+
+        }
+
+        @Override
+        public void onCertificateError(Exception e) {
+            Toast.makeText(ManageEidsActivity.this, getText(R.string.cert_read_failed) + " " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
     }
 
 }

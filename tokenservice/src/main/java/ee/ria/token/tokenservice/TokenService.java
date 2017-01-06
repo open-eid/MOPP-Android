@@ -14,6 +14,7 @@ import ee.ria.token.tokenservice.callback.PersonalFileCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.SignCallback;
 import ee.ria.token.tokenservice.callback.UnblockPinCallback;
+import ee.ria.token.tokenservice.callback.UseCounterCallback;
 import ee.ria.token.tokenservice.reader.CardReader;
 import ee.ria.token.tokenservice.token.PinVerificationException;
 import ee.ria.token.tokenservice.token.Token;
@@ -65,6 +66,19 @@ public class TokenService extends Service {
         }
         cardReader.connect(callback);
         return cardReader;
+    }
+
+    public void readUseCounter(Token.CertType certType, UseCounterCallback callback) {
+        if (token == null) {
+            callback.cardNotProvided();
+            return;
+        }
+        try {
+            int counterByte = token.readUseCounter(certType);
+            callback.onCounterRead(counterByte);
+        } catch (Exception e) {
+            Log.e(TAG, "readUseCounter: ", e);
+        }
     }
 
     public void readRetryCounter(Token.PinType pinType, RetryCounterCallback callback) {

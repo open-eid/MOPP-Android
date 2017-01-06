@@ -4,14 +4,15 @@
     <item android:drawable="@android:color/white" />
 
     <item
+        android:bottom="50dp"
         android:drawable="@drawable/digidoc_app"
-        android:gravity="top|center"
-        android:top="25dp" />
+        android:gravity="center" />
 
     <item
-        android:width="300dp"
-        android:height="175dp"
+        android:width="280dp"
+        android:height="150dp"
+        android:bottom="40dp"
         android:drawable="@drawable/eu_structural_h"
-        android:gravity="center" />
+        android:gravity="bottom|center" />
 
 </layer-list>

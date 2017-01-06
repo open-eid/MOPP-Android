@@ -113,4 +113,20 @@
     <string name="openingFileFailed">Opening File Failed</string>
     <string name="save_container_no_files">Container needs to have atleast 1 data file to save</string>
 
+    <!--eID-->
+    <string name="eid_cert">Certificate:</string>
+    <string name="eid_valid">Valid</string>
+    <string name="eid_valid_untill">Valid untill:</string>
+    <string name="eid_id_number">Personal Code:</string>
+    <string name="eid_born">Birth:</string>
+    <string name="eid_nationality">Citizenship:</string>
+    <string name="eid_email">E-mail:</string>
+    <string name="eid_info">ID-kaart on riigi sisene kohustuslik isikut tõendav dokument alates 15-aastast. Eesti kodanik saab ID-kaardiga reisida Euroopa Liidu ja Euroopa Majanduspiirkonna riikides.\n\nID-kaarti saad taotleda Politsei- ka Piirivalveameti <![CDATA[<a href="https://www.politsei.ee/en/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">teeninduses</a>]]>, Eesti Vabariigi välisesindustes, posti või e-posti teel.</string>
+    <string name="eid_invalid">Expired</string>
+    <string name="eid_given_names">Given names:</string>
+    <string name="eid_surname">Surname:</string>
+    <string name="eid_card_in_reader">Card in reader:</string>
+    <string name="eid_sign_cert">Signature certificate:</string>
+    <string name="eid_sign_cert_used">Signature key has been used:</string>
+
 </resources>
