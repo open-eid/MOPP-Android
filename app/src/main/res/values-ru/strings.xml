@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RIA DigiDoc</string>
-    <string name="action_read">Read personal data</string>
-    <string name="action_read_cert">Read cert</string>
-    <string name="action_read_personal">Read personal data</string>
     <string name="action_sign">Подписать</string>
     <string name="edit_text">Edit text</string>
     <string name="insert_pin_puk">Введите PIN/PUK</string>
     <string name="settings">Настройки</string>
-    <string name="cert_read_failed">Cert read failed</string>
+    <string name="cert_read_failed">Произошла ошибка при чтении сертификата</string>
     <string name="current_pin_puk">Текущий PIN/PUK</string>
-    <string name="connect">Connect</string>
+    <string name="connect">Подсоединиться</string>
     <string name="new_pin_puk">Новый PIN/PUK</string>
     <string name="change_puk">Изменить PUK</string>
     <string name="change_pin">Изменить PIN1</string>
@@ -74,7 +71,7 @@
     <string name="using_pin1_option">Kasutades kehtivat PIN1 koodi</string>
     <string name="pin1_info_title">Uus PIN1 kood:</string>
     <string name="pin1_info"><![CDATA[\u2022 peab olema erinev eelmisest PIN1-st\n\u2022 peab olema 4-12 -numbriline ega tohi sisaldada tähti.\n\u2022 ei saa olla 0000, 1234 ega tohi osaliselt ega täielikult kattuda sinu isikukoodiga.]]></string>
-    <string name="change">Muuda</string>
+    <string name="change">Изменить</string>
     <string name="new_pin2_title">Uus PIN2 kood:</string>
     <string name="new_pin2_hint">Uus PIN2</string>
     <string name="new_pin2_again_hint">Uus PIN2 uuesti</string>
@@ -125,4 +122,5 @@
     <string name="eid_card_in_reader">В считывателе карта:</string>
     <string name="eid_sign_cert">Сертификат подписи:</string>
     <string name="eid_sign_cert_used">Сертификат использован:</string>
+    <string name="insert_card_wait">Insert card or wait a reader to respond.</string>
 </resources>

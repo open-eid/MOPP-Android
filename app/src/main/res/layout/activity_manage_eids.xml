@@ -352,7 +352,7 @@
                 </LinearLayout>
 
                 <View
-                    android:id="@+id/separator"
+                    android:id="@+id/info_separator"
                     android:layout_width="wrap_content"
                     android:layout_height="2dp"
                     android:layout_marginEnd="10dp"
@@ -367,8 +367,8 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:textSize="15sp" />
-
+                    android:textSize="15sp"
+                    android:visibility="gone" />
 
             </LinearLayout>
         </ScrollView>

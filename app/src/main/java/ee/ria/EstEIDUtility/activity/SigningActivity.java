@@ -1,8 +1,13 @@
 package ee.ria.EstEIDUtility.activity;
 
-import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,8 +25,6 @@ import java.security.Signature;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
-import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
-import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
@@ -36,40 +39,77 @@ import static ee.ria.EstEIDUtility.container.ContainerBuilder.ContainerLocation.
 
 public class SigningActivity extends AppCompatActivity {
 
-    private static final String TAG = "SigningActivity";
+    private static final String TAG = SigningActivity.class.getName();
     TextView content;
     byte[] signCert, signedBytes;
 
     private TokenService tokenService;
     private TokenServiceConnection tokenServiceConnection;
 
+    private BroadcastReceiver cardInsertedReceiver;
+    private BroadcastReceiver cardRemovedReceiver;
+
     @Override
     protected void onStart() {
         super.onStart();
-        ServiceCreatedCallback callback = new TokenServiceCreatedCallback();
-        tokenServiceConnection = new TokenServiceConnection(this, callback);
+        tokenServiceConnection = new TokenServiceConnection();
         tokenServiceConnection.connectService();
+
+        cardInsertedReceiver = new CardPresentReciever();
+        registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
+
+        cardRemovedReceiver = new CardAbsentReciever();
+        registerReceiver(cardRemovedReceiver, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
     }
 
-    class TokenServiceCreatedCallback implements ServiceCreatedCallback {
+    @Override
+    protected void onDestroy() {
+        if (cardInsertedReceiver != null) {
+            unregisterReceiver(cardInsertedReceiver);
+        }
+        if (cardRemovedReceiver != null) {
+            unregisterReceiver(cardRemovedReceiver);
+        }
+        super.onDestroy();
+    }
+
+    class CardPresentReciever extends BroadcastReceiver {
 
         @Override
-        public void created(Service service) {
-            tokenService = (TokenService) service;
+        public void onReceive(Context context, Intent intent) {
             enableButtons(true);
             Toast.makeText(SigningActivity.this, "Service connected", Toast.LENGTH_LONG).show();
         }
 
-        @Override
-        public void failed() {
-            Log.e(TAG, "failed: ", null);
-        }
+    }
+
+    class CardAbsentReciever extends BroadcastReceiver {
 
         @Override
-        public void disconnected() {
+        public void onReceive(Context context, Intent intent) {
             tokenService = null;
             enableButtons(false);
             Toast.makeText(SigningActivity.this, "Service disconnected", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    class TokenServiceConnection implements ServiceConnection {
+
+        void connectService() {
+            Intent intent = new Intent(SigningActivity.this, TokenService.class);
+            bindService(intent, this, Context.BIND_AUTO_CREATE);
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            TokenService.LocalBinder binder = (TokenService.LocalBinder) service;
+            tokenService = binder.getService();
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            tokenService = null;
         }
     }
 
@@ -88,10 +128,10 @@ public class SigningActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        super.onStop();
         if (tokenServiceConnection != null) {
             unbindService(tokenServiceConnection);
         }
+        super.onStop();
     }
 
     public void signText(final View view) throws NoSuchAlgorithmException {

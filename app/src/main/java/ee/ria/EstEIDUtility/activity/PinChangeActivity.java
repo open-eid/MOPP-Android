@@ -1,10 +1,15 @@
 package ee.ria.EstEIDUtility.activity;
 
-import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,8 +19,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import ee.ria.EstEIDUtility.R;
-import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
-import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.ChangePinCallback;
@@ -23,8 +26,6 @@ import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.token.Token;
 
 public class PinChangeActivity extends AppCompatActivity {
-
-    private static final String TAG = "PinChangeActivity";
 
     private RadioGroup radioPinGroup;
     private RadioButton radioPIN;
@@ -49,21 +50,32 @@ public class PinChangeActivity extends AppCompatActivity {
     private TextView newPinTitle;
     private TextView newPinAgainTitle;
 
-    private boolean tokenServiceBound;
-
     private RetryCounterCallback pinBlockedCallback;
     private ChangePinCallback pinChangeCallback;
 
     private Token.PinType pinType;
 
+    private BroadcastReceiver cardInsertedReceiver;
+    private BroadcastReceiver cardRemovedReceiver;
+
     boolean pinBlocked;
-    //TODO: better refactor this and get callback when card connect
     boolean cardProvided;
 
     @Override
     public void onStop() {
         super.onStop();
         unBindTokenService();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (cardInsertedReceiver != null) {
+            unregisterReceiver(cardInsertedReceiver);
+        }
+        if (cardRemovedReceiver != null) {
+            unregisterReceiver(cardRemovedReceiver);
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -142,8 +154,6 @@ public class PinChangeActivity extends AppCompatActivity {
                 return;
             }
 
-            cardProvided = true;
-
             switch (radioPinGroup.getCheckedRadioButtonId()) {
                 case R.id.radioPIN:
                     tokenService.changePin(pinType, currentPinPuk, newPin, pinChangeCallback);
@@ -212,7 +222,6 @@ public class PinChangeActivity extends AppCompatActivity {
         fail.setVisibility(View.GONE);
         successText.setText(getText(R.string.pin1_change_success));
         success.setVisibility(View.VISIBLE);
-        pinBlocked = false;
         new Handler().postDelayed(new Runnable() {
             public void run() {
                 success.setVisibility(View.GONE);
@@ -223,6 +232,9 @@ public class PinChangeActivity extends AppCompatActivity {
     private void showFailMessage(CharSequence message) {
         failText.setText(message);
         fail.setVisibility(View.VISIBLE);
+    }
+
+    private void readRetryCounter() {
         if (!pinBlocked && cardProvided) {
             tokenService.readRetryCounter(pinType, pinBlockedCallback);
         }
@@ -233,6 +245,7 @@ public class PinChangeActivity extends AppCompatActivity {
         @Override
         public void success() {
             showSuccessMessage();
+            pinBlocked = false;
             clearTexts();
             radioPIN.setEnabled(true);
             refreshLayout(R.id.radioPIN);
@@ -241,12 +254,8 @@ public class PinChangeActivity extends AppCompatActivity {
         @Override
         public void error(Exception e) {
             clearTexts();
-            //TODO: handle exceptions in TokenService to be able to differ what was exactly the reason and show different messages
-            if (e != null) {
-                showFailMessage(createPinChangeFailedMessage());
-            } else {
-                showFailMessage(createPinChangeFailedMessage());
-            }
+            showFailMessage(createPinChangeFailedMessage());
+            readRetryCounter();
         }
 
     }
@@ -306,7 +315,6 @@ public class PinChangeActivity extends AppCompatActivity {
 
         @Override
         public void onCounterRead(byte counterByte) {
-            cardProvided = true;
             if (counterByte > 0) {
                 radioPIN.setEnabled(true);
                 radioPUK.setChecked(false);
@@ -322,11 +330,6 @@ public class PinChangeActivity extends AppCompatActivity {
             }
         }
 
-        @Override
-        public void cardNotProvided() {
-            cardProvided = false;
-            showFailMessage(getText(R.string.card_not_provided));
-        }
     }
 
     private void setLayoutTitle() {
@@ -341,34 +344,70 @@ public class PinChangeActivity extends AppCompatActivity {
     }
 
     private void connectTokenService() {
-        tokenServiceConnection = new TokenServiceConnection(this, new TokenServiceCreatedCallback());
+        tokenServiceConnection = new TokenServiceConnection();
         tokenServiceConnection.connectService();
-        tokenServiceBound = true;
+
+        cardInsertedReceiver = new CardPresentReciever();
+        registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
+
+        cardRemovedReceiver = new CardAbsentReciever();
+        registerReceiver(cardRemovedReceiver, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
     }
 
-    class TokenServiceCreatedCallback implements ServiceCreatedCallback {
+    class CardPresentReciever extends BroadcastReceiver {
 
         @Override
-        public void created(Service service) {
-            tokenService = (TokenService) service;
-            tokenService.readRetryCounter(pinType, pinBlockedCallback);
+        public void onReceive(Context context, Intent intent) {
+            cardProvided = true;
+
+            fail.setVisibility(View.GONE);
+            radioPIN.setEnabled(true);
+            radioPUK.setEnabled(true);
+            changeButton.setEnabled(true);
+
+            readRetryCounter();
+        }
+
+    }
+
+    class CardAbsentReciever extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            cardProvided = false;
+            showFailMessage(getText(R.string.card_not_provided));
+            radioPIN.setEnabled(false);
+            radioPUK.setEnabled(false);
+            changeButton.setEnabled(false);
+            pinBlocked = false;
+        }
+    }
+
+    class TokenServiceConnection implements ServiceConnection {
+
+        void connectService() {
+            Intent intent = new Intent(PinChangeActivity.this, TokenService.class);
+            PinChangeActivity.this.bindService(intent, this, Context.BIND_AUTO_CREATE);
         }
 
         @Override
-        public void failed() {
-            Log.d(TAG, "failed to bind token service");
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            TokenService.LocalBinder binder = (TokenService.LocalBinder) service;
+            tokenService = binder.getService();
+            if (!tokenService.isTokenAvailable()) {
+                showFailMessage(getText(R.string.insert_card_wait));
+            }
         }
 
         @Override
-        public void disconnected() {
-            Log.d(TAG, "token service disconnected");
+        public void onServiceDisconnected(ComponentName name) {
+            tokenService = null;
         }
     }
 
     private void unBindTokenService() {
-        if (tokenServiceConnection != null && tokenServiceBound) {
+        if (tokenServiceConnection != null) {
             unbindService(tokenServiceConnection);
-            tokenServiceBound = false;
         }
     }
 

@@ -156,6 +156,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:layout_toEndOf="@+id/bdocSignaturesTitle"
+                    android:enabled="false"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:text="@string/addFile"

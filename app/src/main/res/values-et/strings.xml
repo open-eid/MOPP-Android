@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RIA DigiDoc</string>
-    <string name="action_read">Read personal data</string>
-    <string name="action_read_cert">Read cert</string>
-    <string name="action_read_personal">Read personal data</string>
     <string name="action_sign">Sign</string>
     <string name="edit_text">Edit text</string>
     <string name="insert_pin_puk">Insert PIN/PUK</string>
@@ -126,4 +123,5 @@
     <string name="eid_card_in_reader">Lugejas on dokument:</string>
     <string name="eid_sign_cert">Allkirjastamise sertifikaat:</string>
     <string name="eid_sign_cert_used">Sertifikaat on kasutatud:</string>
+    <string name="insert_card_wait">Insert card or wait a reader to respond.</string>
 </resources>

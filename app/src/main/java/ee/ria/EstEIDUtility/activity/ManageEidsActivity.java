@@ -1,13 +1,20 @@
 package ee.ria.EstEIDUtility.activity;
 
-import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,8 +26,6 @@ import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.domain.X509Cert;
-import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
-import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.EstEIDUtility.util.DateUtils;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.CertCallback;
@@ -30,7 +35,7 @@ import ee.ria.token.tokenservice.token.Token;
 
 public class ManageEidsActivity extends AppCompatActivity {
 
-    private static final String TAG = "ManageEidsActivity";
+    private static final String TAG = ManageEidsActivity.class.getName();
 
     private TokenService tokenService;
     private TokenServiceConnection tokenServiceConnection;
@@ -48,15 +53,21 @@ public class ManageEidsActivity extends AppCompatActivity {
     private TextView dateOfBirth;
     private TextView nationalityView;
     private TextView emailView;
+    private TextView info;
+    private View infoSeparator;
+    private BroadcastReceiver cardInsertedReceiver;
+    private BroadcastReceiver cardRemovedReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_eids);
 
-        TextView info = (TextView) findViewById(R.id.info);
+        info = (TextView) findViewById(R.id.info);
         info.setText(Html.fromHtml(getString(R.string.eid_info)));
         info.setMovementMethod(LinkMovementMethod.getInstance());
+
+        infoSeparator = findViewById(R.id.info_separator);
 
         givenNames = (TextView) findViewById(R.id.givenNames);
         surnameView = (TextView) findViewById(R.id.surname);
@@ -73,32 +84,80 @@ public class ManageEidsActivity extends AppCompatActivity {
         nationalityView = (TextView) findViewById(R.id.nationality);
         emailView = (TextView) findViewById(R.id.email);
 
-        ServiceCreatedCallback callback = new TokenServiceCreatedCallback();
-        tokenServiceConnection = new TokenServiceConnection(this, callback);
+        tokenServiceConnection = new TokenServiceConnection();
         tokenServiceConnection.connectService();
+
+        cardInsertedReceiver = new CardAbsentReciever();
+        registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
+
+        cardRemovedReceiver = new CardRemovedReciever();
+        registerReceiver(cardRemovedReceiver, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
     }
 
-    class TokenServiceCreatedCallback implements ServiceCreatedCallback {
+    class TokenServiceConnection implements ServiceConnection {
+
+        void connectService() {
+            Intent intent = new Intent(ManageEidsActivity.this, TokenService.class);
+            ManageEidsActivity.this.bindService(intent, this, Context.BIND_AUTO_CREATE);
+        }
 
         @Override
-        public void created(Service service) {
-            tokenService = (TokenService) service;
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            TokenService.LocalBinder binder = (TokenService.LocalBinder) service;
+            tokenService = binder.getService();
             serviceBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            tokenService = null;
+        }
+    }
+
+    class CardAbsentReciever extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
             readPersonalData();
             readCertInfo();
+            info.setVisibility(View.GONE);
+            infoSeparator.setVisibility(View.GONE);
         }
+
+    }
+
+    class CardRemovedReciever extends BroadcastReceiver {
 
         @Override
-        public void failed() {
-            Log.e(TAG, "failed: ", null);
+        public void onReceive(Context context, Intent intent) {
+            info.setVisibility(View.VISIBLE);
+            infoSeparator.setVisibility(View.VISIBLE);
+            String empty = "";
+            givenNames.setText(empty);
+            givenNames.setText(empty);
+            surnameView.setText(empty);
+            documentNumberView.setText(empty);
+            certValidityTime.setText(empty);
+            cardValidityTime.setText(empty);
+            personIdCode.setText(empty);
+            dateOfBirth.setText(empty);
+            nationalityView.setText(empty);
+            cardValidity.setText(empty);
+            emailView.setText(empty);
+            certValidity.setText(empty);
+            certUsedView.setText(empty);
         }
+    }
 
-        @Override
-        public void disconnected() {
-            tokenService = null;
-            serviceBound = false;
+    @Override
+    protected void onDestroy() {
+        if (cardInsertedReceiver != null) {
+            unregisterReceiver(cardInsertedReceiver);
         }
-
+        if (cardRemovedReceiver != null) {
+            unregisterReceiver(cardRemovedReceiver);
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -114,28 +173,16 @@ public class ManageEidsActivity extends AppCompatActivity {
         PersonalFileCallback callback = new PersonalFileCallback() {
             @Override
             public void onPersonalFileResponse(SparseArray<String> result) {
-                String surname = result.get(1);
-                String firstName = result.get(2);
-                String firstName2 = result.get(3);
-
                 String expiryDate = result.get(9);
-                String identificationCode = result.get(7);
-                String birthDate = result.get(6);
-                String nationality = result.get(5);
 
-                String documentNumber = result.get(8);
-
-                givenNames.setText(firstName);
-                givenNames.append(firstName2);
-                surnameView.setText(surname);
-
-                documentNumberView.setText(documentNumber);
-
+                surnameView.setText(result.get(1));
+                givenNames.setText(result.get(2));
+                givenNames.append(result.get(3));
+                nationalityView.setText(result.get(5));
+                dateOfBirth.setText(result.get(6));
+                personIdCode.setText(result.get(7));
+                documentNumberView.setText(result.get(8));
                 certValidityTime.setText(expiryDate);
-                cardValidityTime.setText(expiryDate);
-                personIdCode.setText(identificationCode);
-                dateOfBirth.setText(birthDate);
-                nationalityView.setText(nationality);
 
                 try {
                     Date expiry = DateUtils.DATE_FORMAT.parse(expiryDate);
@@ -151,7 +198,6 @@ public class ManageEidsActivity extends AppCompatActivity {
                 } catch (ParseException e) {
                     Log.e(TAG, "onPersonalFileResponse: ", e);
                 }
-
             }
 
             @Override
@@ -176,10 +222,6 @@ public class ManageEidsActivity extends AppCompatActivity {
             certUsedView.setText(String.valueOf(counterByte));
         }
 
-        @Override
-        public void cardNotProvided() {
-            Log.e(TAG, "cardNotProvided: ", new Exception("Why?"));
-        }
     }
 
     class SignCertificateCallback implements CertCallback {

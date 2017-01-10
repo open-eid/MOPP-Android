@@ -12,7 +12,7 @@
         android:width="280dp"
         android:height="150dp"
         android:bottom="40dp"
-        android:drawable="@drawable/eu_structural_h"
+        android:drawable="@drawable/eu_regional_h"
         android:gravity="bottom|center" />
 
 </layer-list>

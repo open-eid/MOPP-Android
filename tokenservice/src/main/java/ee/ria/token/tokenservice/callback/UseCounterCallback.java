@@ -4,6 +4,4 @@ public interface UseCounterCallback {
 
     void onCounterRead(int counterByte);
 
-    void cardNotProvided();
-
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 
 import java.util.Arrays;
 
+import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.reader.impl.ACS;
 import ee.ria.token.tokenservice.reader.impl.Identive;
 import ee.ria.token.tokenservice.reader.impl.Omnikey;
@@ -19,8 +20,9 @@ public abstract class CardReader implements SmartCardComChannel {
 	public static final String Identive = "Identive";
 	public static final String Omnikey = "Omnikey";
 
-	public static BroadcastReceiver reciever;
-	public static BroadcastReceiver usbAttachReceiver;
+	public BroadcastReceiver receiver;
+	public BroadcastReceiver usbAttachReceiver;
+	public BroadcastReceiver usbDetachReceiver;
 
 	public abstract void connect(Connected connected);
 	public abstract void close();
@@ -29,10 +31,9 @@ public abstract class CardReader implements SmartCardComChannel {
 		public abstract void connected();
 	}
 
-	public static CardReader getInstance(Context context, String provider) {
+	public static CardReader getInstance(Context context, String provider, TokenService.SMConnected callback) {
 		if (provider.equals(ACS)) {
-			ACS acs = new ACS(context);
-			return acs;
+			return new ACS(context, callback);
 		}
 
 		if (provider.equals(Identive)) {

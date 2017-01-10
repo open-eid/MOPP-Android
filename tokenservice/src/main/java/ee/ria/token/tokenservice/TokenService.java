@@ -21,12 +21,19 @@ import ee.ria.token.tokenservice.token.Token;
 
 public class TokenService extends Service {
 
-    private static final String TAG = "TokenService";
+    private static final String TAG = TokenService.class.getName();
+
+    public static final String CARD_PRESENT_INTENT = "CARD_PRESENT_INTENT";
+    public static final String CARD_ABSENT_INTENT = "CARD_ABSENT_INTENT";
 
     private final IBinder mBinder = new LocalBinder();
 
     private Token token;
     private CardReader cardReader;
+
+    public boolean isTokenAvailable() {
+        return token != null;
+    }
 
     public class LocalBinder extends Binder {
         public TokenService getService() {
@@ -37,11 +44,10 @@ public class TokenService extends Service {
         }
     }
 
-    class SMConnected extends CardReader.Connected {
+    public class SMConnected extends CardReader.Connected {
 
         @Override
         public void connected() {
-            Log.i("SIMINTERFACE_CONNECT", "connected!");
             try {
                 token = TokenFactory.getTokenImpl(cardReader);
             } catch (Exception e) {
@@ -60,17 +66,15 @@ public class TokenService extends Service {
     }
 
     private CardReader getCardReader(SMConnected callback) {
-        final CardReader cardReader = CardReader.getInstance(this, CardReader.ACS);
+        final CardReader cardReader = CardReader.getInstance(this, CardReader.ACS, callback);
         if (cardReader == null) {
             return null;
         }
-        cardReader.connect(callback);
         return cardReader;
     }
 
     public void readUseCounter(Token.CertType certType, UseCounterCallback callback) {
         if (token == null) {
-            callback.cardNotProvided();
             return;
         }
         try {
@@ -83,7 +87,6 @@ public class TokenService extends Service {
 
     public void readRetryCounter(Token.PinType pinType, RetryCounterCallback callback) {
         if (token == null) {
-            callback.cardNotProvided();
             return;
         }
         try {
@@ -110,8 +113,9 @@ public class TokenService extends Service {
     @Override
     public void onDestroy() {
         if (cardReader != null) {
-            this.unregisterReceiver(cardReader.reciever);
+            this.unregisterReceiver(cardReader.receiver);
             this.unregisterReceiver(cardReader.usbAttachReceiver);
+            this.unregisterReceiver(cardReader.usbDetachReceiver);
         }
         super.onDestroy();
     }

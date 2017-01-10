@@ -22,11 +22,7 @@
         <service
             android:name="ee.ria.token.tokenservice.TokenService"
             android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="ee.ria.token.tokenservice.TokenService" />
-            </intent-filter>
-        </service>
+            android:exported="false"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -38,14 +34,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <service
-            android:name="ee.ria.token.tokenservice.TokenService"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="ee.ria.token.tokenservice.TokenService" />
-            </intent-filter>
-        </service>
+
 
         <activity
             android:name=".activity.SplashActivity"

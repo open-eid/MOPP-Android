@@ -1,11 +1,16 @@
 package ee.ria.EstEIDUtility.fragment;
 
 import android.app.Activity;
-import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -14,7 +19,6 @@ import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +40,6 @@ import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.container.DataFileFacade;
-import ee.ria.EstEIDUtility.service.ServiceCreatedCallback;
-import ee.ria.EstEIDUtility.service.TokenServiceConnection;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
@@ -54,7 +56,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class ContainerDetailsFragment extends Fragment {
 
-    public static final String TAG = "CONTAINER_DETAILS_FRAG";
+    public static final String TAG = ContainerDetailsFragment.class.getName();
     private static final int CHOOSE_FILE_REQUEST_ID = 1;
 
     private EditText title;
@@ -75,7 +77,8 @@ public class ContainerDetailsFragment extends Fragment {
     private TokenService tokenService;
     private TokenServiceConnection tokenServiceConnection;
 
-    private boolean tokenServiceBound;
+    private BroadcastReceiver cardInsertedReceiver;
+    private BroadcastReceiver cardRemovedReceiver;
 
     @Override
     public void onStart() {
@@ -87,6 +90,17 @@ public class ContainerDetailsFragment extends Fragment {
     public void onStop() {
         super.onStop();
         unBindTokenService();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (cardInsertedReceiver != null) {
+            getContext().unregisterReceiver(cardInsertedReceiver);
+        }
+        if (cardRemovedReceiver != null) {
+            getContext().unregisterReceiver(cardRemovedReceiver);
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -150,7 +164,7 @@ public class ContainerDetailsFragment extends Fragment {
                     return;
                 }
                 String fileName = title.getText().toString();
-                if (fileName == null || fileName.isEmpty()) {
+                if (fileName.isEmpty()) {
                     NotificationUtil.showWarning(getActivity(), R.string.file_name_empty_message, null);
                     return;
                 }
@@ -188,16 +202,55 @@ public class ContainerDetailsFragment extends Fragment {
     }
 
     private void connectTokenService() {
-        tokenServiceConnection = new TokenServiceConnection(getActivity(), new TokenServiceCreatedCallback());
+        tokenServiceConnection = new TokenServiceConnection();
         tokenServiceConnection.connectService();
-        tokenServiceBound = true;
+
+        cardInsertedReceiver = new CardPresentReciever();
+        getContext().registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
+
+        cardRemovedReceiver = new CardAbsentReciever();
+        getContext().registerReceiver(cardRemovedReceiver, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
+    }
+
+    class TokenServiceConnection implements ServiceConnection {
+
+        void connectService() {
+            Intent intent = new Intent(ContainerDetailsFragment.this.getContext(), TokenService.class);
+            ContainerDetailsFragment.this.getContext().bindService(intent, this, Context.BIND_AUTO_CREATE);
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            TokenService.LocalBinder binder = (TokenService.LocalBinder) service;
+            tokenService = binder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            tokenService = null;
+        }
+    }
+
+    class CardPresentReciever extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            addSignatureButton.setEnabled(true);
+        }
+
+    }
+
+    class CardAbsentReciever extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            addSignatureButton.setEnabled(false);
+        }
     }
 
     private void unBindTokenService() {
-        addSignatureButton.setEnabled(false);
-        if (tokenServiceConnection != null && tokenServiceBound) {
+        if (tokenServiceConnection != null) {
             getActivity().unbindService(tokenServiceConnection);
-            tokenServiceBound = false;
         }
     }
 
@@ -236,11 +289,6 @@ public class ContainerDetailsFragment extends Fragment {
         @Override
         public void onCounterRead(byte counterByte) {
             enterPinText.setText(String.format(getText(R.string.enter_pin_retries_left).toString(), String.valueOf(counterByte)));
-        }
-
-        @Override
-        public void cardNotProvided() {
-            //TODO: implement behaviour
         }
     }
 
@@ -342,27 +390,6 @@ public class ContainerDetailsFragment extends Fragment {
         }).setNegativeButton(R.string.cancel, null);
         builder.setView(view);
         pinDialog = builder.create();
-    }
-
-    class TokenServiceCreatedCallback implements ServiceCreatedCallback {
-
-        @Override
-        public void created(Service service) {
-            tokenService = (TokenService) service;
-            addSignatureButton.setEnabled(true);
-        }
-
-        @Override
-        public void failed() {
-            Log.d(TAG, "failed to bind token service");
-            addSignatureButton.setEnabled(false);
-        }
-
-        @Override
-        public void disconnected() {
-            Log.d(TAG, "token service disconnected");
-            addSignatureButton.setEnabled(false);
-        }
     }
 
     class CertificateInfoCallback implements CertCallback {

@@ -3,16 +3,16 @@ package ee.ria.token.tokenservice;
 import android.util.Log;
 
 import ee.ria.token.tokenservice.reader.CardReader;
-import ee.ria.token.tokenservice.token.Token;
 import ee.ria.token.tokenservice.token.EstEIDv3d4;
 import ee.ria.token.tokenservice.token.EstEIDv3d5;
+import ee.ria.token.tokenservice.token.Token;
 import ee.ria.token.tokenservice.util.TokenVersion;
 import ee.ria.token.tokenservice.util.Util;
 
 public class TokenFactory {
 
     private static final String TAG = "TokenFactory";
-    public static Token getTokenImpl(CardReader cardReader) {
+    static Token getTokenImpl(CardReader cardReader) {
 
         String cardVersion = null;
         try {
