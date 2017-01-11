@@ -118,29 +118,34 @@ public class ACS extends CardReader {
 
         @Override
         protected void onHandleIntent(Intent intent) {
-            while (ctx != null && ctx.isOpened()) {
-                switch (ctx.getState(slot)) {
-                    case Reader.CARD_PRESENT:
-                        try {
-                            ctx.power(slot, Reader.CARD_WARM_RESET);
-                            ctx.setProtocol(slot, Reader.PROTOCOL_T0 | Reader.PROTOCOL_T1);
-                        } catch (ReaderException e) {
-                            Log.e(TAG, "ReaderException: ", e);
-                        }
-                        connected.connected();
-                        Intent cardInsertedIntent = new Intent(TokenService.CARD_PRESENT_INTENT);
-                        sendBroadcast(cardInsertedIntent);
-                        break;
-                    case Reader.CARD_ABSENT:
-                        Intent cardAbsentIntent = new Intent(TokenService.CARD_ABSENT_INTENT);
-                        sendBroadcast(cardAbsentIntent);
-                        break;
+            try {
+                while (ctx != null && ctx.isOpened()) {
+                    switch (ctx.getState(slot)) {
+                        case Reader.CARD_PRESENT:
+                            try {
+                                ctx.power(slot, Reader.CARD_WARM_RESET);
+                                ctx.setProtocol(slot, Reader.PROTOCOL_T0 | Reader.PROTOCOL_T1);
+                            } catch (ReaderException e) {
+                                Log.e(TAG, "ReaderException: ", e);
+                            }
+                            connected.connected();
+                            Intent cardInsertedIntent = new Intent(TokenService.CARD_PRESENT_INTENT);
+                            sendBroadcast(cardInsertedIntent);
+                            break;
+                        case Reader.CARD_ABSENT:
+                            Intent cardAbsentIntent = new Intent(TokenService.CARD_ABSENT_INTENT);
+                            sendBroadcast(cardAbsentIntent);
+                            break;
+                    }
+                    try {
+                        Thread.sleep(CARD_LISTENER_RETRY);
+                    } catch (InterruptedException e) {
+                        Log.e(TAG, "onHandleIntent: ", e);
+                    }
                 }
-                try {
-                    Thread.sleep(CARD_LISTENER_RETRY);
-                } catch (InterruptedException e) {
-                    Log.e(TAG, "onHandleIntent: ", e);
-                }
+            } catch (Exception e) {
+                Log.e(TAG, "onHandleIntent: ", e);
+                //TODO: unplug and plugin message
             }
         }
 

@@ -75,33 +75,45 @@ public class ContainerDetailsFragment extends Fragment {
     private ContainerFacade containerFacade;
 
     private TokenService tokenService;
-    private TokenServiceConnection tokenServiceConnection;
 
     private BroadcastReceiver cardInsertedReceiver;
     private BroadcastReceiver cardRemovedReceiver;
 
+    private boolean serviceBound;
+
     @Override
     public void onStart() {
         super.onStart();
-        connectTokenService();
+        Intent intent = new Intent(getActivity(), TokenService.class);
+        getActivity().bindService(intent, tokenServiceConnection, Context.BIND_AUTO_CREATE);
+
+        cardInsertedReceiver = new CardPresentReciever();
+        cardRemovedReceiver = new CardAbsentReciever();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        unBindTokenService();
+        if (serviceBound) {
+            getActivity().unbindService(tokenServiceConnection);
+            serviceBound = false;
+        }
     }
 
-    @Override
-    public void onDestroy() {
-        if (cardInsertedReceiver != null) {
-            getContext().unregisterReceiver(cardInsertedReceiver);
+    private ServiceConnection tokenServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            TokenService.LocalBinder binder = (TokenService.LocalBinder) service;
+            tokenService = binder.getService();
+            serviceBound = true;
         }
-        if (cardRemovedReceiver != null) {
-            getContext().unregisterReceiver(cardRemovedReceiver);
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceBound = false;
         }
-        super.onDestroy();
-    }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup containerView, Bundle savedInstanceState) {
@@ -201,33 +213,21 @@ public class ContainerDetailsFragment extends Fragment {
         return String.format(format, extension, sizeInKb);
     }
 
-    private void connectTokenService() {
-        tokenServiceConnection = new TokenServiceConnection();
-        tokenServiceConnection.connectService();
-
-        cardInsertedReceiver = new CardPresentReciever();
-        getContext().registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
-
-        cardRemovedReceiver = new CardAbsentReciever();
-        getContext().registerReceiver(cardRemovedReceiver, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
+        getActivity().registerReceiver(cardRemovedReceiver, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
     }
 
-    class TokenServiceConnection implements ServiceConnection {
-
-        void connectService() {
-            Intent intent = new Intent(ContainerDetailsFragment.this.getContext(), TokenService.class);
-            ContainerDetailsFragment.this.getContext().bindService(intent, this, Context.BIND_AUTO_CREATE);
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (cardInsertedReceiver != null) {
+            getActivity().unregisterReceiver(cardInsertedReceiver);
         }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            TokenService.LocalBinder binder = (TokenService.LocalBinder) service;
-            tokenService = binder.getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            tokenService = null;
+        if (cardRemovedReceiver != null) {
+            getActivity().unregisterReceiver(cardRemovedReceiver);
         }
     }
 
@@ -245,12 +245,6 @@ public class ContainerDetailsFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             addSignatureButton.setEnabled(false);
-        }
-    }
-
-    private void unBindTokenService() {
-        if (tokenServiceConnection != null) {
-            getActivity().unbindService(tokenServiceConnection);
         }
     }
 
@@ -303,9 +297,9 @@ public class ContainerDetailsFragment extends Fragment {
     private void browseForFiles() {
         Intent intent = new Intent()
                 .setType("*/*")
+                .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
                 .setAction(Intent.ACTION_GET_CONTENT)
-                .addCategory(Intent.CATEGORY_OPENABLE)
-                .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+                .addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult(
                 Intent.createChooser(intent, getText(R.string.select_file)),
                 CHOOSE_FILE_REQUEST_ID);

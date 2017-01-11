@@ -44,33 +44,38 @@ public class SigningActivity extends AppCompatActivity {
     byte[] signCert, signedBytes;
 
     private TokenService tokenService;
-    private TokenServiceConnection tokenServiceConnection;
 
     private BroadcastReceiver cardInsertedReceiver;
     private BroadcastReceiver cardRemovedReceiver;
 
+    private boolean serviceBound;
+
     @Override
     protected void onStart() {
         super.onStart();
-        tokenServiceConnection = new TokenServiceConnection();
-        tokenServiceConnection.connectService();
+        Intent intent = new Intent(this, TokenService.class);
+        bindService(intent, tokenServiceConnection, Context.BIND_AUTO_CREATE);
 
         cardInsertedReceiver = new CardPresentReciever();
-        registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
-
         cardRemovedReceiver = new CardAbsentReciever();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
         registerReceiver(cardRemovedReceiver, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onPause() {
+        super.onPause();
         if (cardInsertedReceiver != null) {
             unregisterReceiver(cardInsertedReceiver);
         }
         if (cardRemovedReceiver != null) {
             unregisterReceiver(cardRemovedReceiver);
         }
-        super.onDestroy();
     }
 
     class CardPresentReciever extends BroadcastReceiver {
@@ -87,31 +92,26 @@ public class SigningActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            tokenService = null;
             enableButtons(false);
             Toast.makeText(SigningActivity.this, "Service disconnected", Toast.LENGTH_LONG).show();
         }
     }
 
-    class TokenServiceConnection implements ServiceConnection {
-
-        void connectService() {
-            Intent intent = new Intent(SigningActivity.this, TokenService.class);
-            bindService(intent, this, Context.BIND_AUTO_CREATE);
-        }
+    private ServiceConnection tokenServiceConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             TokenService.LocalBinder binder = (TokenService.LocalBinder) service;
             tokenService = binder.getService();
+            serviceBound = true;
 
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            tokenService = null;
+            serviceBound = false;
         }
-    }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,10 +128,11 @@ public class SigningActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        if (tokenServiceConnection != null) {
-            unbindService(tokenServiceConnection);
-        }
         super.onStop();
+        if (serviceBound) {
+            unbindService(tokenServiceConnection);
+            serviceBound = false;
+        }
     }
 
     public void signText(final View view) throws NoSuchAlgorithmException {
