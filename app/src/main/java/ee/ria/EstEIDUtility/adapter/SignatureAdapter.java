@@ -16,21 +16,16 @@ import android.widget.TextView;
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.style.BCStyle;
 
-import java.io.File;
-import java.util.List;
-
 import ee.ria.EstEIDUtility.R;
+import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.domain.X509Cert;
 import ee.ria.EstEIDUtility.fragment.ContainerSignaturesFragment;
 import ee.ria.EstEIDUtility.util.DateUtils;
-import ee.ria.EstEIDUtility.util.FileUtils;
-import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.Signature;
 
 public class SignatureAdapter extends ArrayAdapter<Signature> implements Filterable {
 
-    private static final String TAG = "SignatureAdapter";
     private ContainerFacade containerFacade;
     private ContainerSignaturesFragment containerSignaturesFragment;
 
@@ -114,6 +109,7 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Signature sign = getItem(position);
+                    containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerFacade.getContainerFile()).build();
                     containerFacade.removeSignature(position);
                     containerFacade.save();
                     remove(sign);

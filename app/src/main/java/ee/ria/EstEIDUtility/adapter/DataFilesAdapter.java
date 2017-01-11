@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import ee.ria.EstEIDUtility.R;
+import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.fragment.ContainerDataFilesFragment;
 import ee.ria.EstEIDUtility.util.FileUtils;
@@ -21,7 +22,7 @@ import ee.ria.libdigidocpp.DataFile;
 public class DataFilesAdapter extends ArrayAdapter<DataFile> {
 
     private final Activity context;
-    private final ContainerFacade containerFacade;
+    private ContainerFacade containerFacade;
     private ContainerDataFilesFragment containerDataFilesFragment;
 
     private static class ViewHolder {
@@ -77,6 +78,8 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
 
         @Override
         public void onClick(View v) {
+            containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerFacade.getAbsolutePath()).build();
+
             if (containerFacade.isSigned()) {
                 NotificationUtil.showWarning(context, R.string.datafile_delete_not_allowed_signed, NotificationUtil.NotificationDuration.LONG);
                 return;

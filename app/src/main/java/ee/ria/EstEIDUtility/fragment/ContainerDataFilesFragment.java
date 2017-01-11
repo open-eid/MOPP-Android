@@ -36,7 +36,7 @@ import ee.ria.libdigidocpp.DataFile;
 
 public class ContainerDataFilesFragment extends ListFragment {
 
-    public static final String TAG = "DATAFILES_FRAGMENT";
+    public static final String TAG = ContainerDataFilesFragment.class.getName();
 
     private DataFilesAdapter filesAdapter;
     private ContainerFacade containerFacade;
@@ -46,7 +46,6 @@ public class ContainerDataFilesFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         String containerWorkingPath = getArguments().getString(Constants.CONTAINER_PATH_KEY);
         containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerWorkingPath).build();
-
 
         filesAdapter = new DataFilesAdapter(getActivity(), containerFacade, this);
         setListAdapter(filesAdapter);
