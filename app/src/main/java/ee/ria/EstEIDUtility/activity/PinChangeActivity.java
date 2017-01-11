@@ -37,12 +37,14 @@ public class PinChangeActivity extends AppCompatActivity {
     private Button changeButton;
 
     private TokenService tokenService;
-    private TokenServiceConnection tokenServiceConnection;
+    private boolean serviceBound;
 
     private LinearLayout success;
     private TextView successText;
     private LinearLayout fail;
     private TextView failText;
+    private LinearLayout warning;
+    private TextView warningText;
 
     private TextView title;
     private TextView pinInfoTitle;
@@ -55,8 +57,8 @@ public class PinChangeActivity extends AppCompatActivity {
 
     private Token.PinType pinType;
 
-    private BroadcastReceiver cardInsertedReceiver;
-    private BroadcastReceiver cardRemovedReceiver;
+    private BroadcastReceiver cardPresentReceiver;
+    private BroadcastReceiver cardAbsentReciever;
 
     boolean pinBlocked;
     boolean cardProvided;
@@ -64,18 +66,10 @@ public class PinChangeActivity extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
-        unBindTokenService();
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (cardInsertedReceiver != null) {
-            unregisterReceiver(cardInsertedReceiver);
+        if (serviceBound) {
+            unbindService(tokenServiceConnection);
+            serviceBound = false;
         }
-        if (cardRemovedReceiver != null) {
-            unregisterReceiver(cardRemovedReceiver);
-        }
-        super.onDestroy();
     }
 
     @Override
@@ -96,8 +90,10 @@ public class PinChangeActivity extends AppCompatActivity {
 
         success = (LinearLayout) findViewById(R.id.success);
         fail = (LinearLayout) findViewById(R.id.fail);
+        warning = (LinearLayout) findViewById(R.id.warning);
         successText = (TextView) success.findViewById(R.id.text);
         failText = (TextView) fail.findViewById(R.id.text);
+        warningText = (TextView) warning.findViewById(R.id.text);
 
         title = (TextView) findViewById(R.id.title);
         pinInfoTitle = (TextView) findViewById(R.id.pinInfoTitle);
@@ -111,11 +107,34 @@ public class PinChangeActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(cardPresentReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
+        registerReceiver(cardAbsentReciever, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (cardPresentReceiver != null) {
+            unregisterReceiver(cardPresentReceiver);
+        }
+        if (cardAbsentReciever != null) {
+            unregisterReceiver(cardAbsentReciever);
+        }
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         pinBlockedCallback = new PinBlockedCallback();
         pinChangeCallback = new ChangeCallback();
-        connectTokenService();
+
+        Intent intent = new Intent(this, TokenService.class);
+        bindService(intent, tokenServiceConnection, Context.BIND_AUTO_CREATE);
+
+        cardPresentReceiver = new CardPresentReciever();
+        cardAbsentReciever = new CardAbsentReciever();
 
         switch (pinType) {
             case PIN2:
@@ -220,6 +239,7 @@ public class PinChangeActivity extends AppCompatActivity {
 
     private void showSuccessMessage() {
         fail.setVisibility(View.GONE);
+        warning.setVisibility(View.GONE);
         successText.setText(getText(R.string.pin1_change_success));
         success.setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {
@@ -232,6 +252,11 @@ public class PinChangeActivity extends AppCompatActivity {
     private void showFailMessage(CharSequence message) {
         failText.setText(message);
         fail.setVisibility(View.VISIBLE);
+    }
+
+    private void showWarningMessage(CharSequence message) {
+        warningText.setText(message);
+        warning.setVisibility(View.VISIBLE);
     }
 
     private void readRetryCounter() {
@@ -343,17 +368,6 @@ public class PinChangeActivity extends AppCompatActivity {
         }
     }
 
-    private void connectTokenService() {
-        tokenServiceConnection = new TokenServiceConnection();
-        tokenServiceConnection.connectService();
-
-        cardInsertedReceiver = new CardPresentReciever();
-        registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
-
-        cardRemovedReceiver = new CardAbsentReciever();
-        registerReceiver(cardRemovedReceiver, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
-    }
-
     class CardPresentReciever extends BroadcastReceiver {
 
         @Override
@@ -361,6 +375,7 @@ public class PinChangeActivity extends AppCompatActivity {
             cardProvided = true;
 
             fail.setVisibility(View.GONE);
+            warning.setVisibility(View.GONE);
             radioPIN.setEnabled(true);
             radioPUK.setEnabled(true);
             changeButton.setEnabled(true);
@@ -383,32 +398,22 @@ public class PinChangeActivity extends AppCompatActivity {
         }
     }
 
-    class TokenServiceConnection implements ServiceConnection {
-
-        void connectService() {
-            Intent intent = new Intent(PinChangeActivity.this, TokenService.class);
-            PinChangeActivity.this.bindService(intent, this, Context.BIND_AUTO_CREATE);
-        }
+    private ServiceConnection tokenServiceConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             TokenService.LocalBinder binder = (TokenService.LocalBinder) service;
             tokenService = binder.getService();
             if (!tokenService.isTokenAvailable()) {
-                showFailMessage(getText(R.string.insert_card_wait));
+                showWarningMessage(getText(R.string.insert_card_wait));
             }
+            serviceBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            tokenService = null;
+            serviceBound = false;
         }
-    }
-
-    private void unBindTokenService() {
-        if (tokenServiceConnection != null) {
-            unbindService(tokenServiceConnection);
-        }
-    }
+    };
 
 }

@@ -38,7 +38,6 @@ public class ManageEidsActivity extends AppCompatActivity {
     private static final String TAG = ManageEidsActivity.class.getName();
 
     private TokenService tokenService;
-    private TokenServiceConnection tokenServiceConnection;
     private boolean serviceBound;
 
     private TextView givenNames;
@@ -55,8 +54,8 @@ public class ManageEidsActivity extends AppCompatActivity {
     private TextView emailView;
     private TextView info;
     private View infoSeparator;
-    private BroadcastReceiver cardInsertedReceiver;
-    private BroadcastReceiver cardRemovedReceiver;
+    private BroadcastReceiver cardPresentReceiver;
+    private BroadcastReceiver cardAbsentReciever;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,22 +83,45 @@ public class ManageEidsActivity extends AppCompatActivity {
         nationalityView = (TextView) findViewById(R.id.nationality);
         emailView = (TextView) findViewById(R.id.email);
 
-        tokenServiceConnection = new TokenServiceConnection();
-        tokenServiceConnection.connectService();
-
-        cardInsertedReceiver = new CardAbsentReciever();
-        registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
-
-        cardRemovedReceiver = new CardRemovedReciever();
-        registerReceiver(cardRemovedReceiver, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
+        cardPresentReceiver = new CardPresentReciever();
+        cardAbsentReciever = new CardAbsentReciever();
     }
 
-    class TokenServiceConnection implements ServiceConnection {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(cardPresentReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
+        registerReceiver(cardAbsentReciever, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
+    }
 
-        void connectService() {
-            Intent intent = new Intent(ManageEidsActivity.this, TokenService.class);
-            ManageEidsActivity.this.bindService(intent, this, Context.BIND_AUTO_CREATE);
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (cardPresentReceiver != null) {
+            unregisterReceiver(cardPresentReceiver);
         }
+        if (cardAbsentReciever != null) {
+            unregisterReceiver(cardAbsentReciever);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, TokenService.class);
+        bindService(intent, tokenServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (serviceBound) {
+            unbindService(tokenServiceConnection);
+            serviceBound = false;
+        }
+    }
+
+    private ServiceConnection tokenServiceConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -110,11 +132,11 @@ public class ManageEidsActivity extends AppCompatActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            tokenService = null;
+            serviceBound = false;
         }
-    }
+    };
 
-    class CardAbsentReciever extends BroadcastReceiver {
+    class CardPresentReciever extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -126,7 +148,7 @@ public class ManageEidsActivity extends AppCompatActivity {
 
     }
 
-    class CardRemovedReciever extends BroadcastReceiver {
+    class CardAbsentReciever extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -146,26 +168,6 @@ public class ManageEidsActivity extends AppCompatActivity {
             emailView.setText(empty);
             certValidity.setText(empty);
             certUsedView.setText(empty);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (cardInsertedReceiver != null) {
-            unregisterReceiver(cardInsertedReceiver);
-        }
-        if (cardRemovedReceiver != null) {
-            unregisterReceiver(cardRemovedReceiver);
-        }
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (serviceBound) {
-            unbindService(tokenServiceConnection);
-            serviceBound = false;
         }
     }
 
