@@ -119,6 +119,7 @@ public class ACS extends CardReader {
         @Override
         protected void onHandleIntent(Intent intent) {
             try {
+                boolean isAbsentSent = false;
                 while (ctx != null && ctx.isOpened()) {
                     switch (ctx.getState(slot)) {
                         case Reader.CARD_PRESENT:
@@ -131,10 +132,17 @@ public class ACS extends CardReader {
                             connected.connected();
                             Intent cardInsertedIntent = new Intent(TokenService.CARD_PRESENT_INTENT);
                             sendBroadcast(cardInsertedIntent);
+                            isAbsentSent = false;
                             break;
                         case Reader.CARD_ABSENT:
-                            Intent cardAbsentIntent = new Intent(TokenService.CARD_ABSENT_INTENT);
-                            sendBroadcast(cardAbsentIntent);
+                            if (!isAbsentSent) {
+                                Intent cardAbsentIntent = new Intent(TokenService.CARD_ABSENT_INTENT);
+                                sendBroadcast(cardAbsentIntent);
+                                isAbsentSent = true;
+                            }
+                            break;
+                        default:
+                            isAbsentSent = false;
                             break;
                     }
                     try {

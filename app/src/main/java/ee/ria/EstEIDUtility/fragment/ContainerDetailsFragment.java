@@ -2,6 +2,7 @@ package ee.ria.EstEIDUtility.fragment;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -160,6 +161,8 @@ public class ContainerDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                refreshContainerFacade();
+
                 Uri uriToFile = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, containerFacade.getContainerFile());
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
@@ -204,6 +207,10 @@ public class ContainerDetailsFragment extends Fragment {
         fileInfoTextView.setText(getFormattedFileInfo());
         title.setText(containerFacade.getName());
         body.setText(containerFacade.getName());
+    }
+
+    private void refreshContainerFacade() {
+        containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerFacade.getContainerFile()).build();
     }
 
     private String getFormattedFileInfo() {
@@ -289,17 +296,32 @@ public class ContainerDetailsFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CHOOSE_FILE_REQUEST_ID && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            addToFileList(data.getData());
+
+        if (requestCode == CHOOSE_FILE_REQUEST_ID && resultCode == RESULT_OK && data != null) {
+            ClipData clipData;
+            Uri uriData;
+            if ((clipData = data.getClipData()) != null) {
+                for (int i = 0; i < clipData.getItemCount(); i++) {
+                    ClipData.Item item = clipData.getItemAt(i);
+                    Uri uri = item.getUri();
+                    if (uri != null) {
+                        addToFileList(uri);
+                    }
+                }
+            } else if ((uriData = data.getData()) != null) {
+                addToFileList(uriData);
+            }
         }
+
     }
 
     private void browseForFiles() {
         Intent intent = new Intent()
                 .setType("*/*")
-                .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
+                .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
                 .setAction(Intent.ACTION_GET_CONTENT)
                 .addCategory(Intent.CATEGORY_OPENABLE);
+
         startActivityForResult(
                 Intent.createChooser(intent, getText(R.string.select_file)),
                 CHOOSE_FILE_REQUEST_ID);
@@ -323,8 +345,8 @@ public class ContainerDetailsFragment extends Fragment {
     private class AddFileButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Container container = containerFacade.getContainer();
-            if (container.signatures().size() > 0) {
+            refreshContainerFacade();
+            if (containerFacade.getContainer().signatures().size() > 0) {
                 NotificationUtil.showError(getActivity(), R.string.add_file_remove_signatures, null);
                 return;
             }
@@ -389,6 +411,7 @@ public class ContainerDetailsFragment extends Fragment {
     class CertificateInfoCallback implements CertCallback {
         @Override
         public void onCertificateResponse(byte[] cert) {
+            refreshContainerFacade();
             Container container = containerFacade.getContainer();
             Signature signature = container.prepareWebSignature(cert);
             byte[] dataToSign = signature.dataToSign();
@@ -406,6 +429,7 @@ public class ContainerDetailsFragment extends Fragment {
     class SameSignatureCallback implements CertCallback {
         @Override
         public void onCertificateResponse(byte[] cert) {
+            refreshContainerFacade();
             if (containerFacade.isSignedBy(cert)) {
                 NotificationUtil.showWarning(getActivity(), R.string.already_signed_by_person, null);
                 return;
