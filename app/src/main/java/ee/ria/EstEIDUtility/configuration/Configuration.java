@@ -17,10 +17,9 @@ import ee.ria.libdigidocpp.digidoc;
 
 public class Configuration {
 
-    private static final String TAG = "Configuration";
+    private static final String TAG = Configuration.class.getName();
 
     static {
-
         System.loadLibrary("c++_shared");
         System.loadLibrary("xerces-c-3.1");
         System.loadLibrary("xalanMsg");

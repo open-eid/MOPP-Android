@@ -1,6 +1,6 @@
 package ee.ria.EstEIDUtility.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -22,12 +22,15 @@ import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.domain.X509Cert;
 import ee.ria.EstEIDUtility.fragment.ContainerSignaturesFragment;
 import ee.ria.EstEIDUtility.util.DateUtils;
+import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.libdigidocpp.Signature;
 
 public class SignatureAdapter extends ArrayAdapter<Signature> implements Filterable {
 
     private ContainerFacade containerFacade;
     private ContainerSignaturesFragment containerSignaturesFragment;
+
+    private NotificationUtil notificationUtil;
 
     private static class ViewHolder {
         TextView name;
@@ -36,10 +39,12 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
         TextView isSigned;
     }
 
-    public SignatureAdapter(Context context, ContainerFacade containerFacade, ContainerSignaturesFragment containerSignaturesFragment) {
-        super(context, 0, containerFacade.getSignatures());
+    public SignatureAdapter(Activity activity, ContainerFacade containerFacade, ContainerSignaturesFragment containerSignaturesFragment) {
+        super(activity, 0, containerFacade.getSignatures());
         this.containerFacade = containerFacade;
         this.containerSignaturesFragment = containerSignaturesFragment;
+
+        notificationUtil = new NotificationUtil(activity);
     }
 
     @NonNull
@@ -112,6 +117,7 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
                     containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerFacade.getContainerFile()).build();
                     containerFacade.removeSignature(position);
                     containerFacade.save();
+                    notificationUtil.showSuccessMessage(getContext().getText(R.string.signature_removed));
                     remove(sign);
                     notifyDataSetChanged();
                     containerSignaturesFragment.calculateFragmentHeight();

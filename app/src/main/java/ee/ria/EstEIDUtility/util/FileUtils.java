@@ -18,7 +18,7 @@ import java.text.DecimalFormat;
 
 public class FileUtils {
 
-    private static final String TAG = "FileUtils";
+    private static final String TAG = FileUtils.class.getName();
 
     public static String getKilobytes(long length) {
         double kilobytes = (length / 1024);

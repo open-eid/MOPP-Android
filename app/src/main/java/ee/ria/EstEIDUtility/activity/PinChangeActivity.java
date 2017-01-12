@@ -7,19 +7,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.util.Constants;
+import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.ChangePinCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
@@ -39,13 +38,6 @@ public class PinChangeActivity extends AppCompatActivity {
     private TokenService tokenService;
     private boolean serviceBound;
 
-    private LinearLayout success;
-    private TextView successText;
-    private LinearLayout fail;
-    private TextView failText;
-    private LinearLayout warning;
-    private TextView warningText;
-
     private TextView title;
     private TextView pinInfoTitle;
     private TextView pinInfo;
@@ -62,6 +54,8 @@ public class PinChangeActivity extends AppCompatActivity {
 
     boolean pinBlocked;
     boolean cardProvided;
+
+    private NotificationUtil notificationUtil;
 
     @Override
     public void onStop() {
@@ -88,12 +82,7 @@ public class PinChangeActivity extends AppCompatActivity {
         newPinView = (EditText) findViewById(R.id.newPin);
         newPinAgainView = (EditText) findViewById(R.id.newPinAgain);
 
-        success = (LinearLayout) findViewById(R.id.success);
-        fail = (LinearLayout) findViewById(R.id.fail);
-        warning = (LinearLayout) findViewById(R.id.warning);
-        successText = (TextView) success.findViewById(R.id.text);
-        failText = (TextView) fail.findViewById(R.id.text);
-        warningText = (TextView) warning.findViewById(R.id.text);
+        notificationUtil = new NotificationUtil(this);
 
         title = (TextView) findViewById(R.id.title);
         pinInfoTitle = (TextView) findViewById(R.id.pinInfoTitle);
@@ -199,18 +188,18 @@ public class PinChangeActivity extends AppCompatActivity {
         if (newPin.length() < 5) {
             String pinTooShortMessage = String.format(getString(R.string.new_pin2_length_short), newPin.length());
             newPinView.setError(pinTooShortMessage);
-            showFailMessage(pinTooShortMessage);
+            notificationUtil.showFailMessage(pinTooShortMessage);
             return false;
         }
         if (!newPin.equals(newPinAgain)) {
             String pinNoMatchMessage = getString(R.string.pin2_no_match);
             newPinAgainView.setError(pinNoMatchMessage);
-            showFailMessage(pinNoMatchMessage);
+            notificationUtil.showFailMessage(pinNoMatchMessage);
             return false;
         } else if ("00000".equals(newPin) || "12345".equals(newPin)) {
             String pinTooEasyMessage = getString(R.string.pin2_too_easy);
             newPinView.setError(pinTooEasyMessage);
-            showFailMessage(pinTooEasyMessage);
+            notificationUtil.showFailMessage(pinTooEasyMessage);
             return false;
         }
         return true;
@@ -220,43 +209,21 @@ public class PinChangeActivity extends AppCompatActivity {
         if (newPin.length() < 4) {
             String pinTooShortMessage = String.format(getString(R.string.new_pin1_length_short), newPin.length());
             newPinView.setError(pinTooShortMessage);
-            showFailMessage(pinTooShortMessage);
+            notificationUtil.showFailMessage(pinTooShortMessage);
             return false;
         }
         if (!newPin.equals(newPinAgain)) {
             String pinNoMatchMessage = getString(R.string.pin1_no_match);
             newPinAgainView.setError(pinNoMatchMessage);
-            showFailMessage(pinNoMatchMessage);
+            notificationUtil.showFailMessage(pinNoMatchMessage);
             return false;
         } else if ("0000".equals(newPin) || "1234".equals(newPin)) {
             String pinTooEasyMessage = getString(R.string.pin1_too_easy);
             newPinView.setError(pinTooEasyMessage);
-            showFailMessage(pinTooEasyMessage);
+            notificationUtil.showFailMessage(pinTooEasyMessage);
             return false;
         }
         return true;
-    }
-
-    private void showSuccessMessage() {
-        fail.setVisibility(View.GONE);
-        warning.setVisibility(View.GONE);
-        successText.setText(getText(R.string.pin1_change_success));
-        success.setVisibility(View.VISIBLE);
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
-                success.setVisibility(View.GONE);
-            }
-        }, 5000);
-    }
-
-    private void showFailMessage(CharSequence message) {
-        failText.setText(message);
-        fail.setVisibility(View.VISIBLE);
-    }
-
-    private void showWarningMessage(CharSequence message) {
-        warningText.setText(message);
-        warning.setVisibility(View.VISIBLE);
     }
 
     private void readRetryCounter() {
@@ -269,7 +236,7 @@ public class PinChangeActivity extends AppCompatActivity {
 
         @Override
         public void success() {
-            showSuccessMessage();
+            notificationUtil.showSuccessMessage(getText(R.string.pin1_change_success));
             pinBlocked = false;
             clearTexts();
             radioPIN.setEnabled(true);
@@ -279,7 +246,7 @@ public class PinChangeActivity extends AppCompatActivity {
         @Override
         public void error(Exception e) {
             clearTexts();
-            showFailMessage(createPinChangeFailedMessage());
+            notificationUtil.showFailMessage(createPinChangeFailedMessage());
             readRetryCounter();
         }
 
@@ -347,7 +314,7 @@ public class PinChangeActivity extends AppCompatActivity {
                 refreshLayout(R.id.radioPIN);
             } else {
                 pinBlocked = true;
-                showFailMessage(pinBlockedMessage());
+                notificationUtil.showFailMessage(pinBlockedMessage());
                 radioPIN.setChecked(false);
                 radioPUK.setChecked(true);
                 radioPIN.setEnabled(false);
@@ -374,8 +341,7 @@ public class PinChangeActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             cardProvided = true;
 
-            fail.setVisibility(View.GONE);
-            warning.setVisibility(View.GONE);
+            notificationUtil.clearMessages();
             radioPIN.setEnabled(true);
             radioPUK.setEnabled(true);
             changeButton.setEnabled(true);
@@ -390,7 +356,7 @@ public class PinChangeActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             cardProvided = false;
-            showFailMessage(getText(R.string.card_not_provided));
+            notificationUtil.showFailMessage(getText(R.string.card_not_provided));
             radioPIN.setEnabled(false);
             radioPUK.setEnabled(false);
             changeButton.setEnabled(false);
@@ -405,7 +371,7 @@ public class PinChangeActivity extends AppCompatActivity {
             TokenService.LocalBinder binder = (TokenService.LocalBinder) service;
             tokenService = binder.getService();
             if (!tokenService.isTokenAvailable()) {
-                showWarningMessage(getText(R.string.insert_card_wait));
+                notificationUtil.showWarningMessage(getText(R.string.insert_card_wait));
             }
             serviceBound = true;
         }

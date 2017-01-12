@@ -13,11 +13,17 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <include
+            android:id="@+id/messages"
+            layout="@layout/messages" />
+
         <ScrollView
+            android:id="@+id/my_eid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/action_layout"
+            android:layout_below="@+id/messages"
             android:orientation="vertical"
+            android:visibility="gone"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -351,45 +357,19 @@
 
                 </LinearLayout>
 
-                <View
-                    android:id="@+id/info_separator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="2dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:background="#c0c0c0" />
-
-                <TextView
-                    android:id="@+id/info"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:textSize="15sp" />
-
             </LinearLayout>
         </ScrollView>
 
-        <LinearLayout
-            android:id="@+id/action_layout"
+        <TextView
+            android:id="@+id/info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/my_eid"
+            android:layout_marginBottom="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <Button
-                style="?android:attr/buttonStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#4CBD0B"
-                android:text="@android:string/unknownName"
-                android:textColor="#ffffff" />
-        </LinearLayout>
+            android:textSize="15sp" />
 
     </RelativeLayout>
 

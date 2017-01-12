@@ -15,7 +15,7 @@ import ee.ria.libdigidocpp.Signature;
 
 public class ContainerSignaturesFragment extends ListFragment {
 
-    public static final String TAG = "CONT_SIGNATURES_FRAGMENT";
+    public static final String TAG = ContainerSignaturesFragment.class.getName();
     private SignatureAdapter signatureAdapter;
 
     @Override

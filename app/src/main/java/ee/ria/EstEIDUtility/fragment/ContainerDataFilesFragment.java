@@ -40,12 +40,15 @@ public class ContainerDataFilesFragment extends ListFragment {
 
     private DataFilesAdapter filesAdapter;
     private ContainerFacade containerFacade;
+    private NotificationUtil notificationUtil;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String containerWorkingPath = getArguments().getString(Constants.CONTAINER_PATH_KEY);
         containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerWorkingPath).build();
+
+        notificationUtil = new NotificationUtil(getActivity());
 
         filesAdapter = new DataFilesAdapter(getActivity(), containerFacade, this);
         setListAdapter(filesAdapter);
@@ -101,7 +104,7 @@ public class ContainerDataFilesFragment extends ListFragment {
         File attachment = extractAttachment(fileName);
 
         if (attachment == null) {
-            NotificationUtil.showWarning(getActivity(), R.string.attachment_extract_failed, NotificationUtil.NotificationDuration.LONG);
+            notificationUtil.showWarningMessage(getText(R.string.attachment_extract_failed));
             return;
         }
 
@@ -117,7 +120,7 @@ public class ContainerDataFilesFragment extends ListFragment {
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Log.e(TAG, "launchFileContentActivity: no handler for this type of file ", e);
-            NotificationUtil.showError(getActivity(), R.string.file_handler_error, NotificationUtil.NotificationDuration.LONG);
+            notificationUtil.showFailMessage(getText(R.string.file_handler_error));
         }
     }
 
@@ -130,7 +133,7 @@ public class ContainerDataFilesFragment extends ListFragment {
             File attachment = extractAttachment(fileName);
 
             if (attachment == null) {
-                NotificationUtil.showWarning(getActivity(), R.string.attachment_extract_failed, NotificationUtil.NotificationDuration.LONG);
+                notificationUtil.showWarningMessage(getText(R.string.attachment_extract_failed));
                 return false;
             }
 
@@ -139,7 +142,7 @@ public class ContainerDataFilesFragment extends ListFragment {
 
             String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(fileName));
             if (mimeType == null) {
-                NotificationUtil.showWarning(getActivity(), R.string.file_unsharable, NotificationUtil.NotificationDuration.LONG);
+                notificationUtil.showWarningMessage(getText(R.string.file_unsharable));
                 return false;
             }
 

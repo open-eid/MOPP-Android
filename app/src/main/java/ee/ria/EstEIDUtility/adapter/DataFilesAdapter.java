@@ -21,9 +21,10 @@ import ee.ria.libdigidocpp.DataFile;
 
 public class DataFilesAdapter extends ArrayAdapter<DataFile> {
 
-    private final Activity context;
     private ContainerFacade containerFacade;
     private ContainerDataFilesFragment containerDataFilesFragment;
+
+    private NotificationUtil notificationUtil;
 
     private static class ViewHolder {
         TextView fileName;
@@ -33,9 +34,10 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
 
     public DataFilesAdapter(Activity context, ContainerFacade containerFacade, ContainerDataFilesFragment containerDataFilesFragment) {
         super(context, 0, containerFacade.getDataFiles());
-        this.context = context;
         this.containerFacade = containerFacade;
         this.containerDataFilesFragment = containerDataFilesFragment;
+
+        notificationUtil = new NotificationUtil(context);
     }
 
     @NonNull
@@ -81,12 +83,12 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
             containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerFacade.getAbsolutePath()).build();
 
             if (containerFacade.isSigned()) {
-                NotificationUtil.showWarning(context, R.string.datafile_delete_not_allowed_signed, NotificationUtil.NotificationDuration.LONG);
+                notificationUtil.showWarningMessage(getContext().getText(R.string.datafile_delete_not_allowed_signed));
                 return;
             }
 
             if (getCount() == 1) {
-                NotificationUtil.showWarning(context, R.string.datafile_delete_not_allowed_empty, NotificationUtil.NotificationDuration.LONG);
+                notificationUtil.showWarningMessage(getContext().getText(R.string.datafile_delete_not_allowed_empty));
                 return;
             }
 
@@ -103,6 +105,7 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
                 public void onClick(DialogInterface dialog, int which) {
                     containerFacade.removeDataFile(position);
                     containerFacade.save();
+                    notificationUtil.showSuccessMessage(getContext().getText(R.string.file_removed));
                     DataFile dataFile = getItem(position);
                     remove(dataFile);
                     notifyDataSetChanged();

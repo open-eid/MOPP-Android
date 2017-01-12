@@ -66,7 +66,6 @@ public class ContainerDetailsFragment extends Fragment {
     private AlertDialog pinDialog;
     private EditText pinText;
     private TextView enterPinText;
-
     private Button addFileButton;
     private Button addSignatureButton;
     private Button sendButton;
@@ -75,12 +74,13 @@ public class ContainerDetailsFragment extends Fragment {
 
     private ContainerFacade containerFacade;
 
-    private TokenService tokenService;
-
     private BroadcastReceiver cardInsertedReceiver;
     private BroadcastReceiver cardRemovedReceiver;
 
+    private TokenService tokenService;
     private boolean serviceBound;
+
+    private NotificationUtil notificationUtil;
 
     @Override
     public void onStart() {
@@ -119,6 +119,8 @@ public class ContainerDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup containerView, Bundle savedInstanceState) {
         View fragLayout = inflater.inflate(R.layout.fragment_container_details, containerView, false);
+
+        notificationUtil = new NotificationUtil(fragLayout);
 
         String containerWorkingPath = getArguments().getString(Constants.CONTAINER_PATH_KEY);
 
@@ -175,12 +177,12 @@ public class ContainerDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!containerFacade.hasDataFiles()) {
-                    NotificationUtil.showWarning(getActivity(), R.string.save_container_no_files, null);
+                    notificationUtil.showWarningMessage(getText(R.string.save_container_no_files));
                     return;
                 }
                 String fileName = title.getText().toString();
                 if (fileName.isEmpty()) {
-                    NotificationUtil.showWarning(getActivity(), R.string.file_name_empty_message, null);
+                    notificationUtil.showWarningMessage(getText(R.string.file_name_empty_message));
                     return;
                 }
                 File savePath = FileUtils.getContainerFile(getContext(), fileName);
@@ -188,7 +190,7 @@ public class ContainerDetailsFragment extends Fragment {
                     containerFacade.save();
                 } else {
                     if (savePath.exists()) {
-                        NotificationUtil.showWarning(getActivity(), R.string.file_exists_message, NotificationUtil.NotificationDuration.LONG);
+                        notificationUtil.showWarningMessage(getText(R.string.file_exists_message));
                         return;
                     }
                     containerFacade.save(savePath);
@@ -223,6 +225,7 @@ public class ContainerDetailsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        notificationUtil.clearMessages();
         getActivity().registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
         getActivity().registerReceiver(cardRemovedReceiver, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
     }
@@ -243,6 +246,7 @@ public class ContainerDetailsFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             addSignatureButton.setEnabled(true);
+            notificationUtil.clearMessages();
         }
 
     }
@@ -252,6 +256,7 @@ public class ContainerDetailsFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             addSignatureButton.setEnabled(false);
+            notificationUtil.showWarningMessage(getText(R.string.insert_card_wait));
         }
     }
 
@@ -272,16 +277,17 @@ public class ContainerDetailsFragment extends Fragment {
             findSignaturesFragment().addSignature(signature);
             enterPinText.setText(getText(R.string.enter_pin));
             pinText.setText("");
+            notificationUtil.showSuccessMessage(getText(R.string.signature_added));
         }
 
         @Override
         public void onSignError(Exception e, PinVerificationException pinVerificationException) {
             if (pinVerificationException != null) {
-                NotificationUtil.showError(getActivity(), R.string.pin_verification_failed, null);
+                notificationUtil.showFailMessage(getText(R.string.pin_verification_failed));
                 pinText.setText("");
                 tokenService.readRetryCounter(pinVerificationException.getPinType(), new RetryCounterTaskCallback());
             } else {
-                Toast.makeText(getActivity(), e.getMessage(), NotificationUtil.NotificationDuration.SHORT.duration).show();
+                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -312,7 +318,6 @@ public class ContainerDetailsFragment extends Fragment {
                 addToFileList(uriData);
             }
         }
-
     }
 
     private void browseForFiles() {
@@ -335,7 +340,7 @@ public class ContainerDetailsFragment extends Fragment {
         try {
             containerFacade.addDataFile(cachedDataFile);
         } catch (ContainerFacade.DataFileWithSameNameAlreadyExistsException e) {
-            NotificationUtil.showWarning(getActivity(), R.string.container_has_file_with_same_name, NotificationUtil.NotificationDuration.LONG);
+            notificationUtil.showWarningMessage(getText(R.string.container_has_file_with_same_name));
             return;
         }
         DataFileFacade dataFileFacade = containerFacade.getDataFile(cachedDataFile.getName());
@@ -347,7 +352,7 @@ public class ContainerDetailsFragment extends Fragment {
         public void onClick(View v) {
             refreshContainerFacade();
             if (containerFacade.getContainer().signatures().size() > 0) {
-                NotificationUtil.showError(getActivity(), R.string.add_file_remove_signatures, null);
+                notificationUtil.showFailMessage(getText(R.string.add_file_remove_signatures));
                 return;
             }
             browseForFiles();
@@ -421,7 +426,7 @@ public class ContainerDetailsFragment extends Fragment {
 
         @Override
         public void onCertificateError(Exception e) {
-            Toast.makeText(getActivity(), e.getMessage(), NotificationUtil.NotificationDuration.SHORT.duration).show();
+            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -431,7 +436,7 @@ public class ContainerDetailsFragment extends Fragment {
         public void onCertificateResponse(byte[] cert) {
             refreshContainerFacade();
             if (containerFacade.isSignedBy(cert)) {
-                NotificationUtil.showWarning(getActivity(), R.string.already_signed_by_person, null);
+                notificationUtil.showWarningMessage(getText(R.string.already_signed_by_person));
                 return;
             }
 

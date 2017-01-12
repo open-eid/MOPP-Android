@@ -124,4 +124,7 @@
     <string name="eid_sign_cert">Allkirjastamise sertifikaat:</string>
     <string name="eid_sign_cert_used">Sertifikaat on kasutatud:</string>
     <string name="insert_card_wait">Insert card or wait a reader to respond.</string>
+    <string name="signature_added">Signature added</string>
+    <string name="file_removed">File removed successfully</string>
+    <string name="signature_removed">Signature removed successfully</string>
 </resources>

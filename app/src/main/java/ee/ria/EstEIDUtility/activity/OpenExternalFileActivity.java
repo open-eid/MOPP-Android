@@ -20,7 +20,7 @@ import ee.ria.EstEIDUtility.util.FileUtils;
 
 public class OpenExternalFileActivity extends EntryPointActivity {
 
-    public static final String TAG = "OPEN_EXTERNAL_ACTIVITY";
+    public static final String TAG = OpenExternalFileActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
