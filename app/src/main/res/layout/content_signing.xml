@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_signing"
@@ -9,75 +9,38 @@
     tools:context="ee.ria.EstEIDUtility.activity.SigningActivity"
     tools:showIn="@layout/activity_signing">
 
-    <EditText
-        android:id="@+id/textToSign"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:enabled="true"
-        android:hint="Enter file name"
-        android:inputType="text"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <include
+        android:id="@+id/messages"
+        layout="@layout/messages" />
 
-    <Button
-        android:text="@string/action_sign"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button_sign"
-        app:layout_constraintLeft_toLeftOf="@+id/textToSign"
-        app:layout_constraintTop_toBottomOf="@+id/eids_connect"
-        android:layout_marginTop="16dp"
-        android:onClick="signText"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/messages">
 
-    <Button
-        android:text="@string/auth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button_auth"
-        android:layout_marginStart="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/button_sign"
-        app:layout_constraintTop_toTopOf="@+id/button_sign"
-        android:onClick="signText"/>
+        <EditText
+            android:id="@+id/textToSign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:enabled="true"
+            android:hint="Enter file name"
+            android:inputType="text"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:text="@string/verify"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button_verify"
-        android:layout_marginStart="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/button_auth"
-        app:layout_constraintTop_toTopOf="@+id/button_sign"
-        android:onClick="verify"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sign_content"
-        app:layout_constraintLeft_toLeftOf="@+id/button_sign"
-        app:layout_constraintTop_toBottomOf="@+id/button_sign"
-        android:layout_marginTop="16dp" />
-
-    <Button
-        android:text="Connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/eids_connect"
-        app:layout_constraintTop_toBottomOf="@+id/textToSign"
-        app:layout_constraintLeft_toLeftOf="@+id/textToSign"
-        android:layout_marginTop="16dp"
-        android:onClick="connectReader"/>
-
-    <Button
-        android:text="Add container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/add_container"
-        app:layout_constraintTop_toBottomOf="@+id/textToSign"
-        app:layout_constraintLeft_toRightOf="@+id/eids_connect"
-        android:layout_marginTop="16dp"
-        android:onClick="createNewContainer"/>
-
-</android.support.constraint.ConstraintLayout>
+        <Button
+            android:id="@+id/add_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textToSign"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:onClick="createNewContainer"
+            android:text="Add container"
+            app:layout_constraintLeft_toLeftOf="@+id/textToSign"
+            app:layout_constraintTop_toBottomOf="@+id/textToSign" />
+    </RelativeLayout>
+</RelativeLayout>

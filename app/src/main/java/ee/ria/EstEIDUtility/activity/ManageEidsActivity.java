@@ -15,6 +15,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import java.util.List;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.domain.X509Cert;
 import ee.ria.EstEIDUtility.util.DateUtils;
+import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
@@ -36,9 +38,6 @@ import ee.ria.token.tokenservice.token.Token;
 public class ManageEidsActivity extends AppCompatActivity {
 
     private static final String TAG = ManageEidsActivity.class.getName();
-
-    private TokenService tokenService;
-    private boolean serviceBound;
 
     private TextView givenNames;
     private TextView surnameView;
@@ -53,20 +52,27 @@ public class ManageEidsActivity extends AppCompatActivity {
     private TextView nationalityView;
     private TextView emailView;
     private TextView info;
-    private View infoSeparator;
+    private ScrollView myEidView;
+
+    private TokenService tokenService;
+    private boolean serviceBound;
     private BroadcastReceiver cardPresentReceiver;
     private BroadcastReceiver cardAbsentReciever;
+
+    private NotificationUtil notificationUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_eids);
 
+        notificationUtil = new NotificationUtil(this);
         info = (TextView) findViewById(R.id.info);
         info.setText(Html.fromHtml(getString(R.string.eid_info)));
         info.setMovementMethod(LinkMovementMethod.getInstance());
 
-        infoSeparator = findViewById(R.id.info_separator);
+        myEidView = (ScrollView) findViewById(R.id.my_eid);
+        notificationUtil.showWarningMessage(getText(R.string.insert_card_wait));
 
         givenNames = (TextView) findViewById(R.id.givenNames);
         surnameView = (TextView) findViewById(R.id.surname);
@@ -143,7 +149,8 @@ public class ManageEidsActivity extends AppCompatActivity {
             readPersonalData();
             readCertInfo();
             info.setVisibility(View.GONE);
-            infoSeparator.setVisibility(View.GONE);
+            myEidView.setVisibility(View.VISIBLE);
+            notificationUtil.clearMessages();
         }
 
     }
@@ -153,7 +160,9 @@ public class ManageEidsActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             info.setVisibility(View.VISIBLE);
-            infoSeparator.setVisibility(View.VISIBLE);
+            myEidView.setVisibility(View.GONE);
+            notificationUtil.showWarningMessage(getText(R.string.insert_card_wait));
+
             String empty = "";
             givenNames.setText(empty);
             givenNames.setText(empty);
@@ -211,10 +220,10 @@ public class ManageEidsActivity extends AppCompatActivity {
     }
 
     public void readCertInfo() {
-        SignCertificateCallback callback = new SignCertificateCallback();
+        CertCallback callback = new SignCertificateCallback();
         tokenService.readCert(Token.CertType.CertSign, callback);
 
-        AuthCertificateCallback authCertificateCallback = new AuthCertificateCallback();
+        CertCallback authCertificateCallback = new AuthCertificateCallback();
         tokenService.readCert(Token.CertType.CertAuth, authCertificateCallback);
     }
 

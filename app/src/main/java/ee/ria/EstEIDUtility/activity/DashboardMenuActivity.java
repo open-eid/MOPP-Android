@@ -12,8 +12,6 @@ import ee.ria.EstEIDUtility.preferences.SettingsActivity;
 
 public class DashboardMenuActivity extends EntryPointActivity {
 
-    private static final String TAG = "DashboardMenuActivity";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

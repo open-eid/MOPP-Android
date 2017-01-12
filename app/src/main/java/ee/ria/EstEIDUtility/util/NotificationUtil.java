@@ -1,75 +1,68 @@
 package ee.ria.EstEIDUtility.util;
 
 import android.app.Activity;
-import android.support.v4.app.FragmentActivity;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.os.Handler;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import ee.ria.EstEIDUtility.R;
 
 public class NotificationUtil {
 
-    private enum NotificationType {
-        SUCCESS, ERROR, WARNING
+    private LinearLayout success;
+    private TextView successText;
+    private LinearLayout fail;
+    private TextView failText;
+    private LinearLayout warning;
+    private TextView warningText;
+
+    public NotificationUtil(Activity activity) {
+        success = (LinearLayout) activity.findViewById(R.id.success);
+        fail = (LinearLayout) activity.findViewById(R.id.fail);
+        warning = (LinearLayout) activity.findViewById(R.id.warning);
+        messageTexts();
     }
 
-    public enum NotificationDuration {
-        SHORT(2), MEDIUM(3), LONG(5);
-
-        public int duration;
-
-        NotificationDuration(int duration) {
-            this.duration = duration;
-        }
+    public NotificationUtil(View layout) {
+        success = (LinearLayout) layout.findViewById(R.id.success);
+        fail = (LinearLayout) layout.findViewById(R.id.fail);
+        warning = (LinearLayout) layout.findViewById(R.id.warning);
+        messageTexts();
     }
 
-    public static void showSuccess(Activity activity, int resourceId, NotificationDuration duration) {
-        showNotification(activity, resourceId, duration, NotificationType.SUCCESS);
+    private void messageTexts() {
+        successText = (TextView) success.findViewById(R.id.text);
+        failText = (TextView) fail.findViewById(R.id.text);
+        warningText = (TextView) warning.findViewById(R.id.text);
     }
 
-    public static void showWarning(Activity activity, int resourceId, NotificationDuration duration) {
-        showNotification(activity, resourceId, duration, NotificationType.WARNING);
+    public void showSuccessMessage(CharSequence message) {
+        fail.setVisibility(View.GONE);
+        warning.setVisibility(View.GONE);
+        successText.setText(message);
+        success.setVisibility(View.VISIBLE);
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                success.setVisibility(View.GONE);
+            }
+        }, 5000);
     }
 
-    public static void showError(FragmentActivity activity, int resourceId, NotificationDuration duration) {
-        showNotification(activity, resourceId, duration, NotificationType.ERROR);
+    public void showFailMessage(CharSequence message) {
+        failText.setText(message);
+        fail.setVisibility(View.VISIBLE);
     }
 
-    private static void showNotification(Activity activity, int resourceId, NotificationDuration duration, NotificationType toastType) {
-        View layout = getLayout(activity, toastType);
-
-        TextView text = (TextView) layout.findViewById(R.id.text);
-        text.setText(activity.getText(resourceId));
-
-        createAndShowToast(activity, layout, duration);
+    public void showWarningMessage(CharSequence message) {
+        warningText.setText(message);
+        warning.setVisibility(View.VISIBLE);
     }
 
-    private static void createAndShowToast(Activity activity, View layout, NotificationDuration duration) {
-        Toast toast = new Toast(activity);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        if (duration == null) {
-            toast.setDuration(NotificationDuration.MEDIUM.duration);
-        } else {
-            toast.setDuration(duration.duration);
-        }
-        toast.setView(layout);
-        toast.show();
+    public void clearMessages() {
+        fail.setVisibility(View.GONE);
+        warning.setVisibility(View.GONE);
+        success.setVisibility(View.GONE);
     }
 
-    private static View getLayout(Activity activity, NotificationType toastType) {
-        LayoutInflater inflater = activity.getLayoutInflater();
-        switch (toastType) {
-            case SUCCESS:
-                return inflater.inflate(R.layout.success_toast, (ViewGroup) activity.findViewById(R.id.success_toast_container));
-            case ERROR:
-                return inflater.inflate(R.layout.fail_toast, (ViewGroup) activity.findViewById(R.id.fail_toast_container));
-            case WARNING:
-                return inflater.inflate(R.layout.warning_toast, (ViewGroup) activity.findViewById(R.id.warning_toast_container));
-        }
-        return null;
-    }
 }

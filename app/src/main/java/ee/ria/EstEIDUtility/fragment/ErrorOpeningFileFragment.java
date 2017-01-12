@@ -12,7 +12,7 @@ import ee.ria.EstEIDUtility.R;
 public class ErrorOpeningFileFragment extends Fragment {
 
 
-    public static final String TAG = "FILE_OPEN_ERROR_FRAG";
+    public static final String TAG = ErrorOpeningFileFragment.class.getName();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

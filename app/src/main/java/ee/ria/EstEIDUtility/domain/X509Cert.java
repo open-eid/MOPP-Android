@@ -19,7 +19,7 @@ import java.util.Date;
 
 public class X509Cert {
 
-    private static final String TAG = "X509Cert";
+    private static final String TAG = X509Cert.class.getName();
 
     private X509Certificate certificate;
 
