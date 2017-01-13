@@ -60,6 +60,7 @@
     <string name="enter_pin_retries_left">Sisesta pin: (Jäänud katsed: %s)</string>
     <string name="pin_verification_failed">PIN on vale</string>
     <string name="already_signed_by_person">Teie allkiri on juba olemas</string>
+    <string name="upload_to">Send to...</string>
     <string name="pin2_changing">PIN2 muutmine</string>
     <string name="using_pin2_option">Kasutades kehtivat PIN2 koodi</string>
     <string name="using_puk_option">Kasutades kehtivat PUK koodi</string>
