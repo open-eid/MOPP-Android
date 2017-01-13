@@ -47,15 +47,13 @@ public class ContainerDataFilesFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         String containerWorkingPath = getArguments().getString(Constants.CONTAINER_PATH_KEY);
         containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerWorkingPath).build();
-
-        notificationUtil = new NotificationUtil(getActivity());
-
         filesAdapter = new DataFilesAdapter(getActivity(), containerFacade, this);
         setListAdapter(filesAdapter);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        notificationUtil = new NotificationUtil(getActivity());
         calculateFragmentHeight();
         setEmptyText(getText(R.string.empty_container_files));
         getListView().setOnItemLongClickListener(new FileLongClickListener());

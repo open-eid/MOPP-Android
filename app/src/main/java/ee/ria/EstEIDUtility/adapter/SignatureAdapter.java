@@ -31,6 +31,7 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
     private ContainerSignaturesFragment containerSignaturesFragment;
 
     private NotificationUtil notificationUtil;
+    private Activity activity;
 
     private static class ViewHolder {
         TextView name;
@@ -41,15 +42,15 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
 
     public SignatureAdapter(Activity activity, ContainerFacade containerFacade, ContainerSignaturesFragment containerSignaturesFragment) {
         super(activity, 0, containerFacade.getSignatures());
+        this.activity = activity;
         this.containerFacade = containerFacade;
         this.containerSignaturesFragment = containerSignaturesFragment;
-
-        notificationUtil = new NotificationUtil(activity);
     }
 
     @NonNull
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
+        notificationUtil = new NotificationUtil(activity);
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
