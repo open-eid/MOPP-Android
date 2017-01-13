@@ -25,6 +25,7 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
     private ContainerDataFilesFragment containerDataFilesFragment;
 
     private NotificationUtil notificationUtil;
+    private Activity activity;
 
     private static class ViewHolder {
         TextView fileName;
@@ -32,17 +33,17 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
         ImageView removeFile;
     }
 
-    public DataFilesAdapter(Activity context, ContainerFacade containerFacade, ContainerDataFilesFragment containerDataFilesFragment) {
-        super(context, 0, containerFacade.getDataFiles());
+    public DataFilesAdapter(Activity activity, ContainerFacade containerFacade, ContainerDataFilesFragment containerDataFilesFragment) {
+        super(activity, 0, containerFacade.getDataFiles());
+        this.activity = activity;
         this.containerFacade = containerFacade;
         this.containerDataFilesFragment = containerDataFilesFragment;
-
-        notificationUtil = new NotificationUtil(context);
     }
 
     @NonNull
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
+        notificationUtil = new NotificationUtil(activity);
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
