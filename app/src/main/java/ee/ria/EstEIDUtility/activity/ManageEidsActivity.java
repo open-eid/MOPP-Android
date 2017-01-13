@@ -194,6 +194,7 @@ public class ManageEidsActivity extends AppCompatActivity {
                 personIdCode.setText(result.get(7));
                 documentNumberView.setText(result.get(8));
                 certValidityTime.setText(expiryDate);
+                cardValidityTime.setText(expiryDate);
 
                 try {
                     Date expiry = DateUtils.DATE_FORMAT.parse(expiryDate);

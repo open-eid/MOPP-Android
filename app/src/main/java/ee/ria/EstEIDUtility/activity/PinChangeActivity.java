@@ -170,8 +170,8 @@ public class PinChangeActivity extends AppCompatActivity {
                     tokenService.unblockAndChangePin(pinType, currentPinPuk, newPin, pinChangeCallback);
                     break;
             }
-
         }
+
     }
 
     private boolean pinsValid(String newPin, String newPinAgain) {
@@ -240,6 +240,7 @@ public class PinChangeActivity extends AppCompatActivity {
             pinBlocked = false;
             clearTexts();
             radioPIN.setEnabled(true);
+            radioPIN.setChecked(true);
             refreshLayout(R.id.radioPIN);
         }
 

@@ -69,6 +69,9 @@ public class EstEIDv3d4 extends EstEIDToken {
             throw new SecureOperationOverUnsecureChannelException("PIN replace is not allowed");
         }
         verifyPin(PinType.PUK, puk);
+
+        blockPin(pinType, newPin.length);
+
         byte[] recv = transmit(Util.concat(new byte[]{0x00, 0x2C, 0x00, pinType.value, (byte) (puk.length + newPin.length)}, puk, newPin));
         return checkSW(recv);
     }

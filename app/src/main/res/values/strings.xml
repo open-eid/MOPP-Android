@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">RIA DigiDoc</string>
     <string name="action_sign">Sign</string>
-    <string name="edit_text">Edit text</string>
     <string name="insert_pin_puk">Insert PIN/PUK</string>
     <string name="settings">Settings</string>
     <string name="cert_read_failed">Cert read failed</string>
@@ -17,8 +16,6 @@
     <string name="counter_pin1">PIN1 counter</string>
     <string name="counter_pin2">PIN2 counter</string>
     <string name="counter_puk">PUK counter</string>
-    <string name="auth">Auth</string>
-    <string name="verify">Verify</string>
     <string name="title_activity_signing">Signing</string>
     <string name="title_activity_manage_eids">My eID-s</string>
     <string name="title_activity_pin_utilities">PIN manipulations</string>
@@ -101,7 +98,7 @@
     <string name="pin2_blocked"><b>PIN2 on blokeeritud.</b>\nPIN2 avamiseks/muutmiseks peate kasutama PUK koodi.</string>
     <string name="card_not_provided">Card is not provided or there is some other problem with a card</string>
     <string name="file_remove_confirm_message">Are you sure you want to delete %s file from the container?</string>
-    <string name="datafile_delete_not_allowed_signed">Can not remove document from container which has signatures, remove all signatures before removing document.</string>
+    <string name="datafile_delete_not_allowed_signed">Can not remove file from container which has signatures, remove all signatures before removing file.</string>
     <string name="datafile_delete_not_allowed_empty">Can not remove last file from container.</string>
     <string name="signature_is">Signature is\u0020</string>
     <string name="location">Asukoht:\u0020</string>
@@ -147,7 +144,7 @@
     <string name="eid_born">Birth:</string>
     <string name="eid_nationality">Citizenship:</string>
     <string name="eid_email">E-mail:</string>
-    <string name="eid_info">ID-kaart on riigi sisene kohustuslik isikut tõendav dokument alates 15-aastast. Eesti kodanik saab ID-kaardiga reisida Euroopa Liidu ja Euroopa Majanduspiirkonna riikides.\n\nID-kaarti saad taotleda Politsei- ka Piirivalveameti <![CDATA[<a href="https://www.politsei.ee/en/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">teeninduses</a>]]>, Eesti Vabariigi välisesindustes, posti või e-posti teel.</string>
+    <string name="eid_info">ID-card is an internal compulsory identity document starting from age of 15. The Estonian citizens can travel by means of an ID-card in Member States of the European Union and the European Economic Area.\n\nThe ID-card can be applied for in <![CDATA[<a href="https://www.politsei.ee/en/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">Service Offices</a>]]> of Police and Border Guard Administration, in foreign representations of the Republic of Estonia, by post or by e-mail..</string>
     <string name="eid_invalid">Expired</string>
     <string name="eid_given_names">Given names:</string>
     <string name="eid_surname">Surname:</string>
