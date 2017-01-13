@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">RIA DigiDoc</string>
     <string name="action_sign">Подписать</string>
-    <string name="edit_text">Edit text</string>
     <string name="insert_pin_puk">Введите PIN/PUK</string>
     <string name="settings">Настройки</string>
     <string name="cert_read_failed">Произошла ошибка при чтении сертификата</string>
@@ -17,8 +16,6 @@
     <string name="counter_pin1">PIN1 счётчик</string>
     <string name="counter_pin2">PIN2 счётчик</string>
     <string name="counter_puk">PUK счётчик</string>
-    <string name="auth">Auth</string>
-    <string name="verify">Verify</string>
     <string name="title_activity_signing">Подписание</string>
     <string name="title_activity_manage_eids">Мой eID</string>
     <string name="title_activity_pin_utilities">Операции с PIN кодами</string>
@@ -66,11 +63,11 @@
     <string name="pin2_changing">Изменение PIN2</string>
     <string name="using_pin2_option">Использовать действительный PIN2 код</string>
     <string name="using_puk_option">Использовать действительный PUK код</string>
-    <string name="pin2_info"><![CDATA[\u2022 peab olema erinev eelmisest PIN2-st\n\u2022 peab olema 5-12 -numbriline ega tohi sisaldada tähti.\n\u2022 ei saa olla 00000, 12345 ega tohi osaliselt ega täielikult kattuda sinu isikukoodiga.]]></string>
+    <string name="pin2_info"><![CDATA[\u2022 должен отличаться от предыдущего PIN2\n\u2022 должен состоят из 5-12 номерных знаков и не содержать буквы.\n\u2022 не может быть 00000, 12345 и не может частично или полностью содержать сочетания встречающиеся в Вашем личном коде.]]></string>
     <string name="pin2_info_title">Новый PIN2 код:</string>
     <string name="using_pin1_option">Используя действующий PIN1 код</string>
     <string name="pin1_info_title">Новый PIN1 код:</string>
-    <string name="pin1_info"><![CDATA[\u2022 peab olema erinev eelmisest PIN1-st\n\u2022 peab olema 4-12 -numbriline ega tohi sisaldada tähti.\n\u2022 ei saa olla 0000, 1234 ega tohi osaliselt ega täielikult kattuda sinu isikukoodiga.]]></string>
+    <string name="pin1_info"><![CDATA[\u2022 должен отличаться от предыдущего PIN1\n\u2022 должен состоят из  4-12 номерных знаков и не содержать буквы.\n\u2022 не может быть 0000, 1234 и не может частично или полностью содержать сочетания встречающиеся в Вашем личном коде.]]></string>
     <string name="change">Изменить</string>
     <string name="new_pin2_title">Новый PIN2 код:</string>
     <string name="new_pin2_hint">Новый PIN2</string>
@@ -84,25 +81,25 @@
     <string name="valid_pin_1">Действующий PIN1 код:</string>
     <string name="valid_puk">Действующий PUK код:</string>
     <string name="valid_puk_hint">PUK</string>
-    <string name="pin1_blocked"><b>PIN1 заблокирован.</b>\nPIN1 avamiseks/muutmiseks peate kasutama PUK koodi.</string>
+    <string name="pin1_blocked"><b>PIN1 заблокирован.</b>\nPIN1 для разблокировки/изменения нужно использовать PUK код.</string>
     <string name="pin1_change_failed">Изменение PIN1 не удалось</string>
     <string name="pin1_change_success">PIN1 успешно изменён</string>
     <string name="new_pin1_length_short">Новый PIN1 слишком короткий (%o символов).\nМинимальное количество символов PIN1 4.</string>
     <string name="pin1_no_match">\"Новый PIN1\" и \"Новый PIN1 заново\" не идентичны.</string>
-    <string name="pin1_too_easy">PIN sisaldab lihtsasti äraarvatavat kombinatsiooni. PIN1 ei tohi olla 0000 või 1234. Samuti ei tohi PIN1 osaliselt ega täielikult kattuda sinu isikukoodiga.</string>
+    <string name="pin1_too_easy">PIN содержить легко вычисляемую комбинацию. PIN1 не может быть 0000 или 1234. Также не может частично или полностью содержать сочетания встречающиеся в Вашем личном коде.</string>
     <string name="valid_pin_2">Действующий PIN2 код:</string>
     <string name="valid_pin_2_hint">PIN2</string>
     <string name="pin2_change_failed">Изменение PIN2 не удалось</string>
-    <string name="pin2_too_easy">PIN sisaldab lihtsasti äraarvatavat kombinatsiooni. PIN2 ei tohi olla 00000 või 12345. Samuti ei tohi PIN2 osaliselt ega täielikult kattuda sinu isikukoodiga.</string>
+    <string name="pin2_too_easy">PIN содержить легко вычисляемую комбинацию. PIN2 не может быть 00000 или 12345. Также не может частично или полностью содержать сочетания встречающиеся в Вашем личном коде.</string>
     <string name="pin2_no_match">\"Новый PIN2\" и \"Новый PIN2 заново\" не идентичны.</string>
     <string name="new_pin2_length_short">Новый PIN2 слишком короткий (%o символов). Минимальное количество символов PIN2 5.</string>
-    <string name="pin2_blocked"><b>PIN2 заблокирован.</b>\nPIN2 avamiseks/muutmiseks peate kasutama PUK koodi.</string>
+    <string name="pin2_blocked"><b>PIN2 заблокирован.</b>\nPIN2 для разблокировки/изменения нужно использовать PUK код.</string>
     <string name="card_not_provided">Карта не вставлена или существует какая-то проблема с картой.</string>
-    <string name="file_remove_confirm_message">Are you sure you want to delete %s file from the container?</string>
-    <string name="datafile_delete_not_allowed_signed">Can not remove document from container which has signatures, remove all signatures before removing document.</string>
-    <string name="datafile_delete_not_allowed_empty">Can not remove last file from container.</string>
+    <string name="file_remove_confirm_message">Вы уверены, что хотите удалить %s из контейнера?</string>
+    <string name="datafile_delete_not_allowed_signed">Нельзя удалить файл из подписанного контейнера, удалите все подписи перед тем, как удалить файл.</string>
+    <string name="datafile_delete_not_allowed_empty">Нельзя удалить последний файл из контейнера.</string>
     <string name="signature_is">Подпись\u0020</string>
-    <string name="location">Asukoht:</string>
+    <string name="location">Местонахождение:</string>
     <string name="attachment_extract_failed">Не удалось извлечь файл из контейнера</string>
     <string name="file_unsharable">Файла данного типа не может быть отправлен.</string>
     <string name="openingFileFailed">Открытие файла не удалось</string>
@@ -115,7 +112,7 @@
     <string name="eid_born">День рождения:</string>
     <string name="eid_nationality">Гражданство:</string>
     <string name="eid_email">Эл. почта:</string>
-    <string name="eid_info">ID-kaart on riigi sisene kohustuslik isikut tõendav dokument alates 15-aastast. Eesti kodanik saab ID-kaardiga reisida Euroopa Liidu ja Euroopa Majanduspiirkonna riikides.\n\nID-kaarti saad taotleda Politsei- ka Piirivalveameti <![CDATA[<a href="https://www.politsei.ee/ru/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">teeninduses</a>]]>, Eesti Vabariigi välisesindustes, posti või e-posti teel.</string>
+    <string name="eid_info">ID-карта - это внутригосударственный документ, удостоверяющий личность начиная с 15-ти лет. Гражданин Эстонии с ID-картой может путешествовать по Европейскому Союзу и в странах Европейской экономической зоны.\n\nID-карту можете ходатайствовать в <![CDATA[<a href="https://www.politsei.ee/ru/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">представительствах</a>]]> Департамента полиции и пограничной охраны, в зарубежных представительствах Эстонской республики, по почте или по электронной посте.</string>
     <string name="eid_invalid">Недействителен</string>
     <string name="eid_given_names">Имя:</string>
     <string name="eid_surname">Фамилия:</string>

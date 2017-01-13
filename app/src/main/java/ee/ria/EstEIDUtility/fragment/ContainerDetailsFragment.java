@@ -18,7 +18,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
-import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +37,7 @@ import java.io.File;
 
 import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
+import ee.ria.EstEIDUtility.activity.BrowseContainersActivity;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.container.DataFileFacade;
@@ -81,6 +81,7 @@ public class ContainerDetailsFragment extends Fragment {
     private boolean serviceBound;
 
     private NotificationUtil notificationUtil;
+    private boolean cardPresent;
 
     @Override
     public void onStart() {
@@ -176,6 +177,7 @@ public class ContainerDetailsFragment extends Fragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                refreshContainerFacade();
                 if (!containerFacade.hasDataFiles()) {
                     notificationUtil.showWarningMessage(getText(R.string.save_container_no_files));
                     return;
@@ -195,6 +197,8 @@ public class ContainerDetailsFragment extends Fragment {
                     }
                     containerFacade.save(savePath);
                 }
+                Intent intent = new Intent(getActivity(), BrowseContainersActivity.class);
+                startActivity(intent);
             }
         });
         editBdoc.setOnClickListener(new View.OnClickListener() {
@@ -225,7 +229,6 @@ public class ContainerDetailsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        notificationUtil.clearMessages();
         getActivity().registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
         getActivity().registerReceiver(cardRemovedReceiver, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
     }
@@ -245,7 +248,10 @@ public class ContainerDetailsFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            addSignatureButton.setEnabled(true);
+            cardPresent = true;
+            if (!containerFacade.getDataFiles().isEmpty()) {
+                addSignatureButton.setEnabled(true);
+            }
             notificationUtil.clearMessages();
         }
 
@@ -255,6 +261,7 @@ public class ContainerDetailsFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            cardPresent = false;
             addSignatureButton.setEnabled(false);
             notificationUtil.showWarningMessage(getText(R.string.insert_card_wait));
         }
@@ -345,6 +352,10 @@ public class ContainerDetailsFragment extends Fragment {
         }
         DataFileFacade dataFileFacade = containerFacade.getDataFile(cachedDataFile.getName());
         findDataFilesFragment().addFile(dataFileFacade.getContainerDataFile());
+        if (cardPresent) {
+            addSignatureButton.setEnabled(true);
+        }
+        fileInfoTextView.setText(getFormattedFileInfo());
     }
 
     private class AddFileButtonListener implements View.OnClickListener {
@@ -399,8 +410,6 @@ public class ContainerDetailsFragment extends Fragment {
         enterPinText = (TextView) view.findViewById(R.id.enterPin);
         pinText = (EditText) view.findViewById(R.id.pin);
         pinText.setHint(Token.PinType.PIN2.name());
-        InputFilter[] inputFilters = {new InputFilter.LengthFilter(5)};
-        pinText.setFilters(inputFilters);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setPositiveButton(R.string.sign_button, new DialogInterface.OnClickListener() {
@@ -455,7 +464,7 @@ public class ContainerDetailsFragment extends Fragment {
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if (pinText.getText().length() == 5) {
+                    if (pinText.getText().length() >= 5) {
                         positiveButton.setEnabled(true);
                     } else if (positiveButton.isEnabled()) {
                         positiveButton.setEnabled(false);

@@ -22,6 +22,13 @@ abstract class EstEIDToken implements Token {
         }
     }
 
+    void blockPin(PinType pinType, int newPinLength) {
+        byte retries = readRetryCounter(pinType);
+        for (int i = 0; i <= retries; i++) {
+            transmit(Util.concat(new byte[]{0x00, 0x20, 0x00, pinType.value}, new byte[newPinLength], new byte[]{(byte) i}));
+        }
+    }
+
     byte[] readCertRecords() {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         for (byte i = 0; i <= 5; ++i) {

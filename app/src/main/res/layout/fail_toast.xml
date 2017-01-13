@@ -1,15 +1,15 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fail_toast_container"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@android:color/holo_red_light"
-    android:orientation="horizontal"
     android:padding="8dp">
 
     <ImageView
+        android:id="@+id/fail_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="2dp"
         android:contentDescription="@android:string/unknownName"
         android:src="@drawable/ic_error_outline_white_24dp" />
 
@@ -17,5 +17,16 @@
         android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/fail_image"
+        android:layout_toStartOf="@+id/fail_close"
         android:textColor="#FFF" />
-</LinearLayout>
+
+    <ImageView
+        android:id="@+id/fail_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="1dp"
+        android:contentDescription="@android:string/unknownName"
+        android:src="@drawable/ic_clear_white_24dp" />
+</RelativeLayout>

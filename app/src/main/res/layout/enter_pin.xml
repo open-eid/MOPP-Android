@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_root"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="10dp">
 
@@ -24,6 +24,7 @@
         android:layout_marginTop="4dp"
         android:backgroundTint="@android:color/darker_gray"
         android:inputType="numberPassword"
+        android:maxLength="12"
         android:maxLines="1"
         android:textAppearance="?android:textAppearanceMedium" />
 
