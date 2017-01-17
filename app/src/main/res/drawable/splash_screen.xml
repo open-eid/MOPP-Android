@@ -4,15 +4,7 @@
     <item android:drawable="@android:color/white" />
 
     <item
-        android:bottom="50dp"
-        android:drawable="@drawable/digidoc_app"
+        android:drawable="@drawable/logo"
         android:gravity="center" />
-
-    <item
-        android:width="280dp"
-        android:height="150dp"
-        android:bottom="40dp"
-        android:drawable="@drawable/eu_regional_h"
-        android:gravity="bottom|center" />
 
 </layer-list>

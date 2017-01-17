@@ -19,6 +19,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_pin_utilities"
     android:layout_width="match_parent"
@@ -47,14 +48,14 @@
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:padding="10dp">
+        android:padding="2dp">
 
         <ImageView
             android:id="@+id/icon1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@android:string/unknownName"
-            android:src="@drawable/ic_sim_card_black_36dp" />
+            app:srcCompat="@drawable/ic_sim_card_black_36px" />
 
         <TextView
             android:layout_width="match_parent"
@@ -77,7 +78,7 @@
             android:layout_alignTop="@+id/icon1"
             android:contentDescription="@android:string/unknownName"
             android:gravity="center_vertical"
-            android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
+            app:srcCompat="@drawable/ic_keyboard_arrow_right_black_24px" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -87,14 +88,14 @@
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:padding="10dp">
+        android:padding="2dp">
 
         <ImageView
             android:id="@+id/icon2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@android:string/unknownName"
-            android:src="@drawable/ic_sim_card_black_36dp" />
+            app:srcCompat="@drawable/ic_sim_card_black_36px" />
 
         <TextView
             android:layout_width="match_parent"
@@ -117,7 +118,7 @@
             android:layout_alignTop="@+id/icon2"
             android:contentDescription="@android:string/unknownName"
             android:gravity="center_vertical"
-            android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
+            app:srcCompat="@drawable/ic_keyboard_arrow_right_black_24px" />
     </RelativeLayout>
 
 </LinearLayout>

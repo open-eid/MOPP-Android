@@ -45,9 +45,9 @@
 
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginBottom="10dp"
-        android:src="@drawable/eu_regional_h" />
+        app:srcCompat="@drawable/regional" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -18,24 +18,23 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context="ee.ria.EstEIDUtility.fragment.ContainerSignaturesFragment"
-    android:paddingEnd="10dp"
-    android:paddingStart="12dp"
-    android:id="@+id/signaturesLayout">
+    tools:context="ee.ria.EstEIDUtility.fragment.ContainerSignaturesFragment">
 
     <ImageView
-        android:contentDescription="@android:string/unknownName"
         android:id="@+id/signatureImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginEnd="15dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="9dp"
-        android:src="@drawable/ic_person_black_24dp" />
+        android:contentDescription="@android:string/unknownName"
+        app:srcCompat="@drawable/ic_person_black_24px" />
 
     <TextView
         android:id="@+id/personName"
@@ -79,17 +78,17 @@
         android:layout_below="@+id/fileSize"
         android:layout_marginBottom="15dp"
         android:layout_toEndOf="@+id/signed"
-        android:maxLines="1"/>
+        android:maxLines="1" />
 
     <ImageView
-        android:contentDescription="@android:string/unknownName"
         android:id="@+id/removeSignature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="7dp"
-        android:paddingStart="2dp"
+        android:contentDescription="@android:string/unknownName"
         android:paddingEnd="5dp"
-        android:src="@drawable/ic_clear_black_24dp" />
+        android:paddingStart="2dp"
+        app:srcCompat="@drawable/ic_clear_black_24px" />
 
 </RelativeLayout>
