@@ -155,5 +155,7 @@
     <string name="signature_added">Signature added</string>
     <string name="file_removed">File removed successfully</string>
     <string name="signature_removed">Signature removed successfully</string>
+    <string name="pin_old_equals_new">Old and new pin should be different</string>
+    <string name="pin_contains_date_of_birth">PIN ei tohi sisaldada yyyy, ddmm, mmdd kombinatsioone sünniajast</string>
 
 </resources>

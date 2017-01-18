@@ -124,4 +124,6 @@
     <string name="signature_added">Подпись добавлена.</string>
     <string name="file_removed">Файл успешно удалён</string>
     <string name="signature_removed">Подпись успешно удалена</string>
+    <string name="pin_old_equals_new">Old and new pin should be different</string>
+    <string name="pin_contains_date_of_birth">PIN ei tohi sisaldada yyyy, ddmm, mmdd kombinatsioone sünniajast</string>
 </resources>

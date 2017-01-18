@@ -28,6 +28,8 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,16 +37,24 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Date;
+
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.util.Constants;
+import ee.ria.EstEIDUtility.util.DateUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.ChangePinCallback;
+import ee.ria.token.tokenservice.callback.PersonalFileCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.tokenlibrary.Token;
 
 public class PinChangeActivity extends AppCompatActivity {
+
+    public static final String TAG = PinChangeActivity.class.getName();
 
     private RadioGroup radioPinGroup;
     private RadioButton radioPIN;
@@ -174,37 +184,67 @@ public class PinChangeActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            String currentPinPuk = currentPinPukView.getText().toString();
-            String newPin = newPinView.getText().toString();
-            String newPinAgain = newPinAgainView.getText().toString();
+            final String currentPinPuk = currentPinPukView.getText().toString();
+            final String newPin = newPinView.getText().toString();
+            final String newPinAgain = newPinAgainView.getText().toString();
 
-            if (!pinsValid(newPin, newPinAgain)) {
-                return;
-            }
+            PersonalFileCallback callback = new PersonalFileCallback() {
+                @Override
+                public void onPersonalFileResponse(SparseArray<String> result) {
+                    Date dateOfBirth;
+                    try {
+                        dateOfBirth = DateUtils.DATE_FORMAT.parse(result.get(6));
+                    } catch (ParseException e) {
+                        Log.e(TAG, "onPersonalFileResponse: ", e);
+                        notificationUtil.showFailMessage("Couldn't read date of birth");
+                        return;
+                    }
 
-            switch (radioPinGroup.getCheckedRadioButtonId()) {
-                case R.id.radioPIN:
-                    tokenService.changePin(pinType, currentPinPuk, newPin, pinChangeCallback);
-                    break;
-                case R.id.radioPUK:
-                    tokenService.unblockAndChangePin(pinType, currentPinPuk, newPin, pinChangeCallback);
-                    break;
-            }
+                    if (!pinsValid(currentPinPuk, newPin, newPinAgain, dateOfBirth)) {
+                        return;
+                    }
+
+                    switch (radioPinGroup.getCheckedRadioButtonId()) {
+                        case R.id.radioPIN:
+                            tokenService.changePin(pinType, currentPinPuk, newPin, pinChangeCallback);
+                            break;
+                        case R.id.radioPUK:
+                            tokenService.unblockAndChangePin(pinType, currentPinPuk, newPin, pinChangeCallback);
+                            break;
+                    }
+
+                }
+
+                @Override
+                public void onPersonalFileError(String msg) {
+                    Log.d(TAG, "onPersonalFileError: " + msg);
+                }
+            };
+            tokenService.readPersonalFile(callback);
         }
 
     }
 
-    private boolean pinsValid(String newPin, String newPinAgain) {
+    private boolean pinsValid(String currentPinPuk, String newPin, String newPinAgain, Date dateOfBirth) {
+        switch (radioPinGroup.getCheckedRadioButtonId()) {
+            case R.id.radioPIN:
+                if (currentPinPuk.equals(newPin)) {
+                    CharSequence pinsEqual = getText(R.string.pin_old_equals_new);
+                    notificationUtil.showFailMessage(pinsEqual);
+                    newPinView.setError(pinsEqual);
+                    return false;
+                }
+        }
         switch (pinType) {
             case PIN1:
-                return validatePin1(newPin, newPinAgain);
+                return validatePin1(newPin, newPinAgain, dateOfBirth);
             case PIN2:
-                return validatePin2(newPin, newPinAgain);
+                return validatePin2(newPin, newPinAgain, dateOfBirth);
         }
         return true;
     }
 
-    private boolean validatePin2(String newPin, String newPinAgain) {
+    private boolean validatePin2(String newPin, String newPinAgain, Date dateOfBirth) {
         if (newPin.length() < 5) {
             String pinTooShortMessage = String.format(getString(R.string.new_pin2_length_short), newPin.length());
             newPinView.setError(pinTooShortMessage);
@@ -221,11 +261,15 @@ public class PinChangeActivity extends AppCompatActivity {
             newPinView.setError(pinTooEasyMessage);
             notificationUtil.showFailMessage(pinTooEasyMessage);
             return false;
+        } else if (containsDateOfBirth(newPin, dateOfBirth)) {
+            notificationUtil.showFailMessage(getText(R.string.pin_contains_date_of_birth));
+            return false;
         }
+
         return true;
     }
 
-    private boolean validatePin1(String newPin, String newPinAgain) {
+    private boolean validatePin1(String newPin, String newPinAgain, Date dateOfBirth) {
         if (newPin.length() < 4) {
             String pinTooShortMessage = String.format(getString(R.string.new_pin1_length_short), newPin.length());
             newPinView.setError(pinTooShortMessage);
@@ -242,8 +286,25 @@ public class PinChangeActivity extends AppCompatActivity {
             newPinView.setError(pinTooEasyMessage);
             notificationUtil.showFailMessage(pinTooEasyMessage);
             return false;
+        } else if (containsDateOfBirth(newPin, dateOfBirth)) {
+            notificationUtil.showFailMessage(getText(R.string.pin_contains_date_of_birth));
+            return false;
         }
+
         return true;
+    }
+
+    private boolean containsDateOfBirth(String newPin, Date dateOfBirth) {
+        String mmdd = DateUtils.MMDD_FORMAT.format(dateOfBirth);
+        String yyyy = DateUtils.YYYY_FORMAT.format(dateOfBirth);
+        String ddmm = DateUtils.DDMM_FORMAT.format(dateOfBirth);
+        String[] dates = {mmdd, ddmm, yyyy};
+        for (String partOfBirth : Arrays.asList(dates)) {
+            if (newPin.contains(partOfBirth)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void readRetryCounter() {
