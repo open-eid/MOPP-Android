@@ -29,7 +29,7 @@ import android.view.View;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.util.Constants;
-import ee.ria.token.tokenservice.token.Token;
+import ee.ria.tokenlibrary.Token;
 
 public class PinUtilitiesActivity extends AppCompatActivity {
 

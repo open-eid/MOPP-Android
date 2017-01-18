@@ -65,12 +65,13 @@ import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.Signature;
+import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.SignCallback;
-import ee.ria.token.tokenservice.token.PinVerificationException;
-import ee.ria.token.tokenservice.token.Token;
+import ee.ria.tokenlibrary.Token;
+import ee.ria.tokenlibrary.exception.PinVerificationException;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -248,8 +249,8 @@ public class ContainerDetailsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
-        getActivity().registerReceiver(cardRemovedReceiver, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
+        getActivity().registerReceiver(cardInsertedReceiver, new IntentFilter(ACS.CARD_PRESENT_INTENT));
+        getActivity().registerReceiver(cardRemovedReceiver, new IntentFilter(ACS.CARD_ABSENT_INTENT));
     }
 
     @Override

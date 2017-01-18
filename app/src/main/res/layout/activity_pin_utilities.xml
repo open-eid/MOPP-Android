@@ -26,20 +26,92 @@
     android:fitsSystemWindows="true"
     tools:context="ee.ria.EstEIDUtility.activity.PinUtilitiesActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:theme="@style/AppTheme.AppBarOverlay">
 
-    </android.support.design.widget.AppBarLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary" />
 
-    <include layout="@layout/content_pin_utilities" />
+        </android.support.design.widget.AppBarLayout>
 
+        <RelativeLayout
+            android:id="@+id/changePin1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/icon1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@android:string/unknownName"
+                app:srcCompat="@drawable/ic_sim_card_black_36px" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/icon1"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/icon1"
+                android:layout_toStartOf="@+id/arrow1"
+                android:hint="@string/change_pin"
+                android:textAppearance="?android:textAppearanceLarge" />
+
+            <ImageView
+                android:id="@+id/arrow1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/icon1"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="@android:string/unknownName"
+                app:srcCompat="@drawable/ic_keyboard_arrow_right_black_24px" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/changePin2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/icon2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@android:string/unknownName"
+                app:srcCompat="@drawable/ic_sim_card_black_36px" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/icon2"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/icon2"
+                android:layout_toStartOf="@+id/arrow2"
+                android:hint="@string/change_pin2"
+                android:textAppearance="?android:textAppearanceLarge" />
+
+            <ImageView
+                android:id="@+id/arrow2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/icon2"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="@android:string/unknownName"
+                app:srcCompat="@drawable/ic_keyboard_arrow_right_black_24px" />
+        </RelativeLayout>
+
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

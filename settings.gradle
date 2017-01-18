@@ -1,1 +1,1 @@
-include ':app', ':tokenservice'
+include ':app', ':tokenservice', ':tokenlibrary', ':scardcomlibrary'

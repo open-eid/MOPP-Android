@@ -48,11 +48,12 @@ import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.domain.X509Cert;
 import ee.ria.EstEIDUtility.util.DateUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
+import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
 import ee.ria.token.tokenservice.callback.UseCounterCallback;
-import ee.ria.token.tokenservice.token.Token;
+import ee.ria.tokenlibrary.Token;
 
 public class ManageEidsActivity extends AppCompatActivity {
 
@@ -115,8 +116,8 @@ public class ManageEidsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(cardPresentReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
-        registerReceiver(cardAbsentReciever, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
+        registerReceiver(cardPresentReceiver, new IntentFilter(ACS.CARD_PRESENT_INTENT));
+        registerReceiver(cardAbsentReciever, new IntentFilter(ACS.CARD_ABSENT_INTENT));
     }
 
     @Override
