@@ -63,8 +63,6 @@ import ee.ria.EstEIDUtility.container.DataFileFacade;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
-import ee.ria.libdigidocpp.Container;
-import ee.ria.libdigidocpp.Signature;
 import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.CertCallback;
@@ -288,20 +286,13 @@ public class ContainerDetailsFragment extends Fragment {
     }
 
     class SignTaskCallback implements SignCallback {
-        Signature signature;
-        Container container;
-
-        SignTaskCallback(Container container, Signature signature) {
-            this.signature = signature;
-            this.container = container;
-        }
 
         @Override
         public void onSignResponse(byte[] signatureBytes) {
-            signature.setSignatureValue(signatureBytes);
+            containerFacade.setSignatureValue(signatureBytes);
             //signature.extendSignatureProfile("time-mark"); //TODO: extending doesn't work
-            container.save();
-            findSignaturesFragment().addSignature(signature);
+            containerFacade.save();
+            findSignaturesFragment().addSignature(containerFacade.getPreparedSignature());
             enterPinText.setText(getText(R.string.enter_pin));
             pinText.setText("");
             notificationUtil.showSuccessMessage(getText(R.string.signature_added));
@@ -446,11 +437,9 @@ public class ContainerDetailsFragment extends Fragment {
         @Override
         public void onCertificateResponse(byte[] cert) {
             refreshContainerFacade();
-            Container container = containerFacade.getContainer();
-            Signature signature = container.prepareWebSignature(cert);
-            byte[] dataToSign = signature.dataToSign();
+            byte[] dataToSign = containerFacade.prepareWebSignature(cert);
             String pin2 = pinText.getText().toString();
-            tokenService.sign(Token.PinType.PIN2, pin2, dataToSign, new SignTaskCallback(container, signature));
+            tokenService.sign(Token.PinType.PIN2, pin2, dataToSign, new SignTaskCallback());
         }
 
         @Override

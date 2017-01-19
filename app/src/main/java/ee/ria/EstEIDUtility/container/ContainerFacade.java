@@ -42,6 +42,7 @@ public class ContainerFacade {
     private Container container;
     private File containerFile;
     private Map<String, File> dataFileLocations = new HashMap<>();
+    private Signature preparedSignature;
 
     ContainerFacade(Container container, File containerFile) {
         this.container = container;
@@ -152,6 +153,15 @@ public class ContainerFacade {
         return !getDataFiles().isEmpty();
     }
 
+    public byte[] prepareWebSignature(byte[] cert) {
+        preparedSignature = getContainer().prepareWebSignature(cert);
+        return preparedSignature.dataToSign();
+    }
+
+    public void setSignatureValue(byte[] signatureValue) {
+        preparedSignature.setSignatureValue(signatureValue);
+    }
+
     private DataFile getContainerDataFile(String filename) {
         DataFiles containerDataFiles = container.dataFiles();
         DataFile dataFile = null;
@@ -173,6 +183,10 @@ public class ContainerFacade {
             }
         }
         return false;
+    }
+
+    public Signature getPreparedSignature() {
+        return this.preparedSignature;
     }
 
     public class DataFileDoesNotExistException extends RuntimeException {

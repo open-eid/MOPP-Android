@@ -67,7 +67,7 @@ public class ContainerListAdapter extends ArrayAdapter<ContainerInfo> implements
 
     @NonNull
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
@@ -101,10 +101,11 @@ public class ContainerListAdapter extends ArrayAdapter<ContainerInfo> implements
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ContainerInfo item = getItem(position);
-                        getContext().deleteFile(item.getName());
-
-                        filteredContainers.remove(item);
-                        notifyDataSetChanged();
+                        boolean deleted = item.getPath().delete();
+                        if (deleted) {
+                            filteredContainers.remove(item);
+                            notifyDataSetChanged();
+                        }
                     }
                 });
 
@@ -117,7 +118,7 @@ public class ContainerListAdapter extends ArrayAdapter<ContainerInfo> implements
         return convertView;
     }
 
-    public Filter getFilter() {
+    public @NonNull Filter getFilter() {
         return containerFilter;
     }
 

@@ -56,7 +56,6 @@ public class Configuration {
     private static void createDirectoriesIfNotCreated(Context context) {
         createDirectory(FileUtils.getDataFilesCacheDirectory(context));
         createDirectory(FileUtils.getContainerCacheDirectory(context));
-        createDirectory(FileUtils.getDataFilesDirectory(context));
         createDirectory(FileUtils.getContainersDirectory(context));
         createDirectory(FileUtils.getSchemaCacheDirectory(context));
     }

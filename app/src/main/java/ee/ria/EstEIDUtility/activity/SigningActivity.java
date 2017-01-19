@@ -22,8 +22,9 @@ package ee.ria.EstEIDUtility.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 
 import org.apache.commons.io.FilenameUtils;
@@ -45,15 +46,21 @@ public class SigningActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signing);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        Button addContainer = (Button) findViewById(R.id.add_container);
+        addContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createNewContainer();
+            }
+        });
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         notificationUtil = new NotificationUtil(this);
     }
 
-    public void createNewContainer(View view) {
+    private void createNewContainer() {
         FileUtils.clearContainerCache(this);
-        EditText containerName = (EditText) findViewById(R.id.textToSign);
+        EditText containerName = (EditText) findViewById(R.id.containerName);
 
         String fileName = containerName.getText().toString();
         if (fileName.isEmpty()) {
@@ -64,7 +71,6 @@ public class SigningActivity extends AppCompatActivity {
         if (!FilenameUtils.getExtension(containerName.getText().toString()).equals(Constants.BDOC_EXTENSION)) {
             containerName.append(".");
             containerName.append(Constants.BDOC_EXTENSION);
-            containerName.setText(containerName.getText().toString());
         }
 
         String containerFileName = containerName.getText().toString();

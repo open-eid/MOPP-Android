@@ -53,7 +53,7 @@
             android:name=".activity.SigningActivity"
             android:label="@string/title_activity_signing"
             android:parentActivityName=".activity.DashboardMenuActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />

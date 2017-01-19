@@ -26,11 +26,8 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SearchView;
 
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -47,10 +44,10 @@ public class BrowseContainersListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        launchBdocDetailActivity(position);
+        launchContainerDetailActivity(position);
     }
 
-    private void launchBdocDetailActivity(int position) {
+    private void launchContainerDetailActivity(int position) {
         ContainerInfo containerInfo = (ContainerInfo) getListAdapter().getItem(position);
         Intent intent = new Intent(getActivity(), ContainerDetailsActivity.class);
         intent.putExtra(Constants.CONTAINER_NAME_KEY, containerInfo.getName());
@@ -62,9 +59,9 @@ public class BrowseContainersListFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        List<ContainerInfo> bdocs = getBdocFiles();
+        List<ContainerInfo> containers = getContainers();
 
-        final ContainerListAdapter containerListAdapter = new ContainerListAdapter(getActivity(), bdocs);
+        final ContainerListAdapter containerListAdapter = new ContainerListAdapter(getActivity(), containers);
         setListAdapter(containerListAdapter);
 
         SearchView searchView = (SearchView) getActivity().findViewById(R.id.listSearch);
@@ -82,14 +79,14 @@ public class BrowseContainersListFragment extends ListFragment {
         });
     }
 
-    private List<ContainerInfo> getBdocFiles() {
-        List<ContainerInfo> bdocs = new ArrayList<>();
-        List<File> bdocFiles = getBdocContainers();
-        for (File file : bdocFiles) {
+    private List<ContainerInfo> getContainers() {
+        List<ContainerInfo> containers = new ArrayList<>();
+        List<File> containerFiles = FileUtils.getContainers(getActivity());
+        for (File file : containerFiles) {
             String fileCreated = getFileLastModified(file);
-            bdocs.add(new ContainerInfo(file, fileCreated));
+            containers.add(new ContainerInfo(file, fileCreated));
         }
-        return bdocs;
+        return containers;
     }
 
     private String getFileLastModified(File file) {
@@ -104,23 +101,6 @@ public class BrowseContainersListFragment extends ListFragment {
         }
 
         return DateUtils.DATE_FORMAT.format(fileModified);
-    }
-
-    private List<File> getBdocContainers() {
-        File containersPath = FileUtils.getContainersDirectory(getActivity());
-        File[] containerFiles = containersPath.listFiles();
-
-        if (containerFiles == null) {
-            return Collections.emptyList();
-        }
-
-        List<File> bdocs = new ArrayList<>();
-        for (File bdoc : containerFiles) {
-            if (FilenameUtils.getExtension(bdoc.getName()).equals(Constants.BDOC_EXTENSION)) {
-                bdocs.add(bdoc);
-            }
-        }
-        return bdocs;
     }
 
 }
