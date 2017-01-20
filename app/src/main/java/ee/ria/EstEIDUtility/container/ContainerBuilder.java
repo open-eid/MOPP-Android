@@ -36,7 +36,7 @@ import ee.ria.libdigidocpp.Container;
 public class ContainerBuilder {
 
     public enum ContainerLocation {
-        CACHE, STORAGE
+        CACHE
     }
 
     private Context context;

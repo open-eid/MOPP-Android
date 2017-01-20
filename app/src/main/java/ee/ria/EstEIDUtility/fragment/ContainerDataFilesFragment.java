@@ -47,11 +47,11 @@ import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.adapter.DataFilesAdapter;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
+import ee.ria.EstEIDUtility.container.DataFileFacade;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.LayoutUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
-import ee.ria.libdigidocpp.DataFile;
 
 public class ContainerDataFilesFragment extends ListFragment {
 
@@ -88,8 +88,8 @@ public class ContainerDataFilesFragment extends ListFragment {
         launchFileContentActivity(position);
     }
 
-    public void addFile(DataFile dataFile) {
-        filesAdapter.add(dataFile);
+    public void addFile(DataFileFacade dataFileFacade) {
+        filesAdapter.add(dataFileFacade);
         calculateFragmentHeight();
     }
 
@@ -115,8 +115,8 @@ public class ContainerDataFilesFragment extends ListFragment {
     }
 
     private void launchFileContentActivity(int position) {
-        DataFile file = (DataFile) getListAdapter().getItem(position);
-        String fileName = file.fileName();
+        DataFileFacade dataFileFacade = (DataFileFacade) getListAdapter().getItem(position);
+        String fileName = dataFileFacade.getFileName();
 
         File attachment = extractAttachment(fileName);
 
@@ -144,9 +144,8 @@ public class ContainerDataFilesFragment extends ListFragment {
     class FileLongClickListener implements AdapterView.OnItemLongClickListener {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            DataFile file = (DataFile) getListAdapter().getItem(position);
-            String fileName = file.fileName();
-
+            DataFileFacade dataFileFacade = (DataFileFacade) getListAdapter().getItem(position);
+            String fileName = dataFileFacade.getFileName();
             File attachment = extractAttachment(fileName);
 
             if (attachment == null) {

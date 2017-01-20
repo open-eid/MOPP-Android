@@ -230,7 +230,7 @@ public class ContainerDetailsFragment extends Fragment {
 
         fileInfoTextView.setText(getFormattedFileInfo());
         title.setText(containerFacade.getName());
-        body.setText(containerFacade.getName());
+        body.append(containerFacade.getName());
     }
 
     private void refreshContainerFacade() {
@@ -362,7 +362,7 @@ public class ContainerDetailsFragment extends Fragment {
             return;
         }
         DataFileFacade dataFileFacade = containerFacade.getDataFile(cachedDataFile.getName());
-        findDataFilesFragment().addFile(dataFileFacade.getContainerDataFile());
+        findDataFilesFragment().addFile(dataFileFacade);
         if (cardPresent) {
             addSignatureButton.setEnabled(true);
         }
@@ -373,7 +373,8 @@ public class ContainerDetailsFragment extends Fragment {
         @Override
         public void onClick(View v) {
             refreshContainerFacade();
-            if (containerFacade.getContainer().signatures().size() > 0) {
+
+            if (containerFacade.isSigned()) {
                 notificationUtil.showFailMessage(getText(R.string.add_file_remove_signatures));
                 return;
             }

@@ -124,7 +124,6 @@ public class FileUtils {
             IOUtils.closeQuietly(input);
             IOUtils.closeQuietly(output);
         }
-        Log.d(TAG, "writeToFile() called with: destinationFile = [" + destinationFile + "]");
         return destinationFile;
     }
 

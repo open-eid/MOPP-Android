@@ -33,12 +33,12 @@ import android.widget.TextView;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
+import ee.ria.EstEIDUtility.container.DataFileFacade;
 import ee.ria.EstEIDUtility.fragment.ContainerDataFilesFragment;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
-import ee.ria.libdigidocpp.DataFile;
 
-public class DataFilesAdapter extends ArrayAdapter<DataFile> {
+public class DataFilesAdapter extends ArrayAdapter<DataFileFacade> {
 
     private ContainerFacade containerFacade;
     private ContainerDataFilesFragment containerDataFilesFragment;
@@ -61,7 +61,7 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
 
     @NonNull
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         notificationUtil = new NotificationUtil(activity);
         ViewHolder viewHolder;
         if (convertView == null) {
@@ -77,14 +77,13 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        final DataFile file = getItem(position);
-        viewHolder.fileName.setText(file.fileName());
-
-        String fileSizeText = getContext().getString(R.string.file_size);
-        viewHolder.fileSize.setText(String.format(fileSizeText, FileUtils.getKilobytes(file.fileSize())));
-
-        viewHolder.removeFile.setOnClickListener(new RemoveFileListener(position, file.fileName()));
-
+        final DataFileFacade dataFileFacade = getItem(position);
+        if (dataFileFacade != null) {
+            viewHolder.fileName.setText(dataFileFacade.getFileName());
+            String fileSizeText = getContext().getString(R.string.file_size);
+            viewHolder.fileSize.setText(String.format(fileSizeText, FileUtils.getKilobytes(dataFileFacade.getFileSize())));
+            viewHolder.removeFile.setOnClickListener(new RemoveFileListener(position, dataFileFacade.getFileName()));
+        }
         return convertView;
     }
 
@@ -124,10 +123,9 @@ public class DataFilesAdapter extends ArrayAdapter<DataFile> {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     containerFacade.removeDataFile(position);
-                    containerFacade.save();
                     notificationUtil.showSuccessMessage(getContext().getText(R.string.file_removed));
-                    DataFile dataFile = getItem(position);
-                    remove(dataFile);
+                    DataFileFacade dataFileFacade = getItem(position);
+                    remove(dataFileFacade);
                     notifyDataSetChanged();
                     containerDataFilesFragment.calculateFragmentHeight();
                 }

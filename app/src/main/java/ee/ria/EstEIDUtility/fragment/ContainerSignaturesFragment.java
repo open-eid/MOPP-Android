@@ -28,9 +28,9 @@ import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.adapter.SignatureAdapter;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
+import ee.ria.EstEIDUtility.container.SignatureFacade;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.LayoutUtils;
-import ee.ria.libdigidocpp.Signature;
 
 public class ContainerSignaturesFragment extends ListFragment {
 
@@ -41,7 +41,7 @@ public class ContainerSignaturesFragment extends ListFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String containerPath = getArguments().getString(Constants.CONTAINER_PATH_KEY);
-        ContainerFacade containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerPath).build();;
+        ContainerFacade containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerPath).build();
         signatureAdapter = new SignatureAdapter(getActivity(), containerFacade, this);
         setListAdapter(signatureAdapter);
     }
@@ -56,8 +56,8 @@ public class ContainerSignaturesFragment extends ListFragment {
         LayoutUtils.calculateFragmentHeight(getListView());
     }
 
-    public void addSignature(Signature signature) {
-        signatureAdapter.add(signature);
+    public void addSignature(SignatureFacade signatureFacade) {
+        signatureAdapter.add(signatureFacade);
         calculateFragmentHeight();
     }
 

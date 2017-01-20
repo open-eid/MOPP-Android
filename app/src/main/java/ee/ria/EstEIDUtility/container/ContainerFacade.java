@@ -26,9 +26,7 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import ee.ria.EstEIDUtility.domain.X509Cert;
 import ee.ria.libdigidocpp.Container;
@@ -41,16 +39,11 @@ public class ContainerFacade {
 
     private Container container;
     private File containerFile;
-    private Map<String, File> dataFileLocations = new HashMap<>();
     private Signature preparedSignature;
 
     ContainerFacade(Container container, File containerFile) {
         this.container = container;
         this.containerFile = containerFile;
-    }
-
-    public Container getContainer() {
-        return container;
     }
 
     public File getContainerFile() {
@@ -63,39 +56,37 @@ public class ContainerFacade {
         }
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(dataFile.getName()));
         container.addDataFile(dataFile.getAbsolutePath(), mimeType);
-        dataFileLocations.put(dataFile.getName(), dataFile);
         save();
     }
 
     public DataFileFacade getDataFile(String filename) {
-        File file = dataFileLocations.get(filename);
         DataFile dataFile;
-        if (file != null && (dataFile = getContainerDataFile(filename)) != null) {
-            return new DataFileFacade(dataFile, file);
+        if ((dataFile = getContainerDataFile(filename)) != null) {
+            return new DataFileFacade(dataFile);
         }
-        throw new DataFileDoesNotExistException();
+        return null;
     }
 
-    public List<DataFile> getDataFiles() {
+    public List<DataFileFacade> getDataFiles() {
         if (container == null) {
             return Collections.emptyList();
         }
-        List<DataFile> dataFiles = new ArrayList<>();
+        List<DataFileFacade> dataFiles = new ArrayList<>();
         DataFiles containerDataFiles = container.dataFiles();
         for (int i = 0; i < containerDataFiles.size(); i++) {
-            dataFiles.add(containerDataFiles.get(i));
+            dataFiles.add(getDataFile(containerDataFiles.get(i).fileName()));
         }
         return dataFiles;
     }
 
-    public List<Signature> getSignatures() {
+    public List<SignatureFacade> getSignatures() {
         if (container == null) {
             return Collections.emptyList();
         }
         Signatures signatures = container.signatures();
-        List<Signature> signatureItems = new ArrayList<>();
+        List<SignatureFacade> signatureItems = new ArrayList<>();
         for (int i = 0; i < signatures.size(); i++) {
-            signatureItems.add(signatures.get(i));
+            signatureItems.add(new SignatureFacade(signatures.get(i)));
         }
         return signatureItems;
     }
@@ -121,27 +112,24 @@ public class ContainerFacade {
         containerFile = filePath;
     }
 
-    public void save(String absolutePath) {
-        container.save(absolutePath);
-        containerFile = new File(absolutePath);
-    }
-
     public boolean isSigned() {
         return !container.signatures().isEmpty();
     }
 
     public void removeDataFile(int position) {
         container.removeDataFile(position);
+        save();
     }
 
     public void removeSignature(int position) {
         container.removeSignature(position);
+        save();
     }
 
     public boolean isSignedBy(byte[] cert) {
         X509Cert x509Cert = new X509Cert(cert);
-        for (Signature signature : getSignatures()) {
-            X509Cert c = new X509Cert(signature.signingCertificateDer());
+        for (SignatureFacade signatureFacade : getSignatures()) {
+            X509Cert c = new X509Cert(signatureFacade.getSigningCertificateDer());
             if (c.getCertificate().equals(x509Cert.getCertificate())) {
                 return true;
             }
@@ -154,7 +142,7 @@ public class ContainerFacade {
     }
 
     public byte[] prepareWebSignature(byte[] cert) {
-        preparedSignature = getContainer().prepareWebSignature(cert);
+        preparedSignature = container.prepareWebSignature(cert);
         return preparedSignature.dataToSign();
     }
 
@@ -185,11 +173,8 @@ public class ContainerFacade {
         return false;
     }
 
-    public Signature getPreparedSignature() {
-        return this.preparedSignature;
-    }
-
-    public class DataFileDoesNotExistException extends RuntimeException {
+    public SignatureFacade getPreparedSignature() {
+        return new SignatureFacade(preparedSignature);
     }
 
     public class DataFileWithSameNameAlreadyExistsException extends RuntimeException {
