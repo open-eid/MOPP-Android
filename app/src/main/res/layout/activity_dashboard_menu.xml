@@ -28,113 +28,147 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@+id/logo"
         android:layout_alignParentTop="true">
 
-        <android.support.constraint.ConstraintLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center">
 
-            <android.support.constraint.Guideline
-                android:id="@+id/guideline_vertical"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
+                android:baselineAligned="false"
+                android:orientation="horizontal">
 
-            <android.support.constraint.Guideline
-                android:id="@+id/guideline_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.5" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/imageView_sign"
-                style="@style/menuButtonImage"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="@android:string/unknownName"
-                android:onClick="startSign"
-                app:layout_constraintBottom_toTopOf="@+id/textView_sign"
-                app:layout_constraintRight_toLeftOf="@+id/guideline_vertical"
-                app:srcCompat="@drawable/menu_item" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical"
+                        android:padding="5dp">
 
-            <TextView
-                android:id="@+id/textView_sign"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/title_activity_signing"
-                app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal"
-                app:layout_constraintLeft_toLeftOf="@+id/imageView_sign"
-                app:layout_constraintRight_toRightOf="@+id/imageView_sign" />
+                        <ImageView
+                            style="@style/menuButtonImage"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginBottom="8dp"
+                            android:contentDescription="@android:string/unknownName"
+                            android:onClick="startSign"
+                            app:srcCompat="@drawable/ic_new_document" />
 
-            <ImageView
-                android:id="@+id/imageView_signed"
-                style="@style/menuButtonImage"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="16dp"
-                android:contentDescription="@android:string/unknownName"
-                android:onClick="startContainerBrowse"
-                app:layout_constraintBottom_toTopOf="@+id/textView_signed"
-                app:layout_constraintLeft_toRightOf="@+id/guideline_vertical"
-                app:srcCompat="@drawable/menu_item" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/title_activity_signing" />
 
-            <TextView
-                android:id="@+id/textView_signed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/title_activity_browse_containers"
-                app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal"
-                app:layout_constraintLeft_toLeftOf="@+id/imageView_signed"
-                app:layout_constraintRight_toRightOf="@+id/imageView_signed" />
+                    </LinearLayout>
 
-            <ImageView
-                android:id="@+id/imageView_my_eids"
-                style="@style/menuButtonImage"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="20dp"
-                android:contentDescription="@android:string/unknownName"
-                android:onClick="startMyEids"
-                app:layout_constraintRight_toLeftOf="@+id/guideline_vertical"
-                app:layout_constraintTop_toTopOf="@+id/guideline_horizontal"
-                app:srcCompat="@drawable/menu_item" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical"
+                        android:padding="5dp">
 
-            <TextView
-                android:id="@+id/textView_my_eids"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/title_activity_manage_eids"
-                app:layout_constraintLeft_toLeftOf="@+id/imageView_my_eids"
-                app:layout_constraintRight_toRightOf="@+id/imageView_my_eids"
-                app:layout_constraintTop_toBottomOf="@+id/imageView_my_eids" />
+                        <ImageView
+                            style="@style/menuButtonImage"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginBottom="8dp"
+                            android:contentDescription="@android:string/unknownName"
+                            android:onClick="startMyEids"
+                            app:srcCompat="@drawable/ic_eids" />
 
-            <ImageView
-                android:id="@+id/imageView_pin_activities"
-                style="@style/menuButtonImage"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
-                android:contentDescription="@android:string/unknownName"
-                android:onClick="startPinUtilities"
-                app:layout_constraintLeft_toLeftOf="@+id/guideline_vertical"
-                app:layout_constraintTop_toTopOf="@+id/guideline_horizontal"
-                app:srcCompat="@drawable/menu_item" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/title_activity_manage_eids" />
 
-            <TextView
-                android:id="@+id/textView_pin_activities"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/title_activity_pin_utilities"
-                app:layout_constraintLeft_toLeftOf="@+id/imageView_pin_activities"
-                app:layout_constraintRight_toRightOf="@+id/imageView_pin_activities"
-                app:layout_constraintTop_toBottomOf="@+id/imageView_pin_activities" />
 
-        </android.support.constraint.ConstraintLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+
+                        <ImageView
+                            style="@style/menuButtonImage"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginBottom="8dp"
+                            android:contentDescription="@android:string/unknownName"
+                            android:onClick="startContainerBrowse"
+                            app:srcCompat="@drawable/ic_containers" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/title_activity_browse_containers" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+
+                        <ImageView
+                            style="@style/menuButtonImage"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginBottom="8dp"
+                            android:contentDescription="@android:string/unknownName"
+                            android:onClick="startPinUtilities"
+                            app:srcCompat="@drawable/ic_pins" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/title_activity_pin_utilities" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
     </ScrollView>
 
     <LinearLayout
