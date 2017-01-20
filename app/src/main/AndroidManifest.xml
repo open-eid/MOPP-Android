@@ -24,6 +24,10 @@
             android:enabled="true"
             android:exported="false"/>
 
+        <service
+            android:name="ee.ria.mopp.androidmobileid.service.MobileSignService"
+            android:exported="false"/>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="ee.ria.EstEIDUtility"

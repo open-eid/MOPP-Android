@@ -35,9 +35,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,11 +62,16 @@ import ee.ria.EstEIDUtility.activity.BrowseContainersActivity;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.container.DataFileFacade;
+import ee.ria.EstEIDUtility.mid.CreateSignatureRequestBuilder;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.Signature;
+import ee.ria.mopp.androidmobileid.dto.ChallengeDto;
+import ee.ria.mopp.androidmobileid.dto.CreateSignatureStatusDto;
+import ee.ria.mopp.androidmobileid.dto.MobileCreateSignatureRequest;
+import ee.ria.mopp.androidmobileid.service.MobileSignService;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
@@ -73,6 +80,8 @@ import ee.ria.token.tokenservice.token.PinVerificationException;
 import ee.ria.token.tokenservice.token.Token;
 
 import static android.app.Activity.RESULT_OK;
+import static ee.ria.mopp.androidmobileid.dto.MobileCreateSignatureRequest.toJson;
+import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.*;
 
 public class ContainerDetailsFragment extends Fragment {
 
@@ -161,6 +170,7 @@ public class ContainerDetailsFragment extends Fragment {
         editBdoc = (ImageView) fragLayout.findViewById(R.id.editBdoc);
         addFileButton = (Button) fragLayout.findViewById(R.id.addFile);
         addSignatureButton = (Button) fragLayout.findViewById(R.id.addSignature);
+        addSignatureButton.setEnabled(true);
         sendButton = (Button) fragLayout.findViewById(R.id.sendButton);
         saveButton = (Button) fragLayout.findViewById(R.id.saveContainer);
         createPinDialog();
@@ -168,23 +178,72 @@ public class ContainerDetailsFragment extends Fragment {
         return fragLayout;
     }
 
+    private void startMobileSign() {
+        containerFacade.save();
+        MobileCreateSignatureRequest request = CreateSignatureRequestBuilder
+                .aCreateSignatureRequest()
+                .withContainer(containerFacade)
+                .withIdCode("38608014910")
+                .withPhoneNr("+37253001191")
+                .withSingingProfile(CreateSignatureRequestBuilder.SigningProfile.LT)
+                .build();
+        Log.i(TAG, "Built mobile sign request: " + request);
+        Log.i(TAG, "Mobile sign request in json: " + toJson(request));
+        Intent mobileSignIntent = new Intent(getActivity(), MobileSignService.class);
+        mobileSignIntent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));
+        getActivity().startService(mobileSignIntent);
+        addSignatureButton.setEnabled(false);
+    }
+
+    private void addSignature(String adesSignature) {
+        Toast.makeText(getContext(), "Adding Ades Signature", Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String broadcastType = intent.getStringExtra(BROADCAST_TYPE);
+                if (CREATE_SIGNATURE_CHALLENGE.equals(broadcastType)) {
+                    ChallengeDto challenge = ChallengeDto.fromJson(intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE));
+                    Log.i(TAG, challenge.getClass().getName() + ": " + challenge.toString());
+                    Toast.makeText(context, "Challenge: " + challenge.getChallengeID(), Toast.LENGTH_SHORT).show();
+                } else if (CREATE_SIGNATURE_STATUS.equals(broadcastType)) {
+                    CreateSignatureStatusDto status = CreateSignatureStatusDto.fromJson(intent.getStringExtra(CREATE_SIGNATURE_STATUS));
+                    if (status.getStatus() != CreateSignatureStatusDto.ProcessStatus.SIGNATURE) {
+                        Log.i(TAG, "Status: " + status.toString());
+                        Toast.makeText(context, "Status: " + status.getStatus().name(), Toast.LENGTH_SHORT).show();
+                    }else {
+                        Log.i(TAG, status.getClass().getName() + ": " + status.toString());
+                        Toast.makeText(context, "Signature: " + status.getSignature(), Toast.LENGTH_SHORT).show();
+                        addSignature(status.getSignature());
+                    }
+                } else {
+                    Toast.makeText(context, "I dunnnoo :(", Toast.LENGTH_SHORT).show();
+                }
+                addSignatureButton.setEnabled(true);
+            }
+        }, new IntentFilter(BROADCAST_ACTION));
+
+
 
         addFileButton.setOnClickListener(new AddFileButtonListener());
         addSignatureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tokenService.readCert(Token.CertType.CertSign, new SameSignatureCallback());
+                if (cardPresent) {
+                    tokenService.readCert(Token.CertType.CertSign, new SameSignatureCallback());
+                } else {
+                    startMobileSign();
+                }
             }
         });
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 refreshContainerFacade();
-
                 Uri uriToFile = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, containerFacade.getContainerFile());
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
@@ -281,7 +340,7 @@ public class ContainerDetailsFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             cardPresent = false;
-            addSignatureButton.setEnabled(false);
+            addSignatureButton.setEnabled(true);
             notificationUtil.showWarningMessage(getText(R.string.insert_card_wait));
         }
     }
@@ -300,6 +359,7 @@ public class ContainerDetailsFragment extends Fragment {
             signature.setSignatureValue(signatureBytes);
             //signature.extendSignatureProfile("time-mark"); //TODO: extending doesn't work
             container.save();
+
             findSignaturesFragment().addSignature(signature);
             enterPinText.setText(getText(R.string.enter_pin));
             pinText.setText("");
