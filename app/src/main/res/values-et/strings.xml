@@ -54,10 +54,10 @@
     <string name="file_saved">Fail salvestatud</string>
     <string name="file_save_failed">Faili salvestamine ebaõnnestus</string>
     <string name="file_handler_error">No handler for this type of file</string>
-    <string name="enter_pin">Sisesta pin:</string>
+    <string name="enter_pin2">Sisesta PIN2:</string>
     <string name="sign_button">OK</string>
     <string name="cancel">Cancel</string>
-    <string name="enter_pin_retries_left">Sisesta pin: (Jäänud katsed: %s)</string>
+    <string name="enter_pin2_retries_left">Sisesta PIN2: (Jäänud katsed: %s)</string>
     <string name="pin_verification_failed">PIN on vale</string>
     <string name="already_signed_by_person">Teie allkiri on juba olemas</string>
     <string name="upload_to">Send to...</string>
@@ -129,4 +129,5 @@
     <string name="pin_contains_date_of_birth">PIN ei tohi sisaldada yyyy, ddmm, mmdd kombinatsioone sünniajast</string>
     <string name="enter_container_name">Enter container name</string>
     <string name="create_container">Create container</string>
+    <string name="error_page_title">Error</string>
 </resources>

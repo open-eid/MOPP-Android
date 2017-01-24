@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.provider.OpenableColumns;
 import android.util.Log;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -165,6 +166,11 @@ public class FileUtils {
             return Collections.emptyList();
         }
         return Arrays.asList(containerFiles);
+    }
+
+    public static boolean isContainer(String fileName) {
+        String extension = FilenameUtils.getExtension(fileName).toLowerCase();
+        return Arrays.asList("bdoc", "asice").contains(extension);
     }
 
 }

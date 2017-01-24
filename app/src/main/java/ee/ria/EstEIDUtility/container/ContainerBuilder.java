@@ -21,12 +21,14 @@ package ee.ria.EstEIDUtility.container;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,7 +56,15 @@ public class ContainerBuilder {
         Container container = getContainer();
         for (Uri uri : dataFileUris) {
             File file = FileUtils.cacheUriAsDataFile(context, uri);
-            container.addDataFile(file.getAbsolutePath(), resolveMimeType(file));
+            String mimeType = resolveMimeType(file);
+            if (mimeType == null) {
+                if (FileUtils.isContainer(file.getName())) {
+                    mimeType = "application/zip";
+                } else {
+                    continue;
+                }
+            }
+            container.addDataFile(file.getAbsolutePath(), mimeType);
         }
         if (!dataFileUris.isEmpty()) {
             container.save(containerFile.getAbsolutePath());
@@ -112,6 +122,11 @@ public class ContainerBuilder {
 
     public ContainerBuilder withDataFile(Uri uri) {
         dataFileUris.add(uri);
+        return this;
+    }
+
+    public ContainerBuilder withDataFiles(List<Uri> uris) {
+        dataFileUris.addAll(uris);
         return this;
     }
 

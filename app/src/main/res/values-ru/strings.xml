@@ -54,10 +54,10 @@
     <string name="file_saved">Файл сохранён</string>
     <string name="file_save_failed">Сохранение файла не удалось</string>
     <string name="file_handler_error">Для такого типа файлов нет обработчика</string>
-    <string name="enter_pin">Введите pin:</string>
+    <string name="enter_pin2">Введите PIN2:</string>
     <string name="sign_button">OK</string>
     <string name="cancel">Отменить</string>
-    <string name="enter_pin_retries_left">Введите pin: (Осталось попыток: %s)</string>
+    <string name="enter_pin2_retries_left">Введите PIN2: (Осталось попыток: %s)</string>
     <string name="pin_verification_failed">PIN неверен</string>
     <string name="already_signed_by_person">Ваша подпись уже есть</string>
     <string name="upload_to">Отправить...</string>
@@ -128,4 +128,5 @@
     <string name="pin_contains_date_of_birth">PIN ei tohi sisaldada yyyy, ddmm, mmdd kombinatsioone sünniajast</string>
     <string name="enter_container_name">Enter container name</string>
     <string name="create_container">Create container</string>
+    <string name="error_page_title">Error</string>
 </resources>

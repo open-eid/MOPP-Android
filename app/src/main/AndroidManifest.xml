@@ -106,20 +106,15 @@
                 android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />
 
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
 
-                <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
 
-                <data
-                    android:mimeType="application/octet-stream"
-                    android:pathPattern=".*\\.*"
-                    android:scheme="file" />
-                <data
-                    android:mimeType="application/octet-stream"
-                    android:pathPattern=".*\\.*"
-                    android:scheme="content" />
+                <data android:mimeType="*/*" />
             </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

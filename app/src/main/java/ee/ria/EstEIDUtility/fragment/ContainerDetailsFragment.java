@@ -293,7 +293,7 @@ public class ContainerDetailsFragment extends Fragment {
             //signature.extendSignatureProfile("time-mark"); //TODO: extending doesn't work
             containerFacade.save();
             findSignaturesFragment().addSignature(containerFacade.getPreparedSignature());
-            enterPinText.setText(getText(R.string.enter_pin));
+            enterPinText.setText(getText(R.string.enter_pin2));
             pinText.setText("");
             notificationUtil.showSuccessMessage(getText(R.string.signature_added));
         }
@@ -313,7 +313,12 @@ public class ContainerDetailsFragment extends Fragment {
     private class RetryCounterTaskCallback implements RetryCounterCallback {
         @Override
         public void onCounterRead(byte counterByte) {
-            enterPinText.setText(String.format(getText(R.string.enter_pin_retries_left).toString(), String.valueOf(counterByte)));
+            if (counterByte > 0) {
+                enterPinText.setText(String.format(getText(R.string.enter_pin2_retries_left).toString(), String.valueOf(counterByte)));
+            } else {
+                notificationUtil.showFailMessage(getText(R.string.pin2_blocked));
+                addSignatureButton.setEnabled(false);
+            }
         }
     }
 
