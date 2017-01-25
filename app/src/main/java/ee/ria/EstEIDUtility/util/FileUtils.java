@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -51,11 +52,6 @@ public class FileUtils {
     public static File cacheUriAsDataFile(Context context, Uri uri) {
         String fileName = resolveFileName(uri, context.getContentResolver());
         return cacheUriAsDataFile(context, uri, fileName);
-    }
-
-    public static File cacheUriAsContainerFile(Context context, Uri uri) {
-        String fileName = resolveFileName(uri, context.getContentResolver());
-        return cacheUriAsContainerFile(context, uri, fileName);
     }
 
     public static String resolveFileName(Uri uri, ContentResolver contentResolver) {
@@ -86,10 +82,6 @@ public class FileUtils {
 
     public static File getContainersDirectory(Context context) {
         return new File(getFilesDir(context), Constants.CONTAINERS_DIRECTORY);
-    }
-
-    public static File getContainerFile(Context context, String fileName) {
-        return new File(getContainersDirectory(context), fileName);
     }
 
     public static void clearDataFileCache(Context context) {
@@ -126,11 +118,6 @@ public class FileUtils {
             IOUtils.closeQuietly(output);
         }
         return destinationFile;
-    }
-
-    private static File cacheUriAsContainerFile(Context context, Uri uri, String fileName) {
-        File directory = getContainerCacheDirectory(context);
-        return writeUriDataToDirectory(directory, uri, fileName, context.getContentResolver());
     }
 
     private static void clearDirectory(File directory) {
@@ -173,4 +160,35 @@ public class FileUtils {
         return Arrays.asList("bdoc", "asice").contains(extension);
     }
 
+    public static String resolveMimeType(String fileName) {
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(fileName));
+        if (mimeType == null) {
+            if (isContainer(fileName)) {
+                mimeType = "application/zip";
+            }
+        }
+        return mimeType;
+    }
+
+    public static File uriAsContainerFile(Context context, Uri uri) {
+        String fileName = resolveFileName(uri, context.getContentResolver());
+        return uriAsContainerFile(context, uri, fileName);
+    }
+
+    private static File uriAsContainerFile(Context context, Uri uri, String fileName) {
+        File directory = getContainerCacheDirectory(context);
+        return writeUriDataToDirectory(directory, uri, fileName, context.getContentResolver());
+    }
+
+    public static File incrementFileName(File directory, String containerName) {
+        File file = new File(directory, containerName);
+        int num = 0;
+        while(file.exists()) {
+            num++;
+            String fileName = containerName;
+            fileName = FilenameUtils.removeExtension(fileName) + " (" + num + ")." + FilenameUtils.getExtension(fileName);
+            file = new File(directory, fileName);
+        }
+        return file;
+    }
 }

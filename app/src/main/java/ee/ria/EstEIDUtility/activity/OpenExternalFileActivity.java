@@ -89,18 +89,22 @@ public class OpenExternalFileActivity extends EntryPointActivity {
             if (!containers.isEmpty()) {
                 Uri containerUri = containers.get(0);
                 uris.remove(containerUri);
-                return ContainerBuilder
-                        .aContainer(this)
-                        .fromExistingContainer(containerUri)
-                        .withDataFiles(uris)
-                        .build();
+                try {
+                    return ContainerBuilder
+                            .aContainer(this)
+                            .fromExternalContainer(containerUri)
+                            .withDataFiles(uris)
+                            .build();
+                } catch (ContainerBuilder.ExternalContainerSaveException e) {
+                    Log.e(TAG, "createContainer: ", e);
+                    return null;
+                }
             }
 
             String fileName = FileUtils.resolveFileName(uris.get(0), getContentResolver());
             return ContainerBuilder
                     .aContainer(this)
                     .withDataFiles(uris)
-                    .withContainerLocation(ContainerBuilder.ContainerLocation.CACHE)
                     .withContainerName(FilenameUtils.getBaseName(fileName) + "." + Constants.BDOC_EXTENSION)
                     .build();
         }
@@ -110,15 +114,19 @@ public class OpenExternalFileActivity extends EntryPointActivity {
     public ContainerFacade createContainer(Uri uri) {
         String fileName = FileUtils.resolveFileName(uri, getContentResolver());
         if (FileUtils.isContainer(fileName)) {
-            return ContainerBuilder
-                    .aContainer(this)
-                    .fromExistingContainer(uri)
-                    .build();
+            try {
+                return ContainerBuilder
+                        .aContainer(this)
+                        .fromExternalContainer(uri)
+                        .build();
+            } catch (ContainerBuilder.ExternalContainerSaveException e) {
+                Log.e(TAG, "createContainer: ", e);
+                return null;
+            }
         } else {
             return ContainerBuilder
                     .aContainer(this)
                     .withDataFile(uri)
-                    .withContainerLocation(ContainerBuilder.ContainerLocation.CACHE)
                     .withContainerName(FilenameUtils.getBaseName(fileName) + "." + Constants.BDOC_EXTENSION)
                     .build();
         }

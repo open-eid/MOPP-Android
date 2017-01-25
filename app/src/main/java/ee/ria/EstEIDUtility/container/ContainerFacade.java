@@ -19,10 +19,6 @@
 
 package ee.ria.EstEIDUtility.container;
 
-import android.webkit.MimeTypeMap;
-
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.domain.X509Cert;
+import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFile;
 import ee.ria.libdigidocpp.DataFiles;
@@ -55,7 +52,7 @@ public class ContainerFacade {
         if (hasDataFile(dataFile.getName())) {
             throw new DataFileWithSameNameAlreadyExistsException();
         }
-        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(dataFile.getName()));
+        String mimeType = FileUtils.resolveMimeType(dataFile.getName());
         container.addDataFile(dataFile.getAbsolutePath(), mimeType);
         save();
     }
@@ -108,7 +105,7 @@ public class ContainerFacade {
         save(containerFile);
     }
 
-    public void save(File filePath) {
+    private void save(File filePath) {
         container.save(filePath.getAbsolutePath());
         containerFile = filePath;
     }

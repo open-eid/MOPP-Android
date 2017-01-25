@@ -28,7 +28,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -129,7 +128,9 @@ public class ContainerDataFilesFragment extends ListFragment {
         getContext().grantUriPermission(BuildConfig.APPLICATION_ID, contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(fileName));
+
+        String mimeType = FileUtils.resolveMimeType(fileName);
+
         intent.setDataAndType(contentUri, mimeType);
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
@@ -156,7 +157,7 @@ public class ContainerDataFilesFragment extends ListFragment {
             Uri contentUri = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, attachment);
             getContext().grantUriPermission(BuildConfig.APPLICATION_ID, contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(fileName));
+            String mimeType = FileUtils.resolveMimeType(fileName);
             if (mimeType == null) {
                 notificationUtil.showWarningMessage(getText(R.string.file_unsharable));
                 return false;

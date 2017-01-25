@@ -60,7 +60,6 @@ import java.util.Arrays;
 
 import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
-import ee.ria.EstEIDUtility.activity.BrowseContainersActivity;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.container.DataFileFacade;
@@ -156,7 +155,7 @@ public class ContainerDetailsFragment extends Fragment {
         createFilesListFragment();
         createSignatureListFragment();
 
-        title = (EditText) fragLayout.findViewById(R.id.listDocName);
+        title = (EditText) fragLayout.findViewById(R.id.docName);
         title.setKeyListener(null);
 
         body = (TextView) fragLayout.findViewById(R.id.listDocLocation);
@@ -186,7 +185,6 @@ public class ContainerDetailsFragment extends Fragment {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 refreshContainerFacade();
 
                 Uri uriToFile = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, containerFacade.getContainerFile());
@@ -197,46 +195,66 @@ public class ContainerDetailsFragment extends Fragment {
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.upload_to)));
             }
         });
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                refreshContainerFacade();
-                if (!containerFacade.hasDataFiles()) {
-                    notificationUtil.showWarningMessage(getText(R.string.save_container_no_files));
-                    return;
-                }
-                String fileName = title.getText().toString();
-                if (fileName.isEmpty()) {
-                    notificationUtil.showWarningMessage(getText(R.string.file_name_empty_message));
-                    return;
-                }
-                File savePath = FileUtils.getContainerFile(getContext(), fileName);
-                if (savePath.getAbsolutePath().equals(containerFacade.getAbsolutePath())) {
-                    containerFacade.save();
-                } else {
-                    if (savePath.exists()) {
-                        notificationUtil.showWarningMessage(getText(R.string.file_exists_message));
-                        return;
-                    }
-                    containerFacade.save(savePath);
-                }
-                Intent intent = new Intent(getActivity(), BrowseContainersActivity.class);
-                startActivity(intent);
-            }
-        });
-        editBdoc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                title.setInputType(EditorInfo.TYPE_CLASS_TEXT);
-                InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                input.showSoftInput(title, InputMethodManager.SHOW_IMPLICIT);
-            }
-        });
+        saveButton.setOnClickListener(new SaveFileNameListener());
+        title.setOnClickListener(new ChangeFileNameListener());
+        editBdoc.setOnClickListener(new ChangeFileNameListener());
 
         fileInfoTextView.setText(getFormattedFileInfo());
         title.setText(containerFacade.getName());
         body.append(containerFacade.getName());
     }
+
+    class SaveFileNameListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            refreshContainerFacade();
+            if (!containerFacade.hasDataFiles()) {
+                notificationUtil.showWarningMessage(getText(R.string.save_container_no_files));
+                return;
+            }
+            String fileName = title.getText().toString();
+            if (fileName.isEmpty()) {
+                notificationUtil.showWarningMessage(getText(R.string.file_name_empty_message));
+                return;
+            }
+
+            if (!FilenameUtils.getExtension(fileName).equals(Constants.BDOC_EXTENSION)) {
+                title.append(".");
+                title.append(Constants.BDOC_EXTENSION);
+                fileName = title.getText().toString();
+            }
+
+            File file = new File(FileUtils.getContainersDirectory(getContext()), fileName);
+            if (file.exists()) {
+                notificationUtil.showFailMessage(getText(R.string.file_exists_message));
+                return;
+            }
+
+            boolean renamed = containerFacade.getContainerFile().renameTo(file);
+            if (renamed) {
+                notificationUtil.showSuccessMessage(getText(R.string.file_rename_success));
+            }
+            containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(file).build();
+            containerFacade.save();
+            saveButton.setVisibility(View.GONE);
+            InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            input.hideSoftInputFromWindow(title.getWindowToken(), 0);
+            title.setCursorVisible(false);
+        }
+    }
+    class ChangeFileNameListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            saveButton.setVisibility(View.VISIBLE);
+            title.setCursorVisible(true);
+            title.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+            InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+            input.showSoftInput(title, InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+
 
     private void refreshContainerFacade() {
         containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerFacade.getContainerFile()).build();

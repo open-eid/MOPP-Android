@@ -54,13 +54,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:contentDescription="@android:string/unknownName"
-            android:labelFor="@+id/listDocName"
+            android:labelFor="@+id/docName"
             android:paddingEnd="5dp"
             android:paddingStart="0dp"
             app:srcCompat="@drawable/ic_mode_edit_black_18px" />
 
         <EditText
-            android:id="@+id/listDocName"
+            android:id="@+id/docName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="2dp"
@@ -76,7 +76,7 @@
             android:id="@+id/listDocLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/listDocName"
+            android:layout_below="@+id/docName"
             android:layout_marginBottom="3dp"
             android:layout_toEndOf="@+id/bdocImg"
             android:ellipsize="end"
@@ -221,7 +221,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/save" />
+            android:text="@string/save"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/sendButton"
@@ -229,9 +230,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:backgroundTint="#4CBD0B"
-            android:text="@string/send"
-            android:textColor="#ffffff" />
+            android:text="@string/send" />
     </LinearLayout>
 
 </RelativeLayout>

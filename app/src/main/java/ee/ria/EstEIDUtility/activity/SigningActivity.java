@@ -36,8 +36,6 @@ import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 
-import static ee.ria.EstEIDUtility.container.ContainerBuilder.ContainerLocation.CACHE;
-
 public class SigningActivity extends AppCompatActivity {
 
     private NotificationUtil notificationUtil;
@@ -60,6 +58,8 @@ public class SigningActivity extends AppCompatActivity {
 
     private void createNewContainer() {
         FileUtils.clearContainerCache(this);
+        FileUtils.clearDataFileCache(this);
+
         EditText containerName = (EditText) findViewById(R.id.containerName);
 
         String fileName = containerName.getText().toString();
@@ -76,11 +76,11 @@ public class SigningActivity extends AppCompatActivity {
         String containerFileName = containerName.getText().toString();
 
         ContainerFacade containerFacade = ContainerBuilder.aContainer(this)
-                .withContainerLocation(CACHE)
                 .withContainerName(containerFileName)
                 .build();
 
         Intent intent = new Intent(this, ContainerDetailsActivity.class);
+
         intent.putExtra(Constants.CONTAINER_NAME_KEY, containerFacade.getName());
         intent.putExtra(Constants.CONTAINER_PATH_KEY, containerFacade.getAbsolutePath());
         startActivity(intent);
