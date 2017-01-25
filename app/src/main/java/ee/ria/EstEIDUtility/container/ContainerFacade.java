@@ -25,6 +25,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -146,6 +147,11 @@ public class ContainerFacade {
         return preparedSignature.dataToSign();
     }
 
+    public byte[] prepareWebSignature(byte[] cert, String profile) {
+        preparedSignature = container.prepareWebSignature(cert, profile);
+        return preparedSignature.dataToSign();
+    }
+
     public void setSignatureValue(byte[] signatureValue) {
         preparedSignature.setSignatureValue(signatureValue);
     }
@@ -176,6 +182,18 @@ public class ContainerFacade {
     public SignatureFacade getPreparedSignature() {
         return new SignatureFacade(preparedSignature);
     }
+
+    public String getExtendedSignatureProfile() {
+        if (isSignedWithExtendedProfile()) {
+            return container.signatures().get(0).profile();
+        }
+        return null;
+    }
+
+    private boolean isSignedWithExtendedProfile() {
+        return isSigned() && Arrays.asList("time-stamp", "time-mark").contains(container.signatures().get(0).profile());
+    }
+
 
     public class DataFileWithSameNameAlreadyExistsException extends RuntimeException {
     }

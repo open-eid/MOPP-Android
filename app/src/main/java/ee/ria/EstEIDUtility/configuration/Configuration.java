@@ -27,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -50,6 +51,7 @@ public class Configuration {
     public static void init(Context context) {
         createDirectoriesIfNotCreated(context);
         unpackSchema(context);
+        placeAccessCertificate(context);
         initLibDigidoc(context);
     }
 
@@ -73,6 +75,20 @@ public class Configuration {
         } catch (IOException e) {
             Log.e(TAG, "initLibraryConfiguration: ", e);
         }
+    }
+
+    private static void placeAccessCertificate(Context context) {
+        File schemaPath = FileUtils.getSchemaCacheDirectory(context);
+        try {
+            InputStream is = context.getResources().openRawResource(R.raw.sk878252);
+            File accessCertificate = new File(schemaPath, "878252.p12");
+            FileOutputStream out = new FileOutputStream(accessCertificate);
+            IOUtils.copy(is, out);
+            out.close();
+        } catch (IOException e) {
+            Log.e(TAG, "error placing access certificate: ", e);
+        }
+
     }
 
     private static void initLibDigidoc(Context context) {

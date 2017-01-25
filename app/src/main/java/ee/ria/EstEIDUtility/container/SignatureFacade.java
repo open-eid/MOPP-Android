@@ -10,6 +10,18 @@ public class SignatureFacade {
         this.signature = signature;
     }
 
+    /**
+     * If container has signatures, you must use the same profile
+     * @param profile can be 'time-stamp' or 'time-mark'
+     */
+    public void extendSignatureProfile(String profile) {
+        signature.extendSignatureProfile(profile);
+    }
+
+    public String getSignatureProfile() {
+        return signature.profile();
+    }
+
     public byte[] getSigningCertificateDer() {
         return signature.signingCertificateDer();
     }

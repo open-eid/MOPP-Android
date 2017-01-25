@@ -28,9 +28,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -38,6 +40,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +56,7 @@ import android.widget.Toast;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
+import java.util.Arrays;
 
 import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
@@ -60,6 +64,7 @@ import ee.ria.EstEIDUtility.activity.BrowseContainersActivity;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.container.DataFileFacade;
+import ee.ria.EstEIDUtility.container.SignatureFacade;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
@@ -244,6 +249,15 @@ public class ContainerDetailsFragment extends Fragment {
         return String.format(format, extension, sizeInKb);
     }
 
+    private String getFutureSignatureProfile() {
+        String profile = containerFacade.getExtendedSignatureProfile();
+        if (profile == null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            profile = preferences.getString("container_file_type", "time-stamp");
+        }
+        return profile;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -290,9 +304,10 @@ public class ContainerDetailsFragment extends Fragment {
         @Override
         public void onSignResponse(byte[] signatureBytes) {
             containerFacade.setSignatureValue(signatureBytes);
-            //signature.extendSignatureProfile("time-mark"); //TODO: extending doesn't work
+            SignatureFacade signatureFacade = containerFacade.getPreparedSignature();
+            signatureFacade.extendSignatureProfile(getFutureSignatureProfile());
             containerFacade.save();
-            findSignaturesFragment().addSignature(containerFacade.getPreparedSignature());
+            findSignaturesFragment().addSignature(signatureFacade);
             enterPinText.setText(getText(R.string.enter_pin2));
             pinText.setText("");
             notificationUtil.showSuccessMessage(getText(R.string.signature_added));
@@ -443,7 +458,7 @@ public class ContainerDetailsFragment extends Fragment {
         @Override
         public void onCertificateResponse(byte[] cert) {
             refreshContainerFacade();
-            byte[] dataToSign = containerFacade.prepareWebSignature(cert);
+            byte[] dataToSign = containerFacade.prepareWebSignature(cert, getFutureSignatureProfile());
             String pin2 = pinText.getText().toString();
             tokenService.sign(Token.PinType.PIN2, pin2, dataToSign, new SignTaskCallback());
         }
