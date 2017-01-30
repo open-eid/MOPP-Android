@@ -21,22 +21,17 @@ package ee.ria.EstEIDUtility.fragment;
 
 import android.app.ListFragment;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SearchView;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.activity.ContainerDetailsActivity;
 import ee.ria.EstEIDUtility.adapter.ContainerListAdapter;
-import ee.ria.EstEIDUtility.domain.ContainerInfo;
 import ee.ria.EstEIDUtility.util.Constants;
-import ee.ria.EstEIDUtility.util.DateUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
 
 public class BrowseContainersListFragment extends ListFragment {
@@ -48,18 +43,17 @@ public class BrowseContainersListFragment extends ListFragment {
     }
 
     private void launchContainerDetailActivity(int position) {
-        ContainerInfo containerInfo = (ContainerInfo) getListAdapter().getItem(position);
+        File containerFile = (File) getListAdapter().getItem(position);
         Intent intent = new Intent(getActivity(), ContainerDetailsActivity.class);
-        intent.putExtra(Constants.CONTAINER_NAME_KEY, containerInfo.getName());
-        intent.putExtra(Constants.CONTAINER_PATH_KEY, containerInfo.getPath().getAbsolutePath());
+        intent.putExtra(Constants.CONTAINER_NAME_KEY, containerFile.getName());
+        intent.putExtra(Constants.CONTAINER_PATH_KEY, containerFile.getAbsolutePath());
         startActivity(intent);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        List<ContainerInfo> containers = getContainers();
+    public void onResume() {
+        super.onResume();
+        List<File> containers = FileUtils.getContainers(getActivity());
 
         final ContainerListAdapter containerListAdapter = new ContainerListAdapter(getActivity(), containers);
         setListAdapter(containerListAdapter);
@@ -77,30 +71,6 @@ public class BrowseContainersListFragment extends ListFragment {
                 return false;
             }
         });
-    }
-
-    private List<ContainerInfo> getContainers() {
-        List<ContainerInfo> containers = new ArrayList<>();
-        List<File> containerFiles = FileUtils.getContainers(getActivity());
-        for (File file : containerFiles) {
-            String fileCreated = getFileLastModified(file);
-            containers.add(new ContainerInfo(file, fileCreated));
-        }
-        return containers;
-    }
-
-    private String getFileLastModified(File file) {
-        Date fileModified = new Date(file.lastModified());
-
-        if (DateUtils.isToday(fileModified)) {
-            return DateUtils.TODAY_FORMAT.format(fileModified);
-        } else if (DateUtils.isYesterday(fileModified)) {
-            return getString(R.string.activity_browse_containers_yesterday);
-        } else if (DateUtils.isCurrentYear(fileModified)) {
-            return DateUtils.CURRENT_YEAR_FORMAT.format(fileModified);
-        }
-
-        return DateUtils.DATE_FORMAT.format(fileModified);
     }
 
 }

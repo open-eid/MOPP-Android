@@ -26,7 +26,6 @@ public interface Token {
 	byte[] sign(PinType type, String pin, byte[] data);
 	SparseArray<String> readPersonalFile();
 	boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin);
-	boolean unblockPin(PinType pinType, byte[] puk);
 	byte[] readCert(CertType type);
     byte readRetryCounter(PinType pinType);
     int readUseCounter(CertType certType);

@@ -131,4 +131,5 @@
     <string name="create_container">Создать контейнер</string>
     <string name="error_page_title">Ошибка</string>
     <string name="file_rename_success">Файл переименован успешно</string>
+    <string name="signing_failed">одписание не удалось. Пожалуйста проверьте сертификаты Вашей карты.</string>
 </resources>

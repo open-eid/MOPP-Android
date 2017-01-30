@@ -32,16 +32,20 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
-import ee.ria.EstEIDUtility.domain.ContainerInfo;
+import ee.ria.EstEIDUtility.util.DateUtils;
 
-public class ContainerListAdapter extends ArrayAdapter<ContainerInfo> implements Filterable {
+public class ContainerListAdapter extends ArrayAdapter<File> implements Filterable {
 
-    private List<ContainerInfo> allContainers ;
-    private List<ContainerInfo> filteredContainers;
+    private List<File> allContainers ;
+    private List<File> filteredContainers;
     private ContainerFilter containerFilter = new ContainerFilter();
     private AlertDialog confirmDialog;
 
@@ -51,8 +55,9 @@ public class ContainerListAdapter extends ArrayAdapter<ContainerInfo> implements
         ImageView removeContainer;
     }
 
-    public ContainerListAdapter(Context context, List<ContainerInfo> allContainers) {
+    public ContainerListAdapter(Context context, List<File> allContainers) {
         super(context, 0, allContainers);
+        Collections.sort(allContainers, new ContainersListComparator());
         this.allContainers = allContainers;
         this.filteredContainers = allContainers;
     }
@@ -61,7 +66,7 @@ public class ContainerListAdapter extends ArrayAdapter<ContainerInfo> implements
         return filteredContainers.size();
     }
 
-    public ContainerInfo getItem(int position) {
+    public File getItem(int position) {
         return filteredContainers.get(position);
     }
 
@@ -82,9 +87,9 @@ public class ContainerListAdapter extends ArrayAdapter<ContainerInfo> implements
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        final ContainerInfo containerInfo = getItem(position);
-        viewHolder.fileName.setText(containerInfo.getName());
-        viewHolder.fileCreated.setText(containerInfo.getCreated());
+        final File containerFile = getItem(position);
+        viewHolder.fileName.setText(containerFile.getName());
+        viewHolder.fileCreated.setText(getFileLastModified(containerFile.lastModified()));
 
         viewHolder.removeContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,15 +98,15 @@ public class ContainerListAdapter extends ArrayAdapter<ContainerInfo> implements
                 builder.setTitle(R.string.bdoc_remove_confirm_title);
 
                 String confirmMessage = getContext().getString(R.string.bdoc_remove_confirm_message);
-                confirmMessage = String.format(confirmMessage, containerInfo.getName());
+                confirmMessage = String.format(confirmMessage, containerFile.getName());
 
                 builder.setMessage(confirmMessage);
 
                 builder.setPositiveButton(R.string.confirm_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ContainerInfo item = getItem(position);
-                        boolean deleted = item.getPath().delete();
+                        File item = getItem(position);
+                        boolean deleted = item.delete();
                         if (deleted) {
                             filteredContainers.remove(item);
                             notifyDataSetChanged();
@@ -118,6 +123,20 @@ public class ContainerListAdapter extends ArrayAdapter<ContainerInfo> implements
         return convertView;
     }
 
+    private String getFileLastModified(long lastModified) {
+        Date fileModified = new Date(lastModified);
+
+        if (DateUtils.isToday(fileModified)) {
+            return DateUtils.TODAY_FORMAT.format(fileModified);
+        } else if (DateUtils.isYesterday(fileModified)) {
+            return getContext().getString(R.string.activity_browse_containers_yesterday);
+        } else if (DateUtils.isCurrentYear(fileModified)) {
+            return DateUtils.CURRENT_YEAR_FORMAT.format(fileModified);
+        }
+
+        return DateUtils.DATE_FORMAT.format(fileModified);
+    }
+
     public @NonNull Filter getFilter() {
         return containerFilter;
     }
@@ -128,10 +147,10 @@ public class ContainerListAdapter extends ArrayAdapter<ContainerInfo> implements
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
 
-            final List<ContainerInfo> all = allContainers;
-            final List<ContainerInfo> filtered = new ArrayList<>();
+            final List<File> all = allContainers;
+            final List<File> filtered = new ArrayList<>();
 
-            for (ContainerInfo ci : all) {
+            for (File ci : all) {
                 if (matchesConstraintIgnoreCase(ci.getName(), constraint)) {
                     filtered.add(ci);
                 }
@@ -149,8 +168,22 @@ public class ContainerListAdapter extends ArrayAdapter<ContainerInfo> implements
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            filteredContainers = (ArrayList<ContainerInfo>) results.values;
+            filteredContainers = (ArrayList<File>) results.values;
             notifyDataSetChanged();
+        }
+    }
+
+    private class ContainersListComparator implements Comparator<File> {
+
+        @Override
+        public int compare(File o1, File o2) {
+            if (o1.lastModified() > o2.lastModified()) {
+                return -1;
+            }
+            if (o1.lastModified() == o2.lastModified()) {
+                return 0;
+            }
+            return 1;
         }
     }
 

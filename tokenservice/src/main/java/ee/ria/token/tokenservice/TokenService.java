@@ -37,7 +37,6 @@ import ee.ria.token.tokenservice.callback.ChangePinCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.SignCallback;
-import ee.ria.token.tokenservice.callback.UnblockPinCallback;
 import ee.ria.token.tokenservice.callback.UseCounterCallback;
 import ee.ria.tokenlibrary.Token;
 import ee.ria.tokenlibrary.TokenFactory;
@@ -175,20 +174,6 @@ public class TokenService extends Service {
             }
         } catch (Exception e) {
             Log.e(TAG, "unblockAndChangePin: ", e);
-            callback.error(e);
-        }
-    }
-
-    public void unblockPin(Token.PinType pinType, String puk, UnblockPinCallback callback) {
-        try {
-            boolean unblocked = token.unblockPin(pinType, puk.getBytes());
-            if (unblocked) {
-                callback.success();
-            } else {
-                callback.error(new Exception("PIN change failed"));
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "unblockPin: ", e);
             callback.error(e);
         }
     }

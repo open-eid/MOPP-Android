@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import ee.ria.EstEIDUtility.domain.X509Cert;
+import ee.ria.EstEIDUtility.certificate.X509Cert;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFile;
@@ -139,11 +139,6 @@ public class ContainerFacade {
         return !getDataFiles().isEmpty();
     }
 
-    public byte[] prepareWebSignature(byte[] cert) {
-        preparedSignature = container.prepareWebSignature(cert);
-        return preparedSignature.dataToSign();
-    }
-
     public byte[] prepareWebSignature(byte[] cert, String profile) {
         preparedSignature = container.prepareWebSignature(cert, profile);
         return preparedSignature.dataToSign();
@@ -182,15 +177,27 @@ public class ContainerFacade {
 
     public String getExtendedSignatureProfile() {
         if (isSignedWithExtendedProfile()) {
-            return container.signatures().get(0).profile();
+            String profile = container.signatures().get(0).profile();
+            profile = profile.substring(profile.lastIndexOf("/") + 1);
+            return profile;
         }
         return null;
     }
 
     private boolean isSignedWithExtendedProfile() {
-        return isSigned() && Arrays.asList("time-stamp", "time-mark").contains(container.signatures().get(0).profile());
-    }
+        if (!isSigned()) {
+            return false;
+        }
 
+        String profile = container.signatures().get(0).profile();
+
+        for (String option : Arrays.asList("time-stamp", "time-mark")) {
+            if (profile.contains(option)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public class DataFileWithSameNameAlreadyExistsException extends RuntimeException {
     }

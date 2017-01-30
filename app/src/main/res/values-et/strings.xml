@@ -132,4 +132,5 @@
     <string name="create_container">Loo uus konteiner</string>
     <string name="error_page_title">Viga</string>
     <string name="file_rename_success">Fail oli edukalt ümbernimetatud</string>
+    <string name="signing_failed">Konteineri allkirjastamine ebaõnnestunud. Palun kontrollige Teie kaardi sertifikaate.</string>
 </resources>

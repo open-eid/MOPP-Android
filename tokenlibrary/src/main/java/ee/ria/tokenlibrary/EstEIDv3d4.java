@@ -98,16 +98,6 @@ public class EstEIDv3d4 extends EstEIDToken {
     }
 
     @Override
-    public boolean unblockPin(PinType pinType, byte[] puk) {
-        if (!isSecureChannel()) {
-            throw new SecureOperationOverUnsecureChannelException("PIN unblock is not allowed");
-        }
-        verifyPin(PinType.PUK, puk);
-        byte[] recv = transmit(new byte[]{0x00, 0x2C, 0x03, pinType.value});
-        return checkSW(recv);
-    }
-
-    @Override
     public byte[] readCert(CertType type) {
         selectMasterFile();
         selectCatalogue();

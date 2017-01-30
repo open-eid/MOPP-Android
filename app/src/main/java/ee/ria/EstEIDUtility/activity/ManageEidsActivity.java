@@ -45,7 +45,7 @@ import java.util.Date;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
-import ee.ria.EstEIDUtility.domain.X509Cert;
+import ee.ria.EstEIDUtility.certificate.X509Cert;
 import ee.ria.EstEIDUtility.util.DateUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.scardcomlibrary.impl.ACS;

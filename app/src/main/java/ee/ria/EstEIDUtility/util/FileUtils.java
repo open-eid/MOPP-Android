@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -152,7 +153,9 @@ public class FileUtils {
         if (containerFiles == null) {
             return Collections.emptyList();
         }
-        return Arrays.asList(containerFiles);
+        List<File> containers = new ArrayList<>();
+        Collections.addAll(containers, containerFiles);
+        return containers;
     }
 
     public static boolean isContainer(String fileName) {

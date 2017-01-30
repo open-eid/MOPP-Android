@@ -39,7 +39,7 @@ import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.container.SignatureFacade;
-import ee.ria.EstEIDUtility.domain.X509Cert;
+import ee.ria.EstEIDUtility.certificate.X509Cert;
 import ee.ria.EstEIDUtility.fragment.ContainerSignaturesFragment;
 import ee.ria.EstEIDUtility.util.DateUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;

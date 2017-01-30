@@ -40,7 +40,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +55,6 @@ import android.widget.Toast;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
-import java.util.Arrays;
 
 import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
@@ -204,6 +202,10 @@ public class ContainerDetailsFragment extends Fragment {
         body.append(containerFacade.getName());
     }
 
+    public void updateFileSize() {
+        fileInfoTextView.setText(getFormattedFileInfo());
+    }
+
     class SaveFileNameListener implements View.OnClickListener {
 
         @Override
@@ -254,7 +256,6 @@ public class ContainerDetailsFragment extends Fragment {
             input.showSoftInput(title, InputMethodManager.SHOW_IMPLICIT);
         }
     }
-
 
     private void refreshContainerFacade() {
         containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerFacade.getContainerFile()).build();
@@ -335,11 +336,11 @@ public class ContainerDetailsFragment extends Fragment {
         public void onSignError(Exception e, PinVerificationException pinVerificationException) {
             if (pinVerificationException != null) {
                 notificationUtil.showFailMessage(getText(R.string.pin_verification_failed));
-                pinText.setText("");
                 tokenService.readRetryCounter(pinVerificationException.getPinType(), new RetryCounterTaskCallback());
             } else {
-                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                notificationUtil.showFailMessage(getText(R.string.signing_failed));
             }
+            pinText.setText("");
         }
     }
 

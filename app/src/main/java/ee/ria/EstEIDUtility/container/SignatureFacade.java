@@ -1,8 +1,12 @@
 package ee.ria.EstEIDUtility.container;
 
+import android.util.Log;
+
 import ee.ria.libdigidocpp.Signature;
 
 public class SignatureFacade {
+
+    private static final String TAG = SignatureFacade.class.getName();
 
     private final Signature signature;
 
@@ -18,10 +22,6 @@ public class SignatureFacade {
         signature.extendSignatureProfile(profile);
     }
 
-    public String getSignatureProfile() {
-        return signature.profile();
-    }
-
     public byte[] getSigningCertificateDer() {
         return signature.signingCertificateDer();
     }
@@ -35,6 +35,7 @@ public class SignatureFacade {
             signature.validate();
             return true;
         } catch (Exception e) {
+            Log.e(TAG, "isSignatureValid: ", e);
             return false;
         }
     }

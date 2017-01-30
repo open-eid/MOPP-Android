@@ -20,9 +20,12 @@
 package ee.ria.EstEIDUtility.adapter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +38,7 @@ import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.container.DataFileFacade;
 import ee.ria.EstEIDUtility.fragment.ContainerDataFilesFragment;
+import ee.ria.EstEIDUtility.fragment.ContainerDetailsFragment;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 
@@ -82,19 +86,21 @@ public class DataFilesAdapter extends ArrayAdapter<DataFileFacade> {
             viewHolder.fileName.setText(dataFileFacade.getFileName());
             String fileSizeText = getContext().getString(R.string.file_size);
             viewHolder.fileSize.setText(String.format(fileSizeText, FileUtils.getKilobytes(dataFileFacade.getFileSize())));
-            viewHolder.removeFile.setOnClickListener(new RemoveFileListener(position, dataFileFacade.getFileName()));
+            viewHolder.removeFile.setOnClickListener(new RemoveFileListener(position, dataFileFacade.getFileName(), parent.getContext()));
         }
         return convertView;
     }
 
     private class RemoveFileListener implements View.OnClickListener {
 
-        private int position;
-        private String fileName;
+        private final int position;
+        private final String fileName;
+        private final Context context;
 
-        RemoveFileListener(int position, String fileName) {
+        RemoveFileListener(int position, String fileName, Context context) {
             this.position = position;
             this.fileName = fileName;
+            this.context = context;
         }
 
         @Override
@@ -123,6 +129,9 @@ public class DataFilesAdapter extends ArrayAdapter<DataFileFacade> {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     containerFacade.removeDataFile(position);
+                    FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+                    ContainerDetailsFragment containerDetailsFragment = (ContainerDetailsFragment) fragmentManager.findFragmentByTag(ContainerDetailsFragment.TAG);
+                    containerDetailsFragment.updateFileSize();
                     notificationUtil.showSuccessMessage(getContext().getText(R.string.file_removed));
                     DataFileFacade dataFileFacade = getItem(position);
                     remove(dataFileFacade);

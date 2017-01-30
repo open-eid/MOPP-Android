@@ -162,5 +162,6 @@
     <string name="create_container">Create container</string>
     <string name="error_page_title">Error</string>
     <string name="file_rename_success">File renamed successfully</string>
+    <string name="signing_failed">Signing a container failed. Please check your card certificates.</string>
 
 </resources>
