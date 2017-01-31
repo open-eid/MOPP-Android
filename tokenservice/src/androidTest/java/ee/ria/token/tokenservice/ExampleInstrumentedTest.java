@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.test.tokenservice", appContext.getPackageName());
+        assertEquals("ee.ria.token.tokenservice.test", appContext.getPackageName());
     }
 }

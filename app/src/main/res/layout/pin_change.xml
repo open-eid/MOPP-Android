@@ -162,20 +162,12 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/cancelButton"
-            style="?android:attr/buttonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/cancel" />
-
-        <Button
             android:id="@+id/changeButton"
             style="?android:attr/buttonStyle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:enabled="false"
             android:text="@string/change" />
+
     </LinearLayout>
 </RelativeLayout>

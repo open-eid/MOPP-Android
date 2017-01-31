@@ -38,8 +38,6 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-
-
         <activity
             android:name=".activity.SplashActivity"
             android:theme="@style/SplashTheme">
@@ -53,13 +51,14 @@
         <activity
             android:name=".activity.DashboardMenuActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".activity.SigningActivity"
             android:label="@string/title_activity_signing"
             android:parentActivityName=".activity.DashboardMenuActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />
@@ -112,20 +111,15 @@
                 android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />
 
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
 
-                <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
 
-                <data
-                    android:mimeType="application/octet-stream"
-                    android:pathPattern=".*\\.*"
-                    android:scheme="file" />
-                <data
-                    android:mimeType="application/octet-stream"
-                    android:pathPattern=".*\\.*"
-                    android:scheme="content" />
+                <data android:mimeType="*/*" />
             </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

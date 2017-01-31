@@ -21,9 +21,6 @@ package ee.ria.EstEIDUtility.container;
 
 import android.content.Context;
 import android.net.Uri;
-import android.webkit.MimeTypeMap;
-
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,12 +32,7 @@ import ee.ria.libdigidocpp.Container;
 
 public class ContainerBuilder {
 
-    public enum ContainerLocation {
-        CACHE, STORAGE
-    }
-
     private Context context;
-    private ContainerLocation containerLocation;
     private String containerName;
     private File containerFile;
     private List<Uri> dataFileUris = new ArrayList<>();
@@ -51,10 +43,15 @@ public class ContainerBuilder {
         if (containerFile == null) {
             containerFile = resolveContainerFile();
         }
+
         Container container = getContainer();
         for (Uri uri : dataFileUris) {
             File file = FileUtils.cacheUriAsDataFile(context, uri);
-            container.addDataFile(file.getAbsolutePath(), resolveMimeType(file));
+            String mimeType = FileUtils.resolveMimeType(file.getName());
+            if (mimeType == null) {
+                continue;
+            }
+            container.addDataFile(file.getAbsolutePath(), mimeType);
         }
         if (!dataFileUris.isEmpty()) {
             container.save(containerFile.getAbsolutePath());
@@ -69,26 +66,14 @@ public class ContainerBuilder {
         return Container.create(containerFile.getAbsolutePath());
     }
 
-    private String resolveMimeType(File file) {
-        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(file.getName()));
-    }
-
     private File resolveContainerFile() {
-        File directory = resolveDirectory();
+        File directory = FileUtils.getContainersDirectory(context);
         String containerName = resolveContainerName();
-        return new File(directory, containerName);
+        return FileUtils.incrementFileName(directory, containerName);
     }
 
     private String resolveContainerName() {
         return containerName != null && !containerName.isEmpty() ? containerName : UUID.randomUUID().toString();
-    }
-
-    private File resolveDirectory() {
-        if (containerLocation == null || containerLocation == ContainerLocation.CACHE) {
-            return FileUtils.getContainerCacheDirectory(context);
-        } else {
-            return FileUtils.getContainersDirectory(context);
-        }
     }
 
     public static ContainerBuilder aContainer(Context context) {
@@ -102,12 +87,22 @@ public class ContainerBuilder {
         return this;
     }
 
-    public ContainerBuilder fromExistingContainer(Uri uri) {
-        return fromExistingContainer(FileUtils.cacheUriAsContainerFile(context, uri));
-    }
-
     public ContainerBuilder fromExistingContainer(String containerFilePath) {
         return fromExistingContainer(new File(containerFilePath));
+    }
+
+    public ContainerBuilder fromExternalContainer(Uri uri) throws ExternalContainerSaveException {
+        File from = FileUtils.uriAsContainerFile(context, uri);
+        String containerName = from.getName();
+        File directory = FileUtils.getContainersDirectory(context);
+
+        File to = FileUtils.incrementFileName(directory, containerName);
+        boolean renamed = from.renameTo(to);
+        if (!renamed) {
+            throw new ExternalContainerSaveException();
+        }
+        this.containerFile = to;
+        return this;
     }
 
     public ContainerBuilder withDataFile(Uri uri) {
@@ -115,13 +110,16 @@ public class ContainerBuilder {
         return this;
     }
 
-    public ContainerBuilder withContainerLocation(ContainerLocation containerLocation) {
-        this.containerLocation = containerLocation;
+    public ContainerBuilder withDataFiles(List<Uri> uris) {
+        dataFileUris.addAll(uris);
         return this;
     }
 
     public ContainerBuilder withContainerName(String containerName) {
         this.containerName = containerName;
         return this;
+    }
+
+    public class ExternalContainerSaveException extends Exception {
     }
 }

@@ -19,18 +19,14 @@
 
 package ee.ria.EstEIDUtility.container;
 
-import android.webkit.MimeTypeMap;
-
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import ee.ria.EstEIDUtility.domain.X509Cert;
+import ee.ria.EstEIDUtility.certificate.X509Cert;
+import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFile;
 import ee.ria.libdigidocpp.DataFiles;
@@ -41,15 +37,11 @@ public class ContainerFacade {
 
     private Container container;
     private File containerFile;
-    private Map<String, File> dataFileLocations = new HashMap<>();
+    private Signature preparedSignature;
 
     ContainerFacade(Container container, File containerFile) {
         this.container = container;
         this.containerFile = containerFile;
-    }
-
-    public Container getContainer() {
-        return container;
     }
 
     public File getContainerFile() {
@@ -60,41 +52,39 @@ public class ContainerFacade {
         if (hasDataFile(dataFile.getName())) {
             throw new DataFileWithSameNameAlreadyExistsException();
         }
-        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(dataFile.getName()));
+        String mimeType = FileUtils.resolveMimeType(dataFile.getName());
         container.addDataFile(dataFile.getAbsolutePath(), mimeType);
-        dataFileLocations.put(dataFile.getName(), dataFile);
         save();
     }
 
     public DataFileFacade getDataFile(String filename) {
-        File file = dataFileLocations.get(filename);
         DataFile dataFile;
-        if (file != null && (dataFile = getContainerDataFile(filename)) != null) {
-            return new DataFileFacade(dataFile, file);
+        if ((dataFile = getContainerDataFile(filename)) != null) {
+            return new DataFileFacade(dataFile);
         }
-        throw new DataFileDoesNotExistException();
+        return null;
     }
 
-    public List<DataFile> getDataFiles() {
+    public List<DataFileFacade> getDataFiles() {
         if (container == null) {
             return Collections.emptyList();
         }
-        List<DataFile> dataFiles = new ArrayList<>();
+        List<DataFileFacade> dataFiles = new ArrayList<>();
         DataFiles containerDataFiles = container.dataFiles();
         for (int i = 0; i < containerDataFiles.size(); i++) {
-            dataFiles.add(containerDataFiles.get(i));
+            dataFiles.add(getDataFile(containerDataFiles.get(i).fileName()));
         }
         return dataFiles;
     }
 
-    public List<Signature> getSignatures() {
+    public List<SignatureFacade> getSignatures() {
         if (container == null) {
             return Collections.emptyList();
         }
         Signatures signatures = container.signatures();
-        List<Signature> signatureItems = new ArrayList<>();
+        List<SignatureFacade> signatureItems = new ArrayList<>();
         for (int i = 0; i < signatures.size(); i++) {
-            signatureItems.add(signatures.get(i));
+            signatureItems.add(new SignatureFacade(signatures.get(i)));
         }
         return signatureItems;
     }
@@ -115,14 +105,9 @@ public class ContainerFacade {
         save(containerFile);
     }
 
-    public void save(File filePath) {
+    private void save(File filePath) {
         container.save(filePath.getAbsolutePath());
         containerFile = filePath;
-    }
-
-    public void save(String absolutePath) {
-        container.save(absolutePath);
-        containerFile = new File(absolutePath);
     }
 
     public boolean isSigned() {
@@ -131,16 +116,18 @@ public class ContainerFacade {
 
     public void removeDataFile(int position) {
         container.removeDataFile(position);
+        save();
     }
 
     public void removeSignature(int position) {
         container.removeSignature(position);
+        save();
     }
 
     public boolean isSignedBy(byte[] cert) {
         X509Cert x509Cert = new X509Cert(cert);
-        for (Signature signature : getSignatures()) {
-            X509Cert c = new X509Cert(signature.signingCertificateDer());
+        for (SignatureFacade signatureFacade : getSignatures()) {
+            X509Cert c = new X509Cert(signatureFacade.getSigningCertificateDer());
             if (c.getCertificate().equals(x509Cert.getCertificate())) {
                 return true;
             }
@@ -150,6 +137,15 @@ public class ContainerFacade {
 
     public boolean hasDataFiles() {
         return !getDataFiles().isEmpty();
+    }
+
+    public byte[] prepareWebSignature(byte[] cert, String profile) {
+        preparedSignature = container.prepareWebSignature(cert, profile);
+        return preparedSignature.dataToSign();
+    }
+
+    public void setSignatureValue(byte[] signatureValue) {
+        preparedSignature.setSignatureValue(signatureValue);
     }
 
     private DataFile getContainerDataFile(String filename) {
@@ -175,7 +171,46 @@ public class ContainerFacade {
         return false;
     }
 
-    public class DataFileDoesNotExistException extends RuntimeException {
+    public SignatureFacade getPreparedSignature() {
+        return new SignatureFacade(preparedSignature);
+    }
+
+    public String getExtendedSignatureProfile() {
+        if (isSignedWithExtendedProfile()) {
+            String profile = container.signatures().get(0).profile();
+            profile = profile.substring(profile.lastIndexOf("/") + 1);
+            return profile;
+        }
+        return null;
+    }
+
+    private boolean isSignedWithExtendedProfile() {
+        if (!isSigned()) {
+            return false;
+        }
+        String profile = container.signatures().get(0).profile();
+        profile = profile.substring(profile.lastIndexOf("/") + 1);
+        for (String option : Arrays.asList("time-stamp", "time-mark")) {
+            if (profile.contains(option)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addAdESSignature(byte[] encoded) {
+        container.addAdESSignature(encoded);
+    }
+
+    public String getNextSignatureId() {
+        List<SignatureFacade> signatures = getSignatures();
+        List<String> existingIds = new ArrayList<>();
+        for (SignatureFacade s : signatures) {
+            existingIds.add(s.getId().toUpperCase());
+        }
+        int id = 0;
+        while (existingIds.contains("S" + id)) ++id;
+        return "S" + id;
     }
 
     public class DataFileWithSameNameAlreadyExistsException extends RuntimeException {

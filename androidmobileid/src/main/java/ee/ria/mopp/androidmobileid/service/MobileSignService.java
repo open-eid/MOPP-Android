@@ -9,15 +9,15 @@ import android.util.Log;
 import java.io.IOException;
 
 import ee.ria.mopp.androidmobileid.dto.request.GetMobileCreateSignatureStatusRequest;
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
+import ee.ria.mopp.androidmobileid.dto.request.RequestObject;
+import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
 import ee.ria.mopp.androidmobileid.dto.response.SoapFault;
 import ee.ria.mopp.androidmobileid.soap.DigidocServiceClient;
 import ee.ria.mopp.androidmobileid.soap.ErrorUtils;
 import ee.ria.mopp.androidmobileid.soap.RequestBody;
 import ee.ria.mopp.androidmobileid.soap.RequestEnvelope;
-import ee.ria.mopp.androidmobileid.dto.request.RequestObject;
 import ee.ria.mopp.androidmobileid.soap.ServiceGenerator;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -27,6 +27,8 @@ import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.CREATE_SIG
 
 public class MobileSignService extends IntentService {
 
+    private static final long INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 10000;
+    private static final long SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 5000;
     public static final String TAG = MobileSignService.class.getName();
     private DigidocServiceClient ddsClient;
 
@@ -37,28 +39,22 @@ public class MobileSignService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         MobileCreateSignatureRequest request = getRequestFromIntent(intent);
-        Log.i(TAG, "Created object form json: " + request.toString());
-
         ddsClient = ServiceGenerator.createService(DigidocServiceClient.class);
-
         Call<MobileCreateSignatureResponse> call = ddsClient.mobileCreateSignature(wrapInEnvelope(request));
 
         try {
             Response<MobileCreateSignatureResponse> responseWrapper = call.execute();
             if (!responseWrapper.isSuccessful()) {
                 SoapFault fault = ErrorUtils.parseError(responseWrapper);
-                Log.i(TAG, "fault");
                 broadcastFault(fault);
             } else {
                 MobileCreateSignatureResponse response = responseWrapper.body();
-                Log.i(TAG, "Create Signature response: " + response.toString());
                 broadcastMobileCreateSignatureResponse(response);
-                sleep(10000);
-                doStatusLoop(new GetMobileCreateSignatureStatusRequest(response.getSesscode()));
+                sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
+                doCreateSignatureStatusRequestLoop(new GetMobileCreateSignatureStatusRequest(response.getSesscode()));
             }
-
         } catch (IOException e) {
-            e.printStackTrace();
+           Log.e(TAG, "SoapRequestFailure", e);
         }
     }
 
@@ -69,20 +65,15 @@ public class MobileSignService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
-    private void doStatusLoop(GetMobileCreateSignatureStatusRequest request) {
-        try {
-            Call<GetMobileCreateSignatureStatusResponse> responseCall = ddsClient.getMobileCreateSignatureStatus(wrapInEnvelope(request));
-            GetMobileCreateSignatureStatusResponse response = responseCall.execute().body();
-            Log.i(TAG, "SignatureStatusResponse: " + response.toString());
-            if (response.getStatus() == GetMobileCreateSignatureStatusResponse.ProcessStatus.OUTSTANDING_TRANSACTION) {
-                broadcastMobileCreateSignatureStatusResponse(response);
-                sleep(5000);
-                doStatusLoop(request);
-            } else {
-                broadcastMobileCreateSignatureStatusResponse(response);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void doCreateSignatureStatusRequestLoop(GetMobileCreateSignatureStatusRequest request) throws IOException {
+        Call<GetMobileCreateSignatureStatusResponse> responseCall = ddsClient.getMobileCreateSignatureStatus(wrapInEnvelope(request));
+        GetMobileCreateSignatureStatusResponse response = responseCall.execute().body();
+        if (response.getStatus() == GetMobileCreateSignatureStatusResponse.ProcessStatus.OUTSTANDING_TRANSACTION) {
+            broadcastMobileCreateSignatureStatusResponse(response);
+            sleep(SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
+            doCreateSignatureStatusRequestLoop(request);
+        } else {
+            broadcastMobileCreateSignatureStatusResponse(response);
         }
     }
 
@@ -109,13 +100,11 @@ public class MobileSignService extends IntentService {
     }
 
     private void sleep(long millis) {
-        Log.i(TAG, "sleeping: " + millis);
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.e(TAG, "interrupted", e);
             Thread.currentThread().interrupt();
         }
-        Log.i(TAG, "finished sleeping");
     }
 }

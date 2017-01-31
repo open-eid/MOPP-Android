@@ -19,7 +19,7 @@
 
 package ee.ria.token.tokenservice.callback;
 
-import ee.ria.token.tokenservice.token.PinVerificationException;
+import ee.ria.tokenlibrary.exception.PinVerificationException;
 
 public interface SignCallback {
     void onSignResponse(byte[] signature);

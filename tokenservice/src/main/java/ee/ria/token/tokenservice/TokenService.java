@@ -20,30 +20,33 @@
 package ee.ria.token.tokenservice;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
 
+import ee.ria.scardcomlibrary.impl.ACS;
+import ee.ria.scardcomlibrary.CardReader;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.ChangePinCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.SignCallback;
-import ee.ria.token.tokenservice.callback.UnblockPinCallback;
 import ee.ria.token.tokenservice.callback.UseCounterCallback;
-import ee.ria.token.tokenservice.reader.CardReader;
-import ee.ria.token.tokenservice.token.PinVerificationException;
-import ee.ria.token.tokenservice.token.Token;
+import ee.ria.tokenlibrary.Token;
+import ee.ria.tokenlibrary.TokenFactory;
+import ee.ria.tokenlibrary.exception.PinVerificationException;
 
 public class TokenService extends Service {
 
     private static final String TAG = TokenService.class.getName();
 
-    public static final String CARD_PRESENT_INTENT = "CARD_PRESENT_INTENT";
-    public static final String CARD_ABSENT_INTENT = "CARD_ABSENT_INTENT";
+    private BroadcastReceiver tokenAvailableReceiver;
 
     private final IBinder mBinder = new LocalBinder();
 
@@ -63,33 +66,30 @@ public class TokenService extends Service {
         }
     }
 
-    public class SMConnected extends CardReader.Connected {
-
+    private class TokenAvailableReceiver extends BroadcastReceiver {
         @Override
-        public void connected() {
-            try {
-                token = TokenFactory.getTokenImpl(cardReader);
-            } catch (Exception e) {
-                Log.e(TAG, "getTokenImpl: ", e);
+        public void onReceive(Context context, Intent intent) {
+            token = TokenFactory.getTokenImpl(cardReader);
+            if (token != null) {
+                Intent cardInsertedIntent = new Intent(ACS.CARD_PRESENT_INTENT);
+                sendBroadcast(cardInsertedIntent);
             }
         }
-
     }
+
+    @Override
+    public void onCreate() {
+        tokenAvailableReceiver = new TokenAvailableReceiver();
+        registerReceiver(tokenAvailableReceiver, new IntentFilter(ACS.TOKEN_AVAILABLE_INTENT));
+        super.onCreate();
+    }
+
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        SMConnected callback = new SMConnected();
-        cardReader = getCardReader(callback);
+        cardReader = CardReader.getInstance(this, CardReader.Provider.ACS);
         return mBinder;
-    }
-
-    private CardReader getCardReader(SMConnected callback) {
-        final CardReader cardReader = CardReader.getInstance(this, CardReader.ACS, callback);
-        if (cardReader == null) {
-            return null;
-        }
-        return cardReader;
     }
 
     public void readUseCounter(Token.CertType certType, UseCounterCallback callback) {
@@ -136,6 +136,7 @@ public class TokenService extends Service {
             this.unregisterReceiver(cardReader.usbAttachReceiver);
             this.unregisterReceiver(cardReader.usbDetachReceiver);
         }
+        unregisterReceiver(tokenAvailableReceiver);
         super.onDestroy();
     }
 
@@ -177,20 +178,6 @@ public class TokenService extends Service {
         }
     }
 
-    public void unblockPin(Token.PinType pinType, String puk, UnblockPinCallback callback) {
-        try {
-            boolean unblocked = token.unblockPin(pinType, puk.getBytes());
-            if (unblocked) {
-                callback.success();
-            } else {
-                callback.error(new Exception("PIN change failed"));
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "unblockPin: ", e);
-            callback.error(e);
-        }
-    }
-
     public void readCert(Token.CertType type, CertCallback certCallback) {
         try {
             byte[] certBytes = token.readCert(type);
@@ -200,4 +187,5 @@ public class TokenService extends Service {
             certCallback.onCertificateError(e);
         }
     }
+
 }

@@ -22,9 +22,7 @@ android {
 }
 
 dependencies {
-    compile files('libs/acssmc-1.1.3.jar')
-    compile files('libs/AndroidSCard.jar')
-    compile files('libs/JSR268Library.jar')
+    compile project(':tokenlibrary')
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'

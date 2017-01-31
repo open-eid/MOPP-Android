@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ee.ria.EstEIDUtility.container.ContainerFacade;
+import ee.ria.EstEIDUtility.container.DataFileFacade;
 import ee.ria.libdigidocpp.DataFile;
 import ee.ria.libdigidocpp.Signature;
 import ee.ria.mopp.androidmobileid.dto.request.DataFileDto;
@@ -80,41 +81,40 @@ public class CreateSignatureRequestBuilder {
     }
 
     private void buildDataFiles() {
-        List<DataFile> dataFiles = container.getDataFiles();
+        List<DataFileFacade> dataFiles = container.getDataFiles();
         List<DataFileDto> dataFileDtos = new ArrayList<>();
-        for (DataFile df : dataFiles) {
+        for (DataFileFacade df : dataFiles) {
             dataFileDtos.add(createDataFileDto(df));
         }
         request.setDatafiles(dataFileDtos);
     }
 
-    private DataFileDto createDataFileDto(DataFile df) {
+    private DataFileDto createDataFileDto(DataFileFacade df) {
         DataFileDto dto = new DataFileDto();
-        dto.setId(df.id());
-        dto.setMimeType(df.mediaType());
+        dto.setId(df.getId());
+        dto.setMimeType(df.getMediaType());
         dto.setDigestType(DIGEST_TYPE);
         dto.setDigestValue(Base64.encodeToString(df.calcDigest(DIGEST_METHOD), Base64.DEFAULT));
         return dto;
     }
 
     private String getNextSignatureId() {
-        List<Signature> signatures = container.getSignatures();
-        List<String> existingIds = new ArrayList<>();
-        for (Signature s : signatures) {
-            existingIds.add(s.id().toUpperCase());
-        }
-        int id = 0;
-        while (existingIds.contains("S" + id)) ++id;
-        return "S" + id;
+        return container.getNextSignatureId();
     }
 
     private String getSigningProfile() {
+        //TODO: not correct, should be determined based on existing signatures
+        return SigningProfile.LT_TM.name();
+
+        /*
         List<Signature> signatures = container.getSignatures();
         if (signatures.isEmpty()) {
             return signingProfile.name();
         } else {
             return parseLibdigidocProfile(signatures.get(0).profile());
         }
+        */
+
     }
 
     private String parseLibdigidocProfile(String profile) {

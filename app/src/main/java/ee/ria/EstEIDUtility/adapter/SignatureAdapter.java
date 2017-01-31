@@ -38,13 +38,13 @@ import org.spongycastle.asn1.x500.style.BCStyle;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
-import ee.ria.EstEIDUtility.domain.X509Cert;
+import ee.ria.EstEIDUtility.container.SignatureFacade;
+import ee.ria.EstEIDUtility.certificate.X509Cert;
 import ee.ria.EstEIDUtility.fragment.ContainerSignaturesFragment;
 import ee.ria.EstEIDUtility.util.DateUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
-import ee.ria.libdigidocpp.Signature;
 
-public class SignatureAdapter extends ArrayAdapter<Signature> implements Filterable {
+public class SignatureAdapter extends ArrayAdapter<SignatureFacade> implements Filterable {
 
     private ContainerFacade containerFacade;
     private ContainerSignaturesFragment containerSignaturesFragment;
@@ -68,7 +68,7 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
 
     @NonNull
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         notificationUtil = new NotificationUtil(activity);
         ViewHolder viewHolder;
         if (convertView == null) {
@@ -85,28 +85,28 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Signature signature = getItem(position);
+        SignatureFacade signatureFacade = getItem(position);
 
-        X509Cert x509Cert = new X509Cert(signature.signingCertificateDer());
+        if (signatureFacade != null) {
+            X509Cert x509Cert = new X509Cert(signatureFacade.getSigningCertificateDer());
 
-        String surname = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SURNAME));
-        String name = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.GIVENNAME));
-        String serialNumber = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SERIALNUMBER));
+            String surname = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SURNAME));
+            String name = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.GIVENNAME));
+            String serialNumber = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SERIALNUMBER));
 
-        String personInfo = String.format("%s %s (%s)", name, surname, serialNumber);
-        viewHolder.name.setText(personInfo);
-        viewHolder.signed.setText(DateUtils.formatSignedDate(signature.trustedSigningTime()));
+            String personInfo = String.format("%s %s (%s)", name, surname, serialNumber);
+            viewHolder.name.setText(personInfo);
+            viewHolder.signed.setText(DateUtils.formatSignedDate(signatureFacade.getTrustedSigningTime()));
 
-        try {
-            signature.validate();
-            viewHolder.isSigned.setText(getContext().getText(R.string.signature_valid));
-            viewHolder.isSigned.setTextColor(Color.GREEN);
-        } catch (Exception e) {
-            viewHolder.isSigned.setText(getContext().getText(R.string.signature_invalid));
-            viewHolder.isSigned.setTextColor(Color.RED);
+            if (signatureFacade.isSignatureValid()) {
+                viewHolder.isSigned.setText(getContext().getText(R.string.signature_valid));
+                viewHolder.isSigned.setTextColor(Color.GREEN);
+            } else {
+                viewHolder.isSigned.setText(getContext().getText(R.string.signature_invalid));
+                viewHolder.isSigned.setTextColor(Color.RED);
+            }
+            viewHolder.removeSignature.setOnClickListener(new RemoveSignatureListener(position, personInfo));
         }
-
-        viewHolder.removeSignature.setOnClickListener(new RemoveSignatureListener(position, personInfo));
         return convertView;
     }
 
@@ -133,12 +133,11 @@ public class SignatureAdapter extends ArrayAdapter<Signature> implements Filtera
             builder.setPositiveButton(R.string.confirm_button, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Signature sign = getItem(position);
+                    SignatureFacade signatureFacade = getItem(position);
                     containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerFacade.getContainerFile()).build();
                     containerFacade.removeSignature(position);
-                    containerFacade.save();
                     notificationUtil.showSuccessMessage(getContext().getText(R.string.signature_removed));
-                    remove(sign);
+                    remove(signatureFacade);
                     notifyDataSetChanged();
                     containerSignaturesFragment.calculateFragmentHeight();
                 }

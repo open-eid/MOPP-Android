@@ -29,6 +29,10 @@ import java.util.Date;
 public class DateUtils {
 
     private static final String TAG = DateUtils.class.getName();
+    public static final SimpleDateFormat YYYY_FORMAT = new SimpleDateFormat("yyyy");
+    public static final SimpleDateFormat MMDD_FORMAT = new SimpleDateFormat("ddMM");
+    public static final SimpleDateFormat DDMM_FORMAT = new SimpleDateFormat("MMdd");
+
     public static final SimpleDateFormat TODAY_FORMAT = new SimpleDateFormat("HH:mm");
     public static final SimpleDateFormat CURRENT_YEAR_FORMAT = new SimpleDateFormat("dd.MMM");
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");

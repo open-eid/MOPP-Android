@@ -20,30 +20,33 @@
 package ee.ria.EstEIDUtility.container;
 
 
-import java.io.File;
-
 import ee.ria.libdigidocpp.DataFile;
 
 public class DataFileFacade {
 
     private DataFile containerDataFile;
-    private File cachedDataFile;
-    private String name;
 
-    public DataFileFacade(DataFile containerDataFile, File cachedDataFile) {
+    DataFileFacade(DataFile containerDataFile) {
         this.containerDataFile = containerDataFile;
-        this.cachedDataFile = cachedDataFile;
     }
 
-    public DataFile getContainerDataFile() {
-        return containerDataFile;
-    }
-
-    public File getLocation() {
-        return cachedDataFile;
-    }
-
-    public String getName() {
+    public String getFileName() {
         return containerDataFile.fileName();
+    }
+
+    public long getFileSize() {
+        return containerDataFile.fileSize();
+    }
+
+    public String getId() {
+        return containerDataFile.id();
+    }
+
+    public String getMediaType() {
+        return containerDataFile.mediaType();
+    }
+
+    public byte[] calcDigest(String digestMethod) {
+        return containerDataFile.calcDigest(digestMethod);
     }
 }

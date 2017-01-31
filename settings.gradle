@@ -1,1 +1,1 @@
-include ':app', ':tokenservice', ':androidmobileid'
+include ':app', ':tokenservice', ':tokenlibrary', ':scardcomlibrary', ':androidmobileid'

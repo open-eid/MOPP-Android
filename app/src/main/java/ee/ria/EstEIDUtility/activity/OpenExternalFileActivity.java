@@ -19,6 +19,7 @@
 
 package ee.ria.EstEIDUtility.activity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -27,7 +28,8 @@ import android.util.Log;
 
 import org.apache.commons.io.FilenameUtils;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
@@ -45,42 +47,99 @@ public class OpenExternalFileActivity extends EntryPointActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_external_file);
-        try {
-            ContainerFacade container = createContainer(getIntent().getData());
+        handleIntentAction();
+    }
+
+    private void handleIntentAction() {
+        Intent intent = getIntent();
+
+        ContainerFacade container = null;
+        switch (intent.getAction()) {
+            case Intent.ACTION_VIEW:
+                try {
+                    container = createContainer(intent.getData());
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage(), e);
+                }
+                break;
+            case Intent.ACTION_SEND:
+                Uri sendUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                if (sendUri != null) {
+                    container = createContainer(sendUri);
+                }
+                break;
+            case Intent.ACTION_SEND_MULTIPLE:
+                ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                if (uris != null) {
+                    container = createContainer(uris);
+                }
+                break;
+        }
+
+        if (container != null) {
             createContainerDetailsFragment(container);
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+        } else {
             createErrorFragment();
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        FileUtils.clearContainerCache(this);
-        FileUtils.clearDataFileCache(this);
+    private ContainerFacade createContainer(List<Uri> uris) {
+        if (!uris.isEmpty()) {
+            List<Uri> containers = searchForContainers(uris);
+            if (!containers.isEmpty()) {
+                Uri containerUri = containers.get(0);
+                uris.remove(containerUri);
+                try {
+                    return ContainerBuilder
+                            .aContainer(this)
+                            .fromExternalContainer(containerUri)
+                            .withDataFiles(uris)
+                            .build();
+                } catch (ContainerBuilder.ExternalContainerSaveException e) {
+                    Log.e(TAG, "createContainer: ", e);
+                    return null;
+                }
+            }
+
+            String fileName = FileUtils.resolveFileName(uris.get(0), getContentResolver());
+            return ContainerBuilder
+                    .aContainer(this)
+                    .withDataFiles(uris)
+                    .withContainerName(FilenameUtils.getBaseName(fileName) + "." + Constants.BDOC_EXTENSION)
+                    .build();
+        }
+        return null;
     }
 
     public ContainerFacade createContainer(Uri uri) {
         String fileName = FileUtils.resolveFileName(uri, getContentResolver());
-        if (isContainer(fileName)) {
-            return ContainerBuilder
-                    .aContainer(this)
-                    .fromExistingContainer(uri)
-                    .build();
+        if (FileUtils.isContainer(fileName)) {
+            try {
+                return ContainerBuilder
+                        .aContainer(this)
+                        .fromExternalContainer(uri)
+                        .build();
+            } catch (ContainerBuilder.ExternalContainerSaveException e) {
+                Log.e(TAG, "createContainer: ", e);
+                return null;
+            }
         } else {
             return ContainerBuilder
                     .aContainer(this)
                     .withDataFile(uri)
-                    .withContainerLocation(ContainerBuilder.ContainerLocation.CACHE)
                     .withContainerName(FilenameUtils.getBaseName(fileName) + "." + Constants.BDOC_EXTENSION)
                     .build();
         }
     }
 
-    private boolean isContainer(String fileName) {
-        String extension = FilenameUtils.getExtension(fileName).toLowerCase();
-        return Arrays.asList("bdoc", "asice").contains(extension);
+    private List<Uri> searchForContainers(List<Uri> uris) {
+        List<Uri> containers = new ArrayList<>();
+        for (Uri uri : uris) {
+            if (FileUtils.isContainer(FileUtils.resolveFileName(uri, getContentResolver()))) {
+                containers.add(uri);
+            }
+        }
+        return containers;
     }
 
     private void createContainerDetailsFragment(ContainerFacade container) {
@@ -110,7 +169,7 @@ public class OpenExternalFileActivity extends EntryPointActivity {
         }
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         errorFragment = new ErrorOpeningFileFragment();
-        setTitle("Error");
+        setTitle(R.string.error_page_title);
         fragmentTransaction.add(R.id.container_layout_holder, errorFragment, ErrorOpeningFileFragment.TAG);
         fragmentTransaction.commit();
     }

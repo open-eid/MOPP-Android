@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
     <files-path name="containers" path="containers/" />
-    <files-path name="data_files" path="datafiles/" />
     <cache-path name="container_cache" path="containers/" />
     <cache-path name="data_file_cache" path="datafiles/" />
 </paths>

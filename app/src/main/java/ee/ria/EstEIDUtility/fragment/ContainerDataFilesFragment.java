@@ -28,7 +28,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -47,11 +46,11 @@ import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.adapter.DataFilesAdapter;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
+import ee.ria.EstEIDUtility.container.DataFileFacade;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.LayoutUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
-import ee.ria.libdigidocpp.DataFile;
 
 public class ContainerDataFilesFragment extends ListFragment {
 
@@ -88,8 +87,8 @@ public class ContainerDataFilesFragment extends ListFragment {
         launchFileContentActivity(position);
     }
 
-    public void addFile(DataFile dataFile) {
-        filesAdapter.add(dataFile);
+    public void addFile(DataFileFacade dataFileFacade) {
+        filesAdapter.add(dataFileFacade);
         calculateFragmentHeight();
     }
 
@@ -115,8 +114,8 @@ public class ContainerDataFilesFragment extends ListFragment {
     }
 
     private void launchFileContentActivity(int position) {
-        DataFile file = (DataFile) getListAdapter().getItem(position);
-        String fileName = file.fileName();
+        DataFileFacade dataFileFacade = (DataFileFacade) getListAdapter().getItem(position);
+        String fileName = dataFileFacade.getFileName();
 
         File attachment = extractAttachment(fileName);
 
@@ -129,7 +128,9 @@ public class ContainerDataFilesFragment extends ListFragment {
         getContext().grantUriPermission(BuildConfig.APPLICATION_ID, contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(fileName));
+
+        String mimeType = FileUtils.resolveMimeType(fileName);
+
         intent.setDataAndType(contentUri, mimeType);
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
@@ -144,9 +145,8 @@ public class ContainerDataFilesFragment extends ListFragment {
     class FileLongClickListener implements AdapterView.OnItemLongClickListener {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            DataFile file = (DataFile) getListAdapter().getItem(position);
-            String fileName = file.fileName();
-
+            DataFileFacade dataFileFacade = (DataFileFacade) getListAdapter().getItem(position);
+            String fileName = dataFileFacade.getFileName();
             File attachment = extractAttachment(fileName);
 
             if (attachment == null) {
@@ -157,7 +157,7 @@ public class ContainerDataFilesFragment extends ListFragment {
             Uri contentUri = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, attachment);
             getContext().grantUriPermission(BuildConfig.APPLICATION_ID, contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FilenameUtils.getExtension(fileName));
+            String mimeType = FileUtils.resolveMimeType(fileName);
             if (mimeType == null) {
                 notificationUtil.showWarningMessage(getText(R.string.file_unsharable));
                 return false;

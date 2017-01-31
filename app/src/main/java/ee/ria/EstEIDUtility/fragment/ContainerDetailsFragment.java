@@ -28,9 +28,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -39,7 +41,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,29 +61,28 @@ import java.util.List;
 
 import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
-import ee.ria.EstEIDUtility.activity.BrowseContainersActivity;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.container.DataFileFacade;
+import ee.ria.EstEIDUtility.container.SignatureFacade;
 import ee.ria.EstEIDUtility.mid.CreateSignatureRequestBuilder;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.MobileSignProgressHelper;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
-import ee.ria.libdigidocpp.Container;
-import ee.ria.libdigidocpp.Signature;
 import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse.ProcessStatus;
 import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
 import ee.ria.mopp.androidmobileid.dto.response.SoapFault;
 import ee.ria.mopp.androidmobileid.service.MobileSignService;
+import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.token.tokenservice.callback.SignCallback;
-import ee.ria.token.tokenservice.token.PinVerificationException;
-import ee.ria.token.tokenservice.token.Token;
+import ee.ria.tokenlibrary.Token;
+import ee.ria.tokenlibrary.exception.PinVerificationException;
 
 import static android.app.Activity.RESULT_OK;
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.toJson;
@@ -173,7 +173,7 @@ public class ContainerDetailsFragment extends Fragment {
         createFilesListFragment();
         createSignatureListFragment();
 
-        title = (EditText) fragLayout.findViewById(R.id.listDocName);
+        title = (EditText) fragLayout.findViewById(R.id.docName);
         title.setKeyListener(null);
 
         body = (TextView) fragLayout.findViewById(R.id.listDocLocation);
@@ -221,16 +221,16 @@ public class ContainerDetailsFragment extends Fragment {
 
     private void addSignature(String adesSignature) {
         byte[] encoded = Charset.forName("UTF-8").encode(adesSignature).array();
-        containerFacade.getContainer().addAdESSignature(encoded);
+        containerFacade.addAdESSignature(encoded);
         containerFacade.save();
-        List<Signature> signatures = containerFacade.getSignatures();
-        Signature signature = signatures.get(signatures.size() - 1);
+        List<SignatureFacade> signatures = containerFacade.getSignatures();
+        SignatureFacade signature = signatures.get(signatures.size() - 1);
         findSignaturesFragment().addSignature(signature);
         notificationUtil.showSuccessMessage(getText(R.string.signature_added));
     }
 
     private void registerMidBroadcastReceiver() {
-        //TODO: refactor this nightmare
+        //TODO: Consider refactoring this, also need to register and unregister onPause and onResume
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -261,6 +261,8 @@ public class ContainerDetailsFragment extends Fragment {
         }, new IntentFilter(MID_BROADCAST_ACTION));
     }
 
+
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -281,7 +283,9 @@ public class ContainerDetailsFragment extends Fragment {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 refreshContainerFacade();
+
                 Uri uriToFile = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, containerFacade.getContainerFile());
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
@@ -290,45 +294,68 @@ public class ContainerDetailsFragment extends Fragment {
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.upload_to)));
             }
         });
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                refreshContainerFacade();
-                if (!containerFacade.hasDataFiles()) {
-                    notificationUtil.showWarningMessage(getText(R.string.save_container_no_files));
-                    return;
-                }
-                String fileName = title.getText().toString();
-                if (fileName.isEmpty()) {
-                    notificationUtil.showWarningMessage(getText(R.string.file_name_empty_message));
-                    return;
-                }
-                File savePath = FileUtils.getContainerFile(getContext(), fileName);
-                if (savePath.getAbsolutePath().equals(containerFacade.getAbsolutePath())) {
-                    containerFacade.save();
-                } else {
-                    if (savePath.exists()) {
-                        notificationUtil.showWarningMessage(getText(R.string.file_exists_message));
-                        return;
-                    }
-                    containerFacade.save(savePath);
-                }
-                Intent intent = new Intent(getActivity(), BrowseContainersActivity.class);
-                startActivity(intent);
-            }
-        });
-        editBdoc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                title.setInputType(EditorInfo.TYPE_CLASS_TEXT);
-                InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                input.showSoftInput(title, InputMethodManager.SHOW_IMPLICIT);
-            }
-        });
+        saveButton.setOnClickListener(new SaveFileNameListener());
+        title.setOnClickListener(new ChangeFileNameListener());
+        editBdoc.setOnClickListener(new ChangeFileNameListener());
 
         fileInfoTextView.setText(getFormattedFileInfo());
         title.setText(containerFacade.getName());
-        body.setText(containerFacade.getName());
+        body.append(containerFacade.getName());
+    }
+
+    public void updateFileSize() {
+        fileInfoTextView.setText(getFormattedFileInfo());
+    }
+
+    class SaveFileNameListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            refreshContainerFacade();
+            if (!containerFacade.hasDataFiles()) {
+                notificationUtil.showWarningMessage(getText(R.string.save_container_no_files));
+                return;
+            }
+            String fileName = title.getText().toString();
+            if (fileName.isEmpty()) {
+                notificationUtil.showWarningMessage(getText(R.string.file_name_empty_message));
+                return;
+            }
+
+            if (!FilenameUtils.getExtension(fileName).equals(Constants.BDOC_EXTENSION)) {
+                title.append(".");
+                title.append(Constants.BDOC_EXTENSION);
+                fileName = title.getText().toString();
+            }
+
+            File file = new File(FileUtils.getContainersDirectory(getContext()), fileName);
+            if (file.exists()) {
+                notificationUtil.showFailMessage(getText(R.string.file_exists_message));
+                return;
+            }
+
+            boolean renamed = containerFacade.getContainerFile().renameTo(file);
+            if (renamed) {
+                notificationUtil.showSuccessMessage(getText(R.string.file_rename_success));
+            }
+            containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(file).build();
+            containerFacade.save();
+            saveButton.setVisibility(View.GONE);
+            InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            input.hideSoftInputFromWindow(title.getWindowToken(), 0);
+            title.setCursorVisible(false);
+        }
+    }
+    class ChangeFileNameListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            saveButton.setVisibility(View.VISIBLE);
+            title.setCursorVisible(true);
+            title.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+            InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+            input.showSoftInput(title, InputMethodManager.SHOW_IMPLICIT);
+        }
     }
 
     private void refreshContainerFacade() {
@@ -342,11 +369,20 @@ public class ContainerDetailsFragment extends Fragment {
         return String.format(format, extension, sizeInKb);
     }
 
+    private String getFutureSignatureProfile() {
+        String profile = containerFacade.getExtendedSignatureProfile();
+        if (profile == null) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            profile = preferences.getString("container_file_type", "time-stamp");
+        }
+        return profile;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().registerReceiver(cardInsertedReceiver, new IntentFilter(TokenService.CARD_PRESENT_INTENT));
-        getActivity().registerReceiver(cardRemovedReceiver, new IntentFilter(TokenService.CARD_ABSENT_INTENT));
+        getActivity().registerReceiver(cardInsertedReceiver, new IntentFilter(ACS.CARD_PRESENT_INTENT));
+        getActivity().registerReceiver(cardRemovedReceiver, new IntentFilter(ACS.CARD_ABSENT_INTENT));
     }
 
     @Override
@@ -384,22 +420,15 @@ public class ContainerDetailsFragment extends Fragment {
     }
 
     class SignTaskCallback implements SignCallback {
-        Signature signature;
-        Container container;
-
-        SignTaskCallback(Container container, Signature signature) {
-            this.signature = signature;
-            this.container = container;
-        }
 
         @Override
         public void onSignResponse(byte[] signatureBytes) {
-            signature.setSignatureValue(signatureBytes);
-            //signature.extendSignatureProfile("time-mark"); //TODO: extending doesn't work
-            container.save();
-
-            findSignaturesFragment().addSignature(signature);
-            enterPinText.setText(getText(R.string.enter_pin));
+            containerFacade.setSignatureValue(signatureBytes);
+            SignatureFacade signatureFacade = containerFacade.getPreparedSignature();
+            signatureFacade.extendSignatureProfile(getFutureSignatureProfile());
+            containerFacade.save();
+            findSignaturesFragment().addSignature(signatureFacade);
+            enterPinText.setText(getText(R.string.enter_pin2));
             pinText.setText("");
             notificationUtil.showSuccessMessage(getText(R.string.signature_added));
         }
@@ -408,18 +437,23 @@ public class ContainerDetailsFragment extends Fragment {
         public void onSignError(Exception e, PinVerificationException pinVerificationException) {
             if (pinVerificationException != null) {
                 notificationUtil.showFailMessage(getText(R.string.pin_verification_failed));
-                pinText.setText("");
                 tokenService.readRetryCounter(pinVerificationException.getPinType(), new RetryCounterTaskCallback());
             } else {
-                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                notificationUtil.showFailMessage(getText(R.string.signing_failed));
             }
+            pinText.setText("");
         }
     }
 
     private class RetryCounterTaskCallback implements RetryCounterCallback {
         @Override
         public void onCounterRead(byte counterByte) {
-            enterPinText.setText(String.format(getText(R.string.enter_pin_retries_left).toString(), String.valueOf(counterByte)));
+            if (counterByte > 0) {
+                enterPinText.setText(String.format(getText(R.string.enter_pin2_retries_left).toString(), String.valueOf(counterByte)));
+            } else {
+                notificationUtil.showFailMessage(getText(R.string.pin2_blocked));
+                addSignatureButton.setEnabled(true);
+            }
         }
     }
 
@@ -468,7 +502,7 @@ public class ContainerDetailsFragment extends Fragment {
             return;
         }
         DataFileFacade dataFileFacade = containerFacade.getDataFile(cachedDataFile.getName());
-        findDataFilesFragment().addFile(dataFileFacade.getContainerDataFile());
+        findDataFilesFragment().addFile(dataFileFacade);
         if (cardPresent) {
             addSignatureButton.setEnabled(true);
         }
@@ -479,7 +513,8 @@ public class ContainerDetailsFragment extends Fragment {
         @Override
         public void onClick(View v) {
             refreshContainerFacade();
-            if (containerFacade.getContainer().signatures().size() > 0) {
+
+            if (containerFacade.isSigned()) {
                 notificationUtil.showFailMessage(getText(R.string.add_file_remove_signatures));
                 return;
             }
@@ -543,11 +578,9 @@ public class ContainerDetailsFragment extends Fragment {
         @Override
         public void onCertificateResponse(byte[] cert) {
             refreshContainerFacade();
-            Container container = containerFacade.getContainer();
-            Signature signature = container.prepareWebSignature(cert);
-            byte[] dataToSign = signature.dataToSign();
+            byte[] dataToSign = containerFacade.prepareWebSignature(cert, getFutureSignatureProfile());
             String pin2 = pinText.getText().toString();
-            tokenService.sign(Token.PinType.PIN2, pin2, dataToSign, new SignTaskCallback(container, signature));
+            tokenService.sign(Token.PinType.PIN2, pin2, dataToSign, new SignTaskCallback());
         }
 
         @Override
