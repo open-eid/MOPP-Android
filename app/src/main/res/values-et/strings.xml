@@ -125,4 +125,7 @@
     <string name="signature_added">Signature added</string>
     <string name="file_removed">File removed successfully</string>
     <string name="signature_removed">Signature removed successfully</string>
+    <string name="mobile_id">Sign with mobile ID</string>
+    <string name="mobile_nr">Telefoninumber</string>
+    <string name="personal_code">Isikukood</string>
 </resources>

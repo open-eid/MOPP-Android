@@ -156,4 +156,27 @@
     <string name="file_removed">File removed successfully</string>
     <string name="signature_removed">Signature removed successfully</string>
 
+    <!--Mobile Id -->
+    <string name="mobile_id">Sign with mobile ID</string>
+    <string name="mobile_nr">Mobile number</string>
+    <string name="personal_code">Personal code</string>
+
+
+    <string name="status_request_sent">Sign request sent</string>
+    <string name="status_request_ok">Request accepted</string>
+    <string name="status_expired_transaction">Request timeout</string>
+    <string name="status_user_cancel">User denied or cancelled</string>
+    <string name="status_signature">Got signature</string>
+    <string name="status_outstanding_transaction">Request pending</string>
+    <string name="status_mid_not_ready">Mobile-ID not ready, try again later</string>
+    <string name="status_phone_absent">Phone is switched off or out of coverage</string>
+    <string name="status_sending_error">Request sending error</string>
+    <string name="status_sim_error">SIM application error</string>
+    <string name="status_not_valid">signature is not valid</string>
+    <string name="status_revoked_certificate">Certificate revoked</string>
+    <string name="status_internal_error">Technical error</string>
+
+
+
+
 </resources>

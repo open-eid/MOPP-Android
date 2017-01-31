@@ -27,8 +27,8 @@ import java.util.List;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.libdigidocpp.DataFile;
 import ee.ria.libdigidocpp.Signature;
-import ee.ria.mopp.androidmobileid.dto.DataFileDto;
-import ee.ria.mopp.androidmobileid.dto.MobileCreateSignatureRequest;
+import ee.ria.mopp.androidmobileid.dto.request.DataFileDto;
+import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
 
 public class CreateSignatureRequestBuilder {
 

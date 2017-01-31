@@ -17,29 +17,42 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.dto;
+package ee.ria.mopp.androidmobileid.dto.response;
 
 import com.google.gson.Gson;
 
-public class ChallengeDto {
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Path;
+import org.simpleframework.xml.Root;
 
-    private String sesscode;
+@Root(strict = false, name = "dig:MobileCreateSignatureResponse")
+public class MobileCreateSignatureResponse {
+
+    private static final String BASE_PATH = "Body/MobileCreateSignatureResponse/";
+
+    @Element(name = "Sesscode")
+    @Path(BASE_PATH)
+    private int sesscode;
+    @Element(name = "ChallengeID")
+    @Path(BASE_PATH)
     private String challengeID;
+    @Element(name = "Status")
+    @Path(BASE_PATH)
     private String status;
 
-    public static String toJson(ChallengeDto challenge) {
+    public static String toJson(MobileCreateSignatureResponse challenge) {
         return new Gson().toJson(challenge);
     }
 
-    public static ChallengeDto fromJson(String json) {
-        return new Gson().fromJson(json, ChallengeDto.class);
+    public static MobileCreateSignatureResponse fromJson(String json) {
+        return new Gson().fromJson(json, MobileCreateSignatureResponse.class);
     }
 
-    public String getSesscode() {
+    public int getSesscode() {
         return sesscode;
     }
 
-    public void setSesscode(String sesscode) {
+    public void setSesscode(int sesscode) {
         this.sesscode = sesscode;
     }
 
@@ -61,7 +74,7 @@ public class ChallengeDto {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ChallengeDto{");
+        final StringBuilder sb = new StringBuilder("MobileCreateSignatureResponse {");
         sb.append("sesscode='").append(sesscode).append('\'');
         sb.append(", challengeID='").append(challengeID).append('\'');
         sb.append(", status='").append(status).append('\'');

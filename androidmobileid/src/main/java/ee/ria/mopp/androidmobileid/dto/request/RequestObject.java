@@ -17,14 +17,8 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.service;
+package ee.ria.mopp.androidmobileid.dto.request;
 
-public class MobileSignConstants {
-    public static final String MID_BROADCAST_ACTION = "ee.ria.mopp.androidmobileid.BROADCAST";
-    public static final String MID_BROADCAST_TYPE_KEY = "ee.ria.mopp.androidmobileid.MID_BROADCAST_TYPE_KEY";
-
-    public static final String CREATE_SIGNATURE_REQUEST = "ee.ria.mopp.androidmobileid.CREATE_SIGNATURE_REQUEST";
-    public static final String CREATE_SIGNATURE_CHALLENGE = "ee.ria.mopp.androidmobileid.MID_CHALLENGE";
-    public static final String CREATE_SIGNATURE_STATUS = "ee.ria.mopp.androidmobileid.CREATE_SIGNATURE_STATUS";
-    public static final String SERVICE_FAULT = "ee.ria.mopp.androidmobileid.SERVICE_FAULT";
+public interface RequestObject {
+    String getOperationName();
 }

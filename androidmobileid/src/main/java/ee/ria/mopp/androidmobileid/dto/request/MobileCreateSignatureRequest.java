@@ -1,28 +1,70 @@
-package ee.ria.mopp.androidmobileid.dto;
+/*
+ * Copyright 2017 Riigi Infosüsteemide Amet
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
+package ee.ria.mopp.androidmobileid.dto.request;
 
 import com.google.gson.Gson;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.Root;
+
 import java.util.List;
 
-public class MobileCreateSignatureRequest {
+@Root(name = "dig:MobileCreateSignature")
+public class MobileCreateSignatureRequest implements RequestObject{
 
+    @Element(name = "IDCode")
     private String idCode;
+    @Element(name = "Country", required = false)
     private String country;
+    @Element(name = "PhoneNo")
     private String phoneNr;
+    @Element(name = "Language")
     private String language;
+    @Element(name = "ServiceName")
     private String serviceName;
+    @Element(name = "MessageToDisplay", required = false)
     private String messageToDisplay;
+    @Element(name = "Role", required = false)
     private String role;
+    @Element(name = "City", required = false)
     private String city;
+    @Element(name = "StateOrProvince", required = false)
     private String stateOrProvince;
+    @Element(name = "PostalCode", required = false)
     private String postalCode;
+    @Element(name = "CountryName", required = false)
     private String countryName;
+    @Element(name = "SigningProfile", required = false)
     private String signingProfile;
+    @Element(name = "Format")
     private String format;
+    @Element(name = "Version")
     private String version;
+    @Element(name = "SignatureID")
     private String signatureId;
+    @Element(name = "MessagingMode")
     private String messagingMode;
+    @Element(name = "AsyncConfiguration", required = false)
     private Integer asyncConfiguration;
+    @ElementList(name = "DataFiles")
     private List<DataFileDto> datafiles;
 
     public static String toJson(MobileCreateSignatureRequest mobileCreateSignatureRequest) {
@@ -31,6 +73,11 @@ public class MobileCreateSignatureRequest {
 
     public static MobileCreateSignatureRequest fromJson(String json) {
         return new Gson().fromJson(json, MobileCreateSignatureRequest.class);
+    }
+
+    @Override
+    public String getOperationName() {
+        return "dig:MobileCreateSignature";
     }
 
     public String getIdCode() {

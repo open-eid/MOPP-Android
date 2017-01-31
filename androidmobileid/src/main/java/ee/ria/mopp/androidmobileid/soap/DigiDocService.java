@@ -19,55 +19,46 @@
 
 package ee.ria.mopp.androidmobileid.soap;
 
+
 import android.util.Log;
 
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
-import org.ksoap2.transport.KeepAliveHttpsTransportSE;
+import java.io.IOException;
 
-import ee.ria.mopp.androidmobileid.dto.ChallengeDto;
-import ee.ria.mopp.androidmobileid.dto.MobileCreateSignatureRequest;
+import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
+import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class DigiDocService {
+
+    private static final String TAG = "DigiDocService";
 
     private static final String NAMESPACE = "http://www.sk.ee/DigiDocService/DigiDocService_2_3.wsdl";
     private static final String MAIN_REQUEST_URL = "https://digidocservice.sk.ee/?wsdl";
     private static final String SOAP_ACTION = "http://www.sk.ee/DigiDocService/DigiDocService_2_3.wsdl/MobileCreateSignature";
     private static final String MOBILE_CREATE_SIGNATURE_METHOD_NAME = "MobileCreateSignature";
 
-    public ChallengeDto mobileCreateSignature(MobileCreateSignatureRequest request) {
-        SoapObject soapRequest = new SoapObject(NAMESPACE, MOBILE_CREATE_SIGNATURE_METHOD_NAME);
+    public MobileCreateSignatureResponse mobileCreateSignature(MobileCreateSignatureRequest request) {
+        RequestEnvelope envelope = new RequestEnvelope(new RequestBody(request));
 
 
-        SoapSerializationEnvelope envelope = getSoapSerializationEnvelope(soapRequest);
-        HttpTransportSE ht = getHttpTransportSE();
+
+        DigidocServiceClient ddsClient = ServiceGenerator.createService(DigidocServiceClient.class);
+
+
+        Call<MobileCreateSignatureResponse> call = ddsClient.mobileCreateSignature(envelope);
         try {
-            ht.debug = true;
-            ht.call(SOAP_ACTION, envelope);
-            Log.d("DDS_DUMP_REQUEST: ", ht.requestDump);
-            Log.d("DDS_DUMP_RESPONSE: ", ht.responseDump);
-        } catch (Exception e) {
+            Response<MobileCreateSignatureResponse> response = call.execute();
+            if (response.isSuccessful()) {
+                Log.i(TAG, "Call successful");
+                return response.body();
+            }
+            else {
+                return null;
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        ChallengeDto challengeDto = new ChallengeDto();
-        return challengeDto;
-    }
-
-    private SoapSerializationEnvelope getSoapSerializationEnvelope(SoapObject request) {
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.dotNet = false;
-        envelope.implicitTypes = true;
-        envelope.setAddAdornments(false);
-        envelope.setOutputSoapObject(request);
-        return envelope;
-    }
-
-    private HttpTransportSE getHttpTransportSE() {
-        HttpTransportSE ht = new KeepAliveHttpsTransportSE("digidocservice.sk.ee", 443, "", 6000);
-        ht.debug = true;
-        ht.setXmlVersionTag("<!--?xml version=\"1.0\" encoding= \"UTF-8\" ?-->");
-        return ht;
+        return null;
     }
 }

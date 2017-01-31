@@ -124,4 +124,7 @@
     <string name="signature_added">Подпись добавлена.</string>
     <string name="file_removed">Файл успешно удалён</string>
     <string name="signature_removed">Подпись успешно удалена</string>
+    <string name="mobile_id">Sign with mobile ID</string>
+    <string name="mobile_nr">Mobile number</string>
+    <string name="personal_code">Personal code</string>
 </resources>

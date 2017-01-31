@@ -17,29 +17,42 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.dto;
+package ee.ria.mopp.androidmobileid.dto.response;
 
 import com.google.gson.Gson;
 
-public class CreateSignatureStatusDto {
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Path;
+import org.simpleframework.xml.Root;
 
-    private String sessCode;
+@Root(strict = false, name = "dig:GetMobileCreateSignatureStatusResponse")
+public class GetMobileCreateSignatureStatusResponse {
+
+    private static final String BASE_PATH = "Body/GetMobileCreateSignatureStatusResponse/";
+
+    @Element(name = "Sesscode")
+    @Path(BASE_PATH)
+    private int sessCode;
+    @Element(name = "Status")
+    @Path(BASE_PATH)
     private ProcessStatus status;
+    @Element(name = "Signature", required = false)
+    @Path(BASE_PATH)
     private String signature;
 
-    public static String toJson(CreateSignatureStatusDto status) {
+    public static String toJson(GetMobileCreateSignatureStatusResponse status) {
         return new Gson().toJson(status);
     }
 
-    public static CreateSignatureStatusDto fromJson(String json) {
-        return new Gson().fromJson(json, CreateSignatureStatusDto.class);
+    public static GetMobileCreateSignatureStatusResponse fromJson(String json) {
+        return new Gson().fromJson(json, GetMobileCreateSignatureStatusResponse.class);
     }
 
-    public String getSessCode() {
+    public int getSessCode() {
         return sessCode;
     }
 
-    public void setSessCode(String sessCode) {
+    public void setSessCode(int sessCode) {
         this.sessCode = sessCode;
     }
 
@@ -61,7 +74,7 @@ public class CreateSignatureStatusDto {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CreateSignatureStatusDto{");
+        final StringBuilder sb = new StringBuilder("GetMobileCreateSignatureStatusResponse{");
         sb.append("sessCode='").append(sessCode).append('\'');
         sb.append(", status=").append(status);
         sb.append(", signature='").append(signature).append('\'');

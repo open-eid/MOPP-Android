@@ -17,14 +17,33 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.service;
+package ee.ria.mopp.androidmobileid.soap;
 
-public class MobileSignConstants {
-    public static final String MID_BROADCAST_ACTION = "ee.ria.mopp.androidmobileid.BROADCAST";
-    public static final String MID_BROADCAST_TYPE_KEY = "ee.ria.mopp.androidmobileid.MID_BROADCAST_TYPE_KEY";
 
-    public static final String CREATE_SIGNATURE_REQUEST = "ee.ria.mopp.androidmobileid.CREATE_SIGNATURE_REQUEST";
-    public static final String CREATE_SIGNATURE_CHALLENGE = "ee.ria.mopp.androidmobileid.MID_CHALLENGE";
-    public static final String CREATE_SIGNATURE_STATUS = "ee.ria.mopp.androidmobileid.CREATE_SIGNATURE_STATUS";
-    public static final String SERVICE_FAULT = "ee.ria.mopp.androidmobileid.SERVICE_FAULT";
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+
+import ee.ria.mopp.androidmobileid.dto.response.SoapFault;
+import okhttp3.ResponseBody;
+import retrofit2.Converter;
+import retrofit2.Response;
+
+public class ErrorUtils {
+
+    public static SoapFault parseError(Response<?> response) {
+        Converter<ResponseBody, SoapFault> converter =
+                ServiceGenerator.retrofit()
+                        .responseBodyConverter(SoapFault.class, new Annotation[0]);
+
+        SoapFault error;
+
+        try {
+            error = converter.convert(response.errorBody());
+        } catch (IOException e) {
+            return new SoapFault();
+        }
+
+        return error;
+    }
 }
