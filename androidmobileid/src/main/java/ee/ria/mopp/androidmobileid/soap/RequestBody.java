@@ -22,8 +22,6 @@ package ee.ria.mopp.androidmobileid.soap;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 
-import ee.ria.mopp.androidmobileid.dto.request.RequestObject;
-
 public class RequestBody {
 
     @Element(name = "DdsRequestObject")

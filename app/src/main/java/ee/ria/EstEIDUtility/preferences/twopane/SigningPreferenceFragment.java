@@ -45,7 +45,9 @@ public class SigningPreferenceFragment extends PreferenceFragment {
                 "signature_location_city",
                 "signature_location_state",
                 "signature_location_country",
-                "signature_location_zip"
+                "signature_location_zip",
+                "personal_code",
+                "mobile_nr"
         );
     }
 

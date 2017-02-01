@@ -48,6 +48,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -57,7 +58,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.List;
+import java.util.Locale;
 
 import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
@@ -68,13 +69,13 @@ import ee.ria.EstEIDUtility.container.SignatureFacade;
 import ee.ria.EstEIDUtility.mid.CreateSignatureRequestBuilder;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
-import ee.ria.EstEIDUtility.util.MobileSignProgressHelper;
+import ee.ria.EstEIDUtility.mid.MobileSignProgressHelper;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse.ProcessStatus;
 import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
-import ee.ria.mopp.androidmobileid.dto.response.SoapFault;
+import ee.ria.mopp.androidmobileid.dto.response.ServiceFault;
 import ee.ria.mopp.androidmobileid.service.MobileSignService;
 import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.token.tokenservice.TokenService;
@@ -114,6 +115,7 @@ public class ContainerDetailsFragment extends Fragment {
 
     private BroadcastReceiver cardInsertedReceiver;
     private BroadcastReceiver cardRemovedReceiver;
+    private BroadcastReceiver mobileIdBroadcastReceiver;
 
     private TokenService tokenService;
     private boolean serviceBound;
@@ -130,6 +132,7 @@ public class ContainerDetailsFragment extends Fragment {
 
         cardInsertedReceiver = new CardPresentReciever();
         cardRemovedReceiver = new CardAbsentReciever();
+        mobileIdBroadcastReceiver = new MobileIdBroadcastReceiver();
     }
 
     @Override
@@ -194,20 +197,36 @@ public class ContainerDetailsFragment extends Fragment {
         View view = getActivity().getLayoutInflater().inflate(R.layout.mobile_id_dialogue, null);
         final EditText mobileNr = (EditText) view.findViewById(R.id.mobile_nr);
         final EditText personalCode = (EditText) view.findViewById(R.id.personal_code);
+        final CheckBox rememberMe = (CheckBox) view.findViewById(R.id.remember_me);
+
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mobileNr.setText(preferences.getString("mobile_nr", ""));
+        personalCode.setText(preferences.getString("personal_code", ""));
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setPositiveButton(R.string.sign_button, new DialogInterface.OnClickListener() {
+
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String phone = mobileNr.getText().toString();
                 String pCode = personalCode.getText().toString();
+
+                if (rememberMe.isChecked()) {
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("mobile_nr", phone);
+                    editor.putString("personal_code", pCode);
+                    editor.apply();
+                }
+                String message = getResources().getString(R.string.action_sign) + " " + containerFacade.getName();
                 containerFacade.save();
                 MobileCreateSignatureRequest request = CreateSignatureRequestBuilder
                         .aCreateSignatureRequest()
                         .withContainer(containerFacade)
                         .withIdCode(pCode)
                         .withPhoneNr(phone)
-                        .withSingingProfile(CreateSignatureRequestBuilder.SigningProfile.LT)
+                        .withMessageToDisplay(message)
+                        .withLocale(Locale.getDefault())
+                        .withLocalSigningProfile(getFutureSignatureProfile())
                         .build();
                 Intent mobileSignIntent = new Intent(getActivity(), MobileSignService.class);
                 mobileSignIntent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));
@@ -216,6 +235,7 @@ public class ContainerDetailsFragment extends Fragment {
             }
         }).setNegativeButton(R.string.cancel, null);
         builder.setView(view);
+        notificationUtil.clearMessages();
         builder.show();
     }
 
@@ -223,52 +243,14 @@ public class ContainerDetailsFragment extends Fragment {
         byte[] encoded = Charset.forName("UTF-8").encode(adesSignature).array();
         containerFacade.addAdESSignature(encoded);
         containerFacade.save();
-        List<SignatureFacade> signatures = containerFacade.getSignatures();
-        SignatureFacade signature = signatures.get(signatures.size() - 1);
+        SignatureFacade signature = containerFacade.getLastSignature();
         findSignaturesFragment().addSignature(signature);
         notificationUtil.showSuccessMessage(getText(R.string.signature_added));
     }
 
-    private void registerMidBroadcastReceiver() {
-        //TODO: Consider refactoring this, also need to register and unregister onPause and onResume
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String broadcastType = intent.getStringExtra(MID_BROADCAST_TYPE_KEY);
-                if (SERVICE_FAULT.equals(broadcastType)) {
-                    SoapFault fault = SoapFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
-                    mobileSignProgressHelper.close();
-                    notificationUtil.showFailMessage(fault.getMessage());
-                }
-                else if (CREATE_SIGNATURE_CHALLENGE.equals(broadcastType)) {
-                    MobileCreateSignatureResponse challenge = MobileCreateSignatureResponse.fromJson(intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE));
-                    mobileSignProgressHelper.showMobileSignProgress(challenge.getChallengeID());
-                }
-                else if (CREATE_SIGNATURE_STATUS.equals(broadcastType)) {
-                    GetMobileCreateSignatureStatusResponse status = GetMobileCreateSignatureStatusResponse.fromJson(intent.getStringExtra(CREATE_SIGNATURE_STATUS));
-                    if (status.getStatus() == ProcessStatus.OUTSTANDING_TRANSACTION) {
-                        mobileSignProgressHelper.updateStatus(status.getStatus());
-                    } else if (status.getStatus() == ProcessStatus.SIGNATURE) {
-                        mobileSignProgressHelper.close();
-                        addSignature(status.getSignature());
-                    } else {
-                        mobileSignProgressHelper.close();
-                        notificationUtil.showFailMessage(mobileSignProgressHelper.getMessage(status.getStatus()));
-                    }
-                }
-                addSignatureButton.setEnabled(true);
-            }
-        }, new IntentFilter(MID_BROADCAST_ACTION));
-    }
-
-
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        registerMidBroadcastReceiver();
-
         addFileButton.setOnClickListener(new AddFileButtonListener());
         addSignatureButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -383,6 +365,7 @@ public class ContainerDetailsFragment extends Fragment {
         super.onResume();
         getActivity().registerReceiver(cardInsertedReceiver, new IntentFilter(ACS.CARD_PRESENT_INTENT));
         getActivity().registerReceiver(cardRemovedReceiver, new IntentFilter(ACS.CARD_ABSENT_INTENT));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mobileIdBroadcastReceiver, new IntentFilter(MID_BROADCAST_ACTION));
     }
 
     @Override
@@ -393,6 +376,9 @@ public class ContainerDetailsFragment extends Fragment {
         }
         if (cardRemovedReceiver != null) {
             getActivity().unregisterReceiver(cardRemovedReceiver);
+        }
+        if (mobileIdBroadcastReceiver != null) {
+            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mobileIdBroadcastReceiver);
         }
     }
 
@@ -625,6 +611,50 @@ public class ContainerDetailsFragment extends Fragment {
 
         @Override
         public void onCertificateError(Exception e) {
+        }
+    }
+
+    class MobileIdBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String broadcastType = intent.getStringExtra(MID_BROADCAST_TYPE_KEY);
+            if (isServiceFaultBroadcast(broadcastType)) {
+                ServiceFault fault = ServiceFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
+                mobileSignProgressHelper.close();
+                notificationUtil.showFailMessage(mobileSignProgressHelper.getFaultReasonMessage(fault.getReason()));
+                addSignatureButton.setEnabled(true);
+            }
+            else if (isChallengeBroadcast(broadcastType)) {
+                MobileCreateSignatureResponse challenge = MobileCreateSignatureResponse.fromJson(intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE));
+                mobileSignProgressHelper.showMobileSignProgress(challenge.getChallengeID());
+            }
+            else if (isStatusBroadcast(broadcastType)) {
+                GetMobileCreateSignatureStatusResponse status = GetMobileCreateSignatureStatusResponse.fromJson(intent.getStringExtra(CREATE_SIGNATURE_STATUS));
+                if (status.getStatus() == ProcessStatus.OUTSTANDING_TRANSACTION) {
+                    mobileSignProgressHelper.updateStatus(status.getStatus());
+                } else if (status.getStatus() == ProcessStatus.SIGNATURE) {
+                    mobileSignProgressHelper.close();
+                    addSignature(status.getSignature());
+                    addSignatureButton.setEnabled(true);
+                } else {
+                    mobileSignProgressHelper.close();
+                    notificationUtil.showFailMessage(mobileSignProgressHelper.getMessage(status.getStatus()));
+                    addSignatureButton.setEnabled(true);
+                }
+            }
+        }
+
+        private boolean isStatusBroadcast(String broadcastType) {
+            return CREATE_SIGNATURE_STATUS.equals(broadcastType);
+        }
+
+        private boolean isChallengeBroadcast(String broadcastType) {
+            return CREATE_SIGNATURE_CHALLENGE.equals(broadcastType);
+        }
+
+        private boolean isServiceFaultBroadcast(String broadcastType) {
+            return SERVICE_FAULT.equals(broadcastType);
         }
     }
 

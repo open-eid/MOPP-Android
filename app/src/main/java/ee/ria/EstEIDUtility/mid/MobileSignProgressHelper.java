@@ -17,7 +17,7 @@
  *
  */
 
-package ee.ria.EstEIDUtility.util;
+package ee.ria.EstEIDUtility.mid;
 
 import android.view.View;
 import android.widget.LinearLayout;
@@ -34,10 +34,12 @@ public class MobileSignProgressHelper {
     private TextView controlCodeText;
     private TextView mobileSignInfoText;
     private ProgressBar mobileSignProgressBar;
-    private MobileSignStatusMessageSource messageSource;
+    private MobileSignStatusMessageSource statusMessageSource;
+    private MobileSignFaultMessageSource faultMessageSource;
 
     public MobileSignProgressHelper(View layout) {
-        messageSource = new MobileSignStatusMessageSource(layout.getResources());
+        faultMessageSource = new MobileSignFaultMessageSource(layout.getResources());
+        statusMessageSource = new MobileSignStatusMessageSource(layout.getResources());
         progressLayout = (LinearLayout) layout.findViewById(R.id.mobile_sign_progress);
         signingProgressText = (TextView) layout.findViewById(R.id.signing_progress_text);
         controlCodeText = (TextView) layout.findViewById(R.id.mobile_sign_control_code);
@@ -47,7 +49,7 @@ public class MobileSignProgressHelper {
 
     public void showMobileSignProgress(CharSequence controlCode) {
         controlCodeText.setText(controlCode);
-        signingProgressText.setText(messageSource.getInitialStatusMessage());
+        signingProgressText.setText(statusMessageSource.getInitialStatusMessage());
         showAll();
     }
 
@@ -56,7 +58,7 @@ public class MobileSignProgressHelper {
     }
 
     public void updateStatus(GetMobileCreateSignatureStatusResponse.ProcessStatus processStatus) {
-        signingProgressText.setText(messageSource.getMessage(processStatus));
+        signingProgressText.setText(statusMessageSource.getMessage(processStatus));
     }
 
     public void close() {
@@ -64,6 +66,10 @@ public class MobileSignProgressHelper {
     }
 
     public CharSequence getMessage(GetMobileCreateSignatureStatusResponse.ProcessStatus status) {
-        return messageSource.getMessage(status);
+        return statusMessageSource.getMessage(status);
+    }
+
+    public CharSequence getFaultReasonMessage(String reason) {
+        return faultMessageSource.getMessage(reason);
     }
 }

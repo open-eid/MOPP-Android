@@ -27,8 +27,10 @@ import org.simpleframework.xml.Root;
 
 import java.util.List;
 
+import ee.ria.mopp.androidmobileid.soap.RequestObject;
+
 @Root(name = "dig:MobileCreateSignature")
-public class MobileCreateSignatureRequest implements RequestObject{
+public class MobileCreateSignatureRequest implements RequestObject {
 
     @Element(name = "IDCode")
     private String idCode;

@@ -17,7 +17,7 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.dto.request;
+package ee.ria.mopp.androidmobileid.soap;
 
 import org.simpleframework.xml.strategy.Type;
 import org.simpleframework.xml.strategy.Visitor;

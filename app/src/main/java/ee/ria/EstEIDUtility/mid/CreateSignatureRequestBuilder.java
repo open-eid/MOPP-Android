@@ -22,7 +22,9 @@ package ee.ria.EstEIDUtility.mid;
 import android.util.Base64;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.container.DataFileFacade;
@@ -40,12 +42,14 @@ public class CreateSignatureRequestBuilder {
     private static final int ASYNC_CONFIGURATION = 0;
     private static final String DIGEST_TYPE = "sha256";
     private static final String DIGEST_METHOD = "http://www.w3.org/2001/04/xmlenc#sha256";
+    private static final String DEFAULT_LANGUAGE = "ENG";
+    private static final List<String> SUPPORTED_LANGUAGES = Arrays.asList("ENG", "EST", "RUS", "LIT");
 
     private String phoneNr;
     private String idCode;
     private String message;
-    private String language;
-    private SigningProfile signingProfile;
+    private Locale locale;
+    private String localSigningProfile;
     private ContainerFacade container;
     private MobileCreateSignatureRequest request;
 
@@ -62,8 +66,25 @@ public class CreateSignatureRequestBuilder {
     private void buildPersonalInfo() {
         request.setIdCode(idCode);
         request.setPhoneNr(phoneNr);
-        request.setLanguage(language == null ? "EST" : language);
+        request.setLanguage(getLanguage());
         request.setMessageToDisplay(message == null ? "Sign " + container.getName() : message);
+    }
+
+    private String getLanguage() {
+        if (locale == null) {
+            return DEFAULT_LANGUAGE;
+        } else {
+            return getLanguageFromLocaleOrDefault(locale);
+        }
+    }
+
+    private String getLanguageFromLocaleOrDefault(Locale locale) {
+        try {
+            String language = locale.getISO3Language().toUpperCase();
+            return SUPPORTED_LANGUAGES.contains(language) ? language : DEFAULT_LANGUAGE;
+        } catch (Exception e) {
+            return DEFAULT_LANGUAGE;
+        }
     }
 
     private void buildConstantParameters() {
@@ -103,18 +124,7 @@ public class CreateSignatureRequestBuilder {
     }
 
     private String getSigningProfile() {
-        //TODO: not correct, should be determined based on existing signatures
-        return SigningProfile.LT_TM.name();
-
-        /*
-        List<Signature> signatures = container.getSignatures();
-        if (signatures.isEmpty()) {
-            return signingProfile.name();
-        } else {
-            return parseLibdigidocProfile(signatures.get(0).profile());
-        }
-        */
-
+        return parseLibdigidocProfile(localSigningProfile);
     }
 
     private String parseLibdigidocProfile(String profile) {
@@ -129,11 +139,10 @@ public class CreateSignatureRequestBuilder {
         return new CreateSignatureRequestBuilder();
     }
 
-    public CreateSignatureRequestBuilder withSingingProfile(SigningProfile signingProfile) {
-        this.signingProfile = signingProfile;
+    public CreateSignatureRequestBuilder withLocalSigningProfile(String signingProfile) {
+        this.localSigningProfile = signingProfile;
         return this;
     }
-
 
     public CreateSignatureRequestBuilder withPhoneNr(String phoneNr) {
         this.phoneNr = phoneNr;
@@ -152,6 +161,11 @@ public class CreateSignatureRequestBuilder {
 
     public CreateSignatureRequestBuilder withMessageToDisplay(String message) {
         this.message = message;
+        return this;
+    }
+
+    public CreateSignatureRequestBuilder withLocale(Locale locale) {
+        this.locale = locale;
         return this;
     }
 

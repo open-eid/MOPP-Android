@@ -89,6 +89,11 @@ public class ContainerFacade {
         return signatureItems;
     }
 
+    public SignatureFacade getLastSignature() {
+        List<SignatureFacade> signatures = getSignatures();
+        return signatures.isEmpty() ? null : signatures.get(signatures.size() -1);
+    }
+
     public String getName() {
         return containerFile.getName();
     }
@@ -177,7 +182,7 @@ public class ContainerFacade {
 
     public String getExtendedSignatureProfile() {
         if (isSignedWithExtendedProfile()) {
-            String profile = container.signatures().get(0).profile();
+            String profile = getFirstSignatureProfile();
             profile = profile.substring(profile.lastIndexOf("/") + 1);
             return profile;
         }
@@ -188,7 +193,7 @@ public class ContainerFacade {
         if (!isSigned()) {
             return false;
         }
-        String profile = container.signatures().get(0).profile();
+        String profile = getFirstSignatureProfile();
         profile = profile.substring(profile.lastIndexOf("/") + 1);
         for (String option : Arrays.asList("time-stamp", "time-mark")) {
             if (profile.contains(option)) {
@@ -196,6 +201,10 @@ public class ContainerFacade {
             }
         }
         return false;
+    }
+
+    private String getFirstSignatureProfile() {
+        return container.signatures().get(0).profile();
     }
 
     public void addAdESSignature(byte[] encoded) {

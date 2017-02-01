@@ -57,8 +57,10 @@ public class ContainerSignaturesFragment extends ListFragment {
     }
 
     public void addSignature(SignatureFacade signatureFacade) {
-        signatureAdapter.add(signatureFacade);
-        calculateFragmentHeight();
+        if (signatureFacade != null) {
+            signatureAdapter.add(signatureFacade);
+            calculateFragmentHeight();
+        }
     }
 
 }

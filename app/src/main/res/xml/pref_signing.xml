@@ -13,6 +13,26 @@
         android:title="@string/pref_signing_title_file_type" />
 
     <EditTextPreference
+        android:capitalize="none"
+        android:defaultValue=""
+        android:inputType="number"
+        android:key="personal_code"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_personal_code" />
+
+    <EditTextPreference
+        android:capitalize="none"
+        android:defaultValue=""
+        android:inputType="phone"
+        android:key="mobile_nr"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_mobile_nr" />
+
+    <EditTextPreference
         android:capitalize="sentences"
         android:defaultValue=""
         android:inputType="textCapSentences"

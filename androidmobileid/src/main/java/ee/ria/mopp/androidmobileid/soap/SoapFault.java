@@ -17,9 +17,7 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.dto.response;
-
-import com.google.gson.Gson;
+package ee.ria.mopp.androidmobileid.soap;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Path;
@@ -39,15 +37,6 @@ public class SoapFault {
     @Element
     @Path(BASE_PATH + "detail/")
     private String message;
-
-
-    public static String toJson(SoapFault fault) {
-        return new Gson().toJson(fault);
-    }
-
-    public static SoapFault fromJson(String json) {
-        return new Gson().fromJson(json, SoapFault.class);
-    }
 
     public String getFaultcode() {
         return faultcode;

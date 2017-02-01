@@ -22,6 +22,8 @@ package ee.ria.mopp.androidmobileid.dto.request;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
+import ee.ria.mopp.androidmobileid.soap.RequestObject;
+
 @Root(name = "dig:GetMobileCreateSignatureStatus")
 public class GetMobileCreateSignatureStatusRequest implements RequestObject {
 

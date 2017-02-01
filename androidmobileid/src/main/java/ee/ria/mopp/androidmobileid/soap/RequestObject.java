@@ -17,7 +17,7 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.dto.request;
+package ee.ria.mopp.androidmobileid.soap;
 
 public interface RequestObject {
     String getOperationName();

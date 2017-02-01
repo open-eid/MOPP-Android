@@ -29,7 +29,7 @@
         android:id="@+id/mobile_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:labelFor="@+id/pin"
+        android:labelFor="@+id/mobile_nr"
         android:text="@string/mobile_id"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -62,5 +62,12 @@
         android:maxLength="11"
         android:maxLines="1"
         android:textAppearance="?android:textAppearanceMedium" />
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/remember_me"
+        android:text="@string/remember_me"
+        android:checked="true" />
 
 </LinearLayout>

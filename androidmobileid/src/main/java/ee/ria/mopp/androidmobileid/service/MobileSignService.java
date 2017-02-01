@@ -10,15 +10,16 @@ import java.io.IOException;
 
 import ee.ria.mopp.androidmobileid.dto.request.GetMobileCreateSignatureStatusRequest;
 import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
-import ee.ria.mopp.androidmobileid.dto.request.RequestObject;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
-import ee.ria.mopp.androidmobileid.dto.response.SoapFault;
+import ee.ria.mopp.androidmobileid.dto.response.ServiceFault;
 import ee.ria.mopp.androidmobileid.soap.DigidocServiceClient;
 import ee.ria.mopp.androidmobileid.soap.ErrorUtils;
 import ee.ria.mopp.androidmobileid.soap.RequestBody;
 import ee.ria.mopp.androidmobileid.soap.RequestEnvelope;
+import ee.ria.mopp.androidmobileid.soap.RequestObject;
 import ee.ria.mopp.androidmobileid.soap.ServiceGenerator;
+import ee.ria.mopp.androidmobileid.soap.SoapFault;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -30,6 +31,7 @@ public class MobileSignService extends IntentService {
     private static final long INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 10000;
     private static final long SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 5000;
     public static final String TAG = MobileSignService.class.getName();
+
     private DigidocServiceClient ddsClient;
 
     public MobileSignService() {
@@ -45,8 +47,7 @@ public class MobileSignService extends IntentService {
         try {
             Response<MobileCreateSignatureResponse> responseWrapper = call.execute();
             if (!responseWrapper.isSuccessful()) {
-                SoapFault fault = ErrorUtils.parseError(responseWrapper);
-                broadcastFault(fault);
+                parseErrorAndBroadcast(responseWrapper);
             } else {
                 MobileCreateSignatureResponse response = responseWrapper.body();
                 broadcastMobileCreateSignatureResponse(response);
@@ -54,31 +55,44 @@ public class MobileSignService extends IntentService {
                 doCreateSignatureStatusRequestLoop(new GetMobileCreateSignatureStatusRequest(response.getSesscode()));
             }
         } catch (IOException e) {
-           Log.e(TAG, "SoapRequestFailure", e);
+            broadcastFault(new ServiceFault(e));
+            Log.e(TAG, "SoapRequestFailure", e);
         }
-    }
-
-    private void broadcastFault(SoapFault fault) {
-        Intent localIntent = new Intent(MobileSignConstants.MID_BROADCAST_ACTION)
-                .putExtra(MobileSignConstants.MID_BROADCAST_TYPE_KEY, MobileSignConstants.SERVICE_FAULT)
-                .putExtra(MobileSignConstants.SERVICE_FAULT, SoapFault.toJson(fault));
-        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
     private void doCreateSignatureStatusRequestLoop(GetMobileCreateSignatureStatusRequest request) throws IOException {
         Call<GetMobileCreateSignatureStatusResponse> responseCall = ddsClient.getMobileCreateSignatureStatus(wrapInEnvelope(request));
-        GetMobileCreateSignatureStatusResponse response = responseCall.execute().body();
-        if (response.getStatus() == GetMobileCreateSignatureStatusResponse.ProcessStatus.OUTSTANDING_TRANSACTION) {
-            broadcastMobileCreateSignatureStatusResponse(response);
+        Response<GetMobileCreateSignatureStatusResponse> responseWrapper = responseCall.execute();
+        if (!responseWrapper.isSuccessful()) {
+            parseErrorAndBroadcast(responseWrapper);
+            return;
+        }
+        GetMobileCreateSignatureStatusResponse response = responseWrapper.body();
+        broadcastMobileCreateSignatureStatusResponse(response);
+        if (isOutstandingTransaction(response)) {
             sleep(SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
             doCreateSignatureStatusRequestLoop(request);
-        } else {
-            broadcastMobileCreateSignatureStatusResponse(response);
         }
+    }
+
+    private boolean isOutstandingTransaction(GetMobileCreateSignatureStatusResponse response) {
+        return response.getStatus() == GetMobileCreateSignatureStatusResponse.ProcessStatus.OUTSTANDING_TRANSACTION;
+    }
+
+    private void parseErrorAndBroadcast(Response responseWrapper) {
+        SoapFault soapFault = ErrorUtils.parseError(responseWrapper);
+        broadcastFault(new ServiceFault(soapFault));
     }
 
     private RequestEnvelope wrapInEnvelope(RequestObject request) {
         return new RequestEnvelope(new RequestBody(request));
+    }
+
+    private void broadcastFault(ServiceFault fault) {
+        Intent localIntent = new Intent(MobileSignConstants.MID_BROADCAST_ACTION)
+                .putExtra(MobileSignConstants.MID_BROADCAST_TYPE_KEY, MobileSignConstants.SERVICE_FAULT)
+                .putExtra(MobileSignConstants.SERVICE_FAULT, ServiceFault.toJson(fault));
+        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
     private void broadcastMobileCreateSignatureStatusResponse(GetMobileCreateSignatureStatusResponse status) {

@@ -17,7 +17,7 @@
  *
  */
 
-package ee.ria.EstEIDUtility.util;
+package ee.ria.EstEIDUtility.mid;
 
 import android.content.res.Resources;
 

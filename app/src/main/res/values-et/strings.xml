@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RIA DigiDoc</string>
-    <string name="action_sign">Sign</string>
+    <string name="action_sign">Allkirjasta</string>
     <string name="insert_pin_puk">Insert PIN/PUK</string>
     <string name="settings">Settings</string>
     <string name="cert_read_failed">Cert read failed</string>

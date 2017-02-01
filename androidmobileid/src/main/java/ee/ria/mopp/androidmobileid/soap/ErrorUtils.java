@@ -24,7 +24,6 @@ package ee.ria.mopp.androidmobileid.soap;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 
-import ee.ria.mopp.androidmobileid.dto.response.SoapFault;
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Response;
