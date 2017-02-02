@@ -68,6 +68,14 @@ abstract class EstEIDToken implements Token {
     }
 
     @Override
+    public byte[] readCert(CertType type) {
+        selectMasterFile();
+        selectCatalogue();
+        transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x04, 0x02, type.value, (byte) 0xCE});
+        return readCertRecords();
+    }
+
+    @Override
     public byte readRetryCounter(PinType pinType) {
         selectMasterFile();
         transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x0C, 0x02, 0x00, 0x16});

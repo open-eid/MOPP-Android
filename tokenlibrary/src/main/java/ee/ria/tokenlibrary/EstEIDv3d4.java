@@ -49,7 +49,8 @@ public class EstEIDv3d4 extends EstEIDToken {
                     byte[] challenge = {0x3F, 0x4B, (byte) 0xE6, 0x4B, (byte) 0xC9, 0x06, 0x6F, 0x14, (byte) 0x8A, 0x39, 0x21, (byte) 0xD8, 0x7C, (byte) 0x94, 0x41, 0x40, (byte) 0x99, 0x72, 0x4B, 0x58, 0x75, (byte) 0xA1, 0x15, 0x78};
                     return transmitExtended(Util.concat(new byte[]{0x00, (byte) 0x88, 0x00, 0x00, 0x24}, challenge));
                 case PIN2:
-                    return transmitExtended(Util.concat(new byte[]{0x00, 0x2A, (byte) 0x9E, (byte) 0x9A, 0x23}, AlgorithmUtils.addPadding(data)));
+                    byte[] padded = AlgorithmUtils.addPadding(data);
+                    return transmitExtended(Util.concat(new byte[]{0x00, 0x2A, (byte) 0x9E, (byte) 0x9A, (byte) padded.length}, padded));
                 default:
                     throw new Exception("Unsupported");
             }
@@ -95,15 +96,6 @@ public class EstEIDv3d4 extends EstEIDToken {
 
         byte[] recv = transmit(Util.concat(new byte[]{0x00, 0x2C, 0x00, pinType.value, (byte) (puk.length + newPin.length)}, puk, newPin));
         return checkSW(recv);
-    }
-
-    @Override
-    public byte[] readCert(CertType type) {
-        selectMasterFile();
-        selectCatalogue();
-        transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x04, 0x02, (byte) 0xAA, (byte) 0xCE});
-        return readCertRecords();
-
     }
 
     @Override
