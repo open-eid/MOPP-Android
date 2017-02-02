@@ -4,7 +4,7 @@
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
     <ListPreference
-        android:defaultValue="bdoc"
+        android:defaultValue="time-mark"
         android:entries="@array/pref_signing_file_type_names"
         android:entryValues="@array/pref_signing_file_type_values"
         android:key="container_file_type"
