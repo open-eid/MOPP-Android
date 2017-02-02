@@ -19,31 +19,37 @@
 
 package ee.ria.EstEIDUtility.util;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
+@SuppressLint("SimpleDateFormat")
 public class DateUtils {
 
     private static final String TAG = DateUtils.class.getName();
+
     public static final SimpleDateFormat YYYY_FORMAT = new SimpleDateFormat("yyyy");
     public static final SimpleDateFormat MMDD_FORMAT = new SimpleDateFormat("ddMM");
     public static final SimpleDateFormat DDMM_FORMAT = new SimpleDateFormat("MMdd");
 
-    public static final SimpleDateFormat TODAY_FORMAT = new SimpleDateFormat("HH:mm");
-    public static final SimpleDateFormat CURRENT_YEAR_FORMAT = new SimpleDateFormat("dd.MMM");
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
+    public static final SimpleDateFormat TODAY_FORMAT = new SimpleDateFormat("HH:mm", Locale.getDefault());
+    public static final SimpleDateFormat CURRENT_YEAR_FORMAT = new SimpleDateFormat("dd.MMM", Locale.getDefault());
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
 
-    private static final SimpleDateFormat SIGNATURE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    private static final SimpleDateFormat APP_FORMAT = new SimpleDateFormat("dd MMM yyyy HH:mm");
+    private static final String TRUSTED_SIGNATURE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    private static final String GREENWICH_MEAN_TIME = "Etc/GMT";
+    private static final String SIGNATURE_TIME_DISPLAY_FORMAT = "dd MMM yyyy HH:mm";
 
     public static String formatSignedDate(String trustedSigningTime) {
         try {
-            Date signedDate = SIGNATURE_FORMAT.parse(trustedSigningTime);
-            return APP_FORMAT.format(signedDate);
+            Date signedDate = getTrustedSigningTimeFormatWithGmtTimeZone().parse(trustedSigningTime);
+            return getSignatureTimeDisplayFormatWithDeviceTimeZone().format(signedDate);
         } catch (ParseException e) {
             Log.e(TAG, "formatSignedDate: ", e);
         }
@@ -90,5 +96,17 @@ public class DateUtils {
         c1.setTime(date);
 
         return year == c1.get(Calendar.YEAR);
+    }
+
+    private static SimpleDateFormat getTrustedSigningTimeFormatWithGmtTimeZone() {
+        SimpleDateFormat sdf = new SimpleDateFormat(TRUSTED_SIGNATURE_FORMAT);
+        sdf.setTimeZone(TimeZone.getTimeZone(GREENWICH_MEAN_TIME));
+        return sdf;
+    }
+
+    private static SimpleDateFormat getSignatureTimeDisplayFormatWithDeviceTimeZone() {
+        SimpleDateFormat sdf = new SimpleDateFormat(SIGNATURE_TIME_DISPLAY_FORMAT, Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getDefault());
+        return sdf;
     }
 }
