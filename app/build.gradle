@@ -10,6 +10,8 @@ android {
         targetSdkVersion 21
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
+        versionCode 1
+        versionName "0.0.5-beta"
     }
 
     buildTypes {

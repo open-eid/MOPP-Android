@@ -20,10 +20,12 @@
 package ee.ria.EstEIDUtility.activity;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.preferences.SettingsActivity;
@@ -34,6 +36,20 @@ public class DashboardMenuActivity extends EntryPointActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard_menu);
+        showVersion();
+    }
+
+    private void showVersion() {
+        TextView version = (TextView)findViewById(R.id.app_version);
+        version.setText(getVersionName());
+    }
+
+    private String getVersionName() {
+        try {
+            return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            return "N/A";
+        }
     }
 
     @Override
