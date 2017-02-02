@@ -36,6 +36,7 @@ import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.fragment.ContainerDetailsFragment;
 import ee.ria.EstEIDUtility.fragment.ErrorOpeningFileFragment;
+import ee.ria.EstEIDUtility.preferences.accessor.AppPreferences;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 
@@ -105,7 +106,7 @@ public class OpenExternalFileActivity extends EntryPointActivity {
             return ContainerBuilder
                     .aContainer(this)
                     .withDataFiles(uris)
-                    .withContainerName(FilenameUtils.getBaseName(fileName) + "." + Constants.BDOC_EXTENSION)
+                    .withContainerName(FilenameUtils.getBaseName(fileName) + "." + getContainerFormat())
                     .build();
         }
         return null;
@@ -127,7 +128,7 @@ public class OpenExternalFileActivity extends EntryPointActivity {
             return ContainerBuilder
                     .aContainer(this)
                     .withDataFile(uri)
-                    .withContainerName(FilenameUtils.getBaseName(fileName) + "." + Constants.BDOC_EXTENSION)
+                    .withContainerName(FilenameUtils.getBaseName(fileName) + "." + getContainerFormat())
                     .build();
         }
     }
@@ -172,6 +173,10 @@ public class OpenExternalFileActivity extends EntryPointActivity {
         setTitle(R.string.error_page_title);
         fragmentTransaction.add(R.id.container_layout_holder, errorFragment, ErrorOpeningFileFragment.TAG);
         fragmentTransaction.commit();
+    }
+
+    private String getContainerFormat() {
+        return AppPreferences.get(this).getContainerFormat();
     }
 
     private ErrorOpeningFileFragment findErrorFragment() {

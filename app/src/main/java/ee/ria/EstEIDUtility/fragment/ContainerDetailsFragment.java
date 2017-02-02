@@ -28,11 +28,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -67,9 +65,11 @@ import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.container.DataFileFacade;
 import ee.ria.EstEIDUtility.container.SignatureFacade;
 import ee.ria.EstEIDUtility.mid.CreateSignatureRequestBuilder;
-import ee.ria.EstEIDUtility.util.Constants;
-import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.mid.MobileSignProgressHelper;
+import ee.ria.EstEIDUtility.preferences.accessor.AppPreferences;
+import ee.ria.EstEIDUtility.util.Constants;
+import ee.ria.EstEIDUtility.util.ContainerNameUtils;
+import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
@@ -199,9 +199,9 @@ public class ContainerDetailsFragment extends Fragment {
         final EditText personalCode = (EditText) view.findViewById(R.id.personal_code);
         final CheckBox rememberMe = (CheckBox) view.findViewById(R.id.remember_me);
 
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        mobileNr.setText(preferences.getString("mobile_nr", ""));
-        personalCode.setText(preferences.getString("personal_code", ""));
+        final AppPreferences preferences = AppPreferences.get(getContext());
+        mobileNr.setText(preferences.getMobileNumber());
+        personalCode.setText(preferences.getPersonalCode());
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setPositiveButton(R.string.sign_button, new DialogInterface.OnClickListener() {
@@ -210,12 +210,9 @@ public class ContainerDetailsFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 String phone = mobileNr.getText().toString();
                 String pCode = personalCode.getText().toString();
-
                 if (rememberMe.isChecked()) {
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("mobile_nr", phone);
-                    editor.putString("personal_code", pCode);
-                    editor.apply();
+                    preferences.updateMobileNumber(phone);
+                    preferences.updatePersonalCode(pCode);
                 }
                 String message = getResources().getString(R.string.action_sign) + " " + containerFacade.getName();
                 containerFacade.save();
@@ -304,9 +301,9 @@ public class ContainerDetailsFragment extends Fragment {
                 return;
             }
 
-            if (!FilenameUtils.getExtension(fileName).equals(Constants.BDOC_EXTENSION)) {
+            if (!ContainerNameUtils.hasSupportedContainerExtension(fileName)) {
                 title.append(".");
-                title.append(Constants.BDOC_EXTENSION);
+                title.append(AppPreferences.get(getContext()).getContainerFormat());
                 fileName = title.getText().toString();
             }
 
@@ -354,8 +351,7 @@ public class ContainerDetailsFragment extends Fragment {
     private String getFutureSignatureProfile() {
         String profile = containerFacade.getExtendedSignatureProfile();
         if (profile == null) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-            profile = preferences.getString("container_file_type", "time-stamp");
+            profile = AppPreferences.get(getContext()).getSignatureProfile();
         }
         return profile;
     }

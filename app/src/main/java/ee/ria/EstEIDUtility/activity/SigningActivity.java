@@ -27,12 +27,12 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import org.apache.commons.io.FilenameUtils;
-
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
+import ee.ria.EstEIDUtility.preferences.accessor.AppPreferences;
 import ee.ria.EstEIDUtility.util.Constants;
+import ee.ria.EstEIDUtility.util.ContainerNameUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 
@@ -68,9 +68,9 @@ public class SigningActivity extends AppCompatActivity {
             return;
         }
 
-        if (!FilenameUtils.getExtension(containerName.getText().toString()).equals(Constants.BDOC_EXTENSION)) {
+        if (!ContainerNameUtils.hasSupportedContainerExtension(fileName)) {
             containerName.append(".");
-            containerName.append(Constants.BDOC_EXTENSION);
+            containerName.append(AppPreferences.get(this).getContainerFormat());
         }
 
         String containerFileName = containerName.getText().toString();
@@ -85,5 +85,4 @@ public class SigningActivity extends AppCompatActivity {
         intent.putExtra(Constants.CONTAINER_PATH_KEY, containerFacade.getAbsolutePath());
         startActivity(intent);
     }
-
 }

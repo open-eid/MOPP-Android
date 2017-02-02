@@ -19,12 +19,27 @@
 
 package ee.ria.EstEIDUtility.util;
 
-public class Constants {
-    public static final String CONTAINER_NAME_KEY = "ee.ria.EstEIDUtility.containerName";
-    public static final String CONTAINER_PATH_KEY = "ee.ria.EstEIDUtility.containerPath";
+import org.apache.commons.io.FilenameUtils;
 
-    public static final String PIN_TYPE_KEY = "ee.ria.EstEIDUtility.pinType";
-    public static final String SCHEMA_DIRECTORY = "schema";
-    public static final String CONTAINERS_DIRECTORY = "containers";
-    public static final String DATA_FILES_DIRECTORY = "datafiles";
+import ee.ria.EstEIDUtility.preferences.accessor.AppPreferences;
+
+public class ContainerNameUtils {
+
+    private ContainerNameUtils() {}
+
+    public static boolean hasSupportedContainerExtension(String containerName) {
+        return hasBdocExtension(containerName) || hasAsiceExtension(containerName);
+    }
+
+    public static boolean hasBdocExtension(String containerName) {
+        return hasExtension(containerName, AppPreferences.BDOC_CONTAINER_TYPE);
+    }
+
+    public static boolean hasAsiceExtension(String containerName) {
+        return hasExtension(containerName, AppPreferences.ASICE_CONTAINER_TYPE);
+    }
+
+    public static boolean hasExtension(String containerName, String extension) {
+        return FilenameUtils.getExtension(containerName).equals(extension);
+    }
 }

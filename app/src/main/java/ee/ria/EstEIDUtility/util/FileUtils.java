@@ -159,8 +159,7 @@ public class FileUtils {
     }
 
     public static boolean isContainer(String fileName) {
-        String extension = FilenameUtils.getExtension(fileName).toLowerCase();
-        return Arrays.asList("bdoc", "asice").contains(extension);
+        return ContainerNameUtils.hasSupportedContainerExtension(fileName);
     }
 
     public static String resolveMimeType(String fileName) {
