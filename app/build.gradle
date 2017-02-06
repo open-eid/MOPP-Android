@@ -2,16 +2,16 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "ee.ria.EstEIDUtility"
         minSdkVersion 21
-        targetSdkVersion 21
+        targetSdkVersion 25
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
-        versionCode 1
-        versionName "0.0.5-beta"
+        versionCode 2
+        versionName "0.0.5-beta2"
     }
 
     buildTypes {
