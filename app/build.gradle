@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "ee.ria.EstEIDUtility"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 22 //TODO: investigate error loading library when targeting sdk above 22
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         versionCode 2
