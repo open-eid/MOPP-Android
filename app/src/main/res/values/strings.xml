@@ -107,6 +107,7 @@
     <string name="openingFileFailed">Opening File Failed</string>
     <string name="save_container_no_files">Container needs to have atleast 1 data file to save</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="no_connectivity_warning">Please connect to internet in order to sign</string>
 
 
     <!-- Strings related to Settings -->

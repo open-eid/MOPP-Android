@@ -104,6 +104,7 @@
     <string name="attachment_extract_failed">Не удалось извлечь файл из контейнера</string>
     <string name="file_unsharable">Файла данного типа не может быть отправлен.</string>
     <string name="openingFileFailed">Открытие файла не удалось</string>
+    <string name="no_connectivity_warning">Please connect to internet in order to sign</string>
 
     <!--eID-->
     <string name="eid_cert">Сертификат:</string>

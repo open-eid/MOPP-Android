@@ -19,14 +19,14 @@
 
 package ee.ria.mopp.androidmobileid.service;
 
-public class MobileSignConstants {
-    public static final String MID_BROADCAST_ACTION = "ee.ria.mopp.androidmobileid.BROADCAST";
-    public static final String MID_BROADCAST_TYPE_KEY = "ee.ria.mopp.androidmobileid.MID_BROADCAST_TYPE_KEY";
+public interface MobileSignConstants {
+    String MID_BROADCAST_ACTION = "ee.ria.mopp.androidmobileid.MID_BROADCAST_ACTION";
+    String MID_BROADCAST_TYPE_KEY = "ee.ria.mopp.androidmobileid.MID_BROADCAST_TYPE_KEY";
 
-    public static final String CREATE_SIGNATURE_REQUEST = "ee.ria.mopp.androidmobileid.CREATE_SIGNATURE_REQUEST";
-    public static final String ACCESS_TOKEN_PASS = "ee.ria.mopp.androidmobileid.ACCESS_TOKEN_PASS";
-    public static final String ACCESS_TOKEN_PATH = "ee.ria.mopp.androidmobileid.ACCESS_TOKEN_PATH";
-    public static final String CREATE_SIGNATURE_CHALLENGE = "ee.ria.mopp.androidmobileid.MID_CHALLENGE";
-    public static final String CREATE_SIGNATURE_STATUS = "ee.ria.mopp.androidmobileid.CREATE_SIGNATURE_STATUS";
-    public static final String SERVICE_FAULT = "ee.ria.mopp.androidmobileid.SERVICE_FAULT";
+    String CREATE_SIGNATURE_REQUEST = "ee.ria.mopp.androidmobileid.CREATE_SIGNATURE_REQUEST";
+    String ACCESS_TOKEN_PASS = "ee.ria.mopp.androidmobileid.ACCESS_TOKEN_PASS";
+    String ACCESS_TOKEN_PATH = "ee.ria.mopp.androidmobileid.ACCESS_TOKEN_PATH";
+    String CREATE_SIGNATURE_CHALLENGE = "ee.ria.mopp.androidmobileid.MID_CHALLENGE";
+    String CREATE_SIGNATURE_STATUS = "ee.ria.mopp.androidmobileid.CREATE_SIGNATURE_STATUS";
+    String SERVICE_FAULT = "ee.ria.mopp.androidmobileid.SERVICE_FAULT";
 }

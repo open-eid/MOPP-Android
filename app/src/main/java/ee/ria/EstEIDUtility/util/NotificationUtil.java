@@ -103,10 +103,24 @@ public class NotificationUtil {
         warning.setVisibility(View.VISIBLE);
     }
 
+    public void clearWarning(CharSequence message) {
+        if (isSameWarningDisplayed(message.toString())) {
+            warning.setVisibility(View.GONE);
+        }
+    }
+
     public void clearMessages() {
         fail.setVisibility(View.GONE);
         warning.setVisibility(View.GONE);
         success.setVisibility(View.GONE);
+    }
+
+    private boolean isSameWarningDisplayed(String message) {
+        if (message == null || warning.getVisibility() == View.GONE) {
+            return false;
+        }
+        String displayedMessage = warningText.getText().toString();
+        return message.equals(displayedMessage);
     }
 
 }

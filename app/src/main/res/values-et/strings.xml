@@ -105,6 +105,7 @@
     <string name="file_unsharable">Selle tüüpi faili ei saa jagada.</string>
     <string name="openingFileFailed">Faili avamine ebaõnnestus</string>
     <string name="save_container_no_files">Konteineris peab olema vähemalt 1 fail et salvestada</string>
+    <string name="no_connectivity_warning">Please connect to internet in order to sign</string>
 
     <!--eID-->
     <string name="eid_cert">Sertifikaat:</string>

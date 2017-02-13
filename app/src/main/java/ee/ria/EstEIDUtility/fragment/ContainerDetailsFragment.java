@@ -28,6 +28,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -118,6 +120,7 @@ public class ContainerDetailsFragment extends Fragment {
 
     private BroadcastReceiver cardInsertedReceiver;
     private BroadcastReceiver cardRemovedReceiver;
+    private BroadcastReceiver connectivityBroadcastReceiver;
     private BroadcastReceiver mobileIdBroadcastReceiver;
 
     private TokenService tokenService;
@@ -148,6 +151,7 @@ public class ContainerDetailsFragment extends Fragment {
         cardInsertedReceiver = new CardPresentReciever();
         cardRemovedReceiver = new CardAbsentReciever();
         mobileIdBroadcastReceiver = new MobileIdBroadcastReceiver();
+        connectivityBroadcastReceiver = new ConnectivityBroadcastReceiver();
     }
 
     @Override
@@ -238,6 +242,7 @@ public class ContainerDetailsFragment extends Fragment {
         fileInfoTextView.setText(getFormattedFileInfo());
         title.setText(containerFacade.getName());
         body.append(containerFacade.getName());
+        checkConnectivity();
     }
 
     @Override
@@ -268,6 +273,7 @@ public class ContainerDetailsFragment extends Fragment {
     private void registerBroadcastReceivers() {
         getActivity().registerReceiver(cardInsertedReceiver, new IntentFilter(ACS.CARD_PRESENT_INTENT));
         getActivity().registerReceiver(cardRemovedReceiver, new IntentFilter(ACS.CARD_ABSENT_INTENT));
+        getActivity().registerReceiver(connectivityBroadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mobileIdBroadcastReceiver, new IntentFilter(MID_BROADCAST_ACTION));
     }
 
@@ -278,9 +284,27 @@ public class ContainerDetailsFragment extends Fragment {
         if (cardRemovedReceiver != null) {
             getActivity().unregisterReceiver(cardRemovedReceiver);
         }
+        if (connectivityBroadcastReceiver != null) {
+            getActivity().unregisterReceiver(connectivityBroadcastReceiver);
+        }
         if (mobileIdBroadcastReceiver != null) {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mobileIdBroadcastReceiver);
         }
+    }
+
+    private void checkConnectivity() {
+        CharSequence noInternetConnection = getText(R.string.no_connectivity_warning);
+        if (!isInternetAccessAvailable()) {
+            notificationUtil.showWarningMessage(noInternetConnection);
+        } else {
+            notificationUtil.clearWarning(noInternetConnection);
+        }
+    }
+
+    private boolean isInternetAccessAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     private void createFilesListFragment() {
@@ -499,7 +523,6 @@ public class ContainerDetailsFragment extends Fragment {
             InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
             input.showSoftInput(title, InputMethodManager.SHOW_IMPLICIT);
         }
-
     }
 
     class CardPresentReciever extends BroadcastReceiver {
@@ -617,6 +640,13 @@ public class ContainerDetailsFragment extends Fragment {
         @Override
         public void onCertificateError(Exception e) {
             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class ConnectivityBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            checkConnectivity();
         }
     }
 
