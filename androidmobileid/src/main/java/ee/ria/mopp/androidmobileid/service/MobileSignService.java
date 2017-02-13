@@ -6,7 +6,19 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 
 import ee.ria.mopp.androidmobileid.dto.request.GetMobileCreateSignatureStatusRequest;
 import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
@@ -24,6 +36,8 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.fromJson;
+import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
+import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
 
 public class MobileSignService extends IntentService {
@@ -41,7 +55,13 @@ public class MobileSignService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         MobileCreateSignatureRequest request = getRequestFromIntent(intent);
-        ddsClient = ServiceGenerator.createService(DigidocServiceClient.class);
+        try {
+            SSLContext ddsSSLConfig = createSSLConfig(intent);
+            ddsClient = ServiceGenerator.createService(DigidocServiceClient.class, ddsSSLConfig);
+        } catch (Exception e) {
+            ddsClient = ServiceGenerator.createService(DigidocServiceClient.class, null);
+        }
+
         Call<MobileCreateSignatureResponse> call = ddsClient.mobileCreateSignature(wrapInEnvelope(request));
 
         try {
@@ -57,6 +77,24 @@ public class MobileSignService extends IntentService {
         } catch (IOException e) {
             broadcastFault(new ServiceFault(e));
             Log.e(TAG, "SoapRequestFailure", e);
+        }
+    }
+
+    private static SSLContext createSSLConfig(Intent intent) throws CertificateException, IOException,
+            KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException {
+
+        String keystorePath = intent.getStringExtra(ACCESS_TOKEN_PATH);
+        String keystorePass = intent.getStringExtra(ACCESS_TOKEN_PASS);
+
+        try (InputStream key = new FileInputStream(new File(keystorePath))) {
+            String keyStoreType = "PKCS12";
+            KeyStore keyStore   = KeyStore.getInstance(keyStoreType);
+            keyStore.load(key, keystorePass.toCharArray());
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+            kmf.init(keyStore, null);
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(kmf.getKeyManagers(), null, null);
+            return sslContext;
         }
     }
 

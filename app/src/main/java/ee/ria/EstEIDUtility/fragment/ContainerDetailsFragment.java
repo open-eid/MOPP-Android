@@ -71,6 +71,7 @@ import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.ContainerNameUtils;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
+import ee.ria.libdigidocpp.Conf;
 import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse.ProcessStatus;
@@ -87,6 +88,8 @@ import ee.ria.tokenlibrary.exception.PinVerificationException;
 
 import static android.app.Activity.RESULT_OK;
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.toJson;
+import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
+import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.CREATE_SIGNATURE_CHALLENGE;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.CREATE_SIGNATURE_STATUS;
@@ -392,6 +395,8 @@ public class ContainerDetailsFragment extends Fragment {
                             .build();
                     Intent mobileSignIntent = new Intent(getActivity(), MobileSignService.class);
                     mobileSignIntent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));
+                    mobileSignIntent.putExtra(ACCESS_TOKEN_PASS, Conf.instance().PKCS12Pass());
+                    mobileSignIntent.putExtra(ACCESS_TOKEN_PATH, new File(FileUtils.getSchemaCacheDirectory(getContext()), "878252.p12").getAbsolutePath());
                     getActivity().startService(mobileSignIntent);
                     disableSigning();
                 }

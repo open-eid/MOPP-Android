@@ -19,11 +19,15 @@
 
 package ee.ria.mopp.androidmobileid.soap;
 
+import android.util.Log;
+
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.strategy.VisitorStrategy;
 
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -36,23 +40,19 @@ public class ServiceGenerator {
 
     private static Retrofit retrofit;
 
-    private static Serializer visitorStrategySerializer() {
-        return new Persister(new VisitorStrategy(new RequestObjectInterceptor()));
-    }
-
     private static Retrofit.Builder builder = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(SimpleXmlConverterFactory.create(visitorStrategySerializer()));
+            .baseUrl(BASE_URL)
+            .addConverterFactory(SimpleXmlConverterFactory.create(visitorStrategySerializer()));
 
-    private static HttpLoggingInterceptor logging = new HttpLoggingInterceptor()
-                    .setLevel(HttpLoggingInterceptor.Level.BODY);
+    private static OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
 
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    private static HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor()
+            .setLevel(HttpLoggingInterceptor.Level.BODY);
 
-    public static <S> S createService(Class<S> serviceClass) {
-        if (!httpClient.interceptors().contains(logging)) {
-            httpClient.addInterceptor(logging);
-            builder.client(httpClient.connectTimeout(30, TimeUnit.SECONDS).build());
+    public static <S> S createService(Class<S> serviceClass, SSLContext sslContext) {
+        if (!httpClientBuilder.interceptors().contains(loggingInterceptor)) {
+            httpClientBuilder.addInterceptor(loggingInterceptor);
+            builder.client(buildHttpClient(sslContext));
             retrofit = builder.build();
         }
         return retrofit.create(serviceClass);
@@ -60,5 +60,22 @@ public class ServiceGenerator {
 
     static Retrofit retrofit() {
         return retrofit;
+    }
+
+    private static OkHttpClient buildHttpClient(SSLContext sslContext) {
+        if (sslContext != null) {
+            try {
+                return httpClientBuilder.connectTimeout(30, TimeUnit.SECONDS)
+                        .sslSocketFactory(sslContext.getSocketFactory())
+                        .build();
+            } catch (Exception e) {
+                Log.e("ServiceGenerator", "Exception", e);
+            }
+        }
+        return httpClientBuilder.connectTimeout(30, TimeUnit.SECONDS).build();
+    }
+
+    private static Serializer visitorStrategySerializer() {
+        return new Persister(new VisitorStrategy(new RequestObjectInterceptor()));
     }
 }
