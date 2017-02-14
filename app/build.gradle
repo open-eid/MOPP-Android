@@ -10,8 +10,8 @@ android {
         targetSdkVersion 22 //TODO: investigate error loading library when targeting sdk above 22
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
-        versionCode 3
-        versionName "0.0.6-beta"
+        versionCode 4
+        versionName "0.0.6-beta2"
     }
 
     buildTypes {
