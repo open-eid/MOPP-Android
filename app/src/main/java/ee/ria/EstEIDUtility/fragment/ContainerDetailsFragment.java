@@ -57,11 +57,12 @@ import android.widget.Toast;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.util.Locale;
 
 import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
+import ee.ria.EstEIDUtility.container.AddedAdesSignatureReceiver;
+import ee.ria.EstEIDUtility.container.AsyncAdesSignatureAdder;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.container.DataFileFacade;
@@ -99,7 +100,7 @@ import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.MID_BROADC
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.MID_BROADCAST_TYPE_KEY;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.SERVICE_FAULT;
 
-public class ContainerDetailsFragment extends Fragment {
+public class ContainerDetailsFragment extends Fragment implements AddedAdesSignatureReceiver{
 
     public static final String TAG = ContainerDetailsFragment.class.getName();
     private static final int CHOOSE_FILE_REQUEST_ID = 1;
@@ -265,6 +266,15 @@ public class ContainerDetailsFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onAdesSignatureAdded(ContainerFacade modifiedContainerFacade) {
+        containerFacade = modifiedContainerFacade;
+        containerFacade.save();
+        SignatureFacade signature = containerFacade.getLastSignature();
+        findSignaturesFragment().addSignature(signature);
+        notificationUtil.showSuccessMessage(getText(R.string.signature_added));
+        enableSigning();
+    }
 
     public void updateFileSize() {
         fileInfoTextView.setText(getFormattedFileInfo());
@@ -385,7 +395,6 @@ public class ContainerDetailsFragment extends Fragment {
         pinDialog = builder.create();
     }
 
-
     private void startMobileSign() {
         View view = getActivity().getLayoutInflater().inflate(R.layout.mobile_id_dialogue, null);
         final EditText mobileNr = (EditText) view.findViewById(R.id.mobile_nr);
@@ -432,12 +441,7 @@ public class ContainerDetailsFragment extends Fragment {
     }
 
     private void addAdesSignature(String adesSignature) {
-        byte[] encoded = Charset.forName("UTF-8").encode(adesSignature).array();
-        containerFacade.addAdESSignature(encoded);
-        containerFacade.save();
-        SignatureFacade signature = containerFacade.getLastSignature();
-        findSignaturesFragment().addSignature(signature);
-        notificationUtil.showSuccessMessage(getText(R.string.signature_added));
+        new AsyncAdesSignatureAdder(adesSignature, containerFacade, this).execute();
     }
 
     private void refreshContainerFacade() {
@@ -671,7 +675,6 @@ public class ContainerDetailsFragment extends Fragment {
                 } else if (status.getStatus() == ProcessStatus.SIGNATURE) {
                     mobileSignProgressHelper.close();
                     addAdesSignature(status.getSignature());
-                    enableSigning();
                 } else {
                     mobileSignProgressHelper.close();
                     notificationUtil.showFailMessage(mobileSignProgressHelper.getMessage(status.getStatus()));
