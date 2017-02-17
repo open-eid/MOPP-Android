@@ -318,7 +318,12 @@ public class PinChangeActivity extends AppCompatActivity {
 
         @Override
         public void success() {
-            notificationUtil.showSuccessMessage(getText(R.string.pin1_change_success));
+            switch (pinType) {
+                case PIN1:
+                    notificationUtil.showSuccessMessage(getText(R.string.pin1_change_success));
+                case PIN2:
+                    notificationUtil.showSuccessMessage(getText(R.string.pin2_change_success));
+            }
             pinBlocked = false;
             clearTexts();
             radioPIN.setEnabled(true);

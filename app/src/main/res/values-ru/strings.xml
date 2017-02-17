@@ -106,6 +106,7 @@
     <string name="valid_pin_2">Действующий PIN2 код:</string>
     <string name="valid_pin_2_hint">PIN2</string>
     <string name="pin2_change_failed">Изменение PIN2 не удалось</string>
+    <string name="pin2_change_success">PIN2 успешно изменён</string>
     <string name="pin2_too_easy">PIN содержить легко вычисляемую комбинацию. PIN2 не может быть 00000 или 12345. Также не может содержать комбинацию, встречающуюся в дате Вашего рождения.</string>
     <string name="pin2_no_match">\"Новый PIN2\" и \"Новый PIN2 заново\" не идентичны.</string>
     <string name="new_pin2_length_short">Новый PIN2 слишком короткий (%o символов). Минимальное количество символов PIN2 5.</string>
