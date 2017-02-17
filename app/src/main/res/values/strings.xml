@@ -106,6 +106,7 @@
     <string name="valid_pin_2">Current PIN2 code:</string>
     <string name="valid_pin_2_hint">PIN2</string>
     <string name="pin2_change_failed">PIN2 change failed</string>
+    <string name="pin2_change_success">PIN2 changed successfully</string>
     <string name="pin2_too_easy">PIN2 contains too obvious combination. PIN2 can\'t be 00000 or 12345. Also PIN2 can\'t contain your date of birth.</string>
     <string name="pin2_no_match">\"New PIN2\" and \"New PIN2 again\" are different.</string>
     <string name="new_pin2_length_short">New PIN2 is too short (%o characters). Minimum number of PIN2 characters is 5.</string>
