@@ -2,26 +2,26 @@
 <resources>
     <string name="app_name">RIA DigiDoc</string>
     <string name="action_sign">Allkirjasta</string>
-    <string name="insert_pin_puk">Insert PIN/PUK</string>
-    <string name="settings">Settings</string>
-    <string name="cert_read_failed">Cert read failed</string>
-    <string name="current_pin_puk">Current PIN/PUK</string>
-    <string name="connect">Connect</string>
-    <string name="new_pin_puk">New PIN/PUK</string>
-    <string name="change_puk">Change PUK</string>
-    <string name="change_pin">Change PIN1</string>
-    <string name="unblock_pin1">Unblock PIN1</string>
-    <string name="change_pin2">Change PIN2</string>
-    <string name="unblock_pin2">Unblock PIN2</string>
-    <string name="counter_pin1">PIN1 counter</string>
-    <string name="counter_pin2">PIN2 counter</string>
-    <string name="counter_puk">PUK counter</string>
+    <string name="insert_pin_puk">Sisesta PIN/PUK</string>
+    <string name="settings">Seaded</string>
+    <string name="cert_read_failed">Sertifikaadi lugemine ebaõnnestus</string>
+    <string name="current_pin_puk">Kehtiv PIN/PUK</string>
+    <string name="connect">Ühenda</string>
+    <string name="new_pin_puk">Uus PIN/PUK</string>
+    <string name="change_puk">Muuda PUK</string>
+    <string name="change_pin">Muuda PIN1</string>
+    <string name="unblock_pin1">Tühista PIN1 blokeering</string>
+    <string name="change_pin2">Muuda PIN2</string>
+    <string name="unblock_pin2">Tühista PIN2 blokeering</string>
+    <string name="counter_pin1">PIN1 loendur</string>
+    <string name="counter_pin2">PIN2 loendur</string>
+    <string name="counter_puk">PUK loendur</string>
     <string name="title_activity_signing">Allkirjastamine</string>
     <string name="title_activity_manage_eids">Minu eID-d</string>
     <string name="title_activity_pin_utilities">PIN-i toimingud</string>
     <string name="title_activity_browse_containers">Allkirjastatud</string>
     <string name="title_activity_create_new_container">Konteiner</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Seaded</string>
     <string name="activity_browse_containers_yesterday">Eile</string>
     <string name="search">Otsi</string>
     <string name="title_activity_manage_container">Konteiner</string>
@@ -32,7 +32,7 @@
     <string name="cancel_button">Ei</string>
     <string name="confirm_button">Jah</string>
     <string name="bdoc_remove_confirm_title">Kustutamine</string>
-    <string name="bdoc_remove_confirm_message">Kas oled kindel, et soovid kustutada %s fail?</string>
+    <string name="bdoc_remove_confirm_message">Kas oled kindel, et soovid kustutada faili %s</string>
     <string name="signatures_title">Allkirjad</string>
     <string name="file_location">Asukoht: </string>
     <string name="file_info">Vorming: %1$s | Suurus: %2$s kb</string>
@@ -40,49 +40,49 @@
     <string name="files_title">Failid</string>
     <string name="create_new">Loo uus</string>
     <string name="send">Saada</string>
-    <string name="signature_remove_confirm_message">Kas oled kindel, et soovid kustutada %s allkiri?</string>
+    <string name="signature_remove_confirm_message">Kas oled kindel, et soovid kustutada %s allkirja?</string>
     <string name="signature_valid">kehtiv</string>
     <string name="signature_invalid">kehtetu</string>
     <string name="close_button">Sulge</string>
     <string name="empty_container_files" >Ühtegi faili ei ole lisatud. Igal digiallkirjastatud dokumendil peab olema sisu. Faili või failide lisamiseks tippige nuppu \"Lisa\".</string>
-    <string name="empty_container_signatures" >Ühtegi allkirja ei ole lisatud. Allkirja saab alles pärast failide lisamist lisada.</string>
-    <string name="add_file_remove_signatures">Failide lisamiseks konteiner peab olema allkirjastamata</string>
-    <string name="file_exists_message">Fail sama nimega on juba olemas</string>
+    <string name="empty_container_signatures" >Ühtegi allkirja ei ole lisatud. Allkirjastada saab alles pärast failide lisamist.</string>
+    <string name="add_file_remove_signatures">Failide lisamiseks peab konteiner olema allkirjastamata</string>
+    <string name="file_exists_message">Sama nimega fail on juba olemas</string>
     <string name="file_name_empty_message">Fail ei tohi olla tühja nimega</string>
-    <string name="select_file">Select File to Add</string>
+    <string name="select_file">Vali fail(id) mida lisada</string>
     <string name="container_has_file_with_same_name">Konteineris on juba olemas sama nimega fail</string>
     <string name="file_saved">Fail salvestatud</string>
     <string name="file_save_failed">Faili salvestamine ebaõnnestus</string>
-    <string name="file_handler_error">No handler for this type of file</string>
+    <string name="file_handler_error">Failitüübi jaoks puudub käsitleja</string>
     <string name="enter_pin2">Sisesta PIN2:</string>
     <string name="sign_button">OK</string>
-    <string name="cancel">Cancel</string>
-    <string name="enter_pin2_retries_left">Sisesta PIN2: (Jäänud katsed: %s)</string>
+    <string name="cancel">Tühista</string>
+    <string name="enter_pin2_retries_left">Sisesta PIN2: (Jäänud katseid: %s)</string>
     <string name="pin_verification_failed">PIN on vale</string>
     <string name="already_signed_by_person">Teie allkiri on juba olemas</string>
     <string name="upload_to">Saada…</string>
-    <string name="card_not_provided">Kaart ei ole sisse pandud või kaardiga on mingi muu probleem.</string>
-    <string name="file_remove_confirm_message">Olete kindel et tahate kustutada %s fail kontainerist?</string>
-    <string name="datafile_delete_not_allowed_signed">Ei tohi kustutada faili allkirjastatud konteinerist, kustuta kõik allkirjad enne faili kustutamist.</string>
-    <string name="datafile_delete_not_allowed_empty">Viimane fail ei saa eemaldada konteinerist.</string>
+    <string name="card_not_provided">Kaart ei ole sisestatud või kaarti ei õnnestu lugeda.</string>
+    <string name="file_remove_confirm_message">Olete kindel et tahate faili %s kontainerist eemaldada?</string>
+    <string name="datafile_delete_not_allowed_signed">Allkirjastatud konteinerist ei saa faile kustutada, enne faili kustutamist kustuta kõik allkirjad.</string>
+    <string name="datafile_delete_not_allowed_empty">Viimast fail ei saa konteinerist eemaldada.</string>
     <string name="signature_is">Allkiri on\u0020</string>
     <string name="location">Asukoht:</string>
     <string name="attachment_extract_failed">Konteinerist faili väljavõtmine ebaõnnestus</string>
     <string name="file_unsharable">Seda tüüpi faili ei saa jagada.</string>
     <string name="openingFileFailed">Faili avamine ebaõnnestus</string>
-    <string name="save_container_no_files">Konteineris peab olema vähemalt 1 fail et salvestada</string>
-    <string name="title_activity_settings">Settings</string>
-    <string name="no_connectivity_warning">Please connect to internet in order to sign</string>
+    <string name="save_container_no_files">Salvestamiseks peab konteineris olema vähemalt 1 fail</string>
+    <string name="title_activity_settings">Seaded</string>
+    <string name="no_connectivity_warning">Allkirjastamiseks loo palun internetiühendus</string>
 
     <!-- Strings related to pin activities-->
     <string name="pin2_changing">PIN2 muutmine</string>
     <string name="using_pin2_option">Kasutades kehtivat PIN2 koodi</string>
     <string name="using_puk_option">Kasutades kehtivat PUK koodi</string>
-    <string name="pin2_info"><![CDATA[\u2022 peab olema erinev eelmisest PIN2–st\n\u2022 peab olema 5–12 -numbriline ega tohi sisaldada tähti.\n\u2022 ei saa olla 00000, 12345 ega tohi sisaldada kombinatsioon sünniajast.]]></string>
+    <string name="pin2_info"><![CDATA[\u2022 peab olema erinev eelmisest PIN2–st\n\u2022 peab olema 5–12 -numbriline ega tohi sisaldada tähti.\n\u2022 ei saa olla 00000, 12345 ega tohi sisaldada kombinatsioone sünnikuupäevast.]]></string>
     <string name="pin2_info_title">Uus PIN2 kood:</string>
     <string name="using_pin1_option">Kasutades kehtivat PIN1 koodi</string>
     <string name="pin1_info_title">Uus PIN1 kood:</string>
-    <string name="pin1_info"><![CDATA[\u2022 peab olema erinev eelmisest PIN1–st\n\u2022 peab olema 4–12 -numbriline ega tohi sisaldada tähti.\n\u2022 ei saa olla 0000, 1234 ega tohi tohi sisaldada kombinatsioon sünniajast.]]></string>
+    <string name="pin1_info"><![CDATA[\u2022 peab olema erinev eelmisest PIN1–st\n\u2022 peab olema 4–12 -numbriline ega tohi sisaldada tähti.\n\u2022 ei saa olla 0000, 1234 ega tohi tohi sisaldada kombinatsioone sünnikuupäevast.]]></string>
     <string name="change">Muuda</string>
     <string name="new_pin2_title">Uus PIN2 kood:</string>
     <string name="new_pin2_hint">Uus PIN2</string>
@@ -98,28 +98,28 @@
     <string name="valid_puk">Kehtiv PUK kood:</string>
     <string name="valid_puk_hint">PUK</string>
     <string name="pin1_blocked"><b>PIN1 on blokeeritud.</b>\nPIN1 avamiseks/muutmiseks peate kasutama PUK koodi.</string>
-    <string name="pin1_change_failed">PIN1 muutmine ebaõnnestunud</string>
+    <string name="pin1_change_failed">PIN1 muutmine ebaõnnestus</string>
     <string name="pin1_change_success">PIN1 muutmine oli edukas</string>
     <string name="new_pin1_length_short">Uus PIN 1 on liiga lühike (%o tähemärki).\nMinimaalne PIN1 tähemärkide arv on 4.</string>
     <string name="pin1_no_match">\"Uus PIN1\" ja \"Uus PIN1 uuesti\" on erinevad.</string>
-    <string name="pin1_too_easy">PIN sisaldab lihtsasti äraarvatavat kombinatsiooni. PIN1 ei tohi olla 0000 või 1234. Samuti ei tohi PIN1 sisaldada kombinatsioon sünniajast.</string>
+    <string name="pin1_too_easy">PIN1 sisaldab lihtsasti äraarvatavat kombinatsiooni. PIN1 ei tohi olla 0000 või 1234. Samuti ei tohi PIN1 sisaldada kombinatsioone sünnikuupäevast.</string>
     <string name="valid_pin_2">Kehtiv PIN2 kood:</string>
     <string name="valid_pin_2_hint">PIN2</string>
-    <string name="pin2_change_failed">PIN2 muutmine ebaõnnestunud</string>
-    <string name="pin2_too_easy">PIN sisaldab lihtsasti äraarvatavat kombinatsiooni. PIN2 ei tohi olla 00000 või 12345. Samuti ei tohi PIN2 sisaldada kombinatsioon sünniajast.</string>
+    <string name="pin2_change_failed">PIN2 muutmine ebaõnnestus</string>
+    <string name="pin2_too_easy">PIN2 sisaldab lihtsasti äraarvatavat kombinatsiooni. PIN2 ei tohi olla 00000 või 12345. Samuti ei tohi PIN2 sisaldada kombinatsioone sünnikuupäevast.</string>
     <string name="pin2_no_match">\"Uus PIN2\" ja \"Uus PIN2 uuesti\" on erinevad.</string>
     <string name="new_pin2_length_short">Uus PIN2 on liiga lühike (%o tähemärki). Minimaalne PIN2 tähemärkide arv on 5.</string>
     <string name="pin2_blocked"><b>PIN2 on blokeeritud.</b>\nPIN2 avamiseks/muutmiseks peate kasutama PUK koodi.</string>
 
     <!-- Strings related to Settings -->
     <!-- General settings -->
-    <string name="pref_header_general">General</string>
-    <string name="pref_general_title_online_tsl_check">Online TSL digest check</string>
+    <string name="pref_header_general">Üldised seaded</string>
+    <string name="pref_general_title_online_tsl_check">Kontrolli TSL värskendust</string>
     <string name="pref_ringtone_silent">Silent</string> <!-- Only used for preference change listener -->
 
     <!-- Settings for Signing -->
-    <string name="pref_header_signing">Signing</string>
-    <string name="pref_signing_title_file_type">Default file type</string>
+    <string name="pref_header_signing">Allkirjastamise seaded</string>
+    <string name="pref_signing_title_file_type">Vaikimisi failivorming</string>
     <string-array name="pref_signing_file_type_names">
         <item>BDOC</item>
         <item>ASiC-E</item>
@@ -128,22 +128,22 @@
         <item>time-mark</item>
         <item>time-stamp</item>
     </string-array>
-    <string name="pref_title_personal_code">Personal code</string>
-    <string name="pref_title_mobile_nr">Mobile number</string>
-    <string name="pref_title_signing_role">Role</string>
-    <string name="pref_title_signing_resolution">Resolution</string>
-    <string name="pref_title_signing_city">City</string>
-    <string name="pref_title_signing_state">State</string>
-    <string name="pref_title_signing_country">Country</string>
-    <string name="pref_title_signing_zip">Zip</string>
-    <string name="pref_title_signing_save_last_used">Always save the last used role, resolution and location</string>
+    <string name="pref_title_personal_code">Isikukood</string>
+    <string name="pref_title_mobile_nr">Telefoninumber</string>
+    <string name="pref_title_signing_role">Roll</string>
+    <string name="pref_title_signing_resolution">Resolutsioon</string>
+    <string name="pref_title_signing_city">Linn</string>
+    <string name="pref_title_signing_state">Maakond</string>
+    <string name="pref_title_signing_country">Riik</string>
+    <string name="pref_title_signing_zip">Postiindeks</string>
+    <string name="pref_title_signing_save_last_used">Jäta viimati sisestatud roll, resolutsioon ja asukoht meelde</string>
 
     <!--eID-->
     <string name="eid_cert">Sertifikaat:</string>
     <string name="eid_valid">Kehtiv</string>
     <string name="eid_valid_untill">Kehtib kuni:</string>
     <string name="eid_id_number">Isikukood:</string>
-    <string name="eid_born">Sundinud:</string>
+    <string name="eid_born">Sündinud:</string>
     <string name="eid_nationality">Kodakondsus:</string>
     <string name="eid_email">E-post:</string>
     <string name="eid_info">ID-kaart on riigi sisene kohustuslik isikut tõendav dokument alates 15-aastast. Eesti kodanik saab ID-kaardiga reisida Euroopa Liidu ja Euroopa Majanduspiirkonna riikides.\n\nID-kaarti saad taotleda Politsei- ka Piirivalveameti <![CDATA[<a href="https://www.politsei.ee/et/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">teeninduses</a>]]>, Eesti Vabariigi välisesindustes, posti või e-posti teel.</string>
@@ -152,58 +152,58 @@
     <string name="eid_surname">Perekonnanimi:</string>
     <string name="eid_card_in_reader">Lugejas on dokument:</string>
     <string name="eid_sign_cert">Allkirjastamise sertifikaat:</string>
-    <string name="eid_sign_cert_used">Sertifikaat on kasutatud:</string>
+    <string name="eid_sign_cert_used">Sertifikaati on kasutatud:</string>
 
     <string name="insert_card_wait">Sisesta kaart või oota lugeja vastust.</string>
     <string name="signature_added">Allkiri lisatud</string>
     <string name="file_removed">Faili kustutamine õnnestus</string>
     <string name="signature_removed">Allkirja kustutamine õnnestus</string>
     <string name="pin_old_equals_new">Vana ja uus PIN koodid peavad olema erinevad</string>
-    <string name="pin_contains_date_of_birth">PIN ei tohi sisaldada yyyy, ddmm, mmdd kombinatsioone sünniajast</string>
+    <string name="pin_contains_date_of_birth">PIN ei tohi sisaldada yyyy, ddmm, mmdd kombinatsioone sünnikuupäevast</string>
     <string name="enter_container_name">Sisestage konteineri nimi</string>
     <string name="create_container">Loo uus konteiner</string>
     <string name="error_page_title">Viga</string>
-    <string name="file_rename_success">Fail oli edukalt ümbernimetatud</string>
-    <string name="signing_failed">Konteineri allkirjastamine ebaõnnestunud. Palun kontrollige Teie kaardi sertifikaate.</string>
+    <string name="file_rename_success">Fail on edukalt ümbernimetatud</string>
+    <string name="signing_failed">Konteineri allkirjastamine ebaõnnestus. Palun kontrollige oma kaardi sertifikaate.</string>
 
     <!--Mobile Id -->
-    <string name="mobile_id">Sign with mobile ID</string>
-    <string name="mobile_nr">Mobile number</string>
-    <string name="personal_code">Personal code</string>
-    <string name="remember_me">Remember me</string>
+    <string name="mobile_id">Allkirjasta Mobiil-ID\'ga</string>
+    <string name="mobile_nr">Telefoninumber</string>
+    <string name="personal_code">Isikukood</string>
+    <string name="remember_me">Pea mind meeles</string>
 
     <!-- Mobile Id Create signature statuses -->
-    <string name="status_request_sent">Sign request sent</string>
-    <string name="status_request_ok">Request accepted</string>
-    <string name="status_expired_transaction">Request timeout</string>
-    <string name="status_user_cancel">User denied or cancelled</string>
-    <string name="status_signature">Got signature</string>
-    <string name="status_outstanding_transaction">Request pending</string>
-    <string name="status_mid_not_ready">Mobile-ID not ready, try again later</string>
-    <string name="status_phone_absent">Phone is switched off or out of coverage</string>
-    <string name="status_sending_error">Request sending error</string>
-    <string name="status_sim_error">SIM application error</string>
-    <string name="status_not_valid">signature is not valid</string>
-    <string name="status_revoked_certificate">Certificate revoked</string>
-    <string name="status_internal_error">Technical error</string>
+    <string name="status_request_sent">Allkirjastamispäring saadetud</string>
+    <string name="status_request_ok">Päring vastuvõetud</string>
+    <string name="status_expired_transaction">Päringu ajalõpp</string>
+    <string name="status_user_cancel">Kasutaja katkestas</string>
+    <string name="status_signature">Allkiri saadud</string>
+    <string name="status_outstanding_transaction">Päring käimas</string>
+    <string name="status_mid_not_ready">Mobiil-ID pole saadaval, proovi hiljem uuesti</string>
+    <string name="status_phone_absent">Telefon on välja lülitatud või asub väljaspool levi piirkonda</string>
+    <string name="status_sending_error">Viga päringu saatmisel</string>
+    <string name="status_sim_error">SIM-i tööriistakomplekti viga</string>
+    <string name="status_not_valid">Allkiri ei ole kehtiv</string>
+    <string name="status_revoked_certificate">Sertifikaat tühistatud</string>
+    <string name="status_internal_error">Tehniline viga</string>
 
     <!-- Mobile Sign service faults -->
-    <string name="unknown_error">Unknown error occurred when signing with Mobile ID</string>
-    <string name="local_service_exception">Something went wrong, try again later</string>
-    <string name="general_client">Something went wrong, try again</string>
-    <string name="incorrect_input_parameters">Incorrect mobile number and/or personal code, mobile number must contain country code</string>
-    <string name="missing_input_parameters">Missing mobile number and/or personal code</string>
-    <string name="ocsp_unauthorized">Unable to access mobile sign service</string>
-    <string name="general_service">There was an error with Digidoc service, try again later</string>
-    <string name="missing_user_certificate">Missing user certificate</string>
-    <string name="certificate_validity_unknown">Unable to verify certificate validity</string>
-    <string name="session_locked">Mobile sign session is locked, try again later</string>
-    <string name="general_user">An error occurred with the signers mobile phone</string>
-    <string name="not_mobile_id_user">Not a mobile ID user</string>
-    <string name="user_certificate_revoked">Your mobile sign certificate is revoked</string>
-    <string name="user_certificate_status_unknown">Your mobile sign certificate status is unkown</string>
-    <string name="user_certificate_suspended">Your mobile sign certificate is suspended</string>
-    <string name="user_certificate_expired">Your mobile sign certificate is expired</string>
-    <string name="message_exceeds_volume_limit">Too many datafiles in container</string>
-    <string name="simultaneous_requests_limit_exceeded">Simultaneous requests limit exceeded</string>
+    <string name="unknown_error">Tundmatu viga Mobiil-ID\'ga allkirjastamisel</string>
+    <string name="local_service_exception">Midagi läks valesti, proovi hiljem uuesti</string>
+    <string name="general_client">Midagi läks valesti, proovi uuesti</string>
+    <string name="incorrect_input_parameters">Vigane telefoninumber ja/või isikukood, telefoninumber peab sisaldama riigikoodi</string>
+    <string name="missing_input_parameters">Puudub telefoninumber ja/või isikukood</string>
+    <string name="ocsp_unauthorized">Mobiilse allkirjastamise teenusele ei õnnestu ligi pääseda</string>
+    <string name="general_service">Viga DigidocService\'ga, proovi hiljem uuesti</string>
+    <string name="missing_user_certificate">Kasutaja sertifikaat puudub</string>
+    <string name="certificate_validity_unknown">Sertifikaadi kehtivust ei õnnestu kontrollida</string>
+    <string name="session_locked">Mobiilse allkirjastamise sessioon on lukustunud, proovi hiljem uuesti</string>
+    <string name="general_user">Viga Mobiil-ID kasutamisel kasutaja telefonis</string>
+    <string name="not_mobile_id_user">Pole Mobiil-ID kasutaja</string>
+    <string name="user_certificate_revoked">Teie Mobiil-ID allkirjastamise sertifikaat on tühistatud</string>
+    <string name="user_certificate_status_unknown">Teie  Mobiil-ID allkirjastamise sertifikaadi olek on teadmata</string>
+    <string name="user_certificate_suspended">Teie Mobiil-ID\'ga allkirjastamise sertifikaadi kehtivus on peatatud</string>
+    <string name="user_certificate_expired">Teie Mobiil-ID allkirjastamise sertifikaat on aegunud</string>
+    <string name="message_exceeds_volume_limit">Liiga palju faile ühes konteineris</string>
+    <string name="simultaneous_requests_limit_exceeded">Samaaegsete pöördumiste limiit ületatud</string>
 </resources>
