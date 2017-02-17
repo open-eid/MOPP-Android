@@ -147,7 +147,7 @@
     <string name="eid_born">Birth:</string>
     <string name="eid_nationality">Citizenship:</string>
     <string name="eid_email">E-mail:</string>
-    <string name="eid_info">ID-card is an internal compulsory identity document starting from age of 15. The Estonian citizens can travel by means of an ID-card in Member States of the European Union and the European Economic Area.\n\nThe ID-card can be applied for in <![CDATA[<a href="https://www.politsei.ee/en/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">Service Offices</a>]]> of Police and Border Guard Administration, in foreign representations of the Republic of Estonia, by post or by e-mail..</string>
+    <string name="eid_info">ID-card is an internal compulsory identity document. ID-card can be used to travel in Member States of the European Union and the European Economic Area.\n\nThe ID-card can be applied for in <![CDATA[<a href="https://www.politsei.ee/en/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">Service Offices</a>]]> of Police and Border Guard Administration, in foreign representations of the Republic of Estonia, by post or by e-mail..</string>
     <string name="eid_invalid">Expired</string>
     <string name="eid_given_names">Given names:</string>
     <string name="eid_surname">Surname:</string>

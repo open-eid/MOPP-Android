@@ -44,7 +44,7 @@
     <string name="signature_valid">kehtiv</string>
     <string name="signature_invalid">kehtetu</string>
     <string name="close_button">Sulge</string>
-    <string name="empty_container_files" >Ühtegi faili ei ole lisatud. Igal digiallkirjastatud dokumendil peab olema sisu. Faili või failide lisamiseks tippige nuppu \"Lisa\".</string>
+    <string name="empty_container_files" >Ühtegi faili ei ole lisatud. Igal digiallkirjastatud dokumendil peab olema sisu. Faili või failide lisamiseks vajutage nuppu \"Lisa\".</string>
     <string name="empty_container_signatures" >Ühtegi allkirja ei ole lisatud. Allkirjastada saab alles pärast failide lisamist.</string>
     <string name="add_file_remove_signatures">Failide lisamiseks peab konteiner olema allkirjastamata</string>
     <string name="file_exists_message">Sama nimega fail on juba olemas</string>
@@ -62,7 +62,7 @@
     <string name="already_signed_by_person">Teie allkiri on juba olemas</string>
     <string name="upload_to">Saada…</string>
     <string name="card_not_provided">Kaart ei ole sisestatud või kaarti ei õnnestu lugeda.</string>
-    <string name="file_remove_confirm_message">Olete kindel et tahate faili %s kontainerist eemaldada?</string>
+    <string name="file_remove_confirm_message">Olete kindel, et tahate faili %s kontainerist eemaldada?</string>
     <string name="datafile_delete_not_allowed_signed">Allkirjastatud konteinerist ei saa faile kustutada, enne faili kustutamist kustuta kõik allkirjad.</string>
     <string name="datafile_delete_not_allowed_empty">Viimast fail ei saa konteinerist eemaldada.</string>
     <string name="signature_is">Allkiri on\u0020</string>
@@ -115,7 +115,7 @@
     <!-- Strings related to Settings -->
     <!-- General settings -->
     <string name="pref_header_general">Üldised seaded</string>
-    <string name="pref_general_title_online_tsl_check">Kontrolli TSL värskendust</string>
+    <string name="pref_general_title_online_tsl_check">Kontrolli usaldusnimekirja värskendust</string>
     <string name="pref_ringtone_silent">Silent</string> <!-- Only used for preference change listener -->
 
     <!-- Settings for Signing -->
@@ -137,7 +137,7 @@
     <string name="pref_title_signing_state">Maakond</string>
     <string name="pref_title_signing_country">Riik</string>
     <string name="pref_title_signing_zip">Postiindeks</string>
-    <string name="pref_title_signing_save_last_used">Jäta viimati sisestatud roll, resolutsioon ja asukoht meelde</string>
+    <string name="pref_title_signing_save_last_used">Jäta meelde viimati sisestatud roll, resolutsioon ja asukoht</string>
 
     <!--eID-->
     <string name="eid_cert">Sertifikaat:</string>
@@ -147,7 +147,7 @@
     <string name="eid_born">Sündinud:</string>
     <string name="eid_nationality">Kodakondsus:</string>
     <string name="eid_email">E-post:</string>
-    <string name="eid_info">ID-kaart on riigi sisene kohustuslik isikut tõendav dokument alates 15-aastast. Eesti kodanik saab ID-kaardiga reisida Euroopa Liidu ja Euroopa Majanduspiirkonna riikides.\n\nID-kaarti saad taotleda Politsei- ka Piirivalveameti <![CDATA[<a href="https://www.politsei.ee/et/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">teeninduses</a>]]>, Eesti Vabariigi välisesindustes, posti või e-posti teel.</string>
+    <string name="eid_info">ID-kaart on riigi sisene kohustuslik isikut tõendav dokument. ID-kaardiga saab reisida Euroopa Liidu ja Euroopa Majanduspiirkonna riikides.\n\nID-kaarti saad taotleda Politsei- ka Piirivalveameti <![CDATA[<a href="https://www.politsei.ee/et/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">teeninduses</a>]]>, Eesti Vabariigi välisesindustes, posti või e-posti teel.</string>
     <string name="eid_invalid">Aegunud</string>
     <string name="eid_given_names">Eesnimed:</string>
     <string name="eid_surname">Perekonnanimi:</string>
