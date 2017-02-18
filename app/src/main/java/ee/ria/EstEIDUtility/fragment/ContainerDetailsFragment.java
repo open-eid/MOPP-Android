@@ -437,6 +437,15 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
                         preferences.updateMobileNumber(phone);
                         preferences.updatePersonalCode(pCode);
                     }
+                    final String estonianCountryCode = "372";
+                    final String plusPrefixedEstonianCountryCode = "+" + estonianCountryCode;
+                    final String firstNumberInEstonianMobileNumbers = "5";
+
+                    if (!phone.startsWith(estonianCountryCode) && !phone.startsWith(plusPrefixedEstonianCountryCode)) {
+                        if (phone.startsWith(firstNumberInEstonianMobileNumbers)) {
+                            phone = estonianCountryCode + phone;
+                        }
+                    }
                     String message = getResources().getString(R.string.action_sign) + " " + containerFacade.getName();
                     MobileCreateSignatureRequest request = CreateSignatureRequestBuilder
                             .aCreateSignatureRequest()
