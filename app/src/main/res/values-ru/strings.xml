@@ -192,7 +192,7 @@
     <string name="unknown_error">Unknown error occurred when signing with Mobile ID</string>
     <string name="local_service_exception">Something went wrong, try again later</string>
     <string name="general_client">Something went wrong, try again</string>
-    <string name="incorrect_input_parameters">Incorrect mobile number and/or personal code, mobile number must contain country code</string>
+    <string name="incorrect_input_parameters">Incorrect mobile number and/or personal code, non-Estonian mobile numbers must be prefixed with the country code</string>
     <string name="missing_input_parameters">Missing mobile number and/or personal code</string>
     <string name="ocsp_unauthorized">Unable to access mobile sign service</string>
     <string name="general_service">There was an error with Digidoc service, try again later</string>
