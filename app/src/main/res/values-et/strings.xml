@@ -192,7 +192,7 @@
     <string name="unknown_error">Tundmatu viga Mobiil-ID\'ga allkirjastamisel</string>
     <string name="local_service_exception">Midagi läks valesti, proovi hiljem uuesti</string>
     <string name="general_client">Midagi läks valesti, proovi uuesti</string>
-    <string name="incorrect_input_parameters">Vigane telefoninumber ja/või isikukood, telefoninumber peab sisaldama riigikoodi</string>
+    <string name="incorrect_input_parameters">Vigane telefoninumber ja/või isikukood, välismaa telefoninumber peab algama riigikoodiga</string>
     <string name="missing_input_parameters">Puudub telefoninumber ja/või isikukood</string>
     <string name="ocsp_unauthorized">Mobiilse allkirjastamise teenusele ei õnnestu ligi pääseda</string>
     <string name="general_service">Viga DigidocService\'ga, proovi hiljem uuesti</string>
