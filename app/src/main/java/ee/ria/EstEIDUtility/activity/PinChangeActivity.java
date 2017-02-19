@@ -29,7 +29,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -40,6 +39,9 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.DateUtils;
@@ -56,36 +58,45 @@ public class PinChangeActivity extends AppCompatActivity {
 
     public static final String TAG = PinChangeActivity.class.getName();
 
-    private RadioGroup radioPinGroup;
-    private RadioButton radioPIN;
-    private RadioButton radioPUK;
-    private TextView currentPinTitle;
-    private EditText currentPinPukView;
-    private EditText newPinView;
-    private EditText newPinAgainView;
-    private Button changeButton;
+    @BindView(R.id.radioButtons) RadioGroup radioPinGroup;
+    @BindView(R.id.radioPIN) RadioButton radioPIN;
+    @BindView(R.id.radioPUK) RadioButton radioPUK;
+    @BindView(R.id.currentPinTitle) TextView currentPinTitle;
+    @BindView(R.id.currentPinPuk) EditText currentPinPukView;
+    @BindView(R.id.newPin) EditText newPinView;
+    @BindView(R.id.newPinAgain) EditText newPinAgainView;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.pinInfoTitle) TextView pinInfoTitle;
+    @BindView(R.id.pinInfo) TextView pinInfo;
+    @BindView(R.id.newPinTitle) TextView newPinTitle;
+    @BindView(R.id.newPinAgainTitle) TextView newPinAgainTitle;
+    @BindView(R.id.changeButton) Button changeButton;
 
     private TokenService tokenService;
-    private boolean serviceBound;
-
-    private TextView title;
-    private TextView pinInfoTitle;
-    private TextView pinInfo;
-    private TextView newPinTitle;
-    private TextView newPinAgainTitle;
-
     private RetryCounterCallback pinBlockedCallback;
     private ChangePinCallback pinChangeCallback;
-
-    private Token.PinType pinType;
 
     private BroadcastReceiver cardPresentReceiver;
     private BroadcastReceiver cardAbsentReciever;
 
+    private boolean serviceBound;
     boolean pinBlocked;
     boolean cardProvided;
 
+    private Token.PinType pinType;
     private NotificationUtil notificationUtil;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        pinType = (Token.PinType) getIntent().getSerializableExtra(Constants.PIN_TYPE_KEY);
+        setLayoutTitle();
+        setContentView(R.layout.pin_change);
+        ButterKnife.bind(this);
+        notificationUtil = new NotificationUtil(this);
+        radioPIN.setChecked(true);
+        Timber.tag(TAG);
+    }
 
     @Override
     public void onStop() {
@@ -94,36 +105,6 @@ public class PinChangeActivity extends AppCompatActivity {
             unbindService(tokenServiceConnection);
             serviceBound = false;
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        pinType = (Token.PinType) getIntent().getSerializableExtra(Constants.PIN_TYPE_KEY);
-        setLayoutTitle();
-        setContentView(R.layout.pin_change);
-
-        radioPinGroup = (RadioGroup) findViewById(R.id.radioButtons);
-        radioPIN = (RadioButton) findViewById(R.id.radioPIN);
-        radioPUK = (RadioButton) findViewById(R.id.radioPUK);
-        currentPinTitle = (TextView) findViewById(R.id.currentPinTitle);
-
-        currentPinPukView = (EditText) findViewById(R.id.currentPinPuk);
-        newPinView = (EditText) findViewById(R.id.newPin);
-        newPinAgainView = (EditText) findViewById(R.id.newPinAgain);
-
-        notificationUtil = new NotificationUtil(this);
-
-        title = (TextView) findViewById(R.id.title);
-        pinInfoTitle = (TextView) findViewById(R.id.pinInfoTitle);
-        pinInfo = (TextView) findViewById(R.id.pinInfo);
-        newPinTitle = (TextView) findViewById(R.id.newPinTitle);
-        newPinAgainTitle = (TextView) findViewById(R.id.newPinAgainTitle);
-
-        radioPIN.setChecked(true);
-        changeButton = (Button) findViewById(R.id.changeButton);
-
-        Timber.tag(TAG);
     }
 
     @Override
@@ -170,60 +151,51 @@ public class PinChangeActivity extends AppCompatActivity {
                 newPinAgainView.setHint(getText(R.string.new_pin2_again_hint));
                 break;
         }
-
-        radioPinGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                refreshLayout(radioPinGroup.getCheckedRadioButtonId());
-            }
-        });
-
-        changeButton.setOnClickListener(new ChangeButtonClickListener());
     }
 
-    class ChangeButtonClickListener implements View.OnClickListener {
+    @OnClick({R.id.radioPIN, R.id.radioPUK})
+    void onChangePinMethodChange() {
+        refreshLayout(radioPinGroup.getCheckedRadioButtonId());
+    }
 
-        @Override
-        public void onClick(View v) {
-            final String currentPinPuk = currentPinPukView.getText().toString();
-            final String newPin = newPinView.getText().toString();
-            final String newPinAgain = newPinAgainView.getText().toString();
+    @OnClick(R.id.changeButton)
+    void onChangeButtonClicked() {
+        final String currentPinPuk = currentPinPukView.getText().toString();
+        final String newPin = newPinView.getText().toString();
+        final String newPinAgain = newPinAgainView.getText().toString();
 
-            PersonalFileCallback callback = new PersonalFileCallback() {
-                @Override
-                public void onPersonalFileResponse(SparseArray<String> result) {
-                    Date dateOfBirth;
-                    try {
-                        dateOfBirth = DateUtils.DATE_FORMAT.parse(result.get(6));
-                    } catch (ParseException e) {
-                        Timber.e(e, "Error parsing date of birth from personal file");
-                        notificationUtil.showFailMessage("Couldn't read date of birth");
-                        return;
-                    }
-
-                    if (!pinsValid(currentPinPuk, newPin, newPinAgain, dateOfBirth)) {
-                        return;
-                    }
-
-                    switch (radioPinGroup.getCheckedRadioButtonId()) {
-                        case R.id.radioPIN:
-                            tokenService.changePin(pinType, currentPinPuk, newPin, pinChangeCallback);
-                            break;
-                        case R.id.radioPUK:
-                            tokenService.unblockAndChangePin(pinType, currentPinPuk, newPin, pinChangeCallback);
-                            break;
-                    }
-
+        PersonalFileCallback callback = new PersonalFileCallback() {
+            @Override
+            public void onPersonalFileResponse(SparseArray<String> result) {
+                Date dateOfBirth;
+                try {
+                    dateOfBirth = DateUtils.DATE_FORMAT.parse(result.get(6));
+                } catch (ParseException e) {
+                    Timber.e(e, "Error parsing date of birth from personal file");
+                    notificationUtil.showFailMessage("Couldn't read date of birth");
+                    return;
                 }
 
-                @Override
-                public void onPersonalFileError(String msg) {
-                    Timber.d("onPersonalFileError: %s", msg);
+                if (!pinsValid(currentPinPuk, newPin, newPinAgain, dateOfBirth)) {
+                    return;
                 }
-            };
-            tokenService.readPersonalFile(callback);
-        }
 
+                switch (radioPinGroup.getCheckedRadioButtonId()) {
+                    case R.id.radioPIN:
+                        tokenService.changePin(pinType, currentPinPuk, newPin, pinChangeCallback);
+                        break;
+                    case R.id.radioPUK:
+                        tokenService.unblockAndChangePin(pinType, currentPinPuk, newPin, pinChangeCallback);
+                        break;
+                }
+            }
+
+            @Override
+            public void onPersonalFileError(String msg) {
+                Timber.d("onPersonalFileError: %s", msg);
+            }
+        };
+        tokenService.readPersonalFile(callback);
     }
 
     private boolean pinsValid(String currentPinPuk, String newPin, String newPinAgain, Date dateOfBirth) {

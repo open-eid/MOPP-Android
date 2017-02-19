@@ -43,6 +43,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.certificate.X509Cert;
 import ee.ria.EstEIDUtility.util.DateUtils;
@@ -59,20 +61,20 @@ public class ManageEidsActivity extends AppCompatActivity {
 
     private static final String TAG = ManageEidsActivity.class.getName();
 
-    private TextView givenNames;
-    private TextView surnameView;
-    private TextView documentNumberView;
-    private TextView cardValidity;
-    private TextView cardValidityTime;
-    private TextView certValidity;
-    private TextView certValidityTime;
-    private TextView certUsedView;
-    private TextView personIdCode;
-    private TextView dateOfBirth;
-    private TextView nationalityView;
-    private TextView emailView;
-    private TextView info;
-    private ScrollView myEidView;
+    @BindView(R.id.givenNames) TextView givenNames;
+    @BindView(R.id.surname) TextView surnameView;
+    @BindView(R.id.document_number) TextView documentNumberView;
+    @BindView(R.id.card_validity) TextView cardValidity;
+    @BindView(R.id.card_valid_value) TextView cardValidityTime;
+    @BindView(R.id.cert_validity) TextView certValidity;
+    @BindView(R.id.cert_valid_value) TextView certValidityTime;
+    @BindView(R.id.cert_used) TextView certUsedView;
+    @BindView(R.id.person_id) TextView personIdCode;
+    @BindView(R.id.date_of_birth) TextView dateOfBirth;
+    @BindView(R.id.nationality) TextView nationalityView;
+    @BindView(R.id.email) TextView emailView;
+    @BindView(R.id.info) TextView info;
+    @BindView(R.id.my_eid) ScrollView myEidView;
 
     private TokenService tokenService;
     private boolean serviceBound;
@@ -85,33 +87,13 @@ public class ManageEidsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_eids);
-
+        ButterKnife.bind(this);
         notificationUtil = new NotificationUtil(this);
-        info = (TextView) findViewById(R.id.info);
         info.setText(Html.fromHtml(getString(R.string.eid_info)));
         info.setMovementMethod(LinkMovementMethod.getInstance());
-
-        myEidView = (ScrollView) findViewById(R.id.my_eid);
         notificationUtil.showWarningMessage(getText(R.string.insert_card_wait));
-
-        givenNames = (TextView) findViewById(R.id.givenNames);
-        surnameView = (TextView) findViewById(R.id.surname);
-        documentNumberView = (TextView) findViewById(R.id.document_number);
-        cardValidity = (TextView) findViewById(R.id.card_validity);
-        cardValidityTime = (TextView) findViewById(R.id.card_valid_value);
-
-        certValidity = (TextView) findViewById(R.id.cert_validity);
-        certValidityTime = (TextView) findViewById(R.id.cert_valid_value);
-        certUsedView = (TextView) findViewById(R.id.cert_used);
-
-        personIdCode = (TextView) findViewById(R.id.person_id);
-        dateOfBirth = (TextView) findViewById(R.id.date_of_birth);
-        nationalityView = (TextView) findViewById(R.id.nationality);
-        emailView = (TextView) findViewById(R.id.email);
-
         cardPresentReceiver = new CardPresentReciever();
         cardAbsentReciever = new CardAbsentReciever();
-
         Timber.tag(TAG);
     }
 

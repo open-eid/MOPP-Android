@@ -27,36 +27,36 @@ import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.tokenlibrary.Token;
 
 public class PinUtilitiesActivity extends AppCompatActivity {
 
+    @BindView(R.id.changePin1) View changePin1;
+    @BindView(R.id.changePin2) View changePin2;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_utilities);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 
-        View changePin1 = findViewById(R.id.changePin1);
-        changePin1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchPinChangeActivity(Token.PinType.PIN1);
-            }
-        });
+    @OnClick(R.id.changePin1)
+    void onChangePin1() {
+        launchPinChangeActivity(Token.PinType.PIN1);
+    }
 
-        View changePin2 = findViewById(R.id.changePin2);
-        changePin2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchPinChangeActivity(Token.PinType.PIN2);
-            }
-        });
+    @OnClick(R.id.changePin2)
+    void onChangePin2() {
+        launchPinChangeActivity(Token.PinType.PIN2);
     }
 
     private void launchPinChangeActivity(Token.PinType pinType) {

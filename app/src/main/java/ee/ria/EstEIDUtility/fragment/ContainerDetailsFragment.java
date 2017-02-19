@@ -59,6 +59,8 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.OnClick;
 import ee.ria.EstEIDUtility.BuildConfig;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.container.AddedAdesSignatureReceiver;
@@ -91,6 +93,8 @@ import ee.ria.tokenlibrary.exception.PinVerificationException;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
+import static butterknife.ButterKnife.bind;
+import static butterknife.ButterKnife.findById;
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.toJson;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
@@ -106,17 +110,20 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
     public static final String TAG = ContainerDetailsFragment.class.getName();
     private static final int CHOOSE_FILE_REQUEST_ID = 1;
 
-    private EditText title;
-    private TextView body;
-    private TextView fileInfoTextView;
+    //Fragment views
+    @BindView(R.id.docName) EditText title;
+    @BindView(R.id.listDocLocation) TextView body;
+    @BindView(R.id.dbocInfo) TextView fileInfoTextView;
+    @BindView(R.id.addFile) Button addFileButton;
+    @BindView(R.id.addSignature) Button addSignatureButton;
+    @BindView(R.id.sendButton) Button sendButton;
+    @BindView(R.id.saveContainer) Button saveButton;
+    @BindView(R.id.editBdoc) ImageView editBdoc;
+
+    //PIN dialog views
     private AlertDialog pinDialog;
-    private EditText pinText;
     private TextView enterPinText;
-    private Button addFileButton;
-    private Button addSignatureButton;
-    private Button sendButton;
-    private Button saveButton;
-    private ImageView editBdoc;
+    private EditText pinText;
 
     private ContainerFacade containerFacade;
 
@@ -124,14 +131,13 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
     private BroadcastReceiver cardRemovedReceiver;
     private BroadcastReceiver connectivityBroadcastReceiver;
     private BroadcastReceiver mobileIdBroadcastReceiver;
-
     private TokenService tokenService;
-    private boolean serviceBound;
 
     private NotificationUtil notificationUtil;
     private MobileSignProgressHelper mobileSignProgressHelper;
-    private boolean cardPresent;
 
+    private boolean serviceBound;
+    private boolean cardPresent;
     private boolean mobileSignInProgress = false;
     private boolean mobileSignReceiverRegistered = false;
 
@@ -194,11 +200,12 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup containerView, Bundle savedInstanceState) {
         View fragLayout = inflater.inflate(R.layout.fragment_container_details, containerView, false);
+        bind(this, fragLayout);
+
         notificationUtil = new NotificationUtil(fragLayout);
         mobileSignProgressHelper = new MobileSignProgressHelper(fragLayout);
 
         String containerWorkingPath = getArguments().getString(Constants.CONTAINER_PATH_KEY);
-
         containerFacade = ContainerBuilder
                 .aContainer(getContext())
                 .fromExistingContainer(containerWorkingPath)
@@ -207,17 +214,8 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         createFilesListFragment();
         createSignatureListFragment();
 
-        title = (EditText) fragLayout.findViewById(R.id.docName);
         title.setKeyListener(null);
 
-        body = (TextView) fragLayout.findViewById(R.id.listDocLocation);
-        fileInfoTextView = (TextView) fragLayout.findViewById(R.id.dbocInfo);
-
-        editBdoc = (ImageView) fragLayout.findViewById(R.id.editBdoc);
-        addFileButton = (Button) fragLayout.findViewById(R.id.addFile);
-        addSignatureButton = (Button) fragLayout.findViewById(R.id.addSignature);
-        sendButton = (Button) fragLayout.findViewById(R.id.sendButton);
-        saveButton = (Button) fragLayout.findViewById(R.id.saveContainer);
         createPinDialog();
         if (containerFacade.hasDataFiles()) {
             enableSigning();
@@ -225,36 +223,85 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         return fragLayout;
     }
 
+    @OnClick(R.id.addSignature)
+    public void onAddSignatureClick() {
+        if (cardPresent) {
+            tokenService.readCert(Token.CertType.CertSign, new SameSignatureCallback());
+        } else {
+            startMobileSign();
+        }
+    }
+
+    @OnClick(R.id.sendButton)
+    public void onShareContainer() {
+        refreshContainerFacade();
+        Uri uriToFile = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, containerFacade.getContainerFile());
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uriToFile);
+        shareIntent.setType("application/zip");
+        startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.upload_to)));
+    }
+
+    @OnClick(R.id.addFile)
+    public void onAddFileToContainerClick() {
+        refreshContainerFacade();
+        if (containerFacade.isSigned()) {
+            notificationUtil.showFailMessage(getText(R.string.add_file_remove_signatures));
+            return;
+        }
+        browseForFiles();
+    }
+
+    @OnClick(R.id.saveContainer)
+    public void onSaveContainerClick() {
+        refreshContainerFacade();
+        if (!containerFacade.hasDataFiles()) {
+            notificationUtil.showWarningMessage(getText(R.string.save_container_no_files));
+            return;
+        }
+        String fileName = title.getText().toString();
+        if (fileName.isEmpty()) {
+            notificationUtil.showWarningMessage(getText(R.string.file_name_empty_message));
+            return;
+        }
+
+        if (!ContainerNameUtils.hasSupportedContainerExtension(fileName)) {
+            title.append(".");
+            title.append(AppPreferences.get(getContext()).getContainerFormat());
+            fileName = title.getText().toString();
+        }
+
+        File file = new File(FileUtils.getContainersDirectory(getContext()), fileName);
+        if (file.exists()) {
+            notificationUtil.showFailMessage(getText(R.string.file_exists_message));
+            return;
+        }
+
+        boolean renamed = containerFacade.getContainerFile().renameTo(file);
+        if (renamed) {
+            notificationUtil.showSuccessMessage(getText(R.string.file_rename_success));
+        }
+        containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(file).build();
+        containerFacade.save();
+        saveButton.setVisibility(View.GONE);
+        InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        input.hideSoftInputFromWindow(title.getWindowToken(), 0);
+        title.setCursorVisible(false);
+    }
+
+    @OnClick({R.id.docName, R.id.editBdoc})
+    public void onChangeContainerName() {
+        saveButton.setVisibility(View.VISIBLE);
+        title.setCursorVisible(true);
+        title.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+        InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        input.showSoftInput(title, InputMethodManager.SHOW_IMPLICIT);
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        addFileButton.setOnClickListener(new AddFileButtonListener());
-        addSignatureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cardPresent) {
-                    tokenService.readCert(Token.CertType.CertSign, new SameSignatureCallback());
-                } else {
-                    startMobileSign();
-                }
-            }
-        });
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                refreshContainerFacade();
-                Uri uriToFile = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, containerFacade.getContainerFile());
-                Intent shareIntent = new Intent();
-                shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_STREAM, uriToFile);
-                shareIntent.setType("application/zip");
-                startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.upload_to)));
-            }
-        });
-        saveButton.setOnClickListener(new SaveFileNameListener());
-        title.setOnClickListener(new ChangeFileNameListener());
-        editBdoc.setOnClickListener(new ChangeFileNameListener());
-
         fileInfoTextView.setText(getFormattedFileInfo());
         title.setText(containerFacade.getName());
         body.append(containerFacade.getName());
@@ -401,9 +448,9 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
     }
 
     private void createPinDialog() {
-        View view = getActivity().getLayoutInflater().inflate(R.layout.enter_pin, null);
-        enterPinText = (TextView) view.findViewById(R.id.enterPin);
-        pinText = (EditText) view.findViewById(R.id.pin);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.enter_pin, null);
+        enterPinText = findById(view, R.id.enterPin);
+        pinText = findById(view, R.id.pin);
         pinText.setHint(Token.PinType.PIN2.name());
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setPositiveButton(R.string.sign_button, new DialogInterface.OnClickListener() {
@@ -417,10 +464,10 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
     }
 
     private void startMobileSign() {
-        View view = getActivity().getLayoutInflater().inflate(R.layout.mobile_id_dialogue, null);
-        final EditText mobileNr = (EditText) view.findViewById(R.id.mobile_nr);
-        final EditText personalCode = (EditText) view.findViewById(R.id.personal_code);
-        final CheckBox rememberMe = (CheckBox) view.findViewById(R.id.remember_me);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.mobile_id_dialogue, null);
+        final EditText mobileNr = findById(view, R.id.mobile_nr);
+        final EditText personalCode = findById(view, R.id.personal_code);
+        final CheckBox rememberMe = findById(view, R.id.remember_me);
 
         final AppPreferences preferences = AppPreferences.get(getContext());
         mobileNr.setText(preferences.getMobileNumber());
@@ -511,56 +558,6 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         return (ContainerSignaturesFragment) getChildFragmentManager().findFragmentByTag(ContainerSignaturesFragment.TAG);
     }
 
-    class SaveFileNameListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            refreshContainerFacade();
-            if (!containerFacade.hasDataFiles()) {
-                notificationUtil.showWarningMessage(getText(R.string.save_container_no_files));
-                return;
-            }
-            String fileName = title.getText().toString();
-            if (fileName.isEmpty()) {
-                notificationUtil.showWarningMessage(getText(R.string.file_name_empty_message));
-                return;
-            }
-
-            if (!ContainerNameUtils.hasSupportedContainerExtension(fileName)) {
-                title.append(".");
-                title.append(AppPreferences.get(getContext()).getContainerFormat());
-                fileName = title.getText().toString();
-            }
-
-            File file = new File(FileUtils.getContainersDirectory(getContext()), fileName);
-            if (file.exists()) {
-                notificationUtil.showFailMessage(getText(R.string.file_exists_message));
-                return;
-            }
-
-            boolean renamed = containerFacade.getContainerFile().renameTo(file);
-            if (renamed) {
-                notificationUtil.showSuccessMessage(getText(R.string.file_rename_success));
-            }
-            containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(file).build();
-            containerFacade.save();
-            saveButton.setVisibility(View.GONE);
-            InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            input.hideSoftInputFromWindow(title.getWindowToken(), 0);
-            title.setCursorVisible(false);
-        }
-    }
-
-    class ChangeFileNameListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            saveButton.setVisibility(View.VISIBLE);
-            title.setCursorVisible(true);
-            title.setInputType(EditorInfo.TYPE_CLASS_TEXT);
-            InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-            input.showSoftInput(title, InputMethodManager.SHOW_IMPLICIT);
-        }
-    }
-
     class CardPresentReciever extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -612,19 +609,6 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
             } else {
                 notificationUtil.showFailMessage(getText(R.string.pin2_blocked));
             }
-        }
-    }
-
-
-    private class AddFileButtonListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            refreshContainerFacade();
-            if (containerFacade.isSigned()) {
-                notificationUtil.showFailMessage(getText(R.string.add_file_remove_signatures));
-                return;
-            }
-            browseForFiles();
         }
     }
 

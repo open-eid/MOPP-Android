@@ -35,11 +35,13 @@ import android.widget.TextView;
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.style.BCStyle;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ee.ria.EstEIDUtility.R;
+import ee.ria.EstEIDUtility.certificate.X509Cert;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.container.SignatureFacade;
-import ee.ria.EstEIDUtility.certificate.X509Cert;
 import ee.ria.EstEIDUtility.fragment.ContainerSignaturesFragment;
 import ee.ria.EstEIDUtility.util.DateUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
@@ -52,11 +54,15 @@ public class SignatureAdapter extends ArrayAdapter<SignatureFacade> implements F
     private NotificationUtil notificationUtil;
     private Activity activity;
 
-    private static class ViewHolder {
-        TextView name;
-        TextView signed;
-        ImageView removeSignature;
-        TextView isSigned;
+    static class ViewHolder {
+        @BindView(R.id.personName) TextView name;
+        @BindView(R.id.fileSize) TextView signed;
+        @BindView(R.id.removeSignature) ImageView removeSignature;
+        @BindView(R.id.isSigned) TextView isSigned;
+
+        ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 
     public SignatureAdapter(Activity activity, ContainerFacade containerFacade, ContainerSignaturesFragment containerSignaturesFragment) {
@@ -72,14 +78,8 @@ public class SignatureAdapter extends ArrayAdapter<SignatureFacade> implements F
         notificationUtil = new NotificationUtil(activity);
         ViewHolder viewHolder;
         if (convertView == null) {
-            viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_container_signatures, parent, false);
-
-            viewHolder.name = (TextView) convertView.findViewById(R.id.personName);
-            viewHolder.signed = (TextView) convertView.findViewById(R.id.fileSize);
-            viewHolder.isSigned = (TextView) convertView.findViewById(R.id.isSigned);
-            viewHolder.removeSignature = (ImageView) convertView.findViewById(R.id.removeSignature);
-
+            viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();

@@ -33,6 +33,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
@@ -50,10 +52,14 @@ public class DataFilesAdapter extends ArrayAdapter<DataFileFacade> {
     private NotificationUtil notificationUtil;
     private Activity activity;
 
-    private static class ViewHolder {
-        TextView fileName;
-        TextView fileSize;
-        ImageView removeFile;
+    static class ViewHolder {
+        @BindView(R.id.fileName) TextView fileName;
+        @BindView(R.id.fileSize) TextView fileSize;
+        @BindView(R.id.removeFile) ImageView removeFile;
+
+        ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 
     public DataFilesAdapter(Activity activity, ContainerFacade containerFacade, ContainerDataFilesFragment containerDataFilesFragment) {
@@ -69,13 +75,8 @@ public class DataFilesAdapter extends ArrayAdapter<DataFileFacade> {
         notificationUtil = new NotificationUtil(activity);
         ViewHolder viewHolder;
         if (convertView == null) {
-            viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_container_datafiles, parent, false);
-
-            viewHolder.fileSize = (TextView) convertView.findViewById(R.id.fileSize);
-            viewHolder.fileName = (TextView) convertView.findViewById(R.id.fileName);
-            viewHolder.removeFile = (ImageView) convertView.findViewById(R.id.removeFile);
-
+            viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();

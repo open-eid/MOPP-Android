@@ -22,11 +22,13 @@ package ee.ria.EstEIDUtility.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
 import ee.ria.EstEIDUtility.container.ContainerFacade;
@@ -38,22 +40,23 @@ import ee.ria.EstEIDUtility.util.NotificationUtil;
 
 public class SigningActivity extends AppCompatActivity {
 
+    @BindView(R.id.add_container) Button addContainerButton;
+
     private NotificationUtil notificationUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signing);
-        Button addContainer = (Button) findViewById(R.id.add_container);
-        addContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createNewContainer();
-            }
-        });
+        ButterKnife.bind(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         notificationUtil = new NotificationUtil(this);
+    }
+
+    @OnClick(R.id.add_container)
+    void onAddContainer() {
+        createNewContainer();
     }
 
     private void createNewContainer() {

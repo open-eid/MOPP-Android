@@ -39,6 +39,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.util.DateUtils;
 
@@ -49,10 +51,14 @@ public class ContainerListAdapter extends ArrayAdapter<File> implements Filterab
     private ContainerFilter containerFilter = new ContainerFilter();
     private AlertDialog confirmDialog;
 
-    private static class ViewHolder {
-        TextView fileName;
-        TextView fileCreated;
-        ImageView removeContainer;
+    static class ViewHolder {
+        @BindView(R.id.listDocName) TextView fileName;
+        @BindView(R.id.listDocTime) TextView fileCreated;
+        @BindView(R.id.removeContainer) ImageView removeContainer;
+
+        ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 
     public ContainerListAdapter(Context context, List<File> allContainers) {
@@ -75,22 +81,15 @@ public class ContainerListAdapter extends ArrayAdapter<File> implements Filterab
     public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder viewHolder;
         if (convertView == null) {
-            viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.container_list_row, parent, false);
-
-            viewHolder.fileName = (TextView) convertView.findViewById(R.id.listDocName);
-            viewHolder.fileCreated = (TextView) convertView.findViewById(R.id.listDocTime);
-            viewHolder.removeContainer = (ImageView) convertView.findViewById(R.id.removeContainer);
-
+            viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
         final File containerFile = getItem(position);
         viewHolder.fileName.setText(containerFile.getName());
         viewHolder.fileCreated.setText(getFileLastModified(containerFile.lastModified()));
-
         viewHolder.removeContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
