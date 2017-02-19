@@ -26,7 +26,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.support.v4.content.FileProvider;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -51,6 +50,7 @@ import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.LayoutUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
+import timber.log.Timber;
 
 public class ContainerDataFilesFragment extends ListFragment {
 
@@ -67,6 +67,7 @@ public class ContainerDataFilesFragment extends ListFragment {
         containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerWorkingPath).build();
         filesAdapter = new DataFilesAdapter(getActivity(), containerFacade, this);
         setListAdapter(filesAdapter);
+        Timber.tag(TAG);
     }
 
     @Override
@@ -108,7 +109,7 @@ public class ContainerDataFilesFragment extends ListFragment {
                 }
             }
         } catch (IOException e) {
-            Log.e(TAG, "extractAttachment: ", e);
+            Timber.e(e, "Extracting attachment from container failed");
         }
         return attachment;
     }
@@ -137,7 +138,7 @@ public class ContainerDataFilesFragment extends ListFragment {
         try {
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            Log.e(TAG, "launchFileContentActivity: no handler for this type of file ", e);
+            Timber.e(e, "No handler for this type (%s) of file found", mimeType);
             notificationUtil.showFailMessage(getText(R.string.file_handler_error));
         }
     }

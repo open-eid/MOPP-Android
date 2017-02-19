@@ -27,10 +27,10 @@ import android.smartcardio.CommandAPDU;
 import android.smartcardio.TerminalFactory;
 import android.smartcardio.ipc.CardService;
 import android.smartcardio.ipc.ICardService;
-import android.util.Log;
 
 import ee.ria.scardcomlibrary.CardReader;
 import ee.ria.scardcomlibrary.SmartCardCommunicationException;
+import timber.log.Timber;
 
 public class Omnikey extends CardReader {
     private ICardService mService;
@@ -38,6 +38,7 @@ public class Omnikey extends CardReader {
     private Card card;
 
     public Omnikey(Context context) {
+        Timber.tag(Omnikey.class.getName());
         try {
             Intent serviceIntent = new Intent("com.theobroma.cardreadermanager.backendipc.BroadcastRecord");
             serviceIntent.setPackage("com.theobroma.cardreadermanager.backendipc");
@@ -47,7 +48,7 @@ public class Omnikey extends CardReader {
             mService = CardService.getInstance(context.getApplicationContext());
             mFactory = mService.getTerminalFactory();
         } catch (Exception e) {
-            Log.e(TAG, "Omnikey: ", e);
+            Timber.e(e, "Error initializing reader");
         }
     }
 
@@ -55,7 +56,7 @@ public class Omnikey extends CardReader {
         try {
             return mFactory.terminals().list().size() > 0;
         } catch (CardException e) {
-            Log.e(TAG, "hasSupportedReader: ", e);
+            Timber.e(e, "Error occurred when checking for supported readers");
             return false;
         }
     }
@@ -80,7 +81,7 @@ public class Omnikey extends CardReader {
             card = mFactory.terminals().list().get(0).connect("T=0");
             connected.connected();
         } catch (CardException e) {
-            Log.e(TAG, "connect: ", e);
+            Timber.e(e, "Error connecting to reader");
         }
     }
 
@@ -90,7 +91,7 @@ public class Omnikey extends CardReader {
             try {
                 card.disconnect(true);
             } catch (CardException e) {
-                Log.e(TAG, "close: ", e);
+                Timber.e(e, "Error closing reader");
             }
         }
         mService.releaseService();

@@ -107,4 +107,14 @@ public class ServiceFault {
         reasonMap.put("503", "simultaneous_requests_limit_exceeded");
         return reasonMap;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ServiceFault{");
+        sb.append("originalFaultCode='").append(originalFaultCode).append('\'');
+        sb.append(", originalFaultMessage='").append(originalFaultMessage).append('\'');
+        sb.append(", reason='").append(reason).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }

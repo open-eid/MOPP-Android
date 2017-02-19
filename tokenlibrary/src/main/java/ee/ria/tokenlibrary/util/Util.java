@@ -19,14 +19,14 @@
 
 package ee.ria.tokenlibrary.util;
 
-import android.util.Log;
-
 import org.spongycastle.util.encoders.Hex;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+
+import timber.log.Timber;
 
 public class Util {
 
@@ -71,7 +71,7 @@ public class Util {
             }
             return cert.getSubjectDN().getName();
         } catch (Exception e) {
-            Log.e(TAG, "getCommonName: ", e);
+            Timber.e(e, "Error parsing CN from certificate");
         }
         return "";
     }

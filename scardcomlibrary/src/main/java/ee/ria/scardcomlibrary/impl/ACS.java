@@ -37,6 +37,7 @@ import java.util.HashMap;
 
 import ee.ria.scardcomlibrary.CardReader;
 import ee.ria.scardcomlibrary.SmartCardCommunicationException;
+import timber.log.Timber;
 
 public class ACS extends CardReader {
 
@@ -63,6 +64,7 @@ public class ACS extends CardReader {
         createUsbDetachReceiver();
         createUsbPermissionReceiver();
         checkAttachedDevices();
+        Timber.tag(TAG);
     }
 
     private void createUsbPermissionReceiver() {
@@ -80,7 +82,7 @@ public class ACS extends CardReader {
                                 Intent cardInsertedService = new Intent(context, CardStateService.class);
                                 context.startService(cardInsertedService);
                             } catch (Exception e) {
-                                Log.e(TAG, "onReceive: ", e);
+                                Timber.e(e, "onReceive");
                             }
                         }
                     }
@@ -153,7 +155,7 @@ public class ACS extends CardReader {
                                 ctx.power(slot, Reader.CARD_WARM_RESET);
                                 ctx.setProtocol(slot, Reader.PROTOCOL_T0 | Reader.PROTOCOL_T1);
                             } catch (ReaderException e) {
-                                Log.e(TAG, "ReaderException: ", e);
+                                Timber.e(e, "Reader Exception Occurred");
                             }
 
                             Intent cardInsertedIntent = new Intent(TOKEN_AVAILABLE_INTENT);
@@ -175,11 +177,11 @@ public class ACS extends CardReader {
                     try {
                         Thread.sleep(CARD_LISTENER_RETRY);
                     } catch (InterruptedException e) {
-                        Log.e(TAG, "onHandleIntent: ", e);
+                        Timber.e(e, "waiting for card listener retry %i millis was interrupted ", CARD_LISTENER_RETRY);
                     }
                 }
             } catch (Exception e) {
-                Log.e(TAG, "onHandleIntent: ", e);
+                Timber.e(e, "Exception on Handle Intent");
                 //TODO: unplug and plugin message
             }
         }

@@ -4,7 +4,6 @@ package ee.ria.mopp.androidmobileid.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +33,7 @@ import ee.ria.mopp.androidmobileid.soap.ServiceGenerator;
 import ee.ria.mopp.androidmobileid.soap.SoapFault;
 import retrofit2.Call;
 import retrofit2.Response;
+import timber.log.Timber;
 
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.fromJson;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
@@ -42,18 +42,21 @@ import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.CREATE_SIG
 
 public class MobileSignService extends IntentService {
 
+    public static final String TAG = MobileSignService.class.getName();
+
     private static final long INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 10000;
     private static final long SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 5000;
-    public static final String TAG = MobileSignService.class.getName();
 
     private DigidocServiceClient ddsClient;
 
     public MobileSignService() {
         super(TAG);
+        Timber.tag(TAG);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Timber.d("Handling mobile sign intent");
         MobileCreateSignatureRequest request = getRequestFromIntent(intent);
         try {
             SSLContext ddsSSLConfig = createSSLConfig(intent);
@@ -76,7 +79,7 @@ public class MobileSignService extends IntentService {
             }
         } catch (IOException e) {
             broadcastFault(new ServiceFault(e));
-            Log.e(TAG, "SoapRequestFailure", e);
+            Timber.e(e, "Soap request to DigiDocService failed");
         }
     }
 
@@ -119,7 +122,9 @@ public class MobileSignService extends IntentService {
 
     private void parseErrorAndBroadcast(Response responseWrapper) {
         SoapFault soapFault = ErrorUtils.parseError(responseWrapper);
-        broadcastFault(new ServiceFault(soapFault));
+        ServiceFault serviceFault = new ServiceFault(soapFault);
+        Timber.d("Service fault occured: %s", serviceFault.toString());
+        broadcastFault(serviceFault);
     }
 
     private RequestEnvelope wrapInEnvelope(RequestObject request) {
@@ -155,7 +160,7 @@ public class MobileSignService extends IntentService {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
-            Log.e(TAG, "interrupted", e);
+            Timber.e(e, "Waiting for next call to DigiDocService interrupted");
             Thread.currentThread().interrupt();
         }
     }

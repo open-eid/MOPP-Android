@@ -24,7 +24,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import org.apache.commons.io.FilenameUtils;
@@ -37,13 +36,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class FileUtils {
+import timber.log.Timber;
 
-    private static final String TAG = FileUtils.class.getName();
+public class FileUtils {
 
     public static String getKilobytes(long length) {
         double kilobytes = (length / 1024);
@@ -104,7 +102,7 @@ public class FileUtils {
             InputStream inputStream = contentResolver.openInputStream(uri);
             return writeToFile(destination, inputStream);
         } catch (Exception e) {
-            Log.e(TAG, "failed to cache URI data", e);
+            Timber.e(e, "failed to cache URI data");
             throw new FailedToCacheUriDataException(e);
         }
     }
@@ -126,7 +124,7 @@ public class FileUtils {
             for (File child : directory.listFiles()) {
                 boolean delete = child.delete();
                 if (delete) {
-                    Log.d(TAG, "clearDirectory() called with: directory = [" + directory + "]" + " File [" + child.getName() + "] deleted");
+                    Timber.d("clearDirectory() called with: directory = %s File %s deleted", directory.toString(), child.getName());
                 }
             }
         }

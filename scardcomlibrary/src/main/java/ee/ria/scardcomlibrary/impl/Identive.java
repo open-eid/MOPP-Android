@@ -30,6 +30,7 @@ import java.util.Arrays;
 
 import ee.ria.scardcomlibrary.CardReader;
 import ee.ria.scardcomlibrary.SmartCardCommunicationException;
+import timber.log.Timber;
 
 public class Identive extends CardReader {
 
@@ -40,6 +41,7 @@ public class Identive extends CardReader {
         this.context = context;
         ctx = new SCard();
         ctx.SCardEstablishContext(context);
+        Timber.tag(Identive.class.getName());
     }
 
     @Override
@@ -55,7 +57,7 @@ public class Identive extends CardReader {
             ctx.SCardListReaders(context, deviceList);
             return deviceList.size() > 0;
         } catch (Exception e) {
-            Log.e(TAG, "hasSupportedReader: ", e);
+            Timber.e(e, "Exception when checking for supported reader");
         }
         return false;
     }

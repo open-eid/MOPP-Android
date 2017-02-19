@@ -31,7 +31,6 @@ import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ScrollView;
@@ -54,6 +53,7 @@ import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
 import ee.ria.token.tokenservice.callback.UseCounterCallback;
 import ee.ria.tokenlibrary.Token;
+import timber.log.Timber;
 
 public class ManageEidsActivity extends AppCompatActivity {
 
@@ -111,6 +111,8 @@ public class ManageEidsActivity extends AppCompatActivity {
 
         cardPresentReceiver = new CardPresentReciever();
         cardAbsentReciever = new CardAbsentReciever();
+
+        Timber.tag(TAG);
     }
 
     @Override
@@ -228,13 +230,13 @@ public class ManageEidsActivity extends AppCompatActivity {
                         cardValidityTime.setTextColor(Color.RED);
                     }
                 } catch (ParseException e) {
-                    Log.e(TAG, "onPersonalFileResponse: ", e);
+                    Timber.e(e, "Error parsing expiry date");
                 }
             }
 
             @Override
             public void onPersonalFileError(String msg) {
-                Log.d(TAG, "onPersonalFileError: " + msg);
+                Timber.d("Unable to read personal file: %s", msg);
             }
         };
         tokenService.readPersonalFile(callback);
@@ -290,7 +292,7 @@ public class ManageEidsActivity extends AppCompatActivity {
             try {
                 Collection<List<?>> subjectAlternativeNames = x509Cert.getCertificate().getSubjectAlternativeNames();
                 if (subjectAlternativeNames == null) {
-                    Log.d(TAG, "Couldn't read email");
+                    Timber.d("Couldn't read email address from certificate");
                     return;
                 }
                 for (List subjectAlternativeName : subjectAlternativeNames) {
@@ -299,7 +301,7 @@ public class ManageEidsActivity extends AppCompatActivity {
                     }
                 }
             } catch (CertificateParsingException e) {
-                Log.e(TAG, "onCertificateResponse: ", e);
+                Timber.e(e, "Error parsing certificate");
             }
 
         }

@@ -19,11 +19,10 @@
 
 package ee.ria.tokenlibrary;
 
-import android.util.Log;
-
 import ee.ria.scardcomlibrary.CardReader;
 import ee.ria.tokenlibrary.util.TokenVersion;
 import ee.ria.tokenlibrary.util.Util;
+import timber.log.Timber;
 
 public class TokenFactory {
 
@@ -35,7 +34,7 @@ public class TokenFactory {
             byte[] versionBytes = cardReader.transmitExtended(new byte[]{0x00, (byte) 0xCA, 0x01, 0x00, 0x03});
             cardVersion = Util.toHex(versionBytes);
         } catch (Exception e) {
-            Log.e(TAG, "getTokenImpl: ", e);
+            Timber.e(e, "Error retrieving token implementation");
         }
 
         if (cardVersion == null) {

@@ -19,13 +19,11 @@
 
 package ee.ria.EstEIDUtility.certificate;
 
-import android.util.Log;
-
-import org.spongycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.RDN;
 import org.spongycastle.asn1.x500.X500Name;
 import org.spongycastle.asn1.x500.style.IETFUtils;
+import org.spongycastle.cert.jcajce.JcaX509CertificateHolder;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateEncodingException;
@@ -36,6 +34,8 @@ import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 
+import timber.log.Timber;
+
 public class X509Cert {
 
     private static final String TAG = X509Cert.class.getName();
@@ -44,6 +44,7 @@ public class X509Cert {
 
     public X509Cert(byte[] signingCertificateDer) {
         certificate = getSignatureCertificate(signingCertificateDer);
+        Timber.tag(TAG);
     }
 
     public boolean isValid() {
@@ -62,7 +63,7 @@ public class X509Cert {
         try {
             x500name = new JcaX509CertificateHolder(certificate).getSubject();
         } catch (CertificateEncodingException e) {
-            Log.e(TAG, "getValueByObjectIdentifier: ", e);
+            Timber.e(e, "Error getting value by ASN1 Object identifier");
         }
         if (x500name == null) {
             return null;
@@ -81,7 +82,7 @@ public class X509Cert {
             CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
             return (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(signingCertificateDer));
         } catch (CertificateException e) {
-            Log.e(TAG, "CertificateFactory: ", e);
+            Timber.e(e, "Error creating certificate object from byte array");
         }
         return null;
     }

@@ -28,7 +28,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
@@ -51,6 +50,7 @@ import ee.ria.token.tokenservice.callback.ChangePinCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
 import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.tokenlibrary.Token;
+import timber.log.Timber;
 
 public class PinChangeActivity extends AppCompatActivity {
 
@@ -121,8 +121,9 @@ public class PinChangeActivity extends AppCompatActivity {
         newPinAgainTitle = (TextView) findViewById(R.id.newPinAgainTitle);
 
         radioPIN.setChecked(true);
-
         changeButton = (Button) findViewById(R.id.changeButton);
+
+        Timber.tag(TAG);
     }
 
     @Override
@@ -195,7 +196,7 @@ public class PinChangeActivity extends AppCompatActivity {
                     try {
                         dateOfBirth = DateUtils.DATE_FORMAT.parse(result.get(6));
                     } catch (ParseException e) {
-                        Log.e(TAG, "onPersonalFileResponse: ", e);
+                        Timber.e(e, "Error parsing date of birth from personal file");
                         notificationUtil.showFailMessage("Couldn't read date of birth");
                         return;
                     }
@@ -217,7 +218,7 @@ public class PinChangeActivity extends AppCompatActivity {
 
                 @Override
                 public void onPersonalFileError(String msg) {
-                    Log.d(TAG, "onPersonalFileError: " + msg);
+                    Timber.d("onPersonalFileError: %s", msg);
                 }
             };
             tokenService.readPersonalFile(callback);

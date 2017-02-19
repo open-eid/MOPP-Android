@@ -24,7 +24,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -39,6 +38,7 @@ import ee.ria.EstEIDUtility.fragment.ErrorOpeningFileFragment;
 import ee.ria.EstEIDUtility.preferences.accessor.AppPreferences;
 import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
+import timber.log.Timber;
 
 public class OpenExternalFileActivity extends EntryPointActivity {
 
@@ -49,18 +49,19 @@ public class OpenExternalFileActivity extends EntryPointActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_external_file);
         handleIntentAction();
+        Timber.tag(TAG);
     }
 
     private void handleIntentAction() {
         Intent intent = getIntent();
-
         ContainerFacade container = null;
+        Timber.d("Handling action: %s ", intent.getAction());
         switch (intent.getAction()) {
             case Intent.ACTION_VIEW:
                 try {
                     container = createContainer(intent.getData());
                 } catch (Exception e) {
-                    Log.e(TAG, e.getMessage(), e);
+                    Timber.e(e, "Error creating container from uri %s", intent.getData().toString());
                 }
                 break;
             case Intent.ACTION_SEND:
@@ -97,7 +98,7 @@ public class OpenExternalFileActivity extends EntryPointActivity {
                             .withDataFiles(uris)
                             .build();
                 } catch (ContainerBuilder.ExternalContainerSaveException e) {
-                    Log.e(TAG, "createContainer: ", e);
+                    Timber.e(e, "Failed to create container");
                     return null;
                 }
             }
@@ -121,7 +122,7 @@ public class OpenExternalFileActivity extends EntryPointActivity {
                         .fromExternalContainer(uri)
                         .build();
             } catch (ContainerBuilder.ExternalContainerSaveException e) {
-                Log.e(TAG, "createContainer: ", e);
+                Timber.e(e, "Failed to create container");
                 return null;
             }
         } else {

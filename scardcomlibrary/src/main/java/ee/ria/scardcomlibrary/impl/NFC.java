@@ -28,12 +28,14 @@ import java.io.IOException;
 
 import ee.ria.scardcomlibrary.CardReader;
 import ee.ria.scardcomlibrary.SmartCardCommunicationException;
+import timber.log.Timber;
 
 public class NFC extends CardReader {
     private IsoDep nfc;
 
     public NFC(Tag tag) {
         nfc = IsoDep.get(tag);
+        Timber.tag(NFC.class.getName());
     }
 
     @Override
@@ -57,7 +59,7 @@ public class NFC extends CardReader {
             nfc.setTimeout(5000);
             connected.connected();
         } catch(IOException e) {
-            Log.e(TAG, "connect: ", e);
+            Timber.e(e, "Error connecting to NFC");
         }
     }
 
@@ -66,7 +68,7 @@ public class NFC extends CardReader {
         try {
             nfc.close();
         } catch (IOException e) {
-            Log.e(TAG, "close: ", e);
+            Timber.e(e, "Error closing nfc");
         }
     }
 }

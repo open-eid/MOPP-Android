@@ -20,7 +20,6 @@
 package ee.ria.EstEIDUtility.configuration;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
 
@@ -34,6 +33,7 @@ import java.util.zip.ZipInputStream;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.libdigidocpp.digidoc;
+import timber.log.Timber;
 
 public class Configuration {
 
@@ -49,6 +49,7 @@ public class Configuration {
     }
 
     public static void init(Context context) {
+        Timber.tag(TAG);
         createDirectoriesIfNotCreated(context);
         unpackSchema(context);
         placeAccessCertificate(context);
@@ -73,7 +74,7 @@ public class Configuration {
                 out.close();
             }
         } catch (IOException e) {
-            Log.e(TAG, "initLibraryConfiguration: ", e);
+            Timber.e(e, "Library configuration initialization failed");
         }
     }
 
@@ -86,7 +87,7 @@ public class Configuration {
             IOUtils.copy(is, out);
             out.close();
         } catch (IOException e) {
-            Log.e(TAG, "error placing access certificate: ", e);
+            Timber.e(e, "error placing access certificate");
         }
 
     }
@@ -99,7 +100,7 @@ public class Configuration {
         if (!dir.exists()) {
             boolean mkdir = dir.mkdir();
             if (mkdir) {
-                Log.d(TAG, "initLibraryConfiguration: created " + dir.getName() + " directory");
+                Timber.d("initLibraryConfiguration: created %s directory", dir.getName());
             }
         }
     }

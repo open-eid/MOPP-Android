@@ -20,7 +20,6 @@
 package ee.ria.EstEIDUtility.util;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,6 +27,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import timber.log.Timber;
 
 @SuppressLint("SimpleDateFormat")
 public class DateUtils {
@@ -51,7 +52,7 @@ public class DateUtils {
             Date signedDate = getTrustedSigningTimeFormatWithGmtTimeZone().parse(trustedSigningTime);
             return getSignatureTimeDisplayFormatWithDeviceTimeZone().format(signedDate);
         } catch (ParseException e) {
-            Log.e(TAG, "formatSignedDate: ", e);
+            Timber.e(e, "Error parsing signed date");
         }
         return null;
     }

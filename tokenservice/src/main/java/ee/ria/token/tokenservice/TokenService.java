@@ -27,11 +27,10 @@ import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.util.SparseArray;
 
-import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.scardcomlibrary.CardReader;
+import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.ChangePinCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
@@ -41,6 +40,7 @@ import ee.ria.token.tokenservice.callback.UseCounterCallback;
 import ee.ria.tokenlibrary.Token;
 import ee.ria.tokenlibrary.TokenFactory;
 import ee.ria.tokenlibrary.exception.PinVerificationException;
+import timber.log.Timber;
 
 public class TokenService extends Service {
 
@@ -100,7 +100,7 @@ public class TokenService extends Service {
             int counterByte = token.readUseCounter(certType);
             callback.onCounterRead(counterByte);
         } catch (Exception e) {
-            Log.e(TAG, "readUseCounter: ", e);
+            Timber.e(e, "Error reading use counter from card");
         }
     }
 
@@ -112,7 +112,7 @@ public class TokenService extends Service {
             byte counterByte = token.readRetryCounter(pinType);
             callback.onCounterRead(counterByte);
         } catch (Exception e) {
-            Log.e(TAG, "readRetryCounter: ", e);
+            Timber.e(e, "Error reading retry counter from card");
         }
     }
 
@@ -121,10 +121,10 @@ public class TokenService extends Service {
             byte[] sign = token.sign(pinType, pin, data);
             callback.onSignResponse(sign);
         } catch (PinVerificationException e) {
-            Log.e(TAG, "sign: ", e);
+            Timber.e(e, "Invalid PIN provided for signing");
             callback.onSignError(null, e);
         } catch (Exception e) {
-            Log.e(TAG, "sign: ", e);
+            Timber.e(e, "Error occurred when trying to sign with %s", pinType.name());
             callback.onSignError(e, null);
         }
     }
@@ -145,7 +145,7 @@ public class TokenService extends Service {
             SparseArray<String> result = token.readPersonalFile();
             callback.onPersonalFileResponse(result);
         } catch (Exception e) {
-            Log.e(TAG, "readPersonalFile: ", e);
+            Timber.e(e, "Error reading personal file from card");
             callback.onPersonalFileError(e.getMessage());
         }
     }
@@ -159,7 +159,7 @@ public class TokenService extends Service {
                 callback.error(null);
             }
         } catch (Exception e) {
-            Log.e(TAG, "changePin: ", e);
+            Timber.e(e, "Error changing %s", pinType.name());
             callback.error(e);
         }
     }
@@ -173,7 +173,7 @@ public class TokenService extends Service {
                 callback.error(null);
             }
         } catch (Exception e) {
-            Log.e(TAG, "unblockAndChangePin: ", e);
+            Timber.e(e, "Error when trying to unblock and change %s", pinType.name());
             callback.error(e);
         }
     }
@@ -183,7 +183,7 @@ public class TokenService extends Service {
             byte[] certBytes = token.readCert(type);
             certCallback.onCertificateResponse(certBytes);
         } catch (Exception e) {
-            Log.e(TAG, "readCertificateInHex: ", e);
+            Timber.e(e, "Error reading certificate: %s from card", type.name());
             certCallback.onCertificateError(e);
         }
     }
