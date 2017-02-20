@@ -21,6 +21,7 @@ package ee.ria.EstEIDUtility;
 
 import android.app.Application;
 
+import ee.ria.EstEIDUtility.configuration.Configuration;
 import ee.ria.EstEIDUtility.logging.ReleaseTree;
 import timber.log.Timber;
 
@@ -30,6 +31,7 @@ public class DigidocApplication extends Application {
     public void onCreate() {
         super.onCreate();
         configureLogging();
+        Configuration.init(getApplicationContext());
     }
 
     private void configureLogging() {

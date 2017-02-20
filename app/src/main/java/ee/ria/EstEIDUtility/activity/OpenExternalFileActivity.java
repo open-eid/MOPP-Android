@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -40,7 +41,7 @@ import ee.ria.EstEIDUtility.util.Constants;
 import ee.ria.EstEIDUtility.util.FileUtils;
 import timber.log.Timber;
 
-public class OpenExternalFileActivity extends EntryPointActivity {
+public class OpenExternalFileActivity extends AppCompatActivity {
 
     public static final String TAG = OpenExternalFileActivity.class.getName();
 

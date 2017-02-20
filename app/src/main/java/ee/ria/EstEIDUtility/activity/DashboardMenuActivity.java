@@ -22,6 +22,7 @@ package ee.ria.EstEIDUtility.activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +31,7 @@ import android.widget.TextView;
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.preferences.SettingsActivity;
 
-public class DashboardMenuActivity extends EntryPointActivity {
+public class DashboardMenuActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

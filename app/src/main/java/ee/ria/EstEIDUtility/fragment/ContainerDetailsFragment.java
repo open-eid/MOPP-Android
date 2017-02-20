@@ -330,6 +330,7 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
 
     @Override
     public void onAdesSignatureAdded(ContainerFacade modifiedContainerFacade) {
+        mobileSignProgressHelper.close();
         containerFacade = modifiedContainerFacade;
         containerFacade.save();
         SignatureFacade signature = containerFacade.getLastSignature();
@@ -689,7 +690,7 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
                 if (status.getStatus() == ProcessStatus.OUTSTANDING_TRANSACTION) {
                     mobileSignProgressHelper.updateStatus(status.getStatus());
                 } else if (status.getStatus() == ProcessStatus.SIGNATURE) {
-                    mobileSignProgressHelper.close();
+                    mobileSignProgressHelper.updateStatus(status.getStatus());
                     mobileSignInProgress = false;
                     addAdesSignature(status.getSignature());
                 } else {
