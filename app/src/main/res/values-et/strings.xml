@@ -19,7 +19,7 @@
     <string name="title_activity_signing">Allkirjastamine</string>
     <string name="title_activity_manage_eids">Minu eID-d</string>
     <string name="title_activity_pin_utilities">PIN-i toimingud</string>
-    <string name="title_activity_browse_containers">Allkirjastatud</string>
+    <string name="title_activity_browse_containers">Dokumendid</string>
     <string name="title_activity_create_new_container">Konteiner</string>
     <string name="action_settings">Seaded</string>
     <string name="activity_browse_containers_yesterday">Eile</string>

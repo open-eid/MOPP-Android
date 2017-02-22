@@ -66,7 +66,7 @@
                             android:layout_marginBottom="8dp"
                             android:contentDescription="@android:string/unknownName"
                             android:onClick="startSign"
-                            app:srcCompat="@drawable/ic_new_document" />
+                            app:srcCompat="@drawable/ic_sign" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -127,7 +127,7 @@
                             android:layout_marginBottom="8dp"
                             android:contentDescription="@android:string/unknownName"
                             android:onClick="startContainerBrowse"
-                            app:srcCompat="@drawable/ic_containers" />
+                            app:srcCompat="@drawable/ic_documents" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -153,7 +153,7 @@
                             android:layout_marginBottom="8dp"
                             android:contentDescription="@android:string/unknownName"
                             android:onClick="startPinUtilities"
-                            app:srcCompat="@drawable/ic_pins" />
+                            app:srcCompat="@drawable/ic_pin_activities" />
 
                         <TextView
                             android:layout_width="wrap_content"

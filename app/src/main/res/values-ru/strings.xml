@@ -19,7 +19,7 @@
     <string name="title_activity_signing">Подписание</string>
     <string name="title_activity_manage_eids">Мой eID</string>
     <string name="title_activity_pin_utilities">Операции с PIN кодами</string>
-    <string name="title_activity_browse_containers">Подписанные</string>
+    <string name="title_activity_browse_containers">Документы</string>
     <string name="title_activity_create_new_container">Контейнер</string>
     <string name="action_settings">Настройки</string>
     <string name="activity_browse_containers_yesterday">Вчера</string>
