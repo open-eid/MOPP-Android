@@ -28,13 +28,15 @@ import java.util.Locale;
 
 import ee.ria.EstEIDUtility.container.ContainerFacade;
 import ee.ria.EstEIDUtility.container.DataFileFacade;
-import ee.ria.libdigidocpp.DataFile;
-import ee.ria.libdigidocpp.Signature;
 import ee.ria.mopp.androidmobileid.dto.request.DataFileDto;
 import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
 
 public class CreateSignatureRequestBuilder {
 
+    private static final String ESTONIAN_PHONE_CODE = "372";
+    private static final String PLUS_PREFIXED_ESTONIAN_PHONE_CODE = "+" + ESTONIAN_PHONE_CODE;
+    private static final String FIRST_NUMBER_IN_ESTONIAN_MOBILE_NUMBER = "5";
+    private static final int MAX_MESSAGE_TO_DISLPAY_BYTES = 40;
     private static final String FORMAT = "BDOC";
     private static final String VERSION = "2.1";
     private static final String MESSAGING_MODE = "asynchClientServer";
@@ -47,7 +49,7 @@ public class CreateSignatureRequestBuilder {
 
     private String phoneNr;
     private String idCode;
-    private String message;
+    private String desiredMessage;
     private Locale locale;
     private String localSigningProfile;
     private ContainerFacade container;
@@ -65,9 +67,27 @@ public class CreateSignatureRequestBuilder {
 
     private void buildPersonalInfo() {
         request.setIdCode(idCode);
-        request.setPhoneNr(phoneNr);
+        request.setPhoneNr(addEstonianCountryCodeIfMissingAndApplicable(phoneNr));
         request.setLanguage(getLanguage());
-        request.setMessageToDisplay(message == null ? "Sign " + container.getName() : message);
+        request.setMessageToDisplay(trimDesiredMessageIfNotWithinSizeLimit());
+    }
+
+    private String addEstonianCountryCodeIfMissingAndApplicable(String phoneNr) {
+        if (!phoneNr.startsWith(ESTONIAN_PHONE_CODE) && !phoneNr.startsWith(PLUS_PREFIXED_ESTONIAN_PHONE_CODE)) {
+            if (phoneNr.startsWith(FIRST_NUMBER_IN_ESTONIAN_MOBILE_NUMBER)) {
+                return ESTONIAN_PHONE_CODE + phoneNr;
+            }
+        }
+        return phoneNr;
+    }
+
+    private String trimDesiredMessageIfNotWithinSizeLimit() {
+        if (desiredMessage == null) desiredMessage = "Sign " + container.getName();
+        if (desiredMessage.getBytes().length > MAX_MESSAGE_TO_DISLPAY_BYTES) {
+            int bytesPerChar = desiredMessage.getBytes().length / desiredMessage.length();
+            return desiredMessage.substring(0,36/bytesPerChar) + "...";
+        }
+        return desiredMessage;
     }
 
     private String getLanguage() {
@@ -159,8 +179,14 @@ public class CreateSignatureRequestBuilder {
         return this;
     }
 
-    public CreateSignatureRequestBuilder withMessageToDisplay(String message) {
-        this.message = message;
+    /**
+     * Will be used literally if the message is up to 40 Bytes long. Otherwise the message will be
+     * shortened to fit the 40 Byte limit.
+     * @param message
+     * @return
+     */
+    public CreateSignatureRequestBuilder withDesiredMessageToDisplay(String message) {
+        this.desiredMessage = message;
         return this;
     }
 
