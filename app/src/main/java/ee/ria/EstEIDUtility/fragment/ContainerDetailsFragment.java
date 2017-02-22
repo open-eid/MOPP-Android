@@ -485,28 +485,13 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
                         preferences.updateMobileNumber(phone);
                         preferences.updatePersonalCode(pCode);
                     }
-                    final String estonianCountryCode = "372";
-                    final String plusPrefixedEstonianCountryCode = "+" + estonianCountryCode;
-                    final String firstNumberInEstonianMobileNumbers = "5";
-
-                    if (!phone.startsWith(estonianCountryCode) && !phone.startsWith(plusPrefixedEstonianCountryCode)) {
-                        if (phone.startsWith(firstNumberInEstonianMobileNumbers)) {
-                            phone = estonianCountryCode + phone;
-                        }
-                    }
-
-                    final int maxMessageBytes = 40;
                     String message = getResources().getString(R.string.action_sign) + " " + containerFacade.getName();
-                    if (message.getBytes().length > maxMessageBytes) {
-                        int bytesPerChar = message.getBytes().length / message.length();
-                        message = message.substring(0,36/bytesPerChar) + "...";
-                    }
                     MobileCreateSignatureRequest request = CreateSignatureRequestBuilder
                             .aCreateSignatureRequest()
                             .withContainer(containerFacade)
                             .withIdCode(pCode)
                             .withPhoneNr(phone)
-                            .withMessageToDisplay(message)
+                            .withDesiredMessageToDisplay(message)
                             .withLocale(Locale.getDefault())
                             .withLocalSigningProfile(getFutureSignatureProfile())
                             .build();
