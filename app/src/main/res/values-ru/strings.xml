@@ -70,9 +70,9 @@
     <string name="attachment_extract_failed">Не удалось извлечь файл из контейнера</string>
     <string name="file_unsharable">Файла данного типа не может быть отправлен.</string>
     <string name="openingFileFailed">Открытие файла не удалось</string>
-    <string name="save_container_no_files">Container needs to have atleast 1 data file to save</string>
-    <string name="title_activity_settings">Settings</string>
-    <string name="no_connectivity_warning">Please connect to internet in order to sign</string>
+    <string name="save_container_no_files">Для сохранения контейнер должен иметь по крайней мере 1 файл данных</string>
+    <string name="title_activity_settings">Настройки</string>
+    <string name="no_connectivity_warning">Пожалуйста подключиться к интернету для того чтобы подписать</string>
 
     <!-- Strings related to pin activities-->
     <string name="pin2_changing">Изменение PIN2</string>
@@ -114,13 +114,13 @@
 
     <!-- Strings related to Settings -->
     <!-- General settings -->
-    <string name="pref_header_general">General</string>
+    <string name="pref_header_general">Общее</string>
     <string name="pref_general_title_online_tsl_check">Online TSL digest check</string>
     <string name="pref_ringtone_silent">Silent</string> <!-- Only used for preference change listener -->
 
     <!-- Settings for Signing -->
-    <string name="pref_header_signing">Signing</string>
-    <string name="pref_signing_title_file_type">Default file type</string>
+    <string name="pref_header_signing">Подписание</string>
+    <string name="pref_signing_title_file_type">Формат файла по умолчанию</string>
     <string-array name="pref_signing_file_type_names">
         <item>BDOC</item>
         <item>ASiC-E</item>
@@ -168,43 +168,43 @@
     <string name="signing_failed">одписание не удалось. Пожалуйста проверьте сертификаты Вашей карты.</string>
 
     <!--Mobile Id -->
-    <string name="mobile_id">Sign with mobile ID</string>
-    <string name="mobile_nr">Mobile number</string>
-    <string name="personal_code">Personal code</string>
-    <string name="remember_me">Remember me</string>
+    <string name="mobile_id">Подпишите при помощи Mobiil-ID</string>
+    <string name="mobile_nr">Номер мобильного телефона</string>
+    <string name="personal_code">Персональный код</string>
+    <string name="remember_me">Запомни меня</string>
 
     <!-- Mobile Id Create signature statuses -->
-    <string name="status_request_sent">Sign request sent</string>
-    <string name="status_request_ok">Request accepted</string>
-    <string name="status_expired_transaction">Request timeout</string>
-    <string name="status_user_cancel">User denied or cancelled</string>
-    <string name="status_signature">Got signature</string>
-    <string name="status_outstanding_transaction">Request pending</string>
-    <string name="status_mid_not_ready">Mobile-ID not ready, try again later</string>
-    <string name="status_phone_absent">Phone is switched off or out of coverage</string>
-    <string name="status_sending_error">Request sending error</string>
-    <string name="status_sim_error">SIM application error</string>
-    <string name="status_not_valid">signature is not valid</string>
-    <string name="status_revoked_certificate">Certificate revoked</string>
-    <string name="status_internal_error">Technical error</string>
+    <string name="status_request_sent">Запрос на подпись отправлен</string>
+    <string name="status_request_ok">Запрос принят</string>
+    <string name="status_expired_transaction">Превышение лимита времени запроса</string>
+    <string name="status_user_cancel">Пользователь прервал</string>
+    <string name="status_signature">Подпись получена</string>
+    <string name="status_outstanding_transaction">Запрос незакончен</string>
+    <string name="status_mid_not_ready">Mobiil-ID недоступен, попробуйте позже</string>
+    <string name="status_phone_absent">Телефон выключен или находится вне зоны доступа</string>
+    <string name="status_sending_error">Ошибка при посылке запроса</string>
+    <string name="status_sim_error">Ошибка SIM-приложения</string>
+    <string name="status_not_valid">Цифровая подпись недействительна</string>
+    <string name="status_revoked_certificate">Сертификаты отозваны</string>
+    <string name="status_internal_error">Техническая ошибка</string>
 
     <!-- Mobile Sign service faults -->
-    <string name="unknown_error">Unknown error occurred when signing with Mobile ID</string>
-    <string name="local_service_exception">Something went wrong, try again later</string>
-    <string name="general_client">Something went wrong, try again</string>
-    <string name="incorrect_input_parameters">Incorrect mobile number and/or personal code, non-Estonian mobile numbers must be prefixed with the country code</string>
-    <string name="missing_input_parameters">Missing mobile number and/or personal code</string>
-    <string name="ocsp_unauthorized">Unable to access mobile sign service</string>
-    <string name="general_service">There was an error with Digidoc service, try again later</string>
-    <string name="missing_user_certificate">Missing user certificate</string>
-    <string name="certificate_validity_unknown">Unable to verify certificate validity</string>
-    <string name="session_locked">Mobile sign session is locked, try again later</string>
-    <string name="general_user">An error occurred with the signers mobile phone</string>
-    <string name="not_mobile_id_user">Not a mobile ID user</string>
-    <string name="user_certificate_revoked">Your mobile sign certificate is revoked</string>
-    <string name="user_certificate_status_unknown">Your mobile sign certificate status is unkown</string>
-    <string name="user_certificate_suspended">Your mobile sign certificate is suspended</string>
-    <string name="user_certificate_expired">Your mobile sign certificate is expired</string>
-    <string name="message_exceeds_volume_limit">Too many datafiles in container</string>
-    <string name="simultaneous_requests_limit_exceeded">Simultaneous requests limit exceeded</string>
+    <string name="unknown_error">Неизвестная ошибка при подписании с помощю Mobiil-ID</string>
+    <string name="local_service_exception">Ошибка, что-то пошло не так! попробуйте позже</string>
+    <string name="general_client">Ошибка, что-то пошло не так! попробуйте снова</string>
+    <string name="incorrect_input_parameters">Неверный номер телефона или/и персональный код, не Эстонские номера телефонов должны начинаться с кода страны</string>
+    <string name="missing_input_parameters">Отсутствует номер телефона или/и персональный код</string>
+    <string name="ocsp_unauthorized">Сервис мобильной подписи недоступен</string>
+    <string name="general_service">Ошибка сервиса DigiDoc, попробуйте позже</string>
+    <string name="missing_user_certificate">Отсутствует сертификат пользователя</string>
+    <string name="certificate_validity_unknown">Невозможно проверить действительность сертификата</string>
+    <string name="session_locked">Сессия мобильной подписи заблокирована, попробуйте позже</string>
+    <string name="general_user">Ошабка приложения Mobiil-ID в телефоне пользователя</string>
+    <string name="not_mobile_id_user">Не пользователь Mobiil-ID</string>
+    <string name="user_certificate_revoked">Ваш сертификат цифровой подписи отозван</string>
+    <string name="user_certificate_status_unknown">Статус Вашего сертификата цифровой подписи неизвестен</string>
+    <string name="user_certificate_suspended">Ваш сертификат цифровой подписи временно приостановлен</string>
+    <string name="user_certificate_expired">Срок действительности Вашего сертификата цифровой подписи истек</string>
+    <string name="message_exceeds_volume_limit">Слишком много файлов в контейнере</string>
+    <string name="simultaneous_requests_limit_exceeded">Превышен лимит подобный запросов</string>
 </resources>
