@@ -170,7 +170,7 @@
     <!--Mobile Id -->
     <string name="mobile_id">Подпишите при помощи Mobiil-ID</string>
     <string name="mobile_nr">Номер мобильного телефона</string>
-    <string name="personal_code">Персональный код</string>
+    <string name="personal_code">Личный код</string>
     <string name="remember_me">Запомни меня</string>
 
     <!-- Mobile Id Create signature statuses -->
@@ -192,8 +192,8 @@
     <string name="unknown_error">Неизвестная ошибка при подписании с помощю Mobiil-ID</string>
     <string name="local_service_exception">Ошибка, что-то пошло не так! попробуйте позже</string>
     <string name="general_client">Ошибка, что-то пошло не так! попробуйте снова</string>
-    <string name="incorrect_input_parameters">Неверный номер телефона или/и персональный код, не Эстонские номера телефонов должны начинаться с кода страны</string>
-    <string name="missing_input_parameters">Отсутствует номер телефона или/и персональный код</string>
+    <string name="incorrect_input_parameters">Неверный номер телефона или/и личный код, не Эстонские номера телефонов должны начинаться с кода страны</string>
+    <string name="missing_input_parameters">Отсутствует номер телефона или/и личный код</string>
     <string name="ocsp_unauthorized">Сервис мобильной подписи недоступен</string>
     <string name="general_service">Ошибка сервиса DigiDoc, попробуйте позже</string>
     <string name="missing_user_certificate">Отсутствует сертификат пользователя</string>
