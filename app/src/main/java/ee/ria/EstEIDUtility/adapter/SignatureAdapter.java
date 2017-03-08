@@ -94,7 +94,14 @@ public class SignatureAdapter extends ArrayAdapter<SignatureFacade> implements F
             String name = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.GIVENNAME));
             String serialNumber = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SERIALNUMBER));
 
-            String personInfo = String.format("%s %s (%s)", name, surname, serialNumber);
+            String personInfo;
+            if ((surname != null && !surname.isEmpty()) && (name != null && !name.isEmpty())) {
+                personInfo = String.format("%s %s (%s)", name, surname, serialNumber);
+            } else {
+                String commonName = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.CN));
+                personInfo = String.format("%s (%s)", commonName, serialNumber);
+            }
+
             viewHolder.name.setText(personInfo);
             viewHolder.signed.setText(DateUtils.formatSignedDate(signatureFacade.getTrustedSigningTime()));
 
