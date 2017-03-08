@@ -45,7 +45,7 @@
         android:layout_marginTop="5dp"
         android:layout_toEndOf="@+id/signatureImage"
         android:layout_toStartOf="@+id/removeSignature"
-        android:maxLines="1"
+        android:maxLines="2"
         android:text="@android:string/unknownName"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
