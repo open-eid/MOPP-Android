@@ -20,10 +20,6 @@
 package ee.ria.EstEIDUtility.preferences;
 
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -32,10 +28,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
-import java.util.List;
-
-import ee.ria.EstEIDUtility.R;
-import ee.ria.EstEIDUtility.preferences.twopane.GeneralPreferenceFragment;
 import ee.ria.EstEIDUtility.preferences.twopane.SigningPreferenceFragment;
 
 /**
@@ -82,6 +74,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SigningPreferenceFragment())
+                .commit();
     }
 
     /**
@@ -97,30 +92,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.pref_headers, target);
-    }
-
-    @Override
-    public boolean onIsMultiPane() {
-        return isXLargeTablet(this);
-    }
-
     /**
      * This method stops fragment injection in malicious applications.
      * Only allow known and allowed fragments
      */
+    @Override
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
-                || GeneralPreferenceFragment.class.getName().equals(fragmentName)
                 || SigningPreferenceFragment.class.getName().equals(fragmentName);
-    }
-
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
 
     private void setupActionBar() {

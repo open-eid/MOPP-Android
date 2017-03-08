@@ -15,7 +15,7 @@
     <EditTextPreference
         android:capitalize="none"
         android:defaultValue=""
-        android:inputType="number"
+        android:inputType="phone"
         android:key="personal_code"
         android:maxLines="1"
         android:selectAllOnFocus="true"
@@ -31,71 +31,5 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_title_mobile_nr" />
-
-    <EditTextPreference
-        android:capitalize="sentences"
-        android:defaultValue=""
-        android:inputType="textCapSentences"
-        android:key="signature_role"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_signing_role" />
-
-    <EditTextPreference
-        android:capitalize="sentences"
-        android:defaultValue=""
-        android:inputType="textCapSentences"
-        android:key="signature_resolution"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_signing_resolution" />
-
-    <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue=""
-        android:inputType="textCapWords"
-        android:key="signature_location_city"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_signing_city" />
-
-    <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue=""
-        android:inputType="textCapWords"
-        android:key="signature_location_state"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_signing_state" />
-
-    <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue=""
-        android:inputType="textCapWords"
-        android:key="signature_location_country"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_signing_country" />
-
-    <EditTextPreference
-        android:capitalize="none"
-        android:defaultValue=""
-        android:inputType="text"
-        android:key="signature_location_zip"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_signing_zip" />
-
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="save_last_used_signature_info"
-        android:summary="@string/pref_title_signing_save_last_used"
-        android:title="@string/pref_title_signing_save_last_used" />
 
 </PreferenceScreen>

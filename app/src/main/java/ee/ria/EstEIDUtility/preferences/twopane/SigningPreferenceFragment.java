@@ -20,11 +20,9 @@
 package ee.ria.EstEIDUtility.preferences.twopane;
 
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import android.view.MenuItem;
 
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.preferences.SettingsActivity;
@@ -40,25 +38,9 @@ public class SigningPreferenceFragment extends PreferenceFragment {
 
         bindPreferencesSummariesToValues(
                 "container_file_type",
-                "signature_role",
-                "signature_resolution",
-                "signature_location_city",
-                "signature_location_state",
-                "signature_location_country",
-                "signature_location_zip",
                 "personal_code",
                 "mobile_nr"
         );
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            startActivity(new Intent(getActivity(), SettingsActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private void bindPreferencesSummariesToValues(String... preferenceKey) {

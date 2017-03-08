@@ -1,9 +1,0 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="online_tsl_check"
-        android:summary="@string/pref_general_title_online_tsl_check"
-        android:title="@string/pref_general_title_online_tsl_check" />
-
-</PreferenceScreen>
