@@ -79,7 +79,7 @@ Use the gradle wrapper to execute debug build.
 ```
 
 ### Assemble release build and sign the resulting .apk
-**Step 2.1** Use the gradle wrapper to execute debug build.
+**Step 2.1** Use the gradle wrapper to execute release build.
 
 ```bash
 ./gradlew assembleRelease
