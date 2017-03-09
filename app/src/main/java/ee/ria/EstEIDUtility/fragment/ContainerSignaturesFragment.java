@@ -24,6 +24,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 
+import java.io.File;
+
 import ee.ria.EstEIDUtility.R;
 import ee.ria.EstEIDUtility.adapter.SignatureAdapter;
 import ee.ria.EstEIDUtility.container.ContainerBuilder;
@@ -61,6 +63,10 @@ public class ContainerSignaturesFragment extends ListFragment {
             signatureAdapter.add(signatureFacade);
             calculateFragmentHeight();
         }
+    }
+
+    public void updateContainer(File containerFile) {
+        signatureAdapter.updateContainerFile(containerFile);
     }
 
 }

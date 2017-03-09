@@ -33,6 +33,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ee.ria.EstEIDUtility.R;
@@ -67,6 +69,10 @@ public class DataFilesAdapter extends ArrayAdapter<DataFileFacade> {
         this.activity = activity;
         this.containerFacade = containerFacade;
         this.containerDataFilesFragment = containerDataFilesFragment;
+    }
+
+    public void updateContainerFile(File containerFile) {
+        containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerFile).build();
     }
 
     @NonNull

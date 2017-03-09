@@ -290,9 +290,15 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(file).build();
         containerFacade.save();
         saveButton.setVisibility(View.GONE);
+        updateContainerReferencesForSignatureAndDataFileViews(containerFacade.getContainerFile());
         InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         input.hideSoftInputFromWindow(title.getWindowToken(), 0);
         title.setCursorVisible(false);
+    }
+
+    private void updateContainerReferencesForSignatureAndDataFileViews(File containerFile) {
+        findDataFilesFragment().updateContainerFile(containerFile);
+        findSignaturesFragment().updateContainer(containerFile);
     }
 
     @OnClick({R.id.docName, R.id.editBdoc})

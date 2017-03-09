@@ -103,6 +103,11 @@ public class ContainerDataFilesFragment extends ListFragment {
         calculateFragmentHeight();
     }
 
+    public void updateContainerFile(File containerFile) {
+        containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerFile).build();
+        filesAdapter.updateContainerFile(containerFile);
+    }
+
     private File extractAttachment(String fileName) {
         File attachment = null;
         File containerFile = containerFacade.getContainerFile();

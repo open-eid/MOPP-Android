@@ -35,6 +35,8 @@ import android.widget.TextView;
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.style.BCStyle;
 
+import java.io.File;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ee.ria.EstEIDUtility.R;
@@ -70,6 +72,10 @@ public class SignatureAdapter extends ArrayAdapter<SignatureFacade> implements F
         this.activity = activity;
         this.containerFacade = containerFacade;
         this.containerSignaturesFragment = containerSignaturesFragment;
+    }
+
+    public void updateContainerFile(File containerFile) {
+        containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerFile).build();
     }
 
     @NonNull
