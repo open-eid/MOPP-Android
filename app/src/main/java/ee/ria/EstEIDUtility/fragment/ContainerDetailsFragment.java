@@ -143,8 +143,6 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
 
     private boolean serviceBound;
     private boolean cardPresent;
-    private boolean mobileSignInProgress = false;
-    private boolean mobileSignReceiverRegistered = false;
 
     private ServiceConnection tokenServiceConnection = new ServiceConnection() {
         @Override
@@ -177,16 +175,6 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         if (serviceBound) {
             getActivity().unbindService(tokenServiceConnection);
             serviceBound = false;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mobileIdBroadcastReceiver != null && mobileSignReceiverRegistered) {
-            Timber.d("Unregistering mobileIdBroadcastReceiver");
-            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mobileIdBroadcastReceiver);
-            mobileSignReceiverRegistered = false;
         }
     }
 
@@ -358,11 +346,7 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         getActivity().registerReceiver(cardInsertedReceiver, new IntentFilter(ACS.CARD_PRESENT_INTENT));
         getActivity().registerReceiver(cardRemovedReceiver, new IntentFilter(ACS.CARD_ABSENT_INTENT));
         getActivity().registerReceiver(connectivityBroadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        if (!mobileSignReceiverRegistered) {
-            Timber.d("Registering mobileIdBroadcastReceiver");
-            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mobileIdBroadcastReceiver, new IntentFilter(MID_BROADCAST_ACTION));
-            mobileSignReceiverRegistered = true;
-        }
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mobileIdBroadcastReceiver, new IntentFilter(MID_BROADCAST_ACTION));
     }
 
     private void unregisterBroadcastReceivers() {
@@ -375,10 +359,8 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         if (connectivityBroadcastReceiver != null) {
             getActivity().unregisterReceiver(connectivityBroadcastReceiver);
         }
-        if (mobileIdBroadcastReceiver != null && !mobileSignInProgress && mobileSignReceiverRegistered) {
-            Timber.d("Unregistering mobileIdBroadcastReceiver");
+        if (mobileIdBroadcastReceiver != null) {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mobileIdBroadcastReceiver);
-            mobileSignReceiverRegistered = false;
         }
     }
 
@@ -511,7 +493,6 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
                     mobileSignIntent.putExtra(ACCESS_TOKEN_PASS, Conf.instance().PKCS12Pass());
                     mobileSignIntent.putExtra(ACCESS_TOKEN_PATH, new File(FileUtils.getSchemaCacheDirectory(getContext()), "878252.p12").getAbsolutePath());
                     getActivity().startService(mobileSignIntent);
-                    mobileSignInProgress = true;
                     disableSigning();
                 }
             })
@@ -692,11 +673,9 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
                     mobileSignProgressHelper.updateStatus(status.getStatus());
                 } else if (status.getStatus() == ProcessStatus.SIGNATURE) {
                     mobileSignProgressHelper.updateStatus(status.getStatus());
-                    mobileSignInProgress = false;
                     addAdesSignature(status.getSignature());
                 } else {
                     mobileSignProgressHelper.close();
-                    mobileSignInProgress = false;
                     notificationUtil.showFailMessage(mobileSignProgressHelper.getMessage(status.getStatus()));
                     enableSigning();
                 }
