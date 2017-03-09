@@ -33,12 +33,12 @@ import static ee.ria.EstEIDUtility.util.Constants.APP_PACKAGE_NAME;
 
 public class SharingUtils {
 
-    public static List<Intent> createTargetedSendIntentsForResolvers(List<ResolveInfo> availableResolvers, Uri uriToFile) {
+    public static List<Intent> createTargetedSendIntentsForResolvers(List<ResolveInfo> availableResolvers, Uri uriToFile, String mediaType) {
         List<Intent> targetedIntents = new ArrayList<>();
         for (ResolveInfo resolveInfo : availableResolvers) {
             String packageName = resolvePackageName(resolveInfo);
             if (!APP_PACKAGE_NAME.equals(packageName)) {
-                targetedIntents.add(createTargetedSendContainerIntent(uriToFile, packageName));
+                targetedIntents.add(createTargetedSendIntent(uriToFile, mediaType, packageName));
             }
         }
         return targetedIntents;
@@ -65,10 +65,10 @@ public class SharingUtils {
         }
     }
 
-    public static Intent createContainerSendIntent(Uri containerUri) {
+    public static Intent createSendIntent(Uri containerUri, String mediaType) {
         return new Intent(Intent.ACTION_SEND)
                 .putExtra(Intent.EXTRA_STREAM, containerUri)
-                .setType("application/zip");
+                .setType(mediaType);
     }
 
     public static Intent createViewIntent(Uri contentUri, String mediaType) {
@@ -87,7 +87,7 @@ public class SharingUtils {
         return createViewIntent(contentUri, mediaType).setPackage(packageName);
     }
 
-    private static Intent createTargetedSendContainerIntent(Uri uriToFile, String packageName) {
-        return createContainerSendIntent(uriToFile).setPackage(packageName);
+    private static Intent createTargetedSendIntent(Uri uriToFile, String mediaType, String packageName) {
+        return createSendIntent(uriToFile, mediaType).setPackage(packageName);
     }
 }

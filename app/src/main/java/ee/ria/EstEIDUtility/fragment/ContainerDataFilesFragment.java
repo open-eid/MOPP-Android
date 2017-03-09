@@ -56,6 +56,8 @@ import ee.ria.EstEIDUtility.util.NotificationUtil;
 import timber.log.Timber;
 
 import static ee.ria.EstEIDUtility.util.SharingUtils.createChooser;
+import static ee.ria.EstEIDUtility.util.SharingUtils.createSendIntent;
+import static ee.ria.EstEIDUtility.util.SharingUtils.createTargetedSendIntentsForResolvers;
 import static ee.ria.EstEIDUtility.util.SharingUtils.createViewIntent;
 import static ee.ria.EstEIDUtility.util.SharingUtils.createdTargetedViewIntentsForResolvers;
 import static ee.ria.EstEIDUtility.util.SharingUtils.resolvePackageName;
@@ -141,8 +143,8 @@ public class ContainerDataFilesFragment extends ListFragment {
             return createViewIntent(contentUri, mediaType);
         }
 
-        PackageManager packageManager = getActivity().getPackageManager();
         Intent viewIntent = createViewIntent(contentUri, mediaType);
+        PackageManager packageManager = getActivity().getPackageManager();
 
         List<ResolveInfo> allAvailableResolvers = packageManager.queryIntentActivities(viewIntent, 0);
         ResolveInfo defaultResolver = packageManager.resolveActivity(viewIntent, 0);
@@ -174,29 +176,35 @@ public class ContainerDataFilesFragment extends ListFragment {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
             DataFileFacade dataFileFacade = (DataFileFacade) getListAdapter().getItem(position);
-            String fileName = dataFileFacade.getFileName();
-            File attachment = extractAttachment(fileName);
-
-            if (attachment == null) {
-                notificationUtil.showWarningMessage(getText(R.string.attachment_extract_failed));
+            try {
+                startActivity(createChooserOrShareIntentForDataFile(dataFileFacade));
+                return true;
+            } catch (FailedToCreateViewIntentException e) {
+                Timber.e(e, "Failed to create send intent for container datafile");
+                notificationUtil.showFailMessage(e.getMessage());
                 return false;
             }
+        }
+    }
 
-            Uri contentUri = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, attachment);
-            getContext().grantUriPermission(BuildConfig.APPLICATION_ID, contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+    private Intent createChooserOrShareIntentForDataFile(DataFileFacade dataFileFacade) {
+        String fileName = dataFileFacade.getFileName();
+        String mediaType = FileUtils.resolveMimeType(fileName);
+        if (mediaType == null) {
+            mediaType = "application/octet-stream";
+        }
+        Uri contentUri = createShareUri(fileName);
+        Intent sendIntent = createSendIntent(contentUri, mediaType);
+        PackageManager packageManager = getActivity().getPackageManager();
+        List<ResolveInfo> allAvailableResolvers = packageManager.queryIntentActivities(sendIntent, 0);
+        List<Intent> targetedIntents = createTargetedSendIntentsForResolvers(allAvailableResolvers, contentUri, mediaType);
 
-            String mimeType = FileUtils.resolveMimeType(fileName);
-            if (mimeType == null) {
-                notificationUtil.showWarningMessage(getText(R.string.file_unsharable));
-                return false;
-            }
-
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-            shareIntent.setType(mimeType);
-            startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.upload_to)));
-            return true;
+        if (targetedIntents.isEmpty()) {
+            throw new FailedToCreateViewIntentException(getText(R.string.file_handler_error));
+        } else if (targetedIntents.size() == 1) {
+            return targetedIntents.get(0);
+        } else {
+            return createChooser(targetedIntents, getText(R.string.upload_to));
         }
     }
 
@@ -205,4 +213,5 @@ public class ContainerDataFilesFragment extends ListFragment {
             super(message.toString());
         }
     }
+
 }

@@ -98,7 +98,7 @@ import static android.app.Activity.RESULT_OK;
 import static butterknife.ButterKnife.bind;
 import static butterknife.ButterKnife.findById;
 import static ee.ria.EstEIDUtility.util.SharingUtils.createChooser;
-import static ee.ria.EstEIDUtility.util.SharingUtils.createContainerSendIntent;
+import static ee.ria.EstEIDUtility.util.SharingUtils.createSendIntent;
 import static ee.ria.EstEIDUtility.util.SharingUtils.createTargetedSendIntentsForResolvers;
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.toJson;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
@@ -241,9 +241,10 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
     public void onShareContainer() {
         refreshContainerFacade();
         Uri uriToFile = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, containerFacade.getContainerFile());
-        Intent shareIntent = createContainerSendIntent(uriToFile);
+        String mediaType = "application/zip";
+        Intent shareIntent = createSendIntent(uriToFile, mediaType);
         List<ResolveInfo> allAvailableResolvers = getActivity().getPackageManager().queryIntentActivities(shareIntent, 0);
-        List<Intent> targetedIntents = createTargetedSendIntentsForResolvers(allAvailableResolvers, uriToFile);
+        List<Intent> targetedIntents = createTargetedSendIntentsForResolvers(allAvailableResolvers, uriToFile, mediaType);
         startActivity(createChooser(targetedIntents, getText(R.string.upload_to)));
     }
 
