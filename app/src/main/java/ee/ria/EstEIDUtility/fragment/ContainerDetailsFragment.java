@@ -31,7 +31,9 @@ import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -40,7 +42,9 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,9 +59,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.io.FilenameUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
+import java.security.MessageDigest;
+import java.security.PrivateKey;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+
+import javax.crypto.Cipher;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -228,7 +250,19 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         if (cardPresent) {
             tokenService.readCert(Token.CertType.CertSign, new SameSignatureCallback());
         } else {
-            startMobileSign();
+            new AlertDialog.Builder(getContext())
+                .setMessage("Select signing method")
+                .setPositiveButton("Smart-ID", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        startSmartIDSign();
+                    }
+                })
+                .setNegativeButton("Mobile ID", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        startMobileSign();
+                    }
+                })
+                .show();
         }
     }
 
@@ -510,6 +544,42 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         builder.show();
     }
 
+    private void startSmartIDSign() {
+        final AppPreferences preferences = AppPreferences.get(getContext());
+        final EditText account = new EditText(getContext());
+        account.setInputType(InputType.TYPE_CLASS_TEXT);
+        account.setHint("PNOEE-47101010027-ABCD-Q");
+        account.setText(preferences.getSmartIDAccount());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+            .setTitle("Sign with Smart-ID")
+            .setView(account)
+            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    preferences.updateSmartIDAccount(account.getText().toString());
+                    new SmartID(containerFacade, account.getText().toString(), getResources().openRawResource(R.raw.sk878252)) {
+                        @Override
+                        void onDoneSigning(Exception e) {
+                            if (e != null) {
+                                notificationUtil.showFailMessage(e.getMessage());
+                            }
+                            else {
+                                notificationUtil.showSuccessMessage(getText(R.string.signature_added));
+                            }
+                            mobileSignInProgress = false;
+                            enableSigning();
+                            refreshContainerFacade();
+                        }
+                    };
+                    mobileSignInProgress = true;
+                    disableSigning();
+                }
+            })
+            .setNegativeButton("Cancel", null);
+        notificationUtil.clearMessages();
+        builder.show();
+    }
+
     private void addAdesSignature(String adesSignature) {
         new AsyncAdesSignatureAdder(adesSignature, containerFacade, this).execute();
     }
@@ -700,6 +770,178 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         }
         private boolean isServiceFaultBroadcast(String broadcastType) {
             return SERVICE_FAULT.equals(broadcastType);
+        }
+    }
+
+    private static class SmartID {
+        private ContainerFacade doc;
+        private static final String url = "https://rp-api.smart-id.com/v1";
+        private static final String UUID_ENCRYPTED = "k3S0bg/YQhrBPgWhLW6G6TbA6h3vdU8765lNFR3Fnu3isF/7/r0d+8z0ED85fXSVIzQLGTCR+coiy9vYhvcgmVLUmEMXtJDXNrFoI8qKxYmPH+t0dtao3PyDwGKez06pCfPCV1Vur6/NnTj6aJGeK3qMy8CEFWHF95trARNGaac=";
+        private String UUID = null;
+
+        SmartID(ContainerFacade doc, String account, InputStream p12) {
+            this.doc = doc;
+            try {
+                KeyStore keystore = KeyStore.getInstance("PKCS12");
+                String p12Password = Conf.instance().PKCS12Pass();
+                keystore.load(p12, p12Password.toCharArray());
+                PrivateKey privateKey = (PrivateKey)keystore.getKey(keystore.aliases().nextElement(), p12Password.toCharArray());
+
+                Cipher decrypt = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+                decrypt.init(Cipher.DECRYPT_MODE, privateKey);
+                UUID = new String(decrypt.doFinal(Base64.decode(UUID_ENCRYPTED, Base64.DEFAULT)), StandardCharsets.UTF_8);
+
+                JSONObject p = new JSONObject();
+                p.put("relyingPartyUUID", UUID);
+                p.put("relyingPartyName", "DigiDoc3");
+                p.put("certificateLevel", "ADVANCED");
+                new SmartIDTask(String.format("%s/certificatechoice/document/%s", SmartID.url, account)) {
+                    @Override
+                    protected void onPostExecute(Exception e) {
+                        if (e != null) {
+                            onDoneSigning(e);
+                        } else {
+                            signTask(documentNR, data);
+                        }
+                    }
+                }.execute(p);
+            } catch (Exception e) {
+                onDoneSigning(e);
+            }
+        }
+
+        private void signTask(String documentNR, byte[] cert) {
+            try {
+                byte[] dataToSign = doc.prepareWebSignature(cert, "time-stamp");
+                byte[] codeDigest = MessageDigest.getInstance("SHA-256").digest(dataToSign);
+                final int code = ByteBuffer.wrap(codeDigest).getShort(codeDigest.length - 2) & 0x0000FFFF;
+
+                JSONObject p = new JSONObject();
+                p.put("relyingPartyUUID", UUID);
+                p.put("relyingPartyName", "DigiDoc3");
+                p.put("certificateLevel", "ADVANCED");
+                p.put("hash", Base64.encodeToString(dataToSign, Base64.NO_WRAP));
+                p.put("hashType", "SHA256");
+                p.put("displayText", "Sign document");
+
+                new SmartIDTask(SmartID.url + "/signature/document/" + documentNR) {
+                    @Override
+                    protected void onPostExecute(Exception e) {
+                        if (e == null) {
+                            try {
+                                doc.setSignatureValue(data);
+                                doc.getPreparedSignature().extendSignatureProfile("time-stamp");
+                                doc.save();
+                            } catch (Exception ex) {
+                                e = ex;
+                            }
+                        }
+                        onDoneSigning(e);
+                    }
+                }.execute(p);
+            } catch (Exception e) {
+                onDoneSigning(e);
+            }
+        }
+
+        void onDoneSigning(Exception e) {
+        }
+
+        static private class SmartIDTask extends AsyncTask<JSONObject, Void, Exception> {
+            private final String url;
+            public String documentNR;
+            public byte[] data = null;
+            private final List<String> contentType = Arrays.asList(new String[]{"application/json", "application/json-rpc", "application/json;charset=UTF-8"});
+
+            SmartIDTask(String url) {
+                this.url = url;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                final SmartIDTask task = this;
+                new CountDownTimer(2 * 60 * 1000, 1000) {
+                    @Override
+                    public void onTick(long tick) {
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        if (task.getStatus() == AsyncTask.Status.RUNNING) {
+                            task.cancel(false);
+                        }
+                    }
+                }.start();
+            }
+
+            @Override
+            protected Exception doInBackground(JSONObject... req) {
+                try {
+                    JSONObject p = sendJSON(url, req[0]);
+                    String url = String.format("%s/session/%s?timeoutMs=10000", SmartID.url, p.getString("sessionID"));
+                    do {
+                        p = sendJSON(url, null);
+                    } while (!isCancelled() && p.getString("state").equals("RUNNING"));
+
+                    if (isCancelled()) {
+                        return new Exception("Timeout");
+                    } else if (p.has("result") && p.getJSONObject("result").get("endResult").equals("USER_REFUSED")) {
+                        return new InterruptedIOException();
+                    } else if (p.has("result") && !p.getJSONObject("result").get("endResult").equals("OK")) {
+                        return new Exception("Signing failed: " + p.getJSONObject("result").get("endResult").toString());
+                    } else if (p.has("signature") && p.get("signature") != null) {
+                        data = Base64.decode(p.getJSONObject("signature").getString("value"), Base64.DEFAULT);
+                    } else if (p.has("cert") && p.get("cert") != null) {
+                        documentNR = p.getJSONObject("result").getString("documentNumber");
+                        data = Base64.decode(p.getJSONObject("cert").getString("value"), Base64.DEFAULT);
+                    }
+                } catch (Exception e) {
+                    return e;
+                }
+                return null;
+            }
+
+            @Override
+            protected void onCancelled(Exception e) {
+                onPostExecute(e);
+            }
+
+            JSONObject sendJSON(String url, JSONObject params) throws JSONException, IOException {
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.setRequestProperty("Content-Type", "application/json");
+                if (params != null) {
+                    connection.setDoOutput(true);
+                    byte[] content = params.toString().getBytes();
+                    connection.setFixedLengthStreamingMode(content.length);
+                    OutputStream os = connection.getOutputStream();
+                    os.write(content);
+                    os.close();
+                }
+
+                if (connection.getResponseCode() == 404 && params != null) {
+                    throw new IOException("Account not found");
+                } else if (connection.getResponseCode() == 404) {
+                    throw new IOException("Request not found");
+                } else if (connection.getResponseCode() != 200) {
+                    throw new IOException(content(connection));
+                } else if (!contentType.contains(connection.getContentType())) {
+                    throw new IOException("Invalid ContentType");
+                }
+                return new JSONObject(content(connection));
+            }
+
+            static String content(HttpURLConnection connection) throws IOException {
+                InputStream is = connection.getResponseCode() >= 400 ? connection.getErrorStream() : connection.getInputStream();
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                int count;
+                while ((count = is.read(buffer)) != -1) {
+                    out.write(buffer, 0, count);
+                }
+                is.close();
+                out.close();
+                return new String(out.toByteArray());
+            }
         }
     }
 }

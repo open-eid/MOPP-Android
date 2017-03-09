@@ -27,6 +27,7 @@ public class AppPreferences {
 
     public static final String MOBILE_NUMBER_KEY = "mobile_nr";
     public static final String PERSONAL_CODE_KEY = "personal_code";
+    public static final String SMARTID_ACCOUNT = "smart_id";
     public static final String SIGNATURE_PROFILE_KEY = "container_file_type";
     public static final String BDOC_CONTAINER_TYPE = "bdoc";
     public static final String ASICE_CONTAINER_TYPE = "asice";
@@ -56,6 +57,10 @@ public class AppPreferences {
         return preferences.getString(SIGNATURE_PROFILE_KEY, DEFAULT_SINGATURE_PROFILE);
     }
 
+    public String getSmartIDAccount() {
+        return preferences.getString(SMARTID_ACCOUNT, "");
+    }
+
     public String getContainerFormat() {
         return isTimeMarkProfile() ? BDOC_CONTAINER_TYPE : ASICE_CONTAINER_TYPE;
     }
@@ -70,6 +75,10 @@ public class AppPreferences {
 
     public void updatePersonalCode(String newPersonalCode) {
         updateString(PERSONAL_CODE_KEY, newPersonalCode);
+    }
+
+    public void updateSmartIDAccount(String newAccount) {
+        updateString(SMARTID_ACCOUNT, newAccount);
     }
 
     private void updateString(String key, String value) {
