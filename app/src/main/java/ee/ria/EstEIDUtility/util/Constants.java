@@ -23,6 +23,8 @@ public class Constants {
     public static final String CONTAINER_NAME_KEY = "ee.ria.EstEIDUtility.containerName";
     public static final String CONTAINER_PATH_KEY = "ee.ria.EstEIDUtility.containerPath";
 
+    public static final String APP_PACKAGE_NAME = "ee.ria.EstEIDUtility";
+
     public static final String PIN_TYPE_KEY = "ee.ria.EstEIDUtility.pinType";
     public static final String SCHEMA_DIRECTORY = "schema";
     public static final String CONTAINERS_DIRECTORY = "containers";

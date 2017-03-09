@@ -28,6 +28,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -57,6 +58,7 @@ import android.widget.Toast;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -95,6 +97,9 @@ import timber.log.Timber;
 import static android.app.Activity.RESULT_OK;
 import static butterknife.ButterKnife.bind;
 import static butterknife.ButterKnife.findById;
+import static ee.ria.EstEIDUtility.util.SharingUtils.createChooser;
+import static ee.ria.EstEIDUtility.util.SharingUtils.createContainerSendIntent;
+import static ee.ria.EstEIDUtility.util.SharingUtils.createTargetedSendIntentsForResolvers;
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.toJson;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
@@ -236,11 +241,10 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
     public void onShareContainer() {
         refreshContainerFacade();
         Uri uriToFile = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, containerFacade.getContainerFile());
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_STREAM, uriToFile);
-        shareIntent.setType("application/zip");
-        startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.upload_to)));
+        Intent shareIntent = createContainerSendIntent(uriToFile);
+        List<ResolveInfo> allAvailableResolvers = getActivity().getPackageManager().queryIntentActivities(shareIntent, 0);
+        List<Intent> targetedIntents = createTargetedSendIntentsForResolvers(allAvailableResolvers, uriToFile);
+        startActivity(createChooser(targetedIntents, getText(R.string.upload_to)));
     }
 
     @OnClick(R.id.addFile)

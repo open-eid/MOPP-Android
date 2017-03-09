@@ -73,6 +73,7 @@
     <string name="save_container_no_files">Salvestamiseks peab konteineris olema vähemalt 1 fail</string>
     <string name="title_activity_settings">Seaded</string>
     <string name="no_connectivity_warning">Allkirjastamiseks loo palun internetiühendus</string>
+    <string name="open_file_with">Ava rakendusega</string>
 
     <!-- Strings related to pin activities-->
     <string name="pin2_changing">PIN2 muutmine</string>

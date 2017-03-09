@@ -19,8 +19,9 @@
 
 package ee.ria.EstEIDUtility.fragment;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -30,13 +31,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -51,6 +54,11 @@ import ee.ria.EstEIDUtility.util.FileUtils;
 import ee.ria.EstEIDUtility.util.LayoutUtils;
 import ee.ria.EstEIDUtility.util.NotificationUtil;
 import timber.log.Timber;
+
+import static ee.ria.EstEIDUtility.util.SharingUtils.createChooser;
+import static ee.ria.EstEIDUtility.util.SharingUtils.createViewIntent;
+import static ee.ria.EstEIDUtility.util.SharingUtils.createdTargetedViewIntentsForResolvers;
+import static ee.ria.EstEIDUtility.util.SharingUtils.resolvePackageName;
 
 public class ContainerDataFilesFragment extends ListFragment {
 
@@ -101,7 +109,7 @@ public class ContainerDataFilesFragment extends ListFragment {
             while ((ze = zis.getNextEntry()) != null) {
                 if (fileName.equals(ze.getName())) {
                     File cacheDir = FileUtils.getDataFilesCacheDirectory(getContext());
-                    attachment = File.createTempFile(FilenameUtils.removeExtension(fileName), "." + FilenameUtils.getExtension(fileName), cacheDir);
+                    attachment = new File(cacheDir, fileName);
                     try (FileOutputStream out = new FileOutputStream(attachment)) {
                         IOUtils.copy(zis, out);
                     }
@@ -116,31 +124,50 @@ public class ContainerDataFilesFragment extends ListFragment {
 
     private void launchFileContentActivity(int position) {
         DataFileFacade dataFileFacade = (DataFileFacade) getListAdapter().getItem(position);
+        try {
+            startActivity(createChooserOrViewIntentForDataFile(dataFileFacade));
+        } catch (FailedToCreateViewIntentException e) {
+            Timber.e(e, "Failed to create view intent for container datafile");
+            notificationUtil.showFailMessage(e.getMessage());
+        }
+    }
+
+    private Intent createChooserOrViewIntentForDataFile(DataFileFacade dataFileFacade) {
         String fileName = dataFileFacade.getFileName();
+        String mediaType = FileUtils.resolveMimeType(fileName);
+        Uri contentUri = createShareUri(fileName);
 
-        File attachment = extractAttachment(fileName);
-
-        if (attachment == null) {
-            notificationUtil.showWarningMessage(getText(R.string.attachment_extract_failed));
-            return;
+        if (FileUtils.isContainer(fileName)) {
+            return createViewIntent(contentUri, mediaType);
         }
 
+        PackageManager packageManager = getActivity().getPackageManager();
+        Intent viewIntent = createViewIntent(contentUri, mediaType);
+
+        List<ResolveInfo> allAvailableResolvers = packageManager.queryIntentActivities(viewIntent, 0);
+        ResolveInfo defaultResolver = packageManager.resolveActivity(viewIntent, 0);
+
+        Map<String, Intent> targetedIntents = createdTargetedViewIntentsForResolvers(allAvailableResolvers, contentUri, mediaType);
+
+        if (targetedIntents.isEmpty()) {
+            throw new FailedToCreateViewIntentException(getText(R.string.file_handler_error));
+        } else if (targetedIntents.size() == 1) {
+            return targetedIntents.values().iterator().next();
+        } else if (targetedIntents.containsKey(resolvePackageName(defaultResolver))) {
+            return targetedIntents.get(resolvePackageName(defaultResolver));
+        } else {
+            return createChooser(new ArrayList<>(targetedIntents.values()), getText(R.string.open_file_with));
+        }
+    }
+
+    private Uri createShareUri(String dataFileName) {
+        File attachment = extractAttachment(dataFileName);
+        if (attachment == null) {
+            throw new FailedToCreateViewIntentException(getText(R.string.attachment_extract_failed));
+        }
         Uri contentUri = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID, attachment);
         getContext().grantUriPermission(BuildConfig.APPLICATION_ID, contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-
-        String mimeType = FileUtils.resolveMimeType(fileName);
-
-        intent.setDataAndType(contentUri, mimeType);
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            Timber.e(e, "No handler for this type (%s) of file found", mimeType);
-            notificationUtil.showFailMessage(getText(R.string.file_handler_error));
-        }
+        return contentUri;
     }
 
     class FileLongClickListener implements AdapterView.OnItemLongClickListener {
@@ -173,4 +200,9 @@ public class ContainerDataFilesFragment extends ListFragment {
         }
     }
 
+    private class FailedToCreateViewIntentException extends RuntimeException {
+        FailedToCreateViewIntentException(CharSequence message) {
+            super(message.toString());
+        }
+    }
 }

@@ -73,6 +73,7 @@
     <string name="save_container_no_files">Container needs to have at least 1 data file to save</string>
     <string name="title_activity_settings">Settings</string>
     <string name="no_connectivity_warning">Please connect to internet in order to sign</string>
+    <string name="open_file_with">Open file with</string>
 
     <!-- Strings related to pin activities-->
     <string name="pin2_changing">PIN2 changing</string>
