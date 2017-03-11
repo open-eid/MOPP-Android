@@ -33,6 +33,7 @@
         android:id="@+id/listSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:iconifiedByDefault="false"
         android:queryHint="@string/search"/>
 
     <fragment
