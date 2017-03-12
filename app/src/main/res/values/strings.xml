@@ -173,6 +173,7 @@
     <string name="mobile_nr">Mobile number</string>
     <string name="personal_code">Personal code</string>
     <string name="remember_me">Remember me</string>
+    <string name="mobile_sign_info">"Make sure the control code above matches and enter Mobile-ID PIN2-code"</string>
 
     <!-- Mobile Id Create signature statuses -->
     <string name="status_request_sent">Signing request sent</string>

@@ -47,7 +47,7 @@
             android:id="@+id/mobile_sign_progress_bar" />
 
         <TextView
-            android:text="Make sure the control code above matches with the one in your phone screen and enter Mobile-ID PIN2-code"
+            android:text="@string/mobile_sign_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/mobile_sign_info"
