@@ -79,27 +79,6 @@
             android:text="@android:string/unknownName"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <TextView
-            android:id="@+id/listDocLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/docName"
-            android:layout_marginBottom="3dp"
-            android:layout_toEndOf="@+id/bdocImg"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@string/location" />
-
-        <TextView
-            android:id="@+id/dbocInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/listDocLocation"
-            android:layout_toEndOf="@+id/bdocImg"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@android:string/unknownName" />
-
     </RelativeLayout>
 
     <ScrollView
@@ -116,6 +95,29 @@
             android:orientation="vertical"
             android:paddingEnd="2dp"
             android:paddingStart="3dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+		<TextView
+		    android:id="@+id/listDocLocation"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_marginBottom="3dp"
+                    android:layout_marginTop="5dp"
+		    android:ellipsize="end"
+		    android:maxLines="1"
+		    android:text="@string/location" />
+
+		<TextView
+		    android:id="@+id/dbocInfo"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/listDocLocation"
+		    android:ellipsize="end"
+		    android:maxLines="1"
+		    android:text="@android:string/unknownName" />
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
