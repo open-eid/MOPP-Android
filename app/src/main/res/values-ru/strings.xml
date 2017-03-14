@@ -156,6 +156,7 @@
     <string name="eid_sign_cert">Сертификат подписи:</string>
     <string name="eid_cert_used">Сертификат использован %s раз</string>
     <string name="eid_auth_cert">Идент. сертификат:</string>
+    <string name="eid_cert_blocked">%s заблокирован</string>
 
     <string name="insert_card_wait">Вставьте карту или подождите пока данные считываются.</string>
     <string name="signature_added">Подпись добавлена.</string>

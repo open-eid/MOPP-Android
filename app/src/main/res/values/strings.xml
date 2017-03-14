@@ -156,6 +156,7 @@
     <string name="eid_sign_cert">Signature certificate:</string>
     <string name="eid_cert_used">Certificate has been used %s times</string>
     <string name="eid_auth_cert">Authentication certificate:</string>
+    <string name="eid_cert_blocked">%s blocked</string>
 
     <string name="insert_card_wait">Insert card or wait for the reader to respond.</string>
     <string name="signature_added">Signature added</string>

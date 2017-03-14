@@ -54,6 +54,7 @@ import ee.ria.token.tokenservice.TokenService;
 import ee.ria.token.tokenservice.callback.CertCallback;
 import ee.ria.token.tokenservice.callback.PersonalFileCallback;
 import ee.ria.token.tokenservice.callback.UseCounterCallback;
+import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.tokenlibrary.Token;
 import timber.log.Timber;
 
@@ -235,7 +236,6 @@ public class ManageEidsActivity extends AppCompatActivity {
     private class SignCertUseCounterTaskCallback implements UseCounterCallback {
         @Override
         public void onCounterRead(int counterByte) {
-            //signCertUsedView.setText(String.valueOf(counterByte));
             signCertUsedView.setText(String.format(getText(R.string.eid_cert_used).toString(), String.valueOf(counterByte)));
         }
 
@@ -244,7 +244,6 @@ public class ManageEidsActivity extends AppCompatActivity {
     private class AuthCertUseCounterTaskCallback implements UseCounterCallback {
         @Override
         public void onCounterRead(int counterByte) {
-            //authCertUsedView.setText(String.valueOf(counterByte));
             authCertUsedView.setText(String.format(getText(R.string.eid_cert_used).toString(), String.valueOf(counterByte)));
         }
 
@@ -269,6 +268,9 @@ public class ManageEidsActivity extends AppCompatActivity {
                 signCertValidity.setTextColor(Color.RED);
                 signCertValidityTime.setTextColor(Color.RED);
             }
+
+            Pin2RetryCountCallback pin2CounterCallback = new Pin2RetryCountCallback();
+            tokenService.readRetryCounter(Token.PinType.PIN2, pin2CounterCallback);
         }
 
         @Override
@@ -298,6 +300,9 @@ public class ManageEidsActivity extends AppCompatActivity {
                 authCertValidityTime.setTextColor(Color.RED);
             }
 
+            Pin1RetryCountCallback pin1CounterCallback = new Pin1RetryCountCallback();
+            tokenService.readRetryCounter(Token.PinType.PIN1, pin1CounterCallback);
+
             try {
                 Collection<List<?>> subjectAlternativeNames = x509Cert.getCertificate().getSubjectAlternativeNames();
                 if (subjectAlternativeNames == null) {
@@ -322,4 +327,29 @@ public class ManageEidsActivity extends AppCompatActivity {
 
     }
 
+    class Pin1RetryCountCallback implements RetryCounterCallback {
+
+        @Override
+        public void onCounterRead(byte counterByte) {
+            if (counterByte == 0) {
+                authCertValidity.setText(String.format(getText(R.string.eid_cert_blocked).toString(), "PIN1"));
+                authCertValidity.setTextColor(Color.RED);
+                authCertValidityTime.setTextColor(Color.RED);
+            }
+        }
+
+    }
+
+    class Pin2RetryCountCallback implements RetryCounterCallback {
+
+        @Override
+        public void onCounterRead(byte counterByte) {
+            if (counterByte == 0) {
+                signCertValidity.setText(String.format(getText(R.string.eid_cert_blocked).toString(), "PIN2"));
+                signCertValidity.setTextColor(Color.RED);
+                signCertValidityTime.setTextColor(Color.RED);
+            }
+        }
+
+    }
 }

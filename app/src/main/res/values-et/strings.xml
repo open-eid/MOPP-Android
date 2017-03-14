@@ -156,6 +156,7 @@
     <string name="eid_sign_cert">Allkirjastamise sertifikaat:</string>
     <string name="eid_cert_used">Sertifikaati on kasutatud %s korda</string>
     <string name="eid_auth_cert">Isikutuvastamise sertifikaat:</string>
+    <string name="eid_cert_blocked">%s blokeeritud</string>
 
     <string name="insert_card_wait">Sisesta kaart või oota lugeja vastust.</string>
     <string name="signature_added">Allkiri lisatud</string>
