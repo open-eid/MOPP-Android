@@ -141,9 +141,9 @@
     <string name="pref_title_signing_save_last_used">Always save the last used role, resolution and location</string>
 
     <!--eID-->
-    <string name="eid_cert">Certificate:</string>
+    <string name="eid_doc_validity">Validity:</string>
     <string name="eid_valid">Valid</string>
-    <string name="eid_valid_untill">Valid until:</string>
+    <string name="eid_valid_until">Valid until:</string>
     <string name="eid_id_number">Personal Code:</string>
     <string name="eid_born">Birth:</string>
     <string name="eid_nationality">Citizenship:</string>
@@ -154,7 +154,8 @@
     <string name="eid_surname">Surname:</string>
     <string name="eid_card_in_reader">Card in reader:</string>
     <string name="eid_sign_cert">Signature certificate:</string>
-    <string name="eid_sign_cert_used">Signature key has been used:</string>
+    <string name="eid_cert_used">Certificate has been used %s times</string>
+    <string name="eid_auth_cert">Authentication certificate:</string>
 
     <string name="insert_card_wait">Insert card or wait for the reader to respond.</string>
     <string name="signature_added">Signature added</string>

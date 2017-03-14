@@ -141,9 +141,9 @@
     <string name="pref_title_signing_save_last_used">Always save the last used role, resolution and location</string>
 
     <!--eID-->
-    <string name="eid_cert">Сертификат:</string>
+    <string name="eid_doc_validity">Действительность:</string>
     <string name="eid_valid">Действителен</string>
-    <string name="eid_valid_untill">Действителен до:</string>
+    <string name="eid_valid_until">Действителен до:</string>
     <string name="eid_id_number">Личный номер:</string>
     <string name="eid_born">День рождения:</string>
     <string name="eid_nationality">Гражданство:</string>
@@ -154,7 +154,8 @@
     <string name="eid_surname">Фамилия:</string>
     <string name="eid_card_in_reader">В считывателе карта:</string>
     <string name="eid_sign_cert">Сертификат подписи:</string>
-    <string name="eid_sign_cert_used">Сертификат использован:</string>
+    <string name="eid_cert_used">Сертификат использован %s раз</string>
+    <string name="eid_auth_cert">Идент. сертификат:</string>
 
     <string name="insert_card_wait">Вставьте карту или подождите пока данные считываются.</string>
     <string name="signature_added">Подпись добавлена.</string>

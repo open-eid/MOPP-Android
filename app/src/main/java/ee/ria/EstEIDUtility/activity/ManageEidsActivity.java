@@ -65,10 +65,12 @@ public class ManageEidsActivity extends AppCompatActivity {
     @BindView(R.id.surname) TextView surnameView;
     @BindView(R.id.document_number) TextView documentNumberView;
     @BindView(R.id.card_validity) TextView cardValidity;
-    @BindView(R.id.card_valid_value) TextView cardValidityTime;
-    @BindView(R.id.cert_validity) TextView certValidity;
-    @BindView(R.id.cert_valid_value) TextView certValidityTime;
-    @BindView(R.id.cert_used) TextView certUsedView;
+    @BindView(R.id.signing_cert_validity) TextView signCertValidity;
+    @BindView(R.id.sign_cert_valid_value) TextView signCertValidityTime;
+    @BindView(R.id.sign_cert_used) TextView signCertUsedView;
+    @BindView(R.id.auth_cert_validity) TextView authCertValidity;
+    @BindView(R.id.auth_cert_valid_value) TextView authCertValidityTime;
+    @BindView(R.id.auth_cert_used) TextView authCertUsedView;
     @BindView(R.id.person_id) TextView personIdCode;
     @BindView(R.id.date_of_birth) TextView dateOfBirth;
     @BindView(R.id.nationality) TextView nationalityView;
@@ -172,15 +174,17 @@ public class ManageEidsActivity extends AppCompatActivity {
             givenNames.setText(empty);
             surnameView.setText(empty);
             documentNumberView.setText(empty);
-            certValidityTime.setText(empty);
-            cardValidityTime.setText(empty);
+            signCertValidityTime.setText(empty);
             personIdCode.setText(empty);
             dateOfBirth.setText(empty);
             nationalityView.setText(empty);
             cardValidity.setText(empty);
             emailView.setText(empty);
-            certValidity.setText(empty);
-            certUsedView.setText(empty);
+            signCertValidity.setText(empty);
+            signCertUsedView.setText(empty);
+            authCertValidityTime.setText(empty);
+            authCertValidity.setText(empty);
+            authCertUsedView.setText(empty);            
         }
     }
 
@@ -197,19 +201,15 @@ public class ManageEidsActivity extends AppCompatActivity {
                 dateOfBirth.setText(result.get(6));
                 personIdCode.setText(result.get(7));
                 documentNumberView.setText(result.get(8));
-                certValidityTime.setText(expiryDate);
-                cardValidityTime.setText(expiryDate);
 
                 try {
                     Date expiry = DateUtils.DATE_FORMAT.parse(expiryDate);
                     if (!expiry.before(new Date()) && expiry.after(new Date())) {
                         cardValidity.setText(getText(R.string.eid_valid));
                         cardValidity.setTextColor(Color.GREEN);
-                        cardValidityTime.setTextColor(Color.GREEN);
                     } else {
                         cardValidity.setText(getText(R.string.eid_invalid));
                         cardValidity.setTextColor(Color.RED);
-                        cardValidityTime.setTextColor(Color.RED);
                     }
                 } catch (ParseException e) {
                     Timber.e(e, "Error parsing expiry date");
@@ -232,10 +232,20 @@ public class ManageEidsActivity extends AppCompatActivity {
         tokenService.readCert(Token.CertType.CertAuth, authCertificateCallback);
     }
 
-    private class UseCounterTaskCallback implements UseCounterCallback {
+    private class SignCertUseCounterTaskCallback implements UseCounterCallback {
         @Override
         public void onCounterRead(int counterByte) {
-            certUsedView.setText(String.valueOf(counterByte));
+            //signCertUsedView.setText(String.valueOf(counterByte));
+            signCertUsedView.setText(String.format(getText(R.string.eid_cert_used).toString(), String.valueOf(counterByte)));
+        }
+
+    }
+
+    private class AuthCertUseCounterTaskCallback implements UseCounterCallback {
+        @Override
+        public void onCounterRead(int counterByte) {
+            //authCertUsedView.setText(String.valueOf(counterByte));
+            authCertUsedView.setText(String.format(getText(R.string.eid_cert_used).toString(), String.valueOf(counterByte)));
         }
 
     }
@@ -246,16 +256,18 @@ public class ManageEidsActivity extends AppCompatActivity {
         public void onCertificateResponse(byte[] cert) {
             X509Cert x509Cert = new X509Cert(cert);
 
-            tokenService.readUseCounter(Token.CertType.CertSign, new UseCounterTaskCallback());
+            tokenService.readUseCounter(Token.CertType.CertSign, new SignCertUseCounterTaskCallback());
+
+            signCertValidityTime.setText(DateUtils.DATE_FORMAT.format(x509Cert.validUntil()));
 
             if (x509Cert.isValid()) {
-                certValidity.setText(getText(R.string.eid_valid));
-                certValidity.setTextColor(Color.GREEN);
-                certValidityTime.setTextColor(Color.GREEN);
+                signCertValidity.setText(getText(R.string.eid_valid));
+                signCertValidity.setTextColor(Color.GREEN);
+                signCertValidityTime.setTextColor(Color.GREEN);
             } else {
-                certValidity.setText(getText(R.string.eid_invalid));
-                certValidity.setTextColor(Color.RED);
-                certValidityTime.setTextColor(Color.RED);
+                signCertValidity.setText(getText(R.string.eid_invalid));
+                signCertValidity.setTextColor(Color.RED);
+                signCertValidityTime.setTextColor(Color.RED);
             }
         }
 
@@ -271,6 +283,21 @@ public class ManageEidsActivity extends AppCompatActivity {
         @Override
         public void onCertificateResponse(byte[] cert) {
             X509Cert x509Cert = new X509Cert(cert);
+
+            tokenService.readUseCounter(Token.CertType.CertAuth, new AuthCertUseCounterTaskCallback());
+
+            authCertValidityTime.setText(DateUtils.DATE_FORMAT.format(x509Cert.validUntil()));
+
+            if (x509Cert.isValid()) {
+                authCertValidity.setText(getText(R.string.eid_valid));
+                authCertValidity.setTextColor(Color.GREEN);
+                authCertValidityTime.setTextColor(Color.GREEN);
+            } else {
+                authCertValidity.setText(getText(R.string.eid_invalid));
+                authCertValidity.setTextColor(Color.RED);
+                authCertValidityTime.setTextColor(Color.RED);
+            }
+
             try {
                 Collection<List<?>> subjectAlternativeNames = x509Cert.getCertificate().getSubjectAlternativeNames();
                 if (subjectAlternativeNames == null) {

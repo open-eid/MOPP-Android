@@ -251,12 +251,48 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
                         android:layout_weight="0.7"
-                        android:text="@string/eid_cert"
+                        android:text="@string/eid_doc_validity"
                         android:textAlignment="textEnd"
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/card_validity"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAlignment="textStart"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+
+                <View
+                    android:id="@+id/auth_certificate_separator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="2dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="20dp"
+                    android:background="#c0c0c0" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:layout_weight="0.7"
+                        android:text="@string/eid_auth_cert"
+                        android:textAlignment="textEnd"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/auth_cert_validity"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -277,12 +313,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
                         android:layout_weight="0.7"
-                        android:text="@string/eid_valid_untill"
+                        android:text="@string/eid_valid_until"
                         android:textAlignment="textEnd"
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/card_valid_value"
+                        android:id="@+id/auth_cert_valid_value"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -290,6 +326,25 @@
                         android:textStyle="bold" />
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/auth_cert_used"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAlignment="center"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+
 
                 <View
                     android:id="@+id/certificate_separator"
@@ -316,7 +371,7 @@
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/cert_validity"
+                        android:id="@+id/signing_cert_validity"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -337,12 +392,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
                         android:layout_weight="0.7"
-                        android:text="@string/eid_valid_untill"
+                        android:text="@string/eid_valid_until"
                         android:textAlignment="textEnd"
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/cert_valid_value"
+                        android:id="@+id/sign_cert_valid_value"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -358,19 +413,11 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:layout_weight="0.7"
-                        android:text="@string/eid_sign_cert_used"
-                        android:textAlignment="textEnd"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/cert_used"
+                        android:id="@+id/sign_cert_used"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textAlignment="center"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 

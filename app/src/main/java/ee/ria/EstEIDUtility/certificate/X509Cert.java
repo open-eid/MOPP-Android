@@ -58,6 +58,12 @@ public class X509Cert {
         return true;
     }
 
+
+    public Date validUntil() {
+        return certificate.getNotAfter();
+    }
+
+
     public String getValueByObjectIdentifier(ASN1ObjectIdentifier identifier) {
         X500Name x500name = null;
         try {

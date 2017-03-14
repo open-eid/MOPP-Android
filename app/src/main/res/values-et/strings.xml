@@ -141,9 +141,9 @@
     <string name="pref_title_signing_save_last_used">Jäta meelde viimati sisestatud roll, resolutsioon ja asukoht</string>
 
     <!--eID-->
-    <string name="eid_cert">Sertifikaat:</string>
+    <string name="eid_doc_validity">Kehtivus:</string>
     <string name="eid_valid">Kehtiv</string>
-    <string name="eid_valid_untill">Kehtib kuni:</string>
+    <string name="eid_valid_until">Kehtib kuni:</string>
     <string name="eid_id_number">Isikukood:</string>
     <string name="eid_born">Sündinud:</string>
     <string name="eid_nationality">Kodakondsus:</string>
@@ -154,7 +154,8 @@
     <string name="eid_surname">Perekonnanimi:</string>
     <string name="eid_card_in_reader">Lugejas on dokument:</string>
     <string name="eid_sign_cert">Allkirjastamise sertifikaat:</string>
-    <string name="eid_sign_cert_used">Sertifikaati on kasutatud:</string>
+    <string name="eid_cert_used">Sertifikaati on kasutatud %s korda</string>
+    <string name="eid_auth_cert">Isikutuvastamise sertifikaat:</string>
 
     <string name="insert_card_wait">Sisesta kaart või oota lugeja vastust.</string>
     <string name="signature_added">Allkiri lisatud</string>
