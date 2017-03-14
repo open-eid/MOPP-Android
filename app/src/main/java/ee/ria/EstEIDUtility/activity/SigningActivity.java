@@ -87,5 +87,6 @@ public class SigningActivity extends AppCompatActivity {
         intent.putExtra(Constants.CONTAINER_NAME_KEY, containerFacade.getName());
         intent.putExtra(Constants.CONTAINER_PATH_KEY, containerFacade.getAbsolutePath());
         startActivity(intent);
+        finish();
     }
 }
