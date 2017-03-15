@@ -86,6 +86,8 @@ public class ManageEidsActivity extends AppCompatActivity {
 
     private NotificationUtil notificationUtil;
 
+    private static final int DIGIDOC_GREEN = Color.rgb(80, 155, 0);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -207,7 +209,7 @@ public class ManageEidsActivity extends AppCompatActivity {
                     Date expiry = DateUtils.DATE_FORMAT.parse(expiryDate);
                     if (!expiry.before(new Date()) && expiry.after(new Date())) {
                         cardValidity.setText(getText(R.string.eid_valid));
-                        cardValidity.setTextColor(Color.GREEN);
+                        cardValidity.setTextColor(DIGIDOC_GREEN);
                     } else {
                         cardValidity.setText(getText(R.string.eid_invalid));
                         cardValidity.setTextColor(Color.RED);
@@ -261,8 +263,8 @@ public class ManageEidsActivity extends AppCompatActivity {
 
             if (x509Cert.isValid()) {
                 signCertValidity.setText(getText(R.string.eid_valid));
-                signCertValidity.setTextColor(Color.GREEN);
-                signCertValidityTime.setTextColor(Color.GREEN);
+                signCertValidity.setTextColor(DIGIDOC_GREEN);
+                signCertValidityTime.setTextColor(DIGIDOC_GREEN);
             } else {
                 signCertValidity.setText(getText(R.string.eid_invalid));
                 signCertValidity.setTextColor(Color.RED);
@@ -292,8 +294,8 @@ public class ManageEidsActivity extends AppCompatActivity {
 
             if (x509Cert.isValid()) {
                 authCertValidity.setText(getText(R.string.eid_valid));
-                authCertValidity.setTextColor(Color.GREEN);
-                authCertValidityTime.setTextColor(Color.GREEN);
+                authCertValidity.setTextColor(DIGIDOC_GREEN);
+                authCertValidityTime.setTextColor(DIGIDOC_GREEN);
             } else {
                 authCertValidity.setText(getText(R.string.eid_invalid));
                 authCertValidity.setTextColor(Color.RED);

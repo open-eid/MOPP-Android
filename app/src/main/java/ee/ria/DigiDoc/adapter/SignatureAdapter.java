@@ -113,7 +113,7 @@ public class SignatureAdapter extends ArrayAdapter<SignatureFacade> implements F
 
             if (signatureFacade.isSignatureValid()) {
                 viewHolder.isSigned.setText(getContext().getText(R.string.signature_valid));
-                viewHolder.isSigned.setTextColor(Color.GREEN);
+                viewHolder.isSigned.setTextColor(Color.rgb(80, 155, 0));
             } else {
                 viewHolder.isSigned.setText(getContext().getText(R.string.signature_invalid));
                 viewHolder.isSigned.setTextColor(Color.RED);
