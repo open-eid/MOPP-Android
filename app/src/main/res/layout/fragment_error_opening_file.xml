@@ -25,7 +25,7 @@
     android:background="@android:color/holo_red_light"
     android:gravity="center"
     android:padding="8dp"
-    tools:context="ee.ria.EstEIDUtility.fragment.ErrorOpeningFileFragment">
+    tools:context="ee.ria.DigiDoc.fragment.ErrorOpeningFileFragment">
 
     <ImageView
         android:id="@+id/fail_image"

@@ -23,7 +23,7 @@
     android:id="@+id/bdoc_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ee.ria.EstEIDUtility.activity.ContainerDetailsActivity"
+    tools:context="ee.ria.DigiDoc.activity.ContainerDetailsActivity"
     android:orientation="vertical">
 
 </LinearLayout>

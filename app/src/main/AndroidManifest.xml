@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ee.ria.EstEIDUtility">
+    package="ee.ria.DigiDoc">
 
     <uses-feature android:name="android.hardware.usb.host" />
 
@@ -28,7 +28,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="ee.ria.EstEIDUtility"
+            android:authorities="ee.ria.DigiDoc"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -59,7 +59,7 @@
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />
+                android:value="ee.ria.DigiDoc.activity.DashboardMenuActivity" />
         </activity>
         <activity
             android:name=".activity.ManageEidsActivity"
@@ -68,7 +68,7 @@
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />
+                android:value="ee.ria.DigiDoc.activity.DashboardMenuActivity" />
         </activity>
         <activity
             android:name=".activity.PinUtilitiesActivity"
@@ -77,7 +77,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />
+                android:value="ee.ria.DigiDoc.activity.DashboardMenuActivity" />
         </activity>
         <activity
             android:name=".activity.BrowseContainersActivity"
@@ -86,7 +86,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />
+                android:value="ee.ria.DigiDoc.activity.DashboardMenuActivity" />
         </activity>
         <activity
             android:name=".activity.ContainerDetailsActivity"
@@ -106,7 +106,7 @@
             android:parentActivityName=".activity.DashboardMenuActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ee.ria.EstEIDUtility.activity.DashboardMenuActivity" />
+                android:value="ee.ria.DigiDoc.activity.DashboardMenuActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

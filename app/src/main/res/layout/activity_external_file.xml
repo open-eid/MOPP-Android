@@ -23,6 +23,6 @@
     android:id="@+id/container_layout_holder"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ee.ria.EstEIDUtility.activity.OpenExternalFileActivity"
+    tools:context="ee.ria.DigiDoc.activity.OpenExternalFileActivity"
     android:orientation="vertical">
 </LinearLayout>

@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.2"
 
     defaultConfig {
-        applicationId "ee.ria.EstEIDUtility"
+        applicationId "ee.ria.DigiDoc"
         minSdkVersion 21
         targetSdkVersion 22 //TODO: investigate error loading library when targeting sdk above 22
         multiDexEnabled true
