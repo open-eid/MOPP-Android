@@ -38,7 +38,8 @@
 
         <activity
             android:name=".activity.SplashActivity"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -56,7 +57,8 @@
             android:name=".activity.SigningActivity"
             android:label="@string/title_activity_signing"
             android:parentActivityName=".activity.DashboardMenuActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ee.ria.DigiDoc.activity.DashboardMenuActivity" />
@@ -65,7 +67,8 @@
             android:name=".activity.ManageEidsActivity"
             android:label="@string/title_activity_manage_eids"
             android:parentActivityName=".activity.DashboardMenuActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ee.ria.DigiDoc.activity.DashboardMenuActivity" />
@@ -74,7 +77,8 @@
             android:name=".activity.PinUtilitiesActivity"
             android:label="@string/title_activity_pin_utilities"
             android:parentActivityName=".activity.DashboardMenuActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ee.ria.DigiDoc.activity.DashboardMenuActivity" />
@@ -83,7 +87,8 @@
             android:name=".activity.BrowseContainersActivity"
             android:label="@string/title_activity_browse_containers"
             android:parentActivityName=".activity.DashboardMenuActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ee.ria.DigiDoc.activity.DashboardMenuActivity" />
@@ -92,10 +97,12 @@
             android:name=".activity.ContainerDetailsActivity"
             android:label="@string/bdoc_detail_title"
             android:launchMode="singleTop"
-            android:parentActivityName=".activity.BrowseContainersActivity" />
+            android:parentActivityName=".activity.BrowseContainersActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.PinChangeActivity"
-            android:parentActivityName=".activity.PinUtilitiesActivity" />
+            android:parentActivityName=".activity.PinUtilitiesActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -103,7 +110,8 @@
 
         <activity
             android:name=".activity.OpenExternalFileActivity"
-            android:parentActivityName=".activity.DashboardMenuActivity">
+            android:parentActivityName=".activity.DashboardMenuActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ee.ria.DigiDoc.activity.DashboardMenuActivity" />
@@ -138,7 +146,8 @@
 
         <activity
             android:name=".preferences.SettingsActivity"
-            android:label="@string/title_activity_settings">
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
