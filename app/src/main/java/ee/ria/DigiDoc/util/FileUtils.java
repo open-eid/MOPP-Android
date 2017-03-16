@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 import android.webkit.MimeTypeMap;
+import android.os.Environment;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -80,7 +81,7 @@ public class FileUtils {
     }
 
     public static File getContainersDirectory(Context context) {
-        return new File(getFilesDir(context), Constants.CONTAINERS_DIRECTORY);
+        return new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Constants.CONTAINERS_DIRECTORY);
     }
 
     public static void clearDataFileCache(Context context) {
