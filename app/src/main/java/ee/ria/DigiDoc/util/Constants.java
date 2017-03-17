@@ -27,6 +27,6 @@ public class Constants {
 
     public static final String PIN_TYPE_KEY = "ee.ria.DigiDoc.pinType";
     public static final String SCHEMA_DIRECTORY = "schema";
-    public static final String CONTAINERS_DIRECTORY = "DigiDocContainers";
+    public static final String CONTAINERS_DIRECTORY = "DigiDoc";
     public static final String DATA_FILES_DIRECTORY = "datafiles";
 }

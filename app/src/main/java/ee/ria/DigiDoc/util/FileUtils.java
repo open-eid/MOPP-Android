@@ -44,6 +44,8 @@ import timber.log.Timber;
 
 public class FileUtils {
 
+    private static final File baseStorageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
     public static String getKilobytes(long length) {
         double kilobytes = (length / 1024);
         return new DecimalFormat("##.##").format(kilobytes);
@@ -81,7 +83,7 @@ public class FileUtils {
     }
 
     public static File getContainersDirectory(Context context) {
-        return new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Constants.CONTAINERS_DIRECTORY);
+        return new File(baseStorageDir, Constants.CONTAINERS_DIRECTORY);
     }
 
     public static void clearDataFileCache(Context context) {
@@ -148,12 +150,20 @@ public class FileUtils {
     }
 
     public static List<File> getContainers(Context context) {
-        File[] containerFiles = FileUtils.getContainersDirectory(context).listFiles();
-        if (containerFiles == null) {
+        File[] containerFilesInBaseDir = baseStorageDir.listFiles();
+        File[] containerFilesInDigiDocDir = FileUtils.getContainersDirectory(context).listFiles();
+
+        if (containerFilesInBaseDir == null && containerFilesInDigiDocDir == null) {
             return Collections.emptyList();
         }
+
         List<File> containers = new ArrayList<>();
-        Collections.addAll(containers, containerFiles);
+        if (containerFilesInBaseDir != null) {
+            Collections.addAll(containers, containerFilesInBaseDir);
+        }
+        if (containerFilesInDigiDocDir != null) {
+            Collections.addAll(containers, containerFilesInDigiDocDir);
+        }
         return containers;
     }
 
