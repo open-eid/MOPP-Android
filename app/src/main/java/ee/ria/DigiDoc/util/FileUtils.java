@@ -35,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.FilenameFilter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -150,8 +151,24 @@ public class FileUtils {
     }
 
     public static List<File> getContainers(Context context) {
-        File[] containerFilesInBaseDir = baseStorageDir.listFiles();
-        File[] containerFilesInDigiDocDir = FileUtils.getContainersDirectory(context).listFiles();
+
+        FilenameFilter containersOnly = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                String lowerName = name.toLowerCase();
+                return lowerName.endsWith(".bdoc")  ||
+                       lowerName.endsWith(".ddoc")  ||
+                       lowerName.endsWith(".asice") ||
+                       lowerName.endsWith(".sce")   ||
+                       lowerName.endsWith(".scs")   ||
+                       lowerName.endsWith(".edoc")  ||
+                       lowerName.endsWith(".adoc")  ||
+                       lowerName.endsWith(".asics");
+            }
+        };
+
+        File[] containerFilesInBaseDir = baseStorageDir.listFiles(containersOnly);
+        File[] containerFilesInDigiDocDir = FileUtils.getContainersDirectory(context).listFiles(containersOnly);
 
         if (containerFilesInBaseDir == null && containerFilesInDigiDocDir == null) {
             return Collections.emptyList();
