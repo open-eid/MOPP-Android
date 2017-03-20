@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <files-path name="containers" path="containers/" />
-    <cache-path name="container_cache" path="containers/" />
+    <external-path name="external_files" path="."/>
+    <cache-path name="container_cache" path="DigiDoc/" />
     <cache-path name="data_file_cache" path="datafiles/" />
 </paths>
