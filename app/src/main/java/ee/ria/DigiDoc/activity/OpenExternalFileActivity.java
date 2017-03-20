@@ -29,6 +29,7 @@ import android.support.v7.app.AppCompatActivity;
 import org.apache.commons.io.FilenameUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ee.ria.DigiDoc.R;
@@ -44,6 +45,8 @@ import timber.log.Timber;
 public class OpenExternalFileActivity extends AppCompatActivity {
 
     public static final String TAG = OpenExternalFileActivity.class.getName();
+    private static final List<String> containerExt = Arrays.asList(
+            new String[]{"asice", "asics", "sce", "scs", "adoc", "bdoc", "ddoc", "edoc", "pdf"});
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +119,7 @@ public class OpenExternalFileActivity extends AppCompatActivity {
 
     public ContainerFacade createContainer(Uri uri) {
         String fileName = FileUtils.resolveFileName(uri, getContentResolver());
-        if (FileUtils.isContainer(fileName)) {
+        if (OpenExternalFileActivity.containerExt.contains(FilenameUtils.getExtension(fileName))) {
             try {
                 return ContainerBuilder
                         .aContainer(this)
