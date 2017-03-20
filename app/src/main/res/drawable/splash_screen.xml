@@ -3,8 +3,10 @@
 
     <item android:drawable="@android:color/white" />
 
-    <item
-        android:drawable="@drawable/logo"
-        android:gravity="center" />
+    <item>
+        <bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+            android:src="@mipmap/splash"
+            android:gravity="center"/>
+    </item>
 
 </layer-list>
