@@ -35,8 +35,8 @@
     <string name="bdoc_remove_confirm_message">Are you sure you want to delete file %s?</string>
     <string name="signatures_title">Signatures</string>
     <string name="file_location">Location: </string>
-    <string name="file_info">Format: %1$s | Size: %2$s kb</string>
-    <string name="file_size">Size: %s kb</string>
+    <string name="file_info">Format: %1$s | Size: %2$s</string>
+    <string name="file_size">Size: %s</string>
     <string name="files_title">Files</string>
     <string name="create_new">Create new</string>
     <string name="send">Send</string>

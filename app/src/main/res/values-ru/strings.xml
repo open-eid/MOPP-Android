@@ -35,8 +35,8 @@
     <string name="bdoc_remove_confirm_message">Уверены, что хотите удалить файл %s?</string>
     <string name="signatures_title">Подписи</string>
     <string name="file_location">Местонахождение: </string>
-    <string name="file_info">Формат: %1$s | Размер: %2$s kb</string>
-    <string name="file_size">Размер: %s kb</string>
+    <string name="file_info">Формат: %1$s | Размер: %2$s</string>
+    <string name="file_size">Размер: %s</string>
     <string name="files_title">Файлы</string>
     <string name="create_new">Создать новый</string>
     <string name="send">Отправить</string>

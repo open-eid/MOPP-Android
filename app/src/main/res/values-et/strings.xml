@@ -35,8 +35,8 @@
     <string name="bdoc_remove_confirm_message">Kas oled kindel, et soovid kustutada faili %s</string>
     <string name="signatures_title">Allkirjad</string>
     <string name="file_location">Asukoht: </string>
-    <string name="file_info">Vorming: %1$s | Suurus: %2$s kb</string>
-    <string name="file_size">Suurus: %s kb</string>
+    <string name="file_info">Vorming: %1$s | Suurus: %2$s</string>
+    <string name="file_size">Suurus: %s</string>
     <string name="files_title">Failid</string>
     <string name="create_new">Loo uus</string>
     <string name="send">Saada</string>

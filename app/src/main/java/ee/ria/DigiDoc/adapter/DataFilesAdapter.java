@@ -26,6 +26,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,7 +93,8 @@ public class DataFilesAdapter extends ArrayAdapter<DataFileFacade> {
         if (dataFileFacade != null) {
             viewHolder.fileName.setText(dataFileFacade.getFileName());
             String fileSizeText = getContext().getString(R.string.file_size);
-            viewHolder.fileSize.setText(String.format(fileSizeText, FileUtils.getKilobytes(dataFileFacade.getFileSize())));
+            String fileSizeWithUnit = Formatter.formatShortFileSize(getContext(), dataFileFacade.getFileSize());
+            viewHolder.fileSize.setText(String.format(fileSizeText, fileSizeWithUnit));
             viewHolder.removeFile.setOnClickListener(new RemoveFileListener(position, dataFileFacade.getFileName(), parent.getContext()));
         }
         return convertView;

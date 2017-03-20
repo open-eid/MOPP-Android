@@ -47,11 +47,6 @@ public class FileUtils {
 
     private static final File baseStorageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
-    public static String getKilobytes(long length) {
-        double kilobytes = (length / 1024);
-        return new DecimalFormat("##.##").format(kilobytes);
-    }
-
     public static File cacheUriAsDataFile(Context context, Uri uri) {
         String fileName = resolveFileName(uri, context.getContentResolver());
         return cacheUriAsDataFile(context, uri, fileName);

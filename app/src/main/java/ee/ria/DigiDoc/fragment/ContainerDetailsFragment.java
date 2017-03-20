@@ -42,6 +42,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -513,8 +514,8 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
     private String getFormattedFileInfo() {
         String format = getContext().getString(R.string.file_info);
         String extension = FilenameUtils.getExtension(containerFacade.getName()).toUpperCase();
-        String sizeInKb = FileUtils.getKilobytes(containerFacade.fileSize());
-        return String.format(format, extension, sizeInKb);
+        String sizeWithUnit = Formatter.formatShortFileSize(getContext(), containerFacade.fileSize());
+        return String.format(format, extension, sizeWithUnit);
     }
 
     private String getFutureSignatureProfile() {
