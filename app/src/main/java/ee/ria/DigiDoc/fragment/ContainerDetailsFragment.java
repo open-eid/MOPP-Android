@@ -118,7 +118,6 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
 
     //Fragment views
     @BindView(R.id.docName) EditText title;
-    @BindView(R.id.listDocLocation) TextView body;
     @BindView(R.id.dbocInfo) TextView fileInfoTextView;
     @BindView(R.id.addFile) Button addFileButton;
     @BindView(R.id.addSignature) Button addSignatureButton;
@@ -304,7 +303,6 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         super.onViewCreated(view, savedInstanceState);
         fileInfoTextView.setText(getFormattedFileInfo());
         title.setText(containerFacade.getName());
-        body.append(containerFacade.getName());
         checkConnectivity();
     }
 
