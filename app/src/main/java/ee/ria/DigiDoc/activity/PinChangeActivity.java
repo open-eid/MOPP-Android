@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
@@ -298,9 +299,19 @@ public class PinChangeActivity extends AppCompatActivity {
             }
             pinBlocked = false;
             clearTexts();
-            radioPIN.setEnabled(true);
-            radioPIN.setChecked(true);
+            
+            currentPinPukView.setEnabled(false);
+            newPinView.setEnabled(false);
+            newPinAgainView.setEnabled(false);
+            changeButton.setEnabled(false);
             refreshLayout(R.id.radioPIN);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    PinChangeActivity.this.finish();
+                }
+            }, 2000);
         }
 
         @Override
