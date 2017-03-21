@@ -99,21 +99,13 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-		<TextView
-		    android:id="@+id/listDocLocation"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_marginBottom="3dp"
-                    android:layout_marginTop="5dp"
-		    android:ellipsize="end"
-		    android:maxLines="1"
-		    android:text="@string/location" />
 
 		<TextView
 		    android:id="@+id/dbocInfo"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:layout_below="@+id/listDocLocation"
+		    android:layout_marginBottom="3dp"
+                    android:layout_marginTop="5dp"
 		    android:ellipsize="end"
 		    android:maxLines="1"
 		    android:text="@android:string/unknownName" />
