@@ -102,10 +102,19 @@ public class SignatureAdapter extends ArrayAdapter<SignatureFacade> implements F
 
             String personInfo;
             if ((surname != null && !surname.isEmpty()) && (name != null && !name.isEmpty())) {
-                personInfo = String.format("%s %s (%s)", name, surname, serialNumber);
+                if (serialNumber != null) {
+                    personInfo = String.format("%s %s (%s)", name, surname, serialNumber);
+                } else {
+                    personInfo = String.format("%s %s", name, surname);
+                }
             } else {
                 String commonName = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.CN));
-                personInfo = String.format("%s (%s)", commonName, serialNumber);
+
+                if (serialNumber != null) {
+                    personInfo = String.format("%s (%s)", commonName, serialNumber);
+                } else {
+                    personInfo = String.format("%s", commonName);
+                }
             }
 
             viewHolder.name.setText(personInfo);
