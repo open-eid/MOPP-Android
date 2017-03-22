@@ -105,7 +105,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.PukChangeActivity"
-            android:parentActivityName=".activity.PukUtilitiesActivity"
+            android:parentActivityName=".activity.PinUtilitiesActivity"
             android:screenOrientation="portrait" />
 
         <meta-data

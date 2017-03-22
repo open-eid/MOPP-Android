@@ -19,12 +19,10 @@
 
 package ee.ria.DigiDoc.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
 import android.view.View;
 
 import butterknife.BindView;
@@ -71,11 +69,6 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         intent.putExtra(Constants.PIN_TYPE_KEY, pinType);
         startActivity(intent);
         overridePendingTransition(R.anim.enter, R.anim.leave);
-    }
-
-    @Override
-    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
-        return super.onCreateView(parent, name, context, attrs);
     }
 
 }
