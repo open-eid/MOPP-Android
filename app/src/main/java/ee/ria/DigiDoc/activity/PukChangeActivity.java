@@ -75,6 +75,7 @@ public class PukChangeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.change_puk);
         setContentView(R.layout.puk_change);
         ButterKnife.bind(this);
         notificationUtil = new NotificationUtil(this);

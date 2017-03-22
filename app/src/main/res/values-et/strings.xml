@@ -125,6 +125,7 @@
     <string name="puk_blocked"><b>PUK on blokeeritud.</b></string>
     <string name="puk_change_failed">PUK muutmine ebaõnnestus</string>
     <string name="puk_change_success">PUK muutmine oli edukas</string>
+    <string name="puk_warning">Kui peale vahetamist PUK kood läheb meelest ära ja sertifikaat jääb blokeerituks kolme vale PIN1 või PIN2 sisetamise järel, siis ainus võimalus ID-kaart jälle tööle saada on pöörduda klienditeeninduspunkti poole.</string>
 
     <!-- Strings related to Settings -->
     <!-- General settings -->

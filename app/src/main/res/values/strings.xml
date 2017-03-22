@@ -125,6 +125,7 @@
     <string name="puk_blocked"><b>PUK is blocked.</b></string>
     <string name="puk_change_failed">PUK change failed</string>
     <string name="puk_change_success">PUK changed successfully</string>
+    <string name="puk_warning">If you forget the PUK code or the certificates remain blocked, you have to visit the service center to obtain new codes.</string>
 
     <!-- Strings related to Settings -->
     <!-- General settings -->

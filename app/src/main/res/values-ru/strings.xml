@@ -125,6 +125,7 @@
     <string name="puk_blocked"><b>PUK заблокирован.</b></string>
     <string name="puk_change_failed">Изменение PUK не удалось</string>
     <string name="puk_change_success">PUK успешно изменён</string>
+    <string name="puk_warning">Если после смены PUK код забывается и сетрификат блокируется из-за неверно введённых PIN1 или PIN2, то единственной возможностью восстановить работоспособность ID- карты, это обратиться в бюро обслуживания.</string>
 
     <!-- Strings related to Settings -->
     <!-- General settings -->
