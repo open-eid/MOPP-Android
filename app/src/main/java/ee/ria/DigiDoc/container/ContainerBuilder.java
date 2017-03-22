@@ -23,6 +23,9 @@ import android.content.Context;
 import android.net.Uri;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -97,8 +100,13 @@ public class ContainerBuilder {
         File directory = FileUtils.getContainersDirectory(context);
 
         File to = FileUtils.incrementFileName(directory, containerName);
-        boolean renamed = from.renameTo(to);
-        if (!renamed) {
+        try {
+            FileChannel outputChannel = new FileOutputStream(to).getChannel();
+            FileChannel inputChannel = new FileInputStream(from).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            from.delete();
+        } catch (Exception e) {
             throw new ExternalContainerSaveException();
         }
         this.containerFile = to;
