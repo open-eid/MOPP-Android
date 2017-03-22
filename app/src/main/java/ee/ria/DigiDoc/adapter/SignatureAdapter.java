@@ -94,27 +94,32 @@ public class SignatureAdapter extends ArrayAdapter<SignatureFacade> implements F
         SignatureFacade signatureFacade = getItem(position);
 
         if (signatureFacade != null) {
-            X509Cert x509Cert = new X509Cert(signatureFacade.getSigningCertificateDer());
-
-            String surname = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SURNAME));
-            String name = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.GIVENNAME));
-            String serialNumber = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SERIALNUMBER));
-
             String personInfo;
-            if ((surname != null && !surname.isEmpty()) && (name != null && !name.isEmpty())) {
-                if (serialNumber != null) {
-                    personInfo = String.format("%s %s (%s)", name, surname, serialNumber);
+            byte[] der = signatureFacade.getSigningCertificateDer();
+            if (der != null && der.length > 0) {
+                X509Cert x509Cert = new X509Cert(der);
+
+                String surname = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SURNAME));
+                String name = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.GIVENNAME));
+                String serialNumber = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SERIALNUMBER));
+
+                if ((surname != null && !surname.isEmpty()) && (name != null && !name.isEmpty())) {
+                    if (serialNumber != null) {
+                        personInfo = String.format("%s %s (%s)", name, surname, serialNumber);
+                    } else {
+                        personInfo = String.format("%s %s", name, surname);
+                    }
                 } else {
-                    personInfo = String.format("%s %s", name, surname);
+                    String commonName = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.CN));
+
+                    if (serialNumber != null) {
+                        personInfo = String.format("%s (%s)", commonName, serialNumber);
+                    } else {
+                        personInfo = String.format("%s", commonName);
+                    }
                 }
             } else {
-                String commonName = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.CN));
-
-                if (serialNumber != null) {
-                    personInfo = String.format("%s (%s)", commonName, serialNumber);
-                } else {
-                    personInfo = String.format("%s", commonName);
-                }
+                personInfo = signatureFacade.getSignedBy();
             }
 
             viewHolder.name.setText(personInfo);

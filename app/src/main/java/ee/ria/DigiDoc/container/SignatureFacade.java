@@ -25,6 +25,10 @@ public class SignatureFacade {
         return signature.signingCertificateDer();
     }
 
+    public String getSignedBy() {
+        return signature.signedBy();
+    }
+
     public String getTrustedSigningTime() {
         return signature.trustedSigningTime();
     }
