@@ -112,6 +112,19 @@
     <string name="pin2_no_match">\"New PIN2\" and \"New PIN2 again\" are different.</string>
     <string name="new_pin2_length_short">New PIN2 is too short (%o characters). Minimum number of PIN2 characters is 5.</string>
     <string name="pin2_blocked"><b>PIN2 is blocked.</b>\nTo unblock/change PIN2 use PUK code.</string>
+    <string name="puk_changing">PUK changing</string>
+    <string name="puk_info_title">New PUK code:</string>
+    <string name="puk_info"><![CDATA[\u2022 must be different from previous PUK\n\u2022 must be 8–12 digits long and can\'t contain letters.\n\u2022 can\'t be 00000000, 12345678 and can\'t contain your date of birth.]]></string>
+    <string name="new_puk_title">New PUK code:</string>
+    <string name="new_puk_hint">New PUK</string>
+    <string name="new_puk_again_hint">New PUK again</string>
+    <string name="new_puk_again_title">New PUK code again:</string>
+    <string name="new_puk_length_short">New PUK is too short (%o characters). Minimum number of PUK characters is 8.</string>
+    <string name="puk_no_match">\"New PUK\" and \"New PUK again\" are different.</string>
+    <string name="puk_too_easy">PUK contains too obvious combination. PUK can\'t be 00000000 or 12345678. Also PUK can\'t contain your date of birth.</string>
+    <string name="puk_blocked"><b>PUK is blocked.</b></string>
+    <string name="puk_change_failed">PUK change failed</string>
+    <string name="puk_change_success">PUK changed successfully</string>
 
     <!-- Strings related to Settings -->
     <!-- General settings -->
@@ -164,6 +177,8 @@
     <string name="signature_removed">Signature removed successfully</string>
     <string name="pin_old_equals_new">Old and new PIN should be different</string>
     <string name="pin_contains_date_of_birth">PIN can\'t contain yyyy, ddmm, mmdd combinations of date of birth</string>
+    <string name="puk_old_equals_new">Old and new PUK should be different</string>
+    <string name="puk_contains_date_of_birth">PUK can\'t contain yyyy, ddmm, mmdd combinations of date of birth</string>
     <string name="enter_container_name">Enter container name</string>
     <string name="create_container">Create container</string>
     <string name="error_page_title">Error</string>

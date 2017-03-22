@@ -38,6 +38,7 @@ public class PinUtilitiesActivity extends AppCompatActivity {
 
     @BindView(R.id.changePin1) View changePin1;
     @BindView(R.id.changePin2) View changePin2;
+    @BindView(R.id.changePUK) View changePUK;
     @BindView(R.id.toolbar) Toolbar toolbar;
 
     @Override
@@ -57,6 +58,12 @@ public class PinUtilitiesActivity extends AppCompatActivity {
     @OnClick(R.id.changePin2)
     void onChangePin2() {
         launchPinChangeActivity(Token.PinType.PIN2);
+    }
+
+    @OnClick(R.id.changePUK)
+    void onChangePUK() {
+        startActivity(new Intent(this, PukChangeActivity.class));
+        overridePendingTransition(R.anim.enter, R.anim.leave);
     }
 
     private void launchPinChangeActivity(Token.PinType pinType) {
