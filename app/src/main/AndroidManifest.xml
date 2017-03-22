@@ -103,6 +103,10 @@
             android:name=".activity.PinChangeActivity"
             android:parentActivityName=".activity.PinUtilitiesActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.PukChangeActivity"
+            android:parentActivityName=".activity.PukUtilitiesActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.gms.version"

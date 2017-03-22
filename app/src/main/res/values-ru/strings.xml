@@ -112,6 +112,19 @@
     <string name="pin2_no_match">\"Новый PIN2\" и \"Новый PIN2 заново\" не идентичны.</string>
     <string name="new_pin2_length_short">Новый PIN2 слишком короткий (%o символов). Минимальное количество символов PIN2 5.</string>
     <string name="pin2_blocked"><b>PIN2 заблокирован.</b>\nPIN2 для разблокировки/изменения нужно использовать PUK код.</string>
+    <string name="puk_changing">Изменение PUK</string>
+    <string name="puk_info_title">Новый PUK код:</string>
+    <string name="puk_info"><![CDATA[\u2022 должен отличаться от предыдущего PUK\n\u2022 должен состоят из 8–12 номерных знаков и не содержать буквы.\n\u2022 не может быть 00000000, 12345678 и не может содержать комбинацию, встречающуюся в дате Вашего рождения.]]></string>
+    <string name="new_puk_title">Новый PUK код:</string>
+    <string name="new_puk_hint">Новый PUK</string>
+    <string name="new_puk_again_hint">Новый PUK заново</string>
+    <string name="new_puk_again_title">Новый PUK код заново:</string>
+    <string name="new_puk_length_short">Новый PUK слишком короткий (%o символов).\nМинимальное количество символов PUK 8.</string>
+    <string name="puk_no_match">\"Новый PUK\" и \"Новый PUK заново\" не идентичны.</string>
+    <string name="puk_too_easy">PUK содержить легко вычисляемую комбинацию. PUK не может быть 00000000 или 12345678. Также не может содержать комбинацию, встречающуюся в дате Вашего рождения.</string>
+    <string name="puk_blocked"><b>PUK заблокирован.</b></string>
+    <string name="puk_change_failed">Изменение PUK не удалось</string>
+    <string name="puk_change_success">PUK успешно изменён</string>
 
     <!-- Strings related to Settings -->
     <!-- General settings -->
@@ -164,6 +177,8 @@
     <string name="signature_removed">Подпись успешно удалена</string>
     <string name="pin_old_equals_new">Старый и новый PIN должны быть разные</string>
     <string name="pin_contains_date_of_birth">PIN не может содержать yyyy, ddmm, mmdd комбинации даты рождения</string>
+    <string name="puk_old_equals_new">Старый и новый PUK должны быть разные</string>
+    <string name="puk_contains_date_of_birth">PUK не может содержать yyyy, ddmm, mmdd комбинации даты рождения</string>
     <string name="enter_container_name">Введите имя контейнера</string>
     <string name="create_container">Создать контейнер</string>
     <string name="error_page_title">Ошибка</string>

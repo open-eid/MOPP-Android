@@ -117,5 +117,40 @@
                 app:srcCompat="@drawable/ic_keyboard_arrow_right_black_36px" />
         </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/changePUK"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <ImageView
+                android:id="@+id/icon3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@android:string/unknownName"
+                android:padding="10dp"
+                app:srcCompat="@drawable/ic_sim_card_black_36px" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/icon3"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@+id/icon3"
+                android:layout_toStartOf="@+id/arrow3"
+                android:hint="@string/change_puk"
+                android:padding="10dp"
+                android:textAppearance="?android:textAppearanceLarge" />
+
+            <ImageView
+                android:id="@+id/arrow3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/icon3"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="@android:string/unknownName"
+                android:padding="10dp"
+                app:srcCompat="@drawable/ic_keyboard_arrow_right_black_36px" />
+        </RelativeLayout>
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
