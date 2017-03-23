@@ -203,6 +203,7 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
                 .aContainer(getContext())
                 .fromExistingContainer(containerWorkingPath)
                 .build();
+        addFileButton.setEnabled(containerFacade.isRWContainer());
 
         createFilesListFragment();
         createSignatureListFragment();
@@ -507,6 +508,7 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
 
     private void refreshContainerFacade() {
         containerFacade = ContainerBuilder.aContainer(getContext()).fromExistingContainer(containerFacade.getContainerFile()).build();
+        addFileButton.setEnabled(containerFacade.isRWContainer());
     }
 
     private String getFormattedFileInfo() {
@@ -525,7 +527,7 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
     }
 
     private void enableSigning() {
-        addSignatureButton.setEnabled(true);
+        addSignatureButton.setEnabled(containerFacade.isRWContainer());
     }
 
     private void disableSigning() {
@@ -559,7 +561,7 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         }
     }
 
-    class SignTaskCallback implements SignCallback {
+    private class SignTaskCallback implements SignCallback {
         @Override
         public void onSignResponse(byte[] signatureBytes) {
             containerFacade.setSignatureValue(signatureBytes);
@@ -594,7 +596,7 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         }
     }
 
-    class CertificateInfoCallback implements CertCallback {
+    private class CertificateInfoCallback implements CertCallback {
         @Override
         public void onCertificateResponse(byte[] cert) {
             refreshContainerFacade();
@@ -608,7 +610,7 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
         }
     }
 
-    class SameSignatureCallback implements CertCallback {
+    private class SameSignatureCallback implements CertCallback {
         @Override
         public void onCertificateResponse(byte[] cert) {
             refreshContainerFacade();

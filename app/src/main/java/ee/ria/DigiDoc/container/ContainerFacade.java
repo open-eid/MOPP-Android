@@ -19,6 +19,8 @@
 
 package ee.ria.DigiDoc.container;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +40,7 @@ public class ContainerFacade {
     private Container container;
     private File containerFile;
     private Signature preparedSignature;
+    private static final List<String> isRWContainer = Arrays.asList("asice", "sce", "bdoc", "edoc");
 
     ContainerFacade(Container container, File containerFile) {
         this.container = container;
@@ -117,6 +120,10 @@ public class ContainerFacade {
 
     public boolean isSigned() {
         return !container.signatures().isEmpty();
+    }
+
+    public boolean isRWContainer() {
+        return isRWContainer.contains(FilenameUtils.getExtension(containerFile.getName()));
     }
 
     public void removeDataFile(int position) {

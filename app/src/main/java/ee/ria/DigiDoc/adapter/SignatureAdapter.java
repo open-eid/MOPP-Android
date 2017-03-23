@@ -133,6 +133,7 @@ public class SignatureAdapter extends ArrayAdapter<SignatureFacade> implements F
                 viewHolder.isSigned.setTextColor(Color.RED);
             }
             viewHolder.removeSignature.setOnClickListener(new RemoveSignatureListener(position, personInfo));
+            viewHolder.removeSignature.setVisibility(containerFacade.isRWContainer() ? View.VISIBLE : View.INVISIBLE);
         }
         return convertView;
     }
