@@ -52,17 +52,6 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"/>
-
-        <activity
-            android:name=".activity.SigningActivity"
-            android:label="@string/title_activity_signing"
-            android:parentActivityName=".activity.DashboardMenuActivity"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="ee.ria.DigiDoc.activity.DashboardMenuActivity" />
-        </activity>
         <activity
             android:name=".activity.ManageEidsActivity"
             android:label="@string/title_activity_manage_eids"
