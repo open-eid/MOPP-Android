@@ -46,7 +46,7 @@ public class OpenExternalFileActivity extends AppCompatActivity {
 
     public static final String TAG = OpenExternalFileActivity.class.getName();
     private static final List<String> containerExt = Arrays.asList(
-            new String[]{"asice", "asics", "sce", "scs", "adoc", "bdoc", "ddoc", "edoc", "pdf"});
+            "asice", "asics", "sce", "scs", "adoc", "bdoc", "ddoc", "edoc", "pdf");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

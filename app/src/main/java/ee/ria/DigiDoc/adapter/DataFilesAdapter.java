@@ -44,7 +44,6 @@ import ee.ria.DigiDoc.container.ContainerFacade;
 import ee.ria.DigiDoc.container.DataFileFacade;
 import ee.ria.DigiDoc.fragment.ContainerDataFilesFragment;
 import ee.ria.DigiDoc.fragment.ContainerDetailsFragment;
-import ee.ria.DigiDoc.util.FileUtils;
 import ee.ria.DigiDoc.util.NotificationUtil;
 
 public class DataFilesAdapter extends ArrayAdapter<DataFileFacade> {
@@ -96,6 +95,7 @@ public class DataFilesAdapter extends ArrayAdapter<DataFileFacade> {
             String fileSizeWithUnit = Formatter.formatShortFileSize(getContext(), dataFileFacade.getFileSize());
             viewHolder.fileSize.setText(String.format(fileSizeText, fileSizeWithUnit));
             viewHolder.removeFile.setOnClickListener(new RemoveFileListener(position, dataFileFacade.getFileName(), parent.getContext()));
+            viewHolder.removeFile.setVisibility(containerFacade.isRWContainer() ? View.VISIBLE : View.INVISIBLE);
         }
         return convertView;
     }
