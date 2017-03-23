@@ -15,6 +15,7 @@
     <EditTextPreference
         android:capitalize="none"
         android:defaultValue=""
+        android:hint="47101010033"
         android:inputType="phone"
         android:key="personal_code"
         android:maxLines="1"
@@ -25,11 +26,17 @@
     <EditTextPreference
         android:capitalize="none"
         android:defaultValue=""
+        android:hint="3727654321"
         android:inputType="phone"
         android:key="mobile_nr"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/pref_title_mobile_nr" />
+
+    <Preference
+        android:title="About"
+        android:key="about"
+        android:layout="@layout/about" />
 
 </PreferenceScreen>
