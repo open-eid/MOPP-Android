@@ -110,6 +110,7 @@
                 android:value="ee.ria.DigiDoc.activity.DashboardMenuActivity" />
 
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
 
