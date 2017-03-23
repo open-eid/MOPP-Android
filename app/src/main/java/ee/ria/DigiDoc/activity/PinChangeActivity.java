@@ -294,12 +294,14 @@ public class PinChangeActivity extends AppCompatActivity {
             switch (pinType) {
                 case PIN1:
                     notificationUtil.showSuccessMessage(getText(R.string.pin1_change_success));
+                    break;
                 case PIN2:
                     notificationUtil.showSuccessMessage(getText(R.string.pin2_change_success));
+                    break;
             }
             pinBlocked = false;
             clearTexts();
-            
+
             currentPinPukView.setEnabled(false);
             newPinView.setEnabled(false);
             newPinAgainView.setEnabled(false);
