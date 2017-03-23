@@ -22,6 +22,8 @@ package ee.ria.DigiDoc.container;
 import android.content.Context;
 import android.net.Uri;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import ee.ria.DigiDoc.preferences.accessor.AppPreferences;
 import ee.ria.DigiDoc.util.FileUtils;
 import ee.ria.libdigidocpp.Container;
 
@@ -76,7 +79,14 @@ public class ContainerBuilder {
     }
 
     private String resolveContainerName() {
-        return containerName != null && !containerName.isEmpty() ? containerName : UUID.randomUUID().toString();
+        if (containerName != null && !containerName.isEmpty()) {
+            return containerName;
+        }
+        else if(!dataFileUris.isEmpty()) {
+            return FilenameUtils.getBaseName(FileUtils.resolveFileName(dataFileUris.get(0), context.getContentResolver()))
+                    + "." + AppPreferences.get(context).getContainerFormat();
+        }
+        return UUID.randomUUID().toString();
     }
 
     public static ContainerBuilder aContainer(Context context) {
