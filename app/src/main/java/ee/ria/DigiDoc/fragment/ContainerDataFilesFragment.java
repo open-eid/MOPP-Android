@@ -31,17 +31,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
@@ -109,24 +102,14 @@ public class ContainerDataFilesFragment extends ListFragment {
     }
 
     private File extractAttachment(String fileName) {
-        File attachment = null;
-        File containerFile = containerFacade.getContainerFile();
-        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(containerFile))) {
-            ZipEntry ze;
-            while ((ze = zis.getNextEntry()) != null) {
-                if (fileName.equals(ze.getName())) {
-                    File cacheDir = FileUtils.getDataFilesCacheDirectory(getContext());
-                    attachment = new File(cacheDir, fileName);
-                    try (FileOutputStream out = new FileOutputStream(attachment)) {
-                        IOUtils.copy(zis, out);
-                    }
-                    break;
-                }
-            }
-        } catch (IOException e) {
+        try {
+            File attachment = new File(FileUtils.getDataFilesCacheDirectory(getContext()), fileName);
+            containerFacade.getDataFile(fileName).saveFile(attachment.getAbsolutePath());
+            return attachment;
+        } catch (Exception e) {
             Timber.e(e, "Extracting attachment from container failed");
         }
-        return attachment;
+        return null;
     }
 
     private void launchFileContentActivity(int position) {

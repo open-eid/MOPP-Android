@@ -49,4 +49,8 @@ public class DataFileFacade {
     public byte[] calcDigest(String digestMethod) {
         return containerDataFile.calcDigest(digestMethod);
     }
+
+    public void saveFile(String path) {
+        containerDataFile.saveAs(path);
+    }
 }
