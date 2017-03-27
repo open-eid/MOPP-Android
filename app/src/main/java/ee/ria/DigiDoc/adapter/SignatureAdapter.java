@@ -95,10 +95,8 @@ public class SignatureAdapter extends ArrayAdapter<SignatureFacade> implements F
 
         if (signatureFacade != null) {
             String personInfo;
-            byte[] der = signatureFacade.getSigningCertificateDer();
-            if (der != null && der.length > 0) {
-                X509Cert x509Cert = new X509Cert(der);
-
+            X509Cert x509Cert = signatureFacade.getSigningCertificate();
+            if (x509Cert != null) {
                 String surname = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SURNAME));
                 String name = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.GIVENNAME));
                 String serialNumber = x509Cert.getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SERIALNUMBER));

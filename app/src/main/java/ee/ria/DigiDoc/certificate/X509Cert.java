@@ -50,12 +50,11 @@ public class X509Cert {
     public boolean isValid() {
         try {
             certificate.checkValidity(new Date());
+            return true;
         } catch (CertificateExpiredException e) {
-            return false;
         } catch (CertificateNotYetValidException e) {
-            return false;
         }
-        return true;
+        return false;
     }
 
 
