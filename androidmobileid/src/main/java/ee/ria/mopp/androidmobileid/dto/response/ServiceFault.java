@@ -51,6 +51,12 @@ public class ServiceFault {
         reason = reasonMap.get("exception");
     }
 
+    public ServiceFault(String reason) {
+        originalFaultCode = "";
+        originalFaultMessage = reason;
+        this.reason = reason;
+    }
+
     public String getOriginalFaultCode() {
         return originalFaultCode;
     }

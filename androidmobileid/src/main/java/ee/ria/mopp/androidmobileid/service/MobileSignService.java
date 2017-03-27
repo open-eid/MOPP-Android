@@ -46,6 +46,8 @@ public class MobileSignService extends IntentService {
 
     private static final long INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 10000;
     private static final long SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 5000;
+    private static final long TIMEOUT_CANCEL = 60*1000;
+    private long timeout;
 
     private DigidocServiceClient ddsClient;
 
@@ -57,6 +59,7 @@ public class MobileSignService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Timber.d("Handling mobile sign intent");
+        timeout = 0;
         MobileCreateSignatureRequest request = getRequestFromIntent(intent);
         try {
             SSLContext ddsSSLConfig = createSSLConfig(intent);
@@ -111,6 +114,12 @@ public class MobileSignService extends IntentService {
         GetMobileCreateSignatureStatusResponse response = responseWrapper.body();
         broadcastMobileCreateSignatureStatusResponse(response);
         if (isOutstandingTransaction(response)) {
+            if (timeout > TIMEOUT_CANCEL) {
+                ServiceFault serviceFault = new ServiceFault("status_user_cancel");
+                Timber.d("Service fault occured: %s", serviceFault.toString());
+                broadcastFault(serviceFault);
+                return;
+            }
             sleep(SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
             doCreateSignatureStatusRequestLoop(request);
         }
@@ -158,6 +167,7 @@ public class MobileSignService extends IntentService {
 
     private void sleep(long millis) {
         try {
+            timeout += millis;
             Thread.sleep(millis);
         } catch (InterruptedException e) {
             Timber.e(e, "Waiting for next call to DigiDocService interrupted");
