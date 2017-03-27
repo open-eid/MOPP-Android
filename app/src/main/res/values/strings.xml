@@ -99,14 +99,12 @@
     <string name="valid_puk">Current PUK code:</string>
     <string name="valid_puk_hint">PUK</string>
     <string name="pin1_blocked"><b>PIN1 is blocked.</b>\nTo unblock/change PIN1 use PUK code.</string>
-    <string name="pin1_change_failed">PIN1 change failed</string>
     <string name="pin1_change_success">PIN1 changed successfully</string>
     <string name="new_pin1_length_short">New PIN1 is too short (%o characters).\nMinimum number of PIN1 characters is 4.</string>
     <string name="pin1_no_match">\"New PIN1\" and \"New PIN1 again\" are different.</string>
     <string name="pin1_too_easy">PIN1 contains too obvious combination. PIN1 can\'t be 0000 or 1234. Also PIN1 can\'t contain your date of birth.</string>
     <string name="valid_pin_2">Current PIN2 code:</string>
     <string name="valid_pin_2_hint">PIN2</string>
-    <string name="pin2_change_failed">PIN2 change failed</string>
     <string name="pin2_change_success">PIN2 changed successfully</string>
     <string name="pin2_too_easy">PIN2 contains too obvious combination. PIN2 can\'t be 00000 or 12345. Also PIN2 can\'t contain your date of birth.</string>
     <string name="pin2_no_match">\"New PIN2\" and \"New PIN2 again\" are different.</string>
@@ -126,6 +124,21 @@
     <string name="puk_change_failed">PUK change failed</string>
     <string name="puk_change_success">PUK changed successfully</string>
     <string name="puk_warning">If you forget the PUK code or the certificates remain blocked, you have to visit the service center to obtain new codes.</string>
+
+    <plurals name="pin1_change_failed">
+        <item quantity="zero">PIN1 change failed\nPIN is blocked.</item>
+        <item quantity="one">PIN1 change failed\nPIN will be locked next failed attempt</item>
+        <item quantity="two">PIN1 change failed\nPIN has been entered incorrectly one time</item>
+        <item quantity="few">PIN1 change failed\nPIN has been entered incorrectly one time</item>
+        <item quantity="other">PIN1 change failed\nPIN has been entered incorrectly one time</item>
+    </plurals>
+    <plurals name="pin2_change_failed">
+        <item quantity="zero">PIN2 change failed\nPIN is blocked.</item>
+        <item quantity="one">PIN2 change failed\nPIN will be locked next failed attempt</item>
+        <item quantity="two">PIN2 change failed\nPIN has been entered incorrectly one time</item>
+        <item quantity="few">PIN2 change failed\nPIN has been entered incorrectly one time</item>
+        <item quantity="other">PIN2 change failed\nPIN has been entered incorrectly one time</item>
+    </plurals>
 
     <!-- Strings related to Settings -->
     <!-- General settings -->

@@ -99,14 +99,12 @@
     <string name="valid_puk">Kehtiv PUK kood:</string>
     <string name="valid_puk_hint">PUK</string>
     <string name="pin1_blocked"><b>PIN1 on blokeeritud.</b>\nPIN1 avamiseks/muutmiseks peate kasutama PUK koodi.</string>
-    <string name="pin1_change_failed">PIN1 muutmine ebaõnnestus</string>
     <string name="pin1_change_success">PIN1 muutmine oli edukas</string>
     <string name="new_pin1_length_short">Uus PIN 1 on liiga lühike (%o tähemärki).\nMinimaalne PIN1 tähemärkide arv on 4.</string>
     <string name="pin1_no_match">\"Uus PIN1\" ja \"Uus PIN1 uuesti\" on erinevad.</string>
     <string name="pin1_too_easy">PIN1 sisaldab lihtsasti äraarvatavat kombinatsiooni. PIN1 ei tohi olla 0000 või 1234. Samuti ei tohi PIN1 sisaldada kombinatsioone sünnikuupäevast.</string>
     <string name="valid_pin_2">Kehtiv PIN2 kood:</string>
     <string name="valid_pin_2_hint">PIN2</string>
-    <string name="pin2_change_failed">PIN2 muutmine ebaõnnestus</string>
     <string name="pin2_change_success">PIN2 muutmine oli edukas</string>
     <string name="pin2_too_easy">PIN2 sisaldab lihtsasti äraarvatavat kombinatsiooni. PIN2 ei tohi olla 00000 või 12345. Samuti ei tohi PIN2 sisaldada kombinatsioone sünnikuupäevast.</string>
     <string name="pin2_no_match">\"Uus PIN2\" ja \"Uus PIN2 uuesti\" on erinevad.</string>
@@ -126,6 +124,21 @@
     <string name="puk_change_failed">PUK muutmine ebaõnnestus</string>
     <string name="puk_change_success">PUK muutmine oli edukas</string>
     <string name="puk_warning">Kui peale vahetamist PUK kood läheb meelest ära ja sertifikaat jääb blokeerituks kolme vale PIN1 või PIN2 sisetamise järel, siis ainus võimalus ID-kaart jälle tööle saada on pöörduda klienditeeninduspunkti poole.</string>
+
+    <plurals name="pin1_change_failed">
+        <item quantity="zero">PIN1 muutmine ebaõnnestus\nPIN1 on blokeeritud.</item>
+        <item quantity="one">PIN1 muutmine ebaõnnestus\nJärgmise vale sisestusega lukustub PIN</item>
+        <item quantity="two">PIN1 muutmine ebaõnnestus\nPIN-i on sisestatud vigaselt üks kord</item>
+        <item quantity="few">PIN1 muutmine ebaõnnestus\nPIN-i on sisestatud vigaselt üks kord</item>
+        <item quantity="other">PIN1 muutmine ebaõnnestus\nPIN-i on sisestatud vigaselt üks kord</item>
+    </plurals>
+    <plurals name="pin2_change_failed">
+        <item quantity="zero">PIN2 muutmine ebaõnnestus\nPIN1 on blokeeritud.</item>
+        <item quantity="one">PIN2 muutmine ebaõnnestus\nJärgmise vale sisestusega lukustub PIN</item>
+        <item quantity="two">PIN2 muutmine ebaõnnestus\nPIN-i on sisestatud vigaselt üks kord</item>
+        <item quantity="few">PIN2 muutmine ebaõnnestus\nPIN-i on sisestatud vigaselt üks kord</item>
+        <item quantity="other">PIN2 muutmine ebaõnnestus\nPIN-i on sisestatud vigaselt üks kord</item>
+    </plurals>
 
     <!-- Strings related to Settings -->
     <!-- General settings -->
