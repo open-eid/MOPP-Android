@@ -20,6 +20,8 @@
 package ee.ria.DigiDoc.container;
 
 import org.apache.commons.io.FilenameUtils;
+import org.spongycastle.asn1.ASN1ObjectIdentifier;
+import org.spongycastle.asn1.x500.style.BCStyle;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -137,10 +139,14 @@ public class ContainerFacade {
     }
 
     public boolean isSignedBy(byte[] cert) {
-        X509Cert x509Cert = new X509Cert(cert);
+        return isSignedBy(new X509Cert(cert).getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SERIALNUMBER)));
+    }
+
+    public boolean isSignedBy(String personalCode) {
         for (SignatureFacade signatureFacade : getSignatures()) {
-            X509Cert c = new X509Cert(signatureFacade.getSigningCertificateDer());
-            if (c.getCertificate().equals(x509Cert.getCertificate())) {
+            String serialNumber = signatureFacade.getSigningCertificate()
+                    .getValueByObjectIdentifier(ASN1ObjectIdentifier.getInstance(BCStyle.SERIALNUMBER));
+            if (personalCode != null && serialNumber != null && personalCode.equals(serialNumber)) {
                 return true;
             }
         }

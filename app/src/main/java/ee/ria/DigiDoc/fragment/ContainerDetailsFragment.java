@@ -478,6 +478,10 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
                         preferences.updateMobileNumber(phone);
                         preferences.updatePersonalCode(pCode);
                     }
+                    if (containerFacade.isSignedBy(pCode)) {
+                        notificationUtil.showWarningMessage(getText(R.string.already_signed_by_person));
+                        return;
+                    }
                     String message = getResources().getString(R.string.action_sign) + " " + containerFacade.getName();
                     MobileCreateSignatureRequest request = CreateSignatureRequestBuilder
                             .aCreateSignatureRequest()
@@ -633,11 +637,7 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if (pinText.getText().length() >= 5) {
-                        positiveButton.setEnabled(true);
-                    } else if (positiveButton.isEnabled()) {
-                        positiveButton.setEnabled(false);
-                    }
+                    positiveButton.setEnabled(pinText.getText().length() >= 5);
                 }
             });
         }

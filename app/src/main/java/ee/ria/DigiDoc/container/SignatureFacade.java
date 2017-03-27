@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.container;
 
+import ee.ria.DigiDoc.certificate.X509Cert;
 import ee.ria.libdigidocpp.Signature;
 import timber.log.Timber;
 
@@ -21,8 +22,9 @@ public class SignatureFacade {
         signature.extendSignatureProfile(profile);
     }
 
-    public byte[] getSigningCertificateDer() {
-        return signature.signingCertificateDer();
+    public X509Cert getSigningCertificate() {
+        byte[] data = signature.signingCertificateDer();
+        return data == null ? null : new X509Cert(data);
     }
 
     public String getSignedBy() {
