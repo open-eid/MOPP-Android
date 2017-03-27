@@ -82,7 +82,6 @@ import ee.ria.DigiDoc.util.NotificationUtil;
 import ee.ria.libdigidocpp.Conf;
 import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse.ProcessStatus;
 import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
 import ee.ria.mopp.androidmobileid.dto.response.ServiceFault;
 import ee.ria.mopp.androidmobileid.service.MobileSignService;
@@ -657,40 +656,38 @@ public class ContainerDetailsFragment extends Fragment implements AddedAdesSigna
     class MobileIdBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String broadcastType = intent.getStringExtra(MID_BROADCAST_TYPE_KEY);
-            if (isServiceFaultBroadcast(broadcastType)) {
-                ServiceFault fault = ServiceFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
-                mobileSignProgressHelper.close();
-                notificationUtil.showFailMessage(mobileSignProgressHelper.getFaultReasonMessage(fault.getReason()));
-                enableSigning();
-            }
-            else if (isChallengeBroadcast(broadcastType)) {
-                MobileCreateSignatureResponse challenge = MobileCreateSignatureResponse.fromJson(intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE));
-                mobileSignProgressHelper.showMobileSignProgress(challenge.getChallengeID());
-            }
-            else if (isStatusBroadcast(broadcastType)) {
-                GetMobileCreateSignatureStatusResponse status = GetMobileCreateSignatureStatusResponse.fromJson(intent.getStringExtra(CREATE_SIGNATURE_STATUS));
-                if (status.getStatus() == ProcessStatus.OUTSTANDING_TRANSACTION) {
-                    mobileSignProgressHelper.updateStatus(status.getStatus());
-                } else if (status.getStatus() == ProcessStatus.SIGNATURE) {
-                    mobileSignProgressHelper.updateStatus(status.getStatus());
-                    addAdesSignature(status.getSignature());
-                } else {
+            switch (intent.getStringExtra(MID_BROADCAST_TYPE_KEY))
+            {
+                case SERVICE_FAULT: {
+                    ServiceFault fault = ServiceFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
                     mobileSignProgressHelper.close();
-                    notificationUtil.showFailMessage(mobileSignProgressHelper.getMessage(status.getStatus()));
+                    notificationUtil.showFailMessage(mobileSignProgressHelper.getFaultReasonMessage(fault.getReason()));
                     enableSigning();
+                    break;
+                }
+                case CREATE_SIGNATURE_CHALLENGE: {
+                    MobileCreateSignatureResponse challenge = MobileCreateSignatureResponse.fromJson(intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE));
+                    mobileSignProgressHelper.showMobileSignProgress(challenge.getChallengeID());
+                    break;
+                }
+                case CREATE_SIGNATURE_STATUS: {
+                    GetMobileCreateSignatureStatusResponse status = GetMobileCreateSignatureStatusResponse.fromJson(intent.getStringExtra(CREATE_SIGNATURE_STATUS));
+                    switch (status.getStatus()) {
+                        case OUTSTANDING_TRANSACTION:
+                            mobileSignProgressHelper.updateStatus(status.getStatus());
+                            break;
+                        case SIGNATURE:
+                            mobileSignProgressHelper.updateStatus(status.getStatus());
+                            addAdesSignature(status.getSignature());
+                            break;
+                        default:
+                            mobileSignProgressHelper.close();
+                            notificationUtil.showFailMessage(mobileSignProgressHelper.getMessage(status.getStatus()));
+                            enableSigning();
+                    }
+                    break;
                 }
             }
-        }
-
-        private boolean isStatusBroadcast(String broadcastType) {
-            return CREATE_SIGNATURE_STATUS.equals(broadcastType);
-        }
-        private boolean isChallengeBroadcast(String broadcastType) {
-            return CREATE_SIGNATURE_CHALLENGE.equals(broadcastType);
-        }
-        private boolean isServiceFaultBroadcast(String broadcastType) {
-            return SERVICE_FAULT.equals(broadcastType);
         }
     }
 }

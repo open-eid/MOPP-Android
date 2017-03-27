@@ -48,6 +48,7 @@ public class MobileSignFaultMessageSource {
         messageMap.put("user_certificate_status_unknown", R.string.user_certificate_status_unknown);
         messageMap.put("user_certificate_suspended", R.string.user_certificate_suspended);
         messageMap.put("user_certificate_expired", R.string.user_certificate_expired);
+        messageMap.put("status_user_cancel", R.string.status_user_cancel);
         messageMap.put("message_exceeds_volume_limit", R.string.message_exceeds_volume_limit);
         messageMap.put("simultaneous_requests_limit_exceeded", R.string.simultaneous_requests_limit_exceeded);
         return messageMap;
