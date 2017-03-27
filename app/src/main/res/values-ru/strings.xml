@@ -99,14 +99,12 @@
     <string name="valid_puk">Действующий PUK код:</string>
     <string name="valid_puk_hint">PUK</string>
     <string name="pin1_blocked"><b>PIN1 заблокирован.</b>\nPIN1 для разблокировки/изменения нужно использовать PUK код.</string>
-    <string name="pin1_change_failed">Изменение PIN1 не удалось</string>
     <string name="pin1_change_success">PIN1 успешно изменён</string>
     <string name="new_pin1_length_short">Новый PIN1 слишком короткий (%o символов).\nМинимальное количество символов PIN1 4.</string>
     <string name="pin1_no_match">\"Новый PIN1\" и \"Новый PIN1 заново\" не идентичны.</string>
     <string name="pin1_too_easy">PIN содержить легко вычисляемую комбинацию. PIN1 не может быть 0000 или 1234. Также не может содержать комбинацию, встречающуюся в дате Вашего рождения.</string>
     <string name="valid_pin_2">Действующий PIN2 код:</string>
     <string name="valid_pin_2_hint">PIN2</string>
-    <string name="pin2_change_failed">Изменение PIN2 не удалось</string>
     <string name="pin2_change_success">PIN2 успешно изменён</string>
     <string name="pin2_too_easy">PIN содержить легко вычисляемую комбинацию. PIN2 не может быть 00000 или 12345. Также не может содержать комбинацию, встречающуюся в дате Вашего рождения.</string>
     <string name="pin2_no_match">\"Новый PIN2\" и \"Новый PIN2 заново\" не идентичны.</string>
@@ -126,6 +124,21 @@
     <string name="puk_change_failed">Изменение PUK не удалось</string>
     <string name="puk_change_success">PUK успешно изменён</string>
     <string name="puk_warning">Если после смены PUK код забывается и сетрификат блокируется из-за неверно введённых PIN1 или PIN2, то единственной возможностью восстановить работоспособность ID- карты, это обратиться в бюро обслуживания.</string>
+
+    <plurals name="pin1_change_failed">
+        <item quantity="zero">Изменение PIN1 не удалось\nPIN1 заблокирован.</item>
+        <item quantity="one">Изменение PIN1 не удалось\nПосле следующего неудачного ввода PIN код будет заблокирован</item>
+        <item quantity="two">Изменение PIN1 не удалось\nPin введён неправильно один раз</item>
+        <item quantity="few">Изменение PIN1 не удалось\nPin введён неправильно один раз</item>
+        <item quantity="other">Изменение PIN1 не удалось\nPin введён неправильно один раз</item>
+    </plurals>
+    <plurals name="pin2_change_failed">
+        <item quantity="zero">Изменение PIN2 не удалось\nPIN1 заблокирован.</item>
+        <item quantity="one">Изменение PIN2 не удалось\nПосле следующего неудачного ввода PIN код будет заблокирован</item>
+        <item quantity="two">Изменение PIN2 не удалось\nPin введён неправильно один раз</item>
+        <item quantity="few">Изменение PIN2 не удалось\nPin введён неправильно один раз</item>
+        <item quantity="other">Изменение PIN2 не удалось\nPin введён неправильно один раз</item>
+    </plurals>
 
     <!-- Strings related to Settings -->
     <!-- General settings -->

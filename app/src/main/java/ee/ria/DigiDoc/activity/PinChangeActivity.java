@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -55,6 +56,8 @@ import ee.ria.token.tokenservice.callback.RetryCounterCallback;
 import ee.ria.tokenlibrary.Token;
 import timber.log.Timber;
 
+import static android.R.id.message;
+
 public class PinChangeActivity extends AppCompatActivity {
 
     public static final String TAG = PinChangeActivity.class.getName();
@@ -74,7 +77,6 @@ public class PinChangeActivity extends AppCompatActivity {
     @BindView(R.id.changeButton) Button changeButton;
 
     private TokenService tokenService;
-    private RetryCounterCallback pinBlockedCallback;
     private ChangePinCallback pinChangeCallback;
 
     private BroadcastReceiver cardPresentReceiver;
@@ -91,7 +93,14 @@ public class PinChangeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pinType = (Token.PinType) getIntent().getSerializableExtra(Constants.PIN_TYPE_KEY);
-        setLayoutTitle();
+        switch (pinType) {
+            case PIN1:
+                setTitle(R.string.change_pin);
+                break;
+            case PIN2:
+                setTitle(R.string.change_pin2);
+                break;
+        }
         setContentView(R.layout.pin_change);
         ButterKnife.bind(this);
         notificationUtil = new NotificationUtil(this);
@@ -129,7 +138,6 @@ public class PinChangeActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        pinBlockedCallback = new PinBlockedCallback();
         pinChangeCallback = new ChangeCallback();
 
         Intent intent = new Intent(this, TokenService.class);
@@ -272,8 +280,7 @@ public class PinChangeActivity extends AppCompatActivity {
         String mmdd = DateUtils.MMDD_FORMAT.format(dateOfBirth);
         String yyyy = DateUtils.YYYY_FORMAT.format(dateOfBirth);
         String ddmm = DateUtils.DDMM_FORMAT.format(dateOfBirth);
-        String[] dates = {mmdd, ddmm, yyyy};
-        for (String partOfBirth : Arrays.asList(dates)) {
+        for (String partOfBirth : Arrays.asList(mmdd, ddmm, yyyy)) {
             if (newPin.contains(partOfBirth)) {
                 return true;
             }
@@ -281,9 +288,26 @@ public class PinChangeActivity extends AppCompatActivity {
         return false;
     }
 
-    private void readRetryCounter() {
+    private void readRetryCounter(final boolean showMessage) {
         if (!pinBlocked && cardProvided) {
-            tokenService.readRetryCounter(pinType, pinBlockedCallback);
+            tokenService.readRetryCounter(pinType, new RetryCounterCallback() {
+
+                @Override
+                public void onCounterRead(byte counterByte) {
+                    pinBlocked = counterByte == 0;
+                    radioPIN.setEnabled(!pinBlocked);
+                    radioPUK.setChecked(pinBlocked);
+                    if (counterByte > 0) {
+                        refreshLayout(R.id.radioPIN);
+                        if (showMessage) {
+                            notificationUtil.showFailMessage(createPinChangeFailedMessage(counterByte));
+                        }
+                    } else {
+                        notificationUtil.showFailMessage(pinBlockedMessage());
+                        refreshLayout(R.id.radioPUK);
+                    }
+                }
+            });
         }
     }
 
@@ -319,10 +343,8 @@ public class PinChangeActivity extends AppCompatActivity {
         @Override
         public void error(Exception e) {
             clearTexts();
-            notificationUtil.showFailMessage(createPinChangeFailedMessage());
-            readRetryCounter();
+            readRetryCounter(true);
         }
-
     }
 
     private void clearTexts() {
@@ -366,46 +388,15 @@ public class PinChangeActivity extends AppCompatActivity {
         return null;
     }
 
-    private String createPinChangeFailedMessage() {
+    private String createPinChangeFailedMessage(int count) {
+        Resources res = getResources();
         switch (pinType) {
             case PIN1:
-                return getString(R.string.pin1_change_failed);
+                return res.getQuantityString(R.plurals.pin1_change_failed, count);
             case PIN2:
-                return getString(R.string.pin2_change_failed);
+                return res.getQuantityString(R.plurals.pin2_change_failed, count);
         }
         return null;
-    }
-
-    class PinBlockedCallback implements RetryCounterCallback {
-
-        @Override
-        public void onCounterRead(byte counterByte) {
-            if (counterByte > 0) {
-                radioPIN.setEnabled(true);
-                radioPUK.setChecked(false);
-                radioPIN.setChecked(true);
-                refreshLayout(R.id.radioPIN);
-            } else {
-                pinBlocked = true;
-                notificationUtil.showFailMessage(pinBlockedMessage());
-                radioPIN.setChecked(false);
-                radioPUK.setChecked(true);
-                radioPIN.setEnabled(false);
-                refreshLayout(R.id.radioPUK);
-            }
-        }
-
-    }
-
-    private void setLayoutTitle() {
-        switch (pinType) {
-            case PIN1:
-                setTitle(R.string.change_pin);
-                break;
-            case PIN2:
-                setTitle(R.string.change_pin2);
-                break;
-        }
     }
 
     class CardPresentReciever extends BroadcastReceiver {
@@ -419,7 +410,7 @@ public class PinChangeActivity extends AppCompatActivity {
             radioPUK.setEnabled(true);
             changeButton.setEnabled(true);
 
-            readRetryCounter();
+            readRetryCounter(false);
         }
 
     }
