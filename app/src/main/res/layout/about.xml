@@ -9,4 +9,12 @@
         android:layout_height="wrap_content"
         android:text="RIA DigiDoc is developed by The Information System Authority\nContact for assistance by email info@ria.ee"
         android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/license"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="libdigidocpp GNU Lesser General Public License (LGPL) version 2.1 http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html "
+        android:textAlignment="center" />
+
 </LinearLayout>

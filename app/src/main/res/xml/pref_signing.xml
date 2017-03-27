@@ -34,9 +34,16 @@
         android:singleLine="true"
         android:title="@string/pref_title_mobile_nr" />
 
-    <Preference
+    <PreferenceScreen
+        android:key="about_menu"
         android:title="About"
-        android:key="about"
-        android:layout="@layout/about" />
+        android:persistent="false">
+
+        <Preference
+            android:title="About"
+            android:key="about"
+            android:layout="@layout/about" />
+
+    </PreferenceScreen>
 
 </PreferenceScreen>
