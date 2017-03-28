@@ -71,6 +71,8 @@ public class BrowseContainersListFragment extends ListFragment {
                 return false;
             }
         });
+        searchView.setQuery("", false);
+        getActivity().findViewById(R.id.content_browse_containers).requestFocus();
     }
 
 }
