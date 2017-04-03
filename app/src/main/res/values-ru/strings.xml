@@ -175,7 +175,7 @@
     <string name="eid_born">День рождения:</string>
     <string name="eid_nationality">Гражданство:</string>
     <string name="eid_email">Эл. почта:</string>
-    <string name="eid_info">ID-карта - это внутригосударственный документ, удостоверяющий личность начиная с 15-ти лет. Гражданин Эстонии с ID-картой может путешествовать по Европейскому Союзу и в странах Европейской экономической зоны.\n\nID-карту можете ходатайствовать в <![CDATA[<a href="https://www.politsei.ee/ru/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">представительствах</a>]]> Департамента полиции и пограничной охраны, в зарубежных представительствах Эстонской республики, по почте или по электронной посте.</string>
+    <string name="eid_info">ID-карта - это внутригосударственный документ, удостоверяющий личность начиная с 15-ти лет. Гражданин Эстонии с ID-картой может путешествовать по Европейскому Союзу и в странах Европейской экономической зоны.<![CDATA[<br /><br />]]>ID-карту можете ходатайствовать в <![CDATA[<a href="https://www.politsei.ee/ru/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">представительствах</a>]]> Департамента полиции и пограничной охраны, в зарубежных представительствах Эстонской республики, по почте или по электронной посте.</string>
     <string name="eid_invalid">Недействителен</string>
     <string name="eid_given_names">Имя:</string>
     <string name="eid_surname">Фамилия:</string>
