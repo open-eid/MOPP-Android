@@ -175,7 +175,7 @@
     <string name="eid_born">Sündinud:</string>
     <string name="eid_nationality">Kodakondsus:</string>
     <string name="eid_email">E-post:</string>
-    <string name="eid_info">ID-kaart on riigi sisene kohustuslik isikut tõendav dokument. ID-kaardiga saab reisida Euroopa Liidu ja Euroopa Majanduspiirkonna riikides.\n\nID-kaarti saad taotleda Politsei- ka Piirivalveameti <![CDATA[<a href="https://www.politsei.ee/et/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">teeninduses</a>]]>, Eesti Vabariigi välisesindustes, posti või e-posti teel.</string>
+    <string name="eid_info">ID-kaart on riigi sisene kohustuslik isikut tõendav dokument. ID-kaardiga saab reisida Euroopa Liidu ja Euroopa Majanduspiirkonna riikides.<![CDATA[<br /><br />]]>ID-kaarti saad taotleda Politsei- ka Piirivalveameti <![CDATA[<a href="https://www.politsei.ee/et/teenused/isikut-toendavad-dokumendid/id-kaart/taiskasvanule/">teeninduses</a>]]>, Eesti Vabariigi välisesindustes, posti või e-posti teel.</string>
     <string name="eid_invalid">Aegunud</string>
     <string name="eid_given_names">Eesnimed:</string>
     <string name="eid_surname">Perekonnanimi:</string>
