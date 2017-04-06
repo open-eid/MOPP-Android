@@ -124,6 +124,7 @@
     <string name="puk_change_failed">Изменение PUK не удалось</string>
     <string name="puk_change_success">PUK успешно изменён</string>
     <string name="puk_warning">Если после смены PUK код забывается и сетрификат блокируется из-за неверно введённых PIN1 или PIN2, то единственной возможностью восстановить работоспособность ID- карты, это обратиться в бюро обслуживания.</string>
+    <string name="warning_card_not_found">ID-карта не найдена. \n\nПожалуйста, проверьте правильность установки ID-карты. Новые идентификационные карточки имеют чип на обратной стороне карты.</string>
 
     <plurals name="pin1_change_failed">
         <item quantity="zero">Изменение PIN1 не удалось\nPIN1 заблокирован.</item>

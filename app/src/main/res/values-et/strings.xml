@@ -124,6 +124,7 @@
     <string name="puk_change_failed">PUK muutmine ebaõnnestus</string>
     <string name="puk_change_success">PUK muutmine oli edukas</string>
     <string name="puk_warning">Kui peale vahetamist PUK kood läheb meelest ära ja sertifikaat jääb blokeerituks kolme vale PIN1 või PIN2 sisetamise järel, siis ainus võimalus ID-kaart jälle tööle saada on pöörduda klienditeeninduspunkti poole.</string>
+    <string name="warning_card_not_found">ID-kaarti ei leitud.\n\nKontrolli, kas ID-kaart on õiget pidi lugejas. Uutel ID-kaartidel on kiip kaardi tagumisel küljel.</string>
 
     <plurals name="pin1_change_failed">
         <item quantity="zero">PIN1 muutmine ebaõnnestus\nPIN1 on blokeeritud.</item>

@@ -19,8 +19,14 @@
 
 package ee.ria.DigiDoc.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -30,6 +36,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.util.Constants;
+import ee.ria.DigiDoc.util.NotificationUtil;
+import ee.ria.scardcomlibrary.impl.ACS;
+import ee.ria.token.tokenservice.TokenService;
 import ee.ria.tokenlibrary.Token;
 
 public class PinUtilitiesActivity extends AppCompatActivity {
@@ -38,14 +47,86 @@ public class PinUtilitiesActivity extends AppCompatActivity {
     @BindView(R.id.changePin2) View changePin2;
     @BindView(R.id.changePUK) View changePUK;
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.pinUtilities) View pinUtilities;
+
+    private NotificationUtil notificationUtil;
+    private TokenService tokenService;
+    private boolean serviceBound = false;
+    private BroadcastReceiver cardPresentReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            showWarning(false);
+        }
+    };
+    private BroadcastReceiver cardAbsentReciever = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            showWarning(true);
+        }
+    };
+    private ServiceConnection tokenServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            TokenService.LocalBinder binder = (TokenService.LocalBinder) service;
+            tokenService = binder.getService();
+            showWarning(!tokenService.isTokenAvailable());
+            serviceBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceBound = false;
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, TokenService.class);
+        bindService(intent, tokenServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(cardPresentReceiver, new IntentFilter(ACS.CARD_PRESENT_INTENT));
+        registerReceiver(cardAbsentReciever, new IntentFilter(ACS.CARD_ABSENT_INTENT));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(cardPresentReceiver);
+        unregisterReceiver(cardAbsentReciever);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (serviceBound) {
+            unbindService(tokenServiceConnection);
+            serviceBound = false;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_utilities);
         ButterKnife.bind(this);
+        notificationUtil = new NotificationUtil(this);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        showWarning(true);
+    }
+
+    private void showWarning(boolean warn){
+        pinUtilities.setVisibility(warn ? View.GONE : View.VISIBLE);
+        if (warn) {
+            notificationUtil.showWarningMessage(getText(R.string.warning_card_not_found));
+        } else {
+            notificationUtil.clearMessages();
+        }
     }
 
     @OnClick(R.id.changePin1)
@@ -70,5 +151,4 @@ public class PinUtilitiesActivity extends AppCompatActivity {
         startActivity(intent);
         overridePendingTransition(R.anim.enter, R.anim.leave);
     }
-
 }

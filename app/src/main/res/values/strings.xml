@@ -124,6 +124,7 @@
     <string name="puk_change_failed">PUK change failed</string>
     <string name="puk_change_success">PUK changed successfully</string>
     <string name="puk_warning">If you forget the PUK code or the certificates remain blocked, you have to visit the service center to obtain new codes.</string>
+    <string name="warning_card_not_found">ID card is not found.\n\nPlease check if ID card is inserted correctly. New ID cards have chip on the back side of the card.</string>
 
     <plurals name="pin1_change_failed">
         <item quantity="zero">PIN1 change failed\nPIN is blocked.</item>
