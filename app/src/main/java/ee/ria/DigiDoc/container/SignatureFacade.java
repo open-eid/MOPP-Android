@@ -24,7 +24,7 @@ public class SignatureFacade {
 
     public X509Cert getSigningCertificate() {
         byte[] data = signature.signingCertificateDer();
-        return data == null ? null : new X509Cert(data);
+        return data == null || data.length == 0 ? null : new X509Cert(data);
     }
 
     public String getSignedBy() {
