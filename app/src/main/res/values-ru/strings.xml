@@ -74,6 +74,7 @@
     <string name="title_activity_settings">Настройки</string>
     <string name="no_connectivity_warning">Пожалуйста подключиться к интернету для того чтобы подписать</string>
     <string name="open_file_with">Открыть файл с</string>
+    <string name="developed_by">Приложение RIA DigiDoc разработано Riigi Infosüsteemi Amet.\nЗа помощью обращайтесь по адресу info@ria.ee</string>
 
     <!-- Strings related to pin activities-->
     <string name="pin2_changing">Изменение PIN2</string>
