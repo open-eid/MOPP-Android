@@ -7,7 +7,7 @@
         android:id="@+id/about"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="RIA DigiDoc is developed by The Information System Authority\nContact for assistance by email info@ria.ee"
+        android:text="@string/developed_by"
         android:textAlignment="center" />
 
     <TextView
