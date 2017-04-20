@@ -74,7 +74,7 @@
     <string name="title_activity_settings">Seaded</string>
     <string name="no_connectivity_warning">Allkirjastamiseks loo palun internetiühendus</string>
     <string name="open_file_with">Ava rakendusega</string>
-    <string name="developed_by">RIA DigiDoc rakendus on arendatud Riigi Infosüsteemi Ameti tellimusel.\nTäiendavate küsimuste korral pöörduge info@ria.ee poole</string>
+    <string name="developed_by">RIA DigiDoc rakendus on arendatud Riigi Infosüsteemi Ameti tellimusel.</string>
 
     <!-- Strings related to pin activities-->
     <string name="pin2_changing">PIN2 muutmine</string>
