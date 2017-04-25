@@ -168,6 +168,7 @@
     <string name="pref_title_signing_country">Country</string>
     <string name="pref_title_signing_zip">Zip</string>
     <string name="pref_title_signing_save_last_used">Always save the last used role, resolution and location</string>
+    <string name="title_about">Информация</string>
 
     <!--eID-->
     <string name="eid_doc_validity">Действительность:</string>

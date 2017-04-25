@@ -36,7 +36,7 @@
 
     <PreferenceScreen
         android:key="about_menu"
-        android:title="About"
+        android:title="@string/title_about"
         android:persistent="false">
 
         <Preference
