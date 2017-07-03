@@ -132,9 +132,20 @@ public class TokenService extends Service {
     @Override
     public void onDestroy() {
         if (cardReader != null) {
-            this.unregisterReceiver(cardReader.receiver);
-            this.unregisterReceiver(cardReader.usbAttachReceiver);
-            this.unregisterReceiver(cardReader.usbDetachReceiver);
+            try  {
+                if (cardReader.receiver != null) {
+                    this.unregisterReceiver(cardReader.receiver);
+                }
+                if (cardReader.usbAttachReceiver != null) {
+                    this.unregisterReceiver(cardReader.usbAttachReceiver);
+                }
+                if (cardReader.usbDetachReceiver != null) {
+                    this.unregisterReceiver(cardReader.usbDetachReceiver);
+                }
+            }
+            catch (IllegalArgumentException e) {
+                Timber.e(e, "Error on destruction");
+            }
         }
         unregisterReceiver(tokenAvailableReceiver);
         super.onDestroy();
