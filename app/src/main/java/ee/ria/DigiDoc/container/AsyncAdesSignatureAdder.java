@@ -22,7 +22,7 @@ package ee.ria.DigiDoc.container;
 
 import android.os.AsyncTask;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class AsyncAdesSignatureAdder extends AsyncTask<Void, Void, ContainerFacade>{
 
@@ -38,7 +38,7 @@ public class AsyncAdesSignatureAdder extends AsyncTask<Void, Void, ContainerFaca
 
     @Override
     protected ContainerFacade doInBackground(Void... params) {
-        byte[] encoded = Charset.forName("UTF-8").encode(adesSignature).array();
+        byte[] encoded = adesSignature.getBytes(StandardCharsets.UTF_8);
         containerFacade.addAdESSignature(encoded);
         return containerFacade;
     }
