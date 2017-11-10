@@ -1,41 +1,46 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion project.compileSdkVersion
 
     defaultConfig {
-        applicationId "ee.ria.DigiDoc"
-        minSdkVersion 21
-        targetSdkVersion 22 //TODO: investigate error loading library when targeting sdk above 22
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+
+        applicationId 'ee.ria.DigiDoc'
+        versionCode Integer.parseInt(appVersionCode)
+        versionName appVersionName
+
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
-        versionCode 17
-        versionName "1.0.2-beta"
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
+    lintOptions {
+        lintConfig file('../lint.xml')
     }
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:25.2.0'
-    compile 'com.android.support:appcompat-v7:25.2.0'
-    compile 'com.android.support:design:25.2.0'
-    compile 'commons-io:commons-io:2.4'
-    compile 'com.dropbox.core:dropbox-core-sdk:2.1.1'
-    compile 'com.google.android.gms:play-services-appindexing:9.8.0'
-    compile 'com.android.support:recyclerview-v7:25.2.0'
-    compile 'com.madgag.spongycastle:pkix:1.54.0.0'
-    compile 'com.madgag.spongycastle:core:1.54.0.0'
-    compile 'com.android.support:support-vector-drawable:25.2.0'
-    compile 'com.jakewharton.timber:timber:4.5.1'
-    compile 'com.jakewharton:butterknife:8.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
-    compile project(':tokenservice')
-    compile project(':androidmobileid')
+    implementation "com.android.support:support-annotations:${androidSupportLibraryVersion}"
+    implementation "com.android.support:support-v4:${androidSupportLibraryVersion}"
+    implementation "com.android.support:appcompat-v7:${androidSupportLibraryVersion}"
+    implementation "com.android.support:design:${androidSupportLibraryVersion}"
+    implementation "com.android.support:recyclerview-v7:${androidSupportLibraryVersion}"
+    implementation "com.android.support:support-vector-drawable:${androidSupportLibraryVersion}"
+
+    implementation "com.google.firebase:firebase-appindexing:${firebaseVersion}"
+
+    implementation "commons-io:commons-io:${commonsIoVersion}"
+
+    implementation "com.jakewharton.timber:timber:${timberVersion}"
+    implementation "com.jakewharton:butterknife:${butterknifeVersion}"
+    annotationProcessor "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
+
+    implementation "com.madgag.spongycastle:core:${spongycastleVersion}"
+    implementation "com.madgag.spongycastle:pkix:${spongycastleVersion}"
+
+    implementation project(':scardcomlibrary')
+    implementation project(':tokenlibrary')
+    implementation project(':tokenservice')
+    implementation project(':androidmobileid')
 }

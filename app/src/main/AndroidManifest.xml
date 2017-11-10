@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ee.ria.DigiDoc">
 
     <uses-feature android:name="android.hardware.usb.host" />
@@ -109,7 +110,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ee.ria.DigiDoc.activity.DashboardMenuActivity" />
 
-            <intent-filter>
+            <intent-filter tools:ignore="AppLinkUrlError"> <!-- TODO lint -->
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
@@ -124,7 +125,8 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="content" android:pathPattern=".*\\.asice" android:mimeType="application/octet-stream" />
+                <data android:scheme="content" android:pathPattern=".*\\.asice" android:mimeType="application/octet-stream"
+                    tools:ignore="AppLinkUrlError" /> <!-- TODO lint -->
                 <data android:scheme="content" android:pathPattern=".*\\.asice" android:mimeType="application/vnd.etsi.asic-e+zip" />
                 <data android:scheme="content" android:pathPattern=".*\\.asice" android:mimeType="application/zip" />
                 <data android:scheme="content" android:pathPattern=".*\\.asice" android:mimeType="application/x-zip" />
@@ -167,7 +169,8 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="file" android:pathPattern=".*\\.asice" android:mimeType="*/*" />
+                <data android:scheme="file" android:pathPattern=".*\\.asice" android:mimeType="*/*"
+                    tools:ignore="AppLinkUrlError" /> <!-- TODO lint -->
                 <data android:scheme="file" android:pathPattern=".*\\.asics" android:mimeType="*/*" />
                 <data android:scheme="file" android:pathPattern=".*\\.sce" android:mimeType="*/*" />
                 <data android:scheme="file" android:pathPattern=".*\\.scs" android:mimeType="*/*" />

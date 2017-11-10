@@ -1,17 +1,30 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
+allprojects {
+    buildscript {
+        repositories {
+            google()
+            jcenter()
+        }
+        dependencies {
+            classpath 'com.android.tools.build:gradle:3.0.0'
+        }
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+    repositories {
+        google()
+        jcenter()
     }
 }
 
-allprojects {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
+ext {
+    compileSdkVersion = 26
+    minSdkVersion = 21
+    targetSdkVersion = 22 // TODO: investigate error loading library when targeting sdk above 22
+
+    androidSupportLibraryVersion = '26.1.0'
+    firebaseVersion = '11.6.0'
+    commonsIoVersion = '2.5'
+    timberVersion = '4.6.0'
+    butterknifeVersion = '8.8.1'
+    okhttpVersion = '3.9.0'
+    retrofitVersion = '2.3.0'
+    spongycastleVersion = '1.54.0.0'
 }
