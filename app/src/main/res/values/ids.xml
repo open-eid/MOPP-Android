@@ -14,4 +14,17 @@
     <item type="id" name="mainHomeNavigationCrypto" />
     <item type="id" name="mainHomeNavigationEID" />
 
+    <!-- Signature Home -->
+    <item type="id" name="signatureHome" />
+    <item type="id" name="signatureHomeCreateButton" />
+
+    <!-- Crypto Home -->
+    <item type="id" name="cryptoHome" />
+    <item type="id" name="cryptoHomeCreateButton" />
+
+    <!-- EID Home -->
+    <item type="id" name="eidHome" />
+    <item type="id" name="eidHomeMobileIdButton" />
+    <item type="id" name="eidHomeIdCardButton" />
+
 </resources>

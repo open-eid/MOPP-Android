@@ -18,6 +18,11 @@ android {
     lintOptions {
         lintConfig file('../lint.xml')
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -40,6 +45,8 @@ dependencies {
     implementation "com.madgag.spongycastle:pkix:${spongycastleVersion}"
 
     implementation "blue.aodev:material-values:${materialValuesVersion}"
+
+    implementation "com.jakewharton.rxbinding2:rxbinding-design:${rxBindingVersion}"
 
     implementation project(':scardcomlibrary')
     implementation project(':tokenlibrary')
