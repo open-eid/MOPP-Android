@@ -39,6 +39,8 @@ dependencies {
     implementation "com.madgag.spongycastle:core:${spongycastleVersion}"
     implementation "com.madgag.spongycastle:pkix:${spongycastleVersion}"
 
+    implementation "blue.aodev:material-values:${materialValuesVersion}"
+
     implementation project(':scardcomlibrary')
     implementation project(':tokenlibrary')
     implementation project(':tokenservice')

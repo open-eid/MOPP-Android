@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- General -->
+    <item type="id" name="appBar" />
+    <item type="id" name="toolbar" />
+
+    <!-- Main Home -->
+    <item type="id" name="mainHome" />
+    <item type="id" name="mainHomeNavigation" />
+    <item type="id" name="mainHomeNavigationContainer" />
+
+    <item type="id" name="mainHomeNavigationSignature" />
+    <item type="id" name="mainHomeNavigationCrypto" />
+    <item type="id" name="mainHomeNavigationEID" />
+
+</resources>

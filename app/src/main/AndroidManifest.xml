@@ -37,16 +37,25 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
+        <activity android:name=".android.Activity"
+            android:exported="true"
+            android:theme="@style/Theme.Application" />
+
+        <activity-alias
+            android:name="LauncherActivity"
+            android:targetActivity=".android.Activity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity-alias>
+
         <activity
             android:name=".activity.SplashActivity"
             android:theme="@style/SplashTheme"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".activity.DashboardMenuActivity"
