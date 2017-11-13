@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.support.design.widget.CoordinatorLayout"
+    tools:layout_width="match_parent"
+    tools:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ee.ria.DigiDoc.android.main.HomeToolbar
+            android:id="@id/toolbar"
+            android:theme="@style/ThemeOverlay.Application.Dark.ActionBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="@string/eid_home_title" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/eid_home_text" />
+
+            <Button
+                android:id="@id/eidHomeMobileIdButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/eid_home_mobile_id_button" />
+
+            <Button
+                android:id="@id/eidHomeIdCardButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/eid_home_id_card_button" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</merge>

@@ -11,4 +11,7 @@
     <style name="ThemeOverlay.Application.Dark" parent="ThemeOverlay.AppCompat.Dark">
     </style>
 
+    <style name="ThemeOverlay.Application.Dark.ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    </style>
+
 </resources>

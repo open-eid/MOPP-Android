@@ -28,4 +28,5 @@ ext {
     retrofitVersion = '2.3.0'
     spongycastleVersion = '1.54.0.0'
     materialValuesVersion = '1.1.1'
+    rxBindingVersion = '2.0.0'
 }
