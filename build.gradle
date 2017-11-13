@@ -27,4 +27,5 @@ ext {
     okhttpVersion = '3.9.0'
     retrofitVersion = '2.3.0'
     spongycastleVersion = '1.54.0.0'
+    materialValuesVersion = '1.1.1'
 }

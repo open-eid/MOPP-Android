@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Main Home -->
+    <string name="main_home_navigation_signature">Signature</string>
+    <string name="main_home_navigation_crypto">Crypto</string>
+    <string name="main_home_navigation_eid">My eID</string>
+
+
+
     <string name="app_name">RIA DigiDoc</string>
     <string name="action_sign">Sign</string>
     <string name="insert_pin_puk">Insert PIN/PUK</string>

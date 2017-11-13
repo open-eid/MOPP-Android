@@ -1,5 +1,13 @@
 <resources>
 
+    <style name="Widget.Application.BottomNavigationView" parent="Widget.Design.BottomNavigationView">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="itemTextColor">@drawable/navigation_item_color</item>
+        <item name="itemIconTint">@drawable/navigation_item_color</item>
+    </style>
+
+
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
