@@ -11,6 +11,7 @@ public final class Activity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        setTheme(R.style.Theme_Application);
         super.onCreate(savedInstanceState);
         HomeView homeView = new HomeView(this);
         homeView.setId(R.id.mainHome);

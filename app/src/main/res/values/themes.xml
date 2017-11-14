@@ -5,7 +5,12 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="android:windowBackground">@color/windowBackground</item>
         <item name="android:imeOptions">flagNoExtractUi</item>
+    </style>
+
+    <style name="Theme.Application.Launch">
+        <item name="android:windowBackground">@drawable/launch_bg</item>
     </style>
 
     <style name="ThemeOverlay.Application.Dark" parent="ThemeOverlay.AppCompat.Dark">
