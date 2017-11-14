@@ -39,7 +39,7 @@
 
         <activity android:name=".android.Activity"
             android:exported="true"
-            android:theme="@style/Theme.Application" />
+            android:theme="@style/Theme.Application.Launch" />
 
         <activity-alias
             android:name="LauncherActivity"
