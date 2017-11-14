@@ -5,14 +5,15 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.util.AttributeSet;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.crypto.CryptoHomeView;
-import ee.ria.DigiDoc.android.eid.EIDHomeView;
-import ee.ria.DigiDoc.android.signature.SignatureHomeView;
+import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.crypto.CryptoHomeScreen;
+import ee.ria.DigiDoc.android.eid.EIDHomeScreen;
+import ee.ria.DigiDoc.android.signature.SignatureHomeScreen;
+import ee.ria.DigiDoc.android.utils.navigation.Navigator;
+import ee.ria.DigiDoc.android.utils.navigation.Screen;
 import io.reactivex.disposables.CompositeDisposable;
 
 import static com.jakewharton.rxbinding2.support.design.widget.RxBottomNavigationView.itemSelections;
@@ -23,6 +24,8 @@ public final class HomeView extends LinearLayout {
     private final BottomNavigationView navigationView;
 
     @Nullable private CompositeDisposable disposables;
+
+    private final Navigator homeNavigator;
 
     public HomeView(Context context) {
         this(context, null);
@@ -41,31 +44,27 @@ public final class HomeView extends LinearLayout {
         setOrientation(VERTICAL);
         inflate(context, R.layout.main_home, this);
         navigationView = findViewById(R.id.mainHomeNavigation);
+
+        homeNavigator = Application.component(context).navigator()
+                .childNavigator(findViewById(R.id.mainHomeNavigationContainer));
     }
 
     void navigationItemChanged(MenuItem item) {
-        View current = getChildAt(0);
-        @Nullable View replacement = null;
-
-        if (item.getItemId() == R.id.mainHomeNavigationSignature
-                && current.getId() != R.id.signatureHome) {
-            replacement = new SignatureHomeView(getContext());
-            replacement.setId(R.id.signatureHome);
-        } else if (item.getItemId() == R.id.mainHomeNavigationCrypto
-                && current.getId() != R.id.cryptoHome) {
-            replacement = new CryptoHomeView(getContext());
-            replacement.setId(R.id.cryptoHome);
-        } else if (item.getItemId() == R.id.mainHomeNavigationEID
-                && current.getId() != R.id.eidHome) {
-            replacement = new EIDHomeView(getContext());
-            replacement.setId(R.id.eidHome);
+        Screen screen;
+        switch (item.getItemId()) {
+            case R.id.mainHomeNavigationSignature:
+                screen = SignatureHomeScreen.create();
+                break;
+            case R.id.mainHomeNavigationCrypto:
+                screen = CryptoHomeScreen.create();
+                break;
+            case R.id.mainHomeNavigationEID:
+                screen = EIDHomeScreen.create();
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown navigation item " + item);
         }
-
-        if (replacement != null) {
-            ViewGroup.LayoutParams params = current.getLayoutParams();
-            removeView(current);
-            addView(replacement, 0, params);
-        }
+        homeNavigator.setRootScreen(screen);
     }
 
     @Override

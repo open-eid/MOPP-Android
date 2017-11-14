@@ -46,6 +46,13 @@ dependencies {
 
     implementation "blue.aodev:material-values:${materialValuesVersion}"
 
+    implementation "com.google.dagger:dagger:${daggerVersion}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+
+    implementation "com.bluelinelabs:conductor:${conductorVersion}"
+
+    implementation "io.reactivex.rxjava2:rxjava:${rxJavaVersion}"
+    implementation "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}"
     implementation "com.jakewharton.rxbinding2:rxbinding-design:${rxBindingVersion}"
 
     implementation project(':scardcomlibrary')

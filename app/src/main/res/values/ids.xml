@@ -6,7 +6,7 @@
     <item type="id" name="toolbar" />
 
     <!-- Main Home -->
-    <item type="id" name="mainHome" />
+    <item type="id" name="mainHomeScreen" />
     <item type="id" name="mainHomeNavigation" />
     <item type="id" name="mainHomeNavigationContainer" />
 
@@ -15,15 +15,15 @@
     <item type="id" name="mainHomeNavigationEID" />
 
     <!-- Signature Home -->
-    <item type="id" name="signatureHome" />
+    <item type="id" name="signatureHomeScreen" />
     <item type="id" name="signatureHomeCreateButton" />
 
     <!-- Crypto Home -->
-    <item type="id" name="cryptoHome" />
+    <item type="id" name="cryptoHomeScreen" />
     <item type="id" name="cryptoHomeCreateButton" />
 
     <!-- EID Home -->
-    <item type="id" name="eidHome" />
+    <item type="id" name="eidHomeScreen" />
     <item type="id" name="eidHomeMobileIdButton" />
     <item type="id" name="eidHomeIdCardButton" />
 
