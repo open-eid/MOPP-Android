@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.main;
+package ee.ria.DigiDoc.android.main.home;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

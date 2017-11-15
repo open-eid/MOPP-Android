@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.main.HomeScreen;
+import ee.ria.DigiDoc.android.main.home.HomeScreen;
 import ee.ria.DigiDoc.android.utils.conductor.ConductorNavigator;
 
 public final class Activity extends AppCompatActivity {

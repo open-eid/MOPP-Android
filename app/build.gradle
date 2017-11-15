@@ -35,6 +35,7 @@ dependencies {
 
     implementation "com.google.firebase:firebase-appindexing:${firebaseVersion}"
 
+    implementation "com.google.guava:guava:${guavaVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
@@ -55,8 +56,14 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}"
     implementation "com.jakewharton.rxbinding2:rxbinding-design:${rxBindingVersion}"
 
+    implementation "com.google.auto.value:auto-value:${autoValueVersion}"
+    annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+
     implementation project(':scardcomlibrary')
     implementation project(':tokenlibrary')
     implementation project(':tokenservice')
     implementation project(':androidmobileid')
+
+    testAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+    testImplementation "junit:junit:${junitVersion}"
 }
