@@ -2,5 +2,6 @@
 <lint>
     <issue id="InvalidPackage">
         <ignore path="**/pkix-*.jar" /> <!-- javax.naming -->
+        <ignore path="**/auto-value-*.jar" /> <!-- javax.tools -->
     </issue>
 </lint>
