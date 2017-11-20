@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="main_settings_phone_no_key">mainSettingsPhoneNo</string>
+    <string name="main_settings_personal_code_key">mainSettingsPersonalCode</string>
+    <string name="main_settings_role_key">mainSettingsRole</string>
+    <string name="main_settings_city_key">mainSettingsCity</string>
+    <string name="main_settings_county_key">mainSettingsCounty</string>
+    <string name="main_settings_country_key">mainSettingsCountry</string>
+    <string name="main_settings_postal_code_key">mainSettingsPostalCode</string>
+    <string name="main_settings_summary_placeholder">&#160;</string>
+
+</resources>

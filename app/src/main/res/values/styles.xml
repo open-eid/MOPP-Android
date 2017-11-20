@@ -1,5 +1,8 @@
 <resources>
 
+    <style name="Widget.Application.Toolbar" parent="Widget.AppCompat.Toolbar">
+    </style>
+
     <style name="Widget.Application.BottomNavigationView" parent="Widget.Design.BottomNavigationView">
         <item name="android:background">?attr/colorPrimary</item>
         <item name="itemTextColor">@drawable/navigation_item_color</item>

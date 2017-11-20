@@ -2,6 +2,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingTranslation"> <!-- remove when translations are available -->
 
+    <string name="back">Back</string>
+
     <!-- Main Home -->
     <string name="main_home_navigation_signature">Signing</string>
     <string name="main_home_navigation_crypto">Crypto</string>
@@ -13,6 +15,17 @@
     <string name="main_home_toolbar_settings">Settings</string>
     <string name="main_home_toolbar_help">Help</string>
     <string name="main_home_toolbar_about">About</string>
+
+    <!-- Main Settings -->
+    <string name="main_settings_title">Settings</string>
+
+    <string name="main_settings_phone_no_title">Mobile-ID phone number</string>
+    <string name="main_settings_personal_code_title">Personal code</string>
+    <string name="main_settings_role_title">Role</string>
+    <string name="main_settings_city_title">City</string>
+    <string name="main_settings_county_title">County</string>
+    <string name="main_settings_country_title">Country</string>
+    <string name="main_settings_postal_code_title">Postal code</string>
 
     <!-- Signature Home -->
     <string name="signature_home_title">Signing</string>

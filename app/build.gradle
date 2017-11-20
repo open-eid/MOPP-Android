@@ -32,6 +32,8 @@ dependencies {
     implementation "com.android.support:design:${androidSupportLibraryVersion}"
     implementation "com.android.support:recyclerview-v7:${androidSupportLibraryVersion}"
     implementation "com.android.support:support-vector-drawable:${androidSupportLibraryVersion}"
+    implementation "com.android.support:preference-v7:${androidSupportLibraryVersion}"
+    implementation "com.android.support:preference-v14:${androidSupportLibraryVersion}"
 
     implementation "com.google.firebase:firebase-appindexing:${firebaseVersion}"
 
@@ -55,6 +57,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:${rxJavaVersion}"
     implementation "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}"
     implementation "com.jakewharton.rxbinding2:rxbinding:${rxBindingVersion}"
+    implementation "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:${rxBindingVersion}"
     implementation "com.jakewharton.rxbinding2:rxbinding-design:${rxBindingVersion}"
 
     implementation "com.google.auto.value:auto-value:${autoValueVersion}"

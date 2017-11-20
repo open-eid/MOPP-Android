@@ -7,6 +7,8 @@
         <item name="colorAccent">@color/accent</item>
         <item name="android:windowBackground">@color/windowBackground</item>
         <item name="android:imeOptions">flagNoExtractUi</item>
+        <item name="toolbarStyle">@style/Widget.Application.Toolbar</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
     <style name="Theme.Application.Launch">
@@ -16,7 +18,7 @@
     <style name="ThemeOverlay.Application.Dark" parent="ThemeOverlay.AppCompat.Dark">
     </style>
 
-    <style name="ThemeOverlay.Application.Dark.ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="ThemeOverlay.Application.ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 

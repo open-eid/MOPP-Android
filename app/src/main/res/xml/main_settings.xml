@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="@string/main_settings_phone_no_key"
+        android:title="@string/main_settings_phone_no_title"
+        android:summary="@string/main_settings_summary_placeholder" />
+
+    <EditTextPreference
+        android:key="@string/main_settings_personal_code_key"
+        android:title="@string/main_settings_personal_code_title"
+        android:summary="@string/main_settings_summary_placeholder" />
+
+    <EditTextPreference
+        android:key="@string/main_settings_role_key"
+        android:title="@string/main_settings_role_title"
+        android:summary="@string/main_settings_summary_placeholder" />
+
+    <EditTextPreference
+        android:key="@string/main_settings_city_key"
+        android:title="@string/main_settings_city_title"
+        android:summary="@string/main_settings_summary_placeholder" />
+
+    <EditTextPreference
+        android:key="@string/main_settings_county_key"
+        android:title="@string/main_settings_county_title"
+        android:summary="@string/main_settings_summary_placeholder" />
+
+    <EditTextPreference
+        android:key="@string/main_settings_country_key"
+        android:title="@string/main_settings_country_title"
+        android:summary="@string/main_settings_summary_placeholder" />
+
+    <EditTextPreference
+        android:key="@string/main_settings_postal_code_key"
+        android:title="@string/main_settings_postal_code_title"
+        android:summary="@string/main_settings_summary_placeholder" />
+
+</PreferenceScreen>
