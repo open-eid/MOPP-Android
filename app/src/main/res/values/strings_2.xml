@@ -7,6 +7,13 @@
     <string name="main_home_navigation_crypto">Crypto</string>
     <string name="main_home_navigation_eid">My eID</string>
 
+    <string name="main_home_toolbar_overflow">More options</string>
+    <string name="main_home_toolbar_documents">Documents</string>
+    <string name="main_home_toolbar_first_run">First run</string>
+    <string name="main_home_toolbar_settings">Settings</string>
+    <string name="main_home_toolbar_help">Help</string>
+    <string name="main_home_toolbar_about">About</string>
+
     <!-- Signature Home -->
     <string name="signature_home_title">Signing</string>
     <string name="signature_home_create_text">Choose a file to sign or check</string>
