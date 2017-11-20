@@ -17,6 +17,7 @@
     </style>
 
     <style name="ThemeOverlay.Application.Dark.ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
 </resources>
