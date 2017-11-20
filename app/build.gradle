@@ -32,10 +32,10 @@ dependencies {
     implementation "com.android.support:design:${androidSupportLibraryVersion}"
     implementation "com.android.support:recyclerview-v7:${androidSupportLibraryVersion}"
     implementation "com.android.support:support-vector-drawable:${androidSupportLibraryVersion}"
-    implementation "com.android.support:preference-v7:${androidSupportLibraryVersion}"
-    implementation "com.android.support:preference-v14:${androidSupportLibraryVersion}"
 
     implementation "com.google.firebase:firebase-appindexing:${firebaseVersion}"
+
+    implementation "com.takisoft.fix:preference-v7:${preferenceV7FixVersion}"
 
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"

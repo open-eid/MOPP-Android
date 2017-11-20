@@ -26,6 +26,11 @@
     <string name="main_settings_county_title">County</string>
     <string name="main_settings_country_title">Country</string>
     <string name="main_settings_postal_code_title">Postal code</string>
+    <string name="main_settings_file_type_title">Default file type</string>
+    <string-array name="main_settings_file_type_entries">
+        <item>ASiC-E</item>
+        <item>BDOC</item>
+    </string-array>
 
     <!-- Signature Home -->
     <string name="signature_home_title">Signing</string>

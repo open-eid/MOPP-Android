@@ -21,6 +21,7 @@ ext {
 
     androidSupportLibraryVersion = '26.1.0'
     firebaseVersion = '11.6.0'
+    preferenceV7FixVersion = '26.1.0.3'
     guavaVersion = '23.4-android'
     commonsIoVersion = '2.5'
     timberVersion = '4.6.0'

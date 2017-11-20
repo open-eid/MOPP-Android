@@ -8,10 +8,11 @@
         <item name="android:windowBackground">@color/windowBackground</item>
         <item name="android:imeOptions">flagNoExtractUi</item>
         <item name="toolbarStyle">@style/Widget.Application.Toolbar</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material.Fix</item>
+        <item name="preferenceDialog_messageAppearance">@style/PreferenceFixTheme.TextAppearanceDialogMessage</item>
     </style>
 
-    <style name="Theme.Application.Launch">
+    <style name="Theme.Application.Launch" parent="PreferenceFixTheme.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/launch_bg</item>
     </style>
 
