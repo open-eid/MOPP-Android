@@ -14,6 +14,7 @@
     <item type="id" name="mainHomeNavigationCrypto" />
     <item type="id" name="mainHomeNavigationEID" />
 
+    <item type="id" name="mainHomeToolbarLogo" />
     <item type="id" name="mainHomeToolbarOverflow" />
     <item type="id" name="mainHomeToolbarDocuments" />
     <item type="id" name="mainHomeToolbarFirstRun" />

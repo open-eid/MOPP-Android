@@ -33,17 +33,14 @@
     </string-array>
 
     <!-- Signature Home -->
-    <string name="signature_home_title">Signing</string>
     <string name="signature_home_create_text">Choose a file to sign or check</string>
     <string name="signature_home_create_button">Choose file</string>
 
     <!-- Crypto Home -->
-    <string name="crypto_home_title">Crypto</string>
     <string name="crypto_home_create_text">Choose a file to crypt or decrypt</string>
     <string name="crypto_home_create_button">Choose file</string>
 
     <!-- EID Home -->
-    <string name="eid_home_title">My eID</string>
     <string name="eid_home_text">Sign in to see your eID information</string>
     <string name="eid_home_mobile_id_button">Sign in via Mobile-ID</string>
     <string name="eid_home_id_card_button">Sign in via ID card</string>

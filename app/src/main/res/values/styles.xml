@@ -1,6 +1,7 @@
 <resources>
 
     <style name="Widget.Application.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/primaryDark</item>
     </style>
 
     <style name="Widget.Application.BottomNavigationView" parent="Widget.Design.BottomNavigationView">

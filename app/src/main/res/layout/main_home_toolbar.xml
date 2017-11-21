@@ -5,6 +5,14 @@
     tools:layout_width="match_parent"
     tools:layout_height="wrap_content">
 
+    <ImageView
+        android:id="@id/mainHomeToolbarLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_logo"
+        android:contentDescription="@string/application_name" />
+
     <ImageButton
         android:id="@id/mainHomeToolbarOverflow"
         style="?attr/actionOverflowButtonStyle"
