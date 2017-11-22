@@ -12,7 +12,6 @@ android {
         versionName appVersionName
 
         multiDexEnabled true
-        vectorDrawables.useSupportLibrary = true
     }
 
     lintOptions {
@@ -31,7 +30,6 @@ dependencies {
     implementation "com.android.support:appcompat-v7:${androidSupportLibraryVersion}"
     implementation "com.android.support:design:${androidSupportLibraryVersion}"
     implementation "com.android.support:recyclerview-v7:${androidSupportLibraryVersion}"
-    implementation "com.android.support:support-vector-drawable:${androidSupportLibraryVersion}"
 
     implementation "com.google.firebase:firebase-appindexing:${firebaseVersion}"
 

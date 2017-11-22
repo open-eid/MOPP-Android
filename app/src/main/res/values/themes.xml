@@ -17,8 +17,9 @@
         <item name="buttonBarButtonStyle">@style/Widget.Application.Button.ButtonBar</item>
     </style>
 
-    <style name="Theme.Application.Launch" parent="PreferenceFixTheme.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/launch_bg</item>
+    <style name="Theme.Application.Launch" parent="Theme.Application">
+        <item name="android:windowBackground">@drawable/main_launch_bg</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
     </style>
 
     <style name="ThemeOverlay.Application.Dark" parent="ThemeOverlay.AppCompat.Dark">
