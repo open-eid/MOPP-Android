@@ -56,6 +56,16 @@ public final class ConductorNavigator implements Navigator {
     }
 
     @Override
+    public void pushScreen(Screen screen) {
+        router.pushController(RouterTransaction.with((ConductorScreen) screen));
+    }
+
+    @Override
+    public void popScreen() {
+        router.popCurrentController();
+    }
+
+    @Override
     public Navigator childNavigator(ViewGroup container) {
         Router childRouter = router.getBackstack().get(router.getBackstackSize() - 1).controller()
                 .getChildRouter(container);

@@ -26,8 +26,13 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
 import ee.ria.DigiDoc.R;
-import io.reactivex.disposables.CompositeDisposable;
-import timber.log.Timber;
+import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
+import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.navigation.Navigator;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
@@ -38,7 +43,9 @@ public final class HomeToolbar extends Toolbar {
     private final RecyclerView recyclerView;
     private final MenuAdapter adapter;
 
-    @Nullable private CompositeDisposable disposables;
+    private final Navigator navigator;
+
+    private final ViewDisposables disposables;
 
     public HomeToolbar(Context context) {
         this(context, null);
@@ -68,30 +75,33 @@ public final class HomeToolbar extends Toolbar {
         recyclerView.setLayoutManager(new LinearLayoutManager(popupContext));
         recyclerView.setAdapter(adapter = new MenuAdapter());
         popupWindow.setContentView(recyclerView);
+
+        navigator = Application.component(context).navigator();
+        disposables = new ViewDisposables();
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (disposables != null) {
-            disposables.dispose();
-        }
-        disposables = new CompositeDisposable();
-
+        disposables.attach();
         disposables.add(clicks(overflowButton).subscribe(o -> {
             popupWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
             popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
             popupWindow.showAsDropDown(overflowButton);
+        }));
+        disposables.add(adapter.itemClicks().subscribe(menuItem -> {
+            switch (menuItem.id()) {
+                case R.id.mainHomeToolbarSettings:
+                    navigator.pushScreen(SettingsScreen.create());
+                    break;
+            }
         }));
     }
 
     @Override
     protected void onDetachedFromWindow() {
         popupWindow.dismiss();
-        if (disposables != null) {
-            disposables.dispose();
-            disposables = null;
-        }
+        disposables.detach();
         super.onDetachedFromWindow();
     }
 
@@ -122,6 +132,12 @@ public final class HomeToolbar extends Toolbar {
 
     static final class MenuAdapter extends RecyclerView.Adapter<MenuViewHolder> {
 
+        private final Subject<MenuItem> itemClicksSubject = PublishSubject.create();
+
+        Observable<MenuItem> itemClicks() {
+            return itemClicksSubject;
+        }
+
         @Override
         public MenuViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new MenuViewHolder(LayoutInflater.from(parent.getContext())
@@ -132,7 +148,7 @@ public final class HomeToolbar extends Toolbar {
         public void onBindViewHolder(MenuViewHolder holder, int position) {
             holder.bind(MENU_ITEMS.get(position));
             holder.itemView.setOnClickListener(v ->
-                    Timber.d("CLICK: %s", MENU_ITEMS.get(holder.getAdapterPosition())));
+                    itemClicksSubject.onNext(MENU_ITEMS.get(holder.getAdapterPosition())));
         }
 
         @Override

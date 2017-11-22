@@ -2,6 +2,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingTranslation"> <!-- remove when translations are available -->
 
+    <string name="back">Back</string>
+
     <!-- Main Home -->
     <string name="main_home_navigation_signature">Signing</string>
     <string name="main_home_navigation_crypto">Crypto</string>
@@ -14,18 +16,31 @@
     <string name="main_home_toolbar_help">Help</string>
     <string name="main_home_toolbar_about">About</string>
 
+    <!-- Main Settings -->
+    <string name="main_settings_title">Settings</string>
+
+    <string name="main_settings_phone_no_title">Mobile-ID phone number</string>
+    <string name="main_settings_personal_code_title">Personal code</string>
+    <string name="main_settings_role_title">Role</string>
+    <string name="main_settings_city_title">City</string>
+    <string name="main_settings_county_title">County</string>
+    <string name="main_settings_country_title">Country</string>
+    <string name="main_settings_postal_code_title">Postal code</string>
+    <string name="main_settings_file_type_title">Default file type</string>
+    <string-array name="main_settings_file_type_entries">
+        <item>ASiC-E</item>
+        <item>BDOC</item>
+    </string-array>
+
     <!-- Signature Home -->
-    <string name="signature_home_title">Signing</string>
     <string name="signature_home_create_text">Choose a file to sign or check</string>
     <string name="signature_home_create_button">Choose file</string>
 
     <!-- Crypto Home -->
-    <string name="crypto_home_title">Crypto</string>
     <string name="crypto_home_create_text">Choose a file to crypt or decrypt</string>
     <string name="crypto_home_create_button">Choose file</string>
 
     <!-- EID Home -->
-    <string name="eid_home_title">My eID</string>
     <string name="eid_home_text">Sign in to see your eID information</string>
     <string name="eid_home_mobile_id_button">Sign in via Mobile-ID</string>
     <string name="eid_home_id_card_button">Sign in via ID card</string>

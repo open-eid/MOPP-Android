@@ -35,6 +35,8 @@ dependencies {
 
     implementation "com.google.firebase:firebase-appindexing:${firebaseVersion}"
 
+    implementation "com.takisoft.fix:preference-v7:${preferenceV7FixVersion}"
+
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
 
@@ -55,6 +57,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:${rxJavaVersion}"
     implementation "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}"
     implementation "com.jakewharton.rxbinding2:rxbinding:${rxBindingVersion}"
+    implementation "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:${rxBindingVersion}"
     implementation "com.jakewharton.rxbinding2:rxbinding-design:${rxBindingVersion}"
 
     implementation "com.google.auto.value:auto-value:${autoValueVersion}"

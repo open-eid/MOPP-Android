@@ -14,12 +14,17 @@
     <item type="id" name="mainHomeNavigationCrypto" />
     <item type="id" name="mainHomeNavigationEID" />
 
+    <item type="id" name="mainHomeToolbarLogo" />
     <item type="id" name="mainHomeToolbarOverflow" />
     <item type="id" name="mainHomeToolbarDocuments" />
     <item type="id" name="mainHomeToolbarFirstRun" />
     <item type="id" name="mainHomeToolbarSettings" />
     <item type="id" name="mainHomeToolbarHelp" />
     <item type="id" name="mainHomeToolbarAbout" />
+
+    <!-- Main Settings -->
+    <item type="id" name="mainSettingsScreen" />
+    <item type="id" name="mainSettingsFragment" />
 
     <!-- Signature Home -->
     <item type="id" name="signatureHomeScreen" />

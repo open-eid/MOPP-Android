@@ -1,9 +1,21 @@
 <resources>
 
+    <style name="Widget.Application.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/primaryDark</item>
+    </style>
+
     <style name="Widget.Application.BottomNavigationView" parent="Widget.Design.BottomNavigationView">
-        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:background">@color/bottomNavigation</item>
         <item name="itemTextColor">@drawable/navigation_item_color</item>
         <item name="itemIconTint">@drawable/navigation_item_color</item>
+    </style>
+
+    <style name="Widget.Application.Button" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">@color/material_color_white</item>
+    </style>
+
+    <style name="Widget.Application.Button.ButtonBar" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/accent</item>
     </style>
 
 

@@ -1,22 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Application" parent="Theme.Design.Light.NoActionBar">
+    <style name="Base.Theme.Application" parent="Theme.Design.Light.NoActionBar">
+    </style>
+
+    <style name="Theme.Application" parent="Base.Theme.Application">
         <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/accent</item>
         <item name="android:windowBackground">@color/windowBackground</item>
         <item name="android:imeOptions">flagNoExtractUi</item>
+        <item name="toolbarStyle">@style/Widget.Application.Toolbar</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material.Fix</item>
+        <item name="preferenceDialog_messageAppearance">@style/PreferenceFixTheme.TextAppearanceDialogMessage</item>
+        <item name="colorButtonNormal">@color/primary</item>
+        <item name="buttonStyle">@style/Widget.Application.Button</item>
+        <item name="buttonBarButtonStyle">@style/Widget.Application.Button.ButtonBar</item>
     </style>
 
-    <style name="Theme.Application.Launch">
+    <style name="Theme.Application.Launch" parent="PreferenceFixTheme.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/launch_bg</item>
     </style>
 
     <style name="ThemeOverlay.Application.Dark" parent="ThemeOverlay.AppCompat.Dark">
     </style>
 
-    <style name="ThemeOverlay.Application.Dark.ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="ThemeOverlay.Application.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 

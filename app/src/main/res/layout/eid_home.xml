@@ -13,10 +13,9 @@
 
         <ee.ria.DigiDoc.android.main.home.HomeToolbar
             android:id="@id/toolbar"
-            android:theme="@style/ThemeOverlay.Application.Dark.ActionBar"
+            android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:title="@string/eid_home_title" />
+            android:layout_height="wrap_content" />
 
     </android.support.design.widget.AppBarLayout>
 

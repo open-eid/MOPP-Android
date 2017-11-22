@@ -25,5 +25,9 @@ public interface Navigator {
      */
     boolean handleBack();
 
+    void pushScreen(Screen screen);
+
+    void popScreen();
+
     Navigator childNavigator(ViewGroup container);
 }
