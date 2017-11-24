@@ -34,6 +34,7 @@
     </string-array>
 
     <!-- Documents List -->
+    <string name="document_list_title">Manage documents</string>
     <string name="document_list_expand_button">View all</string>
     <string name="document_list_add_button">Add document</string>
 

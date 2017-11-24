@@ -1,9 +1,11 @@
 package ee.ria.DigiDoc.android.document.data;
 
+import android.os.Parcelable;
+
 import com.google.auto.value.AutoValue;
 
 @AutoValue
-public abstract class Document {
+public abstract class Document implements Parcelable {
 
     /**
      * Human-readable display name for the document.
