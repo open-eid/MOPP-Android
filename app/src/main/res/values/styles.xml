@@ -18,6 +18,14 @@
         <item name="android:textColor">@color/accent</item>
     </style>
 
+    <style name="Widget.Application.Subheader" parent="android:Widget.TextView">
+        <item name="android:textSize">@dimen/material_subheader_text_size</item>
+        <item name="android:textColor">@color/material_subheader_text_color_default</item>
+        <item name="android:minHeight">@dimen/material_subheader_height</item>
+        <item name="android:paddingStart">@dimen/material_subheader_padding_start</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
 
 
     <!-- Base application theme. -->
