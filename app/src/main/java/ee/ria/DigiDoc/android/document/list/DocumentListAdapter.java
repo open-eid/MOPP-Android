@@ -16,6 +16,10 @@ final class DocumentListAdapter
 
     private ImmutableList<Document> documents = ImmutableList.of();
 
+    ImmutableList<Document> getDocuments() {
+        return documents;
+    }
+
     void setDocuments(ImmutableList<Document> documents) {
         DiffUtil.DiffResult diffResult = DiffUtil
                 .calculateDiff(new DiffUtilCallback(this.documents, documents));

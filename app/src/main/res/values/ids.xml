@@ -27,6 +27,7 @@
     <item type="id" name="mainSettingsFragment" />
 
     <!-- Document List -->
+    <item type="id" name="documentListScreen" />
     <item type="id" name="documentListRecycler" />
     <item type="id" name="documentListExpandButton" />
     <item type="id" name="documentListAddButton" />
