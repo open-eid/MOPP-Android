@@ -13,11 +13,15 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.document.list.DocumentListContainerView;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
+import io.reactivex.Observable;
+import timber.log.Timber;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 
-public final class SignatureContainerView extends CoordinatorLayout {
+public final class SignatureContainerView extends CoordinatorLayout implements
+        MviView<SignatureContainerIntent, SignatureContainerViewState> {
 
     private static final ImmutableList<Document> DOCUMENTS = ImmutableList.<Document>builder()
             .add(Document.create("Dokument 1.pdf"))
@@ -53,6 +57,16 @@ public final class SignatureContainerView extends CoordinatorLayout {
         documentsView.setDocuments(DOCUMENTS);
 
         navigator = Application.component(context).navigator();
+    }
+
+    @Override
+    public Observable<SignatureContainerIntent> intents() {
+        return Observable.empty();
+    }
+
+    @Override
+    public void render(SignatureContainerViewState state) {
+        Timber.d("render: %s", state);
     }
 
     @Override
