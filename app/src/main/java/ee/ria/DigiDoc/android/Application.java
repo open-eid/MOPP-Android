@@ -27,9 +27,15 @@ import javax.inject.Singleton;
 import dagger.Binds;
 import dagger.BindsInstance;
 import dagger.Component;
+import dagger.MapKey;
 import dagger.Module;
+import dagger.multibindings.IntoMap;
 import ee.ria.DigiDoc.BuildConfig;
+import ee.ria.DigiDoc.android.signature.container.SignatureContainerViewModel;
 import ee.ria.DigiDoc.android.utils.conductor.ConductorNavigator;
+import ee.ria.DigiDoc.android.utils.conductor.ConductorViewModelProvider;
+import ee.ria.DigiDoc.android.utils.mvi.MviViewModel;
+import ee.ria.DigiDoc.android.utils.mvi.MviViewModelProvider;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 import ee.ria.DigiDoc.configuration.Configuration;
 import timber.log.Timber;
@@ -90,6 +96,8 @@ public class Application extends android.app.Application {
 
         Navigator navigator();
 
+        MviViewModelProvider viewModelProvider();
+
         @Component.Builder
         interface Builder {
 
@@ -104,5 +112,20 @@ public class Application extends android.app.Application {
 
         @SuppressWarnings("unused")
         @Binds abstract Navigator navigator(ConductorNavigator conductorNavigator);
+
+        @SuppressWarnings("unused")
+        @Binds abstract MviViewModelProvider viewModelProvider(
+                ConductorViewModelProvider conductorViewModelProvider);
+
+        @SuppressWarnings("unused")
+        @Binds @IntoMap
+        @ViewModelKey(SignatureContainerViewModel.class)
+        abstract MviViewModel signatureContainerViewModel(
+                SignatureContainerViewModel signatureContainerViewModel);
+    }
+
+    @MapKey
+    @interface ViewModelKey {
+        Class<? extends MviViewModel> value();
     }
 }

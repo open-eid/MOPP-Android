@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 
+import ee.ria.DigiDoc.android.utils.mvi.MviViewModelProvider;
 import io.reactivex.Observable;
 
 public interface Navigator {
@@ -64,4 +65,9 @@ public interface Navigator {
      * @param requestCode Filter out results with other request codes.
      */
     Observable<Intent> activityOkResults(int requestCode);
+
+    /**
+     * Get view model provider for current screen.
+     */
+    MviViewModelProvider getViewModelProvider();
 }

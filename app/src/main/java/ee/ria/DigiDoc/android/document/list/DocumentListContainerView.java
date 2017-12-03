@@ -6,6 +6,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.Button;
 
 import com.google.common.collect.ImmutableList;
@@ -15,6 +16,7 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
+import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
@@ -23,6 +25,7 @@ import static com.jakewharton.rxbinding2.view.RxView.clicks;
  */
 public final class DocumentListContainerView extends CardView {
 
+    private final View progressView;
     private final RecyclerView recyclerView;
     private final Button expandButton;
     private final Button addButton;
@@ -44,6 +47,7 @@ public final class DocumentListContainerView extends CardView {
                                      int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.document_list_container, this);
+        progressView = findViewById(android.R.id.secondaryProgress);
         recyclerView = findViewById(R.id.documentListRecycler);
         expandButton = findViewById(R.id.documentListExpandButton);
         addButton = findViewById(R.id.documentListAddButton);
@@ -58,6 +62,20 @@ public final class DocumentListContainerView extends CardView {
         recyclerView.setAdapter(adapter = new DocumentListAdapter());
 
         navigator = Application.component(context).navigator();
+    }
+
+    public Observable<Object> addButtonClicks() {
+        return clicks(addButton);
+    }
+
+    public void setProgress(boolean progress) {
+        progressView.setVisibility(progress ? VISIBLE : GONE);
+        expandButton.setEnabled(!progress);
+        addButton.setEnabled(!progress);
+    }
+
+    public boolean isEmpty() {
+        return adapter.getDocuments().size() == 0;
     }
 
     public void setDocuments(ImmutableList<Document> documents) {

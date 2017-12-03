@@ -13,6 +13,7 @@ import com.bluelinelabs.conductor.RouterTransaction;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import ee.ria.DigiDoc.android.utils.mvi.MviViewModelProvider;
 import ee.ria.DigiDoc.android.utils.navigation.ActivityResult;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 import ee.ria.DigiDoc.android.utils.navigation.Screen;
@@ -79,9 +80,7 @@ public final class ConductorNavigator implements Navigator {
 
     @Override
     public Navigator childNavigator(ViewGroup container) {
-        Router childRouter = router.getBackstack().get(router.getBackstackSize() - 1).controller()
-                .getChildRouter(container);
-        return new ConductorNavigator(childRouter);
+        return new ConductorNavigator(getCurrentScreen().getChildRouter(container));
     }
 
     @Override
@@ -109,5 +108,16 @@ public final class ConductorNavigator implements Navigator {
         return activityResults(requestCode)
                 .filter(result -> result.resultCode() == Activity.RESULT_OK)
                 .map(ActivityResult::data);
+    }
+
+    @Override
+    public MviViewModelProvider getViewModelProvider() {
+        return getCurrentScreen().getViewModelProvider();
+    }
+
+    private ConductorScreen getCurrentScreen() {
+        return (ConductorScreen) router.getBackstack()
+                .get(router.getBackstackSize() - 1)
+                .controller();
     }
 }

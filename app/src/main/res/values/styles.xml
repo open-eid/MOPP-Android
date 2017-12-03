@@ -26,6 +26,9 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
+    <style name="Widget.Application.ProgressBar" parent="Widget.AppCompat.ProgressBar">
+    </style>
+
 
 
     <!-- Base application theme. -->

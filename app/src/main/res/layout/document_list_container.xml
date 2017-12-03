@@ -5,41 +5,62 @@
     tools:layout_width="match_parent"
     tools:layout_height="match_parent">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@id/documentListRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:scrollbars="none" />
+        android:layout_height="match_parent">
 
         <LinearLayout
-            style="?attr/buttonBarStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@id/documentListExpandButton"
-                style="?attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/document_list_expand_button" />
+            <android.support.v7.widget.RecyclerView
+                android:id="@id/documentListRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:scrollbars="none" />
 
-            <Button
-                android:id="@id/documentListAddButton"
-                style="?attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                style="?attr/buttonBarStyle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/document_list_add_button" />
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@id/documentListExpandButton"
+                    style="?attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/document_list_expand_button" />
+
+                <Button
+                    android:id="@id/documentListAddButton"
+                    style="?attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/document_list_add_button" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+        <FrameLayout
+            android:id="@android:id/secondaryProgress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/progressOverlayBackground"
+            android:visibility="gone">
+
+            <ProgressBar
+                style="@style/Widget.Application.ProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+
+        </FrameLayout>
+
+    </FrameLayout>
 
 </merge>
