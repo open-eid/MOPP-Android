@@ -8,7 +8,7 @@ import android.widget.Button;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.signature.container.SignatureContainerScreen;
+import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 
@@ -43,7 +43,7 @@ public final class SignatureHomeView extends CoordinatorLayout {
         super.onAttachedToWindow();
         disposables.attach();
         disposables.add(clicks(createButton).subscribe(o ->
-                navigator.pushScreen(SignatureContainerScreen.create())));
+                navigator.pushScreen(SignatureCreateScreen.create())));
     }
 
     @Override

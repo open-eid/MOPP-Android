@@ -6,5 +6,5 @@ public interface MviViewModel<I extends MviIntent, S extends MviViewState> {
 
     void process(Observable<I> intents);
 
-    Observable<S> states();
+    Observable<S> viewStates();
 }

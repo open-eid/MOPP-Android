@@ -12,10 +12,7 @@ import android.widget.Button;
 import com.google.common.collect.ImmutableList;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.document.data.Document;
-import ee.ria.DigiDoc.android.utils.ViewDisposables;
-import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
@@ -30,10 +27,6 @@ public final class DocumentListContainerView extends CardView {
     private final Button expandButton;
     private final Button addButton;
     private final DocumentListAdapter adapter;
-
-    private final Navigator navigator;
-
-    private final ViewDisposables disposables = new ViewDisposables();
 
     public DocumentListContainerView(Context context) {
         this(context, null);
@@ -60,8 +53,10 @@ public final class DocumentListContainerView extends CardView {
             }
         });
         recyclerView.setAdapter(adapter = new DocumentListAdapter());
+    }
 
-        navigator = Application.component(context).navigator();
+    public Observable<Object> expandButtonClicks() {
+        return clicks(expandButton);
     }
 
     public Observable<Object> addButtonClicks() {
@@ -80,19 +75,5 @@ public final class DocumentListContainerView extends CardView {
 
     public void setDocuments(ImmutableList<Document> documents) {
         adapter.setDocuments(documents);
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        disposables.attach();
-        disposables.add(clicks(expandButton).subscribe(o ->
-                navigator.pushScreen(DocumentListScreen.create(adapter.getDocuments()))));
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        disposables.detach();
-        super.onDetachedFromWindow();
     }
 }

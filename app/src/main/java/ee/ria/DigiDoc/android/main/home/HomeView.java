@@ -93,7 +93,7 @@ public final class HomeView extends LinearLayout implements MviView<HomeIntent, 
         }
         disposables = new CompositeDisposable();
 
-        disposables.add(viewModel.states().subscribe(this::render));
+        disposables.add(viewModel.viewStates().subscribe(this::render));
         viewModel.process(intents());
     }
 

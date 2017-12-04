@@ -31,7 +31,8 @@ import dagger.MapKey;
 import dagger.Module;
 import dagger.multibindings.IntoMap;
 import ee.ria.DigiDoc.BuildConfig;
-import ee.ria.DigiDoc.android.signature.container.SignatureContainerViewModel;
+import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
+import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.conductor.ConductorNavigator;
 import ee.ria.DigiDoc.android.utils.conductor.ConductorViewModelProvider;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewModel;
@@ -117,11 +118,13 @@ public class Application extends android.app.Application {
         @Binds abstract MviViewModelProvider viewModelProvider(
                 ConductorViewModelProvider conductorViewModelProvider);
 
-        @SuppressWarnings("unused")
-        @Binds @IntoMap
-        @ViewModelKey(SignatureContainerViewModel.class)
-        abstract MviViewModel signatureContainerViewModel(
-                SignatureContainerViewModel signatureContainerViewModel);
+        @Binds @IntoMap @SuppressWarnings("unused")
+        @ViewModelKey(SignatureCreateViewModel.class)
+        abstract MviViewModel signatureCreateViewModel(SignatureCreateViewModel viewModel);
+
+        @Binds @IntoMap @SuppressWarnings("unused")
+        @ViewModelKey(SignatureUpdateViewModel.class)
+        abstract MviViewModel signatureUpdateModel(SignatureUpdateViewModel viewModel);
     }
 
     @MapKey

@@ -17,7 +17,7 @@ public final class HomeViewModel implements MviViewModel<HomeIntent, HomeViewSta
     }
 
     @Override
-    public Observable<HomeViewState> states() {
+    public Observable<HomeViewState> viewStates() {
         return intentSubject.compose(processor);
     }
 }

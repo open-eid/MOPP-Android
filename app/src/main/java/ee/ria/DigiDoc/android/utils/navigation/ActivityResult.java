@@ -14,7 +14,7 @@ public abstract class ActivityResult {
 
     @Nullable public abstract Intent data();
 
-    public static ActivityResult create(int requestCode, int resultCode, Intent data) {
+    public static ActivityResult create(int requestCode, int resultCode, @Nullable Intent data) {
         return new AutoValue_ActivityResult(requestCode, resultCode, data);
     }
 }

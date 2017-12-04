@@ -42,9 +42,12 @@
     <string name="signature_home_create_text">Choose a file to sign or check</string>
     <string name="signature_home_create_button">Choose file</string>
 
-    <!-- Signature Container -->
-    <string name="signature_container_documents">Container files</string>
-    <string name="signature_container_signatures">Container signatures</string>
+    <!-- Signature Create -->
+    <string name="signature_create_error">Could not load selected files</string>
+
+    <!-- Signature Update -->
+    <string name="signature_update_documents">Container files</string>
+    <string name="signature_update_signatures">Container signatures</string>
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Choose a file to crypt or decrypt</string>

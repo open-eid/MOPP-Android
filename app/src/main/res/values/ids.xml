@@ -36,10 +36,16 @@
     <item type="id" name="signatureHomeScreen" />
     <item type="id" name="signatureHomeCreateButton" />
 
-    <!-- Signature Container -->
-    <item type="id" name="signatureContainerScreen" />
-    <item type="id" name="signatureContainerDocuments" />
-    <item type="id" name="signatureContainerSignatures" />
+    <!-- Signature Create -->
+    <item type="id" name="signatureCreateScreen" />
+    <item type="id" name="signatureCreateProgress" />
+
+    <!-- Signature Update -->
+    <item type="id" name="signatureUpdateScreen" />
+    <item type="id" name="signatureUpdateContent" />
+    <item type="id" name="signatureUpdateDocuments" />
+    <item type="id" name="signatureUpdateSignatures" />
+    <item type="id" name="signatureUpdateLoadContainerProgress" />
 
     <!-- Crypto Home -->
     <item type="id" name="cryptoHomeScreen" />

@@ -35,6 +35,8 @@ public interface Navigator {
 
     void popScreen();
 
+    void replaceCurrentScreen(Screen screen);
+
     Navigator childNavigator(ViewGroup container);
 
     /**

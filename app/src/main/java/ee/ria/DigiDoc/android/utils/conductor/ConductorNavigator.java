@@ -7,6 +7,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 
+import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.Router;
 import com.bluelinelabs.conductor.RouterTransaction;
 
@@ -76,6 +77,11 @@ public final class ConductorNavigator implements Navigator {
     @Override
     public void popScreen() {
         router.popCurrentController();
+    }
+
+    @Override
+    public void replaceCurrentScreen(Screen screen) {
+        router.replaceTopController(RouterTransaction.with((Controller) screen));
     }
 
     @Override

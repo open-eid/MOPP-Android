@@ -9,7 +9,8 @@
     <android.support.design.widget.AppBarLayout
         android:id="@id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <android.support.v7.widget.Toolbar
             android:id="@id/toolbar"
@@ -22,19 +23,21 @@
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
+        android:id="@id/signatureUpdateContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <TextView
             style="@style/Widget.Application.Subheader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/signature_container_documents" />
+            android:text="@string/signature_update_documents" />
 
         <ee.ria.DigiDoc.android.document.list.DocumentListContainerView
-            android:id="@id/signatureContainerDocuments"
+            android:id="@id/signatureUpdateDocuments"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -45,10 +48,10 @@
             style="@style/Widget.Application.Subheader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/signature_container_signatures" />
+            android:text="@string/signature_update_signatures" />
 
         <ee.ria.DigiDoc.android.signature.list.SignatureListContainerView
-            android:id="@id/signatureContainerSignatures"
+            android:id="@id/signatureUpdateSignatures"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -57,5 +60,11 @@
             android:layout_marginBottom="@dimen/material_content_edge_margin_horizontal" />
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@id/signatureUpdateLoadContainerProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 
 </merge>

@@ -66,7 +66,7 @@ public final class DocumentListScreen extends ConductorScreen {
 
             View containerView = isPush ? from : to;
             View listView = isPush ? to : from;
-            return create(container, containerView.findViewById(R.id.signatureContainerDocuments),
+            return create(container, containerView.findViewById(R.id.signatureUpdateDocuments),
                     listView,  R.id.documentListRecycler, isPush);
         }
 

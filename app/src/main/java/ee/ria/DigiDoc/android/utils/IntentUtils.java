@@ -7,12 +7,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 
-import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import ee.ria.DigiDoc.android.utils.files.FileStream;
 import timber.log.Timber;
 
 public final class IntentUtils {
@@ -70,6 +70,8 @@ public final class IntentUtils {
     /**
      * Parse Uri to get {@link FileStream} value.
      *
+     * TODO file Uri support
+     *
      * @param contentResolver Used to get all the data.
      * @param uri Uri to parse.
      * @return FileStream with all fields filled.
@@ -90,20 +92,6 @@ public final class IntentUtils {
         }
 
         return FileStream.create(type, displayName, inputStream);
-    }
-
-    @AutoValue
-    public static abstract class FileStream {
-
-        public abstract String type();
-
-        public abstract String displayName();
-
-        public abstract InputStream inputStream();
-
-        static FileStream create(String type, String displayName, InputStream inputStream) {
-            return new AutoValue_IntentUtils_FileStream(type, displayName, inputStream);
-        }
     }
 
     private IntentUtils() {}
