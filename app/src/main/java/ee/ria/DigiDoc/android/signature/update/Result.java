@@ -40,4 +40,48 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_LoadContainerResult(false, null, error);
         }
     }
+
+    @AutoValue
+    abstract class AddDocumentsResult implements Result {
+
+        abstract boolean isPicking();
+
+        abstract boolean isAdding();
+
+        @Nullable abstract SignatureContainer container();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            ViewState.Builder builder = state.buildWith()
+                    .pickingDocuments(isPicking())
+                    .addingDocuments(isAdding())
+                    .addDocumentsError(error());
+            if (container() != null) {
+                builder.container(container());
+            }
+            return builder.build();
+        }
+
+        static AddDocumentsResult picking() {
+            return new AutoValue_Result_AddDocumentsResult(true, false, null, null);
+        }
+
+        static AddDocumentsResult adding() {
+            return new AutoValue_Result_AddDocumentsResult(false, true, null, null);
+        }
+
+        static AddDocumentsResult success(SignatureContainer container) {
+            return new AutoValue_Result_AddDocumentsResult(false, false, container, null);
+        }
+
+        static AddDocumentsResult failure(Throwable error) {
+            return new AutoValue_Result_AddDocumentsResult(false, false, null, error);
+        }
+
+        static AddDocumentsResult clear() {
+            return new AutoValue_Result_AddDocumentsResult(false, false, null, null);
+        }
+    }
 }

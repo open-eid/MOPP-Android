@@ -48,6 +48,8 @@
     <!-- Signature Update -->
     <string name="signature_update_documents">Container files</string>
     <string name="signature_update_signatures">Container signatures</string>
+    <string name="signature_update_load_container_error">Could not open signature container</string>
+    <string name="signature_update_add_documents_error_exists">File already exists in the container</string>
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Choose a file to crypt or decrypt</string>

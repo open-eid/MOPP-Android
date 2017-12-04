@@ -9,8 +9,11 @@ import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
+import ee.ria.DigiDoc.android.utils.files.FileStream;
+import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -30,15 +33,36 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     .observeOn(AndroidSchedulers.mainThread())
                     .startWith(Result.LoadContainerResult.progress()));
 
+    private final ObservableTransformer<Action.AddDocumentsAction,
+                                        Result.AddDocumentsResult> addDocuments =
+            upstream -> upstream.flatMap(action -> {
+                if (action.containerFile() == null) {
+                    return Observable.just(Result.AddDocumentsResult.clear());
+                } else if (action.fileStreams() == null) {
+                    return Observable.just(Result.AddDocumentsResult.picking());
+                } else {
+                    return addDocuments(action.containerFile(), action.fileStreams())
+                            .toObservable()
+                            .map(Result.AddDocumentsResult::success)
+                            .onErrorReturn(Result.AddDocumentsResult::failure)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .startWith(Result.AddDocumentsResult.adding());
+                }
+            });
+
+    private final FileSystem fileSystem;
+
     @Inject
-    Processor() {
+    Processor(FileSystem fileSystem) {
+        this.fileSystem = fileSystem;
     }
 
     @Override
     public ObservableSource<Result> apply(Observable<Action> upstream) {
         return upstream.publish(shared -> Observable.merge(
                 shared.ofType(Action.LoadContainerAction.class).compose(loadContainer),
-                Observable.empty()));
+                shared.ofType(Action.AddDocumentsAction.class).compose(addDocuments)));
     }
 
     private Single<SignatureContainer> loadContainer(File containerFile) {
@@ -56,5 +80,21 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
             return SignatureContainer.create(containerFile.getName(), documentBuilder.build());
         });
+    }
+
+    private Single<SignatureContainer> addDocuments(final File containerFile,
+                                                    ImmutableList<FileStream> fileStreams) {
+        return Completable.fromAction(() -> {
+            Container container = Container.open(containerFile.getAbsolutePath());
+            if (container == null) {
+                throw new IOException("Could not open signature container " + containerFile);
+            }
+            for (FileStream fileStream : fileStreams) {
+                File file = fileSystem.cache(fileStream);
+                String mimeType = fileSystem.getMimeType(file);
+                container.addDataFile(file.getAbsolutePath(), mimeType);
+            }
+            container.save();
+        }).andThen(loadContainer(containerFile));
     }
 }

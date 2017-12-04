@@ -7,6 +7,7 @@ public final class Constants {
      */
 
     public static final int RC_SIGNATURE_CREATE_DOCUMENTS_ADD = 0;
+    public static final int RC_SIGNATURE_UPDATE_DOCUMENTS_ADD = 1;
 
     /**
      * Name of the sub-directory in {@link android.os.Environment#DIRECTORY_DOCUMENTS documents}.
