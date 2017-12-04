@@ -73,6 +73,10 @@ public final class DocumentListContainerView extends CardView {
         return adapter.getDocuments().size() == 0;
     }
 
+    public ImmutableList<Document> getDocuments() {
+        return adapter.getDocuments();
+    }
+
     public void setDocuments(ImmutableList<Document> documents) {
         adapter.setDocuments(documents);
     }

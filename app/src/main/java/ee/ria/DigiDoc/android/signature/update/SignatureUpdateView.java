@@ -14,6 +14,7 @@ import java.io.File;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.document.list.DocumentListContainerView;
+import ee.ria.DigiDoc.android.document.list.DocumentListScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
@@ -143,6 +144,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 }));
         disposables.add(dismisses(addDocumentsErrorSnackbar).subscribe(ignored ->
                 addDocumentsIntentSubject.onNext(Intent.AddDocumentsIntent.clear())));
+        disposables.add(documentsView.expandButtonClicks().subscribe(ignored ->
+                navigator.pushScreen(DocumentListScreen.create(documentsView.getDocuments()))));
     }
 
     @Override
