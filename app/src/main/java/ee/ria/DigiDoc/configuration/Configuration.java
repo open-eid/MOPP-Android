@@ -41,7 +41,7 @@ public class Configuration {
 
     static {
         System.loadLibrary("c++_shared");
-        System.loadLibrary("xerces-c-3.1");
+        System.loadLibrary("xerces-c-3.2");
         System.loadLibrary("xalanMsg");
         System.loadLibrary("xalan-c");
         System.loadLibrary("xml-security-c");
