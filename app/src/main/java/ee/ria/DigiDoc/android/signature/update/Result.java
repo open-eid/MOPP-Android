@@ -4,6 +4,8 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
+import java.io.File;
+
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 
@@ -56,7 +58,7 @@ interface Result extends MviResult<ViewState> {
         public ViewState reduce(ViewState state) {
             ViewState.Builder builder = state.buildWith()
                     .pickingDocuments(isPicking())
-                    .addingDocuments(isAdding())
+                    .documentsProgress(isAdding())
                     .addDocumentsError(error());
             if (container() != null) {
                 builder.container(container());
@@ -82,6 +84,41 @@ interface Result extends MviResult<ViewState> {
 
         static AddDocumentsResult clear() {
             return new AutoValue_Result_AddDocumentsResult(false, false, null, null);
+        }
+    }
+
+    @AutoValue
+    abstract class OpenDocumentResult implements Result {
+
+        abstract boolean isOpening();
+
+        @Nullable abstract File documentFile();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .documentsProgress(isOpening())
+                    .openedDocumentFile(documentFile())
+                    .openDocumentError(error())
+                    .build();
+        }
+
+        static OpenDocumentResult opening() {
+            return new AutoValue_Result_OpenDocumentResult(true, null, null);
+        }
+
+        static OpenDocumentResult success(File documentFile) {
+            return new AutoValue_Result_OpenDocumentResult(false, documentFile, null);
+        }
+
+        static OpenDocumentResult failure(Throwable error) {
+            return new AutoValue_Result_OpenDocumentResult(false, null, error);
+        }
+
+        static OpenDocumentResult clear() {
+            return new AutoValue_Result_OpenDocumentResult(false, null, null);
         }
     }
 }

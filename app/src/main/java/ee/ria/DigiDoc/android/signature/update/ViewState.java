@@ -4,6 +4,8 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
+import java.io.File;
+
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 
@@ -18,9 +20,13 @@ abstract class ViewState implements MviViewState {
 
     abstract boolean pickingDocuments();
 
-    abstract boolean addingDocuments();
+    abstract boolean documentsProgress();
 
     @Nullable abstract Throwable addDocumentsError();
+
+    @Nullable abstract File openedDocumentFile();
+
+    @Nullable abstract Throwable openDocumentError();
 
     abstract Builder buildWith();
 
@@ -28,7 +34,7 @@ abstract class ViewState implements MviViewState {
         return new AutoValue_ViewState.Builder()
                 .loadContainerInProgress(false)
                 .pickingDocuments(false)
-                .addingDocuments(false)
+                .documentsProgress(false)
                 .build();
     }
 
@@ -38,8 +44,10 @@ abstract class ViewState implements MviViewState {
         Builder loadContainerInProgress(boolean loadContainerInProgress);
         Builder loadContainerError(@Nullable Throwable error);
         Builder pickingDocuments(boolean pickingDocuments);
-        Builder addingDocuments(boolean addingDocuments);
+        Builder documentsProgress(boolean documentsProgress);
         Builder addDocumentsError(@Nullable Throwable addDocumentsError);
+        Builder openedDocumentFile(@Nullable File openedDocumentFile);
+        Builder openDocumentError(@Nullable Throwable openDocumentError);
         ViewState build();
     }
 }

@@ -48,6 +48,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
 
     private final Subject<Intent.AddDocumentsIntent> addDocumentsIntentSubject =
             PublishSubject.create();
+    private final Subject<Intent.OpenDocumentIntent> openDocumentIntentSubject =
+            PublishSubject.create();
 
     public SignatureUpdateView(Context context) {
         this(context, null);
@@ -79,7 +81,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
 
     @Override
     public Observable<Intent> intents() {
-        return Observable.merge(initialIntent(), addDocumentsIntent());
+        return Observable.merge(initialIntent(), addDocumentsIntent(), openDocumentIntent());
     }
 
     @Override
@@ -95,12 +97,16 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                     createGetContentIntent());
             return;
         }
+        if (state.openedDocumentFile() != null) {
+            openDocumentIntentSubject.onNext(Intent.OpenDocumentIntent.clear());
+            return;
+        }
 
         appBarView.setVisibility(state.loadContainerInProgress() ? GONE : VISIBLE);
         contentView.setVisibility(state.loadContainerInProgress() ? GONE : VISIBLE);
         loadContainerProgressView.setVisibility(state.loadContainerInProgress() ? VISIBLE : GONE);
 
-        documentsView.setProgress(state.addingDocuments());
+        documentsView.setProgress(state.documentsProgress());
 
         SignatureContainer container = state.container();
         if (container != null) {
@@ -126,6 +132,10 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 .mergeWith(addDocumentsIntentSubject);
     }
 
+    private Observable<Intent.OpenDocumentIntent> openDocumentIntent() {
+        return openDocumentIntentSubject;
+    }
+
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -147,6 +157,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 addDocumentsIntentSubject.onNext(Intent.AddDocumentsIntent.clear())));
         disposables.add(documentsView.expandButtonClicks().subscribe(ignored ->
                 navigator.pushScreen(DocumentListScreen.create(documentsView.getDocuments()))));
+        disposables.add(documentsView.documentClicks().subscribe(document ->
+                openDocumentIntentSubject.onNext(Intent.OpenDocumentIntent
+                        .open(containerFile, document))));
     }
 
     @Override

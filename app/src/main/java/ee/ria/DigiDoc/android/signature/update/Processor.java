@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import android.os.SystemClock;
+
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
@@ -20,6 +22,7 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
@@ -51,6 +54,22 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 }
             });
 
+    private final ObservableTransformer<Action.OpenDocumentAction,
+                                        Result.OpenDocumentResult> openDocument =
+            upstream -> upstream.flatMap(action -> {
+                if (action.containerFile() == null) {
+                    return Observable.just(Result.OpenDocumentResult.clear());
+                } else {
+                    return loadDocument(action.containerFile(), action.document())
+                            .toObservable()
+                            .map(Result.OpenDocumentResult::success)
+                            .onErrorReturn(Result.OpenDocumentResult::failure)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .startWith(Result.OpenDocumentResult.opening());
+                }
+            });
+
     private final FileSystem fileSystem;
 
     @Inject
@@ -62,7 +81,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
     public ObservableSource<Result> apply(Observable<Action> upstream) {
         return upstream.publish(shared -> Observable.merge(
                 shared.ofType(Action.LoadContainerAction.class).compose(loadContainer),
-                shared.ofType(Action.AddDocumentsAction.class).compose(addDocuments)));
+                shared.ofType(Action.AddDocumentsAction.class).compose(addDocuments),
+                shared.ofType(Action.OpenDocumentAction.class).compose(openDocument)));
     }
 
     private Single<SignatureContainer> loadContainer(File containerFile) {
@@ -97,5 +117,14 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
             container.save();
         }).andThen(loadContainer(containerFile));
+    }
+
+    private Single<File> loadDocument(File containerFile, Document document) {
+        return Single.fromCallable(() -> {
+            Timber.e("LOAD DOCUMENT START: %s", document);
+            SystemClock.sleep(5000);
+            Timber.e("LOAD DOCUMENT END: %s", document);
+            return new File("");
+        });
     }
 }

@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
+import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 
@@ -39,6 +40,22 @@ interface Intent extends MviIntent {
 
         static AddDocumentsIntent clear() {
             return new AutoValue_Intent_AddDocumentsIntent(null, null);
+        }
+    }
+
+    @AutoValue
+    abstract class OpenDocumentIntent implements Intent {
+
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract Document document();
+
+        static OpenDocumentIntent open(File containerFile, Document document) {
+            return new AutoValue_Intent_OpenDocumentIntent(containerFile, document);
+        }
+
+        static OpenDocumentIntent clear() {
+            return new AutoValue_Intent_OpenDocumentIntent(null, null);
         }
     }
 }

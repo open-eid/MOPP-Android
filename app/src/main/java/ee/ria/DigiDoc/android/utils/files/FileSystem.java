@@ -1,7 +1,6 @@
 package ee.ria.DigiDoc.android.utils.files;
 
 import android.app.Application;
-import android.os.Environment;
 import android.webkit.MimeTypeMap;
 
 import com.google.common.io.ByteStreams;
@@ -19,39 +18,57 @@ import static ee.ria.DigiDoc.android.Constants.DIR_SIGNATURE_CONTAINERS;
 public final class FileSystem {
 
     private final File cacheDir;
+    private final File signatureContainersDir;
 
     @Inject
     FileSystem(Application application) {
         this.cacheDir = application.getCacheDir();
+        this.signatureContainersDir = new File(application.getFilesDir(), DIR_SIGNATURE_CONTAINERS);
     }
 
     /**
-     * Add a file to the file-system.
+     * Add signature container to the file-system.
      *
-     * If the file already exists, add a counter and the end of the filename.
+     * Add increment number before the extension when file with the same name already exists.
+     *
+     * @see #generateSignatureContainerFile(String)
      *
      * @param fileStream Stream to write.
      * @return File that was eventually written into.
      * @throws IOException When file cannot be created for some reason.
      */
-    public File add(FileStream fileStream) throws IOException {
-        File to = generateSignatureContainerFile(fileStream.displayName());
-        FileOutputStream outputStream = new FileOutputStream(to);
+    public File addSignatureContainer(FileStream fileStream) throws IOException {
+        File file = generateSignatureContainerFile(fileStream.displayName());
+        FileOutputStream outputStream = new FileOutputStream(file);
         ByteStreams.copy(fileStream.inputStream(), outputStream);
         fileStream.inputStream().close();
         outputStream.close();
-        return to;
+        return file;
     }
 
+    /**
+     * Generate signature container file.
+     *
+     * Add increment number before the extension when file with the same name already exists.
+     * Example "file_name (1).ext".
+     *
+     * @param name Name of the container file with extension.
+     * @return File with absolute path pointing to generated name.
+     * @throws IOException When something fails.
+     */
     public File generateSignatureContainerFile(String name) throws IOException {
-        File containers = new File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-                DIR_SIGNATURE_CONTAINERS);
-        File file = increaseCounterIfExists(new File(containers, name));
+        File file = increaseCounterIfExists(new File(signatureContainersDir, name));
         Files.createParentDirs(file);
         return file;
     }
 
+    /**
+     * Add file stream to local cache.
+     *
+     * @param fileStream File stream to cache.
+     * @return File with absolute path pointing to generated cache.
+     * @throws IOException When something fails.
+     */
     public File cache(FileStream fileStream) throws IOException {
         File file = new File(cacheDir, fileStream.displayName());
         FileOutputStream outputStream = new FileOutputStream(file);
@@ -59,6 +76,17 @@ public final class FileSystem {
         fileStream.inputStream().close();
         outputStream.close();
         return file;
+    }
+
+    /**
+     * Get MIME type from file extension.
+     *
+     * @param file File to get the extension from.
+     * @return MIME type of the file.
+     */
+    public String getMimeType(File file) {
+        return MimeTypeMap.getSingleton()
+                .getMimeTypeFromExtension(Files.getFileExtension(file.getName()));
     }
 
     private static File increaseCounterIfExists(File file) {
@@ -71,10 +99,5 @@ public final class FileSystem {
             file = new File(directory, String.format(Locale.US, "%s (%d).%s", name, i++, ext));
         }
         return file;
-    }
-
-    public String getMimeType(File file) {
-        return MimeTypeMap.getSingleton()
-                .getMimeTypeFromExtension(Files.getFileExtension(file.getName()));
     }
 }

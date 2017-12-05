@@ -23,7 +23,6 @@ import static com.jakewharton.rxbinding2.view.RxView.clicks;
 public final class DocumentListContainerView extends CardView {
 
     private final View progressView;
-    private final RecyclerView recyclerView;
     private final Button expandButton;
     private final Button addButton;
     private final DocumentListAdapter adapter;
@@ -41,7 +40,7 @@ public final class DocumentListContainerView extends CardView {
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.document_list_container, this);
         progressView = findViewById(android.R.id.secondaryProgress);
-        recyclerView = findViewById(R.id.documentListRecycler);
+        RecyclerView recyclerView = findViewById(R.id.documentListRecycler);
         expandButton = findViewById(R.id.documentListExpandButton);
         addButton = findViewById(R.id.documentListAddButton);
 
@@ -53,6 +52,14 @@ public final class DocumentListContainerView extends CardView {
             }
         });
         recyclerView.setAdapter(adapter = new DocumentListAdapter());
+    }
+
+    public Observable<Document> documentClicks() {
+        return adapter.itemClicks();
+    }
+
+    public Observable<Document> documentLongClicks() {
+        return adapter.itemLongClicks();
     }
 
     public Observable<Object> expandButtonClicks() {
@@ -69,8 +76,6 @@ public final class DocumentListContainerView extends CardView {
 
     public void setProgress(boolean progress) {
         progressView.setVisibility(progress ? VISIBLE : GONE);
-        expandButton.setEnabled(!progress);
-        addButton.setEnabled(!progress);
     }
 
     public boolean isEmpty() {

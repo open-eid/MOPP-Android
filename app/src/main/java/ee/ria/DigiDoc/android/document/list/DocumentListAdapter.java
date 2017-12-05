@@ -10,9 +10,15 @@ import android.widget.TextView;
 import com.google.common.collect.ImmutableList;
 
 import ee.ria.DigiDoc.android.document.data.Document;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 final class DocumentListAdapter
         extends RecyclerView.Adapter<DocumentListAdapter.DocumentsViewHolder> {
+
+    private final Subject<Document> clicksSubject = PublishSubject.create();
+    private final Subject<Document> longClicksSubject = PublishSubject.create();
 
     private ImmutableList<Document> documents = ImmutableList.of();
 
@@ -27,15 +33,29 @@ final class DocumentListAdapter
         diffResult.dispatchUpdatesTo(this);
     }
 
+    Observable<Document> itemClicks() {
+        return clicksSubject;
+    }
+
+    Observable<Document> itemLongClicks() {
+        return longClicksSubject;
+    }
+
     @Override
     public DocumentsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new DocumentsViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(android.R.layout.simple_list_item_1, parent, false));
+                .inflate(android.R.layout.simple_selectable_list_item, parent, false));
     }
 
     @Override
     public void onBindViewHolder(DocumentsViewHolder holder, int position) {
         holder.textView.setText(documents.get(position).name());
+        holder.itemView.setOnClickListener(ignored ->
+                clicksSubject.onNext(documents.get(holder.getAdapterPosition())));
+        holder.itemView.setOnLongClickListener(ignored -> {
+            longClicksSubject.onNext(documents.get(holder.getAdapterPosition()));
+            return true;
+        });
     }
 
     @Override

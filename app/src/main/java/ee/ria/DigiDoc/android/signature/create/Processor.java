@@ -60,7 +60,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
             File containerFile;
             if (fileStreams.size() == 1 && isContainerFile(fileStreams.get(0))) {
                 FileStream fileStream = fileStreams.get(0);
-                containerFile = fileSystem.add(fileStream);
+                containerFile = fileSystem.addSignatureContainer(fileStream);
             } else {
                 String containerName = String.format(Locale.US, "%s.%s",
                         getNameWithoutExtension(fileStreams.get(0).displayName()),
