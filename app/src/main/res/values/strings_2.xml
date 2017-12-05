@@ -3,6 +3,7 @@
     tools:ignore="MissingTranslation"> <!-- remove when translations are available -->
 
     <string name="back">Back</string>
+    <string name="close">Close</string>
 
     <!-- Main Home -->
     <string name="main_home_navigation_signature">Signing</string>
@@ -32,9 +33,18 @@
         <item>BDOC</item>
     </string-array>
 
+    <!-- Documents List -->
+    <string name="document_list_title">Manage documents</string>
+    <string name="document_list_expand_button">View all</string>
+    <string name="document_list_add_button">Add document</string>
+
     <!-- Signature Home -->
     <string name="signature_home_create_text">Choose a file to sign or check</string>
     <string name="signature_home_create_button">Choose file</string>
+
+    <!-- Signature Container -->
+    <string name="signature_container_documents">Container files</string>
+    <string name="signature_container_signatures">Container signatures</string>
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Choose a file to crypt or decrypt</string>

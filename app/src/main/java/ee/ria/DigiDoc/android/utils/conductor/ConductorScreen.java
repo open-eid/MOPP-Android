@@ -11,7 +11,10 @@ import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.Controller;
 
+import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.navigation.Screen;
+
+import static android.support.v4.content.res.ResourcesCompat.getColor;
 
 public abstract class ConductorScreen extends Controller implements Screen {
 
@@ -33,6 +36,7 @@ public abstract class ConductorScreen extends Controller implements Screen {
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
         View view = createView(container.getContext());
         view.setId(id);
+        view.setBackgroundColor(getColor(container.getResources(), R.color.windowBackground, null));
         return view;
     }
 }

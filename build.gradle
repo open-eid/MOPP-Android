@@ -36,5 +36,6 @@ ext {
     rxAndroidVersion = '2.0.1'
     rxBindingVersion = '2.0.0'
     autoValueVersion = '1.5.2'
+    autoValueParcelVersion = '0.2.5'
     junitVersion = '4.12'
 }

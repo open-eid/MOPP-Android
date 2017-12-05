@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.signature;
+package ee.ria.DigiDoc.android.signature.home;
 
 import android.content.Context;
 import android.view.View;

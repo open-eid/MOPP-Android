@@ -26,9 +26,20 @@
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsFragment" />
 
+    <!-- Document List -->
+    <item type="id" name="documentListScreen" />
+    <item type="id" name="documentListRecycler" />
+    <item type="id" name="documentListExpandButton" />
+    <item type="id" name="documentListAddButton" />
+
     <!-- Signature Home -->
     <item type="id" name="signatureHomeScreen" />
     <item type="id" name="signatureHomeCreateButton" />
+
+    <!-- Signature Container -->
+    <item type="id" name="signatureContainerScreen" />
+    <item type="id" name="signatureContainerDocuments" />
+    <item type="id" name="signatureContainerSignatures" />
 
     <!-- Crypto Home -->
     <item type="id" name="cryptoHomeScreen" />
