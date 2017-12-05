@@ -5,6 +5,7 @@ import android.webkit.MimeTypeMap;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
+import com.google.common.net.MediaType;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -70,12 +71,22 @@ public final class FileSystem {
      * @throws IOException When something fails.
      */
     public File cache(FileStream fileStream) throws IOException {
-        File file = new File(cacheDir, fileStream.displayName());
+        File file = getCacheFile(fileStream.displayName());
         FileOutputStream outputStream = new FileOutputStream(file);
         ByteStreams.copy(fileStream.inputStream(), outputStream);
         fileStream.inputStream().close();
         outputStream.close();
         return file;
+    }
+
+    /**
+     * Get path to a file in cache directory.
+     *
+     * @param name Name of the file
+     * @return File with absolute path to file in cache directory.
+     */
+    public File getCacheFile(String name) {
+        return new File(cacheDir, name);
     }
 
     /**
@@ -85,8 +96,9 @@ public final class FileSystem {
      * @return MIME type of the file.
      */
     public String getMimeType(File file) {
-        return MimeTypeMap.getSingleton()
+        String mimeType = MimeTypeMap.getSingleton()
                 .getMimeTypeFromExtension(Files.getFileExtension(file.getName()));
+        return mimeType == null ? MediaType.PLAIN_TEXT_UTF_8.toString() : mimeType;
     }
 
     private static File increaseCounterIfExists(File file) {

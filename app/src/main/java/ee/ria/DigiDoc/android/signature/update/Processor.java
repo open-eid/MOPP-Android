@@ -1,7 +1,5 @@
 package ee.ria.DigiDoc.android.signature.update;
 
-import android.os.SystemClock;
-
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
@@ -14,6 +12,7 @@ import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.libdigidocpp.Container;
+import ee.ria.libdigidocpp.DataFile;
 import ee.ria.libdigidocpp.DataFiles;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -22,7 +21,6 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
@@ -121,10 +119,23 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private Single<File> loadDocument(File containerFile, Document document) {
         return Single.fromCallable(() -> {
-            Timber.e("LOAD DOCUMENT START: %s", document);
-            SystemClock.sleep(5000);
-            Timber.e("LOAD DOCUMENT END: %s", document);
-            return new File("");
+            Container container = Container.open(containerFile.getAbsolutePath());
+            if (container == null) {
+                throw new IOException("Could not open signature container " + containerFile);
+            }
+
+            DataFiles dataFiles = container.dataFiles();
+            for (int i = 0; i < dataFiles.size(); i++) {
+                DataFile dataFile = dataFiles.get(i);
+                if (document.name().equals(dataFile.fileName())) {
+                    File file = fileSystem.getCacheFile(document.name());
+                    dataFile.saveAs(file.getAbsolutePath());
+                    return file;
+                }
+            }
+
+            throw new IllegalArgumentException("Could not find file " + document.name() +
+                    " in container " + containerFile);
         });
     }
 }

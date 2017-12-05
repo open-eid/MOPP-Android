@@ -28,6 +28,7 @@ import static com.jakewharton.rxbinding2.support.design.widget.RxSnackbar.dismis
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 public final class SignatureUpdateView extends CoordinatorLayout implements
@@ -98,6 +99,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             return;
         }
         if (state.openedDocumentFile() != null) {
+            getContext().startActivity(createViewIntent(getContext(), state.openedDocumentFile()));
             openDocumentIntentSubject.onNext(Intent.OpenDocumentIntent.clear());
             return;
         }

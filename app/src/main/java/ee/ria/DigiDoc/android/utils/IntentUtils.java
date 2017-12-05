@@ -2,16 +2,20 @@ package ee.ria.DigiDoc.android.utils;
 
 import android.content.ClipData;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
+import android.support.v4.content.FileProvider;
 
 import com.google.common.collect.ImmutableList;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import timber.log.Timber;
 
@@ -51,20 +55,39 @@ public final class IntentUtils {
             for (int i = 0; i < clipData.getItemCount(); i++) {
                 Uri uri = clipData.getItemAt(i).getUri();
                 try {
-                    builder.add(parseUri(contentResolver, uri));
+                    builder.add(parseGetContentUri(contentResolver, uri));
                 } catch (FileNotFoundException e) {
                     Timber.e(e, "Could not parse Uri %s", uri);
                 }
             }
         } else if (data != null) {
             try {
-                builder.add(parseUri(contentResolver, data));
+                builder.add(parseGetContentUri(contentResolver, data));
             } catch (FileNotFoundException e) {
                 Timber.e(e, "Could not parse Uri %s", data);
             }
         }
 
         return builder.build();
+    }
+
+    /**
+     * Create an intent to send local file to other apps.
+     *
+     * File path has to be shared with {@link FileProvider}.
+     *
+     * @param context Context to use for {@link FileProvider#getUriForFile(Context, String, File)}
+     *                and to get authority string.
+     * @param file File to send.
+     * @return {@link Intent#ACTION_SEND Send intent} with content Uri of the file.
+     */
+    public static Intent createViewIntent(Context context, File file) {
+        Uri uri = FileProvider.getUriForFile(context,
+                context.getString(R.string.file_provider_authority), file);
+        return Intent
+                .createChooser(new Intent(Intent.ACTION_VIEW)
+                        .setData(uri)
+                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION), null);
     }
 
     /**
@@ -77,9 +100,8 @@ public final class IntentUtils {
      * @return FileStream with all fields filled.
      * @throws FileNotFoundException If the input stream opening fails.
      */
-    private static FileStream parseUri(ContentResolver contentResolver, Uri uri)
+    private static FileStream parseGetContentUri(ContentResolver contentResolver, Uri uri)
             throws FileNotFoundException {
-        String type = contentResolver.getType(uri);
         InputStream inputStream = contentResolver.openInputStream(uri);
         String displayName = uri.getLastPathSegment();
         Cursor cursor = contentResolver.query(uri, new String[]{OpenableColumns.DISPLAY_NAME}, null,
@@ -91,7 +113,7 @@ public final class IntentUtils {
             cursor.close();
         }
 
-        return FileStream.create(type, displayName, inputStream);
+        return FileStream.create(displayName, inputStream);
     }
 
     private IntentUtils() {}
