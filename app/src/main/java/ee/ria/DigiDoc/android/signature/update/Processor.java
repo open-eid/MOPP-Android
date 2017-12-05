@@ -78,7 +78,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 documentBuilder.add(Document.create(dataFiles.get(i).fileName()));
             }
 
-            return SignatureContainer.create(containerFile.getName(), documentBuilder.build());
+            return SignatureContainer.create(containerFile.getName(), documentBuilder.build(),
+                    container.signatures().size() > 0);
         });
     }
 

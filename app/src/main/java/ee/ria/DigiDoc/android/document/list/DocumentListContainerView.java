@@ -63,6 +63,10 @@ public final class DocumentListContainerView extends CardView {
         return clicks(addButton);
     }
 
+    public void setAddButtonVisible(boolean addButtonVisible) {
+        addButton.setVisibility(addButtonVisible ? VISIBLE : GONE);
+    }
+
     public void setProgress(boolean progress) {
         progressView.setVisibility(progress ? VISIBLE : GONE);
         expandButton.setEnabled(!progress);
@@ -79,5 +83,9 @@ public final class DocumentListContainerView extends CardView {
 
     public void setDocuments(ImmutableList<Document> documents) {
         adapter.setDocuments(documents);
+
+        expandButton.setVisibility(adapter.getItemCount() > 0 ? VISIBLE : GONE);
+        expandButton.setText(getResources().getString(R.string.document_list_expand_button,
+                adapter.getItemCount()));
     }
 }

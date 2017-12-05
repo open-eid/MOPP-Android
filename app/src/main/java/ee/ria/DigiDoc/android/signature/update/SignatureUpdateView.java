@@ -105,6 +105,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         SignatureContainer container = state.container();
         if (container != null) {
             toolbarView.setTitle(container.name());
+            documentsView.setAddButtonVisible(!container.documentsLocked());
             documentsView.setDocuments(container.documents());
         }
 

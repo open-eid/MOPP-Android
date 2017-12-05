@@ -36,6 +36,7 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/material_button_fab_edge_margin"
         android:src="@drawable/ic_add"
-        android:contentDescription="@string/document_list_add_button" />
+        android:contentDescription="@string/document_list_add_button"
+        android:visibility="gone" />
 
 </merge>

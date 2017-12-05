@@ -33,14 +33,16 @@
                     style="?attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/document_list_expand_button" />
+                    android:text="@string/document_list_expand_button"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@id/documentListAddButton"
                     style="?attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/document_list_add_button" />
+                    android:text="@string/document_list_add_button"
+                    android:visibility="gone" />
 
             </LinearLayout>
 

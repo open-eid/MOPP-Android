@@ -22,8 +22,11 @@ public abstract class SignatureContainer {
 
     public abstract ImmutableList<Document> documents();
 
-    public static SignatureContainer create(String name, ImmutableList<Document> documents) {
-        return new AutoValue_SignatureContainer(name, documents);
+    public abstract boolean documentsLocked();
+
+    public static SignatureContainer create(String name, ImmutableList<Document> documents,
+                                            boolean documentsLocked) {
+        return new AutoValue_SignatureContainer(name, documents, documentsLocked);
     }
 
     /**
