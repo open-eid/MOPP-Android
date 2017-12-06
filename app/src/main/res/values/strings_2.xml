@@ -33,11 +33,6 @@
         <item>BDOC</item>
     </string-array>
 
-    <!-- Documents List -->
-    <string name="document_list_title">Manage documents</string>
-    <string name="document_list_expand_button">View all (%d)</string>
-    <string name="document_list_add_button">Add document</string>
-
     <!-- Signature Home -->
     <string name="signature_home_create_text">Choose a file to sign or check</string>
     <string name="signature_home_create_button">Choose file</string>
@@ -46,8 +41,7 @@
     <string name="signature_create_error">Could not load selected files</string>
 
     <!-- Signature Update -->
-    <string name="signature_update_documents">Container files</string>
-    <string name="signature_update_signatures">Container signatures</string>
+    <string name="signature_update_documents_add_button">Add documents</string>
     <string name="signature_update_load_container_error">Could not open signature container</string>
     <string name="signature_update_add_documents_error_exists">File already exists in the container</string>
 

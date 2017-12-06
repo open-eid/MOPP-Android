@@ -14,30 +14,26 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
-final class DocumentListAdapter
-        extends RecyclerView.Adapter<DocumentListAdapter.DocumentsViewHolder> {
+public final class DocumentsAdapter extends
+        RecyclerView.Adapter<DocumentsAdapter.DocumentsViewHolder> {
 
     private final Subject<Document> clicksSubject = PublishSubject.create();
     private final Subject<Document> longClicksSubject = PublishSubject.create();
 
     private ImmutableList<Document> documents = ImmutableList.of();
 
-    ImmutableList<Document> getDocuments() {
-        return documents;
-    }
-
-    void setDocuments(ImmutableList<Document> documents) {
+    public void setDocuments(ImmutableList<Document> documents) {
         DiffUtil.DiffResult diffResult = DiffUtil
                 .calculateDiff(new DiffUtilCallback(this.documents, documents));
         this.documents = documents;
         diffResult.dispatchUpdatesTo(this);
     }
 
-    Observable<Document> itemClicks() {
+    public Observable<Document> itemClicks() {
         return clicksSubject;
     }
 
-    Observable<Document> itemLongClicks() {
+    public Observable<Document> itemLongClicks() {
         return longClicksSubject;
     }
 

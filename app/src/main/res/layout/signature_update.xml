@@ -9,8 +9,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone">
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
             android:id="@id/toolbar"
@@ -22,49 +21,39 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
-        android:id="@id/signatureUpdateContent"
+    <android.support.v7.widget.RecyclerView
+        android:id="@id/signatureUpdateDocuments"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:scrollbars="vertical" />
 
-        <TextView
-            style="@style/Widget.Application.Subheader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/signature_update_documents" />
-
-        <ee.ria.DigiDoc.android.document.list.DocumentListContainerView
-            android:id="@id/signatureUpdateDocuments"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
-            android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal" />
-
-        <TextView
-            style="@style/Widget.Application.Subheader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/signature_update_signatures" />
-
-        <ee.ria.DigiDoc.android.signature.list.SignatureListContainerView
-            android:id="@id/signatureUpdateSignatures"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
-            android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal"
-            android:layout_marginBottom="@dimen/material_content_edge_margin_horizontal" />
-
-    </LinearLayout>
-
-    <ProgressBar
-        android:id="@id/signatureUpdateLoadContainerProgress"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@id/signatureUpdateDocumentsAddButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/material_button_fab_edge_margin"
+        android:src="@drawable/ic_add"
+        android:contentDescription="@string/signature_update_documents_add_button"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@id/activityOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/activityOverlayBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:translationZ="@dimen/material_elevation_dialog" />
+
+    <ProgressBar
+        android:id="@id/activityIndicator"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/appBar"
+        app:layout_anchorGravity="bottom"
+        android:indeterminate="true" />
 
 </merge>

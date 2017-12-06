@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
@@ -13,8 +15,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.document.list.DocumentListContainerView;
-import ee.ria.DigiDoc.android.document.list.DocumentListScreen;
+import ee.ria.DigiDoc.android.document.list.DocumentsAdapter;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
@@ -26,6 +27,7 @@ import io.reactivex.subjects.Subject;
 import static android.app.Activity.RESULT_OK;
 import static com.jakewharton.rxbinding2.support.design.widget.RxSnackbar.dismisses;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
@@ -36,11 +38,11 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
 
     private File containerFile;
 
-    private final View appBarView;
     private final Toolbar toolbarView;
-    private final View contentView;
-    private final DocumentListContainerView documentsView;
-    private final View loadContainerProgressView;
+    private final View activityIndicatorView;
+    private final View activityOverlayView;
+    private final DocumentsAdapter documentsAdapter;
+    private final View documentsAddButton;
     private final Snackbar addDocumentsErrorSnackbar;
 
     private final Navigator navigator;
@@ -63,13 +65,16 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     public SignatureUpdateView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.signature_update, this);
-        appBarView = findViewById(R.id.appBar);
         toolbarView = findViewById(R.id.toolbar);
-        contentView = findViewById(R.id.signatureUpdateContent);
-        documentsView = findViewById(R.id.signatureUpdateDocuments);
-        loadContainerProgressView = findViewById(R.id.signatureUpdateLoadContainerProgress);
+        activityIndicatorView = findViewById(R.id.activityIndicator);
+        activityOverlayView = findViewById(R.id.activityOverlay);
+        RecyclerView documentsView = findViewById(R.id.signatureUpdateDocuments);
+        documentsAddButton = findViewById(R.id.signatureUpdateDocumentsAddButton);
         addDocumentsErrorSnackbar = Snackbar.make(this,
                 R.string.signature_update_add_documents_error_exists, Snackbar.LENGTH_LONG);
+
+        documentsView.setLayoutManager(new LinearLayoutManager(context));
+        documentsView.setAdapter(documentsAdapter = new DocumentsAdapter());
 
         navigator = Application.component(context).navigator();
         viewModel = navigator.getViewModelProvider().get(SignatureUpdateViewModel.class);
@@ -104,17 +109,13 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             return;
         }
 
-        appBarView.setVisibility(state.loadContainerInProgress() ? GONE : VISIBLE);
-        contentView.setVisibility(state.loadContainerInProgress() ? GONE : VISIBLE);
-        loadContainerProgressView.setVisibility(state.loadContainerInProgress() ? VISIBLE : GONE);
-
-        documentsView.setProgress(state.documentsProgress());
+        setActivity(state.loadContainerInProgress() || state.documentsProgress());
 
         SignatureContainer container = state.container();
         if (container != null) {
             toolbarView.setTitle(container.name());
-            documentsView.setAddButtonVisible(!container.documentsLocked());
-            documentsView.setDocuments(container.documents());
+            documentsAddButton.setVisibility(container.documentsLocked() ? GONE : VISIBLE);
+            documentsAdapter.setDocuments(container.documents());
         }
 
         if (state.addDocumentsError() == null) {
@@ -124,12 +125,17 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         }
     }
 
+    protected void setActivity(boolean activity) {
+        activityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
+        activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
+    }
+
     private Observable<Intent.InitialIntent> initialIntent() {
         return Observable.just(Intent.InitialIntent.create(containerFile));
     }
 
     private Observable<Intent.AddDocumentsIntent> addDocumentsIntent() {
-        return documentsView.addButtonClicks()
+        return clicks(documentsAddButton)
                 .map(ignored -> Intent.AddDocumentsIntent.pick(containerFile))
                 .mergeWith(addDocumentsIntentSubject);
     }
@@ -157,9 +163,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 }));
         disposables.add(dismisses(addDocumentsErrorSnackbar).subscribe(ignored ->
                 addDocumentsIntentSubject.onNext(Intent.AddDocumentsIntent.clear())));
-        disposables.add(documentsView.expandButtonClicks().subscribe(ignored ->
-                navigator.pushScreen(DocumentListScreen.create(documentsView.getDocuments()))));
-        disposables.add(documentsView.documentClicks().subscribe(document ->
+        disposables.add(documentsAdapter.itemClicks().subscribe(document ->
                 openDocumentIntentSubject.onNext(Intent.OpenDocumentIntent
                         .open(containerFile, document))));
     }

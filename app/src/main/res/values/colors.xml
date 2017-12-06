@@ -6,7 +6,7 @@
     <color name="accent">#998B66</color>
     <color name="bottomNavigation">#023664</color>
     <color name="windowBackground">@color/material_color_white</color>
-    <color name="progressOverlayBackground">#66ffffff</color>
+    <color name="activityOverlayBackground">#66ffffff</color>
 
 
 
