@@ -68,6 +68,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 }
             });
 
+    private final ObservableTransformer<Action.DocumentsSelectionAction,
+                                        Result.DocumentsSelectionResult> documentsSelection =
+            upstream -> upstream.map(action ->
+                    Result.DocumentsSelectionResult.create(action.documents()));
+
     private final FileSystem fileSystem;
 
     @Inject
@@ -80,7 +85,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
         return upstream.publish(shared -> Observable.merge(
                 shared.ofType(Action.LoadContainerAction.class).compose(loadContainer),
                 shared.ofType(Action.AddDocumentsAction.class).compose(addDocuments),
-                shared.ofType(Action.OpenDocumentAction.class).compose(openDocument)));
+                shared.ofType(Action.OpenDocumentAction.class).compose(openDocument),
+                shared.ofType(Action.DocumentsSelectionAction.class).compose(documentsSelection)));
     }
 
     private Single<SignatureContainer> loadContainer(File containerFile) {

@@ -3,6 +3,8 @@ package ee.ria.DigiDoc.android.utils.navigation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.Toolbar;
 import android.view.ViewGroup;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviViewModelProvider;
@@ -72,4 +74,12 @@ public interface Navigator {
      * Get view model provider for current screen.
      */
     MviViewModelProvider getViewModelProvider();
+
+    /**
+     * Start action mode.
+     *
+     * @param callback Callback for action mode.
+     * @return Action mode that was started.
+     */
+    ActionMode startActionMode(Toolbar toolbar, ActionMode.Callback callback);
 }

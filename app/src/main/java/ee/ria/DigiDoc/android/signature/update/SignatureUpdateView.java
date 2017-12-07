@@ -4,17 +4,24 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.common.collect.ImmutableSet;
+
 import java.io.File;
+import java.util.Locale;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.document.list.DocumentsAdapter;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -29,6 +36,8 @@ import static com.jakewharton.rxbinding2.support.design.widget.RxSnackbar.dismis
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
+import static ee.ria.DigiDoc.android.utils.Immutables.with;
+import static ee.ria.DigiDoc.android.utils.Immutables.without;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
@@ -44,6 +53,29 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private final DocumentsAdapter documentsAdapter;
     private final View documentsAddButton;
     private final Snackbar addDocumentsErrorSnackbar;
+    private final ActionMode.Callback documentsSelectionActionModeCallback =
+            new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.signature_update_documents_action_mode, menu);
+            return true;
+        }
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            mode.setTitle(String.format(Locale.US, "%d",
+                    selectedDocuments == null ? 0 : selectedDocuments.size()));
+            return true;
+        }
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            return false;
+        }
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            documentsSelectionIntentSubject.onNext(Intent.DocumentsSelectionIntent.clear());
+        }
+    };
+    @Nullable private ActionMode documentsSelectionActionMode;
 
     private final Navigator navigator;
     private final SignatureUpdateViewModel viewModel;
@@ -53,6 +85,10 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             PublishSubject.create();
     private final Subject<Intent.OpenDocumentIntent> openDocumentIntentSubject =
             PublishSubject.create();
+    private final Subject<Intent.DocumentsSelectionIntent> documentsSelectionIntentSubject =
+            PublishSubject.create();
+
+    @Nullable private ImmutableSet<Document> selectedDocuments;
 
     public SignatureUpdateView(Context context) {
         this(context, null);
@@ -87,7 +123,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
 
     @Override
     public Observable<Intent> intents() {
-        return Observable.merge(initialIntent(), addDocumentsIntent(), openDocumentIntent());
+        return Observable.merge(initialIntent(), addDocumentsIntent(), openDocumentIntent(),
+                documentsSelectionIntent());
     }
 
     @Override
@@ -115,7 +152,19 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         if (container != null) {
             toolbarView.setTitle(container.name());
             documentsAddButton.setVisibility(container.documentsLocked() ? GONE : VISIBLE);
-            documentsAdapter.setDocuments(container.documents());
+            documentsAdapter.setDocuments(container.documents(),
+                    selectedDocuments = state.selectedDocuments());
+        }
+
+        if (state.selectedDocuments() == null && documentsSelectionActionMode != null) {
+            documentsSelectionActionMode.finish();
+            documentsSelectionActionMode = null;
+        } else if (state.selectedDocuments() != null && documentsSelectionActionMode == null) {
+            documentsSelectionActionMode = navigator
+                    .startActionMode(toolbarView, documentsSelectionActionModeCallback);
+        }
+        if (documentsSelectionActionMode != null) {
+            documentsSelectionActionMode.invalidate();
         }
 
         if (state.addDocumentsError() == null) {
@@ -144,6 +193,13 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         return openDocumentIntentSubject;
     }
 
+    private Observable<Intent.DocumentsSelectionIntent> documentsSelectionIntent() {
+        return documentsSelectionIntentSubject.mergeWith(documentsAdapter.itemLongClicks()
+                .filter(ignored -> selectedDocuments == null)
+                .map(document ->
+                        Intent.DocumentsSelectionIntent.create(ImmutableSet.of(document))));
+    }
+
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -163,9 +219,18 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 }));
         disposables.add(dismisses(addDocumentsErrorSnackbar).subscribe(ignored ->
                 addDocumentsIntentSubject.onNext(Intent.AddDocumentsIntent.clear())));
-        disposables.add(documentsAdapter.itemClicks().subscribe(document ->
+        disposables.add(documentsAdapter.itemClicks().subscribe(document -> {
+            if (selectedDocuments == null) {
                 openDocumentIntentSubject.onNext(Intent.OpenDocumentIntent
-                        .open(containerFile, document))));
+                        .open(containerFile, document));
+            } else {
+                Intent.DocumentsSelectionIntent intent = Intent.DocumentsSelectionIntent.create(
+                        selectedDocuments.contains(document)
+                                ? without(selectedDocuments, document)
+                                : with(selectedDocuments, document));
+                documentsSelectionIntentSubject.onNext(intent);
+            }
+        }));
     }
 
     @Override

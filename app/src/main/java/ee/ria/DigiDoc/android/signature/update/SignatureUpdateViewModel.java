@@ -30,6 +30,9 @@ public final class SignatureUpdateViewModel extends
             Intent.OpenDocumentIntent openDocumentIntent = (Intent.OpenDocumentIntent) intent;
             return Action.OpenDocumentAction.create(openDocumentIntent.containerFile(),
                     openDocumentIntent.document());
+        } else if (intent instanceof Intent.DocumentsSelectionIntent) {
+            return Action.DocumentsSelectionAction
+                    .create(((Intent.DocumentsSelectionIntent) intent).documents());
         }
         throw new IllegalArgumentException("Unknown intent " + intent);
     }

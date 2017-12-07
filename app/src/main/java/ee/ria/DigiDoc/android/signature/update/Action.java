@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 
@@ -46,6 +47,16 @@ interface Action extends MviAction {
         static OpenDocumentAction create(@Nullable File containerFile,
                                          @Nullable Document document) {
             return new AutoValue_Action_OpenDocumentAction(containerFile, document);
+        }
+    }
+
+    @AutoValue
+    abstract class DocumentsSelectionAction implements Action {
+
+        @Nullable abstract ImmutableSet<Document> documents();
+
+        static DocumentsSelectionAction create(@Nullable ImmutableSet<Document> documents) {
+            return new AutoValue_Action_DocumentsSelectionAction(documents);
         }
     }
 }

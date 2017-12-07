@@ -3,9 +3,11 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 
+import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 
@@ -28,6 +30,8 @@ abstract class ViewState implements MviViewState {
 
     @Nullable abstract Throwable openDocumentError();
 
+    @Nullable abstract ImmutableSet<Document> selectedDocuments();
+
     abstract Builder buildWith();
 
     static ViewState initial() {
@@ -48,6 +52,7 @@ abstract class ViewState implements MviViewState {
         Builder addDocumentsError(@Nullable Throwable addDocumentsError);
         Builder openedDocumentFile(@Nullable File openedDocumentFile);
         Builder openDocumentError(@Nullable Throwable openDocumentError);
+        Builder selectedDocuments(ImmutableSet<Document> selectedDocuments);
         ViewState build();
     }
 }

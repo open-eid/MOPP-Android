@@ -3,9 +3,11 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 
+import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 
@@ -119,6 +121,23 @@ interface Result extends MviResult<ViewState> {
 
         static OpenDocumentResult clear() {
             return new AutoValue_Result_OpenDocumentResult(false, null, null);
+        }
+    }
+
+    @AutoValue
+    abstract class DocumentsSelectionResult implements Result {
+
+        @Nullable abstract ImmutableSet<Document> documents();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .selectedDocuments(documents())
+                    .build();
+        }
+
+        static DocumentsSelectionResult create(@Nullable ImmutableSet<Document> documents) {
+            return new AutoValue_Result_DocumentsSelectionResult(documents);
         }
     }
 }
