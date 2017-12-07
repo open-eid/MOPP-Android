@@ -17,7 +17,7 @@ allprojects {
 ext {
     compileSdkVersion = 26
     minSdkVersion = 21
-    targetSdkVersion = 22 // TODO: investigate error loading library when targeting sdk above 22
+    targetSdkVersion = 26
 
     androidSupportLibraryVersion = '26.1.0'
     firebaseVersion = '11.6.0'
