@@ -18,6 +18,10 @@
         <item name="android:textColor">@color/accent</item>
     </style>
 
+    <style name="Widget.Application.FloatingActionButton" parent="Widget.Design.FloatingActionButton">
+        <item name="android:tint">@color/material_color_white</item>
+    </style>
+
     <style name="Widget.Application.Subheader" parent="android:Widget.TextView">
         <item name="android:textSize">@dimen/material_subheader_text_size</item>
         <item name="android:textColor">@color/material_subheader_text_color_default</item>
