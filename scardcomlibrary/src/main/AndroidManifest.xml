@@ -3,13 +3,12 @@
 
     <uses-permission android:name="android.permission.NFC" />
 
-    <application
-        android:allowBackup="true"
-        android:label="@string/app_name"
-        android:supportsRtl="true">
+    <application>
+
         <service
             android:name="ee.ria.scardcomlibrary.impl.ACS$CardStateService"
             android:enabled="true" />
+
     </application>
 
 </manifest>
