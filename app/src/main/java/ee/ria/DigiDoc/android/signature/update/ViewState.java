@@ -32,6 +32,8 @@ abstract class ViewState implements MviViewState {
 
     @Nullable abstract ImmutableSet<Document> selectedDocuments();
 
+    @Nullable abstract Throwable removeDocumentsError();
+
     abstract Builder buildWith();
 
     static ViewState initial() {
@@ -53,6 +55,7 @@ abstract class ViewState implements MviViewState {
         Builder openedDocumentFile(@Nullable File openedDocumentFile);
         Builder openDocumentError(@Nullable Throwable openDocumentError);
         Builder selectedDocuments(ImmutableSet<Document> selectedDocuments);
+        Builder removeDocumentsError(@Nullable Throwable removeDocumentsError);
         ViewState build();
     }
 }

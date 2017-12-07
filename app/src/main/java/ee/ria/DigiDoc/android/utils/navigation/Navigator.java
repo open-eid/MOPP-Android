@@ -81,5 +81,5 @@ public interface Navigator {
      * @param callback Callback for action mode.
      * @return Action mode that was started.
      */
-    ActionMode startActionMode(Toolbar toolbar, ActionMode.Callback callback);
+    ActionMode startActionMode(ActionMode.Callback callback);
 }

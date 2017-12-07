@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,6 +74,22 @@ final class Processor implements ObservableTransformer<Action, Result> {
             upstream -> upstream.map(action ->
                     Result.DocumentsSelectionResult.create(action.documents()));
 
+    private final ObservableTransformer<Action.RemoveDocumentsAction,
+                                        Result.RemoveDocumentsResult> removeDocuments =
+            upstream -> upstream.flatMap(action -> {
+                if (action.containerFile() == null) {
+                    return Observable.just(Result.RemoveDocumentsResult.clear());
+                } else {
+                    return removeDocuments(action.containerFile(), action.documents())
+                            .toObservable()
+                            .map(Result.RemoveDocumentsResult::success)
+                            .onErrorReturn(Result.RemoveDocumentsResult::failure)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .startWith(Result.RemoveDocumentsResult.progress());
+                }
+            });
+
     private final FileSystem fileSystem;
 
     @Inject
@@ -80,13 +97,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
         this.fileSystem = fileSystem;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ObservableSource<Result> apply(Observable<Action> upstream) {
-        return upstream.publish(shared -> Observable.merge(
+        return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Action.LoadContainerAction.class).compose(loadContainer),
                 shared.ofType(Action.AddDocumentsAction.class).compose(addDocuments),
                 shared.ofType(Action.OpenDocumentAction.class).compose(openDocument),
-                shared.ofType(Action.DocumentsSelectionAction.class).compose(documentsSelection)));
+                shared.ofType(Action.DocumentsSelectionAction.class).compose(documentsSelection),
+                shared.ofType(Action.RemoveDocumentsAction.class).compose(removeDocuments)));
     }
 
     private Single<SignatureContainer> loadContainer(File containerFile) {
@@ -143,5 +162,25 @@ final class Processor implements ObservableTransformer<Action, Result> {
             throw new IllegalArgumentException("Could not find file " + document.name() +
                     " in container " + containerFile);
         });
+    }
+
+    private Single<SignatureContainer> removeDocuments(File containerFile,
+                                                       ImmutableSet<Document> documents) {
+        return Completable.fromAction(() -> {
+            Container container = Container.open(containerFile.getAbsolutePath());
+            if (container == null) {
+                throw new IOException("Could not open signature container " + containerFile);
+            }
+            for (Document document : documents) {
+                DataFiles dataFiles = container.dataFiles();
+                for (int i = 0; i < dataFiles.size(); i++) {
+                    if (document.name().equals(dataFiles.get(i).fileName())) {
+                        container.removeDataFile(i);
+                        break;
+                    }
+                }
+            }
+            container.save();
+        }).andThen(loadContainer(containerFile));
     }
 }

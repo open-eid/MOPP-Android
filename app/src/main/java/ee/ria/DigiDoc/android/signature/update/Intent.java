@@ -73,4 +73,20 @@ interface Intent extends MviIntent {
             return new AutoValue_Intent_DocumentsSelectionIntent(null);
         }
     }
+
+    @AutoValue
+    abstract class RemoveDocumentsIntent implements Intent {
+
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract ImmutableSet<Document> documents();
+
+        static RemoveDocumentsIntent create(File containerFile, ImmutableSet<Document> documents) {
+            return new AutoValue_Intent_RemoveDocumentsIntent(containerFile, documents);
+        }
+
+        static RemoveDocumentsIntent clear() {
+            return new AutoValue_Intent_RemoveDocumentsIntent(null, null);
+        }
+    }
 }

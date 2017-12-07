@@ -7,7 +7,6 @@ import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.Toolbar;
 import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.Controller;
@@ -125,12 +124,11 @@ public final class ConductorNavigator implements Navigator {
     }
 
     @Override
-    public ActionMode startActionMode(Toolbar toolbar, ActionMode.Callback callback) {
+    public ActionMode startActionMode(ActionMode.Callback callback) {
         AppCompatActivity activity = (AppCompatActivity) router.getActivity();
         if (activity == null) {
             throw new IllegalStateException("Can't start action mode, activity is null");
         }
-        activity.setSupportActionBar(toolbar);
         return activity.startSupportActionMode(callback);
     }
 

@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.view.ActionMode;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
@@ -53,6 +55,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private final DocumentsAdapter documentsAdapter;
     private final View documentsAddButton;
     private final Snackbar addDocumentsErrorSnackbar;
+    private final Snackbar removeDocumentsErrorSnackbar;
     private final ActionMode.Callback documentsSelectionActionModeCallback =
             new ActionMode.Callback() {
         @Override
@@ -68,6 +71,11 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         }
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            if (item.getItemId() == R.id.signatureUpdateDocumentsRemoveButton) {
+                removeDocumentsIntentSubject.onNext(Intent.RemoveDocumentsIntent
+                        .create(containerFile, selectedDocuments));
+                return true;
+            }
             return false;
         }
         @Override
@@ -87,7 +95,10 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             PublishSubject.create();
     private final Subject<Intent.DocumentsSelectionIntent> documentsSelectionIntentSubject =
             PublishSubject.create();
+    private final Subject<Intent.RemoveDocumentsIntent> removeDocumentsIntentSubject =
+            PublishSubject.create();
 
+    private boolean documentsLocked = true;
     @Nullable private ImmutableSet<Document> selectedDocuments;
 
     public SignatureUpdateView(Context context) {
@@ -108,6 +119,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         documentsAddButton = findViewById(R.id.signatureUpdateDocumentsAddButton);
         addDocumentsErrorSnackbar = Snackbar.make(this,
                 R.string.signature_update_add_documents_error_exists, Snackbar.LENGTH_LONG);
+        removeDocumentsErrorSnackbar = Snackbar.make(this,
+                R.string.signature_update_documents_remove_error_container_empty,
+                BaseTransientBottomBar.LENGTH_LONG);
 
         documentsView.setLayoutManager(new LinearLayoutManager(context));
         documentsView.setAdapter(documentsAdapter = new DocumentsAdapter());
@@ -121,10 +135,11 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
-        return Observable.merge(initialIntent(), addDocumentsIntent(), openDocumentIntent(),
-                documentsSelectionIntent());
+        return Observable.mergeArray(initialIntent(), addDocumentsIntent(), openDocumentIntent(),
+                documentsSelectionIntent(), removeDocumentsIntent());
     }
 
     @Override
@@ -149,19 +164,24 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         setActivity(state.loadContainerInProgress() || state.documentsProgress());
 
         SignatureContainer container = state.container();
-        if (container != null) {
-            toolbarView.setTitle(container.name());
-            documentsAddButton.setVisibility(container.documentsLocked() ? GONE : VISIBLE);
-            documentsAdapter.setDocuments(container.documents(),
-                    selectedDocuments = state.selectedDocuments());
-        }
+        documentsLocked = container == null || container.documentsLocked();
+        String name = container == null ? null : container.name();
+        ImmutableList<Document> documents = container == null
+                ? ImmutableList.of()
+                : container.documents();
+
+        toolbarView.setTitle(name);
+        documentsAdapter.setDocuments(documents, selectedDocuments = state.selectedDocuments());
+        documentsAddButton.setVisibility(documentsLocked || selectedDocuments != null
+                ? GONE : VISIBLE);
 
         if (state.selectedDocuments() == null && documentsSelectionActionMode != null) {
             documentsSelectionActionMode.finish();
             documentsSelectionActionMode = null;
-        } else if (state.selectedDocuments() != null && documentsSelectionActionMode == null) {
+        } else if (!documentsLocked && state.selectedDocuments() != null
+                && documentsSelectionActionMode == null) {
             documentsSelectionActionMode = navigator
-                    .startActionMode(toolbarView, documentsSelectionActionModeCallback);
+                    .startActionMode(documentsSelectionActionModeCallback);
         }
         if (documentsSelectionActionMode != null) {
             documentsSelectionActionMode.invalidate();
@@ -171,6 +191,11 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             addDocumentsErrorSnackbar.dismiss();
         } else {
             addDocumentsErrorSnackbar.show();
+        }
+        if (state.removeDocumentsError() == null) {
+            removeDocumentsErrorSnackbar.dismiss();
+        } else {
+            removeDocumentsErrorSnackbar.show();
         }
     }
 
@@ -195,9 +220,13 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
 
     private Observable<Intent.DocumentsSelectionIntent> documentsSelectionIntent() {
         return documentsSelectionIntentSubject.mergeWith(documentsAdapter.itemLongClicks()
-                .filter(ignored -> selectedDocuments == null)
+                .filter(ignored -> !documentsLocked && selectedDocuments == null)
                 .map(document ->
                         Intent.DocumentsSelectionIntent.create(ImmutableSet.of(document))));
+    }
+
+    private Observable<Intent.RemoveDocumentsIntent> removeDocumentsIntent() {
+        return removeDocumentsIntentSubject;
     }
 
     @Override
@@ -219,6 +248,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 }));
         disposables.add(dismisses(addDocumentsErrorSnackbar).subscribe(ignored ->
                 addDocumentsIntentSubject.onNext(Intent.AddDocumentsIntent.clear())));
+        disposables.add(dismisses(removeDocumentsErrorSnackbar).subscribe(ignored ->
+                removeDocumentsIntentSubject.onNext(Intent.RemoveDocumentsIntent.clear())));
         disposables.add(documentsAdapter.itemClicks().subscribe(document -> {
             if (selectedDocuments == null) {
                 openDocumentIntentSubject.onNext(Intent.OpenDocumentIntent

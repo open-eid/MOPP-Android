@@ -59,4 +59,17 @@ interface Action extends MviAction {
             return new AutoValue_Action_DocumentsSelectionAction(documents);
         }
     }
+
+    @AutoValue
+    abstract class RemoveDocumentsAction implements Action {
+
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract ImmutableSet<Document> documents();
+
+        static RemoveDocumentsAction create(@Nullable File containerFile,
+                                            @Nullable ImmutableSet<Document> documents) {
+            return new AutoValue_Action_RemoveDocumentsAction(containerFile, documents);
+        }
+    }
 }

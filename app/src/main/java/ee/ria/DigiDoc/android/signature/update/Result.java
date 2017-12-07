@@ -140,4 +140,42 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_DocumentsSelectionResult(documents);
         }
     }
+
+    @AutoValue
+    abstract class RemoveDocumentsResult implements Result {
+
+        abstract boolean inProgress();
+
+        @Nullable abstract SignatureContainer container();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            ViewState.Builder builder = state.buildWith()
+                    .removeDocumentsError(error())
+                    .documentsProgress(inProgress());
+            if (container() != null) {
+                builder.container(container())
+                        .selectedDocuments(null);
+            }
+            return builder.build();
+        }
+
+        static RemoveDocumentsResult progress() {
+            return new AutoValue_Result_RemoveDocumentsResult(true, null, null);
+        }
+
+        static RemoveDocumentsResult success(SignatureContainer container) {
+            return new AutoValue_Result_RemoveDocumentsResult(false, container, null);
+        }
+
+        static RemoveDocumentsResult failure(Throwable error) {
+            return new AutoValue_Result_RemoveDocumentsResult(false, null, error);
+        }
+
+        static RemoveDocumentsResult clear() {
+            return new AutoValue_Result_RemoveDocumentsResult(false, null, null);
+        }
+    }
 }
