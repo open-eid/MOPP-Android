@@ -41,6 +41,14 @@
     <item type="id" name="signatureUpdateDocuments" />
     <item type="id" name="signatureUpdateDocumentsAddButton" />
     <item type="id" name="signatureUpdateDocumentsRemoveButton" />
+    <item type="id" name="signatureUpdateSignatureSummary" />
+    <item type="id" name="signatureUpdateSignatureSummaryValidity" />
+    <item type="id" name="signatureUpdateSignatureSummaryText" />
+    <item type="id" name="signatureUpdateSignatureSummarySignButton" />
+
+    <item type="id" name="signatureUpdateSignatureName" />
+    <item type="id" name="signatureUpdateSignatureCreatedAt" />
+    <item type="id" name="signatureUpdateSignatureValidity" />
 
     <!-- Crypto Home -->
     <item type="id" name="cryptoHomeScreen" />

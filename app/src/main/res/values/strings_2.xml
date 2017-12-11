@@ -46,6 +46,10 @@
     <string name="signature_update_add_documents_error_exists">File already exists in the container</string>
     <string name="signature_update_documents_remove_button">Remove selected documents</string>
     <string name="signature_update_documents_remove_error_container_empty">Can\'t remove all documents from container</string>
+    <string name="signature_update_signature_valid">Signature is valid</string>
+    <string name="signature_update_signature_invalid">Signature is not valid</string>
+    <string name="signature_update_signature_summary_text">Signatures (%d)</string>
+    <string name="signature_update_signature_summary_sign_button">Sign</string>
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Choose a file to crypt or decrypt</string>

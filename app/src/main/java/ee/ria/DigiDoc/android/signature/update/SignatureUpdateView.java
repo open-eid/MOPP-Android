@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.collect.ImmutableList;
@@ -84,6 +85,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         }
     };
     @Nullable private ActionMode documentsSelectionActionMode;
+    private final TextView signatureSummaryTextView;
 
     private final Navigator navigator;
     private final SignatureUpdateViewModel viewModel;
@@ -122,6 +124,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         removeDocumentsErrorSnackbar = Snackbar.make(this,
                 R.string.signature_update_documents_remove_error_container_empty,
                 BaseTransientBottomBar.LENGTH_LONG);
+        signatureSummaryTextView = findViewById(R.id.signatureUpdateSignatureSummaryText);
 
         documentsView.setLayoutManager(new LinearLayoutManager(context));
         documentsView.setAdapter(documentsAdapter = new DocumentsAdapter());
@@ -169,6 +172,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         ImmutableList<Document> documents = container == null
                 ? ImmutableList.of()
                 : container.documents();
+        int signatureCount = container == null ? 0 : container.signatures().size();
 
         toolbarView.setTitle(name);
         documentsAdapter.setDocuments(documents, selectedDocuments = state.selectedDocuments());
@@ -197,6 +201,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         } else {
             removeDocumentsErrorSnackbar.show();
         }
+
+        signatureSummaryTextView.setText(getResources().getString(
+                R.string.signature_update_signature_summary_text, signatureCount));
     }
 
     protected void setActivity(boolean activity) {

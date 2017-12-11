@@ -22,6 +22,8 @@ package ee.ria.DigiDoc.android;
 import android.content.Context;
 import android.os.StrictMode;
 
+import com.jakewharton.threetenabp.AndroidThreeTen;
+
 import javax.inject.Singleton;
 
 import dagger.Binds;
@@ -48,6 +50,7 @@ public class Application extends android.app.Application {
         setupStrictMode();
         super.onCreate();
         setupTimber();
+        setupThreeTenAbp();
         setupContainerConfiguration();
         setupDagger();
     }
@@ -67,6 +70,12 @@ public class Application extends android.app.Application {
             Timber.plant(new Timber.DebugTree());
         }
         // TODO error reporting
+    }
+
+    // ThreeTenAbp
+
+    private void setupThreeTenAbp() {
+        AndroidThreeTen.init(this);
     }
 
     // Container configuration

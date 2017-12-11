@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.LinearLayout"
+    tools:layout_width="match_parent"
+    tools:layout_height="wrap_content"
+    tools:orientation="horizontal"
+    tools:gravity="center_vertical">
+
+    <ImageView
+        android:id="@id/signatureUpdateSignatureSummaryValidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_check_circle"
+        android:contentDescription="@string/signature_update_signature_valid" />
+
+    <TextView
+        android:id="@id/signatureUpdateSignatureSummaryText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/signature_update_signature_summary_text" />
+
+    <Button
+        android:id="@id/signatureUpdateSignatureSummarySignButton"
+        style="@style/Widget.Application.Button.ButtonBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/signature_update_signature_summary_sign_button" />
+
+</merge>

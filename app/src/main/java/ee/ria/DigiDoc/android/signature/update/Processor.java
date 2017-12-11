@@ -3,18 +3,22 @@ package ee.ria.DigiDoc.android.signature.update;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import org.threeten.bp.Instant;
+
 import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.document.data.Document;
+import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFile;
 import ee.ria.libdigidocpp.DataFiles;
+import ee.ria.libdigidocpp.Signatures;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -121,8 +125,24 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 documentBuilder.add(Document.create(dataFiles.get(i).fileName()));
             }
 
+            ImmutableList.Builder<Signature> signatureBuilder = ImmutableList.builder();
+            Signatures signatures = container.signatures();
+            for (int i = 0; i < signatures.size(); i++) {
+                ee.ria.libdigidocpp.Signature signature = signatures.get(i);
+                String name = signature.signedBy();
+                Instant createdAt = Instant.parse(signature.trustedSigningTime());
+                boolean valid;
+                try {
+                    signature.validate();
+                    valid = true;
+                } catch (Exception e) {
+                    valid = false;
+                }
+                signatureBuilder.add(Signature.create(name, createdAt, valid));
+            }
+
             return SignatureContainer.create(containerFile.getName(), documentBuilder.build(),
-                    container.signatures().size() > 0);
+                    container.signatures().size() > 0, signatureBuilder.build());
         });
     }
 
