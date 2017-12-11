@@ -7,6 +7,7 @@
     <style name="Theme.Application" parent="Base.Theme.Application">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorAccent">@color/accent</item>
+        <item name="colorError">@color/error</item>
         <item name="android:windowBackground">@color/windowBackground</item>
         <item name="android:imeOptions">flagNoExtractUi</item>
         <item name="toolbarStyle">@style/Widget.Application.Toolbar</item>
@@ -17,11 +18,19 @@
         <item name="buttonBarButtonStyle">@style/Widget.Application.Button.ButtonBar</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:activatedBackgroundIndicator">@drawable/activated_background</item>
+        <item name="textAppearanceListItem">@style/TextAppearance.Application.ListItem</item>
+        <item name="textAppearanceListItemSecondary">@style/TextAppearance.Application.ListItemSecondary</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.Application.BottomSheetDialog</item>
     </style>
 
     <style name="Theme.Application.Launch" parent="Theme.Application">
         <item name="android:windowBackground">@drawable/main_launch_bg</item>
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
+    </style>
+
+    <style name="Theme.Application.BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="textAppearanceListItem">@style/TextAppearance.Application.ListItem</item>
+        <item name="textAppearanceListItemSecondary">@style/TextAppearance.Application.ListItemSecondary</item>
     </style>
 
     <style name="ThemeOverlay.Application.Dark" parent="ThemeOverlay.AppCompat.Dark">

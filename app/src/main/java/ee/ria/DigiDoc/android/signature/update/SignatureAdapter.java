@@ -1,6 +1,8 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,11 +14,24 @@ import android.widget.TextView;
 import com.google.common.collect.ImmutableList;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.signature.data.Signature;
+import ee.ria.DigiDoc.android.utils.Formatter;
 
 final class SignatureAdapter extends RecyclerView.Adapter<SignatureAdapter.SignatureViewHolder> {
 
+    private final ColorStateList colorValid;
+    private final ColorStateList colorInvalid;
+    private final Formatter formatter;
+
     private ImmutableList<Signature> signatures = ImmutableList.of();
+
+    SignatureAdapter(Context context) {
+        Resources resources = context.getResources();
+        colorValid = ColorStateList.valueOf(resources.getColor(R.color.success));
+        colorInvalid = ColorStateList.valueOf(resources.getColor(R.color.error));
+        formatter = Application.component(context).formatter();
+    }
 
     void setSignatures(ImmutableList<Signature> signatures) {
         DiffUtil.DiffResult diffResult = DiffUtil
@@ -33,20 +48,22 @@ final class SignatureAdapter extends RecyclerView.Adapter<SignatureAdapter.Signa
 
     @Override
     public void onBindViewHolder(SignatureViewHolder holder, int position) {
-        Context context = holder.itemView.getContext();
+        Resources resources = holder.itemView.getResources();
 
         Signature signature = signatures.get(position);
 
         holder.nameView.setText(signature.name());
-        holder.createdAtView.setText(signature.createdAt().toString());
+        holder.createdAtView.setText(formatter.instant(signature.createdAt()));
         if (signature.valid()) {
             holder.validityView.setImageResource(R.drawable.ic_check_circle);
-            holder.validityView.setContentDescription(context.getString(
+            holder.validityView.setContentDescription(resources.getString(
                     R.string.signature_update_signature_valid));
+            holder.validityView.setImageTintList(colorValid);
         } else {
             holder.validityView.setImageResource(R.drawable.ic_error);
-            holder.validityView.setContentDescription(context.getString(
+            holder.validityView.setContentDescription(resources.getString(
                     R.string.signature_update_signature_invalid));
+            holder.validityView.setImageTintList(colorInvalid);
         }
     }
 

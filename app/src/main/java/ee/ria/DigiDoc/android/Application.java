@@ -37,6 +37,7 @@ import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.data.source.FileSystemSignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
+import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.conductor.ConductorNavigator;
 import ee.ria.DigiDoc.android.utils.conductor.ConductorViewModelProvider;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewModel;
@@ -107,6 +108,8 @@ public class Application extends android.app.Application {
         void inject(Activity activity);
 
         Navigator navigator();
+
+        Formatter formatter();
 
         MviViewModelProvider viewModelProvider();
 

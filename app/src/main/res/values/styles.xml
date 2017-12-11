@@ -33,4 +33,14 @@
     <style name="Widget.Application.ProgressBar" parent="Widget.AppCompat.ProgressBar">
     </style>
 
+    <style name="TextAppearance.Application.ListItem" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:textSize">@dimen/material_list_normal_primary_text_size</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="TextAppearance.Application.ListItemSecondary" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textSize">@dimen/material_list_normal_secondary_text_size</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
+
 </resources>

@@ -105,6 +105,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private final Subject<Intent.SignatureListVisibilityIntent>
             signatureListVisibilityIntentSubject = PublishSubject.create();
     private final BottomSheetDialog signatureListDialog;
+    private final RecyclerView signatureListView;
     private final SignatureAdapter signatureAdapter;
 
     private boolean documentsLocked = true;
@@ -137,9 +138,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
 
         signatureListDialog = new BottomSheetDialog(context);
         Context signatureListContext = signatureListDialog.getContext();
-        RecyclerView signatureListView = new RecyclerView(signatureListContext);
+        signatureListView = new RecyclerView(signatureListContext);
         signatureListView.setLayoutManager(new LinearLayoutManager(signatureListContext));
-        signatureListView.setAdapter(signatureAdapter = new SignatureAdapter());
+        signatureListView.setAdapter(signatureAdapter = new SignatureAdapter(signatureListContext));
         signatureListDialog.setContentView(signatureListView);
 
         documentsView.setLayoutManager(new LinearLayoutManager(context));
@@ -223,6 +224,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         }
 
         if (state.signatureListVisible()) {
+            signatureListView.scrollToPosition(0);
             signatureListDialog.show();
         } else {
             signatureListDialog.dismiss();
