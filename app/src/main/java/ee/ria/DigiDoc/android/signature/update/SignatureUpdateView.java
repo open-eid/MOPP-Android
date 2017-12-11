@@ -1,6 +1,8 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.BottomSheetDialog;
@@ -14,6 +16,7 @@ import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +40,7 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 import static android.app.Activity.RESULT_OK;
+import static android.support.v4.content.res.ResourcesCompat.getColor;
 import static com.jakewharton.rxbinding2.support.design.widget.RxSnackbar.dismisses;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
@@ -51,6 +55,11 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         MviView<Intent, ViewState> {
 
     private File containerFile;
+
+    private final Resources resources;
+
+    private final ColorStateList successTint;
+    private final ColorStateList errorTint;
 
     private final Toolbar toolbarView;
     private final View activityIndicatorView;
@@ -88,7 +97,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     };
     @Nullable private ActionMode documentsSelectionActionMode;
     private final View signatureSummaryView;
-    private final TextView signatureSummaryTextView;
+    private final ImageView signatureSummaryValidityView;
+    private final TextView signatureSummaryPrimaryTextView;
+    private final TextView signatureSummarySecondaryTextView;
 
     private final Navigator navigator;
     private final SignatureUpdateViewModel viewModel;
@@ -123,6 +134,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     public SignatureUpdateView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.signature_update, this);
+        resources = context.getResources();
+        successTint = ColorStateList.valueOf(getColor(resources, R.color.success, null));
+        errorTint = ColorStateList.valueOf(getColor(resources, R.color.error, null));
         toolbarView = findViewById(R.id.toolbar);
         activityIndicatorView = findViewById(R.id.activityIndicator);
         activityOverlayView = findViewById(R.id.activityOverlay);
@@ -134,7 +148,11 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 R.string.signature_update_documents_remove_error_container_empty,
                 BaseTransientBottomBar.LENGTH_LONG);
         signatureSummaryView = findViewById(R.id.signatureUpdateSignatureSummary);
-        signatureSummaryTextView = findViewById(R.id.signatureUpdateSignatureSummaryText);
+        signatureSummaryValidityView = findViewById(R.id.signatureUpdateSignatureSummaryValidity);
+        signatureSummaryPrimaryTextView = findViewById(
+                R.id.signatureUpdateSignatureSummaryPrimaryText);
+        signatureSummarySecondaryTextView = findViewById(
+                R.id.signatureUpdateSignatureSummarySecondaryText);
 
         signatureListDialog = new BottomSheetDialog(context);
         Context signatureListContext = signatureListDialog.getContext();
@@ -194,6 +212,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 ? ImmutableList.of()
                 : container.signatures();
         signatureCount = signatures.size();
+        int invalidSignatureCount = container == null ? 0 : container.invalidSignatureCount();
 
         toolbarView.setTitle(name);
         documentsAdapter.setDocuments(documents, selectedDocuments = state.selectedDocuments());
@@ -230,8 +249,27 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             signatureListDialog.dismiss();
         }
 
-        signatureSummaryTextView.setText(getResources().getString(
-                R.string.signature_update_signature_summary_text, signatureCount));
+        signatureSummaryValidityView.setVisibility(signatureCount > 0 ? VISIBLE : GONE);
+        signatureSummaryPrimaryTextView.setVisibility(signatureCount > 0 ? VISIBLE : GONE);
+        if (signatureCount == 0) {
+            signatureSummarySecondaryTextView.setText(
+                    R.string.signature_update_signature_summary_secondary_empty);
+        } else {
+            signatureSummaryPrimaryTextView.setText(resources.getString(
+                    R.string.signature_update_signature_summary_primary, signatureCount));
+            if (invalidSignatureCount == 0) {
+                signatureSummaryValidityView.setImageResource(R.drawable.ic_check_circle);
+                signatureSummaryValidityView.setImageTintList(successTint);
+                signatureSummarySecondaryTextView.setText(
+                        R.string.signature_update_signature_summary_secondary_valid);
+            } else {
+                signatureSummaryValidityView.setImageResource(R.drawable.ic_error);
+                signatureSummaryValidityView.setImageTintList(errorTint);
+                signatureSummarySecondaryTextView.setText(resources.getString(
+                        R.string.signature_update_signature_summary_secondary_invalid,
+                        invalidSignatureCount));
+            }
+        }
         signatureAdapter.setSignatures(signatures);
     }
 

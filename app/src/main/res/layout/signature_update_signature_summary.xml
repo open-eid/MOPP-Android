@@ -11,15 +11,35 @@
         android:id="@id/signatureUpdateSignatureSummaryValidity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/material_list_icon_first_position_margin_start"
         android:src="@drawable/ic_check_circle"
+        android:tint="@color/success"
         android:contentDescription="@string/signature_update_signature_valid" />
 
-    <TextView
-        android:id="@id/signatureUpdateSignatureSummaryText"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/signature_update_signature_summary_text" />
+        android:layout_marginStart="@dimen/material_list_icon_first_position_margin_start"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/material_baseline_grid_2.5x"
+        android:paddingBottom="@dimen/material_baseline_grid_2.5x">
+
+        <TextView
+            android:id="@id/signatureUpdateSignatureSummaryPrimaryText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:text="@string/signature_update_signature_summary_primary" />
+
+        <TextView
+            android:id="@id/signatureUpdateSignatureSummarySecondaryText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceListItemSecondary"
+            android:text="@string/signature_update_signature_summary_secondary_valid" />
+
+    </LinearLayout>
 
     <Button
         android:id="@id/signatureUpdateSignatureSummarySignButton"

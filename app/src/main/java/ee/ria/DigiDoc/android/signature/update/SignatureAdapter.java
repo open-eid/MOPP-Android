@@ -18,6 +18,8 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.utils.Formatter;
 
+import static android.support.v4.content.res.ResourcesCompat.getColor;
+
 final class SignatureAdapter extends RecyclerView.Adapter<SignatureAdapter.SignatureViewHolder> {
 
     private final ColorStateList colorValid;
@@ -28,8 +30,8 @@ final class SignatureAdapter extends RecyclerView.Adapter<SignatureAdapter.Signa
 
     SignatureAdapter(Context context) {
         Resources resources = context.getResources();
-        colorValid = ColorStateList.valueOf(resources.getColor(R.color.success));
-        colorInvalid = ColorStateList.valueOf(resources.getColor(R.color.error));
+        colorValid = ColorStateList.valueOf(getColor(resources, R.color.success, null));
+        colorInvalid = ColorStateList.valueOf(getColor(resources, R.color.error, null));
         formatter = Application.component(context).formatter();
     }
 

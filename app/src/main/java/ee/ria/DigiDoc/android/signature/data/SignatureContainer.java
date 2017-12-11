@@ -26,6 +26,16 @@ public abstract class SignatureContainer {
 
     public abstract ImmutableList<Signature> signatures();
 
+    public int invalidSignatureCount() {
+        int count = 0;
+        for (Signature signature : signatures()) {
+            if (!signature.valid()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public static SignatureContainer create(String name, ImmutableList<Document> documents,
                                             boolean documentsLocked,
                                             ImmutableList<Signature> signatures) {
