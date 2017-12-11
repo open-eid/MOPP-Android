@@ -1,12 +1,25 @@
 package ee.ria.DigiDoc.android.signature.data.source;
 
+import android.support.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import org.spongycastle.asn1.ASN1ObjectIdentifier;
+import org.spongycastle.asn1.x500.RDN;
+import org.spongycastle.asn1.x500.X500Name;
+import org.spongycastle.asn1.x500.style.BCStyle;
+import org.spongycastle.asn1.x500.style.IETFUtils;
+import org.spongycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.threeten.bp.Instant;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -24,6 +37,7 @@ import ee.ria.libdigidocpp.DataFiles;
 import ee.ria.libdigidocpp.Signatures;
 import io.reactivex.Completable;
 import io.reactivex.Single;
+import timber.log.Timber;
 
 import static com.google.common.io.Files.getNameWithoutExtension;
 import static ee.ria.DigiDoc.android.signature.data.SignatureContainer.isContainerFile;
@@ -88,7 +102,10 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
             for (int i = 0; i < signatures.size(); i++) {
                 ee.ria.libdigidocpp.Signature signature = signatures.get(i);
                 String id = signature.id();
-                String name = signature.signedBy();
+                String name = getCertificateCN(signature.signingCertificateDer());
+                if (name == null) {
+                    name = signature.signedBy();
+                }
                 Instant createdAt = Instant.parse(signature.trustedSigningTime());
                 boolean valid;
                 try {
@@ -162,5 +179,39 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
             throw new IllegalArgumentException("Could not find file " + document.name() +
                     " in container " + containerFile);
         });
+    }
+
+    @Nullable private static String getCertificateCN(byte[] signingCertificateDer) {
+        if (signingCertificateDer == null || signingCertificateDer.length == 0) {
+            return null;
+        }
+
+        X509Certificate certificate = null;
+        try {
+            certificate = (X509Certificate) CertificateFactory.getInstance("X.509")
+                    .generateCertificate(new ByteArrayInputStream(signingCertificateDer));
+        } catch (CertificateException e) {
+            Timber.e(e, "Error generating certificate");
+        }
+        if (certificate == null) {
+            return null;
+        }
+
+        X500Name x500name = null;
+        try {
+            x500name = new JcaX509CertificateHolder(certificate).getSubject();
+        } catch (CertificateEncodingException e) {
+            Timber.e(e, "Error getting value by ASN1 Object identifier");
+        }
+        if (x500name == null) {
+            return null;
+        }
+
+        RDN[] rdNs = x500name.getRDNs(ASN1ObjectIdentifier.getInstance(BCStyle.CN));
+        if (rdNs.length == 0) {
+            return null;
+        }
+
+        return IETFUtils.valueToString(rdNs[0].getFirst().getValue());
     }
 }
