@@ -45,6 +45,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:layout_insetEdge="bottom"
+        android:clickable="true"
+        android:focusable="true"
         android:minHeight="64dp"
         android:background="?attr/colorPrimary"
         android:elevation="@dimen/material_elevation_app_bar" />

@@ -72,4 +72,14 @@ interface Action extends MviAction {
             return new AutoValue_Action_RemoveDocumentsAction(containerFile, documents);
         }
     }
+
+    @AutoValue
+    abstract class SignatureListVisibilityAction implements Action {
+
+        abstract boolean isVisible();
+
+        static SignatureListVisibilityAction create(boolean isVisible) {
+            return new AutoValue_Action_SignatureListVisibilityAction(isVisible);
+        }
+    }
 }

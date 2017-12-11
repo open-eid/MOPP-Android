@@ -34,6 +34,8 @@ abstract class ViewState implements MviViewState {
 
     @Nullable abstract Throwable removeDocumentsError();
 
+    abstract boolean signatureListVisible();
+
     abstract Builder buildWith();
 
     static ViewState initial() {
@@ -41,6 +43,7 @@ abstract class ViewState implements MviViewState {
                 .loadContainerInProgress(false)
                 .pickingDocuments(false)
                 .documentsProgress(false)
+                .signatureListVisible(false)
                 .build();
     }
 
@@ -56,6 +59,7 @@ abstract class ViewState implements MviViewState {
         Builder openDocumentError(@Nullable Throwable openDocumentError);
         Builder selectedDocuments(ImmutableSet<Document> selectedDocuments);
         Builder removeDocumentsError(@Nullable Throwable removeDocumentsError);
+        Builder signatureListVisible(boolean signatureListVisible);
         ViewState build();
     }
 }

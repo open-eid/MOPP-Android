@@ -178,4 +178,21 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_RemoveDocumentsResult(false, null, null);
         }
     }
+
+    @AutoValue
+    abstract class SignatureListVisibilityResult implements Result {
+
+        abstract boolean isVisible();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .signatureListVisible(isVisible())
+                    .build();
+        }
+
+        static SignatureListVisibilityResult create(boolean isVisible) {
+            return new AutoValue_Result_SignatureListVisibilityResult(isVisible);
+        }
+    }
 }

@@ -38,6 +38,9 @@ public final class SignatureUpdateViewModel extends
                     (Intent.RemoveDocumentsIntent) intent;
             return Action.RemoveDocumentsAction.create(removeDocumentsIntent.containerFile(),
                     removeDocumentsIntent.documents());
+        } else if (intent instanceof Intent.SignatureListVisibilityIntent) {
+            return Action.SignatureListVisibilityAction
+                    .create(((Intent.SignatureListVisibilityIntent) intent).isVisible());
         }
         throw new IllegalArgumentException("Unknown intent " + intent);
     }

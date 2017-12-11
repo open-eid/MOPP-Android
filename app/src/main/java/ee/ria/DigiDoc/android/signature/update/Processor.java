@@ -26,6 +26,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<Action.RemoveDocumentsAction,
                                         Result.RemoveDocumentsResult> removeDocuments;
 
+    private final ObservableTransformer<Action.SignatureListVisibilityAction,
+                                        Result.SignatureListVisibilityResult>
+            signatureListVisibility;
+
     @Inject Processor(SignatureContainerDataSource signatureContainerDataSource) {
         loadContainer = upstream -> upstream.flatMap(action ->
                 signatureContainerDataSource.get(action.containerFile())
@@ -87,6 +91,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .startWith(Result.RemoveDocumentsResult.progress());
             }
         });
+
+        signatureListVisibility = upstream -> upstream.map(action ->
+                Result.SignatureListVisibilityResult.create(action.isVisible()));
     }
 
     @SuppressWarnings("unchecked")
@@ -97,6 +104,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.AddDocumentsAction.class).compose(addDocuments),
                 shared.ofType(Action.OpenDocumentAction.class).compose(openDocument),
                 shared.ofType(Action.DocumentsSelectionAction.class).compose(documentsSelection),
-                shared.ofType(Action.RemoveDocumentsAction.class).compose(removeDocuments)));
+                shared.ofType(Action.RemoveDocumentsAction.class).compose(removeDocuments),
+                shared.ofType(Action.SignatureListVisibilityAction.class)
+                        .compose(signatureListVisibility)));
     }
 }

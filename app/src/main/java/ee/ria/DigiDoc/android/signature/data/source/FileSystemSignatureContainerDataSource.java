@@ -87,6 +87,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
             Signatures signatures = container.signatures();
             for (int i = 0; i < signatures.size(); i++) {
                 ee.ria.libdigidocpp.Signature signature = signatures.get(i);
+                String id = signature.id();
                 String name = signature.signedBy();
                 Instant createdAt = Instant.parse(signature.trustedSigningTime());
                 boolean valid;
@@ -96,7 +97,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
                 } catch (Exception e) {
                     valid = false;
                 }
-                signatureBuilder.add(Signature.create(name, createdAt, valid));
+                signatureBuilder.add(Signature.create(id, name, createdAt, valid));
             }
 
             return SignatureContainer.create(containerFile.getName(), documentBuilder.build(),

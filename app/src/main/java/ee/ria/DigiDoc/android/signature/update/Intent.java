@@ -89,4 +89,14 @@ interface Intent extends MviIntent {
             return new AutoValue_Intent_RemoveDocumentsIntent(null, null);
         }
     }
+
+    @AutoValue
+    abstract class SignatureListVisibilityIntent implements Intent {
+
+        abstract boolean isVisible();
+
+        static SignatureListVisibilityIntent create(boolean isVisible) {
+            return new AutoValue_Intent_SignatureListVisibilityIntent(isVisible);
+        }
+    }
 }
