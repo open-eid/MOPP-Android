@@ -1,104 +1,92 @@
 package ee.ria.DigiDoc.android.signature.update;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import org.threeten.bp.Instant;
-
-import java.io.File;
-import java.io.IOException;
-
 import javax.inject.Inject;
 
-import ee.ria.DigiDoc.android.document.data.Document;
-import ee.ria.DigiDoc.android.signature.data.Signature;
-import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
-import ee.ria.DigiDoc.android.utils.files.FileStream;
-import ee.ria.DigiDoc.android.utils.files.FileSystem;
-import ee.ria.libdigidocpp.Container;
-import ee.ria.libdigidocpp.DataFile;
-import ee.ria.libdigidocpp.DataFiles;
-import ee.ria.libdigidocpp.Signatures;
-import io.reactivex.Completable;
+import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Action.LoadContainerAction,
-                                        Result.LoadContainerResult> loadContainer =
-            upstream -> upstream.flatMap(action -> loadContainer(action.containerFile())
-                    .toObservable()
-                    .map(Result.LoadContainerResult::success)
-                    .onErrorReturn(AutoValue_Result_LoadContainerResult::failure)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .startWith(Result.LoadContainerResult.progress()));
+                                        Result.LoadContainerResult> loadContainer;
 
     private final ObservableTransformer<Action.AddDocumentsAction,
-                                        Result.AddDocumentsResult> addDocuments =
-            upstream -> upstream.flatMap(action -> {
-                if (action.containerFile() == null) {
-                    return Observable.just(Result.AddDocumentsResult.clear());
-                } else if (action.fileStreams() == null) {
-                    return Observable.just(Result.AddDocumentsResult.picking());
-                } else {
-                    return addDocuments(action.containerFile(), action.fileStreams())
-                            .toObservable()
-                            .map(Result.AddDocumentsResult::success)
-                            .onErrorReturn(Result.AddDocumentsResult::failure)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .startWith(Result.AddDocumentsResult.adding());
-                }
-            });
+                                        Result.AddDocumentsResult> addDocuments;
 
     private final ObservableTransformer<Action.OpenDocumentAction,
-                                        Result.OpenDocumentResult> openDocument =
-            upstream -> upstream.flatMap(action -> {
-                if (action.containerFile() == null) {
-                    return Observable.just(Result.OpenDocumentResult.clear());
-                } else {
-                    return loadDocument(action.containerFile(), action.document())
-                            .toObservable()
-                            .map(Result.OpenDocumentResult::success)
-                            .onErrorReturn(Result.OpenDocumentResult::failure)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .startWith(Result.OpenDocumentResult.opening());
-                }
-            });
+                                        Result.OpenDocumentResult> openDocument;
 
     private final ObservableTransformer<Action.DocumentsSelectionAction,
-                                        Result.DocumentsSelectionResult> documentsSelection =
-            upstream -> upstream.map(action ->
-                    Result.DocumentsSelectionResult.create(action.documents()));
+                                        Result.DocumentsSelectionResult> documentsSelection;
 
     private final ObservableTransformer<Action.RemoveDocumentsAction,
-                                        Result.RemoveDocumentsResult> removeDocuments =
-            upstream -> upstream.flatMap(action -> {
-                if (action.containerFile() == null) {
-                    return Observable.just(Result.RemoveDocumentsResult.clear());
-                } else {
-                    return removeDocuments(action.containerFile(), action.documents())
-                            .toObservable()
-                            .map(Result.RemoveDocumentsResult::success)
-                            .onErrorReturn(Result.RemoveDocumentsResult::failure)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .startWith(Result.RemoveDocumentsResult.progress());
-                }
-            });
+                                        Result.RemoveDocumentsResult> removeDocuments;
 
-    private final FileSystem fileSystem;
+    @Inject Processor(SignatureContainerDataSource signatureContainerDataSource) {
+        loadContainer = upstream -> upstream.flatMap(action ->
+                signatureContainerDataSource.get(action.containerFile())
+                        .toObservable()
+                        .map(Result.LoadContainerResult::success)
+                        .onErrorReturn(AutoValue_Result_LoadContainerResult::failure)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(Result.LoadContainerResult.progress()));
 
-    @Inject
-    Processor(FileSystem fileSystem) {
-        this.fileSystem = fileSystem;
+        addDocuments = upstream -> upstream.flatMap(action -> {
+            if (action.containerFile() == null) {
+                return Observable.just(Result.AddDocumentsResult.clear());
+            } else if (action.fileStreams() == null) {
+                return Observable.just(Result.AddDocumentsResult.picking());
+            } else {
+                return signatureContainerDataSource
+                        .addDocuments(action.containerFile(), action.fileStreams())
+                        .andThen(signatureContainerDataSource.get(action.containerFile()))
+                        .toObservable()
+                        .map(Result.AddDocumentsResult::success)
+                        .onErrorReturn(Result.AddDocumentsResult::failure)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(Result.AddDocumentsResult.adding());
+            }
+        });
+
+        openDocument = upstream -> upstream.flatMap(action -> {
+            if (action.containerFile() == null) {
+                return Observable.just(Result.OpenDocumentResult.clear());
+            } else {
+                return signatureContainerDataSource
+                        .getDocumentFile(action.containerFile(), action.document())
+                        .toObservable()
+                        .map(Result.OpenDocumentResult::success)
+                        .onErrorReturn(Result.OpenDocumentResult::failure)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(Result.OpenDocumentResult.opening());
+            }
+        });
+
+        documentsSelection = upstream -> upstream.map(action ->
+                Result.DocumentsSelectionResult.create(action.documents()));
+
+        removeDocuments = upstream -> upstream.flatMap(action -> {
+            if (action.containerFile() == null) {
+                return Observable.just(Result.RemoveDocumentsResult.clear());
+            } else {
+                return signatureContainerDataSource
+                        .removeDocuments(action.containerFile(), action.documents())
+                        .andThen(signatureContainerDataSource.get(action.containerFile()))
+                        .toObservable()
+                        .map(Result.RemoveDocumentsResult::success)
+                        .onErrorReturn(Result.RemoveDocumentsResult::failure)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(Result.RemoveDocumentsResult.progress());
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -110,97 +98,5 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.OpenDocumentAction.class).compose(openDocument),
                 shared.ofType(Action.DocumentsSelectionAction.class).compose(documentsSelection),
                 shared.ofType(Action.RemoveDocumentsAction.class).compose(removeDocuments)));
-    }
-
-    private Single<SignatureContainer> loadContainer(File containerFile) {
-        return Single.fromCallable(() -> {
-            Container container = Container.open(containerFile.getAbsolutePath());
-            if (container == null) {
-                throw new IOException("Could not open signature container " + containerFile);
-            }
-
-            ImmutableList.Builder<Document> documentBuilder = ImmutableList.builder();
-            DataFiles dataFiles = container.dataFiles();
-            for (int i = 0; i < dataFiles.size(); i++) {
-                documentBuilder.add(Document.create(dataFiles.get(i).fileName()));
-            }
-
-            ImmutableList.Builder<Signature> signatureBuilder = ImmutableList.builder();
-            Signatures signatures = container.signatures();
-            for (int i = 0; i < signatures.size(); i++) {
-                ee.ria.libdigidocpp.Signature signature = signatures.get(i);
-                String name = signature.signedBy();
-                Instant createdAt = Instant.parse(signature.trustedSigningTime());
-                boolean valid;
-                try {
-                    signature.validate();
-                    valid = true;
-                } catch (Exception e) {
-                    valid = false;
-                }
-                signatureBuilder.add(Signature.create(name, createdAt, valid));
-            }
-
-            return SignatureContainer.create(containerFile.getName(), documentBuilder.build(),
-                    container.signatures().size() > 0, signatureBuilder.build());
-        });
-    }
-
-    private Single<SignatureContainer> addDocuments(final File containerFile,
-                                                    ImmutableList<FileStream> fileStreams) {
-        return Completable.fromAction(() -> {
-            Container container = Container.open(containerFile.getAbsolutePath());
-            if (container == null) {
-                throw new IOException("Could not open signature container " + containerFile);
-            }
-            for (FileStream fileStream : fileStreams) {
-                File file = fileSystem.cache(fileStream);
-                String mimeType = fileSystem.getMimeType(file);
-                container.addDataFile(file.getAbsolutePath(), mimeType);
-            }
-            container.save();
-        }).andThen(loadContainer(containerFile));
-    }
-
-    private Single<File> loadDocument(File containerFile, Document document) {
-        return Single.fromCallable(() -> {
-            Container container = Container.open(containerFile.getAbsolutePath());
-            if (container == null) {
-                throw new IOException("Could not open signature container " + containerFile);
-            }
-
-            DataFiles dataFiles = container.dataFiles();
-            for (int i = 0; i < dataFiles.size(); i++) {
-                DataFile dataFile = dataFiles.get(i);
-                if (document.name().equals(dataFile.fileName())) {
-                    File file = fileSystem.getCacheFile(document.name());
-                    dataFile.saveAs(file.getAbsolutePath());
-                    return file;
-                }
-            }
-
-            throw new IllegalArgumentException("Could not find file " + document.name() +
-                    " in container " + containerFile);
-        });
-    }
-
-    private Single<SignatureContainer> removeDocuments(File containerFile,
-                                                       ImmutableSet<Document> documents) {
-        return Completable.fromAction(() -> {
-            Container container = Container.open(containerFile.getAbsolutePath());
-            if (container == null) {
-                throw new IOException("Could not open signature container " + containerFile);
-            }
-            for (Document document : documents) {
-                DataFiles dataFiles = container.dataFiles();
-                for (int i = 0; i < dataFiles.size(); i++) {
-                    if (document.name().equals(dataFiles.get(i).fileName())) {
-                        container.removeDataFile(i);
-                        break;
-                    }
-                }
-            }
-            container.save();
-        }).andThen(loadContainer(containerFile));
     }
 }

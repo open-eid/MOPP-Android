@@ -34,6 +34,8 @@ import dagger.Module;
 import dagger.multibindings.IntoMap;
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
+import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
+import ee.ria.DigiDoc.android.signature.data.source.FileSystemSignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.conductor.ConductorNavigator;
 import ee.ria.DigiDoc.android.utils.conductor.ConductorViewModelProvider;
@@ -122,6 +124,10 @@ public class Application extends android.app.Application {
 
         @SuppressWarnings("unused")
         @Binds abstract Navigator navigator(ConductorNavigator conductorNavigator);
+
+        @SuppressWarnings("unused")
+        @Binds abstract SignatureContainerDataSource signatureContainerDataSource(
+                FileSystemSignatureContainerDataSource fileSystemSignatureContainerDataSource);
 
         @SuppressWarnings("unused")
         @Binds abstract MviViewModelProvider viewModelProvider(
