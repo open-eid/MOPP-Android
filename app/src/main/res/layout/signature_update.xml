@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.support.design.widget.CoordinatorLayout"
+    tools:layout_width="match_parent"
+    tools:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@id/toolbar"
+            android:theme="@style/ThemeOverlay.Application.ActionBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:navigationIcon="@drawable/ic_clear"
+            app:navigationContentDescription="@string/close" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@id/signatureUpdateDocuments"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:scrollbars="vertical" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@id/signatureUpdateDocumentsAddButton"
+        style="@style/Widget.Application.FloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/material_button_fab_edge_margin"
+        android:src="@drawable/ic_add"
+        android:contentDescription="@string/signature_update_documents_add_button"
+        android:visibility="gone" />
+
+    <ee.ria.DigiDoc.android.signature.update.SignatureUpdateSignatureSummaryView
+        android:id="@id/signatureUpdateSignatureSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:layout_insetEdge="bottom"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/colorPrimary"
+        android:elevation="@dimen/material_elevation_app_bar" />
+
+    <FrameLayout
+        android:id="@id/activityOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/activityOverlayBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:translationZ="@dimen/material_elevation_dialog" />
+
+    <ProgressBar
+        android:id="@id/activityIndicator"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/appBar"
+        app:layout_anchorGravity="bottom"
+        android:indeterminate="true" />
+
+</merge>

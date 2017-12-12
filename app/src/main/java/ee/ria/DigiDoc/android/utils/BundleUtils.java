@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.google.common.collect.ImmutableList;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public final class BundleUtils {
@@ -22,5 +23,14 @@ public final class BundleUtils {
     public static <T extends Parcelable> ImmutableList<T> getParcelableImmutableList(Bundle bundle,
                                                                                      String key) {
         return ImmutableList.copyOf(bundle.getParcelableArrayList(key));
+    }
+
+    public static void putFile(Bundle bundle, String key, File value) {
+        bundle.putString(key, value.getAbsolutePath());
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static File getFile(Bundle bundle, String key) {
+        return new File(bundle.getString(key));
     }
 }

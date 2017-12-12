@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -31,5 +32,11 @@ public final class Activity extends AppCompatActivity {
         if (!conductorNavigator.handleBack()) {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        conductorNavigator.onActivityResult(requestCode, resultCode, data);
     }
 }

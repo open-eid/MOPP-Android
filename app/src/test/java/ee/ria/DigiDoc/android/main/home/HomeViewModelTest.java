@@ -16,7 +16,7 @@ public final class HomeViewModelTest {
     @Before
     public void before() {
         HomeViewModel viewModel = new HomeViewModel();
-        states = viewModel.states().test();
+        states = viewModel.viewStates().test();
         viewModel.process(intents = PublishSubject.create());
     }
 

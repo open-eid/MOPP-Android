@@ -33,18 +33,26 @@
         <item>BDOC</item>
     </string-array>
 
-    <!-- Documents List -->
-    <string name="document_list_title">Manage documents</string>
-    <string name="document_list_expand_button">View all</string>
-    <string name="document_list_add_button">Add document</string>
-
     <!-- Signature Home -->
     <string name="signature_home_create_text">Choose a file to sign or check</string>
     <string name="signature_home_create_button">Choose file</string>
 
-    <!-- Signature Container -->
-    <string name="signature_container_documents">Container files</string>
-    <string name="signature_container_signatures">Container signatures</string>
+    <!-- Signature Create -->
+    <string name="signature_create_error">Could not load selected files</string>
+
+    <!-- Signature Update -->
+    <string name="signature_update_documents_add_button">Add documents</string>
+    <string name="signature_update_load_container_error">Could not open signature container</string>
+    <string name="signature_update_add_documents_error_exists">File already exists in the container</string>
+    <string name="signature_update_documents_remove_button">Remove selected documents</string>
+    <string name="signature_update_documents_remove_error_container_empty">Can\'t remove all documents from container</string>
+    <string name="signature_update_signature_valid">Signature is valid</string>
+    <string name="signature_update_signature_invalid">Signature is not valid</string>
+    <string name="signature_update_signature_summary_primary">Signatures (%d)</string>
+    <string name="signature_update_signature_summary_secondary_empty">No signatures added to this container yet</string>
+    <string name="signature_update_signature_summary_secondary_valid">All signatures are valid</string>
+    <string name="signature_update_signature_summary_secondary_invalid">Some signatures are invalid (%d)</string>
+    <string name="signature_update_signature_summary_sign_button">Sign</string>
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Choose a file to crypt or decrypt</string>

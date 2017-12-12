@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="application_name">RIA DigiDoc (debug)</string>
+
+    <string name="file_provider_authority">ee.ria.digidoc.debug.fileprovider</string>
+
+</resources>

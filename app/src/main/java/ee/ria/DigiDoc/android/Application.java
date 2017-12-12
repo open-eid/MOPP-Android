@@ -22,14 +22,26 @@ package ee.ria.DigiDoc.android;
 import android.content.Context;
 import android.os.StrictMode;
 
+import com.jakewharton.threetenabp.AndroidThreeTen;
+
 import javax.inject.Singleton;
 
 import dagger.Binds;
 import dagger.BindsInstance;
 import dagger.Component;
+import dagger.MapKey;
 import dagger.Module;
+import dagger.multibindings.IntoMap;
 import ee.ria.DigiDoc.BuildConfig;
+import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
+import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
+import ee.ria.DigiDoc.android.signature.data.source.FileSystemSignatureContainerDataSource;
+import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
+import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.conductor.ConductorNavigator;
+import ee.ria.DigiDoc.android.utils.conductor.ConductorViewModelProvider;
+import ee.ria.DigiDoc.android.utils.mvi.MviViewModel;
+import ee.ria.DigiDoc.android.utils.mvi.MviViewModelProvider;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 import ee.ria.DigiDoc.configuration.Configuration;
 import timber.log.Timber;
@@ -41,6 +53,7 @@ public class Application extends android.app.Application {
         setupStrictMode();
         super.onCreate();
         setupTimber();
+        setupThreeTenAbp();
         setupContainerConfiguration();
         setupDagger();
     }
@@ -60,6 +73,12 @@ public class Application extends android.app.Application {
             Timber.plant(new Timber.DebugTree());
         }
         // TODO error reporting
+    }
+
+    // ThreeTenAbp
+
+    private void setupThreeTenAbp() {
+        AndroidThreeTen.init(this);
     }
 
     // Container configuration
@@ -90,6 +109,10 @@ public class Application extends android.app.Application {
 
         Navigator navigator();
 
+        Formatter formatter();
+
+        MviViewModelProvider viewModelProvider();
+
         @Component.Builder
         interface Builder {
 
@@ -104,5 +127,26 @@ public class Application extends android.app.Application {
 
         @SuppressWarnings("unused")
         @Binds abstract Navigator navigator(ConductorNavigator conductorNavigator);
+
+        @SuppressWarnings("unused")
+        @Binds abstract SignatureContainerDataSource signatureContainerDataSource(
+                FileSystemSignatureContainerDataSource fileSystemSignatureContainerDataSource);
+
+        @SuppressWarnings("unused")
+        @Binds abstract MviViewModelProvider viewModelProvider(
+                ConductorViewModelProvider conductorViewModelProvider);
+
+        @Binds @IntoMap @SuppressWarnings("unused")
+        @ViewModelKey(SignatureCreateViewModel.class)
+        abstract MviViewModel signatureCreateViewModel(SignatureCreateViewModel viewModel);
+
+        @Binds @IntoMap @SuppressWarnings("unused")
+        @ViewModelKey(SignatureUpdateViewModel.class)
+        abstract MviViewModel signatureUpdateModel(SignatureUpdateViewModel viewModel);
+    }
+
+    @MapKey
+    @interface ViewModelKey {
+        Class<? extends MviViewModel> value();
     }
 }

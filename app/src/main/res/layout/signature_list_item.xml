@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingTop="@dimen/material_baseline_grid_2.5x"
+    android:paddingBottom="@dimen/material_baseline_grid_2.5x">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/material_list_text_first_position_margin_start"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@id/signatureUpdateSignatureName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceListItem"
+            tools:text="Mari Maasikas, 48405050123" />
+
+        <TextView
+            android:id="@id/signatureUpdateSignatureCreatedAt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceListItemSecondary"
+            tools:text="01 June 2015 13:45" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@id/signatureUpdateSignatureValidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/material_list_icon_last_position_margin_horizontal"
+        android:layout_marginEnd="@dimen/material_list_icon_last_position_margin_horizontal"
+        android:src="@drawable/ic_check_circle"
+        android:tint="@color/success"
+        android:contentDescription="@string/signature_update_signature_valid" />
+
+</LinearLayout>

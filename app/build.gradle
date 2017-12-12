@@ -14,6 +14,24 @@ android {
         multiDexEnabled true
     }
 
+    signingConfigs {
+        debug {
+            storeFile file('../debug.keystore')
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+        }
+        develop {
+            debuggable true
+            applicationIdSuffix '.develop'
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['debug']
+        }
+    }
+
     lintOptions {
         lintConfig file('../lint.xml')
     }
@@ -62,6 +80,8 @@ dependencies {
     implementation "com.google.auto.value:auto-value:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
     annotationProcessor "com.ryanharter.auto.value:auto-value-parcel:${autoValueParcelVersion}"
+
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.0.5'
 
     implementation project(':scardcomlibrary')
     implementation project(':tokenlibrary')
