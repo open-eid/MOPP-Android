@@ -34,6 +34,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         Result.SignatureRemoveSelectionResult>
             signatureRemoveSelection;
 
+    private final ObservableTransformer<Action.SignatureRemoveAction,
+                                        Result.SignatureRemoveResult> signatureRemove;
+
     @Inject Processor(SignatureContainerDataSource signatureContainerDataSource) {
         loadContainer = upstream -> upstream.flatMap(action ->
                 signatureContainerDataSource.get(action.containerFile())
@@ -101,6 +104,22 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         signatureRemoveSelection = upstream -> upstream.map(action ->
                 Result.SignatureRemoveSelectionResult.create(action.signature()));
+
+        signatureRemove = upstream -> upstream.flatMap(action -> {
+            if (action.containerFile() == null) {
+                return Observable.just(Result.SignatureRemoveResult.clear());
+            } else {
+                return signatureContainerDataSource
+                        .removeSignature(action.containerFile(), action.signature())
+                        .andThen(signatureContainerDataSource.get(action.containerFile()))
+                        .toObservable()
+                        .map(Result.SignatureRemoveResult::success)
+                        .onErrorReturn(Result.SignatureRemoveResult::failure)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(Result.SignatureRemoveResult.progress());
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -115,6 +134,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.SignatureListVisibilityAction.class)
                         .compose(signatureListVisibility),
                 shared.ofType(Action.SignatureRemoveSelectionAction.class)
-                        .compose(signatureRemoveSelection)));
+                        .compose(signatureRemoveSelection),
+                shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove)));
     }
 }

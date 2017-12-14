@@ -36,6 +36,7 @@ import static com.jakewharton.rxbinding2.view.RxView.clicks;
 final class SignatureAdapter extends RecyclerView.Adapter<SignatureAdapter.SignatureViewHolder> {
 
     private final Subject<Optional<Signature>> removeSelectionsSubject = PublishSubject.create();
+    private final Subject<Signature> removesSubject = PublishSubject.create();
 
     private final TouchCallback touchCallback = new TouchCallback();
 
@@ -85,6 +86,10 @@ final class SignatureAdapter extends RecyclerView.Adapter<SignatureAdapter.Signa
         }
     }
 
+    Observable<Signature> removes() {
+        return removesSubject;
+    }
+
     @Override
     public SignatureViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new SignatureViewHolder(LayoutInflater.from(parent.getContext())
@@ -120,7 +125,9 @@ final class SignatureAdapter extends RecyclerView.Adapter<SignatureAdapter.Signa
         clicks(holder.removeContainer)
                 .map(ignored -> Optional.<Signature>absent())
                 .subscribe(removeSelectionsSubject);
-        clicks(holder.removeButton).subscribe();
+        clicks(holder.removeButton)
+                .map(ignored -> signatures.get(holder.getAdapterPosition()))
+                .subscribe(removesSubject);
     }
 
     @Override

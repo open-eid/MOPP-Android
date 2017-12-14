@@ -213,4 +213,42 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_SignatureRemoveSelectionResult(signature);
         }
     }
+
+    @AutoValue
+    abstract class SignatureRemoveResult implements Result {
+
+        abstract boolean inProgress();
+
+        @Nullable abstract SignatureContainer container();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            ViewState.Builder builder = state.buildWith()
+                    .signatureRemoveInProgress(inProgress())
+                    .signatureRemoveError(error());
+            if (container() != null) {
+                builder.container(container())
+                        .signatureRemoveSelection(null);
+            }
+            return builder.build();
+        }
+
+        static SignatureRemoveResult progress() {
+            return new AutoValue_Result_SignatureRemoveResult(true, null, null);
+        }
+
+        static SignatureRemoveResult success(SignatureContainer container) {
+            return new AutoValue_Result_SignatureRemoveResult(false, container, null);
+        }
+
+        static SignatureRemoveResult failure(Throwable error) {
+            return new AutoValue_Result_SignatureRemoveResult(false, null, error);
+        }
+
+        static SignatureRemoveResult clear() {
+            return new AutoValue_Result_SignatureRemoveResult(false, null, null);
+        }
+    }
 }

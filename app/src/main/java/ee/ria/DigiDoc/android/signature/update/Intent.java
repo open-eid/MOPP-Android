@@ -110,4 +110,20 @@ interface Intent extends MviIntent {
             return new AutoValue_Intent_SignatureRemoveSelectionIntent(signature);
         }
     }
+
+    @AutoValue
+    abstract class SignatureRemoveIntent implements Intent {
+
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract Signature signature();
+
+        static SignatureRemoveIntent create(File containerFile, Signature signature) {
+            return new AutoValue_Intent_SignatureRemoveIntent(containerFile, signature);
+        }
+
+        static SignatureRemoveIntent clear() {
+            return new AutoValue_Intent_SignatureRemoveIntent(null, null);
+        }
+    }
 }

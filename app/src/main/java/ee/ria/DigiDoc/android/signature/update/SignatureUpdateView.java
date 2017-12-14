@@ -178,7 +178,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), addDocumentsIntent(), openDocumentIntent(),
                 documentsSelectionIntent(), removeDocumentsIntent(),
-                signatureListVisibilityIntent(), signatureRemoveSelectionIntent());
+                signatureListVisibilityIntent(), signatureRemoveSelectionIntent(),
+                signatureRemoveIntent());
     }
 
     @Override
@@ -315,6 +316,11 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         //noinspection Guava
         return signatureAdapter.removeSelections()
                 .map(signature -> Intent.SignatureRemoveSelectionIntent.create(signature.orNull()));
+    }
+
+    private Observable<Intent.SignatureRemoveIntent> signatureRemoveIntent() {
+        return signatureAdapter.removes()
+                .map(signature -> Intent.SignatureRemoveIntent.create(containerFile, signature));
     }
 
     @Override

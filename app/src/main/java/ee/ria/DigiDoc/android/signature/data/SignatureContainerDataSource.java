@@ -21,4 +21,6 @@ public interface SignatureContainerDataSource {
     Completable removeDocuments(File containerFile, ImmutableSet<Document> documents);
 
     Single<File> getDocumentFile(File containerFile, Document document);
+
+    Completable removeSignature(File containerFile, Signature signature);
 }

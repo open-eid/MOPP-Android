@@ -181,6 +181,24 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
         });
     }
 
+    @Override
+    public Completable removeSignature(File containerFile, Signature signature) {
+        return Completable.fromAction(() -> {
+            Container container = Container.open(containerFile.getAbsolutePath());
+            if (container == null) {
+                throw new IOException("Could not open signature container " + containerFile);
+            }
+            Signatures signatures = container.signatures();
+            for (int i = 0; i < signatures.size(); i++) {
+                if (signature.id().equals(signatures.get(i).id())) {
+                    container.removeSignature(i);
+                    break;
+                }
+            }
+            container.save();
+        });
+    }
+
     @Nullable private static String getCertificateCN(byte[] signingCertificateDer) {
         if (signingCertificateDer == null || signingCertificateDer.length == 0) {
             return null;

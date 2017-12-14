@@ -44,6 +44,11 @@ public final class SignatureUpdateViewModel extends
         } else if (intent instanceof Intent.SignatureRemoveSelectionIntent) {
             return Action.SignatureRemoveSelectionAction
                     .create(((Intent.SignatureRemoveSelectionIntent) intent).signature());
+        } else if (intent instanceof Intent.SignatureRemoveIntent) {
+            Intent.SignatureRemoveIntent signatureRemoveIntent =
+                    (Intent.SignatureRemoveIntent) intent;
+            return Action.SignatureRemoveAction.create(signatureRemoveIntent.containerFile(),
+                    signatureRemoveIntent.signature());
         }
         throw new IllegalArgumentException("Unknown intent " + intent);
     }
