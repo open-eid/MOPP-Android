@@ -178,7 +178,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), addDocumentsIntent(), openDocumentIntent(),
                 documentsSelectionIntent(), removeDocumentsIntent(),
-                signatureListVisibilityIntent());
+                signatureListVisibilityIntent(), signatureRemoveSelectionIntent());
     }
 
     @Override
@@ -242,10 +242,10 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             removeDocumentsErrorSnackbar.show();
         }
 
-        if (state.signatureListVisible()) {
+        if (state.signatureListVisible() && !signatureListDialog.isShowing()) {
             signatureListView.scrollToPosition(0);
             signatureListDialog.show();
-        } else {
+        } else if (!state.signatureListVisible()) {
             signatureListDialog.dismiss();
         }
 
@@ -271,6 +271,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             }
         }
         signatureAdapter.setSignatures(signatures);
+        signatureAdapter.setRemoveSelection(state.signatureRemoveSelection());
     }
 
     protected void setActivity(boolean activity) {
@@ -308,6 +309,12 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 .filter(ignored -> signatureCount > 0)
                 .map(o -> Intent.SignatureListVisibilityIntent.create(true))
                 .mergeWith(signatureListVisibilityIntentSubject);
+    }
+
+    private Observable<Intent.SignatureRemoveSelectionIntent> signatureRemoveSelectionIntent() {
+        //noinspection Guava
+        return signatureAdapter.removeSelections()
+                .map(signature -> Intent.SignatureRemoveSelectionIntent.create(signature.orNull()));
     }
 
     @Override

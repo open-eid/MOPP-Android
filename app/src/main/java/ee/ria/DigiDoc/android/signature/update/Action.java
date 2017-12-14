@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableSet;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.document.data.Document;
+import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 
@@ -80,6 +81,16 @@ interface Action extends MviAction {
 
         static SignatureListVisibilityAction create(boolean isVisible) {
             return new AutoValue_Action_SignatureListVisibilityAction(isVisible);
+        }
+    }
+
+    @AutoValue
+    abstract class SignatureRemoveSelectionAction implements Action {
+
+        @Nullable abstract Signature signature();
+
+        static SignatureRemoveSelectionAction create(@Nullable Signature signature) {
+            return new AutoValue_Action_SignatureRemoveSelectionAction(signature);
         }
     }
 }

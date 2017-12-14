@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableSet;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.document.data.Document;
+import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 
@@ -97,6 +98,16 @@ interface Intent extends MviIntent {
 
         static SignatureListVisibilityIntent create(boolean isVisible) {
             return new AutoValue_Intent_SignatureListVisibilityIntent(isVisible);
+        }
+    }
+
+    @AutoValue
+    abstract class SignatureRemoveSelectionIntent implements Intent {
+
+        @Nullable abstract Signature signature();
+
+        static SignatureRemoveSelectionIntent create(@Nullable Signature signature) {
+            return new AutoValue_Intent_SignatureRemoveSelectionIntent(signature);
         }
     }
 }

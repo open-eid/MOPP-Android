@@ -53,6 +53,8 @@
     <string name="signature_update_signature_summary_secondary_valid">All signatures are valid</string>
     <string name="signature_update_signature_summary_secondary_invalid">Some signatures are invalid (%d)</string>
     <string name="signature_update_signature_summary_sign_button">Sign</string>
+    <string name="signature_update_signature_remove_text">Remove signature from container?</string>
+    <string name="signature_update_signature_remove_button">Remove signature</string>
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Choose a file to crypt or decrypt</string>

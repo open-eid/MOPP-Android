@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.document.data.Document;
+import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 
@@ -36,6 +37,8 @@ abstract class ViewState implements MviViewState {
 
     abstract boolean signatureListVisible();
 
+    @Nullable abstract Signature signatureRemoveSelection();
+
     abstract Builder buildWith();
 
     static ViewState initial() {
@@ -60,6 +63,7 @@ abstract class ViewState implements MviViewState {
         Builder selectedDocuments(ImmutableSet<Document> selectedDocuments);
         Builder removeDocumentsError(@Nullable Throwable removeDocumentsError);
         Builder signatureListVisible(boolean signatureListVisible);
+        Builder signatureRemoveSelection(@Nullable Signature signatureRemoveSelection);
         ViewState build();
     }
 }

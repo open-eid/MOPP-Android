@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.document.data.Document;
+import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 
@@ -193,6 +194,23 @@ interface Result extends MviResult<ViewState> {
 
         static SignatureListVisibilityResult create(boolean isVisible) {
             return new AutoValue_Result_SignatureListVisibilityResult(isVisible);
+        }
+    }
+
+    @AutoValue
+    abstract class SignatureRemoveSelectionResult implements Result {
+
+        @Nullable abstract Signature signature();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .signatureRemoveSelection(signature())
+                    .build();
+        }
+
+        static SignatureRemoveSelectionResult create(@Nullable Signature signature) {
+            return new AutoValue_Result_SignatureRemoveSelectionResult(signature);
         }
     }
 }
