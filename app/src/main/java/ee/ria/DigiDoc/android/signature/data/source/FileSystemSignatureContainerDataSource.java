@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Files;
 
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.RDN;
@@ -40,9 +41,13 @@ import io.reactivex.Single;
 import timber.log.Timber;
 
 import static com.google.common.io.Files.getNameWithoutExtension;
-import static ee.ria.DigiDoc.android.signature.data.SignatureContainer.isContainerFile;
 
 public final class FileSystemSignatureContainerDataSource implements SignatureContainerDataSource {
+
+    private static final ImmutableSet<String> EXTENSIONS = ImmutableSet.<String>builder()
+            .add("asice", "asics", "sce", "scs", "adoc", "bdoc", "ddoc", "edoc")
+            .build();
+    private static final String PDF_EXTENSION = "pdf";
 
     private final FileSystem fileSystem;
     private final SettingsDataStore settingsDataStore;
@@ -67,9 +72,6 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
                 containerFile = fileSystem.generateSignatureContainerFile(containerName);
                 Container container = Container.create(containerFile.getAbsolutePath());
                 if (container == null) {
-                    for (FileStream fileStream : fileStreams) {
-                        fileStream.inputStream().close();
-                    }
                     throw new IOException("Could not create container file " + containerFile);
                 }
                 for (FileStream fileStream : fileStreams) {
@@ -197,6 +199,32 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
             }
             container.save();
         });
+    }
+
+    /**
+     * Check whether this is a signature container file which should be opened as such
+     * or a regular file which should be added to the container.
+     *
+     * @param fileStream File stream containing information about the document.
+     * @return True if it is a container, false otherwise.
+     */
+    private boolean isContainerFile(FileStream fileStream) throws IOException {
+        String extension = Files.getFileExtension(fileStream.displayName()).toLowerCase();
+        if (EXTENSIONS.contains(extension)) {
+            return true;
+        }
+        if (PDF_EXTENSION.equals(extension)) {
+            File containerFile = fileSystem.cache(fileStream);
+            try {
+                Container container = Container.open(containerFile.getAbsolutePath());
+                if (container != null && container.signatures().size() > 0) {
+                    return true;
+                }
+            } catch (Exception e) {
+                Timber.d(e, "Could not open PDF as signature container");
+            }
+        }
+        return false;
     }
 
     @Nullable private static String getCertificateCN(byte[] signingCertificateDer) {

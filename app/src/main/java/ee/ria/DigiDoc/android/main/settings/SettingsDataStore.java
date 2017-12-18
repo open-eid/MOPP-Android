@@ -21,6 +21,7 @@ public final class SettingsDataStore {
 
     public String getFileType() {
         String key = application.getString(R.string.main_settings_file_type_key);
-        return PreferenceManager.getDefaultSharedPreferences(application).getString(key, "");
+        return PreferenceManager.getDefaultSharedPreferences(application).getString(key,
+                application.getString(R.string.main_settings_file_type_asice_key));
     }
 }

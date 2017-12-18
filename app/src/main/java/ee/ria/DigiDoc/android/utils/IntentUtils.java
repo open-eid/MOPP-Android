@@ -4,20 +4,15 @@ import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
-import android.provider.OpenableColumns;
 import android.support.v4.content.FileProvider;
 
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
-import timber.log.Timber;
 
 public final class IntentUtils {
 
@@ -54,18 +49,10 @@ public final class IntentUtils {
         if (clipData != null) {
             for (int i = 0; i < clipData.getItemCount(); i++) {
                 Uri uri = clipData.getItemAt(i).getUri();
-                try {
-                    builder.add(parseGetContentUri(contentResolver, uri));
-                } catch (FileNotFoundException e) {
-                    Timber.e(e, "Could not parse Uri %s", uri);
-                }
+                builder.add(FileStream.create(contentResolver, uri));
             }
         } else if (data != null) {
-            try {
-                builder.add(parseGetContentUri(contentResolver, data));
-            } catch (FileNotFoundException e) {
-                Timber.e(e, "Could not parse Uri %s", data);
-            }
+            builder.add(FileStream.create(contentResolver, data));
         }
 
         return builder.build();
@@ -88,32 +75,6 @@ public final class IntentUtils {
                 .createChooser(new Intent(Intent.ACTION_VIEW)
                         .setData(uri)
                         .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION), null);
-    }
-
-    /**
-     * Parse Uri to get {@link FileStream} value.
-     *
-     * TODO file Uri support
-     *
-     * @param contentResolver Used to get all the data.
-     * @param uri Uri to parse.
-     * @return FileStream with all fields filled.
-     * @throws FileNotFoundException If the input stream opening fails.
-     */
-    private static FileStream parseGetContentUri(ContentResolver contentResolver, Uri uri)
-            throws FileNotFoundException {
-        InputStream inputStream = contentResolver.openInputStream(uri);
-        String displayName = uri.getLastPathSegment();
-        Cursor cursor = contentResolver.query(uri, new String[]{OpenableColumns.DISPLAY_NAME}, null,
-                null, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst() && !cursor.isNull(0)) {
-                displayName = cursor.getString(0);
-            }
-            cursor.close();
-        }
-
-        return FileStream.create(displayName, inputStream);
     }
 
     private IntentUtils() {}
