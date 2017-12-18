@@ -16,6 +16,7 @@ import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +39,7 @@ import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
+import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
 import static android.support.v4.content.res.ResourcesCompat.getColor;
@@ -100,6 +102,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private final ImageView signatureSummaryValidityView;
     private final TextView signatureSummaryPrimaryTextView;
     private final TextView signatureSummarySecondaryTextView;
+    private final Button signatureSummarySignButton;
 
     private final Navigator navigator;
     private final SignatureUpdateViewModel viewModel;
@@ -153,6 +156,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 R.id.signatureUpdateSignatureSummaryPrimaryText);
         signatureSummarySecondaryTextView = findViewById(
                 R.id.signatureUpdateSignatureSummarySecondaryText);
+        signatureSummarySignButton = findViewById(R.id.signatureUpdateSignatureSummarySignButton);
 
         signatureListDialog = new BottomSheetDialog(context);
         Context signatureListContext = signatureListDialog.getContext();
@@ -359,6 +363,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         signatureListDialog.setOnDismissListener(ignored ->
                 signatureListVisibilityIntentSubject
                         .onNext(Intent.SignatureListVisibilityIntent.create(false)));
+        disposables.add(clicks(signatureSummarySignButton).subscribe(ignored ->
+                Timber.e("CLICKED SIGN BUTTON")));
     }
 
     @Override

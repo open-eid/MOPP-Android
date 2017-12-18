@@ -19,5 +19,9 @@
         <item>@string/main_settings_file_type_asice_key</item>
         <item>@string/main_settings_file_type_bdoc_key</item>
     </string-array>
+    <string-array name="main_settings_file_type_entries">
+        <item>ASiC-E</item>
+        <item>BDOC</item>
+    </string-array>
 
 </resources>
