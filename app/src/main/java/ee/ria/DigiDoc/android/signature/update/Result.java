@@ -11,6 +11,8 @@ import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
+import ee.ria.DigiDoc.android.utils.navigation.NavigatorResult;
+import ee.ria.DigiDoc.android.utils.navigation.Transaction;
 
 interface Result extends MviResult<ViewState> {
 
@@ -249,6 +251,33 @@ interface Result extends MviResult<ViewState> {
 
         static SignatureRemoveResult clear() {
             return new AutoValue_Result_SignatureRemoveResult(false, null, null);
+        }
+    }
+
+    @AutoValue
+    abstract class SignatureAddResult implements Result, NavigatorResult {
+
+        abstract boolean inProgress();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .signatureAddInProgress(inProgress())
+                    .build();
+        }
+
+        static SignatureAddResult progress() {
+            return new AutoValue_Result_SignatureAddResult(null, true, null);
+        }
+
+        static SignatureAddResult failure(Throwable error) {
+            return new AutoValue_Result_SignatureAddResult(null, false, error);
+        }
+
+        static SignatureAddResult transaction(Transaction transaction) {
+            return new AutoValue_Result_SignatureAddResult(transaction, false, null);
         }
     }
 }

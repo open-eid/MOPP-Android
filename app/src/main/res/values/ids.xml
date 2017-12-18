@@ -54,6 +54,9 @@
     <item type="id" name="signatureUpdateSignatureCreatedAt" />
     <item type="id" name="signatureUpdateSignatureValidity" />
 
+    <!-- Signature Add -->
+    <item type="id" name="signatureAddScreen" />
+
     <!-- Crypto Home -->
     <item type="id" name="cryptoHomeScreen" />
     <item type="id" name="cryptoHomeCreateButton" />

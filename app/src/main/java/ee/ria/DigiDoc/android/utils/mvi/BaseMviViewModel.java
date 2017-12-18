@@ -1,5 +1,10 @@
 package ee.ria.DigiDoc.android.utils.mvi;
 
+import android.support.annotation.Nullable;
+
+import ee.ria.DigiDoc.android.utils.navigation.Navigator;
+import ee.ria.DigiDoc.android.utils.navigation.NavigatorResult;
+import ee.ria.DigiDoc.android.utils.navigation.Transaction;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -16,7 +21,7 @@ public abstract class BaseMviViewModel<
     private final Subject<I> intentSubject;
     private final Observable<S> viewStateObservable;
 
-    protected BaseMviViewModel(ObservableTransformer<A, R> processor) {
+    protected BaseMviViewModel(ObservableTransformer<A, R> processor, Navigator navigator) {
         intentSubject = PublishSubject.create();
         viewStateObservable = intentSubject
                 .compose(this::initialIntentFilter)
@@ -33,6 +38,17 @@ public abstract class BaseMviViewModel<
                 .map(result -> {
                     Timber.d("Result: %s", result);
                     return result;
+                })
+                .doOnNext(result -> {
+                    if (!(result instanceof NavigatorResult)) {
+                        return;
+                    }
+                    @Nullable Transaction transaction = ((NavigatorResult) result).transaction();
+                    if (transaction == null) {
+                        return;
+                    }
+                    Timber.d("Navigator transaction: %s", transaction);
+                    navigator.transaction(transaction);
                 })
                 .scan(initialViewState(), (viewState, result) -> result.reduce(viewState))
                 .map(viewState -> {

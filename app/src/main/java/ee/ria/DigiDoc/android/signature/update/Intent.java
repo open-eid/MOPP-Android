@@ -126,4 +126,14 @@ interface Intent extends MviIntent {
             return new AutoValue_Intent_SignatureRemoveIntent(null, null);
         }
     }
+
+    @AutoValue
+    abstract class SignatureAddIntent implements Intent {
+
+        abstract File containerFile();
+
+        static SignatureAddIntent create(File containerFile) {
+            return new AutoValue_Intent_SignatureAddIntent(containerFile);
+        }
+    }
 }

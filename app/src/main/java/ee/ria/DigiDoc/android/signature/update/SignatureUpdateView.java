@@ -39,7 +39,6 @@ import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
-import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
 import static android.support.v4.content.res.ResourcesCompat.getColor;
@@ -183,7 +182,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         return Observable.mergeArray(initialIntent(), addDocumentsIntent(), openDocumentIntent(),
                 documentsSelectionIntent(), removeDocumentsIntent(),
                 signatureListVisibilityIntent(), signatureRemoveSelectionIntent(),
-                signatureRemoveIntent());
+                signatureRemoveIntent(), signatureAddIntent());
     }
 
     @Override
@@ -205,7 +204,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             return;
         }
 
-        setActivity(state.loadContainerInProgress() || state.documentsProgress());
+        setActivity(state.loadContainerInProgress() || state.documentsProgress()
+                || state.signatureAddInProgress());
 
         SignatureContainer container = state.container();
         documentsLocked = container == null || container.documentsLocked();
@@ -327,6 +327,11 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 .map(signature -> Intent.SignatureRemoveIntent.create(containerFile, signature));
     }
 
+    private Observable<Intent.SignatureAddIntent> signatureAddIntent() {
+        return clicks(signatureSummarySignButton)
+                .map(ignored -> Intent.SignatureAddIntent.create(containerFile));
+    }
+
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -363,8 +368,6 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         signatureListDialog.setOnDismissListener(ignored ->
                 signatureListVisibilityIntentSubject
                         .onNext(Intent.SignatureListVisibilityIntent.create(false)));
-        disposables.add(clicks(signatureSummarySignButton).subscribe(ignored ->
-                Timber.e("CLICKED SIGN BUTTON")));
     }
 
     @Override

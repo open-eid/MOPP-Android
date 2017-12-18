@@ -8,6 +8,10 @@ import android.provider.OpenableColumns;
 import com.google.auto.value.AutoValue;
 import com.google.common.io.ByteSource;
 
+import java.io.File;
+
+import static com.google.common.io.Files.asByteSource;
+
 @AutoValue
 public abstract class FileStream {
 
@@ -16,7 +20,7 @@ public abstract class FileStream {
     public abstract ByteSource source();
 
     /**
-     * Create FileStream instance from {@link ContentResolver} and content {@link Uri}.
+     * Create FileStream from {@link ContentResolver} and content {@link Uri}.
      */
     public static FileStream create(ContentResolver contentResolver, Uri uri) {
         String displayName = uri.getLastPathSegment();
@@ -30,5 +34,12 @@ public abstract class FileStream {
         }
         return new AutoValue_FileStream(displayName,
                 new ContentResolverUriSource(contentResolver, uri));
+    }
+
+    /**
+     * Create FileStream from {@link File}.
+     */
+    public static FileStream create(File file) {
+        return new AutoValue_FileStream(file.getName(), asByteSource(file));
     }
 }

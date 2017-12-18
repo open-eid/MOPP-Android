@@ -59,10 +59,10 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
     }
 
     @Override
-    public Single<File> addContainer(ImmutableList<FileStream> fileStreams) {
+    public Single<File> addContainer(ImmutableList<FileStream> fileStreams, boolean forceCreate) {
         return Single.fromCallable(() -> {
             File containerFile;
-            if (fileStreams.size() == 1 && isContainerFile(fileStreams.get(0))) {
+            if (!forceCreate && fileStreams.size() == 1 && isContainerFile(fileStreams.get(0))) {
                 FileStream fileStream = fileStreams.get(0);
                 containerFile = fileSystem.addSignatureContainer(fileStream);
             } else {

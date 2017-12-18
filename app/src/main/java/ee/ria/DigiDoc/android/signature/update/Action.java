@@ -106,4 +106,14 @@ interface Action extends MviAction {
             return new AutoValue_Action_SignatureRemoveAction(containerFile, signature);
         }
     }
+
+    @AutoValue
+    abstract class SignatureAddAction implements Action {
+
+        abstract File containerFile();
+
+        static SignatureAddAction create(File containerFile) {
+            return new AutoValue_Action_SignatureAddAction(containerFile);
+        }
+    }
 }

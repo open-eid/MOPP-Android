@@ -3,13 +3,13 @@ package ee.ria.DigiDoc.android.signature.create;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.utils.mvi.BaseMviViewModel;
+import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 
 public final class SignatureCreateViewModel extends
         BaseMviViewModel<Intent, ViewState, Action, Result> {
 
-    @Inject
-    SignatureCreateViewModel(Processor processor) {
-        super(processor);
+    @Inject SignatureCreateViewModel(Processor processor, Navigator navigator) {
+        super(processor, navigator);
     }
 
     @Override
