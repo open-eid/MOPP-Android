@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.Router;
 import com.bluelinelabs.conductor.RouterTransaction;
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,6 +23,7 @@ import ee.ria.DigiDoc.android.utils.mvi.MviViewModelProvider;
 import ee.ria.DigiDoc.android.utils.navigation.ActivityResult;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 import ee.ria.DigiDoc.android.utils.navigation.Screen;
+import ee.ria.DigiDoc.android.utils.navigation.Transaction;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -48,6 +52,24 @@ public final class ConductorNavigator implements Navigator {
         this.router = router;
     }
 
+    @Override
+    public void transaction(Transaction transaction) {
+        if (transaction instanceof Transaction.SetRootScreenTransaction) {
+            setRootScreen(((Transaction.SetRootScreenTransaction) transaction).screen());
+        } else if (transaction instanceof Transaction.PushScreenTransaction) {
+            pushScreen(((Transaction.PushScreenTransaction) transaction).screen());
+        } else if (transaction instanceof Transaction.PushScreensTransaction) {
+            pushScreens(((Transaction.PushScreensTransaction) transaction).screens());
+        } else if (transaction instanceof Transaction.PopScreenTransaction) {
+            popScreen();
+        } else if (transaction instanceof Transaction.ReplaceCurrentScreenTransaction) {
+            replaceCurrentScreen(
+                    ((Transaction.ReplaceCurrentScreenTransaction) transaction).screen());
+        } else {
+            throw new IllegalArgumentException("Unknown navigator transaction " + transaction);
+        }
+    }
+
     public void attach(Activity activity, @IdRes int containerId, Bundle savedInstanceState) {
         router = attachRouter(activity, activity.findViewById(containerId), savedInstanceState);
     }
@@ -74,6 +96,15 @@ public final class ConductorNavigator implements Navigator {
     @Override
     public void pushScreen(Screen screen) {
         router.pushController(RouterTransaction.with((ConductorScreen) screen));
+    }
+
+    @Override
+    public void pushScreens(ImmutableList<Screen> screens) {
+        List<RouterTransaction> backstack = router.getBackstack();
+        for (Screen screen : screens) {
+            backstack.add(RouterTransaction.with((ConductorScreen) screen));
+        }
+        router.setBackstack(backstack, null);
     }
 
     @Override

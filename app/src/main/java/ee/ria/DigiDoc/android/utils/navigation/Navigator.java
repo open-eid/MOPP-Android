@@ -4,13 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.Toolbar;
 import android.view.ViewGroup;
+
+import com.google.common.collect.ImmutableList;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviViewModelProvider;
 import io.reactivex.Observable;
 
 public interface Navigator {
+
+    void transaction(Transaction transaction);
 
     /**
      * Returns whether this Navigator has root screen.
@@ -34,6 +37,8 @@ public interface Navigator {
     boolean handleBack();
 
     void pushScreen(Screen screen);
+
+    void pushScreens(ImmutableList<Screen> screens);
 
     void popScreen();
 

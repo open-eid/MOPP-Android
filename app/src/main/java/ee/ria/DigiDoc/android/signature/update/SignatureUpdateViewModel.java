@@ -3,13 +3,13 @@ package ee.ria.DigiDoc.android.signature.update;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.utils.mvi.BaseMviViewModel;
+import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 
 public final class SignatureUpdateViewModel extends
         BaseMviViewModel<Intent, ViewState, Action, Result> {
 
-    @Inject
-    SignatureUpdateViewModel(Processor processor) {
-        super(processor);
+    @Inject SignatureUpdateViewModel(Processor processor, Navigator navigator) {
+        super(processor, navigator);
     }
 
     @Override
@@ -41,6 +41,17 @@ public final class SignatureUpdateViewModel extends
         } else if (intent instanceof Intent.SignatureListVisibilityIntent) {
             return Action.SignatureListVisibilityAction
                     .create(((Intent.SignatureListVisibilityIntent) intent).isVisible());
+        } else if (intent instanceof Intent.SignatureRemoveSelectionIntent) {
+            return Action.SignatureRemoveSelectionAction
+                    .create(((Intent.SignatureRemoveSelectionIntent) intent).signature());
+        } else if (intent instanceof Intent.SignatureRemoveIntent) {
+            Intent.SignatureRemoveIntent signatureRemoveIntent =
+                    (Intent.SignatureRemoveIntent) intent;
+            return Action.SignatureRemoveAction.create(signatureRemoveIntent.containerFile(),
+                    signatureRemoveIntent.signature());
+        } else if (intent instanceof Intent.SignatureAddIntent) {
+            return Action.SignatureAddAction
+                    .create(((Intent.SignatureAddIntent) intent).containerFile());
         }
         throw new IllegalArgumentException("Unknown intent " + intent);
     }

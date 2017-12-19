@@ -16,6 +16,7 @@ import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -100,6 +101,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private final ImageView signatureSummaryValidityView;
     private final TextView signatureSummaryPrimaryTextView;
     private final TextView signatureSummarySecondaryTextView;
+    private final Button signatureSummarySignButton;
 
     private final Navigator navigator;
     private final SignatureUpdateViewModel viewModel;
@@ -153,6 +155,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 R.id.signatureUpdateSignatureSummaryPrimaryText);
         signatureSummarySecondaryTextView = findViewById(
                 R.id.signatureUpdateSignatureSummarySecondaryText);
+        signatureSummarySignButton = findViewById(R.id.signatureUpdateSignatureSummarySignButton);
 
         signatureListDialog = new BottomSheetDialog(context);
         Context signatureListContext = signatureListDialog.getContext();
@@ -178,7 +181,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), addDocumentsIntent(), openDocumentIntent(),
                 documentsSelectionIntent(), removeDocumentsIntent(),
-                signatureListVisibilityIntent());
+                signatureListVisibilityIntent(), signatureRemoveSelectionIntent(),
+                signatureRemoveIntent(), signatureAddIntent());
     }
 
     @Override
@@ -200,7 +204,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             return;
         }
 
-        setActivity(state.loadContainerInProgress() || state.documentsProgress());
+        setActivity(state.loadContainerInProgress() || state.documentsProgress()
+                || state.signatureAddInProgress());
 
         SignatureContainer container = state.container();
         documentsLocked = container == null || container.documentsLocked();
@@ -242,10 +247,10 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             removeDocumentsErrorSnackbar.show();
         }
 
-        if (state.signatureListVisible()) {
+        if (state.signatureListVisible() && !signatureListDialog.isShowing()) {
             signatureListView.scrollToPosition(0);
             signatureListDialog.show();
-        } else {
+        } else if (!state.signatureListVisible()) {
             signatureListDialog.dismiss();
         }
 
@@ -271,6 +276,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             }
         }
         signatureAdapter.setSignatures(signatures);
+        signatureAdapter.setRemoveSelection(state.signatureRemoveSelection());
     }
 
     protected void setActivity(boolean activity) {
@@ -308,6 +314,22 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 .filter(ignored -> signatureCount > 0)
                 .map(o -> Intent.SignatureListVisibilityIntent.create(true))
                 .mergeWith(signatureListVisibilityIntentSubject);
+    }
+
+    private Observable<Intent.SignatureRemoveSelectionIntent> signatureRemoveSelectionIntent() {
+        //noinspection Guava
+        return signatureAdapter.removeSelections()
+                .map(signature -> Intent.SignatureRemoveSelectionIntent.create(signature.orNull()));
+    }
+
+    private Observable<Intent.SignatureRemoveIntent> signatureRemoveIntent() {
+        return signatureAdapter.removes()
+                .map(signature -> Intent.SignatureRemoveIntent.create(containerFile, signature));
+    }
+
+    private Observable<Intent.SignatureAddIntent> signatureAddIntent() {
+        return clicks(signatureSummarySignButton)
+                .map(ignored -> Intent.SignatureAddIntent.create(containerFile));
     }
 
     @Override

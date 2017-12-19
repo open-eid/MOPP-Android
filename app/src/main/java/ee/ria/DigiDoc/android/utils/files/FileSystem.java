@@ -10,6 +10,8 @@ import com.google.common.net.MediaType;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -40,10 +42,12 @@ public final class FileSystem {
      */
     public File addSignatureContainer(FileStream fileStream) throws IOException {
         File file = generateSignatureContainerFile(fileStream.displayName());
-        FileOutputStream outputStream = new FileOutputStream(file);
-        ByteStreams.copy(fileStream.inputStream(), outputStream);
-        fileStream.inputStream().close();
-        outputStream.close();
+        try (
+                InputStream inputStream = fileStream.source().openStream();
+                OutputStream outputStream = new FileOutputStream(file)
+        ) {
+            ByteStreams.copy(inputStream, outputStream);
+        }
         return file;
     }
 
@@ -72,10 +76,12 @@ public final class FileSystem {
      */
     public File cache(FileStream fileStream) throws IOException {
         File file = getCacheFile(fileStream.displayName());
-        FileOutputStream outputStream = new FileOutputStream(file);
-        ByteStreams.copy(fileStream.inputStream(), outputStream);
-        fileStream.inputStream().close();
-        outputStream.close();
+        try (
+                InputStream inputStream = fileStream.source().openStream();
+                OutputStream outputStream = new FileOutputStream(file)
+        ) {
+            ByteStreams.copy(inputStream, outputStream);
+        }
         return file;
     }
 

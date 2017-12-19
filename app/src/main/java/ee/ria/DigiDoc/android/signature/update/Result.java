@@ -8,8 +8,11 @@ import com.google.common.collect.ImmutableSet;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.document.data.Document;
+import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
+import ee.ria.DigiDoc.android.utils.navigation.NavigatorResult;
+import ee.ria.DigiDoc.android.utils.navigation.Transaction;
 
 interface Result extends MviResult<ViewState> {
 
@@ -193,6 +196,88 @@ interface Result extends MviResult<ViewState> {
 
         static SignatureListVisibilityResult create(boolean isVisible) {
             return new AutoValue_Result_SignatureListVisibilityResult(isVisible);
+        }
+    }
+
+    @AutoValue
+    abstract class SignatureRemoveSelectionResult implements Result {
+
+        @Nullable abstract Signature signature();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .signatureRemoveSelection(signature())
+                    .build();
+        }
+
+        static SignatureRemoveSelectionResult create(@Nullable Signature signature) {
+            return new AutoValue_Result_SignatureRemoveSelectionResult(signature);
+        }
+    }
+
+    @AutoValue
+    abstract class SignatureRemoveResult implements Result {
+
+        abstract boolean inProgress();
+
+        @Nullable abstract SignatureContainer container();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            ViewState.Builder builder = state.buildWith()
+                    .signatureRemoveInProgress(inProgress())
+                    .signatureRemoveError(error());
+            if (container() != null) {
+                builder.container(container())
+                        .signatureRemoveSelection(null);
+            }
+            return builder.build();
+        }
+
+        static SignatureRemoveResult progress() {
+            return new AutoValue_Result_SignatureRemoveResult(true, null, null);
+        }
+
+        static SignatureRemoveResult success(SignatureContainer container) {
+            return new AutoValue_Result_SignatureRemoveResult(false, container, null);
+        }
+
+        static SignatureRemoveResult failure(Throwable error) {
+            return new AutoValue_Result_SignatureRemoveResult(false, null, error);
+        }
+
+        static SignatureRemoveResult clear() {
+            return new AutoValue_Result_SignatureRemoveResult(false, null, null);
+        }
+    }
+
+    @AutoValue
+    abstract class SignatureAddResult implements Result, NavigatorResult {
+
+        abstract boolean inProgress();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .signatureAddInProgress(inProgress())
+                    .build();
+        }
+
+        static SignatureAddResult progress() {
+            return new AutoValue_Result_SignatureAddResult(null, true, null);
+        }
+
+        static SignatureAddResult failure(Throwable error) {
+            return new AutoValue_Result_SignatureAddResult(null, false, error);
+        }
+
+        static SignatureAddResult transaction(Transaction transaction) {
+            return new AutoValue_Result_SignatureAddResult(transaction, false, null);
         }
     }
 }

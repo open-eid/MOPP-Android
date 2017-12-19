@@ -1,13 +1,23 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import com.google.common.collect.ImmutableList;
+
+import java.io.File;
+
 import javax.inject.Inject;
 
+import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
+import ee.ria.DigiDoc.android.signature.add.SignatureAddScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
+import ee.ria.DigiDoc.android.utils.files.FileStream;
+import ee.ria.DigiDoc.android.utils.navigation.Transaction;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.google.common.io.Files.getFileExtension;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
@@ -30,7 +40,18 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         Result.SignatureListVisibilityResult>
             signatureListVisibility;
 
-    @Inject Processor(SignatureContainerDataSource signatureContainerDataSource) {
+    private final ObservableTransformer<Action.SignatureRemoveSelectionAction,
+                                        Result.SignatureRemoveSelectionResult>
+            signatureRemoveSelection;
+
+    private final ObservableTransformer<Action.SignatureRemoveAction,
+                                        Result.SignatureRemoveResult> signatureRemove;
+
+    private final ObservableTransformer<Action.SignatureAddAction,
+                                        Result.SignatureAddResult> signatureAdd;
+
+    @Inject Processor(SignatureContainerDataSource signatureContainerDataSource,
+                      SettingsDataStore settingsDataStore) {
         loadContainer = upstream -> upstream.flatMap(action ->
                 signatureContainerDataSource.get(action.containerFile())
                         .toObservable()
@@ -94,6 +115,48 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         signatureListVisibility = upstream -> upstream.map(action ->
                 Result.SignatureListVisibilityResult.create(action.isVisible()));
+
+        signatureRemoveSelection = upstream -> upstream.map(action ->
+                Result.SignatureRemoveSelectionResult.create(action.signature()));
+
+        signatureRemove = upstream -> upstream.flatMap(action -> {
+            if (action.containerFile() == null) {
+                return Observable.just(Result.SignatureRemoveResult.clear());
+            } else {
+                return signatureContainerDataSource
+                        .removeSignature(action.containerFile(), action.signature())
+                        .andThen(signatureContainerDataSource.get(action.containerFile()))
+                        .toObservable()
+                        .map(Result.SignatureRemoveResult::success)
+                        .onErrorReturn(Result.SignatureRemoveResult::failure)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(Result.SignatureRemoveResult.progress());
+            }
+        });
+
+        signatureAdd = upstream -> upstream.flatMap(action -> {
+            File containerFile = action.containerFile();
+            if (settingsDataStore.getFileTypes().contains(
+                    getFileExtension(containerFile.getName()).toLowerCase())) {
+                return Observable
+                        .just(Result.SignatureAddResult.transaction(
+                                Transaction.PushScreenTransaction
+                                        .create(SignatureAddScreen.create(containerFile))));
+            } else {
+                return signatureContainerDataSource
+                        .addContainer(ImmutableList.of(FileStream.create(containerFile)), true)
+                        .toObservable()
+                        .map(newContainerFile -> Result.SignatureAddResult.transaction(
+                                Transaction.PushScreensTransaction.create(
+                                        SignatureUpdateScreen.create(newContainerFile),
+                                        SignatureAddScreen.create(newContainerFile))))
+                        .onErrorReturn(Result.SignatureAddResult::failure)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(Result.SignatureAddResult.progress());
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -106,6 +169,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.DocumentsSelectionAction.class).compose(documentsSelection),
                 shared.ofType(Action.RemoveDocumentsAction.class).compose(removeDocuments),
                 shared.ofType(Action.SignatureListVisibilityAction.class)
-                        .compose(signatureListVisibility)));
+                        .compose(signatureListVisibility),
+                shared.ofType(Action.SignatureRemoveSelectionAction.class)
+                        .compose(signatureRemoveSelection),
+                shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
+                shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd)));
     }
 }

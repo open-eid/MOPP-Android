@@ -23,7 +23,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         createContainer = upstream -> upstream.flatMap(action ->
                 signatureContainerDataSource
-                        .addContainer(action.fileStreams()).toObservable()
+                        .addContainer(action.fileStreams(), false).toObservable()
                         .map(Result.CreateContainerResult::success)
                         .onErrorReturn(Result.CreateContainerResult::failure)
                         .subscribeOn(Schedulers.io())

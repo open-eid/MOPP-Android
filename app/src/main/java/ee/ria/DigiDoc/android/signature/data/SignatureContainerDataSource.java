@@ -12,7 +12,7 @@ import io.reactivex.Single;
 
 public interface SignatureContainerDataSource {
 
-    Single<File> addContainer(ImmutableList<FileStream> fileStreams);
+    Single<File> addContainer(ImmutableList<FileStream> fileStreams, boolean forceCreate);
 
     Single<SignatureContainer> get(File containerFile);
 
@@ -21,4 +21,6 @@ public interface SignatureContainerDataSource {
     Completable removeDocuments(File containerFile, ImmutableSet<Document> documents);
 
     Single<File> getDocumentFile(File containerFile, Document document);
+
+    Completable removeSignature(File containerFile, Signature signature);
 }
