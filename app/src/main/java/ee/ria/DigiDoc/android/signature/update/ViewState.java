@@ -9,6 +9,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.signature.data.Signature;
+import ee.ria.DigiDoc.android.signature.data.SignatureAddStatus;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 
@@ -16,34 +17,30 @@ import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 abstract class ViewState implements MviViewState {
 
     @Nullable abstract SignatureContainer container();
-
     abstract boolean loadContainerInProgress();
-
     @Nullable abstract Throwable loadContainerError();
 
     abstract boolean pickingDocuments();
-
     abstract boolean documentsProgress();
-
     @Nullable abstract Throwable addDocumentsError();
-
     @Nullable abstract File openedDocumentFile();
-
     @Nullable abstract Throwable openDocumentError();
 
     @Nullable abstract ImmutableSet<Document> selectedDocuments();
-
     @Nullable abstract Throwable removeDocumentsError();
 
     abstract boolean signatureListVisible();
-
     @Nullable abstract Signature signatureRemoveSelection();
-
     abstract boolean signatureRemoveInProgress();
-
     @Nullable abstract Throwable signatureRemoveError();
 
+    abstract boolean signatureAddCreateContainerInProgress();
+    abstract boolean signatureAddVisible();
     abstract boolean signatureAddInProgress();
+    @Nullable @SignatureAddStatus abstract String signatureAddStatus();
+    @Nullable abstract String signatureAddChallenge();
+    abstract boolean signatureAddSuccessMessageVisible();
+    @Nullable abstract Throwable signatureAddError();
 
     abstract Builder buildWith();
 
@@ -54,7 +51,10 @@ abstract class ViewState implements MviViewState {
                 .documentsProgress(false)
                 .signatureListVisible(false)
                 .signatureRemoveInProgress(false)
+                .signatureAddCreateContainerInProgress(false)
+                .signatureAddVisible(false)
                 .signatureAddInProgress(false)
+                .signatureAddSuccessMessageVisible(false)
                 .build();
     }
 
@@ -74,7 +74,14 @@ abstract class ViewState implements MviViewState {
         Builder signatureRemoveSelection(@Nullable Signature signatureRemoveSelection);
         Builder signatureRemoveInProgress(boolean signatureRemoveInProgress);
         Builder signatureRemoveError(@Nullable Throwable signatureRemoveError);
+        Builder signatureAddCreateContainerInProgress(
+                boolean signatureAddCreateContainerInProgress);
+        Builder signatureAddVisible(boolean signatureAddVisible);
         Builder signatureAddInProgress(boolean signatureAddInProgress);
+        Builder signatureAddStatus(@Nullable @SignatureAddStatus String signatureAddStatus);
+        Builder signatureAddChallenge(@Nullable String signatureAddChallenge);
+        Builder signatureAddSuccessMessageVisible(boolean signatureAddSuccessMessageVisible);
+        Builder signatureAddError(@Nullable Throwable signatureAddError);
         ViewState build();
     }
 }

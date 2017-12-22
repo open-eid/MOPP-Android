@@ -55,7 +55,12 @@
     <item type="id" name="signatureUpdateSignatureValidity" />
 
     <!-- Signature Add -->
-    <item type="id" name="signatureAddScreen" />
+    <item type="id" name="signatureAdd" />
+    <item type="id" name="signatureAddPhoneNoLabel" />
+    <item type="id" name="signatureAddPhoneNo" />
+    <item type="id" name="signatureAddPersonalCodeLabel" />
+    <item type="id" name="signatureAddPersonalCode" />
+    <item type="id" name="signatureAddRememberMe" />
 
     <!-- Crypto Home -->
     <item type="id" name="cryptoHomeScreen" />

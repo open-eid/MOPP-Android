@@ -31,6 +31,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.document.list.DocumentsAdapter;
+import ee.ria.DigiDoc.android.signature.add.SignatureAddDialog;
 import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -51,6 +52,7 @@ import static ee.ria.DigiDoc.android.utils.Immutables.without;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
+import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.dismisses;
 
 public final class SignatureUpdateView extends CoordinatorLayout implements
         MviView<Intent, ViewState> {
@@ -117,9 +119,14 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             PublishSubject.create();
     private final Subject<Intent.SignatureListVisibilityIntent>
             signatureListVisibilityIntentSubject = PublishSubject.create();
+    private final Subject<Intent.SignatureAddIntent> signatureAddIntentSubject =
+            PublishSubject.create();
+
     private final BottomSheetDialog signatureListDialog;
     private final RecyclerView signatureListView;
     private final SignatureAdapter signatureAdapter;
+
+    private final SignatureAddDialog signatureAddDialog;
 
     private boolean documentsLocked = true;
     @Nullable private ImmutableSet<Document> selectedDocuments;
@@ -163,6 +170,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         signatureListView.setLayoutManager(new LinearLayoutManager(signatureListContext));
         signatureListView.setAdapter(signatureAdapter = new SignatureAdapter(signatureListContext));
         signatureListDialog.setContentView(signatureListView);
+
+        signatureAddDialog = new SignatureAddDialog(context);
 
         documentsView.setLayoutManager(new LinearLayoutManager(context));
         documentsView.setAdapter(documentsAdapter = new DocumentsAdapter());
@@ -277,6 +286,12 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         }
         signatureAdapter.setSignatures(signatures);
         signatureAdapter.setRemoveSelection(state.signatureRemoveSelection());
+
+        if (state.signatureAddVisible()) {
+            signatureAddDialog.show();
+        } else {
+            signatureAddDialog.hide();
+        }
     }
 
     protected void setActivity(boolean activity) {
@@ -312,7 +327,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private Observable<Intent.SignatureListVisibilityIntent> signatureListVisibilityIntent() {
         return clicks(signatureSummaryView)
                 .filter(ignored -> signatureCount > 0)
-                .map(o -> Intent.SignatureListVisibilityIntent.create(true))
+                .map(ignored -> Intent.SignatureListVisibilityIntent.create(true))
                 .mergeWith(signatureListVisibilityIntentSubject);
     }
 
@@ -329,7 +344,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
 
     private Observable<Intent.SignatureAddIntent> signatureAddIntent() {
         return clicks(signatureSummarySignButton)
-                .map(ignored -> Intent.SignatureAddIntent.create(containerFile));
+                .map(ignored -> Intent.SignatureAddIntent.showIntent(containerFile))
+                .mergeWith(signatureAddIntentSubject);
     }
 
     @Override
@@ -365,16 +381,21 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 documentsSelectionIntentSubject.onNext(intent);
             }
         }));
-        signatureListDialog.setOnDismissListener(ignored ->
+        disposables.add(dismisses(signatureListDialog).subscribe(ignored ->
                 signatureListVisibilityIntentSubject
-                        .onNext(Intent.SignatureListVisibilityIntent.create(false)));
+                        .onNext(Intent.SignatureListVisibilityIntent.create(false))));
+        disposables.add(signatureAddDialog.positiveButtonClicks().subscribe(data ->
+                signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.addIntent(containerFile,
+                        data.phoneNo(), data.personalCode(), data.rememberMe()))));
+        disposables.add(signatureAddDialog.cancels().subscribe(ignored ->
+                signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent())));
     }
 
     @Override
     public void onDetachedFromWindow() {
-        signatureListDialog.setOnDismissListener(null);
-        signatureListDialog.dismiss();
         disposables.detach();
+        signatureListDialog.dismiss();
+        signatureAddDialog.dismiss();
         super.onDetachedFromWindow();
     }
 }

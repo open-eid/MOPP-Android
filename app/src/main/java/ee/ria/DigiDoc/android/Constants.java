@@ -2,6 +2,8 @@ package ee.ria.DigiDoc.android;
 
 public final class Constants {
 
+    public static final Object VOID = new Object();
+
     /*
      * Request codes for startActivityForResult
      */

@@ -7,7 +7,6 @@ import java.io.File;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
-import ee.ria.DigiDoc.android.signature.add.SignatureAddScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigation.Transaction;
@@ -137,24 +136,27 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         signatureAdd = upstream -> upstream.flatMap(action -> {
             File containerFile = action.containerFile();
-            if (settingsDataStore.getFileTypes().contains(
-                    getFileExtension(containerFile.getName()).toLowerCase())) {
-                return Observable
-                        .just(Result.SignatureAddResult.transaction(
-                                Transaction.PushScreenTransaction
-                                        .create(SignatureAddScreen.create(containerFile))));
+            if (containerFile == null) {
+                return Observable.just(Result.SignatureAddResult.clear());
+            } else if (action.show()) {
+                if (settingsDataStore.getFileTypes()
+                        .contains(getFileExtension(containerFile.getName()))) {
+                    return Observable.just(Result.SignatureAddResult.show());
+                } else {
+                    return signatureContainerDataSource
+                            .addContainer(ImmutableList.of(FileStream.create(containerFile)), true)
+                            .toObservable()
+                            .map(newContainerFile -> Result.SignatureAddResult.transaction(
+                                    Transaction.PushScreenTransaction.create(
+                                            SignatureUpdateScreen.create(newContainerFile))))
+                            .onErrorReturn(Result.SignatureAddResult::failure)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .startWith(Result.SignatureAddResult.creatingContainer());
+                }
             } else {
-                return signatureContainerDataSource
-                        .addContainer(ImmutableList.of(FileStream.create(containerFile)), true)
-                        .toObservable()
-                        .map(newContainerFile -> Result.SignatureAddResult.transaction(
-                                Transaction.PushScreensTransaction.create(
-                                        SignatureUpdateScreen.create(newContainerFile),
-                                        SignatureAddScreen.create(newContainerFile))))
-                        .onErrorReturn(Result.SignatureAddResult::failure)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.SignatureAddResult.progress());
+                // TODO
+                return Observable.just(Result.SignatureAddResult.clear());
             }
         });
     }

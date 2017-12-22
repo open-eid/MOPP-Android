@@ -9,6 +9,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.signature.data.Signature;
+import ee.ria.DigiDoc.android.signature.data.SignatureAddStatus;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.navigation.NavigatorResult;
@@ -257,27 +258,69 @@ interface Result extends MviResult<ViewState> {
     @AutoValue
     abstract class SignatureAddResult implements Result, NavigatorResult {
 
+        abstract boolean isCreatingContainer();
+
+        abstract boolean isVisible();
+
         abstract boolean inProgress();
+
+        @Nullable @SignatureAddStatus abstract String status();
+
+        @Nullable abstract String challenge();
+
+        @Nullable abstract SignatureContainer container();
 
         @Nullable abstract Throwable error();
 
         @Override
         public ViewState reduce(ViewState state) {
-            return state.buildWith()
+            ViewState.Builder builder = state.buildWith()
+                    .signatureAddCreateContainerInProgress(isCreatingContainer())
+                    .signatureAddVisible(isVisible())
                     .signatureAddInProgress(inProgress())
-                    .build();
+                    .signatureAddStatus(status())
+                    .signatureAddChallenge(challenge())
+                    .signatureAddError(error());
+            if (container() != null) {
+                builder.signatureAddSuccessMessageVisible(true)
+                        .container(container());
+            }
+            return builder.build();
         }
 
-        static SignatureAddResult progress() {
-            return new AutoValue_Result_SignatureAddResult(null, true, null);
+        static SignatureAddResult show() {
+            return new AutoValue_Result_SignatureAddResult(null, false, true, false, null, null,
+                    null, null);
+        }
+
+        static SignatureAddResult creatingContainer() {
+            return new AutoValue_Result_SignatureAddResult(null, true, false, false, null, null,
+                    null, null);
+        }
+
+        static SignatureAddResult progress(String status, @Nullable String challenge) {
+            return new AutoValue_Result_SignatureAddResult(null, false, false, true, status,
+                    challenge, null, null);
+        }
+
+        static SignatureAddResult success(SignatureContainer container) {
+            return new AutoValue_Result_SignatureAddResult(null, false, false, false, null, null,
+                    container, null);
         }
 
         static SignatureAddResult failure(Throwable error) {
-            return new AutoValue_Result_SignatureAddResult(null, false, error);
+            return new AutoValue_Result_SignatureAddResult(null, false, false, false, null, null,
+                    null, error);
         }
 
         static SignatureAddResult transaction(Transaction transaction) {
-            return new AutoValue_Result_SignatureAddResult(transaction, false, null);
+            return new AutoValue_Result_SignatureAddResult(transaction, false, false, false, null,
+                    null, null, null);
+        }
+
+        static SignatureAddResult clear() {
+            return new AutoValue_Result_SignatureAddResult(null, false, false, false, null, null,
+                    null, null);
         }
     }
 }

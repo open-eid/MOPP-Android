@@ -110,10 +110,21 @@ interface Action extends MviAction {
     @AutoValue
     abstract class SignatureAddAction implements Action {
 
-        abstract File containerFile();
+        abstract boolean show();
 
-        static SignatureAddAction create(File containerFile) {
-            return new AutoValue_Action_SignatureAddAction(containerFile);
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract String phoneNo();
+
+        @Nullable abstract String personalCode();
+
+        @Nullable abstract Boolean rememberMe();
+
+        static SignatureAddAction create(boolean show, @Nullable File containerFile,
+                                         @Nullable String phoneNo, @Nullable String personalCode,
+                                         @Nullable Boolean rememberMe) {
+            return new AutoValue_Action_SignatureAddAction(show, containerFile, phoneNo,
+                    personalCode, rememberMe);
         }
     }
 }

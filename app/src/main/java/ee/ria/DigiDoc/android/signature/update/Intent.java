@@ -130,10 +130,28 @@ interface Intent extends MviIntent {
     @AutoValue
     abstract class SignatureAddIntent implements Intent {
 
-        abstract File containerFile();
+        abstract boolean show();
 
-        static SignatureAddIntent create(File containerFile) {
-            return new AutoValue_Intent_SignatureAddIntent(containerFile);
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract String phoneNo();
+
+        @Nullable abstract String personalCode();
+
+        @Nullable abstract Boolean rememberMe();
+
+        static SignatureAddIntent showIntent(File containerFile) {
+            return new AutoValue_Intent_SignatureAddIntent(true, containerFile, null, null, null);
+        }
+
+        static SignatureAddIntent addIntent(File containerFile, String phoneNo, String personalCode,
+                                            boolean rememberMe) {
+            return new AutoValue_Intent_SignatureAddIntent(false, containerFile, phoneNo,
+                    personalCode, rememberMe);
+        }
+
+        static SignatureAddIntent clearIntent() {
+            return new AutoValue_Intent_SignatureAddIntent(false, null, null, null, null);
         }
     }
 }
