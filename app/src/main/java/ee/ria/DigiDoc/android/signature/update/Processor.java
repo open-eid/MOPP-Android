@@ -16,6 +16,7 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.io.Files.getFileExtension;
 
 final class Processor implements ObservableTransformer<Action, Result> {
@@ -155,6 +156,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             .startWith(Result.SignatureAddResult.creatingContainer());
                 }
             } else {
+                /*
+                 * return error result when signature already exists
+                 * make call with service, register broadcast receiver and respond accordingly
+                 */
+                if (firstNonNull(action.rememberMe(), false)) {
+                    settingsDataStore.setPhoneNo(action.phoneNo());
+                    settingsDataStore.setPersonalCode(action.personalCode());
+                }
+
                 // TODO
                 return Observable.just(Result.SignatureAddResult.clear());
             }

@@ -2,14 +2,27 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import javax.inject.Inject;
 
+import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.mvi.BaseMviViewModel;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 
 public final class SignatureUpdateViewModel extends
         BaseMviViewModel<Intent, ViewState, Action, Result> {
 
-    @Inject SignatureUpdateViewModel(Processor processor, Navigator navigator) {
+    private final SettingsDataStore settingsDataStore;
+
+    @Inject SignatureUpdateViewModel(Processor processor, Navigator navigator,
+                                     SettingsDataStore settingsDataStore) {
         super(processor, navigator);
+        this.settingsDataStore = settingsDataStore;
+    }
+
+    String getPhoneNo() {
+        return settingsDataStore.getPhoneNo();
+    }
+
+    String getPersonalCode() {
+        return settingsDataStore.getPersonalCode();
     }
 
     @Override

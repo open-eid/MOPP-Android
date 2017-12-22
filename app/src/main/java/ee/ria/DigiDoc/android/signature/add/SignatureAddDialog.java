@@ -21,7 +21,7 @@ public final class SignatureAddDialog extends AlertDialog implements
 
     private final Subject<Integer> buttonClicksSubject = PublishSubject.create();
 
-    public SignatureAddDialog(@NonNull Context context) {
+    public SignatureAddDialog(@NonNull Context context, String phoneNo, String personalCode) {
         super(context);
         TypedArray a = context.obtainStyledAttributes(new int[]{R.attr.dialogPreferredPadding});
         int padding = a.getDimensionPixelSize(0, 0);
@@ -30,6 +30,8 @@ public final class SignatureAddDialog extends AlertDialog implements
         setTitle(R.string.signature_add_title);
         signatureAddView = new SignatureAddView(getContext());
         signatureAddView.setId(R.id.signatureAdd);
+        signatureAddView.setPhoneNo(phoneNo);
+        signatureAddView.setPersonalCode(personalCode);
         setView(signatureAddView, padding, padding, padding, padding);
         setButton(BUTTON_POSITIVE, getContext().getString(android.R.string.ok), this);
         setButton(BUTTON_NEGATIVE, getContext().getString(android.R.string.cancel), this);

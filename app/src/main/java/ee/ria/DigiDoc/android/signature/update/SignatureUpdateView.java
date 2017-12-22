@@ -142,6 +142,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
 
     public SignatureUpdateView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        navigator = Application.component(context).navigator();
+        viewModel = navigator.getViewModelProvider().get(SignatureUpdateViewModel.class);
+
         inflate(context, R.layout.signature_update, this);
         resources = context.getResources();
         successTint = ColorStateList.valueOf(getColor(resources, R.color.success, null));
@@ -171,13 +174,11 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         signatureListView.setAdapter(signatureAdapter = new SignatureAdapter(signatureListContext));
         signatureListDialog.setContentView(signatureListView);
 
-        signatureAddDialog = new SignatureAddDialog(context);
+        signatureAddDialog = new SignatureAddDialog(context, viewModel.getPhoneNo(),
+                viewModel.getPersonalCode());
 
         documentsView.setLayoutManager(new LinearLayoutManager(context));
         documentsView.setAdapter(documentsAdapter = new DocumentsAdapter());
-
-        navigator = Application.component(context).navigator();
-        viewModel = navigator.getViewModelProvider().get(SignatureUpdateViewModel.class);
     }
 
     public SignatureUpdateView containerFile(File containerFile) {
