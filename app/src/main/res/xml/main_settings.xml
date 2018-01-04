@@ -37,10 +37,10 @@
         android:inputType="number" />
 
     <ListPreference
-        android:key="@string/main_settings_file_type_key"
-        android:title="@string/main_settings_file_type_title"
-        android:entryValues="@array/main_settings_file_type_entry_values"
-        android:entries="@array/main_settings_file_type_entries"
-        android:defaultValue="@string/main_settings_file_type_asice_key" />
+        android:key="@string/main_settings_signature_profile_key"
+        android:title="@string/main_settings_signature_profile_title"
+        android:entryValues="@array/main_settings_signature_profile_entry_values"
+        android:entries="@array/main_settings_signature_profile_entries"
+        android:defaultValue="@string/main_settings_signature_profile_time_mark_key" />
 
 </PreferenceScreen>

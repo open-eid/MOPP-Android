@@ -23,4 +23,6 @@ public interface SignatureContainerDataSource {
     Single<File> getDocumentFile(File containerFile, Document document);
 
     Completable removeSignature(File containerFile, Signature signature);
+
+    Completable addSignature(File containerFile, String signature);
 }

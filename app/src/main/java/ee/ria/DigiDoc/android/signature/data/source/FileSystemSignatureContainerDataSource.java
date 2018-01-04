@@ -17,6 +17,7 @@ import org.threeten.bp.Instant;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -114,6 +115,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
                     signature.validate();
                     valid = true;
                 } catch (Exception e) {
+                    Timber.d(e, "Signature validation failed");
                     valid = false;
                 }
                 signatureBuilder.add(Signature.create(id, name, createdAt, valid));
@@ -197,6 +199,18 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
                     break;
                 }
             }
+            container.save();
+        });
+    }
+
+    @Override
+    public Completable addSignature(File containerFile, String signature) {
+        return Completable.fromAction(() -> {
+            Container container = Container.open(containerFile.getAbsolutePath());
+            if (container == null) {
+                throw new IOException("Could not open signature container " + containerFile);
+            }
+            container.addAdESSignature(signature.getBytes(StandardCharsets.UTF_8));
             container.save();
         });
     }
