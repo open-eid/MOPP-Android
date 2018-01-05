@@ -22,78 +22,11 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@id/signatureUpdateDocuments"
+        android:id="@id/signatureUpdateList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:scrollbars="vertical" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@id/signatureUpdateDocumentsAddButton"
-        style="@style/Widget.Application.FloatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/material_button_fab_edge_margin"
-        android:src="@drawable/ic_add"
-        android:contentDescription="@string/signature_update_documents_add_button"
-        android:visibility="gone" />
-
-    <LinearLayout
-        android:id="@id/signatureUpdateSignatureSummary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:layout_insetEdge="bottom"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="?attr/colorPrimary"
-        android:elevation="@dimen/material_elevation_bottom_sheet_modal">
-
-        <ImageView
-            android:id="@id/signatureUpdateSignatureSummaryValidity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/material_list_icon_first_position_margin_start"
-            android:src="@drawable/ic_check_circle"
-            android:tint="@color/success"
-            android:contentDescription="@string/signature_update_signature_valid" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/material_list_icon_first_position_margin_start"
-            android:orientation="vertical"
-            android:paddingTop="@dimen/material_baseline_grid_2.5x"
-            android:paddingBottom="@dimen/material_baseline_grid_2.5x">
-
-            <TextView
-                android:id="@id/signatureUpdateSignatureSummaryPrimaryText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:text="@string/signature_update_signature_summary_primary" />
-
-            <TextView
-                android:id="@id/signatureUpdateSignatureSummarySecondaryText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceListItemSecondary"
-                android:text="@string/signature_update_signature_summary_secondary_valid" />
-
-        </LinearLayout>
-
-        <Button
-            android:id="@id/signatureUpdateSignatureSummarySignButton"
-            style="@style/Widget.Application.Button.ButtonBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/signature_update_signature_summary_sign_button" />
-
-    </LinearLayout>
 
     <FrameLayout
         android:id="@id/activityOverlay"

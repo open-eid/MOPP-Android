@@ -143,19 +143,17 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
     }
 
     @Override
-    public Completable removeDocuments(File containerFile, ImmutableSet<Document> documents) {
+    public Completable removeDocument(File containerFile, Document document) {
         return Completable.fromAction(() -> {
             Container container = Container.open(containerFile.getAbsolutePath());
             if (container == null) {
                 throw new IOException("Could not open signature container " + containerFile);
             }
-            for (Document document : documents) {
-                DataFiles dataFiles = container.dataFiles();
-                for (int i = 0; i < dataFiles.size(); i++) {
-                    if (document.name().equals(dataFiles.get(i).fileName())) {
-                        container.removeDataFile(i);
-                        break;
-                    }
+            DataFiles dataFiles = container.dataFiles();
+            for (int i = 0; i < dataFiles.size(); i++) {
+                if (document.name().equals(dataFiles.get(i).fileName())) {
+                    container.removeDataFile(i);
+                    break;
                 }
             }
             container.save();

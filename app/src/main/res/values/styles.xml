@@ -43,4 +43,14 @@
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
+    <style name="Widget.Application.Button.Borderless" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:tint">?android:attr/textColorSecondary</item>
+        <item name="android:minWidth">48dp</item>
+    </style>
+
+    <style name="Widget.Application.Button.Borderless.Colored">
+        <item name="android:tint">?attr/colorAccent</item>
+    </style>
+
 </resources>

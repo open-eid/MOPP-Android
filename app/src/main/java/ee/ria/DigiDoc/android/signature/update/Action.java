@@ -66,11 +66,11 @@ interface Action extends MviAction {
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract ImmutableSet<Document> documents();
+        @Nullable abstract Document document();
 
         static RemoveDocumentsAction create(@Nullable File containerFile,
-                                            @Nullable ImmutableSet<Document> documents) {
-            return new AutoValue_Action_RemoveDocumentsAction(containerFile, documents);
+                                            @Nullable Document document) {
+            return new AutoValue_Action_RemoveDocumentsAction(containerFile, document);
         }
     }
 

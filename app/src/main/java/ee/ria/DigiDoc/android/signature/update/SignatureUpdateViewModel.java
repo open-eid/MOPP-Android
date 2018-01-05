@@ -43,14 +43,11 @@ public final class SignatureUpdateViewModel extends
             Intent.OpenDocumentIntent openDocumentIntent = (Intent.OpenDocumentIntent) intent;
             return Action.OpenDocumentAction.create(openDocumentIntent.containerFile(),
                     openDocumentIntent.document());
-        } else if (intent instanceof Intent.DocumentsSelectionIntent) {
-            return Action.DocumentsSelectionAction
-                    .create(((Intent.DocumentsSelectionIntent) intent).documents());
-        } else if (intent instanceof Intent.RemoveDocumentsIntent) {
-            Intent.RemoveDocumentsIntent removeDocumentsIntent =
-                    (Intent.RemoveDocumentsIntent) intent;
-            return Action.RemoveDocumentsAction.create(removeDocumentsIntent.containerFile(),
-                    removeDocumentsIntent.documents());
+        } else if (intent instanceof Intent.RemoveDocumentIntent) {
+            Intent.RemoveDocumentIntent removeDocumentIntent =
+                    (Intent.RemoveDocumentIntent) intent;
+            return Action.RemoveDocumentsAction.create(removeDocumentIntent.containerFile(),
+                    removeDocumentIntent.document());
         } else if (intent instanceof Intent.SignatureListVisibilityIntent) {
             return Action.SignatureListVisibilityAction
                     .create(((Intent.SignatureListVisibilityIntent) intent).isVisible());

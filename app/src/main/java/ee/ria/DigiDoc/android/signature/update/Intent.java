@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 
@@ -62,32 +61,18 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
-    abstract class DocumentsSelectionIntent implements Intent {
-
-        @Nullable abstract ImmutableSet<Document> documents();
-
-        static DocumentsSelectionIntent create(ImmutableSet<Document> documents) {
-            return new AutoValue_Intent_DocumentsSelectionIntent(documents);
-        }
-
-        static DocumentsSelectionIntent clear() {
-            return new AutoValue_Intent_DocumentsSelectionIntent(null);
-        }
-    }
-
-    @AutoValue
-    abstract class RemoveDocumentsIntent implements Intent {
+    abstract class RemoveDocumentIntent implements Intent {
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract ImmutableSet<Document> documents();
+        @Nullable abstract Document document();
 
-        static RemoveDocumentsIntent create(File containerFile, ImmutableSet<Document> documents) {
-            return new AutoValue_Intent_RemoveDocumentsIntent(containerFile, documents);
+        static RemoveDocumentIntent create(File containerFile, Document document) {
+            return new AutoValue_Intent_RemoveDocumentIntent(containerFile, document);
         }
 
-        static RemoveDocumentsIntent clear() {
-            return new AutoValue_Intent_RemoveDocumentsIntent(null, null);
+        static RemoveDocumentIntent clear() {
+            return new AutoValue_Intent_RemoveDocumentIntent(null, null);
         }
     }
 

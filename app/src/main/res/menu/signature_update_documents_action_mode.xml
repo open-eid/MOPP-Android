@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-        android:id="@+id/signatureUpdateDocumentsRemoveButton"
-        android:title="@string/signature_update_documents_remove_button"
-        android:icon="@drawable/ic_delete" />
-
-</menu>

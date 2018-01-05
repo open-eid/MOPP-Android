@@ -136,7 +136,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return Observable.just(Result.RemoveDocumentsResult.clear());
             } else {
                 return signatureContainerDataSource
-                        .removeDocuments(action.containerFile(), action.documents())
+                        .removeDocument(action.containerFile(), action.document())
                         .andThen(signatureContainerDataSource.get(action.containerFile()))
                         .toObservable()
                         .map(Result.RemoveDocumentsResult::success)
