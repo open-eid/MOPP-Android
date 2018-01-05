@@ -131,12 +131,28 @@ final class SignatureUpdateAdapter extends
 
     static final class DocumentViewHolder extends UpdateViewHolder<DocumentItem> {
 
+        private final Formatter formatter;
+
+        private final ImageView iconView;
+        private final TextView nameView;
+        private final TextView sizeView;
+        private final ImageButton removeButton;
+
         DocumentViewHolder(View itemView) {
             super(itemView);
+            formatter = Application.component(itemView.getContext()).formatter();
+            iconView = itemView.findViewById(R.id.signatureUpdateListDocumentIcon);
+            nameView = itemView.findViewById(R.id.signatureUpdateListDocumentName);
+            sizeView = itemView.findViewById(R.id.signatureUpdateListDocumentSize);
+            removeButton = itemView.findViewById(R.id.signatureUpdateListDocumentRemoveButton);
         }
 
         @Override
         void bind(DocumentItem item) {
+            clicks(itemView).subscribe();
+            iconView.setImageResource(formatter.documentTypeImageRes(item.document()));
+            nameView.setText(item.document().name());
+            sizeView.setText(formatter.fileSize(item.document().size()));
         }
     }
 

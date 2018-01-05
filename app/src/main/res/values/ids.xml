@@ -41,6 +41,10 @@
     <item type="id" name="signatureUpdateList" />
     <item type="id" name="signatureUpdateListSubheadTitle" />
     <item type="id" name="signatureUpdateListSubheadButton" />
+    <item type="id" name="signatureUpdateListDocumentIcon" />
+    <item type="id" name="signatureUpdateListDocumentName" />
+    <item type="id" name="signatureUpdateListDocumentSize" />
+    <item type="id" name="signatureUpdateListDocumentRemoveButton" />
     <item type="id" name="signatureUpdateListSignatureValidity" />
     <item type="id" name="signatureUpdateListSignatureName" />
     <item type="id" name="signatureUpdateListSignatureCreatedAt" />

@@ -4,9 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:minHeight="@dimen/material_list_two_line_normal_height"
+    android:paddingTop="@dimen/material_list_normal_padding_vertical"
+    android:paddingBottom="@dimen/material_list_normal_padding_vertical"
     android:gravity="center_vertical"
-    android:paddingTop="@dimen/material_baseline_grid_2.5x"
-    android:paddingBottom="@dimen/material_baseline_grid_2.5x"
     android:background="?attr/selectableItemBackground">
 
     <ImageView

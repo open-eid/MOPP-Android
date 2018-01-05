@@ -97,7 +97,8 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
             ImmutableList.Builder<Document> documentBuilder = ImmutableList.builder();
             DataFiles dataFiles = container.dataFiles();
             for (int i = 0; i < dataFiles.size(); i++) {
-                documentBuilder.add(Document.create(dataFiles.get(i).fileName()));
+                DataFile dataFile = dataFiles.get(i);
+                documentBuilder.add(Document.create(dataFile.fileName(), dataFile.fileSize()));
             }
 
             ImmutableList.Builder<Signature> signatureBuilder = ImmutableList.builder();

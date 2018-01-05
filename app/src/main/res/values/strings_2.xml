@@ -41,6 +41,8 @@
     <string name="signature_update_documents_button">Add documents</string>
     <string name="signature_update_signatures_title">Signatures</string>
     <string name="signature_update_signatures_button">Add signature</string>
+    <string name="signature_update_document_remove_button">Remove document</string>
+    <string name="signature_update_document_type_file">File</string>
     <string name="signature_update_signature_valid">Signature is valid</string>
     <string name="signature_update_signature_invalid">Signature is not valid</string>
     <string name="signature_update_signature_remove_button">Remove signature</string>
