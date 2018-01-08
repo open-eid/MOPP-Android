@@ -98,7 +98,7 @@ final class SignatureUpdateAdapter extends
 
     @Override
     public void onBindViewHolder(UpdateViewHolder<Item> holder, int position) {
-        holder.bind(this, position, getItem(position));
+        holder.bind(this, getItem(position));
     }
 
     @Override
@@ -112,7 +112,7 @@ final class SignatureUpdateAdapter extends
             super(itemView);
         }
 
-        abstract void bind(SignatureUpdateAdapter adapter, int position, T item);
+        abstract void bind(SignatureUpdateAdapter adapter, T item);
 
         static UpdateViewHolder create(int viewType, View itemView) {
             switch (viewType) {
@@ -140,7 +140,7 @@ final class SignatureUpdateAdapter extends
         }
 
         @Override
-        void bind(SignatureUpdateAdapter adapter, int position, SubheadItem item) {
+        void bind(SignatureUpdateAdapter adapter, SubheadItem item) {
             titleView.setText(item.titleRes());
             buttonView.setContentDescription(buttonView.getResources().getString(item.buttonRes()));
             buttonView.setVisibility(item.buttonVisible() ? View.VISIBLE : View.GONE);
@@ -171,15 +171,15 @@ final class SignatureUpdateAdapter extends
         }
 
         @Override
-        void bind(SignatureUpdateAdapter adapter, int position, DocumentItem item) {
+        void bind(SignatureUpdateAdapter adapter, DocumentItem item) {
             clicks(itemView).map(ignored ->
-                    ((DocumentItem) adapter.getItem(position)).document())
+                    ((DocumentItem) adapter.getItem(getAdapterPosition())).document())
                     .subscribe(adapter.documentClicksSubject);
             iconView.setImageResource(formatter.documentTypeImageRes(item.document()));
             nameView.setText(item.document().name());
             sizeView.setText(formatter.fileSize(item.document().size()));
             clicks(removeButton).map(ignored ->
-                    ((DocumentItem) adapter.getItem(position)).document())
+                    ((DocumentItem) adapter.getItem(getAdapterPosition())).document())
                     .subscribe(adapter.documentRemoveClicksSubject);
         }
     }
@@ -209,9 +209,9 @@ final class SignatureUpdateAdapter extends
         }
 
         @Override
-        void bind(SignatureUpdateAdapter adapter, int position, SignatureItem item) {
+        void bind(SignatureUpdateAdapter adapter, SignatureItem item) {
             clicks(itemView).map(ignored ->
-                    ((SignatureItem) adapter.getItem(position)).signature())
+                    ((SignatureItem) adapter.getItem(getAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
             validityView.setImageResource(item.signature().valid()
                     ? R.drawable.ic_check_circle
@@ -220,7 +220,7 @@ final class SignatureUpdateAdapter extends
             nameView.setText(item.signature().name());
             createdAtView.setText(formatter.instant(item.signature().createdAt()));
             clicks(removeButton).map(ignored ->
-                    ((SignatureItem) adapter.getItem(position)).signature())
+                    ((SignatureItem) adapter.getItem(getAdapterPosition())).signature())
                     .subscribe(adapter.signatureRemoveClicksSubject);
         }
     }

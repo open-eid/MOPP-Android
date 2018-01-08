@@ -6,6 +6,7 @@ import com.google.auto.value.AutoValue;
 
 import java.io.File;
 
+import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.signature.data.SignatureAddStatus;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
@@ -24,7 +25,9 @@ abstract class ViewState implements MviViewState {
     @Nullable abstract File openedDocumentFile();
     @Nullable abstract Throwable openDocumentError();
 
-    @Nullable abstract Throwable removeDocumentsError();
+    @Nullable abstract Document documentRemoveConfirmation();
+    abstract boolean documentRemoveInProgress();
+    @Nullable abstract Throwable documentRemoveError();
 
     @Nullable abstract Signature signatureRemoveConfirmation();
     abstract boolean signatureRemoveInProgress();
@@ -45,6 +48,7 @@ abstract class ViewState implements MviViewState {
                 .loadContainerInProgress(false)
                 .pickingDocuments(false)
                 .documentsProgress(false)
+                .documentRemoveInProgress(false)
                 .signatureRemoveInProgress(false)
                 .signatureAddCreateContainerInProgress(false)
                 .signatureAddVisible(false)
@@ -63,7 +67,9 @@ abstract class ViewState implements MviViewState {
         Builder addDocumentsError(@Nullable Throwable addDocumentsError);
         Builder openedDocumentFile(@Nullable File openedDocumentFile);
         Builder openDocumentError(@Nullable Throwable openDocumentError);
-        Builder removeDocumentsError(@Nullable Throwable removeDocumentsError);
+        Builder documentRemoveConfirmation(@Nullable Document documentRemoveConfirmation);
+        Builder documentRemoveInProgress(boolean documentRemoveInProgress);
+        Builder documentRemoveError(@Nullable Throwable documentRemoveError);
         Builder signatureRemoveConfirmation(@Nullable Signature signatureRemoveConfirmation);
         Builder signatureRemoveInProgress(boolean signatureRemoveInProgress);
         Builder signatureRemoveError(@Nullable Throwable signatureRemoveError);

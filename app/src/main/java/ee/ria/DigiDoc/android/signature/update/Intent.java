@@ -61,18 +61,24 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
-    abstract class RemoveDocumentIntent implements Intent {
+    abstract class DocumentRemoveIntent implements Intent {
+
+        abstract boolean showConfirmation();
 
         @Nullable abstract File containerFile();
 
         @Nullable abstract Document document();
 
-        static RemoveDocumentIntent create(File containerFile, Document document) {
-            return new AutoValue_Intent_RemoveDocumentIntent(containerFile, document);
+        static DocumentRemoveIntent showConfirmation(File containerFile, Document document) {
+            return new AutoValue_Intent_DocumentRemoveIntent(true, containerFile, document);
         }
 
-        static RemoveDocumentIntent clear() {
-            return new AutoValue_Intent_RemoveDocumentIntent(null, null);
+        static DocumentRemoveIntent remove(File containerFile, Document document) {
+            return new AutoValue_Intent_DocumentRemoveIntent(false, containerFile, document);
+        }
+
+        static DocumentRemoveIntent clear() {
+            return new AutoValue_Intent_DocumentRemoveIntent(false, null, null);
         }
     }
 

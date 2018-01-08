@@ -6,6 +6,7 @@ import com.google.auto.value.AutoValue;
 
 import java.io.File;
 
+import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.signature.data.SignatureAddStatus;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
@@ -129,7 +130,9 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
-    abstract class RemoveDocumentsResult implements Result {
+    abstract class DocumentRemoveResult implements Result {
+
+        @Nullable abstract Document showConfirmation();
 
         abstract boolean inProgress();
 
@@ -140,28 +143,33 @@ interface Result extends MviResult<ViewState> {
         @Override
         public ViewState reduce(ViewState state) {
             ViewState.Builder builder = state.buildWith()
-                    .removeDocumentsError(error())
-                    .documentsProgress(inProgress());
+                    .documentRemoveConfirmation(showConfirmation())
+                    .documentRemoveInProgress(inProgress())
+                    .documentRemoveError(error());
             if (container() != null) {
                 builder.container(container());
             }
             return builder.build();
         }
 
-        static RemoveDocumentsResult progress() {
-            return new AutoValue_Result_RemoveDocumentsResult(true, null, null);
+        static DocumentRemoveResult confirmation(Document document) {
+            return new AutoValue_Result_DocumentRemoveResult(document, false, null, null);
         }
 
-        static RemoveDocumentsResult success(SignatureContainer container) {
-            return new AutoValue_Result_RemoveDocumentsResult(false, container, null);
+        static DocumentRemoveResult progress() {
+            return new AutoValue_Result_DocumentRemoveResult(null, true, null, null);
         }
 
-        static RemoveDocumentsResult failure(Throwable error) {
-            return new AutoValue_Result_RemoveDocumentsResult(false, null, error);
+        static DocumentRemoveResult success(SignatureContainer container) {
+            return new AutoValue_Result_DocumentRemoveResult(null, false, container, null);
         }
 
-        static RemoveDocumentsResult clear() {
-            return new AutoValue_Result_RemoveDocumentsResult(false, null, null);
+        static DocumentRemoveResult failure(Throwable error) {
+            return new AutoValue_Result_DocumentRemoveResult(null, false, null, error);
+        }
+
+        static DocumentRemoveResult clear() {
+            return new AutoValue_Result_DocumentRemoveResult(null, false, null, null);
         }
     }
 

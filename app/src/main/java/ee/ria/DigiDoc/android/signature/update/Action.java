@@ -51,15 +51,18 @@ interface Action extends MviAction {
     }
 
     @AutoValue
-    abstract class RemoveDocumentsAction implements Action {
+    abstract class DocumentRemoveAction implements Action {
+
+        abstract boolean showConfirmation();
 
         @Nullable abstract File containerFile();
 
         @Nullable abstract Document document();
 
-        static RemoveDocumentsAction create(@Nullable File containerFile,
-                                            @Nullable Document document) {
-            return new AutoValue_Action_RemoveDocumentsAction(containerFile, document);
+        static DocumentRemoveAction create(boolean showConfirmation, @Nullable File containerFile,
+                                           @Nullable Document document) {
+            return new AutoValue_Action_DocumentRemoveAction(showConfirmation, containerFile,
+                    document);
         }
     }
 

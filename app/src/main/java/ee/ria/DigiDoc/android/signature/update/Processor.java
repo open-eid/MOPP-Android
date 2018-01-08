@@ -64,8 +64,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<Action.OpenDocumentAction,
                                         Result.OpenDocumentResult> openDocument;
 
-    private final ObservableTransformer<Action.RemoveDocumentsAction,
-                                        Result.RemoveDocumentsResult> removeDocuments;
+    private final ObservableTransformer<Action.DocumentRemoveAction,
+                                        Result.DocumentRemoveResult> documentRemove;
 
     private final ObservableTransformer<Action.SignatureRemoveAction,
                                         Result.SignatureRemoveResult> signatureRemove;
@@ -117,19 +117,21 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
         });
 
-        removeDocuments = upstream -> upstream.flatMap(action -> {
-            if (action.containerFile() == null) {
-                return Observable.just(Result.RemoveDocumentsResult.clear());
+        documentRemove = upstream -> upstream.flatMap(action -> {
+            if (action.containerFile() == null || action.document() == null) {
+                return Observable.just(Result.DocumentRemoveResult.clear());
+            } else if (action.showConfirmation()) {
+                return Observable.just(Result.DocumentRemoveResult.confirmation(action.document()));
             } else {
                 return signatureContainerDataSource
                         .removeDocument(action.containerFile(), action.document())
                         .andThen(signatureContainerDataSource.get(action.containerFile()))
                         .toObservable()
-                        .map(Result.RemoveDocumentsResult::success)
-                        .onErrorReturn(Result.RemoveDocumentsResult::failure)
+                        .map(Result.DocumentRemoveResult::success)
+                        .onErrorReturn(Result.DocumentRemoveResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.RemoveDocumentsResult.progress());
+                        .startWith(Result.DocumentRemoveResult.progress());
             }
         });
 
@@ -207,7 +209,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.LoadContainerAction.class).compose(loadContainer),
                 shared.ofType(Action.AddDocumentsAction.class).compose(addDocuments),
                 shared.ofType(Action.OpenDocumentAction.class).compose(openDocument),
-                shared.ofType(Action.RemoveDocumentsAction.class).compose(removeDocuments),
+                shared.ofType(Action.DocumentRemoveAction.class).compose(documentRemove),
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd)));
     }
