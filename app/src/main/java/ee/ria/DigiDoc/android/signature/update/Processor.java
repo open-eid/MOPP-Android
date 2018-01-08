@@ -64,19 +64,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<Action.OpenDocumentAction,
                                         Result.OpenDocumentResult> openDocument;
 
-    private final ObservableTransformer<Action.DocumentsSelectionAction,
-                                        Result.DocumentsSelectionResult> documentsSelection;
-
     private final ObservableTransformer<Action.RemoveDocumentsAction,
                                         Result.RemoveDocumentsResult> removeDocuments;
-
-    private final ObservableTransformer<Action.SignatureListVisibilityAction,
-                                        Result.SignatureListVisibilityResult>
-            signatureListVisibility;
-
-    private final ObservableTransformer<Action.SignatureRemoveSelectionAction,
-                                        Result.SignatureRemoveSelectionResult>
-            signatureRemoveSelection;
 
     private final ObservableTransformer<Action.SignatureRemoveAction,
                                         Result.SignatureRemoveResult> signatureRemove;
@@ -128,9 +117,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
         });
 
-        documentsSelection = upstream -> upstream.map(action ->
-                Result.DocumentsSelectionResult.create(action.documents()));
-
         removeDocuments = upstream -> upstream.flatMap(action -> {
             if (action.containerFile() == null) {
                 return Observable.just(Result.RemoveDocumentsResult.clear());
@@ -147,15 +133,12 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
         });
 
-        signatureListVisibility = upstream -> upstream.map(action ->
-                Result.SignatureListVisibilityResult.create(action.isVisible()));
-
-        signatureRemoveSelection = upstream -> upstream.map(action ->
-                Result.SignatureRemoveSelectionResult.create(action.signature()));
-
         signatureRemove = upstream -> upstream.flatMap(action -> {
-            if (action.containerFile() == null) {
+            if (action.containerFile() == null || action.signature() == null) {
                 return Observable.just(Result.SignatureRemoveResult.clear());
+            } else if (action.showConfirmation()) {
+                return Observable.just(Result.SignatureRemoveResult
+                        .confirmation(action.signature()));
             } else {
                 return signatureContainerDataSource
                         .removeSignature(action.containerFile(), action.signature())
@@ -224,12 +207,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.LoadContainerAction.class).compose(loadContainer),
                 shared.ofType(Action.AddDocumentsAction.class).compose(addDocuments),
                 shared.ofType(Action.OpenDocumentAction.class).compose(openDocument),
-                shared.ofType(Action.DocumentsSelectionAction.class).compose(documentsSelection),
                 shared.ofType(Action.RemoveDocumentsAction.class).compose(removeDocuments),
-                shared.ofType(Action.SignatureListVisibilityAction.class)
-                        .compose(signatureListVisibility),
-                shared.ofType(Action.SignatureRemoveSelectionAction.class)
-                        .compose(signatureRemoveSelection),
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd)));
     }

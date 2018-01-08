@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.support.annotation.StringDef;
 import android.support.annotation.StringRes;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -21,22 +22,31 @@ import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 import static android.support.v4.content.res.ResourcesCompat.getColor;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.DOCUMENT;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.SIGNATURE;
 
 final class SignatureUpdateAdapter extends
         RecyclerView.Adapter<SignatureUpdateAdapter.UpdateViewHolder<SignatureUpdateAdapter.Item>> {
+
+    final Subject<Document> documentClicksSubject = PublishSubject.create();
+    final Subject<Object> documentAddClicksSubject = PublishSubject.create();
+    final Subject<Document> documentRemoveClicksSubject = PublishSubject.create();
+    final Subject<Signature> signatureClicksSubject = PublishSubject.create();
+    final Subject<Object> signatureAddClicksSubject = PublishSubject.create();
+    final Subject<Signature> signatureRemoveClicksSubject = PublishSubject.create();
 
     private ImmutableList<Item> items = ImmutableList.of();
 
     void setData(ImmutableList<Document> documents, ImmutableList<Signature> signatures) {
         ImmutableList<Item> items = ImmutableList.<Item>builder()
-                .add(SubheadItem.create(R.string.signature_update_documents_title,
-                        R.string.signature_update_documents_button, true))
+                .add(SubheadItem.create(DOCUMENT, true))
                 .addAll(DocumentItem.of(documents))
-                .add(SubheadItem.create(R.string.signature_update_signatures_title,
-                        R.string.signature_update_signatures_button, true))
+                .add(SubheadItem.create(SIGNATURE, true))
                 .addAll(SignatureItem.of(signatures))
                 .build();
 
@@ -47,23 +57,31 @@ final class SignatureUpdateAdapter extends
     }
 
     Observable<Document> documentClicks() {
-        return Observable.empty();
+        return documentClicksSubject;
     }
 
     Observable<Object> documentAddClicks() {
-        return Observable.empty();
+        return documentAddClicksSubject;
     }
 
     Observable<Document> documentRemoveClicks() {
-        return Observable.empty();
+        return documentRemoveClicksSubject;
+    }
+
+    Observable<Signature> signatureClicks() {
+        return signatureClicksSubject;
     }
 
     Observable<Object> signatureAddClicks() {
-        return Observable.empty();
+        return signatureAddClicksSubject;
     }
 
     Observable<Signature> signatureRemoveClicks() {
-        return Observable.empty();
+        return signatureRemoveClicksSubject;
+    }
+
+    Item getItem(int position) {
+        return items.get(position);
     }
 
     @Override
@@ -80,7 +98,7 @@ final class SignatureUpdateAdapter extends
 
     @Override
     public void onBindViewHolder(UpdateViewHolder<Item> holder, int position) {
-        holder.bind(items.get(position));
+        holder.bind(this, position, getItem(position));
     }
 
     @Override
@@ -94,7 +112,7 @@ final class SignatureUpdateAdapter extends
             super(itemView);
         }
 
-        abstract void bind(T item);
+        abstract void bind(SignatureUpdateAdapter adapter, int position, T item);
 
         static UpdateViewHolder create(int viewType, View itemView) {
             switch (viewType) {
@@ -122,10 +140,15 @@ final class SignatureUpdateAdapter extends
         }
 
         @Override
-        void bind(SubheadItem item) {
+        void bind(SignatureUpdateAdapter adapter, int position, SubheadItem item) {
             titleView.setText(item.titleRes());
             buttonView.setContentDescription(buttonView.getResources().getString(item.buttonRes()));
             buttonView.setVisibility(item.buttonVisible() ? View.VISIBLE : View.GONE);
+            if (item.subheadItemType().equals(DOCUMENT)) {
+                clicks(buttonView).subscribe(adapter.documentAddClicksSubject);
+            } else {
+                clicks(buttonView).subscribe(adapter.signatureAddClicksSubject);
+            }
         }
     }
 
@@ -148,11 +171,16 @@ final class SignatureUpdateAdapter extends
         }
 
         @Override
-        void bind(DocumentItem item) {
-            clicks(itemView).subscribe();
+        void bind(SignatureUpdateAdapter adapter, int position, DocumentItem item) {
+            clicks(itemView).map(ignored ->
+                    ((DocumentItem) adapter.getItem(position)).document())
+                    .subscribe(adapter.documentClicksSubject);
             iconView.setImageResource(formatter.documentTypeImageRes(item.document()));
             nameView.setText(item.document().name());
             sizeView.setText(formatter.fileSize(item.document().size()));
+            clicks(removeButton).map(ignored ->
+                    ((DocumentItem) adapter.getItem(position)).document())
+                    .subscribe(adapter.documentRemoveClicksSubject);
         }
     }
 
@@ -181,15 +209,26 @@ final class SignatureUpdateAdapter extends
         }
 
         @Override
-        void bind(SignatureItem item) {
-            clicks(itemView).subscribe();
+        void bind(SignatureUpdateAdapter adapter, int position, SignatureItem item) {
+            clicks(itemView).map(ignored ->
+                    ((SignatureItem) adapter.getItem(position)).signature())
+                    .subscribe(adapter.signatureClicksSubject);
             validityView.setImageResource(item.signature().valid()
                     ? R.drawable.ic_check_circle
                     : R.drawable.ic_error);
             validityView.setImageTintList(item.signature().valid() ? colorValid : colorInvalid);
             nameView.setText(item.signature().name());
             createdAtView.setText(formatter.instant(item.signature().createdAt()));
+            clicks(removeButton).map(ignored ->
+                    ((SignatureItem) adapter.getItem(position)).signature())
+                    .subscribe(adapter.signatureRemoveClicksSubject);
         }
+    }
+
+    @StringDef({DOCUMENT, SIGNATURE})
+    @interface SubheadItemType {
+        String DOCUMENT = "DOCUMENT";
+        String SIGNATURE = "SIGNATURE";
     }
 
     static abstract class Item {
@@ -200,17 +239,27 @@ final class SignatureUpdateAdapter extends
     @AutoValue
     static abstract class SubheadItem extends Item {
 
+        @SubheadItemType abstract String subheadItemType();
+
         @StringRes abstract int titleRes();
 
         @StringRes abstract int buttonRes();
 
         abstract boolean buttonVisible();
 
-        static SubheadItem create(@StringRes int titleRes, @StringRes int buttonRes,
-                                  boolean buttonVisible) {
+        static SubheadItem create(@SubheadItemType String subheadItemType, boolean buttonVisible) {
+            int titleRes;
+            int buttonRes;
+            if (subheadItemType.equals(DOCUMENT)) {
+                titleRes = R.string.signature_update_documents_title;
+                buttonRes = R.string.signature_update_documents_button;
+            } else {
+                titleRes = R.string.signature_update_signatures_title;
+                buttonRes = R.string.signature_update_signatures_button;
+            }
             return new AutoValue_SignatureUpdateAdapter_SubheadItem(
-                    R.layout.signature_update_list_item_subhead, titleRes, buttonRes,
-                    buttonVisible);
+                    R.layout.signature_update_list_item_subhead, subheadItemType, titleRes,
+                    buttonRes, buttonVisible);
         }
     }
 

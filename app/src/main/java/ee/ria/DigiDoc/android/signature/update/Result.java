@@ -3,11 +3,9 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.signature.data.SignatureAddStatus;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
@@ -131,23 +129,6 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
-    abstract class DocumentsSelectionResult implements Result {
-
-        @Nullable abstract ImmutableSet<Document> documents();
-
-        @Override
-        public ViewState reduce(ViewState state) {
-            return state.buildWith()
-                    .selectedDocuments(documents())
-                    .build();
-        }
-
-        static DocumentsSelectionResult create(@Nullable ImmutableSet<Document> documents) {
-            return new AutoValue_Result_DocumentsSelectionResult(documents);
-        }
-    }
-
-    @AutoValue
     abstract class RemoveDocumentsResult implements Result {
 
         abstract boolean inProgress();
@@ -162,8 +143,7 @@ interface Result extends MviResult<ViewState> {
                     .removeDocumentsError(error())
                     .documentsProgress(inProgress());
             if (container() != null) {
-                builder.container(container())
-                        .selectedDocuments(null);
+                builder.container(container());
             }
             return builder.build();
         }
@@ -186,41 +166,9 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
-    abstract class SignatureListVisibilityResult implements Result {
-
-        abstract boolean isVisible();
-
-        @Override
-        public ViewState reduce(ViewState state) {
-            return state.buildWith()
-                    .signatureListVisible(isVisible())
-                    .build();
-        }
-
-        static SignatureListVisibilityResult create(boolean isVisible) {
-            return new AutoValue_Result_SignatureListVisibilityResult(isVisible);
-        }
-    }
-
-    @AutoValue
-    abstract class SignatureRemoveSelectionResult implements Result {
-
-        @Nullable abstract Signature signature();
-
-        @Override
-        public ViewState reduce(ViewState state) {
-            return state.buildWith()
-                    .signatureRemoveSelection(signature())
-                    .build();
-        }
-
-        static SignatureRemoveSelectionResult create(@Nullable Signature signature) {
-            return new AutoValue_Result_SignatureRemoveSelectionResult(signature);
-        }
-    }
-
-    @AutoValue
     abstract class SignatureRemoveResult implements Result {
+
+        @Nullable abstract Signature showConfirmation();
 
         abstract boolean inProgress();
 
@@ -231,29 +179,33 @@ interface Result extends MviResult<ViewState> {
         @Override
         public ViewState reduce(ViewState state) {
             ViewState.Builder builder = state.buildWith()
+                    .signatureRemoveConfirmation(showConfirmation())
                     .signatureRemoveInProgress(inProgress())
                     .signatureRemoveError(error());
             if (container() != null) {
-                builder.container(container())
-                        .signatureRemoveSelection(null);
+                builder.container(container());
             }
             return builder.build();
         }
 
+        static SignatureRemoveResult confirmation(Signature signature) {
+            return new AutoValue_Result_SignatureRemoveResult(signature, false, null, null);
+        }
+
         static SignatureRemoveResult progress() {
-            return new AutoValue_Result_SignatureRemoveResult(true, null, null);
+            return new AutoValue_Result_SignatureRemoveResult(null, true, null, null);
         }
 
         static SignatureRemoveResult success(SignatureContainer container) {
-            return new AutoValue_Result_SignatureRemoveResult(false, container, null);
+            return new AutoValue_Result_SignatureRemoveResult(null, false, container, null);
         }
 
         static SignatureRemoveResult failure(Throwable error) {
-            return new AutoValue_Result_SignatureRemoveResult(false, null, error);
+            return new AutoValue_Result_SignatureRemoveResult(null, false, null, error);
         }
 
         static SignatureRemoveResult clear() {
-            return new AutoValue_Result_SignatureRemoveResult(false, null, null);
+            return new AutoValue_Result_SignatureRemoveResult(null, false, null, null);
         }
     }
 

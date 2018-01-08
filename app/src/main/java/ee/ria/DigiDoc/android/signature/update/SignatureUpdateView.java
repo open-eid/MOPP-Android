@@ -25,6 +25,7 @@ import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
+import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -59,10 +60,15 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             PublishSubject.create();
     private final Subject<Intent.RemoveDocumentIntent> removeDocumentsIntentSubject =
             PublishSubject.create();
+    private final Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject =
+            PublishSubject.create();
     private final Subject<Intent.SignatureAddIntent> signatureAddIntentSubject =
             PublishSubject.create();
 
+    private final ConfirmationDialog signatureRemoveConfirmationDialog;
     private final SignatureAddDialog signatureAddDialog;
+
+    @Nullable private Signature signatureRemoveConfirmation;
 
     public SignatureUpdateView(Context context) {
         this(context, null);
@@ -91,6 +97,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         listView.setLayoutManager(new LinearLayoutManager(context));
         listView.setAdapter(adapter = new SignatureUpdateAdapter());
 
+        signatureRemoveConfirmationDialog = new ConfirmationDialog(context,
+                R.string.signature_update_signature_remove_confirmation_message);
         signatureAddDialog = new SignatureAddDialog(context, viewModel.getPhoneNo(),
                 viewModel.getPersonalCode());
     }
@@ -127,7 +135,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         }
 
         setActivity(state.loadContainerInProgress() || state.documentsProgress()
-                || state.signatureAddInProgress());
+                || state.signatureRemoveInProgress() || state.signatureAddInProgress());
 
         SignatureContainer container = state.container();
         String name = container == null ? null : container.name();
@@ -150,6 +158,13 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             removeDocumentsErrorSnackbar.dismiss();
         } else {
             removeDocumentsErrorSnackbar.show();
+        }
+
+        signatureRemoveConfirmation = state.signatureRemoveConfirmation();
+        if (signatureRemoveConfirmation != null) {
+            signatureRemoveConfirmationDialog.show();
+        } else {
+            signatureRemoveConfirmationDialog.dismiss();
         }
 
         if (state.signatureAddVisible()) {
@@ -183,8 +198,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     }
 
     private Observable<Intent.SignatureRemoveIntent> signatureRemoveIntent() {
-        return adapter.signatureRemoveClicks()
-                .map(signature -> Intent.SignatureRemoveIntent.create(containerFile, signature));
+        return signatureRemoveIntentSubject;
     }
 
     private Observable<Intent.SignatureAddIntent> signatureAddIntent() {
@@ -220,6 +234,15 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         disposables.add(signatureAddDialog.positiveButtonClicks().subscribe(data ->
                 signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.addIntent(containerFile,
                         data.phoneNo(), data.personalCode(), data.rememberMe()))));
+        disposables.add(adapter.signatureRemoveClicks().subscribe(signature ->
+                signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent
+                        .showConfirmation(containerFile, signature))));
+        disposables.add(signatureRemoveConfirmationDialog.positiveButtonClicks()
+                .subscribe(ignored -> signatureRemoveIntentSubject
+                        .onNext(Intent.SignatureRemoveIntent
+                                .remove(containerFile, signatureRemoveConfirmation))));
+        disposables.add(signatureRemoveConfirmationDialog.cancels().subscribe(ignored ->
+                signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear())));
         disposables.add(signatureAddDialog.cancels().subscribe(ignored ->
                 signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent())));
     }
@@ -228,6 +251,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     public void onDetachedFromWindow() {
         disposables.detach();
         signatureAddDialog.dismiss();
+        signatureRemoveConfirmationDialog.dismiss();
         super.onDetachedFromWindow();
     }
 }

@@ -77,38 +77,24 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
-    abstract class SignatureListVisibilityIntent implements Intent {
-
-        abstract boolean isVisible();
-
-        static SignatureListVisibilityIntent create(boolean isVisible) {
-            return new AutoValue_Intent_SignatureListVisibilityIntent(isVisible);
-        }
-    }
-
-    @AutoValue
-    abstract class SignatureRemoveSelectionIntent implements Intent {
-
-        @Nullable abstract Signature signature();
-
-        static SignatureRemoveSelectionIntent create(@Nullable Signature signature) {
-            return new AutoValue_Intent_SignatureRemoveSelectionIntent(signature);
-        }
-    }
-
-    @AutoValue
     abstract class SignatureRemoveIntent implements Intent {
+
+        abstract boolean showConfirmation();
 
         @Nullable abstract File containerFile();
 
         @Nullable abstract Signature signature();
 
-        static SignatureRemoveIntent create(File containerFile, Signature signature) {
-            return new AutoValue_Intent_SignatureRemoveIntent(containerFile, signature);
+        static SignatureRemoveIntent showConfirmation(File containerFile, Signature signature) {
+            return new AutoValue_Intent_SignatureRemoveIntent(true, containerFile, signature);
+        }
+
+        static SignatureRemoveIntent remove(File containerFile, Signature signature) {
+            return new AutoValue_Intent_SignatureRemoveIntent(false, containerFile, signature);
         }
 
         static SignatureRemoveIntent clear() {
-            return new AutoValue_Intent_SignatureRemoveIntent(null, null);
+            return new AutoValue_Intent_SignatureRemoveIntent(false, null, null);
         }
     }
 

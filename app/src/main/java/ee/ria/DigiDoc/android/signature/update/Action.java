@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 
@@ -52,16 +51,6 @@ interface Action extends MviAction {
     }
 
     @AutoValue
-    abstract class DocumentsSelectionAction implements Action {
-
-        @Nullable abstract ImmutableSet<Document> documents();
-
-        static DocumentsSelectionAction create(@Nullable ImmutableSet<Document> documents) {
-            return new AutoValue_Action_DocumentsSelectionAction(documents);
-        }
-    }
-
-    @AutoValue
     abstract class RemoveDocumentsAction implements Action {
 
         @Nullable abstract File containerFile();
@@ -75,35 +64,18 @@ interface Action extends MviAction {
     }
 
     @AutoValue
-    abstract class SignatureListVisibilityAction implements Action {
-
-        abstract boolean isVisible();
-
-        static SignatureListVisibilityAction create(boolean isVisible) {
-            return new AutoValue_Action_SignatureListVisibilityAction(isVisible);
-        }
-    }
-
-    @AutoValue
-    abstract class SignatureRemoveSelectionAction implements Action {
-
-        @Nullable abstract Signature signature();
-
-        static SignatureRemoveSelectionAction create(@Nullable Signature signature) {
-            return new AutoValue_Action_SignatureRemoveSelectionAction(signature);
-        }
-    }
-
-    @AutoValue
     abstract class SignatureRemoveAction implements Action {
+
+        abstract boolean showConfirmation();
 
         @Nullable abstract File containerFile();
 
         @Nullable abstract Signature signature();
 
-        static SignatureRemoveAction create(@Nullable File containerFile,
+        static SignatureRemoveAction create(boolean showConfirmation, @Nullable File containerFile,
                                             @Nullable Signature signature) {
-            return new AutoValue_Action_SignatureRemoveAction(containerFile, signature);
+            return new AutoValue_Action_SignatureRemoveAction(showConfirmation, containerFile,
+                    signature);
         }
     }
 
