@@ -123,7 +123,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
             }
 
             return SignatureContainer.create(containerFile.getName(), documentBuilder.build(),
-                    container.signatures().size() > 0, signatureBuilder.build());
+                    signatureBuilder.build());
         });
     }
 

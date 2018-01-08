@@ -150,7 +150,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         ImmutableList<Signature> signatures = container == null
                 ? ImmutableList.of()
                 : container.signatures();
-        adapter.setData(documents, signatures);
+        boolean documentAddEnabled = container != null && container.documentAddEnabled();
+        boolean documentRemoveEnabled = container != null && container.documentRemoveEnabled();
+        adapter.setData(documents, signatures, documentAddEnabled, documentRemoveEnabled);
 
         toolbarView.setTitle(name);
 

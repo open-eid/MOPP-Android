@@ -15,23 +15,18 @@ public abstract class SignatureContainer {
 
     public abstract ImmutableList<Document> documents();
 
-    public abstract boolean documentsLocked();
-
     public abstract ImmutableList<Signature> signatures();
 
-    public int invalidSignatureCount() {
-        int count = 0;
-        for (Signature signature : signatures()) {
-            if (!signature.valid()) {
-                count++;
-            }
-        }
-        return count;
+    public boolean documentAddEnabled() {
+        return signatures().size() == 0;
+    }
+
+    public boolean documentRemoveEnabled() {
+        return documentAddEnabled() && documents().size() != 1;
     }
 
     public static SignatureContainer create(String name, ImmutableList<Document> documents,
-                                            boolean documentsLocked,
                                             ImmutableList<Signature> signatures) {
-        return new AutoValue_SignatureContainer(name, documents, documentsLocked, signatures);
+        return new AutoValue_SignatureContainer(name, documents, signatures);
     }
 }

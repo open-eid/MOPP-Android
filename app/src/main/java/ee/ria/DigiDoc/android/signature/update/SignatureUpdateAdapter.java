@@ -42,10 +42,11 @@ final class SignatureUpdateAdapter extends
 
     private ImmutableList<Item> items = ImmutableList.of();
 
-    void setData(ImmutableList<Document> documents, ImmutableList<Signature> signatures) {
+    void setData(ImmutableList<Document> documents, ImmutableList<Signature> signatures,
+                 boolean documentAddEnabled, boolean documentRemoveEnabled) {
         ImmutableList<Item> items = ImmutableList.<Item>builder()
-                .add(SubheadItem.create(DOCUMENT, true))
-                .addAll(DocumentItem.of(documents))
+                .add(SubheadItem.create(DOCUMENT, documentAddEnabled))
+                .addAll(DocumentItem.of(documents, documentRemoveEnabled))
                 .add(SubheadItem.create(SIGNATURE, true))
                 .addAll(SignatureItem.of(signatures))
                 .build();
@@ -178,6 +179,7 @@ final class SignatureUpdateAdapter extends
             iconView.setImageResource(formatter.documentTypeImageRes(item.document()));
             nameView.setText(item.document().name());
             sizeView.setText(formatter.fileSize(item.document().size()));
+            removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton).map(ignored ->
                     ((DocumentItem) adapter.getItem(getAdapterPosition())).document())
                     .subscribe(adapter.documentRemoveClicksSubject);
@@ -268,15 +270,18 @@ final class SignatureUpdateAdapter extends
 
         abstract Document document();
 
-        static DocumentItem create(Document document) {
+        abstract boolean removeButtonVisible();
+
+        static DocumentItem create(Document document, boolean removeButtonVisible) {
             return new AutoValue_SignatureUpdateAdapter_DocumentItem(
-                    R.layout.signature_update_list_item_document, document);
+                    R.layout.signature_update_list_item_document, document, removeButtonVisible);
         }
 
-        static ImmutableList<DocumentItem> of(ImmutableList<Document> documents) {
+        static ImmutableList<DocumentItem> of(ImmutableList<Document> documents,
+                                              boolean removeButtonVisible) {
             ImmutableList.Builder<DocumentItem> builder = ImmutableList.builder();
             for (Document document : documents) {
-                builder.add(create(document));
+                builder.add(create(document, removeButtonVisible));
             }
             return builder.build();
         }
@@ -323,12 +328,19 @@ final class SignatureUpdateAdapter extends
 
         @Override
         public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-            return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
+            Item oldItem = oldList.get(oldItemPosition);
+            Item newItem = newList.get(newItemPosition);
+            if (oldItem instanceof DocumentItem && newItem instanceof DocumentItem) {
+                return ((DocumentItem) oldItem).document()
+                        .equals(((DocumentItem) newItem).document());
+            } else {
+                return oldItem.equals(newItem);
+            }
         }
 
         @Override
         public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-            return areItemsTheSame(oldItemPosition, newItemPosition);
+            return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
         }
     }
 }
