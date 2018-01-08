@@ -49,6 +49,9 @@
     <item type="id" name="signatureUpdateListSignatureName" />
     <item type="id" name="signatureUpdateListSignatureCreatedAt" />
     <item type="id" name="signatureUpdateListSignatureRemoveButton" />
+    <item type="id" name="signatureUpdateMobileIdContainer" />
+    <item type="id" name="signatureUpdateMobileIdStatus" />
+    <item type="id" name="signatureUpdateMobileIdChallenge" />
 
     <!-- Signature Add -->
     <item type="id" name="signatureAdd" />

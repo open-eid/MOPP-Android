@@ -10,9 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import java.io.File;
 
@@ -34,6 +36,10 @@ import static android.app.Activity.RESULT_OK;
 import static com.jakewharton.rxbinding2.support.design.widget.RxSnackbar.dismisses;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
+import static ee.ria.DigiDoc.android.signature.data.SignatureAddStatus.CHECK_CERTIFICATE;
+import static ee.ria.DigiDoc.android.signature.data.SignatureAddStatus.GOT_SIGNATURE;
+import static ee.ria.DigiDoc.android.signature.data.SignatureAddStatus.REQUEST_PENDING;
+import static ee.ria.DigiDoc.android.signature.data.SignatureAddStatus.REQUEST_SENT;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
@@ -47,6 +53,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private final SignatureUpdateAdapter adapter;
     private final View activityIndicatorView;
     private final View activityOverlayView;
+    private final View mobileIdContainerView;
+    private final TextView mobileIdStatusView;
+    private final TextView mobileIdChallengeView;
     private final Snackbar addDocumentsErrorSnackbar;
     private final Snackbar removeDocumentsErrorSnackbar;
 
@@ -90,6 +99,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         RecyclerView listView = findViewById(R.id.signatureUpdateList);
         activityIndicatorView = findViewById(R.id.activityIndicator);
         activityOverlayView = findViewById(R.id.activityOverlay);
+        mobileIdContainerView = findViewById(R.id.signatureUpdateMobileIdContainer);
+        mobileIdStatusView = findViewById(R.id.signatureUpdateMobileIdStatus);
+        mobileIdChallengeView = findViewById(R.id.signatureUpdateMobileIdChallenge);
         addDocumentsErrorSnackbar = Snackbar.make(this,
                 R.string.signature_update_add_documents_error_exists, Snackbar.LENGTH_LONG);
         removeDocumentsErrorSnackbar = Snackbar.make(this,
@@ -186,6 +198,11 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         } else {
             signatureAddDialog.dismiss();
         }
+        mobileIdContainerView.setVisibility(state.signatureAddInProgress() ? VISIBLE : GONE);
+        if (state.signatureAddStatus() != null) {
+            mobileIdStatusView.setText(MOBILE_ID_STATUS_MESSAGES.get(state.signatureAddStatus()));
+        }
+        mobileIdChallengeView.setText(state.signatureAddChallenge());
     }
 
     protected void setActivity(boolean activity) {
@@ -277,4 +294,12 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         documentRemoveConfirmationDialog.dismiss();
         super.onDetachedFromWindow();
     }
+
+    private static final ImmutableMap<String, Integer> MOBILE_ID_STATUS_MESSAGES = ImmutableMap
+            .<String, Integer>builder()
+            .put(CHECK_CERTIFICATE, R.string.status_request_sent)
+            .put(REQUEST_SENT, R.string.status_request_sent)
+            .put(REQUEST_PENDING, R.string.status_outstanding_transaction)
+            .put(GOT_SIGNATURE, R.string.status_signature)
+            .build();
 }
