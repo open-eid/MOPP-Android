@@ -38,6 +38,7 @@
 
     <!-- Signature Update -->
     <item type="id" name="signatureUpdateScreen" />
+    <item type="id" name="signatureUpdateError" />
     <item type="id" name="signatureUpdateList" />
     <item type="id" name="signatureUpdateListSubheadTitle" />
     <item type="id" name="signatureUpdateListSubheadButton" />

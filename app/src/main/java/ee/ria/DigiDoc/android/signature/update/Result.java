@@ -8,13 +8,11 @@ import java.io.File;
 
 import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.signature.data.Signature;
-import ee.ria.DigiDoc.android.signature.data.SignatureAddStatus;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.navigation.NavigatorResult;
 import ee.ria.DigiDoc.android.utils.navigation.Transaction;
-
-import static ee.ria.DigiDoc.android.signature.data.SignatureAddStatus.REQUEST_SENT;
+import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 
 interface Result extends MviResult<ViewState> {
 
@@ -226,7 +224,7 @@ interface Result extends MviResult<ViewState> {
 
         abstract boolean inProgress();
 
-        @Nullable @SignatureAddStatus abstract String status();
+        @Nullable abstract GetMobileCreateSignatureStatusResponse.ProcessStatus status();
 
         @Nullable abstract String challenge();
 
@@ -266,19 +264,21 @@ interface Result extends MviResult<ViewState> {
                     null, null, null);
         }
 
-        static SignatureAddResult status(@SignatureAddStatus String status) {
+        static SignatureAddResult status(
+                GetMobileCreateSignatureStatusResponse.ProcessStatus status) {
             return new AutoValue_Result_SignatureAddResult(null, false, false, true, status, null,
                     null, null, null);
         }
 
         static SignatureAddResult challenge(String challenge) {
-            return new AutoValue_Result_SignatureAddResult(null, false, false, true, REQUEST_SENT,
+            return new AutoValue_Result_SignatureAddResult(null, false, false, true, null,
                     challenge, null, null, null);
         }
 
         static SignatureAddResult signature(String signature) {
-            return new AutoValue_Result_SignatureAddResult(null, false, false, true, null, null,
-                    signature, null, null);
+            return new AutoValue_Result_SignatureAddResult(null, false, false, true,
+                    GetMobileCreateSignatureStatusResponse.ProcessStatus.SIGNATURE, null, signature,
+                    null, null);
         }
 
         static SignatureAddResult success(SignatureContainer container) {

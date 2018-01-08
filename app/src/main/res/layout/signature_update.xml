@@ -21,12 +21,36 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@id/signatureUpdateList"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@id/signatureUpdateError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="@dimen/material_card_supporting_text_padding_horizontal"
+                android:drawablePadding="@dimen/material_card_supporting_text_padding_horizontal"
+                android:drawableStart="@drawable/ic_error"
+                android:textAppearance="@style/TextAppearance.Application.Error"
+                android:text="@string/unknown_error" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@id/signatureUpdateList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <FrameLayout
         android:id="@id/activityOverlay"

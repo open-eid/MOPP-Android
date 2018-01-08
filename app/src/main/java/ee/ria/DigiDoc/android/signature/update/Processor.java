@@ -40,8 +40,6 @@ import io.reactivex.schedulers.Schedulers;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.io.Files.getFileExtension;
-import static ee.ria.DigiDoc.android.signature.data.SignatureAddStatus.REQUEST_PENDING;
-import static ee.ria.DigiDoc.android.signature.data.SignatureAddStatus.REQUEST_SENT;
 import static ee.ria.DigiDoc.util.FileUtils.getSchemaCacheDirectory;
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.toJson;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
@@ -197,7 +195,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 return Observable.just(result);
                             }
                         })
-                        .startWith(Result.SignatureAddResult.status(REQUEST_SENT));
+                        .startWith(Result.SignatureAddResult.status(null));
             }
         });
     }
@@ -269,7 +267,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                             intent.getStringExtra(CREATE_SIGNATURE_STATUS));
                             switch (status.getStatus()) {
                                 case OUTSTANDING_TRANSACTION:
-                                    e.onNext(Result.SignatureAddResult.status(REQUEST_PENDING));
+                                    e.onNext(Result.SignatureAddResult.status(status.getStatus()));
                                     break;
                                 case SIGNATURE:
                                     e.onNext(Result.SignatureAddResult.signature(
@@ -311,6 +309,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         SignatureAlreadyExistsException() {
         }
+
+        @Override
+        public String toString() {
+            return "SignatureAlreadyExistsException{}";
+        }
     }
 
     static final class MobileIdMessageException extends Exception {
@@ -320,6 +323,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
         MobileIdMessageException(ProcessStatus processStatus) {
             this.processStatus = processStatus;
         }
+
+        @Override
+        public String toString() {
+            return "MobileIdMessageException{" +
+                    "processStatus=" + processStatus +
+                    '}';
+        }
     }
 
     static final class MobileIdFaultReasonMessageException extends Exception {
@@ -328,6 +338,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         MobileIdFaultReasonMessageException(String reason) {
             this.reason = reason;
+        }
+
+        @Override
+        public String toString() {
+            return "MobileIdFaultReasonMessageException{" +
+                    "reason='" + reason + '\'' +
+                    '}';
         }
     }
 }

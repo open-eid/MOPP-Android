@@ -8,9 +8,9 @@ import java.io.File;
 
 import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.signature.data.Signature;
-import ee.ria.DigiDoc.android.signature.data.SignatureAddStatus;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
+import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 
 @AutoValue
 abstract class ViewState implements MviViewState {
@@ -36,7 +36,7 @@ abstract class ViewState implements MviViewState {
     abstract boolean signatureAddCreateContainerInProgress();
     abstract boolean signatureAddVisible();
     abstract boolean signatureAddInProgress();
-    @Nullable @SignatureAddStatus abstract String signatureAddStatus();
+    @Nullable abstract GetMobileCreateSignatureStatusResponse.ProcessStatus signatureAddStatus();
     @Nullable abstract String signatureAddChallenge();
     abstract boolean signatureAddSuccessMessageVisible();
     @Nullable abstract Throwable signatureAddError();
@@ -77,7 +77,8 @@ abstract class ViewState implements MviViewState {
                 boolean signatureAddCreateContainerInProgress);
         Builder signatureAddVisible(boolean signatureAddVisible);
         Builder signatureAddInProgress(boolean signatureAddInProgress);
-        Builder signatureAddStatus(@Nullable @SignatureAddStatus String signatureAddStatus);
+        Builder signatureAddStatus(
+                @Nullable GetMobileCreateSignatureStatusResponse.ProcessStatus signatureAddStatus);
         Builder signatureAddChallenge(@Nullable String signatureAddChallenge);
         Builder signatureAddSuccessMessageVisible(boolean signatureAddSuccessMessageVisible);
         Builder signatureAddError(@Nullable Throwable signatureAddError);

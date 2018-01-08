@@ -30,4 +30,6 @@
         <item>@string/main_settings_file_type_asice_key</item>
     </string-array>
 
+    <string name="signature_add_mobile_id_challenge_placeholder">____</string>
+
 </resources>

@@ -1,6 +1,9 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CoordinatorLayout;
@@ -14,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import java.io.File;
 
@@ -28,6 +30,9 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
+import ee.ria.DigiDoc.mid.MobileSignFaultMessageSource;
+import ee.ria.DigiDoc.mid.MobileSignStatusMessageSource;
+import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -36,10 +41,6 @@ import static android.app.Activity.RESULT_OK;
 import static com.jakewharton.rxbinding2.support.design.widget.RxSnackbar.dismisses;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
-import static ee.ria.DigiDoc.android.signature.data.SignatureAddStatus.CHECK_CERTIFICATE;
-import static ee.ria.DigiDoc.android.signature.data.SignatureAddStatus.GOT_SIGNATURE;
-import static ee.ria.DigiDoc.android.signature.data.SignatureAddStatus.REQUEST_PENDING;
-import static ee.ria.DigiDoc.android.signature.data.SignatureAddStatus.REQUEST_SENT;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
@@ -50,6 +51,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private File containerFile;
 
     private final Toolbar toolbarView;
+    private final TextView errorView;
     private final SignatureUpdateAdapter adapter;
     private final View activityIndicatorView;
     private final View activityOverlayView;
@@ -81,6 +83,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     @Nullable private Document documentRemoveConfirmation;
     @Nullable private Signature signatureRemoveConfirmation;
 
+    private final MobileSignStatusMessageSource statusMessageSource;
+    private final MobileSignFaultMessageSource faultMessageSource;
+
     public SignatureUpdateView(Context context) {
         this(context, null);
     }
@@ -96,6 +101,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
 
         inflate(context, R.layout.signature_update, this);
         toolbarView = findViewById(R.id.toolbar);
+        errorView = findViewById(R.id.signatureUpdateError);
         RecyclerView listView = findViewById(R.id.signatureUpdateList);
         activityIndicatorView = findViewById(R.id.activityIndicator);
         activityOverlayView = findViewById(R.id.activityOverlay);
@@ -108,6 +114,12 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 R.string.signature_update_documents_remove_error_container_empty,
                 BaseTransientBottomBar.LENGTH_LONG);
 
+        // android:drawableTint is supported API level 23+
+        TypedArray a = context.obtainStyledAttributes(new int[]{R.attr.colorError});
+        Drawable[] errorDrawables = errorView.getCompoundDrawablesRelative();
+        errorDrawables[0].setTint(a.getColor(0, Color.RED));
+        a.recycle();
+
         listView.setLayoutManager(new LinearLayoutManager(context));
         listView.setAdapter(adapter = new SignatureUpdateAdapter());
 
@@ -117,6 +129,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 R.string.signature_update_signature_remove_confirmation_message);
         signatureAddDialog = new SignatureAddDialog(context, viewModel.getPhoneNo(),
                 viewModel.getPersonalCode());
+
+        statusMessageSource = new MobileSignStatusMessageSource(context.getResources());
+        faultMessageSource = new MobileSignFaultMessageSource(context.getResources());
     }
 
     public SignatureUpdateView containerFile(File containerFile) {
@@ -199,10 +214,28 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             signatureAddDialog.dismiss();
         }
         mobileIdContainerView.setVisibility(state.signatureAddInProgress() ? VISIBLE : GONE);
-        if (state.signatureAddStatus() != null) {
-            mobileIdStatusView.setText(MOBILE_ID_STATUS_MESSAGES.get(state.signatureAddStatus()));
+        GetMobileCreateSignatureStatusResponse.ProcessStatus signatureAddStatus =
+                state.signatureAddStatus();
+        if (signatureAddStatus != null) {
+            mobileIdStatusView.setText(statusMessageSource.getMessage(signatureAddStatus));
+        } else {
+            mobileIdStatusView.setText(statusMessageSource.getInitialStatusMessage());
         }
-        mobileIdChallengeView.setText(state.signatureAddChallenge());
+        String signatureAddChallenge = state.signatureAddChallenge();
+        if (signatureAddChallenge != null) {
+            mobileIdChallengeView.setText(signatureAddChallenge);
+        } else {
+            mobileIdChallengeView.setText(R.string.signature_add_mobile_id_challenge_placeholder);
+        }
+        Throwable signatureAddError = state.signatureAddError();
+        if (signatureAddError instanceof Processor.MobileIdFaultReasonMessageException) {
+            errorView.setText(faultMessageSource.getMessage(
+                    ((Processor.MobileIdFaultReasonMessageException) signatureAddError).reason));
+        } else if (signatureAddError instanceof Processor.MobileIdMessageException) {
+            errorView.setText(statusMessageSource.getMessage(
+                    ((Processor.MobileIdMessageException) signatureAddError).processStatus));
+        }
+        errorView.setVisibility(signatureAddError == null ? GONE : VISIBLE);
     }
 
     protected void setActivity(boolean activity) {
@@ -294,12 +327,4 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         documentRemoveConfirmationDialog.dismiss();
         super.onDetachedFromWindow();
     }
-
-    private static final ImmutableMap<String, Integer> MOBILE_ID_STATUS_MESSAGES = ImmutableMap
-            .<String, Integer>builder()
-            .put(CHECK_CERTIFICATE, R.string.status_request_sent)
-            .put(REQUEST_SENT, R.string.status_request_sent)
-            .put(REQUEST_PENDING, R.string.status_outstanding_transaction)
-            .put(GOT_SIGNATURE, R.string.status_signature)
-            .build();
 }

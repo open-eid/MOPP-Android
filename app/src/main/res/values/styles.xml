@@ -55,4 +55,7 @@
         <item name="android:tintMode">src_in</item>
     </style>
 
+    <style name="TextAppearance.Application.Error" parent="TextAppearance.Design.Error">
+    </style>
+
 </resources>
