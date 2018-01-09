@@ -5,9 +5,6 @@ import com.google.common.collect.ImmutableList;
 
 import ee.ria.DigiDoc.android.document.data.Document;
 
-/**
- * Change this into immutable object, deal with native lib in processor.
- */
 @AutoValue
 public abstract class SignatureContainer {
 

@@ -52,6 +52,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
 
     private final Toolbar toolbarView;
     private final TextView errorView;
+    private final TextView signaturesValidityView;
     private final SignatureUpdateAdapter adapter;
     private final View activityIndicatorView;
     private final View activityOverlayView;
@@ -104,6 +105,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         inflate(context, R.layout.signature_update, this);
         toolbarView = findViewById(R.id.toolbar);
         errorView = findViewById(R.id.signatureUpdateError);
+        signaturesValidityView = findViewById(R.id.signatureUpdateSignaturesValidity);
         RecyclerView listView = findViewById(R.id.signatureUpdateList);
         activityIndicatorView = findViewById(R.id.activityIndicator);
         activityOverlayView = findViewById(R.id.activityOverlay);
@@ -122,9 +124,15 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
 
         // android:drawableTint is supported API level 23+
         TypedArray a = context.obtainStyledAttributes(new int[]{R.attr.colorError});
-        Drawable[] errorDrawables = errorView.getCompoundDrawablesRelative();
-        errorDrawables[0].setTint(a.getColor(0, Color.RED));
+        int errorColor = a.getColor(0, Color.RED);
         a.recycle();
+        Drawable errorDrawable = context.getDrawable(R.drawable.ic_error);
+        if (errorDrawable != null) {
+            errorDrawable.setTint(errorColor);
+            errorView.setCompoundDrawablesWithIntrinsicBounds(errorDrawable, null, null, null);
+            signaturesValidityView.setCompoundDrawablesRelativeWithIntrinsicBounds(errorDrawable,
+                    null, null, null);
+        }
 
         listView.setLayoutManager(new LinearLayoutManager(context));
         listView.setAdapter(adapter = new SignatureUpdateAdapter());
@@ -186,6 +194,15 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         boolean documentAddEnabled = container != null && container.documentAddEnabled();
         boolean documentRemoveEnabled = container != null && container.documentRemoveEnabled();
         adapter.setData(documents, signatures, documentAddEnabled, documentRemoveEnabled);
+
+        boolean allSignaturesValid = true;
+        for (Signature signature : signatures) {
+            if (!signature.valid()) {
+                allSignaturesValid = false;
+                break;
+            }
+        }
+        signaturesValidityView.setVisibility(allSignaturesValid ? GONE : VISIBLE);
 
         toolbarView.setTitle(name);
 

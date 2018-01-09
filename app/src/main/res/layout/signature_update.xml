@@ -41,7 +41,20 @@
                 android:drawablePadding="@dimen/material_card_supporting_text_padding_horizontal"
                 android:drawableStart="@drawable/ic_error"
                 android:textAppearance="@style/TextAppearance.Application.Error"
-                android:text="@string/unknown_error" />
+                android:text="@string/unknown_error"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@id/signatureUpdateSignaturesValidity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="@dimen/material_card_supporting_text_padding_horizontal"
+                android:drawablePadding="@dimen/material_card_supporting_text_padding_horizontal"
+                android:drawableStart="@drawable/ic_error"
+                android:textAppearance="@style/TextAppearance.Application.Error"
+                android:text="@string/signature_update_signatures_invalid"
+                android:visibility="gone" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@id/signatureUpdateList"
