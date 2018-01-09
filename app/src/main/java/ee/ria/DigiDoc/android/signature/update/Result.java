@@ -244,12 +244,16 @@ interface Result extends MviResult<ViewState> {
             if (container() != null) {
                 builder.signatureAddSuccessMessageVisible(true)
                         .container(container());
+            } else {
+                builder.signatureAddSuccessMessageVisible(false);
             }
             if (status() != null) {
                 builder.signatureAddStatus(status());
             }
             if (challenge() != null) {
                 builder.signatureAddChallenge(challenge());
+            } else if (status() == null) {
+                builder.signatureAddChallenge(null);
             }
             return builder.build();
         }
