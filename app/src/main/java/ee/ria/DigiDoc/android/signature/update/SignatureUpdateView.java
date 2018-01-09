@@ -228,7 +228,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             mobileIdChallengeView.setText(R.string.signature_add_mobile_id_challenge_placeholder);
         }
         Throwable signatureAddError = state.signatureAddError();
-        if (signatureAddError instanceof Processor.MobileIdFaultReasonMessageException) {
+        if (signatureAddError instanceof Processor.SignatureAlreadyExistsException) {
+            errorView.setText(R.string.already_signed_by_person);
+        } else if (signatureAddError instanceof Processor.MobileIdFaultReasonMessageException) {
             errorView.setText(faultMessageSource.getMessage(
                     ((Processor.MobileIdFaultReasonMessageException) signatureAddError).reason));
         } else if (signatureAddError instanceof Processor.MobileIdMessageException) {
