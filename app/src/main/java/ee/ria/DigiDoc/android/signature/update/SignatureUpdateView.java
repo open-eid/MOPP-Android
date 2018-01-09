@@ -61,6 +61,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private final Snackbar addDocumentsErrorSnackbar;
     private final Snackbar removeDocumentsErrorSnackbar;
     private final Snackbar signatureAddSuccessSnackbar;
+    private final Snackbar signatureRemoveErrorSnackbar;
 
     private final Navigator navigator;
     private final SignatureUpdateViewModel viewModel;
@@ -116,6 +117,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 BaseTransientBottomBar.LENGTH_LONG);
         signatureAddSuccessSnackbar = Snackbar.make(this, R.string.signature_added,
                 Snackbar.LENGTH_LONG);
+        signatureRemoveErrorSnackbar = Snackbar.make(this,
+                R.string.signature_update_signature_remove_error, Snackbar.LENGTH_LONG);
 
         // android:drawableTint is supported API level 23+
         TypedArray a = context.obtainStyledAttributes(new int[]{R.attr.colorError});
@@ -209,6 +212,11 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             signatureRemoveConfirmationDialog.show();
         } else {
             signatureRemoveConfirmationDialog.dismiss();
+        }
+        if (state.signatureRemoveError() != null) {
+            signatureRemoveErrorSnackbar.show();
+        } else {
+            signatureRemoveErrorSnackbar.dismiss();
         }
 
         if (state.signatureAddVisible()) {
@@ -324,6 +332,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                         .onNext(Intent.SignatureRemoveIntent
                                 .remove(containerFile, signatureRemoveConfirmation))));
         disposables.add(signatureRemoveConfirmationDialog.cancels().subscribe(ignored ->
+                signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear())));
+        disposables.add(dismisses(signatureRemoveErrorSnackbar).subscribe(ignored ->
                 signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear())));
         disposables.add(signatureAddDialog.cancels().subscribe(ignored ->
                 signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent())));

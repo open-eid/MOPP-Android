@@ -48,6 +48,7 @@
     <string name="signature_update_signature_invalid">Signature is not valid</string>
     <string name="signature_update_signature_remove_button">Remove signature</string>
     <string name="signature_update_signature_remove_confirmation_message">Remove signature from container?</string>
+    <string name="signature_update_signature_remove_error">Could not remove signature from the container</string>
 
     <string name="signature_update_load_container_error">Could not open signature container</string>
     <string name="signature_update_add_documents_error_exists">File already exists in the container</string>
