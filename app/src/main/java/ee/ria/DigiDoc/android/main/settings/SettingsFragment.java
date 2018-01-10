@@ -38,7 +38,7 @@ public final class SettingsFragment extends PreferenceFragmentCompatDividers {
         bindSummary(R.string.main_settings_county_key);
         bindSummary(R.string.main_settings_country_key);
         bindSummary(R.string.main_settings_postal_code_key);
-        bindSummary(R.string.main_settings_file_type_key);
+        bindSummary(R.string.main_settings_signature_profile_key);
     }
 
     private void bindSummary(@StringRes int key) {

@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 
@@ -62,78 +61,74 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
-    abstract class DocumentsSelectionIntent implements Intent {
+    abstract class DocumentRemoveIntent implements Intent {
 
-        @Nullable abstract ImmutableSet<Document> documents();
-
-        static DocumentsSelectionIntent create(ImmutableSet<Document> documents) {
-            return new AutoValue_Intent_DocumentsSelectionIntent(documents);
-        }
-
-        static DocumentsSelectionIntent clear() {
-            return new AutoValue_Intent_DocumentsSelectionIntent(null);
-        }
-    }
-
-    @AutoValue
-    abstract class RemoveDocumentsIntent implements Intent {
+        abstract boolean showConfirmation();
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract ImmutableSet<Document> documents();
+        @Nullable abstract Document document();
 
-        static RemoveDocumentsIntent create(File containerFile, ImmutableSet<Document> documents) {
-            return new AutoValue_Intent_RemoveDocumentsIntent(containerFile, documents);
+        static DocumentRemoveIntent showConfirmation(File containerFile, Document document) {
+            return new AutoValue_Intent_DocumentRemoveIntent(true, containerFile, document);
         }
 
-        static RemoveDocumentsIntent clear() {
-            return new AutoValue_Intent_RemoveDocumentsIntent(null, null);
+        static DocumentRemoveIntent remove(File containerFile, Document document) {
+            return new AutoValue_Intent_DocumentRemoveIntent(false, containerFile, document);
         }
-    }
 
-    @AutoValue
-    abstract class SignatureListVisibilityIntent implements Intent {
-
-        abstract boolean isVisible();
-
-        static SignatureListVisibilityIntent create(boolean isVisible) {
-            return new AutoValue_Intent_SignatureListVisibilityIntent(isVisible);
-        }
-    }
-
-    @AutoValue
-    abstract class SignatureRemoveSelectionIntent implements Intent {
-
-        @Nullable abstract Signature signature();
-
-        static SignatureRemoveSelectionIntent create(@Nullable Signature signature) {
-            return new AutoValue_Intent_SignatureRemoveSelectionIntent(signature);
+        static DocumentRemoveIntent clear() {
+            return new AutoValue_Intent_DocumentRemoveIntent(false, null, null);
         }
     }
 
     @AutoValue
     abstract class SignatureRemoveIntent implements Intent {
 
+        abstract boolean showConfirmation();
+
         @Nullable abstract File containerFile();
 
         @Nullable abstract Signature signature();
 
-        static SignatureRemoveIntent create(File containerFile, Signature signature) {
-            return new AutoValue_Intent_SignatureRemoveIntent(containerFile, signature);
+        static SignatureRemoveIntent showConfirmation(File containerFile, Signature signature) {
+            return new AutoValue_Intent_SignatureRemoveIntent(true, containerFile, signature);
+        }
+
+        static SignatureRemoveIntent remove(File containerFile, Signature signature) {
+            return new AutoValue_Intent_SignatureRemoveIntent(false, containerFile, signature);
         }
 
         static SignatureRemoveIntent clear() {
-            return new AutoValue_Intent_SignatureRemoveIntent(null, null);
+            return new AutoValue_Intent_SignatureRemoveIntent(false, null, null);
         }
     }
 
     @AutoValue
     abstract class SignatureAddIntent implements Intent {
 
-        abstract File containerFile();
+        abstract boolean show();
 
-        static SignatureAddIntent create(File containerFile) {
-            return new AutoValue_Intent_SignatureAddIntent(containerFile);
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract String phoneNo();
+
+        @Nullable abstract String personalCode();
+
+        @Nullable abstract Boolean rememberMe();
+
+        static SignatureAddIntent showIntent(File containerFile) {
+            return new AutoValue_Intent_SignatureAddIntent(true, containerFile, null, null, null);
+        }
+
+        static SignatureAddIntent addIntent(File containerFile, String phoneNo, String personalCode,
+                                            boolean rememberMe) {
+            return new AutoValue_Intent_SignatureAddIntent(false, containerFile, phoneNo,
+                    personalCode, rememberMe);
+        }
+
+        static SignatureAddIntent clearIntent() {
+            return new AutoValue_Intent_SignatureAddIntent(false, null, null, null, null);
         }
     }
 }

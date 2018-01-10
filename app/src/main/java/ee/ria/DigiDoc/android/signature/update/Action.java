@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 
@@ -52,68 +51,55 @@ interface Action extends MviAction {
     }
 
     @AutoValue
-    abstract class DocumentsSelectionAction implements Action {
+    abstract class DocumentRemoveAction implements Action {
 
-        @Nullable abstract ImmutableSet<Document> documents();
-
-        static DocumentsSelectionAction create(@Nullable ImmutableSet<Document> documents) {
-            return new AutoValue_Action_DocumentsSelectionAction(documents);
-        }
-    }
-
-    @AutoValue
-    abstract class RemoveDocumentsAction implements Action {
+        abstract boolean showConfirmation();
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract ImmutableSet<Document> documents();
+        @Nullable abstract Document document();
 
-        static RemoveDocumentsAction create(@Nullable File containerFile,
-                                            @Nullable ImmutableSet<Document> documents) {
-            return new AutoValue_Action_RemoveDocumentsAction(containerFile, documents);
-        }
-    }
-
-    @AutoValue
-    abstract class SignatureListVisibilityAction implements Action {
-
-        abstract boolean isVisible();
-
-        static SignatureListVisibilityAction create(boolean isVisible) {
-            return new AutoValue_Action_SignatureListVisibilityAction(isVisible);
-        }
-    }
-
-    @AutoValue
-    abstract class SignatureRemoveSelectionAction implements Action {
-
-        @Nullable abstract Signature signature();
-
-        static SignatureRemoveSelectionAction create(@Nullable Signature signature) {
-            return new AutoValue_Action_SignatureRemoveSelectionAction(signature);
+        static DocumentRemoveAction create(boolean showConfirmation, @Nullable File containerFile,
+                                           @Nullable Document document) {
+            return new AutoValue_Action_DocumentRemoveAction(showConfirmation, containerFile,
+                    document);
         }
     }
 
     @AutoValue
     abstract class SignatureRemoveAction implements Action {
 
+        abstract boolean showConfirmation();
+
         @Nullable abstract File containerFile();
 
         @Nullable abstract Signature signature();
 
-        static SignatureRemoveAction create(@Nullable File containerFile,
+        static SignatureRemoveAction create(boolean showConfirmation, @Nullable File containerFile,
                                             @Nullable Signature signature) {
-            return new AutoValue_Action_SignatureRemoveAction(containerFile, signature);
+            return new AutoValue_Action_SignatureRemoveAction(showConfirmation, containerFile,
+                    signature);
         }
     }
 
     @AutoValue
     abstract class SignatureAddAction implements Action {
 
-        abstract File containerFile();
+        abstract boolean show();
 
-        static SignatureAddAction create(File containerFile) {
-            return new AutoValue_Action_SignatureAddAction(containerFile);
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract String phoneNo();
+
+        @Nullable abstract String personalCode();
+
+        @Nullable abstract Boolean rememberMe();
+
+        static SignatureAddAction create(boolean show, @Nullable File containerFile,
+                                         @Nullable String phoneNo, @Nullable String personalCode,
+                                         @Nullable Boolean rememberMe) {
+            return new AutoValue_Action_SignatureAddAction(show, containerFile, phoneNo,
+                    personalCode, rememberMe);
         }
     }
 }

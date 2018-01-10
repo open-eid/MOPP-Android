@@ -12,16 +12,24 @@
     <string name="main_settings_county_key">mainSettingsCounty</string>
     <string name="main_settings_country_key">mainSettingsCountry</string>
     <string name="main_settings_postal_code_key">mainSettingsPostalCode</string>
-    <string name="main_settings_file_type_key">container_file_type</string>
-    <string name="main_settings_file_type_asice_key">asice</string>
-    <string name="main_settings_file_type_bdoc_key">bdoc</string>
-    <string-array name="main_settings_file_type_entry_values">
-        <item>@string/main_settings_file_type_asice_key</item>
-        <item>@string/main_settings_file_type_bdoc_key</item>
+    <string name="main_settings_signature_profile_key">container_file_type</string>
+    <string name="main_settings_signature_profile_time_mark_key">time-mark</string>
+    <string name="main_settings_signature_profile_time_stamp_key">time-stamp</string>
+    <string-array name="main_settings_signature_profile_entry_values">
+        <item>@string/main_settings_signature_profile_time_mark_key</item>
+        <item>@string/main_settings_signature_profile_time_stamp_key</item>
     </string-array>
-    <string-array name="main_settings_file_type_entries">
-        <item>ASiC-E</item>
+    <string-array name="main_settings_signature_profile_entries">
         <item>BDOC</item>
+        <item>ASiC-E</item>
     </string-array>
+    <string name="main_settings_file_type_bdoc_key">bdoc</string>
+    <string name="main_settings_file_type_asice_key">asice</string>
+    <string-array name="main_settings_file_type_entry_values">
+        <item>@string/main_settings_file_type_bdoc_key</item>
+        <item>@string/main_settings_file_type_asice_key</item>
+    </string-array>
+
+    <string name="signature_add_mobile_id_challenge_placeholder">____</string>
 
 </resources>

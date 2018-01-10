@@ -2,14 +2,27 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import javax.inject.Inject;
 
+import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.mvi.BaseMviViewModel;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 
 public final class SignatureUpdateViewModel extends
         BaseMviViewModel<Intent, ViewState, Action, Result> {
 
-    @Inject SignatureUpdateViewModel(Processor processor, Navigator navigator) {
+    private final SettingsDataStore settingsDataStore;
+
+    @Inject SignatureUpdateViewModel(Processor processor, Navigator navigator,
+                                     SettingsDataStore settingsDataStore) {
         super(processor, navigator);
+        this.settingsDataStore = settingsDataStore;
+    }
+
+    String getPhoneNo() {
+        return settingsDataStore.getPhoneNo();
+    }
+
+    String getPersonalCode() {
+        return settingsDataStore.getPersonalCode();
     }
 
     @Override
@@ -30,28 +43,20 @@ public final class SignatureUpdateViewModel extends
             Intent.OpenDocumentIntent openDocumentIntent = (Intent.OpenDocumentIntent) intent;
             return Action.OpenDocumentAction.create(openDocumentIntent.containerFile(),
                     openDocumentIntent.document());
-        } else if (intent instanceof Intent.DocumentsSelectionIntent) {
-            return Action.DocumentsSelectionAction
-                    .create(((Intent.DocumentsSelectionIntent) intent).documents());
-        } else if (intent instanceof Intent.RemoveDocumentsIntent) {
-            Intent.RemoveDocumentsIntent removeDocumentsIntent =
-                    (Intent.RemoveDocumentsIntent) intent;
-            return Action.RemoveDocumentsAction.create(removeDocumentsIntent.containerFile(),
-                    removeDocumentsIntent.documents());
-        } else if (intent instanceof Intent.SignatureListVisibilityIntent) {
-            return Action.SignatureListVisibilityAction
-                    .create(((Intent.SignatureListVisibilityIntent) intent).isVisible());
-        } else if (intent instanceof Intent.SignatureRemoveSelectionIntent) {
-            return Action.SignatureRemoveSelectionAction
-                    .create(((Intent.SignatureRemoveSelectionIntent) intent).signature());
+        } else if (intent instanceof Intent.DocumentRemoveIntent) {
+            Intent.DocumentRemoveIntent documentRemoveIntent = (Intent.DocumentRemoveIntent) intent;
+            return Action.DocumentRemoveAction.create(documentRemoveIntent.showConfirmation(),
+                    documentRemoveIntent.containerFile(), documentRemoveIntent.document());
         } else if (intent instanceof Intent.SignatureRemoveIntent) {
             Intent.SignatureRemoveIntent signatureRemoveIntent =
                     (Intent.SignatureRemoveIntent) intent;
-            return Action.SignatureRemoveAction.create(signatureRemoveIntent.containerFile(),
-                    signatureRemoveIntent.signature());
+            return Action.SignatureRemoveAction.create(signatureRemoveIntent.showConfirmation(),
+                    signatureRemoveIntent.containerFile(), signatureRemoveIntent.signature());
         } else if (intent instanceof Intent.SignatureAddIntent) {
-            return Action.SignatureAddAction
-                    .create(((Intent.SignatureAddIntent) intent).containerFile());
+            Intent.SignatureAddIntent signatureAddIntent = (Intent.SignatureAddIntent) intent;
+            return Action.SignatureAddAction.create(signatureAddIntent.show(),
+                    signatureAddIntent.containerFile(), signatureAddIntent.phoneNo(),
+                    signatureAddIntent.personalCode(), signatureAddIntent.rememberMe());
         }
         throw new IllegalArgumentException("Unknown intent " + intent);
     }

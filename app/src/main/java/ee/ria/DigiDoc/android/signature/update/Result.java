@@ -3,7 +3,6 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 
@@ -13,6 +12,7 @@ import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.navigation.NavigatorResult;
 import ee.ria.DigiDoc.android.utils.navigation.Transaction;
+import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 
 interface Result extends MviResult<ViewState> {
 
@@ -128,24 +128,9 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
-    abstract class DocumentsSelectionResult implements Result {
+    abstract class DocumentRemoveResult implements Result {
 
-        @Nullable abstract ImmutableSet<Document> documents();
-
-        @Override
-        public ViewState reduce(ViewState state) {
-            return state.buildWith()
-                    .selectedDocuments(documents())
-                    .build();
-        }
-
-        static DocumentsSelectionResult create(@Nullable ImmutableSet<Document> documents) {
-            return new AutoValue_Result_DocumentsSelectionResult(documents);
-        }
-    }
-
-    @AutoValue
-    abstract class RemoveDocumentsResult implements Result {
+        @Nullable abstract Document showConfirmation();
 
         abstract boolean inProgress();
 
@@ -156,69 +141,41 @@ interface Result extends MviResult<ViewState> {
         @Override
         public ViewState reduce(ViewState state) {
             ViewState.Builder builder = state.buildWith()
-                    .removeDocumentsError(error())
-                    .documentsProgress(inProgress());
+                    .documentRemoveConfirmation(showConfirmation())
+                    .documentRemoveInProgress(inProgress())
+                    .documentRemoveError(error());
             if (container() != null) {
-                builder.container(container())
-                        .selectedDocuments(null);
+                builder.container(container());
             }
             return builder.build();
         }
 
-        static RemoveDocumentsResult progress() {
-            return new AutoValue_Result_RemoveDocumentsResult(true, null, null);
+        static DocumentRemoveResult confirmation(Document document) {
+            return new AutoValue_Result_DocumentRemoveResult(document, false, null, null);
         }
 
-        static RemoveDocumentsResult success(SignatureContainer container) {
-            return new AutoValue_Result_RemoveDocumentsResult(false, container, null);
+        static DocumentRemoveResult progress() {
+            return new AutoValue_Result_DocumentRemoveResult(null, true, null, null);
         }
 
-        static RemoveDocumentsResult failure(Throwable error) {
-            return new AutoValue_Result_RemoveDocumentsResult(false, null, error);
+        static DocumentRemoveResult success(SignatureContainer container) {
+            return new AutoValue_Result_DocumentRemoveResult(null, false, container, null);
         }
 
-        static RemoveDocumentsResult clear() {
-            return new AutoValue_Result_RemoveDocumentsResult(false, null, null);
-        }
-    }
-
-    @AutoValue
-    abstract class SignatureListVisibilityResult implements Result {
-
-        abstract boolean isVisible();
-
-        @Override
-        public ViewState reduce(ViewState state) {
-            return state.buildWith()
-                    .signatureListVisible(isVisible())
-                    .build();
+        static DocumentRemoveResult failure(Throwable error) {
+            return new AutoValue_Result_DocumentRemoveResult(null, false, null, error);
         }
 
-        static SignatureListVisibilityResult create(boolean isVisible) {
-            return new AutoValue_Result_SignatureListVisibilityResult(isVisible);
-        }
-    }
-
-    @AutoValue
-    abstract class SignatureRemoveSelectionResult implements Result {
-
-        @Nullable abstract Signature signature();
-
-        @Override
-        public ViewState reduce(ViewState state) {
-            return state.buildWith()
-                    .signatureRemoveSelection(signature())
-                    .build();
-        }
-
-        static SignatureRemoveSelectionResult create(@Nullable Signature signature) {
-            return new AutoValue_Result_SignatureRemoveSelectionResult(signature);
+        static DocumentRemoveResult clear() {
+            return new AutoValue_Result_DocumentRemoveResult(null, false, null, null);
         }
     }
 
     @AutoValue
     abstract class SignatureRemoveResult implements Result {
 
+        @Nullable abstract Signature showConfirmation();
+
         abstract boolean inProgress();
 
         @Nullable abstract SignatureContainer container();
@@ -228,56 +185,124 @@ interface Result extends MviResult<ViewState> {
         @Override
         public ViewState reduce(ViewState state) {
             ViewState.Builder builder = state.buildWith()
+                    .signatureRemoveConfirmation(showConfirmation())
                     .signatureRemoveInProgress(inProgress())
                     .signatureRemoveError(error());
             if (container() != null) {
-                builder.container(container())
-                        .signatureRemoveSelection(null);
+                builder.container(container());
             }
             return builder.build();
         }
 
+        static SignatureRemoveResult confirmation(Signature signature) {
+            return new AutoValue_Result_SignatureRemoveResult(signature, false, null, null);
+        }
+
         static SignatureRemoveResult progress() {
-            return new AutoValue_Result_SignatureRemoveResult(true, null, null);
+            return new AutoValue_Result_SignatureRemoveResult(null, true, null, null);
         }
 
         static SignatureRemoveResult success(SignatureContainer container) {
-            return new AutoValue_Result_SignatureRemoveResult(false, container, null);
+            return new AutoValue_Result_SignatureRemoveResult(null, false, container, null);
         }
 
         static SignatureRemoveResult failure(Throwable error) {
-            return new AutoValue_Result_SignatureRemoveResult(false, null, error);
+            return new AutoValue_Result_SignatureRemoveResult(null, false, null, error);
         }
 
         static SignatureRemoveResult clear() {
-            return new AutoValue_Result_SignatureRemoveResult(false, null, null);
+            return new AutoValue_Result_SignatureRemoveResult(null, false, null, null);
         }
     }
 
     @AutoValue
     abstract class SignatureAddResult implements Result, NavigatorResult {
 
+        abstract boolean isCreatingContainer();
+
+        abstract boolean isVisible();
+
         abstract boolean inProgress();
+
+        @Nullable abstract GetMobileCreateSignatureStatusResponse.ProcessStatus status();
+
+        @Nullable abstract String challenge();
+
+        @Nullable abstract String signature();
+
+        @Nullable abstract SignatureContainer container();
 
         @Nullable abstract Throwable error();
 
         @Override
         public ViewState reduce(ViewState state) {
-            return state.buildWith()
+            ViewState.Builder builder = state.buildWith()
+                    .signatureAddCreateContainerInProgress(isCreatingContainer())
+                    .signatureAddVisible(isVisible())
                     .signatureAddInProgress(inProgress())
-                    .build();
+                    .signatureAddError(error());
+            if (container() != null) {
+                builder.signatureAddSuccessMessageVisible(true)
+                        .container(container());
+            } else {
+                builder.signatureAddSuccessMessageVisible(false);
+            }
+            if (status() != null) {
+                builder.signatureAddStatus(status());
+            }
+            if (challenge() != null) {
+                builder.signatureAddChallenge(challenge());
+            } else if (status() == null) {
+                builder.signatureAddChallenge(null);
+            }
+            return builder.build();
         }
 
-        static SignatureAddResult progress() {
-            return new AutoValue_Result_SignatureAddResult(null, true, null);
+        static SignatureAddResult show() {
+            return new AutoValue_Result_SignatureAddResult(null, false, true, false, null, null,
+                    null, null, null);
+        }
+
+        static SignatureAddResult creatingContainer() {
+            return new AutoValue_Result_SignatureAddResult(null, true, false, false, null, null,
+                    null, null, null);
+        }
+
+        static SignatureAddResult status(
+                GetMobileCreateSignatureStatusResponse.ProcessStatus status) {
+            return new AutoValue_Result_SignatureAddResult(null, false, false, true, status, null,
+                    null, null, null);
+        }
+
+        static SignatureAddResult challenge(String challenge) {
+            return new AutoValue_Result_SignatureAddResult(null, false, false, true, null,
+                    challenge, null, null, null);
+        }
+
+        static SignatureAddResult signature(String signature) {
+            return new AutoValue_Result_SignatureAddResult(null, false, false, true,
+                    GetMobileCreateSignatureStatusResponse.ProcessStatus.SIGNATURE, null, signature,
+                    null, null);
+        }
+
+        static SignatureAddResult success(SignatureContainer container) {
+            return new AutoValue_Result_SignatureAddResult(null, false, false, false, null, null,
+                    null, container, null);
         }
 
         static SignatureAddResult failure(Throwable error) {
-            return new AutoValue_Result_SignatureAddResult(null, false, error);
+            return new AutoValue_Result_SignatureAddResult(null, false, false, false, null, null,
+                    null, null, error);
         }
 
         static SignatureAddResult transaction(Transaction transaction) {
-            return new AutoValue_Result_SignatureAddResult(transaction, false, null);
+            return new AutoValue_Result_SignatureAddResult(transaction, false, false, false, null,
+                    null, null, null, null);
+        }
+
+        static SignatureAddResult clear() {
+            return new AutoValue_Result_SignatureAddResult(null, false, false, false, null, null,
+                    null, null, null);
         }
     }
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.LinearLayout"
+    tools:layout_width="match_parent"
+    tools:layout_height="wrap_content"
+    tools:orientation="vertical">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@id/signatureAddPhoneNoLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@id/signatureAddPhoneNo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:hint="@string/signature_add_phone_no" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@id/signatureAddPersonalCodeLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@id/signatureAddPersonalCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="@string/signature_add_personal_code" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <CheckBox
+        android:id="@id/signatureAddRememberMe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/signature_add_remember_me" />
+
+</merge>

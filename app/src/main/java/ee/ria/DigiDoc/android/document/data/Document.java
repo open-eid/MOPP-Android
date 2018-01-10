@@ -12,7 +12,9 @@ public abstract class Document implements Parcelable {
      */
     public abstract String name();
 
-    public static Document create(String name) {
-        return new AutoValue_Document(name);
+    public abstract long size();
+
+    public static Document create(String name, long size) {
+        return new AutoValue_Document(name, size);
     }
 }

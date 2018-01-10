@@ -17,6 +17,7 @@ import org.threeten.bp.Instant;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -96,7 +97,8 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
             ImmutableList.Builder<Document> documentBuilder = ImmutableList.builder();
             DataFiles dataFiles = container.dataFiles();
             for (int i = 0; i < dataFiles.size(); i++) {
-                documentBuilder.add(Document.create(dataFiles.get(i).fileName()));
+                DataFile dataFile = dataFiles.get(i);
+                documentBuilder.add(Document.create(dataFile.fileName(), dataFile.fileSize()));
             }
 
             ImmutableList.Builder<Signature> signatureBuilder = ImmutableList.builder();
@@ -114,13 +116,14 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
                     signature.validate();
                     valid = true;
                 } catch (Exception e) {
+                    Timber.d(e, "Signature validation failed");
                     valid = false;
                 }
                 signatureBuilder.add(Signature.create(id, name, createdAt, valid));
             }
 
             return SignatureContainer.create(containerFile.getName(), documentBuilder.build(),
-                    container.signatures().size() > 0, signatureBuilder.build());
+                    signatureBuilder.build());
         });
     }
 
@@ -141,19 +144,17 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
     }
 
     @Override
-    public Completable removeDocuments(File containerFile, ImmutableSet<Document> documents) {
+    public Completable removeDocument(File containerFile, Document document) {
         return Completable.fromAction(() -> {
             Container container = Container.open(containerFile.getAbsolutePath());
             if (container == null) {
                 throw new IOException("Could not open signature container " + containerFile);
             }
-            for (Document document : documents) {
-                DataFiles dataFiles = container.dataFiles();
-                for (int i = 0; i < dataFiles.size(); i++) {
-                    if (document.name().equals(dataFiles.get(i).fileName())) {
-                        container.removeDataFile(i);
-                        break;
-                    }
+            DataFiles dataFiles = container.dataFiles();
+            for (int i = 0; i < dataFiles.size(); i++) {
+                if (document.name().equals(dataFiles.get(i).fileName())) {
+                    container.removeDataFile(i);
+                    break;
                 }
             }
             container.save();
@@ -197,6 +198,18 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
                     break;
                 }
             }
+            container.save();
+        });
+    }
+
+    @Override
+    public Completable addSignature(File containerFile, String signature) {
+        return Completable.fromAction(() -> {
+            Container container = Container.open(containerFile.getAbsolutePath());
+            if (container == null) {
+                throw new IOException("Could not open signature container " + containerFile);
+            }
+            container.addAdESSignature(signature.getBytes(StandardCharsets.UTF_8));
             container.save();
         });
     }

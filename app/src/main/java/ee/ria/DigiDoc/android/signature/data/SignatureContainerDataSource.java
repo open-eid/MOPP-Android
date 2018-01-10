@@ -18,9 +18,11 @@ public interface SignatureContainerDataSource {
 
     Completable addDocuments(File containerFile, ImmutableList<FileStream> documentStreams);
 
-    Completable removeDocuments(File containerFile, ImmutableSet<Document> documents);
+    Completable removeDocument(File containerFile, Document document);
 
     Single<File> getDocumentFile(File containerFile, Document document);
 
     Completable removeSignature(File containerFile, Signature signature);
+
+    Completable addSignature(File containerFile, String signature);
 }

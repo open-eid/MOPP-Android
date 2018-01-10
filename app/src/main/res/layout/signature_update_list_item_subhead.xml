@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:minHeight="@dimen/material_list_two_line_normal_height"
+    android:paddingTop="@dimen/material_list_normal_padding_vertical"
+    android:paddingBottom="@dimen/material_list_normal_padding_vertical"
+    android:gravity="center_vertical"
+    android:background="@color/primary">
+
+    <TextView
+        android:id="@id/signatureUpdateListSubheadTitle"
+        style="@style/Widget.Application.Subheader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/signature_update_documents_title" />
+
+    <ImageButton
+        android:id="@id/signatureUpdateListSubheadButton"
+        style="@style/Widget.Application.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/material_list_icon_last_position_margin_horizontal"
+        android:src="@drawable/ic_add_circle"
+        android:contentDescription="@string/signature_update_documents_button"
+        android:background="?attr/selectableItemBackgroundBorderless" />
+
+</LinearLayout>

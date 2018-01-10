@@ -44,7 +44,7 @@ public class ContainerFacade {
     private Signature preparedSignature;
     private static final List<String> isRWContainer = Arrays.asList("asice", "sce", "bdoc", "edoc");
 
-    ContainerFacade(Container container, File containerFile) {
+    public ContainerFacade(Container container, File containerFile) {
         this.container = container;
         this.containerFile = containerFile;
     }
