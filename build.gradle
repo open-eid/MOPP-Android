@@ -20,6 +20,8 @@ ext {
     targetSdkVersion = 27
 
     androidSupportLibraryVersion = '27.0.2'
+    androidSupportTestVersion = '1.0.1'
+    espressoVersion = '3.0.1'
     firebaseVersion = '11.8.0'
     preferenceV7FixVersion = '27.0.1.0'
     guavaVersion = '23.6-android'
@@ -39,4 +41,5 @@ ext {
     autoValueParcelVersion = '0.2.6'
     threetenabpVersion = '1.0.5'
     junitVersion = '4.12'
+    truthVersion = '0.39'
 }

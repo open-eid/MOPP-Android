@@ -1,0 +1,41 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion project.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+
+    lintOptions {
+        lintConfig file('../lint.xml')
+    }
+
+    testOptions {
+        execution 'ANDROID_TEST_ORCHESTRATOR'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation "com.android.support:support-annotations:${androidSupportLibraryVersion}"
+
+    implementation "com.google.guava:guava:${guavaVersion}"
+    implementation "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
+
+    implementation "com.google.auto.value:auto-value:${autoValueVersion}"
+    annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+
+    androidTestUtil "com.android.support.test:orchestrator:${androidSupportTestVersion}"
+    androidTestAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+    androidTestImplementation "com.android.support.test:runner:${androidSupportTestVersion}"
+    androidTestImplementation "com.android.support.test:rules:${androidSupportTestVersion}"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:${espressoVersion}"
+    androidTestImplementation "com.google.truth:truth:${truthVersion}"
+}
