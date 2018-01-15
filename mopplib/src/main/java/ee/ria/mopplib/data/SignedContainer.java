@@ -27,11 +27,13 @@ public abstract class SignedContainer {
         return null;
     }
 
-    public final SignedContainer addAdEsSignature(byte[] adEsSignature) {
+    public final SignedContainer addAdEsSignature(byte[] adEsSignature) throws
+            SignaturesLockedException {
         return null;
     }
 
-    public final SignedContainer removeSignature(Signature signature) {
+    public final SignedContainer removeSignature(Signature signature) throws
+            SignaturesLockedException {
         return null;
     }
 
