@@ -241,10 +241,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
             Conf conf = Conf.instance();
             ContainerFacade containerFacade = new ContainerFacade(container, containerFile);
-            if (containerFacade.isSignedBy(personalCode)) {
-                e.onError(new SignatureAlreadyExistsException());
-                return;
-            }
 
             BroadcastReceiver receiver = new BroadcastReceiver() {
                 @Override
@@ -302,17 +298,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
             intent.putExtra(ACCESS_TOKEN_PATH,
                     new File(getSchemaCacheDirectory(application), "878252.p12").getAbsolutePath());
             application.startService(intent);
-        }
-    }
-
-    static final class SignatureAlreadyExistsException extends Exception {
-
-        SignatureAlreadyExistsException() {
-        }
-
-        @Override
-        public String toString() {
-            return "SignatureAlreadyExistsException{}";
         }
     }
 
