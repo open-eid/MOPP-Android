@@ -1,4 +1,4 @@
-package ee.ria.mopplib;
+package ee.ria.mopplib.data;
 
 import com.google.common.collect.ImmutableList;
 

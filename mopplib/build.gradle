@@ -29,6 +29,8 @@ dependencies {
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
 
+    implementation "com.jakewharton.timber:timber:${timberVersion}"
+
     implementation "com.google.auto.value:auto-value:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 

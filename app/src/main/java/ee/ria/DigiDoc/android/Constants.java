@@ -12,7 +12,8 @@ public final class Constants {
     public static final int RC_SIGNATURE_UPDATE_DOCUMENTS_ADD = 1;
 
     /**
-     * Name of the sub-directory in {@link android.os.Environment#DIRECTORY_DOCUMENTS documents}.
+     * Sub-directory name in {@link android.content.Context#getFilesDir() files dir} for signature
+     * containers.
      */
     public static final String DIR_SIGNATURE_CONTAINERS = "DigiDoc";
 

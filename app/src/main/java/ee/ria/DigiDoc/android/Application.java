@@ -43,7 +43,7 @@ import ee.ria.DigiDoc.android.utils.conductor.ConductorViewModelProvider;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewModel;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewModelProvider;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
-import ee.ria.DigiDoc.configuration.Configuration;
+import ee.ria.mopplib.MoppLib;
 import timber.log.Timber;
 
 public class Application extends android.app.Application {
@@ -54,7 +54,7 @@ public class Application extends android.app.Application {
         super.onCreate();
         setupTimber();
         setupThreeTenAbp();
-        setupContainerConfiguration();
+        setupMoppLib();
         setupDagger();
     }
 
@@ -83,8 +83,8 @@ public class Application extends android.app.Application {
 
     // Container configuration
 
-    private void setupContainerConfiguration() {
-        Configuration.init(getApplicationContext());
+    private void setupMoppLib() {
+        MoppLib.init(this);
     }
 
     // Dagger
