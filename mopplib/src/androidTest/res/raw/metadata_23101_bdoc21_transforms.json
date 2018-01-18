@@ -1,0 +1,17 @@
+{
+  "dataFiles": [
+    {
+      "id": "build.xml",
+      "name": "build.xml",
+      "size": 5329
+    }
+  ],
+  "signatures": [
+    {
+      "id": "S0",
+      "name": "SINIVEE\\,VEIKO\\,36706020210",
+      "createdAt": "2013-11-01T06:46:16Z",
+      "status": "INVALID"
+    }
+  ]
+}

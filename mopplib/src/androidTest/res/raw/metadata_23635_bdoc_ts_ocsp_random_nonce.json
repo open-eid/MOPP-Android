@@ -1,0 +1,17 @@
+{
+  "dataFiles": [
+    {
+      "id": "Makefile",
+      "name": "Makefile",
+      "size": 9075
+    }
+  ],
+  "signatures": [
+    {
+      "id": "S0",
+      "name": "SINIVEE\\,VEIKO\\,36706020210",
+      "createdAt": "2015-11-20T08:32:42Z",
+      "status": "INVALID"
+    }
+  ]
+}

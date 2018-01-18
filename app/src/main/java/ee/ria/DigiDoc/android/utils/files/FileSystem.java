@@ -1,11 +1,9 @@
 package ee.ria.DigiDoc.android.utils.files;
 
 import android.app.Application;
-import android.webkit.MimeTypeMap;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
-import com.google.common.net.MediaType;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,6 +25,10 @@ public final class FileSystem {
     FileSystem(Application application) {
         this.cacheDir = application.getCacheDir();
         this.signatureContainersDir = new File(application.getFilesDir(), DIR_SIGNATURE_CONTAINERS);
+    }
+
+    public File getCacheDir() {
+        return cacheDir;
     }
 
     /**
@@ -93,18 +95,6 @@ public final class FileSystem {
      */
     public File getCacheFile(String name) {
         return new File(cacheDir, name);
-    }
-
-    /**
-     * Get MIME type from file extension.
-     *
-     * @param file File to get the extension from.
-     * @return MIME type of the file.
-     */
-    public String getMimeType(File file) {
-        String mimeType = MimeTypeMap.getSingleton()
-                .getMimeTypeFromExtension(Files.getFileExtension(file.getName()));
-        return mimeType == null ? MediaType.PLAIN_TEXT_UTF_8.toString() : mimeType;
     }
 
     private static File increaseCounterIfExists(File file) {

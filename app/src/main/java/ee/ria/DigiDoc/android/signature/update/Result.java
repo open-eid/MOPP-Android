@@ -6,13 +6,13 @@ import com.google.auto.value.AutoValue;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.android.document.data.Document;
-import ee.ria.DigiDoc.android.signature.data.Signature;
-import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.navigation.NavigatorResult;
 import ee.ria.DigiDoc.android.utils.navigation.Transaction;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
+import ee.ria.mopplib.data.DataFile;
+import ee.ria.mopplib.data.Signature;
+import ee.ria.mopplib.data.SignedContainer;
 
 interface Result extends MviResult<ViewState> {
 
@@ -21,7 +21,7 @@ interface Result extends MviResult<ViewState> {
 
         abstract boolean inProgress();
 
-        @Nullable abstract SignatureContainer container();
+        @Nullable abstract SignedContainer container();
 
         @Nullable abstract Throwable error();
 
@@ -39,7 +39,7 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_LoadContainerResult(true, null, null);
         }
 
-        static LoadContainerResult success(SignatureContainer container) {
+        static LoadContainerResult success(SignedContainer container) {
             return new AutoValue_Result_LoadContainerResult(false, container, null);
         }
 
@@ -55,7 +55,7 @@ interface Result extends MviResult<ViewState> {
 
         abstract boolean isAdding();
 
-        @Nullable abstract SignatureContainer container();
+        @Nullable abstract SignedContainer container();
 
         @Nullable abstract Throwable error();
 
@@ -79,7 +79,7 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_AddDocumentsResult(false, true, null, null);
         }
 
-        static AddDocumentsResult success(SignatureContainer container) {
+        static AddDocumentsResult success(SignedContainer container) {
             return new AutoValue_Result_AddDocumentsResult(false, false, container, null);
         }
 
@@ -130,11 +130,11 @@ interface Result extends MviResult<ViewState> {
     @AutoValue
     abstract class DocumentRemoveResult implements Result {
 
-        @Nullable abstract Document showConfirmation();
+        @Nullable abstract DataFile showConfirmation();
 
         abstract boolean inProgress();
 
-        @Nullable abstract SignatureContainer container();
+        @Nullable abstract SignedContainer container();
 
         @Nullable abstract Throwable error();
 
@@ -150,7 +150,7 @@ interface Result extends MviResult<ViewState> {
             return builder.build();
         }
 
-        static DocumentRemoveResult confirmation(Document document) {
+        static DocumentRemoveResult confirmation(DataFile document) {
             return new AutoValue_Result_DocumentRemoveResult(document, false, null, null);
         }
 
@@ -158,7 +158,7 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_DocumentRemoveResult(null, true, null, null);
         }
 
-        static DocumentRemoveResult success(SignatureContainer container) {
+        static DocumentRemoveResult success(SignedContainer container) {
             return new AutoValue_Result_DocumentRemoveResult(null, false, container, null);
         }
 
@@ -178,7 +178,7 @@ interface Result extends MviResult<ViewState> {
 
         abstract boolean inProgress();
 
-        @Nullable abstract SignatureContainer container();
+        @Nullable abstract SignedContainer container();
 
         @Nullable abstract Throwable error();
 
@@ -202,7 +202,7 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_SignatureRemoveResult(null, true, null, null);
         }
 
-        static SignatureRemoveResult success(SignatureContainer container) {
+        static SignatureRemoveResult success(SignedContainer container) {
             return new AutoValue_Result_SignatureRemoveResult(null, false, container, null);
         }
 
@@ -230,7 +230,7 @@ interface Result extends MviResult<ViewState> {
 
         @Nullable abstract String signature();
 
-        @Nullable abstract SignatureContainer container();
+        @Nullable abstract SignedContainer container();
 
         @Nullable abstract Throwable error();
 
@@ -285,7 +285,7 @@ interface Result extends MviResult<ViewState> {
                     null, null);
         }
 
-        static SignatureAddResult success(SignatureContainer container) {
+        static SignatureAddResult success(SignedContainer container) {
             return new AutoValue_Result_SignatureAddResult(null, false, false, false, null, null,
                     null, container, null);
         }

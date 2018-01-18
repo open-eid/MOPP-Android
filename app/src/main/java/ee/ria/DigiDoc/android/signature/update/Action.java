@@ -7,10 +7,10 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.android.document.data.Document;
-import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
+import ee.ria.mopplib.data.DataFile;
+import ee.ria.mopplib.data.Signature;
 
 interface Action extends MviAction {
 
@@ -42,10 +42,10 @@ interface Action extends MviAction {
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract Document document();
+        @Nullable abstract DataFile document();
 
         static OpenDocumentAction create(@Nullable File containerFile,
-                                         @Nullable Document document) {
+                                         @Nullable DataFile document) {
             return new AutoValue_Action_OpenDocumentAction(containerFile, document);
         }
     }
@@ -57,10 +57,10 @@ interface Action extends MviAction {
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract Document document();
+        @Nullable abstract DataFile document();
 
         static DocumentRemoveAction create(boolean showConfirmation, @Nullable File containerFile,
-                                           @Nullable Document document) {
+                                           @Nullable DataFile document) {
             return new AutoValue_Action_DocumentRemoveAction(showConfirmation, containerFile,
                     document);
         }
