@@ -6,16 +6,16 @@ import com.google.auto.value.AutoValue;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.android.document.data.Document;
-import ee.ria.DigiDoc.android.signature.data.Signature;
-import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
+import ee.ria.mopplib.data.DataFile;
+import ee.ria.mopplib.data.Signature;
+import ee.ria.mopplib.data.SignedContainer;
 
 @AutoValue
 abstract class ViewState implements MviViewState {
 
-    @Nullable abstract SignatureContainer container();
+    @Nullable abstract SignedContainer container();
     abstract boolean loadContainerInProgress();
     @Nullable abstract Throwable loadContainerError();
 
@@ -25,7 +25,7 @@ abstract class ViewState implements MviViewState {
     @Nullable abstract File openedDocumentFile();
     @Nullable abstract Throwable openDocumentError();
 
-    @Nullable abstract Document documentRemoveConfirmation();
+    @Nullable abstract DataFile documentRemoveConfirmation();
     abstract boolean documentRemoveInProgress();
     @Nullable abstract Throwable documentRemoveError();
 
@@ -59,7 +59,7 @@ abstract class ViewState implements MviViewState {
 
     @AutoValue.Builder
     interface Builder {
-        Builder container(@Nullable SignatureContainer container);
+        Builder container(@Nullable SignedContainer container);
         Builder loadContainerInProgress(boolean loadContainerInProgress);
         Builder loadContainerError(@Nullable Throwable error);
         Builder pickingDocuments(boolean pickingDocuments);
@@ -67,7 +67,7 @@ abstract class ViewState implements MviViewState {
         Builder addDocumentsError(@Nullable Throwable addDocumentsError);
         Builder openedDocumentFile(@Nullable File openedDocumentFile);
         Builder openDocumentError(@Nullable Throwable openDocumentError);
-        Builder documentRemoveConfirmation(@Nullable Document documentRemoveConfirmation);
+        Builder documentRemoveConfirmation(@Nullable DataFile documentRemoveConfirmation);
         Builder documentRemoveInProgress(boolean documentRemoveInProgress);
         Builder documentRemoveError(@Nullable Throwable documentRemoveError);
         Builder signatureRemoveConfirmation(@Nullable Signature signatureRemoveConfirmation);

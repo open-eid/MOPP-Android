@@ -18,9 +18,10 @@ import com.google.common.collect.ImmutableList;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.document.data.Document;
-import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import ee.ria.mopplib.data.DataFile;
+import ee.ria.mopplib.data.Signature;
+import ee.ria.mopplib.data.SignatureStatus;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -33,16 +34,16 @@ import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.Sub
 final class SignatureUpdateAdapter extends
         RecyclerView.Adapter<SignatureUpdateAdapter.UpdateViewHolder<SignatureUpdateAdapter.Item>> {
 
-    final Subject<Document> documentClicksSubject = PublishSubject.create();
+    final Subject<DataFile> documentClicksSubject = PublishSubject.create();
     final Subject<Object> documentAddClicksSubject = PublishSubject.create();
-    final Subject<Document> documentRemoveClicksSubject = PublishSubject.create();
+    final Subject<DataFile> documentRemoveClicksSubject = PublishSubject.create();
     final Subject<Signature> signatureClicksSubject = PublishSubject.create();
     final Subject<Object> signatureAddClicksSubject = PublishSubject.create();
     final Subject<Signature> signatureRemoveClicksSubject = PublishSubject.create();
 
     private ImmutableList<Item> items = ImmutableList.of();
 
-    void setData(ImmutableList<Document> documents, ImmutableList<Signature> signatures,
+    void setData(ImmutableList<DataFile> documents, ImmutableList<Signature> signatures,
                  boolean documentAddEnabled, boolean documentRemoveEnabled) {
         ImmutableList<Item> items = ImmutableList.<Item>builder()
                 .add(SubheadItem.create(DOCUMENT, documentAddEnabled))
@@ -57,7 +58,7 @@ final class SignatureUpdateAdapter extends
         result.dispatchUpdatesTo(this);
     }
 
-    Observable<Document> documentClicks() {
+    Observable<DataFile> documentClicks() {
         return documentClicksSubject;
     }
 
@@ -65,7 +66,7 @@ final class SignatureUpdateAdapter extends
         return documentAddClicksSubject;
     }
 
-    Observable<Document> documentRemoveClicks() {
+    Observable<DataFile> documentRemoveClicks() {
         return documentRemoveClicksSubject;
     }
 
@@ -215,10 +216,12 @@ final class SignatureUpdateAdapter extends
             clicks(itemView).map(ignored ->
                     ((SignatureItem) adapter.getItem(getAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
-            validityView.setImageResource(item.signature().valid()
+            validityView.setImageResource(item.signature().status().equals(SignatureStatus.VALID)
                     ? R.drawable.ic_check_circle
                     : R.drawable.ic_error);
-            validityView.setImageTintList(item.signature().valid() ? colorValid : colorInvalid);
+            validityView.setImageTintList(item.signature().status().equals(SignatureStatus.VALID)
+                    ? colorValid
+                    : colorInvalid);
             nameView.setText(item.signature().name());
             createdAtView.setText(formatter.instant(item.signature().createdAt()));
             clicks(removeButton).map(ignored ->
@@ -268,19 +271,19 @@ final class SignatureUpdateAdapter extends
     @AutoValue
     static abstract class DocumentItem extends Item {
 
-        abstract Document document();
+        abstract DataFile document();
 
         abstract boolean removeButtonVisible();
 
-        static DocumentItem create(Document document, boolean removeButtonVisible) {
+        static DocumentItem create(DataFile document, boolean removeButtonVisible) {
             return new AutoValue_SignatureUpdateAdapter_DocumentItem(
                     R.layout.signature_update_list_item_document, document, removeButtonVisible);
         }
 
-        static ImmutableList<DocumentItem> of(ImmutableList<Document> documents,
+        static ImmutableList<DocumentItem> of(ImmutableList<DataFile> documents,
                                               boolean removeButtonVisible) {
             ImmutableList.Builder<DocumentItem> builder = ImmutableList.builder();
-            for (Document document : documents) {
+            for (DataFile document : documents) {
                 builder.add(create(document, removeButtonVisible));
             }
             return builder.build();

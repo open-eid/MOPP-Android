@@ -22,10 +22,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.signature.add.SignatureAddDialog;
-import ee.ria.DigiDoc.android.signature.data.Signature;
-import ee.ria.DigiDoc.android.signature.data.SignatureContainer;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
@@ -33,6 +30,10 @@ import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.mid.MobileSignFaultMessageSource;
 import ee.ria.DigiDoc.mid.MobileSignStatusMessageSource;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
+import ee.ria.mopplib.data.DataFile;
+import ee.ria.mopplib.data.Signature;
+import ee.ria.mopplib.data.SignatureStatus;
+import ee.ria.mopplib.data.SignedContainer;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -83,7 +84,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private final ConfirmationDialog signatureRemoveConfirmationDialog;
     private final SignatureAddDialog signatureAddDialog;
 
-    @Nullable private Document documentRemoveConfirmation;
+    @Nullable private DataFile documentRemoveConfirmation;
     @Nullable private Signature signatureRemoveConfirmation;
 
     private final MobileSignStatusMessageSource statusMessageSource;
@@ -183,21 +184,21 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 || state.documentRemoveInProgress() || state.signatureRemoveInProgress()
                 || state.signatureAddInProgress());
 
-        SignatureContainer container = state.container();
+        SignedContainer container = state.container();
         String name = container == null ? null : container.name();
-        ImmutableList<Document> documents = container == null
+        ImmutableList<DataFile> documents = container == null
                 ? ImmutableList.of()
-                : container.documents();
+                : container.dataFiles();
         ImmutableList<Signature> signatures = container == null
                 ? ImmutableList.of()
                 : container.signatures();
-        boolean documentAddEnabled = container != null && container.documentAddEnabled();
-        boolean documentRemoveEnabled = container != null && container.documentRemoveEnabled();
+        boolean documentAddEnabled = container != null && container.dataFileAddEnabled();
+        boolean documentRemoveEnabled = container != null && container.dataFileRemoveEnabled();
         adapter.setData(documents, signatures, documentAddEnabled, documentRemoveEnabled);
 
         boolean allSignaturesValid = true;
         for (Signature signature : signatures) {
-            if (!signature.valid()) {
+            if (!signature.status().equals(SignatureStatus.VALID)) {
                 allSignaturesValid = false;
                 break;
             }

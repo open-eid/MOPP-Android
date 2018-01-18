@@ -1,12 +1,13 @@
 package ee.ria.DigiDoc.android.signature.data;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.android.document.data.Document;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
+import ee.ria.mopplib.data.DataFile;
+import ee.ria.mopplib.data.Signature;
+import ee.ria.mopplib.data.SignedContainer;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 
@@ -14,13 +15,13 @@ public interface SignatureContainerDataSource {
 
     Single<File> addContainer(ImmutableList<FileStream> fileStreams, boolean forceCreate);
 
-    Single<SignatureContainer> get(File containerFile);
+    Single<SignedContainer> get(File containerFile);
 
     Completable addDocuments(File containerFile, ImmutableList<FileStream> documentStreams);
 
-    Completable removeDocument(File containerFile, Document document);
+    Completable removeDocument(File containerFile, DataFile document);
 
-    Single<File> getDocumentFile(File containerFile, Document document);
+    Single<File> getDocumentFile(File containerFile, DataFile document);
 
     Completable removeSignature(File containerFile, Signature signature);
 

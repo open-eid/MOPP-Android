@@ -1,9 +1,12 @@
 package ee.ria.mopplib.data;
 
 import android.support.annotation.Nullable;
+import android.webkit.MimeTypeMap;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.Files;
+import com.google.common.net.MediaType;
 
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.RDN;
@@ -30,31 +33,129 @@ import timber.log.Timber;
 @AutoValue
 public abstract class SignedContainer {
 
+    abstract File file();
+
     public abstract ImmutableList<DataFile> dataFiles();
 
     public abstract ImmutableList<Signature> signatures();
 
-    public final SignedContainer addDataFiles(ImmutableList<File> dataFiles) {
-        return null;
+    public String name() {
+        return file().getName();
+    }
+
+    public boolean dataFileAddEnabled() {
+        return signatures().size() == 0;
+    }
+
+    public boolean dataFileRemoveEnabled() {
+        return dataFileAddEnabled() && dataFiles().size() != 1;
+    }
+
+    public final SignedContainer addDataFiles(ImmutableList<File> dataFiles) throws IOException {
+        Container container;
+        try {
+            container = Container.open(file().getAbsolutePath());
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+        if (container == null) {
+            throw new IOException("Container.open returned null");
+        }
+        for (File dataFile : dataFiles) {
+            container.addDataFile(dataFile.getAbsolutePath(), mimeType(dataFile));
+        }
+        container.save();
+        return open(file());
     }
 
     public final SignedContainer removeDataFile(DataFile dataFile) throws
-            ContainerDataFilesEmptyException {
-        return null;
+            ContainerDataFilesEmptyException, IOException {
+        Container container;
+        try {
+            container = Container.open(file().getAbsolutePath());
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+        if (container == null) {
+            throw new IOException("Container.open returned null");
+        }
+        if (container.dataFiles().size() == 1) {
+            throw new ContainerDataFilesEmptyException();
+        }
+        DataFiles dataFiles = container.dataFiles();
+        for (int i = 0; i < dataFile.size(); i++) {
+            if (dataFile.name().equals(dataFiles.get(i).fileName())) {
+                container.removeDataFile(i);
+                break;
+            }
+        }
+        container.save();
+        return open(file());
     }
 
-    public final File getDataFile(DataFile dataFile, File directory) {
-        return null;
+    public final File getDataFile(DataFile dataFile, File directory) throws IOException {
+        Container container;
+        try {
+            container = Container.open(file().getAbsolutePath());
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+        if (container == null) {
+            throw new IOException("Container.open returned null");
+        }
+        File file = new File(directory, dataFile.name());
+        DataFiles dataFiles = container.dataFiles();
+        for (int i = 0; i < dataFiles.size(); i++) {
+            ee.ria.libdigidocpp.DataFile containerDataFile = dataFiles.get(i);
+            if (dataFile.name().equals(containerDataFile.fileName())) {
+                containerDataFile.saveAs(file.getAbsolutePath());
+                return file;
+            }
+        }
+        throw new IllegalArgumentException("Could not find file " + dataFile.name() +
+                " in container " + file());
     }
 
     public final SignedContainer addAdEsSignature(byte[] adEsSignature) throws
-            SignaturesLockedException {
-        return null;
+            SignaturesLockedException, IOException {
+        Container container;
+        try {
+            container = Container.open(file().getAbsolutePath());
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+        if (container == null) {
+            throw new IOException("Container.open returned null");
+        }
+        try {
+            container.addAdESSignature(adEsSignature);
+        } catch (Exception e) {
+            throw new SignaturesLockedException();
+        }
+        container.save();
+        return open(file());
     }
 
     public final SignedContainer removeSignature(Signature signature) throws
-            SignaturesLockedException {
-        return null;
+            SignaturesLockedException, IOException {
+        Container container;
+        try {
+            container = Container.open(file().getAbsolutePath());
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+        if (container == null) {
+            throw new IOException("Container.open returned null");
+        }
+        Signatures signatures = container.signatures();
+        for (int i = 0; i < signatures.size(); i++) {
+            if (signature.id().equals(signatures.get(i).id())) {
+                container.removeSignature(i);
+                break;
+            }
+        }
+        container.save();
+        return open(file());
     }
 
     /**
@@ -71,7 +172,20 @@ public abstract class SignedContainer {
         if (dataFiles == null || dataFiles.size() == 0) {
             throw new ContainerDataFilesEmptyException();
         }
-        return null;
+        Container container;
+        try {
+            container = Container.create(file.getAbsolutePath());
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+        if (container == null) {
+            throw new IOException("Container.open returned null");
+        }
+        for (File dataFile : dataFiles) {
+            container.addDataFile(dataFile.getAbsolutePath(), mimeType(dataFile));
+        }
+        container.save();
+        return open(file);
     }
 
     /**
@@ -104,7 +218,8 @@ public abstract class SignedContainer {
             signatureBuilder.add(signature(signatures.get(i)));
         }
 
-        return new AutoValue_SignedContainer(dataFileBuilder.build(), signatureBuilder.build());
+        return new AutoValue_SignedContainer(file, dataFileBuilder.build(),
+                signatureBuilder.build());
     }
 
     private static DataFile dataFile(ee.ria.libdigidocpp.DataFile dataFile) {
@@ -163,5 +278,17 @@ public abstract class SignedContainer {
         }
 
         return IETFUtils.valueToString(rdNs[0].getFirst().getValue());
+    }
+
+    /**
+     * Get MIME type from file extension.
+     *
+     * @param file File to get the extension from.
+     * @return MIME type of the file.
+     */
+    private static String mimeType(File file) {
+        String mimeType = MimeTypeMap.getSingleton()
+                .getMimeTypeFromExtension(Files.getFileExtension(file.getName()));
+        return mimeType == null ? MediaType.PLAIN_TEXT_UTF_8.toString() : mimeType;
     }
 }

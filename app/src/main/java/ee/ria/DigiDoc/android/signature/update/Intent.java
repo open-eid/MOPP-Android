@@ -7,10 +7,10 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.android.document.data.Document;
-import ee.ria.DigiDoc.android.signature.data.Signature;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
+import ee.ria.mopplib.data.DataFile;
+import ee.ria.mopplib.data.Signature;
 
 interface Intent extends MviIntent {
 
@@ -49,9 +49,9 @@ interface Intent extends MviIntent {
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract Document document();
+        @Nullable abstract DataFile document();
 
-        static OpenDocumentIntent open(File containerFile, Document document) {
+        static OpenDocumentIntent open(File containerFile, DataFile document) {
             return new AutoValue_Intent_OpenDocumentIntent(containerFile, document);
         }
 
@@ -67,13 +67,13 @@ interface Intent extends MviIntent {
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract Document document();
+        @Nullable abstract DataFile document();
 
-        static DocumentRemoveIntent showConfirmation(File containerFile, Document document) {
+        static DocumentRemoveIntent showConfirmation(File containerFile, DataFile document) {
             return new AutoValue_Intent_DocumentRemoveIntent(true, containerFile, document);
         }
 
-        static DocumentRemoveIntent remove(File containerFile, Document document) {
+        static DocumentRemoveIntent remove(File containerFile, DataFile document) {
             return new AutoValue_Intent_DocumentRemoveIntent(false, containerFile, document);
         }
 

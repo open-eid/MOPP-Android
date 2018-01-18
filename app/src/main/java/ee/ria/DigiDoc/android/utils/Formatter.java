@@ -15,7 +15,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.document.data.Document;
+import ee.ria.mopplib.data.DataFile;
 
 import static com.google.common.io.Files.getFileExtension;
 
@@ -37,7 +37,7 @@ public final class Formatter {
         return android.text.format.Formatter.formatShortFileSize(application, fileSize);
     }
 
-    @DrawableRes public int documentTypeImageRes(Document document) {
+    @DrawableRes public int documentTypeImageRes(DataFile document) {
         String extension = getFileExtension(document.name()).toLowerCase(Locale.US);
         for (Map.Entry<Integer, String> entry : DOCUMENT_TYPE_MAP.entries()) {
             if (entry.getValue().equals(extension)) {
