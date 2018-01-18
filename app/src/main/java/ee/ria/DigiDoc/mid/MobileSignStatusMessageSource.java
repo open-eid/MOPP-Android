@@ -33,6 +33,7 @@ public class MobileSignStatusMessageSource {
 
     private static Map<ProcessStatus, Integer> createMessageMap() {
         Map<ProcessStatus, Integer> messageMap = new HashMap<>();
+        messageMap.put(ProcessStatus.DEFAULT, R.string.status_request_sent);
         messageMap.put(ProcessStatus.REQUEST_OK, R.string.status_request_ok);
         messageMap.put(ProcessStatus.EXPIRED_TRANSACTION, R.string.status_expired_transaction);
         messageMap.put(ProcessStatus.USER_CANCEL, R.string.status_user_cancel);
@@ -59,6 +60,6 @@ public class MobileSignStatusMessageSource {
     }
 
     public String getInitialStatusMessage() {
-        return resources.getString(R.string.status_request_sent);
+        return getMessage(ProcessStatus.DEFAULT);
     }
 }

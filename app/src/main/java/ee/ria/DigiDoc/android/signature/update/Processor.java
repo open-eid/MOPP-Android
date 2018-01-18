@@ -197,7 +197,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 return Observable.just(result);
                             }
                         })
-                        .startWith(Result.SignatureAddResult.status(null));
+                        .startWith(Result.SignatureAddResult.status(ProcessStatus.DEFAULT));
             }
         });
     }
