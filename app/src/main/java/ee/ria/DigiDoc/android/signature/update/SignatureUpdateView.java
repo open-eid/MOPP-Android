@@ -24,7 +24,6 @@ import ee.ria.DigiDoc.android.utils.ViewSavedState;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
-import ee.ria.DigiDoc.mid.MobileSignFaultMessageSource;
 import ee.ria.DigiDoc.mid.MobileSignStatusMessageSource;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopplib.data.DataFile;
@@ -55,9 +54,6 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private final View mobileIdContainerView;
     private final TextView mobileIdStatusView;
     private final TextView mobileIdChallengeView;
-//    private final Snackbar addDocumentsErrorSnackbar;
-//    private final Snackbar removeDocumentsErrorSnackbar;
-//    private final Snackbar signatureRemoveErrorSnackbar;
 
     private final Navigator navigator;
     private final SignatureUpdateViewModel viewModel;
@@ -74,6 +70,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private final Subject<Intent.SignatureAddIntent> signatureAddIntentSubject =
             PublishSubject.create();
 
+    private final ErrorDialog errorDialog;
     private final ConfirmationDialog documentRemoveConfirmationDialog;
     private final ConfirmationDialog signatureRemoveConfirmationDialog;
     private final SignatureAddDialog signatureAddDialog;
@@ -82,7 +79,6 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     @Nullable private Signature signatureRemoveConfirmation;
 
     private final MobileSignStatusMessageSource statusMessageSource;
-    private final MobileSignFaultMessageSource faultMessageSource;
 
     public SignatureUpdateView(Context context) {
         this(context, null);
@@ -105,17 +101,13 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         mobileIdContainerView = findViewById(R.id.signatureUpdateMobileIdContainer);
         mobileIdStatusView = findViewById(R.id.signatureUpdateMobileIdStatus);
         mobileIdChallengeView = findViewById(R.id.signatureUpdateMobileIdChallenge);
-//        addDocumentsErrorSnackbar = Snackbar.make(this,
-//                R.string.signature_update_add_documents_error_exists, Snackbar.LENGTH_LONG);
-//        removeDocumentsErrorSnackbar = Snackbar.make(this,
-//                R.string.signature_update_documents_remove_error_container_empty,
-//                BaseTransientBottomBar.LENGTH_LONG);
-//        signatureRemoveErrorSnackbar = Snackbar.make(this,
-//                R.string.signature_update_signature_remove_error, Snackbar.LENGTH_LONG);
 
         listView.setLayoutManager(new LinearLayoutManager(context));
         listView.setAdapter(adapter = new SignatureUpdateAdapter());
 
+        errorDialog = new ErrorDialog(context,  addDocumentsIntentSubject,
+                documentRemoveIntentSubject, signatureAddIntentSubject,
+                signatureRemoveIntentSubject);
         documentRemoveConfirmationDialog = new ConfirmationDialog(context,
                 R.string.signature_update_document_remove_confirmation_message);
         signatureRemoveConfirmationDialog = new ConfirmationDialog(context,
@@ -124,7 +116,6 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         resetSignatureAddDialog();
 
         statusMessageSource = new MobileSignStatusMessageSource(context.getResources());
-        faultMessageSource = new MobileSignFaultMessageSource(context.getResources());
     }
 
     public SignatureUpdateView containerFile(File containerFile) {
@@ -182,11 +173,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         adapter.setData(state.signatureAddSuccessMessageVisible(), !allSignaturesValid, name,
                 documents, signatures, documentAddEnabled, documentRemoveEnabled);
 
-        if (state.addDocumentsError() == null) {
-//            addDocumentsErrorSnackbar.dismiss();
-        } else {
-//            addDocumentsErrorSnackbar.show();
-        }
+        errorDialog.show(state.addDocumentsError(), state.documentRemoveError(),
+                state.signatureAddError(), state.signatureRemoveError());
 
         documentRemoveConfirmation = state.documentRemoveConfirmation();
         if (documentRemoveConfirmation != null) {
@@ -194,22 +182,12 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         } else {
             documentRemoveConfirmationDialog.dismiss();
         }
-        if (state.documentRemoveError() == null) {
-//            removeDocumentsErrorSnackbar.dismiss();
-        } else {
-//            removeDocumentsErrorSnackbar.show();
-        }
 
         signatureRemoveConfirmation = state.signatureRemoveConfirmation();
         if (signatureRemoveConfirmation != null) {
             signatureRemoveConfirmationDialog.show();
         } else {
             signatureRemoveConfirmationDialog.dismiss();
-        }
-        if (state.signatureRemoveError() != null) {
-//            signatureRemoveErrorSnackbar.show();
-        } else {
-//            signatureRemoveErrorSnackbar.dismiss();
         }
 
         if (state.signatureAddVisible()) {
@@ -231,15 +209,6 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         } else {
             mobileIdChallengeView.setText(R.string.signature_add_mobile_id_challenge_placeholder);
         }
-        Throwable signatureAddError = state.signatureAddError();
-        if (signatureAddError instanceof Processor.MobileIdFaultReasonMessageException) {
-//            errorView.setText(faultMessageSource.getMessage(
-//                    ((Processor.MobileIdFaultReasonMessageException) signatureAddError).reason));
-        } else if (signatureAddError instanceof Processor.MobileIdMessageException) {
-//            errorView.setText(statusMessageSource.getMessage(
-//                    ((Processor.MobileIdMessageException) signatureAddError).processStatus));
-        }
-//        errorView.setVisibility(signatureAddError == null ? GONE : VISIBLE);
     }
 
     private void setActivity(boolean activity) {
@@ -298,8 +267,6 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                         addDocumentsIntentSubject.onNext(Intent.AddDocumentsIntent.clear());
                     }
                 }));
-//        disposables.add(dismisses(addDocumentsErrorSnackbar).subscribe(ignored ->
-//                addDocumentsIntentSubject.onNext(Intent.AddDocumentsIntent.clear())));
         disposables.add(adapter.scrollToTop().subscribe(ignored -> listView.scrollToPosition(0)));
         disposables.add(adapter.documentRemoveClicks().subscribe(document ->
                 documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent
@@ -309,8 +276,6 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                         .remove(containerFile, documentRemoveConfirmation))));
         disposables.add(documentRemoveConfirmationDialog.cancels().subscribe(ignored ->
                 documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent.clear())));
-//        disposables.add(dismisses(removeDocumentsErrorSnackbar).subscribe(ignored ->
-//                documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent.clear())));
         disposables.add(adapter.documentClicks().subscribe(document ->
                 openDocumentIntentSubject.onNext(Intent.OpenDocumentIntent
                         .open(containerFile, document))));
@@ -326,14 +291,10 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                                 .remove(containerFile, signatureRemoveConfirmation))));
         disposables.add(signatureRemoveConfirmationDialog.cancels().subscribe(ignored ->
                 signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear())));
-//        disposables.add(dismisses(signatureRemoveErrorSnackbar).subscribe(ignored ->
-//                signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear())));
         disposables.add(signatureAddDialog.cancels().subscribe(ignored -> {
             resetSignatureAddDialog();
             signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent());
         }));
-//        disposables.add(dismisses(signatureAddSuccessSnackbar).subscribe(ignored ->
-//                signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent())));
     }
 
     @Override
@@ -342,6 +303,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         signatureAddDialog.dismiss();
         signatureRemoveConfirmationDialog.dismiss();
         documentRemoveConfirmationDialog.dismiss();
+        errorDialog.setOnDismissListener(null);
+        errorDialog.dismiss();
         super.onDetachedFromWindow();
     }
 
