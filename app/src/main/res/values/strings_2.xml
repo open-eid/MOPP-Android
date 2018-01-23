@@ -37,6 +37,8 @@
     <string name="signature_create_error">Could not load selected files</string>
 
     <!-- Signature Update -->
+    <string name="signature_update_title_created">Container signing</string>
+    <string name="signature_update_title_existing">Container validation</string>
     <string name="signature_update_name">Container</string>
     <string name="signature_update_documents_title">Documents</string>
     <string name="signature_update_documents_button">Add documents</string>

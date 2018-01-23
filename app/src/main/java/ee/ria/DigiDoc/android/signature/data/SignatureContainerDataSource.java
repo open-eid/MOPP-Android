@@ -13,7 +13,7 @@ import io.reactivex.Single;
 
 public interface SignatureContainerDataSource {
 
-    Single<File> addContainer(ImmutableList<FileStream> fileStreams, boolean forceCreate);
+    Single<ContainerAdd> addContainer(ImmutableList<FileStream> fileStreams, boolean forceCreate);
 
     Single<SignedContainer> get(File containerFile);
 

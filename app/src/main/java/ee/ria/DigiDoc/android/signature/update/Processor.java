@@ -165,9 +165,12 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     return signatureContainerDataSource
                             .addContainer(ImmutableList.of(FileStream.create(containerFile)), true)
                             .toObservable()
-                            .map(newContainerFile -> Result.SignatureAddResult.transaction(
-                                    Transaction.PushScreenTransaction.create(
-                                            SignatureUpdateScreen.create(newContainerFile))))
+                            .map(containerAdd ->
+                                    Result.SignatureAddResult.transaction(
+                                            Transaction.PushScreenTransaction.create(
+                                                    SignatureUpdateScreen.create(
+                                                            containerAdd.isExistingContainer(),
+                                                            containerAdd.containerFile()))))
                             .onErrorReturn(Result.SignatureAddResult::failure)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())

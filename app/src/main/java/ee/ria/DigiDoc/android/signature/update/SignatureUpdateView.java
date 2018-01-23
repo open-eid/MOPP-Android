@@ -44,6 +44,7 @@ import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 public final class SignatureUpdateView extends CoordinatorLayout implements
         MviView<Intent, ViewState> {
 
+    private boolean isExistingContainer;
     private File containerFile;
 
     private final Toolbar toolbarView;
@@ -118,6 +119,11 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         statusMessageSource = new MobileSignStatusMessageSource(context.getResources());
     }
 
+    public SignatureUpdateView isExistingContainer(boolean isExistingContainer) {
+        this.isExistingContainer = isExistingContainer;
+        return this;
+    }
+
     public SignatureUpdateView containerFile(File containerFile) {
         this.containerFile = containerFile;
         return this;
@@ -148,6 +154,10 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             openDocumentIntentSubject.onNext(Intent.OpenDocumentIntent.clear());
             return;
         }
+
+        toolbarView.setTitle(isExistingContainer
+                ? R.string.signature_update_title_existing
+                : R.string.signature_update_title_created);
 
         setActivity(state.loadContainerInProgress() || state.documentsProgress()
                 || state.documentRemoveInProgress() || state.signatureRemoveInProgress()

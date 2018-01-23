@@ -15,6 +15,8 @@ abstract class ViewState implements MviViewState {
 
     abstract boolean createContainerInProgress();
 
+    abstract boolean existingContainer();
+
     @Nullable abstract File containerFile();
 
     @Nullable abstract Throwable error();
@@ -25,6 +27,7 @@ abstract class ViewState implements MviViewState {
         return new AutoValue_ViewState.Builder()
                 .chooseFiles(false)
                 .createContainerInProgress(false)
+                .existingContainer(false)
                 .build();
     }
 
@@ -32,6 +35,7 @@ abstract class ViewState implements MviViewState {
     interface Builder {
         Builder chooseFiles(boolean chooseFiles);
         Builder createContainerInProgress(boolean createContainerInProgress);
+        Builder existingContainer(boolean existingContainer);
         Builder containerFile(@Nullable File containerFile);
         Builder error(@Nullable Throwable error);
         ViewState build();

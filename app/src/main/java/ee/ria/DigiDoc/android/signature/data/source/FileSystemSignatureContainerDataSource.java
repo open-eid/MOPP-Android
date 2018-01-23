@@ -11,6 +11,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
+import ee.ria.DigiDoc.android.signature.data.ContainerAdd;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
@@ -40,20 +41,24 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
     }
 
     @Override
-    public Single<File> addContainer(ImmutableList<FileStream> fileStreams, boolean forceCreate) {
+    public Single<ContainerAdd> addContainer(ImmutableList<FileStream> fileStreams,
+                                             boolean forceCreate) {
         return Single.fromCallable(() -> {
+            boolean isExistingContainer;
             File containerFile;
             if (!forceCreate && fileStreams.size() == 1 && isContainerFile(fileStreams.get(0))) {
                 FileStream fileStream = fileStreams.get(0);
+                isExistingContainer = true;
                 containerFile = fileSystem.addSignatureContainer(fileStream);
             } else {
                 String containerName = String.format(Locale.US, "%s.%s",
                         getNameWithoutExtension(fileStreams.get(0).displayName()),
                         settingsDataStore.getFileType());
+                isExistingContainer = false;
                 containerFile = fileSystem.generateSignatureContainerFile(containerName);
                 SignedContainer.create(containerFile, cacheFileStreams(fileStreams));
             }
-            return containerFile;
+            return ContainerAdd.create(isExistingContainer, containerFile);
         });
     }
 

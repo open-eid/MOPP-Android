@@ -75,7 +75,8 @@ public final class SignatureCreateView extends FrameLayout implements MviView<In
         Throwable error = state.error();
         progressView.setVisibility(state.createContainerInProgress() ? VISIBLE : GONE);
         if (containerFile != null) {
-            navigator.replaceCurrentScreen(SignatureUpdateScreen.create(containerFile));
+            navigator.replaceCurrentScreen(SignatureUpdateScreen.create(state.existingContainer(),
+                    containerFile));
         } else if (error != null) {
             Toast.makeText(getContext(), R.string.signature_create_error, Toast.LENGTH_LONG)
                     .show();
