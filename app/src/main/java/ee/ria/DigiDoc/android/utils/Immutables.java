@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.utils;
 
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import static com.google.common.base.Predicates.equalTo;
@@ -20,6 +21,18 @@ public final class Immutables {
         return FluentIterable.from(set)
                 .filter(not(equalTo(value)))
                 .toSet();
+    }
+
+    /**
+     * Check that list contains particular subclass instance.
+     */
+    public static <T> boolean containsType(ImmutableList<T> list, Class<? extends T> type) {
+        for (T item : list) {
+            if (type.isInstance(item)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Immutables() {}
