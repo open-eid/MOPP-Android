@@ -42,7 +42,7 @@
             android:textAppearance="?attr/textAppearanceListItemSecondary"
             android:lines="1"
             android:ellipsize="end"
-            tools:text="01 June 2015 13:45" />
+            tools:text="Signed 01 June 2015 13:45" />
 
     </LinearLayout>
 

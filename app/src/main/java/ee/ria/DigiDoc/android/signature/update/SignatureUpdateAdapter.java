@@ -294,7 +294,9 @@ final class SignatureUpdateAdapter extends
                     ? colorValid
                     : colorInvalid);
             nameView.setText(item.signature().name());
-            createdAtView.setText(formatter.instant(item.signature().createdAt()));
+            createdAtView.setText(itemView.getResources().getString(
+                    R.string.signature_update_signature_created_at,
+                    formatter.instant(item.signature().createdAt())));
             clicks(removeButton).map(ignored ->
                     ((SignatureItem) adapter.getItem(getAdapterPosition())).signature())
                     .subscribe(adapter.signatureRemoveClicksSubject);
