@@ -279,9 +279,6 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         disposables.add(adapter.documentClicks().subscribe(document ->
                 openDocumentIntentSubject.onNext(Intent.OpenDocumentIntent
                         .open(containerFile, document))));
-        disposables.add(signatureAddDialog.positiveButtonClicks().subscribe(data ->
-                signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.addIntent(containerFile,
-                        data.phoneNo(), data.personalCode(), data.rememberMe()))));
         disposables.add(adapter.signatureRemoveClicks().subscribe(signature ->
                 signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent
                         .showConfirmation(containerFile, signature))));
@@ -291,6 +288,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                                 .remove(containerFile, signatureRemoveConfirmation))));
         disposables.add(signatureRemoveConfirmationDialog.cancels().subscribe(ignored ->
                 signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear())));
+        disposables.add(signatureAddDialog.positiveButtonClicks().subscribe(data ->
+                signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.addIntent(containerFile,
+                        data.phoneNo(), data.personalCode(), data.rememberMe()))));
         disposables.add(signatureAddDialog.cancels().subscribe(ignored -> {
             resetSignatureAddDialog();
             signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent());
