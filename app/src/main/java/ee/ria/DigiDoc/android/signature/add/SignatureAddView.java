@@ -47,6 +47,10 @@ public final class SignatureAddView extends LinearLayout {
         personalCodeView.setText(personalCode);
     }
 
+    public void setRememberMe(boolean rememberMe) {
+        rememberMeView.setChecked(rememberMe);
+    }
+
     Data getData() {
         return Data.create(phoneNoView.getText().toString(), personalCodeView.getText().toString(),
                 rememberMeView.isChecked());

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CoordinatorLayout;
@@ -24,6 +25,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.signature.add.SignatureAddDialog;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.ViewSavedState;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
@@ -142,8 +144,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 R.string.signature_update_document_remove_confirmation_message);
         signatureRemoveConfirmationDialog = new ConfirmationDialog(context,
                 R.string.signature_update_signature_remove_confirmation_message);
-        signatureAddDialog = new SignatureAddDialog(context, viewModel.getPhoneNo(),
-                viewModel.getPersonalCode());
+        signatureAddDialog = new SignatureAddDialog(context);
+        resetSignatureAddDialog();
 
         statusMessageSource = new MobileSignStatusMessageSource(context.getResources());
         faultMessageSource = new MobileSignFaultMessageSource(context.getResources());
@@ -272,9 +274,15 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         errorView.setVisibility(signatureAddError == null ? GONE : VISIBLE);
     }
 
-    protected void setActivity(boolean activity) {
+    private void setActivity(boolean activity) {
         activityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
         activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
+    }
+
+    private void resetSignatureAddDialog() {
+        signatureAddDialog.setPhoneNo(viewModel.getPhoneNo());
+        signatureAddDialog.setPersonalCode(viewModel.getPersonalCode());
+        signatureAddDialog.setRememberMe(true);
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
@@ -351,8 +359,10 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear())));
         disposables.add(dismisses(signatureRemoveErrorSnackbar).subscribe(ignored ->
                 signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear())));
-        disposables.add(signatureAddDialog.cancels().subscribe(ignored ->
-                signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent())));
+        disposables.add(signatureAddDialog.cancels().subscribe(ignored -> {
+            resetSignatureAddDialog();
+            signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent());
+        }));
         disposables.add(dismisses(signatureAddSuccessSnackbar).subscribe(ignored ->
                 signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent())));
     }
@@ -364,5 +374,18 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         signatureRemoveConfirmationDialog.dismiss();
         documentRemoveConfirmationDialog.dismiss();
         super.onDetachedFromWindow();
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        return ViewSavedState.onSaveInstanceState(super.onSaveInstanceState(), parcel ->
+                parcel.writeBundle(signatureAddDialog.onSaveInstanceState()));
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        super.onRestoreInstanceState(ViewSavedState.onRestoreInstanceState(state, parcel ->
+                signatureAddDialog.onRestoreInstanceState(
+                        parcel.readBundle(getClass().getClassLoader()))));
     }
 }

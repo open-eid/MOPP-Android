@@ -83,6 +83,7 @@ public class GetMobileCreateSignatureStatusResponse {
     }
 
     public enum ProcessStatus {
+        DEFAULT,
         REQUEST_OK,
         EXPIRED_TRANSACTION,
         USER_CANCEL,

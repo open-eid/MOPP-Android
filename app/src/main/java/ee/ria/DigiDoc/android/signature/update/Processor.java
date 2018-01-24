@@ -190,12 +190,14 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         .map(Result.SignatureAddResult::success)
                                         .toObservable()
                                         .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread());
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .startWith(Result.SignatureAddResult
+                                                .status(ProcessStatus.SIGNATURE));
                             } else {
                                 return Observable.just(result);
                             }
                         })
-                        .startWith(Result.SignatureAddResult.status(null));
+                        .startWith(Result.SignatureAddResult.status(ProcessStatus.DEFAULT));
             }
         });
     }
