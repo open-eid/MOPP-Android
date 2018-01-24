@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -187,8 +188,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 return signatureContainerDataSource
                                         .addSignature(containerFile, result.signature())
                                         .andThen(signatureContainerDataSource.get(containerFile))
-                                        .map(Result.SignatureAddResult::success)
                                         .toObservable()
+                                        .flatMap(container -> Observable.timer(3, TimeUnit.SECONDS)
+                                                .map(ignored -> Result.SignatureAddResult.clear())
+                                                .startWith(Result.SignatureAddResult
+                                                        .success(container)))
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .startWith(Result.SignatureAddResult

@@ -52,6 +52,18 @@ public final class SignatureAddDialog extends AlertDialog implements
         buttonClicksSubject.onNext(which);
     }
 
+    @Override
+    public void show() {
+        super.show();
+        signatureAddView.setCursorVisible(true);
+    }
+
+    @Override
+    public void dismiss() {
+        signatureAddView.setCursorVisible(false);
+        super.dismiss();
+    }
+
     public Observable<Object> cancels() {
         return RxDialog.cancels(this)
                 .mergeWith(buttonClicksSubject

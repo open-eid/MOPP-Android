@@ -16,54 +16,18 @@
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:title="@string/signature_update_name"
             app:navigationIcon="@drawable/ic_clear"
             app:navigationContentDescription="@string/close" />
 
     </android.support.design.widget.AppBarLayout>
 
-    <ScrollView
+    <android.support.v7.widget.RecyclerView
+        android:id="@id/signatureUpdateList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:scrollbars="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@id/signatureUpdateError"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="@dimen/material_card_supporting_text_padding_horizontal"
-                android:drawablePadding="@dimen/material_card_supporting_text_padding_horizontal"
-                android:drawableStart="@drawable/ic_error"
-                android:textAppearance="@style/TextAppearance.Application.Error"
-                android:text="@string/unknown_error"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@id/signatureUpdateSignaturesValidity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="@dimen/material_card_supporting_text_padding_horizontal"
-                android:drawablePadding="@dimen/material_card_supporting_text_padding_horizontal"
-                android:drawableStart="@drawable/ic_error"
-                android:textAppearance="@style/TextAppearance.Application.Error"
-                android:text="@string/signature_update_signatures_invalid"
-                android:visibility="gone" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@id/signatureUpdateList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-    </ScrollView>
+        android:scrollbars="vertical" />
 
     <FrameLayout
         android:id="@id/activityOverlay"

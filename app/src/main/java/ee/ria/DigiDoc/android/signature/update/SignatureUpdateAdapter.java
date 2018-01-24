@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.annotation.StringRes;
 import android.support.v7.util.DiffUtil;
@@ -18,6 +19,7 @@ import com.google.common.collect.ImmutableList;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.Constants;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
@@ -30,10 +32,12 @@ import static android.support.v4.content.res.ResourcesCompat.getColor;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.DOCUMENT;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.SIGNATURE;
+import static ee.ria.DigiDoc.android.utils.Immutables.containsType;
 
 final class SignatureUpdateAdapter extends
         RecyclerView.Adapter<SignatureUpdateAdapter.UpdateViewHolder<SignatureUpdateAdapter.Item>> {
 
+    final Subject<Object> scrollToTopSubject = PublishSubject.create();
     final Subject<DataFile> documentClicksSubject = PublishSubject.create();
     final Subject<Object> documentAddClicksSubject = PublishSubject.create();
     final Subject<DataFile> documentRemoveClicksSubject = PublishSubject.create();
@@ -43,19 +47,43 @@ final class SignatureUpdateAdapter extends
 
     private ImmutableList<Item> items = ImmutableList.of();
 
-    void setData(ImmutableList<DataFile> documents, ImmutableList<Signature> signatures,
+    void setData(boolean isSuccess, boolean isWarning, @Nullable String name,
+                 ImmutableList<DataFile> documents, ImmutableList<Signature> signatures,
                  boolean documentAddEnabled, boolean documentRemoveEnabled) {
-        ImmutableList<Item> items = ImmutableList.<Item>builder()
+        ImmutableList.Builder<Item> builder = ImmutableList.builder();
+        if (isSuccess) {
+            builder.add(SuccessItem.create());
+        }
+        if (isWarning) {
+            builder.add(WarningItem.create());
+        }
+        if (name != null) {
+            builder.add(NameItem.create(name));
+        }
+        ImmutableList<Item> items = builder
                 .add(SubheadItem.create(DOCUMENT, documentAddEnabled))
                 .addAll(DocumentItem.of(documents, documentRemoveEnabled))
                 .add(SubheadItem.create(SIGNATURE, true))
                 .addAll(SignatureItem.of(signatures))
                 .build();
 
+        boolean shouldScrollToTop = !this.items.isEmpty() &&
+                ((isSuccess && !containsType(this.items, SuccessItem.class)) ||
+                (isWarning && !containsType(this.items, WarningItem.class)) ||
+                (name != null && !containsType(this.items, NameItem.class)));
+
         DiffUtil.DiffResult result = DiffUtil
                 .calculateDiff(new DiffUtilCallback(this.items, items));
         this.items = items;
         result.dispatchUpdatesTo(this);
+
+        if (shouldScrollToTop) {
+            scrollToTopSubject.onNext(Constants.VOID);
+        }
+    }
+
+    Observable<Object> scrollToTop() {
+        return scrollToTopSubject;
     }
 
     Observable<DataFile> documentClicks() {
@@ -118,6 +146,12 @@ final class SignatureUpdateAdapter extends
 
         static UpdateViewHolder create(int viewType, View itemView) {
             switch (viewType) {
+                case R.layout.signature_update_list_item_success:
+                    return new SuccessViewHolder(itemView);
+                case R.layout.signature_update_list_item_warning:
+                    return new WarningViewHolder(itemView);
+                case R.layout.signature_update_list_item_name:
+                    return new NameViewHolder(itemView);
                 case R.layout.signature_update_list_item_subhead:
                     return new SubheadViewHolder(itemView);
                 case R.layout.signature_update_list_item_document:
@@ -127,6 +161,43 @@ final class SignatureUpdateAdapter extends
                 default:
                     throw new IllegalArgumentException("Unknown view type " + viewType);
             }
+        }
+    }
+
+    static final class SuccessViewHolder extends UpdateViewHolder<SuccessItem> {
+
+        SuccessViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        void bind(SignatureUpdateAdapter adapter, SuccessItem item) {
+        }
+    }
+
+    static final class WarningViewHolder extends UpdateViewHolder<WarningItem> {
+
+        WarningViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        void bind(SignatureUpdateAdapter adapter, WarningItem item) {
+        }
+    }
+
+    static final class NameViewHolder extends UpdateViewHolder<NameItem> {
+
+        private final TextView nameView;
+
+        NameViewHolder(View itemView) {
+            super(itemView);
+            nameView = itemView.findViewById(R.id.signatureUpdateListName);
+        }
+
+        @Override
+        void bind(SignatureUpdateAdapter adapter, NameItem item) {
+            nameView.setText(item.name());
         }
     }
 
@@ -239,6 +310,35 @@ final class SignatureUpdateAdapter extends
     static abstract class Item {
 
         abstract int type();
+    }
+
+    @AutoValue
+    static abstract class SuccessItem extends Item {
+
+        static SuccessItem create() {
+            return new AutoValue_SignatureUpdateAdapter_SuccessItem(
+                    R.layout.signature_update_list_item_success);
+        }
+    }
+
+    @AutoValue
+    static abstract class WarningItem extends Item {
+
+        static WarningItem create() {
+            return new AutoValue_SignatureUpdateAdapter_WarningItem(
+                    R.layout.signature_update_list_item_warning);
+        }
+    }
+
+    @AutoValue
+    static abstract class NameItem extends Item {
+
+        abstract String name();
+
+        static NameItem create(String name) {
+            return new AutoValue_SignatureUpdateAdapter_NameItem(
+                    R.layout.signature_update_list_item_name, name);
+        }
     }
 
     @AutoValue

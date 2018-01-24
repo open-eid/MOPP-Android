@@ -56,6 +56,14 @@ public final class SignatureAddView extends LinearLayout {
                 rememberMeView.isChecked());
     }
 
+    /**
+     * https://issuetracker.google.com/issues/37064488
+     */
+    void setCursorVisible(boolean cursorVisible) {
+        phoneNoView.setCursorVisible(cursorVisible);
+        personalCodeView.setCursorVisible(cursorVisible);
+    }
+
     @AutoValue
     public static abstract class Data {
 
