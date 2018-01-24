@@ -8,27 +8,26 @@ import android.widget.LinearLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.crypto.CryptoHomeScreen;
-import ee.ria.DigiDoc.android.eid.EIDHomeScreen;
-import ee.ria.DigiDoc.android.signature.home.SignatureHomeScreen;
-import ee.ria.DigiDoc.android.utils.Predicates;
+import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigation.Navigator;
-import ee.ria.DigiDoc.android.utils.navigation.Screen;
 import io.reactivex.Observable;
-import io.reactivex.disposables.CompositeDisposable;
-import timber.log.Timber;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 import static com.jakewharton.rxbinding2.support.design.widget.RxBottomNavigationView.itemSelections;
+import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 
-public final class HomeView extends LinearLayout implements MviView<HomeIntent, HomeViewState> {
+public final class HomeView extends LinearLayout implements MviView<Intent, ViewState> {
 
     private final BottomNavigationView navigationView;
 
-    @Nullable private CompositeDisposable disposables;
-
-    private final HomeViewModel viewModel;
     private final Navigator homeNavigator;
+    private final HomeViewModel viewModel;
+    private final ViewDisposables disposables = new ViewDisposables();
+
+    private final Subject<Intent.NavigationIntent> navigationIntentSubject =
+            PublishSubject.create();
 
     public HomeView(Context context) {
         this(context, null);
@@ -47,62 +46,43 @@ public final class HomeView extends LinearLayout implements MviView<HomeIntent, 
         setOrientation(VERTICAL);
         inflate(context, R.layout.main_home, this);
         navigationView = findViewById(R.id.mainHomeNavigation);
+        Navigator navigator = Application.component(context).navigator();
+        viewModel = navigator.getViewModelProvider().get(HomeViewModel.class);
+        homeNavigator = navigator.childNavigator(findViewById(R.id.mainHomeNavigationContainer));
+    }
 
-        viewModel = new HomeViewModel();
-        homeNavigator = Application.component(context).navigator()
-                .childNavigator(findViewById(R.id.mainHomeNavigationContainer));
+    @SuppressWarnings("unchecked")
+    @Override
+    public Observable<Intent> intents() {
+        return Observable.mergeArray(initialIntent(), navigationIntent());
     }
 
     @Override
-    public Observable<HomeIntent> intents() {
-        return Observable.merge(navigationIntents(), Observable.empty());
+    public void render(ViewState state) {
+        homeNavigator.setRootScreen(state.screen());
     }
 
-    @Override
-    public void render(HomeViewState state) {
-        Timber.d("render: %s", state);
-
-        Screen screen;
-        switch (state.currentScreen()) {
-            case R.id.signatureHomeScreen:
-                screen = SignatureHomeScreen.create();
-                break;
-            case R.id.cryptoHomeScreen:
-                screen = CryptoHomeScreen.create();
-                break;
-            case R.id.eidHomeScreen:
-                screen = EIDHomeScreen.create();
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown navigation item " + state);
-        }
-        homeNavigator.setRootScreen(screen);
+    private Observable<Intent.InitialIntent> initialIntent() {
+        return Observable.just(Intent.InitialIntent.create());
     }
 
-    private Observable<HomeIntent.NavigationIntent> navigationIntents() {
-        return itemSelections(navigationView)
-                .filter(Predicates.duplicates())
-                .map(item -> HomeIntent.NavigationIntent.create(item.getItemId()));
+    private Observable<Intent.NavigationIntent> navigationIntent() {
+        return navigationIntentSubject;
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (disposables != null) {
-            disposables.dispose();
-        }
-        disposables = new CompositeDisposable();
-
-        disposables.add(viewModel.viewStates().subscribe(this::render));
+        disposables.attach();
+        disposables.add(viewModel.viewStates().filter(duplicates()).subscribe(this::render));
         viewModel.process(intents());
+        disposables.add(itemSelections(navigationView).filter(duplicates()).subscribe(item ->
+                navigationIntentSubject.onNext(Intent.NavigationIntent.create(item.getItemId()))));
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (disposables != null) {
-            disposables.dispose();
-            disposables = null;
-        }
+        disposables.detach();
         super.onDetachedFromWindow();
     }
 }

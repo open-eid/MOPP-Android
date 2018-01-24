@@ -25,20 +25,11 @@ public abstract class BaseMviViewModel<
         intentSubject = PublishSubject.create();
         viewStateObservable = intentSubject
                 .compose(this::initialIntentFilter)
-                .map(intent -> {
-                    Timber.d("Intent: %s", intent);
-                    return intent;
-                })
+                .doOnNext(intent -> Timber.d("Intent: %s", intent))
                 .map(this::actionFromIntent)
-                .map(action -> {
-                    Timber.d("Action: %s", action);
-                    return action;
-                })
+                .doOnNext(action -> Timber.d("Action: %s", action))
                 .compose(processor)
-                .map(result -> {
-                    Timber.d("Result: %s", result);
-                    return result;
-                })
+                .doOnNext(result -> Timber.d("Result: %s", result))
                 .doOnNext(result -> {
                     if (!(result instanceof NavigatorResult)) {
                         return;
@@ -51,10 +42,7 @@ public abstract class BaseMviViewModel<
                     navigator.transaction(transaction);
                 })
                 .scan(initialViewState(), (viewState, result) -> result.reduce(viewState))
-                .map(viewState -> {
-                    Timber.d("ViewState: %s", viewState);
-                    return viewState;
-                })
+                .doOnNext(viewState -> Timber.d("ViewState: %s", viewState))
                 .replay(1)
                 .autoConnect(0);
     }

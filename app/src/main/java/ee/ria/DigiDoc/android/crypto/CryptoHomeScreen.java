@@ -21,4 +21,9 @@ public final class CryptoHomeScreen extends ConductorScreen {
     protected View createView(Context context) {
         return new CryptoHomeView(context);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj == this || obj instanceof CryptoHomeScreen;
+    }
 }

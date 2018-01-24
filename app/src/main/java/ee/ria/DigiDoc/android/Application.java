@@ -33,6 +33,7 @@ import dagger.MapKey;
 import dagger.Module;
 import dagger.multibindings.IntoMap;
 import ee.ria.DigiDoc.BuildConfig;
+import ee.ria.DigiDoc.android.main.home.HomeViewModel;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.data.source.FileSystemSignatureContainerDataSource;
@@ -135,6 +136,10 @@ public class Application extends android.app.Application {
         @SuppressWarnings("unused")
         @Binds abstract MviViewModelProvider viewModelProvider(
                 ConductorViewModelProvider conductorViewModelProvider);
+
+        @Binds @IntoMap @SuppressWarnings("unused")
+        @ViewModelKey(HomeViewModel.class)
+        abstract MviViewModel mainHomeViewModel(HomeViewModel homeViewModel);
 
         @Binds @IntoMap @SuppressWarnings("unused")
         @ViewModelKey(SignatureCreateViewModel.class)

@@ -21,4 +21,9 @@ public final class SignatureHomeScreen extends ConductorScreen {
     protected View createView(Context context) {
         return new SignatureHomeView(context);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj == this || obj instanceof SignatureHomeScreen;
+    }
 }

@@ -21,4 +21,9 @@ public final class EIDHomeScreen extends ConductorScreen {
     protected View createView(Context context) {
         return new EIDHomeView(context);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj == this || obj instanceof EIDHomeScreen;
+    }
 }
