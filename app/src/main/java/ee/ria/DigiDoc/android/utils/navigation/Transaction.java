@@ -52,4 +52,14 @@ public interface Transaction {
             return new AutoValue_Transaction_ReplaceCurrentScreenTransaction(screen);
         }
     }
+
+    @AutoValue
+    abstract class ActivityResultTransaction implements Transaction {
+
+        public abstract ActivityResult activityResult();
+
+        public static ActivityResultTransaction create(ActivityResult activityResult) {
+            return new AutoValue_Transaction_ActivityResultTransaction(activityResult);
+        }
+    }
 }

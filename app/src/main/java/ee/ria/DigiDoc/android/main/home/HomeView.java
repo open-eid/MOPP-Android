@@ -4,13 +4,20 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.crypto.CryptoHomeScreen;
+import ee.ria.DigiDoc.android.crypto.CryptoHomeView;
+import ee.ria.DigiDoc.android.eid.EIDHomeScreen;
+import ee.ria.DigiDoc.android.eid.EIDHomeView;
+import ee.ria.DigiDoc.android.signature.home.SignatureHomeScreen;
+import ee.ria.DigiDoc.android.signature.home.SignatureHomeView;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
-import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -20,9 +27,9 @@ import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 
 public final class HomeView extends LinearLayout implements MviView<Intent, ViewState> {
 
+    private final FrameLayout navigationContainerView;
     private final BottomNavigationView navigationView;
 
-    private final Navigator homeNavigator;
     private final HomeViewModel viewModel;
     private final ViewDisposables disposables = new ViewDisposables();
 
@@ -45,10 +52,10 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         super(context, attrs, defStyleAttr, defStyleRes);
         setOrientation(VERTICAL);
         inflate(context, R.layout.main_home, this);
+        navigationContainerView = findViewById(R.id.mainHomeNavigationContainer);
         navigationView = findViewById(R.id.mainHomeNavigation);
-        Navigator navigator = Application.component(context).navigator();
-        viewModel = navigator.getViewModelProvider().get(HomeViewModel.class);
-        homeNavigator = navigator.childNavigator(findViewById(R.id.mainHomeNavigationContainer));
+        viewModel = Application.component(context).navigator().getViewModelProvider()
+                .get(HomeViewModel.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -59,7 +66,20 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
 
     @Override
     public void render(ViewState state) {
-        homeNavigator.setRootScreen(state.screen());
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+        View view;
+        if (state.screen() instanceof SignatureHomeScreen) {
+            view = new SignatureHomeView(getContext());
+        } else if (state.screen() instanceof CryptoHomeScreen) {
+            view = new CryptoHomeView(getContext());
+        } else if (state.screen() instanceof EIDHomeScreen) {
+            view = new EIDHomeView(getContext());
+        } else {
+            throw new IllegalArgumentException("Unknown screen " + state.screen());
+        }
+        navigationContainerView.removeAllViews();
+        navigationContainerView.addView(view, layoutParams);
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {

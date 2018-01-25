@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.view.ActionMode;
-import android.view.ViewGroup;
 
 import com.google.common.collect.ImmutableList;
 
@@ -44,8 +43,6 @@ public interface Navigator {
 
     void replaceCurrentScreen(Screen screen);
 
-    Navigator childNavigator(ViewGroup container);
-
     /**
      * @see #getActivityResult(int, Intent, Bundle) Same but options = null.
      */
@@ -68,23 +65,7 @@ public interface Navigator {
     Observable<ActivityResult> activityResults(int requestCode);
 
     /**
-     * Observe activity results with given request code and {@link android.app.Activity#RESULT_OK}
-     * result.
-     *
-     * @param requestCode Filter out results with other request codes.
-     */
-    Observable<Intent> activityOkResults(int requestCode);
-
-    /**
      * Get view model provider for current screen.
      */
     MviViewModelProvider getViewModelProvider();
-
-    /**
-     * Start action mode.
-     *
-     * @param callback Callback for action mode.
-     * @return Action mode that was started.
-     */
-    ActionMode startActionMode(ActionMode.Callback callback);
 }

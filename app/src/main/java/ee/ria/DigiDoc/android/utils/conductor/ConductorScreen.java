@@ -38,18 +38,13 @@ public abstract class ConductorScreen extends Controller implements Screen {
     @NonNull
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
+        if (viewModelProvider == null) {
+            viewModelProvider = Application.component(container.getContext()).viewModelProvider();
+        }
         View view = createView(container.getContext());
         view.setId(id);
         view.setBackgroundColor(getColor(container.getResources(), R.color.windowBackground, null));
         return view;
-    }
-
-    @Override
-    protected void onContextAvailable(@NonNull Context context) {
-        super.onContextAvailable(context);
-        if (viewModelProvider == null) {
-            viewModelProvider = Application.component(context).viewModelProvider();
-        }
     }
 
     MviViewModelProvider getViewModelProvider() {
