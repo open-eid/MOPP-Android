@@ -9,14 +9,6 @@ import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 interface Action extends MviAction {
 
     @AutoValue
-    abstract class ChooseFilesAction implements Action {
-
-        static ChooseFilesAction create() {
-            return new AutoValue_Action_ChooseFilesAction();
-        }
-    }
-
-    @AutoValue
     abstract class CreateContainerAction implements Action {
 
         abstract ImmutableList<FileStream> fileStreams();

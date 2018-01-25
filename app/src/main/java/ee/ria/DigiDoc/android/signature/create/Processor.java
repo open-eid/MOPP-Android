@@ -11,16 +11,10 @@ import io.reactivex.schedulers.Schedulers;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
-    private final ObservableTransformer<Action.ChooseFilesAction,
-                                        Result.ChooseFilesResult> chooseFiles;
-
     private final ObservableTransformer<Action.CreateContainerAction,
                                         Result.CreateContainerResult> createContainer;
 
     @Inject Processor(SignatureContainerDataSource signatureContainerDataSource) {
-        chooseFiles = upstream -> upstream.flatMap(action ->
-                Observable.just(Result.ChooseFilesResult.create()));
-
         createContainer = upstream -> upstream.flatMap(action ->
                 signatureContainerDataSource
                         .addContainer(action.fileStreams(), false).toObservable()
@@ -31,10 +25,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .startWith(Result.CreateContainerResult.inProgress()));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ObservableSource<Result> apply(Observable<Action> upstream) {
-        return upstream.publish(shared -> Observable.merge(
-                shared.ofType(Action.ChooseFilesAction.class).compose(chooseFiles),
+        return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Action.CreateContainerAction.class).compose(createContainer)));
     }
 }

@@ -1,6 +1,8 @@
 package ee.ria.DigiDoc.android.utils.conductor;
 
 import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -38,9 +40,17 @@ public final class ConductorNavigator implements Navigator {
 
     private final Subject<ActivityResult> activityResultSubject = PublishSubject.create();
 
+    private final Application application;
+
     private Router router;
 
-    @Inject ConductorNavigator() {
+    @Inject ConductorNavigator(Application application) {
+        this.application = application;
+    }
+
+    @Override
+    public Context context() {
+        return application;
     }
 
     @Override
@@ -140,11 +150,11 @@ public final class ConductorNavigator implements Navigator {
      * Can be tested with "Don't keep activities" setting in Developer options.
      */
 
-    private final AtomicBoolean screenAttached = new AtomicBoolean(true);
+    private final AtomicBoolean screenAttached = new AtomicBoolean(false);
     private final List<Transaction> transactions = new ArrayList<>();
 
     private void handleTransactionQueue() {
-        if (!screenAttached.get()) {
+        if (!screenAttached.get() && hasRootScreen()) {
             return;
         }
         for (Transaction transaction : transactions) {
@@ -167,7 +177,9 @@ public final class ConductorNavigator implements Navigator {
             }
             router.setBackstack(backstack, null);
         } else if (transaction instanceof Transaction.PopScreenTransaction) {
-            router.popCurrentController();
+            if (router.getBackstackSize() > 0) {
+                router.popCurrentController();
+            }
         } else if (transaction instanceof Transaction.ReplaceCurrentScreenTransaction) {
             router.replaceTopController(RouterTransaction.with((ConductorScreen)
                     ((Transaction.ReplaceCurrentScreenTransaction) transaction).screen()));

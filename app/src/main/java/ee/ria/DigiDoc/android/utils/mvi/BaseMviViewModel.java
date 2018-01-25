@@ -18,7 +18,7 @@ public abstract class BaseMviViewModel<
         A extends MviAction,
         R extends MviResult<S>> implements MviViewModel<I, S> {
 
-    private final Subject<I> intentSubject;
+    protected final Subject<I> intentSubject;
     private final Observable<S> viewStateObservable;
 
     protected BaseMviViewModel(ObservableTransformer<A, R> processor, Navigator navigator) {
@@ -26,10 +26,12 @@ public abstract class BaseMviViewModel<
         viewStateObservable = intentSubject
                 .compose(this::initialIntentFilter)
                 .doOnNext(intent -> Timber.d("Intent: %s", intent))
+                .filter(this::filterIntent)
                 .map(this::actionFromIntent)
                 .doOnNext(action -> Timber.d("Action: %s", action))
                 .compose(processor)
                 .doOnNext(result -> Timber.d("Result: %s", result))
+                .doOnNext(this::onResult)
                 .doOnNext(result -> {
                     if (!(result instanceof NavigatorResult)) {
                         return;
@@ -44,7 +46,8 @@ public abstract class BaseMviViewModel<
                 .scan(initialViewState(), (viewState, result) -> result.reduce(viewState))
                 .doOnNext(viewState -> Timber.d("ViewState: %s", viewState))
                 .replay(1)
-                .autoConnect(0);
+                .autoConnect(0)
+                .doOnDispose(this::onDispose);
     }
 
     @Override
@@ -59,9 +62,19 @@ public abstract class BaseMviViewModel<
 
     protected abstract Class<? extends I> initialIntentType();
 
+    protected boolean filterIntent(I intent) {
+        return true;
+    }
+
     protected abstract A actionFromIntent(I intent);
 
     protected abstract S initialViewState();
+
+    protected void onResult(R result) {
+    }
+
+    protected void onDispose() {
+    }
 
     private ObservableSource<I> initialIntentFilter(Observable<I> intents) {
         Class<? extends I> initialIntentType = initialIntentType();

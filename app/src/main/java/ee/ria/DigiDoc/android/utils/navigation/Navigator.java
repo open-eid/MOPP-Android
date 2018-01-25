@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.utils.navigation;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +12,8 @@ import ee.ria.DigiDoc.android.utils.mvi.MviViewModelProvider;
 import io.reactivex.Observable;
 
 public interface Navigator {
+
+    Context context();
 
     void transaction(Transaction transaction);
 

@@ -7,27 +7,15 @@ import com.google.auto.value.AutoValue;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.signature.data.ContainerAdd;
+import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
+import ee.ria.DigiDoc.android.utils.navigation.NavigatorResult;
+import ee.ria.DigiDoc.android.utils.navigation.Transaction;
 
 interface Result extends MviResult<ViewState> {
 
     @AutoValue
-    abstract class ChooseFilesResult implements Result {
-
-        @Override
-        public ViewState reduce(ViewState state) {
-            return state.buildWith()
-                    .chooseFiles(true)
-                    .build();
-        }
-
-        static ChooseFilesResult create() {
-            return new AutoValue_Result_ChooseFilesResult();
-        }
-    }
-
-    @AutoValue
-    abstract class CreateContainerResult implements Result {
+    abstract class CreateContainerResult implements Result, NavigatorResult {
 
         abstract boolean isExistingContainer();
 
@@ -37,13 +25,19 @@ interface Result extends MviResult<ViewState> {
 
         @Override
         public ViewState reduce(ViewState state) {
-            return state.buildWith()
-                    .chooseFiles(false)
-                    .createContainerInProgress(containerFile() == null && error() == null)
-                    .existingContainer(isExistingContainer())
-                    .containerFile(containerFile())
-                    .error(error())
-                    .build();
+            return state;
+        }
+
+        @Nullable
+        @Override
+        public Transaction transaction() {
+            if (containerFile() != null) {
+                return Transaction.ReplaceCurrentScreenTransaction.create(SignatureUpdateScreen
+                        .create(isExistingContainer(), containerFile()));
+            } else if (error() != null) {
+                return Transaction.PopScreenTransaction.create();
+            }
+            return null;
         }
 
         static CreateContainerResult inProgress() {
