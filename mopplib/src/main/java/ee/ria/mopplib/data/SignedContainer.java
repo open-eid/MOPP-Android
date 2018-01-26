@@ -5,8 +5,8 @@ import android.webkit.MimeTypeMap;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
-import com.google.common.net.MediaType;
 
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.RDN;
@@ -32,6 +32,15 @@ import timber.log.Timber;
 
 @AutoValue
 public abstract class SignedContainer {
+
+    private static final ImmutableSet<String> EXTENSIONS = ImmutableSet.<String>builder()
+            .add("asice", "asics", "sce", "scs", "adoc", "bdoc", "ddoc", "edoc")
+            .build();
+
+    private static final String PDF_EXTENSION = "pdf";
+
+    private static final String CONTAINER_MIME_TYPE = "application/octet-stream";
+    private static final String DEFAULT_MIME_TYPE = "text/plain";
 
     abstract File file();
 
@@ -222,6 +231,35 @@ public abstract class SignedContainer {
                 signatureBuilder.build());
     }
 
+    /**
+     * Check whether this is a signature container file which should be opened as such
+     * or a regular file which should be added to the container.
+     *
+     * @param file File to check.
+     * @return True if it is a container, false otherwise.
+     */
+    public static boolean isContainer(File file) {
+        String extension = Files.getFileExtension(file.getName()).toLowerCase();
+        if (EXTENSIONS.contains(extension)) {
+            return true;
+        }
+        if (PDF_EXTENSION.equals(extension)) {
+            try {
+                Container container = Container.open(file.getAbsolutePath());
+                if (container == null) {
+                    Timber.d("Could not open PDF as signature container %s", file);
+                    return false;
+                }
+                if (container.signatures().size() > 0) {
+                    return true;
+                }
+            } catch (Exception e) {
+                Timber.d("Could not open PDF as signature container %s", file);
+            }
+        }
+        return false;
+    }
+
     private static DataFile dataFile(ee.ria.libdigidocpp.DataFile dataFile) {
         return DataFile.create(dataFile.id(), dataFile.fileName(), dataFile.fileSize());
     }
@@ -235,6 +273,8 @@ public abstract class SignedContainer {
             signature.validate();
             status = SignatureStatus.VALID;
         } catch (Exception e) {
+            Timber.d(e, "Validation failed for signature {id: %s, name: %s, createdAt: %s}",
+                    id, name, createdAt);
             status = SignatureStatus.INVALID;
         }
         return Signature.create(id, name, createdAt, status);
@@ -287,8 +327,11 @@ public abstract class SignedContainer {
      * @return MIME type of the file.
      */
     private static String mimeType(File file) {
-        String mimeType = MimeTypeMap.getSingleton()
-                .getMimeTypeFromExtension(Files.getFileExtension(file.getName()));
-        return mimeType == null ? MediaType.PLAIN_TEXT_UTF_8.toString() : mimeType;
+        String extension = Files.getFileExtension(file.getName()).toLowerCase();
+        if (EXTENSIONS.contains(extension)) {
+            return CONTAINER_MIME_TYPE;
+        }
+        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        return mimeType == null ? DEFAULT_MIME_TYPE : mimeType;
     }
 }
