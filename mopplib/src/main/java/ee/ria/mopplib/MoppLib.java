@@ -40,10 +40,6 @@ public final class MoppLib {
 
     private static void initNativeLibs() {
         System.loadLibrary("c++_shared");
-        System.loadLibrary("xerces-c-3.2");
-        System.loadLibrary("xalanMsg");
-        System.loadLibrary("xalan-c");
-        System.loadLibrary("xml-security-c");
         System.loadLibrary("digidoc_java");
     }
 
