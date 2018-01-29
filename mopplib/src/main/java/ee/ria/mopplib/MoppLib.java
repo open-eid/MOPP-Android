@@ -72,7 +72,7 @@ public final class MoppLib {
         digidoc.initializeLib("libdigidoc Android", getSchemaDir(context).getAbsolutePath());
     }
 
-    private static File getSchemaDir(Context context) {
+    public static File getSchemaDir(Context context) {
         File schemaDir = new File(context.getCacheDir(), SCHEMA_DIR);
         //noinspection ResultOfMethodCallIgnored
         schemaDir.mkdirs();
