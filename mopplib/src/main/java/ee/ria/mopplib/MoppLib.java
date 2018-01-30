@@ -40,10 +40,6 @@ public final class MoppLib {
 
     private static void initNativeLibs() {
         System.loadLibrary("c++_shared");
-        System.loadLibrary("xerces-c-3.2");
-        System.loadLibrary("xalanMsg");
-        System.loadLibrary("xalan-c");
-        System.loadLibrary("xml-security-c");
         System.loadLibrary("digidoc_java");
     }
 
@@ -76,7 +72,7 @@ public final class MoppLib {
         digidoc.initializeLib("libdigidoc Android", getSchemaDir(context).getAbsolutePath());
     }
 
-    private static File getSchemaDir(Context context) {
+    public static File getSchemaDir(Context context) {
         File schemaDir = new File(context.getCacheDir(), SCHEMA_DIR);
         //noinspection ResultOfMethodCallIgnored
         schemaDir.mkdirs();

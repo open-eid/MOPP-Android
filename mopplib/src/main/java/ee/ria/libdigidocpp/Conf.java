@@ -140,10 +140,6 @@ public class Conf {
     return digidocJNI.Conf_TSLCache(swigCPtr, this);
   }
 
-  public SWIGTYPE_p_std__vectorT_digidoc__X509Cert_t TSLCerts() {
-    return new SWIGTYPE_p_std__vectorT_digidoc__X509Cert_t(digidocJNI.Conf_TSLCerts(swigCPtr, this), true);
-  }
-
   public boolean TSLOnlineDigest() {
     return digidocJNI.Conf_TSLOnlineDigest(swigCPtr, this);
   }
