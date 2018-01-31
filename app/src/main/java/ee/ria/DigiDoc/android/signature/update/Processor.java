@@ -31,6 +31,7 @@ import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusRe
 import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
 import ee.ria.mopp.androidmobileid.dto.response.ServiceFault;
 import ee.ria.mopp.androidmobileid.service.MobileSignService;
+import ee.ria.mopplib.MoppLib;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -41,7 +42,6 @@ import io.reactivex.schedulers.Schedulers;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.io.Files.getFileExtension;
-import static ee.ria.DigiDoc.util.FileUtils.getSchemaCacheDirectory;
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.toJson;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
@@ -305,7 +305,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
             intent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));
             intent.putExtra(ACCESS_TOKEN_PASS, conf == null ? "" : conf.PKCS12Pass());
             intent.putExtra(ACCESS_TOKEN_PATH,
-                    new File(getSchemaCacheDirectory(application), "878252.p12").getAbsolutePath());
+                    new File(MoppLib.getSchemaDir(application), "878252.p12").getAbsolutePath());
             application.startService(intent);
         }
     }
