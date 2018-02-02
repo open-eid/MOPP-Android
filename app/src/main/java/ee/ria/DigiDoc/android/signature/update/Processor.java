@@ -91,7 +91,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
             } else {
                 return signatureContainerDataSource
                         .addDocuments(action.containerFile(), action.fileStreams())
-                        .andThen(signatureContainerDataSource.get(action.containerFile()))
                         .toObservable()
                         .map(Result.AddDocumentsResult::success)
                         .onErrorReturn(Result.AddDocumentsResult::failure)
@@ -124,7 +123,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
             } else {
                 return signatureContainerDataSource
                         .removeDocument(action.containerFile(), action.document())
-                        .andThen(signatureContainerDataSource.get(action.containerFile()))
                         .toObservable()
                         .map(Result.DocumentRemoveResult::success)
                         .onErrorReturn(Result.DocumentRemoveResult::failure)
@@ -143,7 +141,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
             } else {
                 return signatureContainerDataSource
                         .removeSignature(action.containerFile(), action.signature())
-                        .andThen(signatureContainerDataSource.get(action.containerFile()))
                         .toObservable()
                         .map(Result.SignatureRemoveResult::success)
                         .onErrorReturn(Result.SignatureRemoveResult::failure)
@@ -187,7 +184,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             if (result.signature() != null) {
                                 return signatureContainerDataSource
                                         .addSignature(containerFile, result.signature())
-                                        .andThen(signatureContainerDataSource.get(containerFile))
                                         .toObservable()
                                         .flatMap(container -> Observable.timer(3, TimeUnit.SECONDS)
                                                 .map(ignored -> Result.SignatureAddResult.clear())
