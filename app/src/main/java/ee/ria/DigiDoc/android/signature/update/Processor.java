@@ -55,14 +55,14 @@ import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.SERVICE_FA
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
-    private final ObservableTransformer<Action.LoadContainerAction,
-                                        Result.LoadContainerResult> loadContainer;
+    private final ObservableTransformer<Action.ContainerLoadAction,
+                                        Result.ContainerLoadResult> containerLoad;
 
-    private final ObservableTransformer<Action.AddDocumentsAction,
-                                        Result.AddDocumentsResult> addDocuments;
+    private final ObservableTransformer<Action.DocumentsAddAction,
+                                        Result.DocumentsAddResult> documentsAdd;
 
-    private final ObservableTransformer<Action.OpenDocumentAction,
-                                        Result.OpenDocumentResult> openDocument;
+    private final ObservableTransformer<Action.DocumentOpenAction,
+                                        Result.DocumentOpenResult> documentOpen;
 
     private final ObservableTransformer<Action.DocumentRemoveAction,
                                         Result.DocumentRemoveResult> documentRemove;
@@ -76,45 +76,45 @@ final class Processor implements ObservableTransformer<Action, Result> {
     @Inject Processor(SignatureContainerDataSource signatureContainerDataSource,
                       SettingsDataStore settingsDataStore, Application application,
                       Navigator navigator) {
-        loadContainer = upstream -> upstream.flatMap(action ->
+        containerLoad = upstream -> upstream.switchMap(action ->
                 signatureContainerDataSource.get(action.containerFile())
                         .toObservable()
-                        .map(Result.LoadContainerResult::success)
-                        .onErrorReturn(AutoValue_Result_LoadContainerResult::failure)
+                        .map(Result.ContainerLoadResult::success)
+                        .onErrorReturn(Result.ContainerLoadResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.LoadContainerResult.progress()));
+                        .startWith(Result.ContainerLoadResult.progress()));
 
-        addDocuments = upstream -> upstream.flatMap(action -> {
+        documentsAdd = upstream -> upstream.flatMap(action -> {
             if (action.containerFile() == null) {
-                return Observable.just(Result.AddDocumentsResult.clear());
+                return Observable.just(Result.DocumentsAddResult.clear());
             } else if (action.fileStreams() == null) {
-                return Observable.just(Result.AddDocumentsResult.picking());
+                return Observable.just(Result.DocumentsAddResult.picking());
             } else {
                 return signatureContainerDataSource
                         .addDocuments(action.containerFile(), action.fileStreams())
                         .andThen(signatureContainerDataSource.get(action.containerFile()))
                         .toObservable()
-                        .map(Result.AddDocumentsResult::success)
-                        .onErrorReturn(Result.AddDocumentsResult::failure)
+                        .map(Result.DocumentsAddResult::success)
+                        .onErrorReturn(Result.DocumentsAddResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.AddDocumentsResult.adding());
+                        .startWith(Result.DocumentsAddResult.adding());
             }
         });
 
-        openDocument = upstream -> upstream.flatMap(action -> {
+        documentOpen = upstream -> upstream.flatMap(action -> {
             if (action.containerFile() == null) {
-                return Observable.just(Result.OpenDocumentResult.clear());
+                return Observable.just(Result.DocumentOpenResult.clear());
             } else {
                 return signatureContainerDataSource
                         .getDocumentFile(action.containerFile(), action.document())
                         .toObservable()
-                        .map(Result.OpenDocumentResult::success)
-                        .onErrorReturn(Result.OpenDocumentResult::failure)
+                        .map(Result.DocumentOpenResult::success)
+                        .onErrorReturn(Result.DocumentOpenResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.OpenDocumentResult.opening());
+                        .startWith(Result.DocumentOpenResult.opening());
             }
         });
 
@@ -214,9 +214,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
     @Override
     public ObservableSource<Result> apply(Observable<Action> upstream) {
         return upstream.publish(shared -> Observable.mergeArray(
-                shared.ofType(Action.LoadContainerAction.class).compose(loadContainer),
-                shared.ofType(Action.AddDocumentsAction.class).compose(addDocuments),
-                shared.ofType(Action.OpenDocumentAction.class).compose(openDocument),
+                shared.ofType(Action.ContainerLoadAction.class).compose(containerLoad),
+                shared.ofType(Action.DocumentsAddAction.class).compose(documentsAdd),
+                shared.ofType(Action.DocumentOpenAction.class).compose(documentOpen),
                 shared.ofType(Action.DocumentRemoveAction.class).compose(documentRemove),
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd)));

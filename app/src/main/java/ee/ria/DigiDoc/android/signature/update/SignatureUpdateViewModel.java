@@ -31,15 +31,15 @@ public final class SignatureUpdateViewModel extends
     @Override
     protected Action action(Intent intent) {
         if (intent instanceof Intent.InitialIntent) {
-            return Action.LoadContainerAction
+            return Action.ContainerLoadAction
                     .create(((Intent.InitialIntent) intent).containerFile());
-        } else if (intent instanceof Intent.AddDocumentsIntent) {
-            Intent.AddDocumentsIntent addDocumentsIntent = (Intent.AddDocumentsIntent) intent;
-            return Action.AddDocumentsAction.create(addDocumentsIntent.containerFile(),
+        } else if (intent instanceof Intent.DocumentsAddIntent) {
+            Intent.DocumentsAddIntent addDocumentsIntent = (Intent.DocumentsAddIntent) intent;
+            return Action.DocumentsAddAction.create(addDocumentsIntent.containerFile(),
                     addDocumentsIntent.fileStreams());
-        } else if (intent instanceof Intent.OpenDocumentIntent) {
-            Intent.OpenDocumentIntent openDocumentIntent = (Intent.OpenDocumentIntent) intent;
-            return Action.OpenDocumentAction.create(openDocumentIntent.containerFile(),
+        } else if (intent instanceof Intent.DocumentOpenIntent) {
+            Intent.DocumentOpenIntent openDocumentIntent = (Intent.DocumentOpenIntent) intent;
+            return Action.DocumentOpenAction.create(openDocumentIntent.containerFile(),
                     openDocumentIntent.document());
         } else if (intent instanceof Intent.DocumentRemoveIntent) {
             Intent.DocumentRemoveIntent documentRemoveIntent = (Intent.DocumentRemoveIntent) intent;

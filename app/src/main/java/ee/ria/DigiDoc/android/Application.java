@@ -46,7 +46,6 @@ import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.data.source.FileSystemSignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.Formatter;
-import ee.ria.DigiDoc.android.utils.mvi.MviViewModel;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
 import ee.ria.mopplib.MoppLib;
@@ -139,7 +138,6 @@ public class Application extends android.app.Application {
             return new ViewModelFactory(viewModelProviders);
         }
 
-
         @SuppressWarnings("unused")
         @Binds abstract SignatureContainerDataSource signatureContainerDataSource(
                 FileSystemSignatureContainerDataSource fileSystemSignatureContainerDataSource);
@@ -154,7 +152,7 @@ public class Application extends android.app.Application {
 
         @SuppressWarnings("unused")
         @Binds @IntoMap @ClassKey(SignatureUpdateViewModel.class)
-        abstract MviViewModel signatureUpdateModel(SignatureUpdateViewModel viewModel);
+        abstract ViewModel signatureUpdateModel(SignatureUpdateViewModel viewModel);
     }
 
     static final class ViewModelFactory implements ViewModelProvider.Factory {

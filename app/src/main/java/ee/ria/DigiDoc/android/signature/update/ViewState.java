@@ -16,14 +16,14 @@ import ee.ria.mopplib.data.SignedContainer;
 abstract class ViewState implements MviViewState {
 
     @Nullable abstract SignedContainer container();
-    abstract boolean loadContainerInProgress();
-    @Nullable abstract Throwable loadContainerError();
+    abstract boolean containerLoadInProgress();
+    @Nullable abstract Throwable containerLoadError();
 
     abstract boolean pickingDocuments();
     abstract boolean documentsProgress();
-    @Nullable abstract Throwable addDocumentsError();
-    @Nullable abstract File openedDocumentFile();
-    @Nullable abstract Throwable openDocumentError();
+    @Nullable abstract Throwable documentsAddError();
+    @Nullable abstract File documentOpenFile();
+    @Nullable abstract Throwable documentOpenError();
 
     @Nullable abstract DataFile documentRemoveConfirmation();
     abstract boolean documentRemoveInProgress();
@@ -45,7 +45,7 @@ abstract class ViewState implements MviViewState {
 
     static ViewState initial() {
         return new AutoValue_ViewState.Builder()
-                .loadContainerInProgress(false)
+                .containerLoadInProgress(false)
                 .pickingDocuments(false)
                 .documentsProgress(false)
                 .documentRemoveInProgress(false)
@@ -60,13 +60,13 @@ abstract class ViewState implements MviViewState {
     @AutoValue.Builder
     interface Builder {
         Builder container(@Nullable SignedContainer container);
-        Builder loadContainerInProgress(boolean loadContainerInProgress);
-        Builder loadContainerError(@Nullable Throwable error);
+        Builder containerLoadInProgress(boolean containerLoadInProgress);
+        Builder containerLoadError(@Nullable Throwable containerLoadError);
         Builder pickingDocuments(boolean pickingDocuments);
         Builder documentsProgress(boolean documentsProgress);
-        Builder addDocumentsError(@Nullable Throwable addDocumentsError);
-        Builder openedDocumentFile(@Nullable File openedDocumentFile);
-        Builder openDocumentError(@Nullable Throwable openDocumentError);
+        Builder documentsAddError(@Nullable Throwable documentsAddError);
+        Builder documentOpenFile(@Nullable File documentOpenFile);
+        Builder documentOpenError(@Nullable Throwable documentOpenError);
         Builder documentRemoveConfirmation(@Nullable DataFile documentRemoveConfirmation);
         Builder documentRemoveInProgress(boolean documentRemoveInProgress);
         Builder documentRemoveError(@Nullable Throwable documentRemoveError);

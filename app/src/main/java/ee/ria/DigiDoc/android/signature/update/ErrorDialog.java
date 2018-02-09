@@ -31,7 +31,7 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
     private final MobileSignStatusMessageSource statusMessageSource;
     private final MobileSignFaultMessageSource faultMessageSource;
 
-    private final Subject<Intent.AddDocumentsIntent> documentsAddIntentSubject;
+    private final Subject<Intent.DocumentsAddIntent> documentsAddIntentSubject;
     private final Subject<Intent.DocumentRemoveIntent> documentRemoveIntentSubject;
     private final Subject<Intent.SignatureAddIntent> signatureAddIntentSubject;
     private final Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject;
@@ -39,7 +39,7 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
     private String type;
 
     ErrorDialog(@NonNull Context context,
-                Subject<Intent.AddDocumentsIntent> documentsAddIntentSubject,
+                Subject<Intent.DocumentsAddIntent> documentsAddIntentSubject,
                 Subject<Intent.DocumentRemoveIntent> documentRemoveIntentSubject,
                 Subject<Intent.SignatureAddIntent> signatureAddIntentSubject,
                 Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject) {
@@ -86,7 +86,7 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
     @Override
     public void onDismiss(DialogInterface dialog) {
         if (TextUtils.equals(type, DOCUMENTS_ADD)) {
-            documentsAddIntentSubject.onNext(Intent.AddDocumentsIntent.clear());
+            documentsAddIntentSubject.onNext(Intent.DocumentsAddIntent.clear());
         } else if (TextUtils.equals(type, DOCUMENT_REMOVE)) {
             documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent.clear());
         } else if (TextUtils.equals(type, SIGNATURE_ADD)) {

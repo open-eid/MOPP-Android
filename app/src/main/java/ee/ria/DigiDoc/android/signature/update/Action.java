@@ -15,38 +15,38 @@ import ee.ria.mopplib.data.Signature;
 interface Action extends MviAction {
 
     @AutoValue
-    abstract class LoadContainerAction implements Action {
+    abstract class ContainerLoadAction implements Action {
 
         abstract File containerFile();
 
-        static LoadContainerAction create(File containerFile) {
-            return new AutoValue_Action_LoadContainerAction(containerFile);
+        static ContainerLoadAction create(File containerFile) {
+            return new AutoValue_Action_ContainerLoadAction(containerFile);
         }
     }
 
     @AutoValue
-    abstract class AddDocumentsAction implements Action {
+    abstract class DocumentsAddAction implements Action {
 
         @Nullable abstract File containerFile();
 
         @Nullable abstract ImmutableList<FileStream> fileStreams();
 
-        static AddDocumentsAction create(@Nullable File containerFile,
+        static DocumentsAddAction create(@Nullable File containerFile,
                                          @Nullable ImmutableList<FileStream> fileStreams) {
-            return new AutoValue_Action_AddDocumentsAction(containerFile, fileStreams);
+            return new AutoValue_Action_DocumentsAddAction(containerFile, fileStreams);
         }
     }
 
     @AutoValue
-    abstract class OpenDocumentAction implements Action {
+    abstract class DocumentOpenAction implements Action {
 
         @Nullable abstract File containerFile();
 
         @Nullable abstract DataFile document();
 
-        static OpenDocumentAction create(@Nullable File containerFile,
+        static DocumentOpenAction create(@Nullable File containerFile,
                                          @Nullable DataFile document) {
-            return new AutoValue_Action_OpenDocumentAction(containerFile, document);
+            return new AutoValue_Action_DocumentOpenAction(containerFile, document);
         }
     }
 

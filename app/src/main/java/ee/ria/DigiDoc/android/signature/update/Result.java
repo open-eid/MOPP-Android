@@ -15,7 +15,7 @@ import ee.ria.mopplib.data.SignedContainer;
 interface Result extends MviResult<ViewState> {
 
     @AutoValue
-    abstract class LoadContainerResult implements Result {
+    abstract class ContainerLoadResult implements Result {
 
         abstract boolean inProgress();
 
@@ -27,27 +27,27 @@ interface Result extends MviResult<ViewState> {
         public ViewState reduce(ViewState state) {
             return state
                     .buildWith()
-                    .loadContainerInProgress(inProgress())
+                    .containerLoadInProgress(inProgress())
                     .container(container())
-                    .loadContainerError(error())
+                    .containerLoadError(error())
                     .build();
         }
 
-        static LoadContainerResult progress() {
-            return new AutoValue_Result_LoadContainerResult(true, null, null);
+        static ContainerLoadResult progress() {
+            return new AutoValue_Result_ContainerLoadResult(true, null, null);
         }
 
-        static LoadContainerResult success(SignedContainer container) {
-            return new AutoValue_Result_LoadContainerResult(false, container, null);
+        static ContainerLoadResult success(SignedContainer container) {
+            return new AutoValue_Result_ContainerLoadResult(false, container, null);
         }
 
-        static LoadContainerResult failure(Throwable error) {
-            return new AutoValue_Result_LoadContainerResult(false, null, error);
+        static ContainerLoadResult failure(Throwable error) {
+            return new AutoValue_Result_ContainerLoadResult(false, null, error);
         }
     }
 
     @AutoValue
-    abstract class AddDocumentsResult implements Result {
+    abstract class DocumentsAddResult implements Result {
 
         abstract boolean isPicking();
 
@@ -62,36 +62,36 @@ interface Result extends MviResult<ViewState> {
             ViewState.Builder builder = state.buildWith()
                     .pickingDocuments(isPicking())
                     .documentsProgress(isAdding())
-                    .addDocumentsError(error());
+                    .documentsAddError(error());
             if (container() != null) {
                 builder.container(container());
             }
             return builder.build();
         }
 
-        static AddDocumentsResult picking() {
-            return new AutoValue_Result_AddDocumentsResult(true, false, null, null);
+        static DocumentsAddResult picking() {
+            return new AutoValue_Result_DocumentsAddResult(true, false, null, null);
         }
 
-        static AddDocumentsResult adding() {
-            return new AutoValue_Result_AddDocumentsResult(false, true, null, null);
+        static DocumentsAddResult adding() {
+            return new AutoValue_Result_DocumentsAddResult(false, true, null, null);
         }
 
-        static AddDocumentsResult success(SignedContainer container) {
-            return new AutoValue_Result_AddDocumentsResult(false, false, container, null);
+        static DocumentsAddResult success(SignedContainer container) {
+            return new AutoValue_Result_DocumentsAddResult(false, false, container, null);
         }
 
-        static AddDocumentsResult failure(Throwable error) {
-            return new AutoValue_Result_AddDocumentsResult(false, false, null, error);
+        static DocumentsAddResult failure(Throwable error) {
+            return new AutoValue_Result_DocumentsAddResult(false, false, null, error);
         }
 
-        static AddDocumentsResult clear() {
-            return new AutoValue_Result_AddDocumentsResult(false, false, null, null);
+        static DocumentsAddResult clear() {
+            return new AutoValue_Result_DocumentsAddResult(false, false, null, null);
         }
     }
 
     @AutoValue
-    abstract class OpenDocumentResult implements Result {
+    abstract class DocumentOpenResult implements Result {
 
         abstract boolean isOpening();
 
@@ -103,25 +103,25 @@ interface Result extends MviResult<ViewState> {
         public ViewState reduce(ViewState state) {
             return state.buildWith()
                     .documentsProgress(isOpening())
-                    .openedDocumentFile(documentFile())
-                    .openDocumentError(error())
+                    .documentOpenFile(documentFile())
+                    .documentOpenError(error())
                     .build();
         }
 
-        static OpenDocumentResult opening() {
-            return new AutoValue_Result_OpenDocumentResult(true, null, null);
+        static DocumentOpenResult opening() {
+            return new AutoValue_Result_DocumentOpenResult(true, null, null);
         }
 
-        static OpenDocumentResult success(File documentFile) {
-            return new AutoValue_Result_OpenDocumentResult(false, documentFile, null);
+        static DocumentOpenResult success(File documentFile) {
+            return new AutoValue_Result_DocumentOpenResult(false, documentFile, null);
         }
 
-        static OpenDocumentResult failure(Throwable error) {
-            return new AutoValue_Result_OpenDocumentResult(false, null, error);
+        static DocumentOpenResult failure(Throwable error) {
+            return new AutoValue_Result_DocumentOpenResult(false, null, error);
         }
 
-        static OpenDocumentResult clear() {
-            return new AutoValue_Result_OpenDocumentResult(false, null, null);
+        static DocumentOpenResult clear() {
+            return new AutoValue_Result_DocumentOpenResult(false, null, null);
         }
     }
 

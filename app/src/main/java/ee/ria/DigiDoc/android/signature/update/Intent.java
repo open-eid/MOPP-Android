@@ -25,38 +25,38 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
-    abstract class AddDocumentsIntent implements Intent {
+    abstract class DocumentsAddIntent implements Intent {
 
         @Nullable abstract File containerFile();
 
         @Nullable abstract ImmutableList<FileStream> fileStreams();
 
-        static AddDocumentsIntent pick(File containerFile) {
-            return new AutoValue_Intent_AddDocumentsIntent(containerFile, null);
+        static DocumentsAddIntent pick(File containerFile) {
+            return new AutoValue_Intent_DocumentsAddIntent(containerFile, null);
         }
 
-        static AddDocumentsIntent add(File containerFile, ImmutableList<FileStream> fileStreams) {
-            return new AutoValue_Intent_AddDocumentsIntent(containerFile, fileStreams);
+        static DocumentsAddIntent add(File containerFile, ImmutableList<FileStream> fileStreams) {
+            return new AutoValue_Intent_DocumentsAddIntent(containerFile, fileStreams);
         }
 
-        static AddDocumentsIntent clear() {
-            return new AutoValue_Intent_AddDocumentsIntent(null, null);
+        static DocumentsAddIntent clear() {
+            return new AutoValue_Intent_DocumentsAddIntent(null, null);
         }
     }
 
     @AutoValue
-    abstract class OpenDocumentIntent implements Intent {
+    abstract class DocumentOpenIntent implements Intent {
 
         @Nullable abstract File containerFile();
 
         @Nullable abstract DataFile document();
 
-        static OpenDocumentIntent open(File containerFile, DataFile document) {
-            return new AutoValue_Intent_OpenDocumentIntent(containerFile, document);
+        static DocumentOpenIntent open(File containerFile, DataFile document) {
+            return new AutoValue_Intent_DocumentOpenIntent(containerFile, document);
         }
 
-        static OpenDocumentIntent clear() {
-            return new AutoValue_Intent_OpenDocumentIntent(null, null);
+        static DocumentOpenIntent clear() {
+            return new AutoValue_Intent_DocumentOpenIntent(null, null);
         }
     }
 
