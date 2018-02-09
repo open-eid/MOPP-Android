@@ -51,6 +51,8 @@ dependencies {
     implementation "com.android.support:cardview-v7:${androidSupportLibraryVersion}"
     implementation "com.android.support:preference-v14:${androidSupportLibraryVersion}"
 
+    implementation "android.arch.lifecycle:viewmodel:${androidArchVersion}"
+
     implementation "com.google.firebase:firebase-appindexing:${firebaseVersion}"
 
     implementation "com.takisoft.fix:preference-v7:${preferenceV7FixVersion}"

@@ -20,7 +20,8 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
-import ee.ria.DigiDoc.android.utils.navigation.Transaction;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.container.ContainerFacade;
 import ee.ria.DigiDoc.mid.CreateSignatureRequestBuilder;
 import ee.ria.libdigidocpp.Conf;
@@ -73,7 +74,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         Result.SignatureAddResult> signatureAdd;
 
     @Inject Processor(SignatureContainerDataSource signatureContainerDataSource,
-                      SettingsDataStore settingsDataStore, Application application) {
+                      SettingsDataStore settingsDataStore, Application application,
+                      Navigator navigator) {
         loadContainer = upstream -> upstream.flatMap(action ->
                 signatureContainerDataSource.get(action.containerFile())
                         .toObservable()
@@ -165,12 +167,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     return signatureContainerDataSource
                             .addContainer(ImmutableList.of(FileStream.create(containerFile)), true)
                             .toObservable()
-                            .map(containerAdd ->
-                                    Result.SignatureAddResult.transaction(
-                                            Transaction.PushScreenTransaction.create(
-                                                    SignatureUpdateScreen.create(
-                                                            containerAdd.isExistingContainer(),
-                                                            containerAdd.containerFile()))))
+                            .doOnNext(containerAdd ->
+                                    navigator.execute(Transaction.push(SignatureUpdateScreen
+                                            .create(containerAdd.isExistingContainer(),
+                                                    containerAdd.containerFile()))))
+                            .map(containerAdd -> Result.SignatureAddResult.creatingContainer())
                             .onErrorReturn(Result.SignatureAddResult::failure)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())

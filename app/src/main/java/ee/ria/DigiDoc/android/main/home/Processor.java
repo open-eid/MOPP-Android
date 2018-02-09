@@ -8,7 +8,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.crypto.CryptoHomeScreen;
 import ee.ria.DigiDoc.android.eid.EIDHomeScreen;
 import ee.ria.DigiDoc.android.signature.home.SignatureHomeScreen;
-import ee.ria.DigiDoc.android.utils.navigation.Screen;
+import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;

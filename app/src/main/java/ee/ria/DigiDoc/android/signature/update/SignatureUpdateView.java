@@ -22,7 +22,8 @@ import ee.ria.DigiDoc.android.signature.add.SignatureAddDialog;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
-import ee.ria.DigiDoc.android.utils.navigation.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.mid.MobileSignStatusMessageSource;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
@@ -92,7 +93,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     public SignatureUpdateView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         navigator = Application.component(context).navigator();
-        viewModel = navigator.getViewModelProvider().get(SignatureUpdateViewModel.class);
+        viewModel = navigator.viewModel(SignatureUpdateViewModel.class);
 
         inflate(context, R.layout.signature_update, this);
         toolbarView = findViewById(R.id.toolbar);
@@ -141,12 +142,12 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         if (state.loadContainerError() != null) {
             Toast.makeText(getContext(), R.string.signature_update_load_container_error,
                     Toast.LENGTH_LONG).show();
-            navigator.popScreen();
+            navigator.execute(Transaction.pop());
             return;
         }
         if (state.pickingDocuments()) {
-            navigator.getActivityResult(RC_SIGNATURE_UPDATE_DOCUMENTS_ADD,
-                    createGetContentIntent());
+            navigator.execute(Transaction.activityForResult(RC_SIGNATURE_UPDATE_DOCUMENTS_ADD,
+                    createGetContentIntent(), null));
             return;
         }
         if (state.openedDocumentFile() != null) {
@@ -266,8 +267,12 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         disposables.attach();
         disposables.add(viewModel.viewStates().subscribe(this::render));
         viewModel.process(intents());
-        disposables.add(navigationClicks(toolbarView).subscribe(o -> navigator.popScreen()));
-        disposables.add(navigator.activityResults(RC_SIGNATURE_UPDATE_DOCUMENTS_ADD).subscribe(
+        disposables.add(navigationClicks(toolbarView).subscribe(o ->
+                navigator.execute(Transaction.pop())));
+        disposables.add(navigator.activityResults()
+                .filter(activityResult -> activityResult.requestCode()
+                        == RC_SIGNATURE_UPDATE_DOCUMENTS_ADD)
+                .subscribe(
                 result -> {
                     if (result.resultCode() == RESULT_OK) {
                         addDocumentsIntentSubject.onNext(Intent.AddDocumentsIntent.add(

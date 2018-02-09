@@ -39,8 +39,8 @@ public final class SignatureCreateView extends FrameLayout implements MviView<In
                                int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         inflate(context, R.layout.signature_create, this);
-        viewModel = Application.component(context).navigator().getViewModelProvider()
-                .get(SignatureCreateViewModel.class);
+        viewModel = Application.component(context).navigator()
+                .viewModel(SignatureCreateViewModel.class);
     }
 
     @Override

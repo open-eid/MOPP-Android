@@ -54,8 +54,7 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         inflate(context, R.layout.main_home, this);
         navigationContainerView = findViewById(R.id.mainHomeNavigationContainer);
         navigationView = findViewById(R.id.mainHomeNavigation);
-        viewModel = Application.component(context).navigator().getViewModelProvider()
-                .get(HomeViewModel.class);
+        viewModel = Application.component(context).navigator().viewModel(HomeViewModel.class);
     }
 
     @SuppressWarnings("unchecked")

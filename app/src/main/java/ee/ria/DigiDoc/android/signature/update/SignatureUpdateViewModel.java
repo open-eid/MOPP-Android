@@ -4,16 +4,14 @@ import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.mvi.BaseMviViewModel;
-import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 
 public final class SignatureUpdateViewModel extends
         BaseMviViewModel<Intent, ViewState, Action, Result> {
 
     private final SettingsDataStore settingsDataStore;
 
-    @Inject SignatureUpdateViewModel(Processor processor, Navigator navigator,
-                                     SettingsDataStore settingsDataStore) {
-        super(processor, navigator);
+    @Inject SignatureUpdateViewModel(Processor processor, SettingsDataStore settingsDataStore) {
+        super(processor);
         this.settingsDataStore = settingsDataStore;
     }
 
@@ -31,7 +29,7 @@ public final class SignatureUpdateViewModel extends
     }
 
     @Override
-    protected Action actionFromIntent(Intent intent) {
+    protected Action action(Intent intent) {
         if (intent instanceof Intent.InitialIntent) {
             return Action.LoadContainerAction
                     .create(((Intent.InitialIntent) intent).containerFile());

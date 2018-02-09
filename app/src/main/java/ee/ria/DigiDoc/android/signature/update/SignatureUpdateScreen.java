@@ -7,7 +7,7 @@ import android.view.View;
 import java.io.File;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.utils.conductor.ConductorScreen;
+import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorScreen;
 
 import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.putFile;
@@ -35,7 +35,7 @@ public final class SignatureUpdateScreen extends ConductorScreen {
     }
 
     @Override
-    protected View createView(Context context) {
+    protected View view(Context context) {
         return new SignatureUpdateView(context)
                 .isExistingContainer(isExistingContainer)
                 .containerFile(containerFile);

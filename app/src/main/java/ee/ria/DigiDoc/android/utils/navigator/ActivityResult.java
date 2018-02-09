@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.utils.navigation;
+package ee.ria.DigiDoc.android.utils.navigator;
 
 import android.content.Intent;
 import android.support.annotation.Nullable;

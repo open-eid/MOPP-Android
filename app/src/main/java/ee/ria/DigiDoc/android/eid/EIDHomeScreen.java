@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.utils.conductor.ConductorScreen;
+import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorScreen;
 
 public final class EIDHomeScreen extends ConductorScreen {
 
@@ -18,7 +18,7 @@ public final class EIDHomeScreen extends ConductorScreen {
     }
 
     @Override
-    protected View createView(Context context) {
+    protected View view(Context context) {
         return new EIDHomeView(context);
     }
 

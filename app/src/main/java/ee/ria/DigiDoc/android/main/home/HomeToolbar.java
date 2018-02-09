@@ -29,7 +29,8 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
-import ee.ria.DigiDoc.android.utils.navigation.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -38,14 +39,13 @@ import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
 public final class HomeToolbar extends Toolbar {
 
+    private final ViewDisposables disposables = new ViewDisposables();
+    private final Navigator navigator;
+
     private final ImageButton overflowButton;
     private final PopupWindow popupWindow;
     private final RecyclerView recyclerView;
     private final MenuAdapter adapter;
-
-    private final Navigator navigator;
-
-    private final ViewDisposables disposables;
 
     public HomeToolbar(Context context) {
         this(context, null);
@@ -77,7 +77,6 @@ public final class HomeToolbar extends Toolbar {
         popupWindow.setContentView(recyclerView);
 
         navigator = Application.component(context).navigator();
-        disposables = new ViewDisposables();
     }
 
     @Override
@@ -92,7 +91,7 @@ public final class HomeToolbar extends Toolbar {
         disposables.add(adapter.itemClicks().subscribe(menuItem -> {
             switch (menuItem.id()) {
                 case R.id.mainHomeToolbarSettings:
-                    navigator.pushScreen(SettingsScreen.create());
+                    navigator.execute(Transaction.push(SettingsScreen.create()));
                     break;
             }
         }));

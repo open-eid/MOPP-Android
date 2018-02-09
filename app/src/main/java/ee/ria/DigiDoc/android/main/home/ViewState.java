@@ -4,7 +4,7 @@ import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.signature.home.SignatureHomeScreen;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
-import ee.ria.DigiDoc.android.utils.navigation.Screen;
+import ee.ria.DigiDoc.android.utils.navigator.Screen;
 
 @AutoValue
 abstract class ViewState implements MviViewState {

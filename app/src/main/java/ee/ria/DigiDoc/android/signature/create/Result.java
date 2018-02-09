@@ -9,13 +9,12 @@ import java.io.File;
 import ee.ria.DigiDoc.android.signature.data.ContainerAdd;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
-import ee.ria.DigiDoc.android.utils.navigation.NavigatorResult;
-import ee.ria.DigiDoc.android.utils.navigation.Transaction;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 
 interface Result extends MviResult<ViewState> {
 
     @AutoValue
-    abstract class CreateContainerResult implements Result, NavigatorResult {
+    abstract class CreateContainerResult implements Result {
 
         abstract boolean isExistingContainer();
 
@@ -29,13 +28,12 @@ interface Result extends MviResult<ViewState> {
         }
 
         @Nullable
-        @Override
         public Transaction transaction() {
             if (containerFile() != null) {
-                return Transaction.ReplaceCurrentScreenTransaction.create(SignatureUpdateScreen
+                return Transaction.replace(SignatureUpdateScreen
                         .create(isExistingContainer(), containerFile()));
             } else if (error() != null) {
-                return Transaction.PopScreenTransaction.create();
+                return Transaction.pop();
             }
             return null;
         }

@@ -20,6 +20,7 @@ ext {
     targetSdkVersion = 27
 
     androidSupportLibraryVersion = '27.0.2'
+    androidArchVersion= '1.1.0'
     androidSupportTestVersion = '1.0.1'
     espressoVersion = '3.0.1'
     firebaseVersion = '11.8.0'

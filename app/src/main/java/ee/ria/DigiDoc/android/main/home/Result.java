@@ -3,7 +3,7 @@ package ee.ria.DigiDoc.android.main.home;
 import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
-import ee.ria.DigiDoc.android.utils.navigation.Screen;
+import ee.ria.DigiDoc.android.utils.navigator.Screen;
 
 interface Result extends MviResult<ViewState> {
 
