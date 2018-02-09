@@ -1,20 +1,23 @@
 package ee.ria.DigiDoc.android.signature.create;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableList;
 
-import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.DigiDoc.android.utils.navigator.TransactionAction;
+
+import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_CREATE_DOCUMENTS_ADD;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 
 interface Action extends MviAction {
 
     @AutoValue
-    abstract class CreateContainerAction implements Action {
+    abstract class ChooseFilesAction implements Action,
+            TransactionAction<Transaction.ActivityForResultTransaction> {
 
-        abstract ImmutableList<FileStream> fileStreams();
-
-        static CreateContainerAction create(ImmutableList<FileStream> fileStreams) {
-            return new AutoValue_Action_CreateContainerAction(fileStreams);
+        static ChooseFilesAction create() {
+            return new AutoValue_Action_ChooseFilesAction(Transaction.activityForResult(
+                    RC_SIGNATURE_CREATE_DOCUMENTS_ADD, createGetContentIntent(), null));
         }
     }
 }

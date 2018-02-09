@@ -11,16 +11,11 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
 
 public final class SignatureCreateView extends FrameLayout implements MviView<Intent, ViewState> {
 
-    private final SignatureCreateViewModel viewModel;
     private final ViewDisposables disposables = new ViewDisposables();
-
-    private final Subject<Intent.CreateContainerIntent> createContainerIntentSubject =
-            PublishSubject.create();
+    private final SignatureCreateViewModel viewModel;
 
     public SignatureCreateView(@NonNull Context context) {
         this(context, null);
@@ -38,26 +33,23 @@ public final class SignatureCreateView extends FrameLayout implements MviView<In
     public SignatureCreateView(@NonNull Context context, @Nullable AttributeSet attrs,
                                int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        inflate(context, R.layout.signature_create, this);
         viewModel = Application.component(context).navigator()
                 .viewModel(SignatureCreateViewModel.class);
-    }
-
-    @Override
-    public Observable<Intent> intents() {
-        return Observable.merge(initialIntent(), createContainerIntent());
-    }
-
-    @Override
-    public void render(ViewState state) {
+        inflate(context, R.layout.signature_create, this);
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
         return Observable.just(Intent.InitialIntent.create());
     }
 
-    private Observable<Intent.CreateContainerIntent> createContainerIntent() {
-        return createContainerIntentSubject;
+    @SuppressWarnings("unchecked")
+    @Override
+    public Observable<Intent> intents() {
+        return Observable.mergeArray(initialIntent());
+    }
+
+    @Override
+    public void render(ViewState state) {
     }
 
     @Override
