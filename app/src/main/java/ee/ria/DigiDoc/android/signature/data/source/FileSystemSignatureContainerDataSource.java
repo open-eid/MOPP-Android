@@ -16,7 +16,6 @@ import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
 import ee.ria.mopplib.data.SignedContainer;
-import io.reactivex.Completable;
 import io.reactivex.Single;
 
 import static com.google.common.io.Files.getNameWithoutExtension;
@@ -70,8 +69,8 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
     }
 
     @Override
-    public Completable removeDocument(File containerFile, DataFile document) {
-        return Completable.fromAction(() ->
+    public Single<SignedContainer> removeDocument(File containerFile, DataFile document) {
+        return Single.fromCallable(() ->
                 SignedContainer
                         .open(containerFile)
                         .removeDataFile(document));
@@ -86,16 +85,16 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
     }
 
     @Override
-    public Completable removeSignature(File containerFile, Signature signature) {
-        return Completable.fromAction(() ->
+    public Single<SignedContainer> removeSignature(File containerFile, Signature signature) {
+        return Single.fromCallable(() ->
                 SignedContainer
                         .open(containerFile)
                         .removeSignature(signature));
     }
 
     @Override
-    public Completable addSignature(File containerFile, String signature) {
-        return Completable.fromAction(() ->
+    public Single<SignedContainer> addSignature(File containerFile, String signature) {
+        return Single.fromCallable(() ->
                 SignedContainer
                         .open(containerFile)
                         .addAdEsSignature(signature.getBytes()));
