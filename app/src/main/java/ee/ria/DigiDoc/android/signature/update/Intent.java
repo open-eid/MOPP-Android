@@ -3,11 +3,9 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
@@ -29,18 +27,12 @@ interface Intent extends MviIntent {
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract ImmutableList<FileStream> fileStreams();
-
-        static DocumentsAddIntent pick(File containerFile) {
-            return new AutoValue_Intent_DocumentsAddIntent(containerFile, null);
-        }
-
-        static DocumentsAddIntent add(File containerFile, ImmutableList<FileStream> fileStreams) {
-            return new AutoValue_Intent_DocumentsAddIntent(containerFile, fileStreams);
+        static DocumentsAddIntent create(File containerFile) {
+            return new AutoValue_Intent_DocumentsAddIntent(containerFile);
         }
 
         static DocumentsAddIntent clear() {
-            return new AutoValue_Intent_DocumentsAddIntent(null, null);
+            return new AutoValue_Intent_DocumentsAddIntent(null);
         }
     }
 

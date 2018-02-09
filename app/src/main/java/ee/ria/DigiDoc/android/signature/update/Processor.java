@@ -41,8 +41,10 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.app.Activity.RESULT_OK;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.io.Files.getFileExtension;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.toJson;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
@@ -85,23 +87,35 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .startWith(Result.ContainerLoadResult.progress()));
 
-        documentsAdd = upstream -> upstream.flatMap(action -> {
-            if (action.containerFile() == null) {
-                return Observable.just(Result.DocumentsAddResult.clear());
-            } else if (action.fileStreams() == null) {
-                return Observable.just(Result.DocumentsAddResult.picking());
-            } else {
-                return signatureContainerDataSource
-                        .addDocuments(action.containerFile(), action.fileStreams())
-                        .andThen(signatureContainerDataSource.get(action.containerFile()))
-                        .toObservable()
-                        .map(Result.DocumentsAddResult::success)
-                        .onErrorReturn(Result.DocumentsAddResult::failure)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.DocumentsAddResult.adding());
-            }
-        });
+        documentsAdd = upstream -> upstream
+                .switchMap(action -> {
+                    if (action.containerFile() == null) {
+                        return Observable.just(Result.DocumentsAddResult.clear());
+                    } else {
+                        navigator.execute(action.transaction());
+                        return navigator.activityResults()
+                                .filter(activityResult ->
+                                        activityResult.requestCode()
+                                                == action.transaction().requestCode())
+                                .switchMap(activityResult -> {
+                                    if (activityResult.resultCode() == RESULT_OK) {
+                                        return signatureContainerDataSource
+                                                .addDocuments(action.containerFile(),
+                                                        parseGetContentIntent(
+                                                                application.getContentResolver(),
+                                                                activityResult.data()))
+                                                .toObservable()
+                                                .map(Result.DocumentsAddResult::success)
+                                                .onErrorReturn(Result.DocumentsAddResult::failure)
+                                                .subscribeOn(Schedulers.io())
+                                                .observeOn(AndroidSchedulers.mainThread())
+                                                .startWith(Result.DocumentsAddResult.adding());
+                                    } else {
+                                        return Observable.just(Result.DocumentsAddResult.clear());
+                                    }
+                                });
+                    }
+                });
 
         documentOpen = upstream -> upstream.flatMap(action -> {
             if (action.containerFile() == null) {

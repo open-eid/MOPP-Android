@@ -3,14 +3,17 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.DigiDoc.android.utils.navigator.TransactionAction;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
+
+import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 
 interface Action extends MviAction {
 
@@ -25,15 +28,16 @@ interface Action extends MviAction {
     }
 
     @AutoValue
-    abstract class DocumentsAddAction implements Action {
+    abstract class DocumentsAddAction implements Action,
+            TransactionAction<Transaction.ActivityForResultTransaction> {
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract ImmutableList<FileStream> fileStreams();
-
-        static DocumentsAddAction create(@Nullable File containerFile,
-                                         @Nullable ImmutableList<FileStream> fileStreams) {
-            return new AutoValue_Action_DocumentsAddAction(containerFile, fileStreams);
+        static DocumentsAddAction create(@Nullable File containerFile) {
+            return new AutoValue_Action_DocumentsAddAction(
+                    Transaction.activityForResult(RC_SIGNATURE_UPDATE_DOCUMENTS_ADD,
+                            createGetContentIntent(), null),
+                    containerFile);
         }
     }
 

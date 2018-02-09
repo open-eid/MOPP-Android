@@ -35,12 +35,8 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
-import static android.app.Activity.RESULT_OK;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
-import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 public final class SignatureUpdateView extends CoordinatorLayout implements
         MviView<Intent, ViewState> {
@@ -145,11 +141,6 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
             navigator.execute(Transaction.pop());
             return;
         }
-        if (state.pickingDocuments()) {
-            navigator.execute(Transaction.activityForResult(RC_SIGNATURE_UPDATE_DOCUMENTS_ADD,
-                    createGetContentIntent(), null));
-            return;
-        }
         if (state.documentOpenFile() != null) {
             getContext().startActivity(createViewIntent(getContext(), state.documentOpenFile()));
             documentOpenIntentSubject.onNext(Intent.DocumentOpenIntent.clear());
@@ -160,9 +151,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
                 ? R.string.signature_update_title_existing
                 : R.string.signature_update_title_created);
 
-        setActivity(state.containerLoadInProgress() || state.documentsProgress()
-                || state.documentRemoveInProgress() || state.signatureRemoveInProgress()
-                || state.signatureAddInProgress());
+        setActivity(state.containerLoadInProgress() || state.documentsAddInProgress()
+                || state.documentOpenInProgress() || state.documentRemoveInProgress()
+                || state.signatureRemoveInProgress() || state.signatureAddInProgress());
 
         SignedContainer container = state.container();
         String name = container == null ? null : container.name();
@@ -239,7 +230,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
 
     private Observable<Intent.DocumentsAddIntent> addDocumentsIntent() {
         return adapter.documentAddClicks()
-                .map(ignored -> Intent.DocumentsAddIntent.pick(containerFile))
+                .map(ignored -> Intent.DocumentsAddIntent.create(containerFile))
                 .mergeWith(documentsAddIntentSubject);
     }
 
@@ -269,19 +260,6 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         viewModel.process(intents());
         disposables.add(navigationClicks(toolbarView).subscribe(o ->
                 navigator.execute(Transaction.pop())));
-        disposables.add(navigator.activityResults()
-                .filter(activityResult -> activityResult.requestCode()
-                        == RC_SIGNATURE_UPDATE_DOCUMENTS_ADD)
-                .subscribe(
-                result -> {
-                    if (result.resultCode() == RESULT_OK) {
-                        documentsAddIntentSubject.onNext(Intent.DocumentsAddIntent.add(
-                                containerFile, parseGetContentIntent(
-                                        getContext().getContentResolver(), result.data())));
-                    } else {
-                        documentsAddIntentSubject.onNext(Intent.DocumentsAddIntent.clear());
-                    }
-                }));
         disposables.add(adapter.scrollToTop().subscribe(ignored -> listView.scrollToPosition(0)));
         disposables.add(adapter.documentRemoveClicks().subscribe(document ->
                 documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent

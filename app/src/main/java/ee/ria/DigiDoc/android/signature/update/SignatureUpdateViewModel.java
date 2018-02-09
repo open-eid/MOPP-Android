@@ -34,9 +34,8 @@ public final class SignatureUpdateViewModel extends
             return Action.ContainerLoadAction
                     .create(((Intent.InitialIntent) intent).containerFile());
         } else if (intent instanceof Intent.DocumentsAddIntent) {
-            Intent.DocumentsAddIntent addDocumentsIntent = (Intent.DocumentsAddIntent) intent;
-            return Action.DocumentsAddAction.create(addDocumentsIntent.containerFile(),
-                    addDocumentsIntent.fileStreams());
+            return Action.DocumentsAddAction
+                    .create(((Intent.DocumentsAddIntent) intent).containerFile());
         } else if (intent instanceof Intent.DocumentOpenIntent) {
             Intent.DocumentOpenIntent openDocumentIntent = (Intent.DocumentOpenIntent) intent;
             return Action.DocumentOpenAction.create(openDocumentIntent.containerFile(),

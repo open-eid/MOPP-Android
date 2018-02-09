@@ -17,7 +17,8 @@ public interface SignatureContainerDataSource {
 
     Single<SignedContainer> get(File containerFile);
 
-    Completable addDocuments(File containerFile, ImmutableList<FileStream> documentStreams);
+    Single<SignedContainer> addDocuments(File containerFile,
+                                         ImmutableList<FileStream> documentStreams);
 
     Completable removeDocument(File containerFile, DataFile document);
 

@@ -61,8 +61,9 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
     }
 
     @Override
-    public Completable addDocuments(File containerFile, ImmutableList<FileStream> documentStreams) {
-        return Completable.fromAction(() ->
+    public Single<SignedContainer> addDocuments(File containerFile,
+                                                ImmutableList<FileStream> documentStreams) {
+        return Single.fromCallable(() ->
                 SignedContainer
                         .open(containerFile)
                         .addDataFiles(cacheFileStreams(documentStreams)));

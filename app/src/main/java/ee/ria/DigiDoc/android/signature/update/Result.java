@@ -49,9 +49,7 @@ interface Result extends MviResult<ViewState> {
     @AutoValue
     abstract class DocumentsAddResult implements Result {
 
-        abstract boolean isPicking();
-
-        abstract boolean isAdding();
+        abstract boolean inProgress();
 
         @Nullable abstract SignedContainer container();
 
@@ -60,8 +58,7 @@ interface Result extends MviResult<ViewState> {
         @Override
         public ViewState reduce(ViewState state) {
             ViewState.Builder builder = state.buildWith()
-                    .pickingDocuments(isPicking())
-                    .documentsProgress(isAdding())
+                    .documentsAddInProgress(inProgress())
                     .documentsAddError(error());
             if (container() != null) {
                 builder.container(container());
@@ -69,24 +66,20 @@ interface Result extends MviResult<ViewState> {
             return builder.build();
         }
 
-        static DocumentsAddResult picking() {
-            return new AutoValue_Result_DocumentsAddResult(true, false, null, null);
-        }
-
         static DocumentsAddResult adding() {
-            return new AutoValue_Result_DocumentsAddResult(false, true, null, null);
+            return new AutoValue_Result_DocumentsAddResult(true, null, null);
         }
 
         static DocumentsAddResult success(SignedContainer container) {
-            return new AutoValue_Result_DocumentsAddResult(false, false, container, null);
+            return new AutoValue_Result_DocumentsAddResult(false, container, null);
         }
 
         static DocumentsAddResult failure(Throwable error) {
-            return new AutoValue_Result_DocumentsAddResult(false, false, null, error);
+            return new AutoValue_Result_DocumentsAddResult(false, null, error);
         }
 
         static DocumentsAddResult clear() {
-            return new AutoValue_Result_DocumentsAddResult(false, false, null, null);
+            return new AutoValue_Result_DocumentsAddResult(false, null, null);
         }
     }
 
@@ -102,7 +95,7 @@ interface Result extends MviResult<ViewState> {
         @Override
         public ViewState reduce(ViewState state) {
             return state.buildWith()
-                    .documentsProgress(isOpening())
+                    .documentOpenInProgress(isOpening())
                     .documentOpenFile(documentFile())
                     .documentOpenError(error())
                     .build();

@@ -19,10 +19,11 @@ abstract class ViewState implements MviViewState {
     abstract boolean containerLoadInProgress();
     @Nullable abstract Throwable containerLoadError();
 
-    abstract boolean pickingDocuments();
-    abstract boolean documentsProgress();
+    abstract boolean documentsAddInProgress();
     @Nullable abstract Throwable documentsAddError();
+
     @Nullable abstract File documentOpenFile();
+    abstract boolean documentOpenInProgress();
     @Nullable abstract Throwable documentOpenError();
 
     @Nullable abstract DataFile documentRemoveConfirmation();
@@ -46,8 +47,8 @@ abstract class ViewState implements MviViewState {
     static ViewState initial() {
         return new AutoValue_ViewState.Builder()
                 .containerLoadInProgress(false)
-                .pickingDocuments(false)
-                .documentsProgress(false)
+                .documentsAddInProgress(false)
+                .documentOpenInProgress(false)
                 .documentRemoveInProgress(false)
                 .signatureRemoveInProgress(false)
                 .signatureAddCreateContainerInProgress(false)
@@ -62,10 +63,10 @@ abstract class ViewState implements MviViewState {
         Builder container(@Nullable SignedContainer container);
         Builder containerLoadInProgress(boolean containerLoadInProgress);
         Builder containerLoadError(@Nullable Throwable containerLoadError);
-        Builder pickingDocuments(boolean pickingDocuments);
-        Builder documentsProgress(boolean documentsProgress);
+        Builder documentsAddInProgress(boolean documentsAddInProgress);
         Builder documentsAddError(@Nullable Throwable documentsAddError);
         Builder documentOpenFile(@Nullable File documentOpenFile);
+        Builder documentOpenInProgress(boolean documentOpenInProgress);
         Builder documentOpenError(@Nullable Throwable documentOpenError);
         Builder documentRemoveConfirmation(@Nullable DataFile documentRemoveConfirmation);
         Builder documentRemoveInProgress(boolean documentRemoveInProgress);
