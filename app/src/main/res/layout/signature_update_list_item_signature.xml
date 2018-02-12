@@ -42,17 +42,18 @@
             android:textAppearance="?attr/textAppearanceListItemSecondary"
             android:lines="1"
             android:ellipsize="end"
-            tools:text="01 June 2015 13:45" />
+            tools:text="Signed 01 June 2015 13:45" />
 
     </LinearLayout>
 
     <ImageButton
         android:id="@id/signatureUpdateListSignatureRemoveButton"
-        style="@style/Widget.Application.Button.Borderless"
+        style="@style/Widget.Application.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/material_list_icon_last_position_margin_horizontal"
-        android:src="@drawable/ic_delete"
+        android:src="@drawable/ic_icon_remove"
+        android:tint="@color/error"
         android:contentDescription="@string/signature_update_signature_remove_button" />
 
 </LinearLayout>

@@ -3,11 +3,9 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
@@ -25,38 +23,32 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
-    abstract class AddDocumentsIntent implements Intent {
+    abstract class DocumentsAddIntent implements Intent {
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract ImmutableList<FileStream> fileStreams();
-
-        static AddDocumentsIntent pick(File containerFile) {
-            return new AutoValue_Intent_AddDocumentsIntent(containerFile, null);
+        static DocumentsAddIntent create(File containerFile) {
+            return new AutoValue_Intent_DocumentsAddIntent(containerFile);
         }
 
-        static AddDocumentsIntent add(File containerFile, ImmutableList<FileStream> fileStreams) {
-            return new AutoValue_Intent_AddDocumentsIntent(containerFile, fileStreams);
-        }
-
-        static AddDocumentsIntent clear() {
-            return new AutoValue_Intent_AddDocumentsIntent(null, null);
+        static DocumentsAddIntent clear() {
+            return new AutoValue_Intent_DocumentsAddIntent(null);
         }
     }
 
     @AutoValue
-    abstract class OpenDocumentIntent implements Intent {
+    abstract class DocumentOpenIntent implements Intent {
 
         @Nullable abstract File containerFile();
 
         @Nullable abstract DataFile document();
 
-        static OpenDocumentIntent open(File containerFile, DataFile document) {
-            return new AutoValue_Intent_OpenDocumentIntent(containerFile, document);
+        static DocumentOpenIntent open(File containerFile, DataFile document) {
+            return new AutoValue_Intent_DocumentOpenIntent(containerFile, document);
         }
 
-        static OpenDocumentIntent clear() {
-            return new AutoValue_Intent_OpenDocumentIntent(null, null);
+        static DocumentOpenIntent clear() {
+            return new AutoValue_Intent_DocumentOpenIntent(null, null);
         }
     }
 

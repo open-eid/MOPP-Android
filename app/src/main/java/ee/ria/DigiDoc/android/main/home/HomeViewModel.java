@@ -1,23 +1,33 @@
 package ee.ria.DigiDoc.android.main.home;
 
-import ee.ria.DigiDoc.android.utils.mvi.MviViewModel;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import javax.inject.Inject;
 
-public final class HomeViewModel implements MviViewModel<HomeIntent, HomeViewState> {
+import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.utils.mvi.BaseMviViewModel;
 
-    private final Subject<HomeIntent> intentSubject = PublishSubject.create();
+public final class HomeViewModel extends BaseMviViewModel<Intent, ViewState, Action, Result> {
 
-    private final HomeProcessor processor = new HomeProcessor();
-
-    @Override
-    public void process(Observable<HomeIntent> intents) {
-        intents.subscribe(intentSubject);
+    @Inject HomeViewModel(Processor processor) {
+        super(processor);
     }
 
     @Override
-    public Observable<HomeViewState> viewStates() {
-        return intentSubject.compose(processor);
+    protected Class<? extends Intent> initialIntentType() {
+        return Intent.InitialIntent.class;
+    }
+
+    @Override
+    protected Action action(Intent intent) {
+        if (intent instanceof Intent.InitialIntent) {
+            return Action.NavigationAction.create(R.id.mainHomeNavigationSignature);
+        } else if (intent instanceof Intent.NavigationIntent) {
+            return Action.NavigationAction.create(((Intent.NavigationIntent) intent).item());
+        }
+        throw new IllegalArgumentException("Unknown intent " + intent);
+    }
+
+    @Override
+    protected ViewState initialViewState() {
+        return ViewState.initial();
     }
 }

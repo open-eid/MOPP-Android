@@ -3,13 +3,12 @@ package ee.ria.DigiDoc.android.signature.create;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.utils.mvi.BaseMviViewModel;
-import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 
 public final class SignatureCreateViewModel extends
         BaseMviViewModel<Intent, ViewState, Action, Result> {
 
-    @Inject SignatureCreateViewModel(Processor processor, Navigator navigator) {
-        super(processor, navigator);
+    @Inject SignatureCreateViewModel(Processor processor) {
+        super(processor);
     }
 
     @Override
@@ -18,14 +17,12 @@ public final class SignatureCreateViewModel extends
     }
 
     @Override
-    protected Action actionFromIntent(Intent intent) {
+    protected Action action(Intent intent) {
         if (intent instanceof Intent.InitialIntent) {
             return Action.ChooseFilesAction.create();
-        } else if (intent instanceof Intent.CreateContainerIntent) {
-            return Action.CreateContainerAction
-                    .create(((Intent.CreateContainerIntent) intent).fileStreams());
+        } else {
+            throw new IllegalArgumentException("Unknown intent " + intent);
         }
-        throw new IllegalArgumentException("Unknown intent " + intent);
     }
 
     @Override

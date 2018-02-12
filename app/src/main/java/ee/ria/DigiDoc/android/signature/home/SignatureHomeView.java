@@ -10,7 +10,8 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
-import ee.ria.DigiDoc.android.utils.navigation.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
@@ -43,7 +44,7 @@ public final class SignatureHomeView extends CoordinatorLayout {
         super.onAttachedToWindow();
         disposables.attach();
         disposables.add(clicks(createButton).subscribe(o ->
-                navigator.pushScreen(SignatureCreateScreen.create())));
+                navigator.execute(Transaction.push(SignatureCreateScreen.create()))));
     }
 
     @Override

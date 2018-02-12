@@ -7,8 +7,6 @@ import com.google.auto.value.AutoValue;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
-import ee.ria.DigiDoc.android.utils.navigation.NavigatorResult;
-import ee.ria.DigiDoc.android.utils.navigation.Transaction;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
@@ -17,7 +15,7 @@ import ee.ria.mopplib.data.SignedContainer;
 interface Result extends MviResult<ViewState> {
 
     @AutoValue
-    abstract class LoadContainerResult implements Result {
+    abstract class ContainerLoadResult implements Result {
 
         abstract boolean inProgress();
 
@@ -29,31 +27,29 @@ interface Result extends MviResult<ViewState> {
         public ViewState reduce(ViewState state) {
             return state
                     .buildWith()
-                    .loadContainerInProgress(inProgress())
+                    .containerLoadInProgress(inProgress())
                     .container(container())
-                    .loadContainerError(error())
+                    .containerLoadError(error())
                     .build();
         }
 
-        static LoadContainerResult progress() {
-            return new AutoValue_Result_LoadContainerResult(true, null, null);
+        static ContainerLoadResult progress() {
+            return new AutoValue_Result_ContainerLoadResult(true, null, null);
         }
 
-        static LoadContainerResult success(SignedContainer container) {
-            return new AutoValue_Result_LoadContainerResult(false, container, null);
+        static ContainerLoadResult success(SignedContainer container) {
+            return new AutoValue_Result_ContainerLoadResult(false, container, null);
         }
 
-        static LoadContainerResult failure(Throwable error) {
-            return new AutoValue_Result_LoadContainerResult(false, null, error);
+        static ContainerLoadResult failure(Throwable error) {
+            return new AutoValue_Result_ContainerLoadResult(false, null, error);
         }
     }
 
     @AutoValue
-    abstract class AddDocumentsResult implements Result {
+    abstract class DocumentsAddResult implements Result {
 
-        abstract boolean isPicking();
-
-        abstract boolean isAdding();
+        abstract boolean inProgress();
 
         @Nullable abstract SignedContainer container();
 
@@ -62,38 +58,33 @@ interface Result extends MviResult<ViewState> {
         @Override
         public ViewState reduce(ViewState state) {
             ViewState.Builder builder = state.buildWith()
-                    .pickingDocuments(isPicking())
-                    .documentsProgress(isAdding())
-                    .addDocumentsError(error());
+                    .documentsAddInProgress(inProgress())
+                    .documentsAddError(error());
             if (container() != null) {
                 builder.container(container());
             }
             return builder.build();
         }
 
-        static AddDocumentsResult picking() {
-            return new AutoValue_Result_AddDocumentsResult(true, false, null, null);
+        static DocumentsAddResult adding() {
+            return new AutoValue_Result_DocumentsAddResult(true, null, null);
         }
 
-        static AddDocumentsResult adding() {
-            return new AutoValue_Result_AddDocumentsResult(false, true, null, null);
+        static DocumentsAddResult success(SignedContainer container) {
+            return new AutoValue_Result_DocumentsAddResult(false, container, null);
         }
 
-        static AddDocumentsResult success(SignedContainer container) {
-            return new AutoValue_Result_AddDocumentsResult(false, false, container, null);
+        static DocumentsAddResult failure(Throwable error) {
+            return new AutoValue_Result_DocumentsAddResult(false, null, error);
         }
 
-        static AddDocumentsResult failure(Throwable error) {
-            return new AutoValue_Result_AddDocumentsResult(false, false, null, error);
-        }
-
-        static AddDocumentsResult clear() {
-            return new AutoValue_Result_AddDocumentsResult(false, false, null, null);
+        static DocumentsAddResult clear() {
+            return new AutoValue_Result_DocumentsAddResult(false, null, null);
         }
     }
 
     @AutoValue
-    abstract class OpenDocumentResult implements Result {
+    abstract class DocumentOpenResult implements Result {
 
         abstract boolean isOpening();
 
@@ -104,26 +95,26 @@ interface Result extends MviResult<ViewState> {
         @Override
         public ViewState reduce(ViewState state) {
             return state.buildWith()
-                    .documentsProgress(isOpening())
-                    .openedDocumentFile(documentFile())
-                    .openDocumentError(error())
+                    .documentOpenInProgress(isOpening())
+                    .documentOpenFile(documentFile())
+                    .documentOpenError(error())
                     .build();
         }
 
-        static OpenDocumentResult opening() {
-            return new AutoValue_Result_OpenDocumentResult(true, null, null);
+        static DocumentOpenResult opening() {
+            return new AutoValue_Result_DocumentOpenResult(true, null, null);
         }
 
-        static OpenDocumentResult success(File documentFile) {
-            return new AutoValue_Result_OpenDocumentResult(false, documentFile, null);
+        static DocumentOpenResult success(File documentFile) {
+            return new AutoValue_Result_DocumentOpenResult(false, documentFile, null);
         }
 
-        static OpenDocumentResult failure(Throwable error) {
-            return new AutoValue_Result_OpenDocumentResult(false, null, error);
+        static DocumentOpenResult failure(Throwable error) {
+            return new AutoValue_Result_DocumentOpenResult(false, null, error);
         }
 
-        static OpenDocumentResult clear() {
-            return new AutoValue_Result_OpenDocumentResult(false, null, null);
+        static DocumentOpenResult clear() {
+            return new AutoValue_Result_DocumentOpenResult(false, null, null);
         }
     }
 
@@ -216,7 +207,7 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
-    abstract class SignatureAddResult implements Result, NavigatorResult {
+    abstract class SignatureAddResult implements Result {
 
         abstract boolean isCreatingContainer();
 
@@ -259,50 +250,45 @@ interface Result extends MviResult<ViewState> {
         }
 
         static SignatureAddResult show() {
-            return new AutoValue_Result_SignatureAddResult(null, false, true, false, null, null,
-                    null, null, null);
+            return new AutoValue_Result_SignatureAddResult(false, true, false, null, null, null,
+                    null, null);
         }
 
         static SignatureAddResult creatingContainer() {
-            return new AutoValue_Result_SignatureAddResult(null, true, false, false, null, null,
-                    null, null, null);
+            return new AutoValue_Result_SignatureAddResult(true, false, false, null, null, null,
+                    null, null);
         }
 
         static SignatureAddResult status(
                 GetMobileCreateSignatureStatusResponse.ProcessStatus status) {
-            return new AutoValue_Result_SignatureAddResult(null, false, false, true, status, null,
-                    null, null, null);
+            return new AutoValue_Result_SignatureAddResult(false, false, true, status, null, null,
+                    null, null);
         }
 
         static SignatureAddResult challenge(String challenge) {
-            return new AutoValue_Result_SignatureAddResult(null, false, false, true, null,
-                    challenge, null, null, null);
+            return new AutoValue_Result_SignatureAddResult(false, false, true, null, challenge,
+                    null, null, null);
         }
 
         static SignatureAddResult signature(String signature) {
-            return new AutoValue_Result_SignatureAddResult(null, false, false, true,
+            return new AutoValue_Result_SignatureAddResult(false, false, true,
                     GetMobileCreateSignatureStatusResponse.ProcessStatus.SIGNATURE, null, signature,
                     null, null);
         }
 
         static SignatureAddResult success(SignedContainer container) {
-            return new AutoValue_Result_SignatureAddResult(null, false, false, false, null, null,
-                    null, container, null);
+            return new AutoValue_Result_SignatureAddResult(false, false, false, null, null, null,
+                    container, null);
         }
 
         static SignatureAddResult failure(Throwable error) {
-            return new AutoValue_Result_SignatureAddResult(null, false, false, false, null, null,
-                    null, null, error);
-        }
-
-        static SignatureAddResult transaction(Transaction transaction) {
-            return new AutoValue_Result_SignatureAddResult(transaction, false, false, false, null,
-                    null, null, null, null);
+            return new AutoValue_Result_SignatureAddResult(false, false, false, null, null, null,
+                    null, error);
         }
 
         static SignatureAddResult clear() {
-            return new AutoValue_Result_SignatureAddResult(null, false, false, false, null, null,
-                    null, null, null);
+            return new AutoValue_Result_SignatureAddResult(false, false, false, null, null, null,
+                    null, null);
         }
     }
 }

@@ -8,22 +8,22 @@ import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
 import ee.ria.mopplib.data.SignedContainer;
-import io.reactivex.Completable;
 import io.reactivex.Single;
 
 public interface SignatureContainerDataSource {
 
-    Single<File> addContainer(ImmutableList<FileStream> fileStreams, boolean forceCreate);
+    Single<ContainerAdd> addContainer(ImmutableList<FileStream> fileStreams, boolean forceCreate);
 
     Single<SignedContainer> get(File containerFile);
 
-    Completable addDocuments(File containerFile, ImmutableList<FileStream> documentStreams);
+    Single<SignedContainer> addDocuments(File containerFile,
+                                         ImmutableList<FileStream> documentStreams);
 
-    Completable removeDocument(File containerFile, DataFile document);
+    Single<SignedContainer> removeDocument(File containerFile, DataFile document);
 
     Single<File> getDocumentFile(File containerFile, DataFile document);
 
-    Completable removeSignature(File containerFile, Signature signature);
+    Single<SignedContainer> removeSignature(File containerFile, Signature signature);
 
-    Completable addSignature(File containerFile, String signature);
+    Single<SignedContainer> addSignature(File containerFile, String signature);
 }

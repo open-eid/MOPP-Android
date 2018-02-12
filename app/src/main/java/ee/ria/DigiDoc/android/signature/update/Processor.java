@@ -20,7 +20,8 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
-import ee.ria.DigiDoc.android.utils.navigation.Transaction;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.container.ContainerFacade;
 import ee.ria.DigiDoc.mid.CreateSignatureRequestBuilder;
 import ee.ria.libdigidocpp.Conf;
@@ -40,8 +41,10 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.app.Activity.RESULT_OK;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.io.Files.getFileExtension;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.toJson;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
@@ -54,14 +57,14 @@ import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.SERVICE_FA
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
-    private final ObservableTransformer<Action.LoadContainerAction,
-                                        Result.LoadContainerResult> loadContainer;
+    private final ObservableTransformer<Action.ContainerLoadAction,
+                                        Result.ContainerLoadResult> containerLoad;
 
-    private final ObservableTransformer<Action.AddDocumentsAction,
-                                        Result.AddDocumentsResult> addDocuments;
+    private final ObservableTransformer<Action.DocumentsAddAction,
+                                        Result.DocumentsAddResult> documentsAdd;
 
-    private final ObservableTransformer<Action.OpenDocumentAction,
-                                        Result.OpenDocumentResult> openDocument;
+    private final ObservableTransformer<Action.DocumentOpenAction,
+                                        Result.DocumentOpenResult> documentOpen;
 
     private final ObservableTransformer<Action.DocumentRemoveAction,
                                         Result.DocumentRemoveResult> documentRemove;
@@ -73,46 +76,59 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         Result.SignatureAddResult> signatureAdd;
 
     @Inject Processor(SignatureContainerDataSource signatureContainerDataSource,
-                      SettingsDataStore settingsDataStore, Application application) {
-        loadContainer = upstream -> upstream.flatMap(action ->
+                      SettingsDataStore settingsDataStore, Application application,
+                      Navigator navigator) {
+        containerLoad = upstream -> upstream.switchMap(action ->
                 signatureContainerDataSource.get(action.containerFile())
                         .toObservable()
-                        .map(Result.LoadContainerResult::success)
-                        .onErrorReturn(AutoValue_Result_LoadContainerResult::failure)
+                        .map(Result.ContainerLoadResult::success)
+                        .onErrorReturn(Result.ContainerLoadResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.LoadContainerResult.progress()));
+                        .startWith(Result.ContainerLoadResult.progress()));
 
-        addDocuments = upstream -> upstream.flatMap(action -> {
-            if (action.containerFile() == null) {
-                return Observable.just(Result.AddDocumentsResult.clear());
-            } else if (action.fileStreams() == null) {
-                return Observable.just(Result.AddDocumentsResult.picking());
-            } else {
-                return signatureContainerDataSource
-                        .addDocuments(action.containerFile(), action.fileStreams())
-                        .andThen(signatureContainerDataSource.get(action.containerFile()))
-                        .toObservable()
-                        .map(Result.AddDocumentsResult::success)
-                        .onErrorReturn(Result.AddDocumentsResult::failure)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.AddDocumentsResult.adding());
-            }
-        });
+        documentsAdd = upstream -> upstream
+                .switchMap(action -> {
+                    if (action.containerFile() == null) {
+                        return Observable.just(Result.DocumentsAddResult.clear());
+                    } else {
+                        navigator.execute(action.transaction());
+                        return navigator.activityResults()
+                                .filter(activityResult ->
+                                        activityResult.requestCode()
+                                                == action.transaction().requestCode())
+                                .switchMap(activityResult -> {
+                                    if (activityResult.resultCode() == RESULT_OK) {
+                                        return signatureContainerDataSource
+                                                .addDocuments(action.containerFile(),
+                                                        parseGetContentIntent(
+                                                                application.getContentResolver(),
+                                                                activityResult.data()))
+                                                .toObservable()
+                                                .map(Result.DocumentsAddResult::success)
+                                                .onErrorReturn(Result.DocumentsAddResult::failure)
+                                                .subscribeOn(Schedulers.io())
+                                                .observeOn(AndroidSchedulers.mainThread())
+                                                .startWith(Result.DocumentsAddResult.adding());
+                                    } else {
+                                        return Observable.just(Result.DocumentsAddResult.clear());
+                                    }
+                                });
+                    }
+                });
 
-        openDocument = upstream -> upstream.flatMap(action -> {
+        documentOpen = upstream -> upstream.flatMap(action -> {
             if (action.containerFile() == null) {
-                return Observable.just(Result.OpenDocumentResult.clear());
+                return Observable.just(Result.DocumentOpenResult.clear());
             } else {
                 return signatureContainerDataSource
                         .getDocumentFile(action.containerFile(), action.document())
                         .toObservable()
-                        .map(Result.OpenDocumentResult::success)
-                        .onErrorReturn(Result.OpenDocumentResult::failure)
+                        .map(Result.DocumentOpenResult::success)
+                        .onErrorReturn(Result.DocumentOpenResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.OpenDocumentResult.opening());
+                        .startWith(Result.DocumentOpenResult.opening());
             }
         });
 
@@ -124,7 +140,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
             } else {
                 return signatureContainerDataSource
                         .removeDocument(action.containerFile(), action.document())
-                        .andThen(signatureContainerDataSource.get(action.containerFile()))
                         .toObservable()
                         .map(Result.DocumentRemoveResult::success)
                         .onErrorReturn(Result.DocumentRemoveResult::failure)
@@ -143,7 +158,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
             } else {
                 return signatureContainerDataSource
                         .removeSignature(action.containerFile(), action.signature())
-                        .andThen(signatureContainerDataSource.get(action.containerFile()))
                         .toObservable()
                         .map(Result.SignatureRemoveResult::success)
                         .onErrorReturn(Result.SignatureRemoveResult::failure)
@@ -165,9 +179,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     return signatureContainerDataSource
                             .addContainer(ImmutableList.of(FileStream.create(containerFile)), true)
                             .toObservable()
-                            .map(newContainerFile -> Result.SignatureAddResult.transaction(
-                                    Transaction.PushScreenTransaction.create(
-                                            SignatureUpdateScreen.create(newContainerFile))))
+                            .doOnNext(containerAdd ->
+                                    navigator.execute(Transaction.push(SignatureUpdateScreen
+                                            .create(containerAdd.isExistingContainer(),
+                                                    containerAdd.containerFile()))))
+                            .map(containerAdd -> Result.SignatureAddResult.creatingContainer())
                             .onErrorReturn(Result.SignatureAddResult::failure)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -187,7 +203,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             if (result.signature() != null) {
                                 return signatureContainerDataSource
                                         .addSignature(containerFile, result.signature())
-                                        .andThen(signatureContainerDataSource.get(containerFile))
                                         .toObservable()
                                         .flatMap(container -> Observable.timer(3, TimeUnit.SECONDS)
                                                 .map(ignored -> Result.SignatureAddResult.clear())
@@ -210,9 +225,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
     @Override
     public ObservableSource<Result> apply(Observable<Action> upstream) {
         return upstream.publish(shared -> Observable.mergeArray(
-                shared.ofType(Action.LoadContainerAction.class).compose(loadContainer),
-                shared.ofType(Action.AddDocumentsAction.class).compose(addDocuments),
-                shared.ofType(Action.OpenDocumentAction.class).compose(openDocument),
+                shared.ofType(Action.ContainerLoadAction.class).compose(containerLoad),
+                shared.ofType(Action.DocumentsAddAction.class).compose(documentsAdd),
+                shared.ofType(Action.DocumentOpenAction.class).compose(documentOpen),
                 shared.ofType(Action.DocumentRemoveAction.class).compose(documentRemove),
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd)));

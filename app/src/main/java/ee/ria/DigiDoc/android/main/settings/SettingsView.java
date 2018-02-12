@@ -10,7 +10,8 @@ import com.jakewharton.rxbinding2.support.v7.widget.RxToolbar;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
-import ee.ria.DigiDoc.android.utils.navigation.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 
 public final class SettingsView extends CoordinatorLayout {
 
@@ -41,7 +42,7 @@ public final class SettingsView extends CoordinatorLayout {
         super.onAttachedToWindow();
         disposables.attach();
         disposables.add(RxToolbar.navigationClicks(toolbarView).subscribe(o ->
-                navigator.popScreen()));
+                navigator.execute(Transaction.pop())));
     }
 
     @Override

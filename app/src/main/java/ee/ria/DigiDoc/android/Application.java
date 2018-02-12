@@ -19,30 +19,35 @@
 
 package ee.ria.DigiDoc.android;
 
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
+import java.util.Map;
+
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import dagger.Binds;
 import dagger.BindsInstance;
 import dagger.Component;
-import dagger.MapKey;
 import dagger.Module;
+import dagger.Provides;
+import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
 import ee.ria.DigiDoc.BuildConfig;
+import ee.ria.DigiDoc.android.main.home.HomeViewModel;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.data.source.FileSystemSignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.Formatter;
-import ee.ria.DigiDoc.android.utils.conductor.ConductorNavigator;
-import ee.ria.DigiDoc.android.utils.conductor.ConductorViewModelProvider;
-import ee.ria.DigiDoc.android.utils.mvi.MviViewModel;
-import ee.ria.DigiDoc.android.utils.mvi.MviViewModelProvider;
-import ee.ria.DigiDoc.android.utils.navigation.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
 import ee.ria.mopplib.MoppLib;
 import timber.log.Timber;
 
@@ -105,13 +110,9 @@ public class Application extends android.app.Application {
     @Component(modules = ApplicationModule.class)
     public interface ApplicationComponent {
 
-        void inject(Activity activity);
-
         Navigator navigator();
 
         Formatter formatter();
-
-        MviViewModelProvider viewModelProvider();
 
         @Component.Builder
         interface Builder {
@@ -125,28 +126,48 @@ public class Application extends android.app.Application {
     @Module
     static abstract class ApplicationModule {
 
-        @SuppressWarnings("unused")
-        @Binds abstract Navigator navigator(ConductorNavigator conductorNavigator);
+        @Provides @Singleton
+        static Navigator navigator(Activity.RootScreenFactory rootScreenFactory,
+                                   ViewModelProvider.Factory viewModelFactory) {
+            return new ConductorNavigator(rootScreenFactory, viewModelFactory);
+        }
+
+        @Provides @Singleton
+        static ViewModelProvider.Factory viewModelFactory(
+                Map<Class<?>, Provider<ViewModel>> viewModelProviders) {
+            return new ViewModelFactory(viewModelProviders);
+        }
 
         @SuppressWarnings("unused")
         @Binds abstract SignatureContainerDataSource signatureContainerDataSource(
                 FileSystemSignatureContainerDataSource fileSystemSignatureContainerDataSource);
 
         @SuppressWarnings("unused")
-        @Binds abstract MviViewModelProvider viewModelProvider(
-                ConductorViewModelProvider conductorViewModelProvider);
+        @Binds @IntoMap @ClassKey(HomeViewModel.class)
+        abstract ViewModel mainHomeViewModel(HomeViewModel homeViewModel);
 
-        @Binds @IntoMap @SuppressWarnings("unused")
-        @ViewModelKey(SignatureCreateViewModel.class)
-        abstract MviViewModel signatureCreateViewModel(SignatureCreateViewModel viewModel);
+        @SuppressWarnings("unused")
+        @Binds @IntoMap @ClassKey(SignatureCreateViewModel.class)
+        abstract ViewModel signatureCreateViewModel(SignatureCreateViewModel viewModel);
 
-        @Binds @IntoMap @SuppressWarnings("unused")
-        @ViewModelKey(SignatureUpdateViewModel.class)
-        abstract MviViewModel signatureUpdateModel(SignatureUpdateViewModel viewModel);
+        @SuppressWarnings("unused")
+        @Binds @IntoMap @ClassKey(SignatureUpdateViewModel.class)
+        abstract ViewModel signatureUpdateModel(SignatureUpdateViewModel viewModel);
     }
 
-    @MapKey
-    @interface ViewModelKey {
-        Class<? extends MviViewModel> value();
+    static final class ViewModelFactory implements ViewModelProvider.Factory {
+
+        private final Map<Class<?>, Provider<ViewModel>> viewModelProviders;
+
+        ViewModelFactory(Map<Class<?>, Provider<ViewModel>> viewModelProviders) {
+            this.viewModelProviders = viewModelProviders;
+        }
+
+        @SuppressWarnings("unchecked")
+        @NonNull
+        @Override
+        public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+            return (T) viewModelProviders.get(modelClass).get();
+        }
     }
 }

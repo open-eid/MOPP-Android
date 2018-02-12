@@ -22,7 +22,8 @@ import ee.ria.DigiDoc.android.signature.add.SignatureAddDialog;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
-import ee.ria.DigiDoc.android.utils.navigation.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.mid.MobileSignStatusMessageSource;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
@@ -34,16 +35,13 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
-import static android.app.Activity.RESULT_OK;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
-import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 public final class SignatureUpdateView extends CoordinatorLayout implements
         MviView<Intent, ViewState> {
 
+    private boolean isExistingContainer;
     private File containerFile;
 
     private final Toolbar toolbarView;
@@ -59,9 +57,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private final SignatureUpdateViewModel viewModel;
     private final ViewDisposables disposables = new ViewDisposables();
 
-    private final Subject<Intent.AddDocumentsIntent> addDocumentsIntentSubject =
+    private final Subject<Intent.DocumentsAddIntent> documentsAddIntentSubject =
             PublishSubject.create();
-    private final Subject<Intent.OpenDocumentIntent> openDocumentIntentSubject =
+    private final Subject<Intent.DocumentOpenIntent> documentOpenIntentSubject =
             PublishSubject.create();
     private final Subject<Intent.DocumentRemoveIntent> documentRemoveIntentSubject =
             PublishSubject.create();
@@ -91,7 +89,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     public SignatureUpdateView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         navigator = Application.component(context).navigator();
-        viewModel = navigator.getViewModelProvider().get(SignatureUpdateViewModel.class);
+        viewModel = navigator.viewModel(SignatureUpdateViewModel.class);
 
         inflate(context, R.layout.signature_update, this);
         toolbarView = findViewById(R.id.toolbar);
@@ -105,7 +103,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         listView.setLayoutManager(new LinearLayoutManager(context));
         listView.setAdapter(adapter = new SignatureUpdateAdapter());
 
-        errorDialog = new ErrorDialog(context,  addDocumentsIntentSubject,
+        errorDialog = new ErrorDialog(context, documentsAddIntentSubject,
                 documentRemoveIntentSubject, signatureAddIntentSubject,
                 signatureRemoveIntentSubject);
         documentRemoveConfirmationDialog = new ConfirmationDialog(context,
@@ -116,6 +114,11 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         resetSignatureAddDialog();
 
         statusMessageSource = new MobileSignStatusMessageSource(context.getResources());
+    }
+
+    public SignatureUpdateView isExistingContainer(boolean isExistingContainer) {
+        this.isExistingContainer = isExistingContainer;
+        return this;
     }
 
     public SignatureUpdateView containerFile(File containerFile) {
@@ -132,26 +135,25 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
 
     @Override
     public void render(ViewState state) {
-        if (state.loadContainerError() != null) {
+        if (state.containerLoadError() != null) {
             Toast.makeText(getContext(), R.string.signature_update_load_container_error,
                     Toast.LENGTH_LONG).show();
-            navigator.popScreen();
+            navigator.execute(Transaction.pop());
             return;
         }
-        if (state.pickingDocuments()) {
-            navigator.getActivityResult(RC_SIGNATURE_UPDATE_DOCUMENTS_ADD,
-                    createGetContentIntent());
-            return;
-        }
-        if (state.openedDocumentFile() != null) {
-            getContext().startActivity(createViewIntent(getContext(), state.openedDocumentFile()));
-            openDocumentIntentSubject.onNext(Intent.OpenDocumentIntent.clear());
+        if (state.documentOpenFile() != null) {
+            getContext().startActivity(createViewIntent(getContext(), state.documentOpenFile()));
+            documentOpenIntentSubject.onNext(Intent.DocumentOpenIntent.clear());
             return;
         }
 
-        setActivity(state.loadContainerInProgress() || state.documentsProgress()
-                || state.documentRemoveInProgress() || state.signatureRemoveInProgress()
-                || state.signatureAddInProgress());
+        toolbarView.setTitle(isExistingContainer
+                ? R.string.signature_update_title_existing
+                : R.string.signature_update_title_created);
+
+        setActivity(state.containerLoadInProgress() || state.documentsAddInProgress()
+                || state.documentOpenInProgress() || state.documentRemoveInProgress()
+                || state.signatureRemoveInProgress() || state.signatureAddInProgress());
 
         SignedContainer container = state.container();
         String name = container == null ? null : container.name();
@@ -173,7 +175,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         adapter.setData(state.signatureAddSuccessMessageVisible(), !allSignaturesValid, name,
                 documents, signatures, documentAddEnabled, documentRemoveEnabled);
 
-        errorDialog.show(state.addDocumentsError(), state.documentRemoveError(),
+        errorDialog.show(state.documentsAddError(), state.documentRemoveError(),
                 state.signatureAddError(), state.signatureRemoveError());
 
         documentRemoveConfirmation = state.documentRemoveConfirmation();
@@ -226,14 +228,14 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         return Observable.just(Intent.InitialIntent.create(containerFile));
     }
 
-    private Observable<Intent.AddDocumentsIntent> addDocumentsIntent() {
+    private Observable<Intent.DocumentsAddIntent> addDocumentsIntent() {
         return adapter.documentAddClicks()
-                .map(ignored -> Intent.AddDocumentsIntent.pick(containerFile))
-                .mergeWith(addDocumentsIntentSubject);
+                .map(ignored -> Intent.DocumentsAddIntent.create(containerFile))
+                .mergeWith(documentsAddIntentSubject);
     }
 
-    private Observable<Intent.OpenDocumentIntent> openDocumentIntent() {
-        return openDocumentIntentSubject;
+    private Observable<Intent.DocumentOpenIntent> openDocumentIntent() {
+        return documentOpenIntentSubject;
     }
 
     private Observable<Intent.DocumentRemoveIntent> documentRemoveIntent() {
@@ -256,17 +258,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         disposables.attach();
         disposables.add(viewModel.viewStates().subscribe(this::render));
         viewModel.process(intents());
-        disposables.add(navigationClicks(toolbarView).subscribe(o -> navigator.popScreen()));
-        disposables.add(navigator.activityResults(RC_SIGNATURE_UPDATE_DOCUMENTS_ADD).subscribe(
-                result -> {
-                    if (result.resultCode() == RESULT_OK) {
-                        addDocumentsIntentSubject.onNext(Intent.AddDocumentsIntent.add(
-                                containerFile, parseGetContentIntent(
-                                        getContext().getContentResolver(), result.data())));
-                    } else {
-                        addDocumentsIntentSubject.onNext(Intent.AddDocumentsIntent.clear());
-                    }
-                }));
+        disposables.add(navigationClicks(toolbarView).subscribe(o ->
+                navigator.execute(Transaction.pop())));
         disposables.add(adapter.scrollToTop().subscribe(ignored -> listView.scrollToPosition(0)));
         disposables.add(adapter.documentRemoveClicks().subscribe(document ->
                 documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent
@@ -277,7 +270,7 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         disposables.add(documentRemoveConfirmationDialog.cancels().subscribe(ignored ->
                 documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent.clear())));
         disposables.add(adapter.documentClicks().subscribe(document ->
-                openDocumentIntentSubject.onNext(Intent.OpenDocumentIntent
+                documentOpenIntentSubject.onNext(Intent.DocumentOpenIntent
                         .open(containerFile, document))));
         disposables.add(adapter.signatureRemoveClicks().subscribe(signature ->
                 signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent

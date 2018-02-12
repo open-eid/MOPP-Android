@@ -4,16 +4,14 @@ import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.mvi.BaseMviViewModel;
-import ee.ria.DigiDoc.android.utils.navigation.Navigator;
 
 public final class SignatureUpdateViewModel extends
         BaseMviViewModel<Intent, ViewState, Action, Result> {
 
     private final SettingsDataStore settingsDataStore;
 
-    @Inject SignatureUpdateViewModel(Processor processor, Navigator navigator,
-                                     SettingsDataStore settingsDataStore) {
-        super(processor, navigator);
+    @Inject SignatureUpdateViewModel(Processor processor, SettingsDataStore settingsDataStore) {
+        super(processor);
         this.settingsDataStore = settingsDataStore;
     }
 
@@ -31,17 +29,16 @@ public final class SignatureUpdateViewModel extends
     }
 
     @Override
-    protected Action actionFromIntent(Intent intent) {
+    protected Action action(Intent intent) {
         if (intent instanceof Intent.InitialIntent) {
-            return Action.LoadContainerAction
+            return Action.ContainerLoadAction
                     .create(((Intent.InitialIntent) intent).containerFile());
-        } else if (intent instanceof Intent.AddDocumentsIntent) {
-            Intent.AddDocumentsIntent addDocumentsIntent = (Intent.AddDocumentsIntent) intent;
-            return Action.AddDocumentsAction.create(addDocumentsIntent.containerFile(),
-                    addDocumentsIntent.fileStreams());
-        } else if (intent instanceof Intent.OpenDocumentIntent) {
-            Intent.OpenDocumentIntent openDocumentIntent = (Intent.OpenDocumentIntent) intent;
-            return Action.OpenDocumentAction.create(openDocumentIntent.containerFile(),
+        } else if (intent instanceof Intent.DocumentsAddIntent) {
+            return Action.DocumentsAddAction
+                    .create(((Intent.DocumentsAddIntent) intent).containerFile());
+        } else if (intent instanceof Intent.DocumentOpenIntent) {
+            Intent.DocumentOpenIntent openDocumentIntent = (Intent.DocumentOpenIntent) intent;
+            return Action.DocumentOpenAction.create(openDocumentIntent.containerFile(),
                     openDocumentIntent.document());
         } else if (intent instanceof Intent.DocumentRemoveIntent) {
             Intent.DocumentRemoveIntent documentRemoveIntent = (Intent.DocumentRemoveIntent) intent;
