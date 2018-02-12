@@ -2,91 +2,130 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:parentTag="android.support.design.widget.CoordinatorLayout"
+    tools:parentTag="android.widget.LinearLayout"
     tools:layout_width="match_parent"
-    tools:layout_height="match_parent">
+    tools:layout_height="match_parent"
+    tools:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@id/appBar"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@id/toolbar"
-            android:theme="@style/ThemeOverlay.Application.ActionBar"
+        <android.support.design.widget.AppBarLayout
+            android:id="@id/appBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@id/toolbar"
+                android:theme="@style/ThemeOverlay.Application.ActionBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/signature_update_name"
+                app:navigationIcon="@drawable/ic_clear"
+                app:navigationContentDescription="@string/close" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@id/signatureUpdateList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:scrollbars="vertical" />
+
+        <FrameLayout
+            android:id="@id/activityOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/activityOverlayBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:translationZ="@dimen/material_elevation_dialog" />
+
+        <ProgressBar
+            android:id="@id/activityIndicator"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="@string/signature_update_name"
-            app:navigationIcon="@drawable/ic_clear"
-            app:navigationContentDescription="@string/close" />
+            app:layout_anchor="@id/appBar"
+            app:layout_anchorGravity="bottom"
+            android:indeterminate="true" />
 
-    </android.support.design.widget.AppBarLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@id/signatureUpdateList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:scrollbars="vertical" />
-
-    <FrameLayout
-        android:id="@id/activityOverlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/activityOverlayBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:translationZ="@dimen/material_elevation_dialog" />
-
-    <ProgressBar
-        android:id="@id/activityIndicator"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@id/appBar"
-        app:layout_anchorGravity="bottom"
-        android:indeterminate="true" />
-
-    <android.support.v7.widget.CardView
-        android:id="@id/signatureUpdateMobileIdContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="@dimen/material_dialog_screen_edge_margin_minimum_horizontal"
-        android:layout_marginTop="@dimen/material_dialog_screen_edge_margin_minimum_vertical"
-        android:layout_marginEnd="@dimen/material_dialog_screen_edge_margin_minimum_horizontal"
-        android:layout_marginBottom="@dimen/material_dialog_screen_edge_margin_minimum_vertical"
-        app:contentPadding="@dimen/material_card_title_block_padding_horizontal"
-        android:translationZ="@dimen/material_dialog_elevation">
-
-        <LinearLayout
+        <android.support.v7.widget.CardView
+            android:id="@id/signatureUpdateMobileIdContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/material_dialog_screen_edge_margin_minimum_horizontal"
+            android:layout_marginTop="@dimen/material_dialog_screen_edge_margin_minimum_vertical"
+            android:layout_marginEnd="@dimen/material_dialog_screen_edge_margin_minimum_horizontal"
+            android:layout_marginBottom="@dimen/material_dialog_screen_edge_margin_minimum_vertical"
+            app:contentPadding="@dimen/material_card_title_block_padding_horizontal"
+            android:translationZ="@dimen/material_dialog_elevation">
 
-            <TextView
-                android:id="@id/signatureUpdateMobileIdStatus"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/status_request_sent" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@id/signatureUpdateMobileIdChallenge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                tools:text="5503" />
+                <TextView
+                    android:id="@id/signatureUpdateMobileIdStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/status_request_sent" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/mobile_sign_info" />
+                <TextView
+                    android:id="@id/signatureUpdateMobileIdChallenge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    tools:text="5503" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/mobile_sign_info" />
 
-    </android.support.v7.widget.CardView>
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/accent">
+
+        <Button
+            android:id="@id/signatureUpdateSendButton"
+            style="@style/Widget.Application.Button.Container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/signature_update_send_button"
+            android:drawableTop="@drawable/ic_share" />
+
+        <android.support.v4.widget.Space
+            android:id="@id/signatureUpdateButtonSpace"
+            android:layout_width="1px"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@id/signatureUpdateSignatureAddButton"
+            style="@style/Widget.Application.Button.Container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/signature_update_signature_add_button"
+            android:drawableTop="@drawable/ic_signature" />
+
+    </LinearLayout>
 
 </merge>

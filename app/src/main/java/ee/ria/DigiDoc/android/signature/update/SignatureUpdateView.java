@@ -3,12 +3,13 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.content.Context;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,10 +37,10 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 
-public final class SignatureUpdateView extends CoordinatorLayout implements
-        MviView<Intent, ViewState> {
+public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
 
     private boolean isExistingContainer;
     private File containerFile;
@@ -52,6 +53,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     private final View mobileIdContainerView;
     private final TextView mobileIdStatusView;
     private final TextView mobileIdChallengeView;
+    private final Button sendButton;
+    private final View buttonSpace;
+    private final Button signatureAddButton;
 
     private final Navigator navigator;
     private final SignatureUpdateViewModel viewModel;
@@ -87,10 +91,15 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     }
 
     public SignatureUpdateView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+        this(context, attrs, defStyleAttr, 0);
+    }
+
+    public SignatureUpdateView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
         navigator = Application.component(context).navigator();
         viewModel = navigator.viewModel(SignatureUpdateViewModel.class);
 
+        setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update, this);
         toolbarView = findViewById(R.id.toolbar);
         listView = findViewById(R.id.signatureUpdateList);
@@ -99,6 +108,9 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         mobileIdContainerView = findViewById(R.id.signatureUpdateMobileIdContainer);
         mobileIdStatusView = findViewById(R.id.signatureUpdateMobileIdStatus);
         mobileIdChallengeView = findViewById(R.id.signatureUpdateMobileIdChallenge);
+        sendButton = findViewById(R.id.signatureUpdateSendButton);
+        buttonSpace = findViewById(R.id.signatureUpdateButtonSpace);
+        signatureAddButton = findViewById(R.id.signatureUpdateSignatureAddButton);
 
         listView.setLayoutManager(new LinearLayoutManager(context));
         listView.setAdapter(adapter = new SignatureUpdateAdapter());
@@ -130,7 +142,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), addDocumentsIntent(), openDocumentIntent(),
-                documentRemoveIntent(), signatureRemoveIntent(), signatureAddIntent());
+                documentRemoveIntent(), signatureRemoveIntent(), signatureAddIntent(),
+                sendIntent());
     }
 
     @Override
@@ -150,6 +163,8 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         toolbarView.setTitle(isExistingContainer
                 ? R.string.signature_update_title_existing
                 : R.string.signature_update_title_created);
+        sendButton.setVisibility(isExistingContainer ? VISIBLE : GONE);
+        buttonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
 
         setActivity(state.containerLoadInProgress() || state.documentsAddInProgress()
                 || state.documentOpenInProgress() || state.documentRemoveInProgress()
@@ -211,11 +226,17 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
         } else {
             mobileIdChallengeView.setText(R.string.signature_add_mobile_id_challenge_placeholder);
         }
+
+        sendButton.getCompoundDrawables()[1].setTintList(sendButton.getTextColors());
+        signatureAddButton.getCompoundDrawables()[1].setTintList(
+                signatureAddButton.getTextColors());
     }
 
     private void setActivity(boolean activity) {
         activityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
         activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
+        sendButton.setEnabled(!activity);
+        signatureAddButton.setEnabled(!activity);
     }
 
     private void resetSignatureAddDialog() {
@@ -247,9 +268,14 @@ public final class SignatureUpdateView extends CoordinatorLayout implements
     }
 
     private Observable<Intent.SignatureAddIntent> signatureAddIntent() {
-        return adapter.signatureAddClicks()
+        return clicks(signatureAddButton)
                 .map(ignored -> Intent.SignatureAddIntent.showIntent(containerFile))
                 .mergeWith(signatureAddIntentSubject);
+    }
+
+    private Observable<Intent.SendIntent> sendIntent() {
+        return clicks(sendButton)
+                .map(ignored -> Intent.SendIntent.create(containerFile));
     }
 
     @Override

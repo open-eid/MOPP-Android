@@ -13,6 +13,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
+import ee.ria.mopplib.data.SignedContainer;
 
 public final class IntentUtils {
 
@@ -66,7 +67,7 @@ public final class IntentUtils {
      * @param context Context to use for {@link FileProvider#getUriForFile(Context, String, File)}
      *                and to get authority string.
      * @param file File to send.
-     * @return {@link Intent#ACTION_SEND Send intent} with content Uri of the file.
+     * @return {@link Intent#ACTION_VIEW View intent} with content Uri of the file.
      */
     public static Intent createViewIntent(Context context, File file) {
         Uri uri = FileProvider.getUriForFile(context,
@@ -75,6 +76,15 @@ public final class IntentUtils {
                 .createChooser(new Intent(Intent.ACTION_VIEW)
                         .setData(uri)
                         .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION), null);
+    }
+
+    public static Intent createSendIntent(Context context, File file) {
+        Uri uri = FileProvider.getUriForFile(context,
+                context.getString(R.string.file_provider_authority), file);
+        return Intent
+                .createChooser(new Intent(Intent.ACTION_SEND)
+                        .putExtra(Intent.EXTRA_STREAM, uri)
+                        .setType(SignedContainer.mimeType(file)), null);
     }
 
     private IntentUtils() {}

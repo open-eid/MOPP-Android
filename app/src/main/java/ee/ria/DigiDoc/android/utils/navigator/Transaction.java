@@ -24,6 +24,10 @@ public abstract class Transaction {
         return ReplaceTransaction.create(screen);
     }
 
+    public static ActivityTransaction activity(Intent intent, Bundle options) {
+        return ActivityTransaction.create(intent, options);
+    }
+
     public static ActivityForResultTransaction activityForResult(int requestCode, Intent intent,
                                                                  @Nullable Bundle options) {
         return ActivityForResultTransaction.create(requestCode, intent, options);
@@ -64,6 +68,18 @@ public abstract class Transaction {
 
         static ReplaceTransaction create(Screen screen) {
             return new AutoValue_Transaction_ReplaceTransaction(screen);
+        }
+    }
+
+    @AutoValue
+    public abstract static class ActivityTransaction extends Transaction {
+
+        public abstract Intent intent();
+
+        @Nullable public abstract Bundle options();
+
+        static ActivityTransaction create(Intent intent, @Nullable Bundle options) {
+            return new AutoValue_Transaction_ActivityTransaction(intent, options);
         }
     }
 

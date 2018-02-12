@@ -18,6 +18,10 @@
         <item name="android:textColor">@color/accent</item>
     </style>
 
+    <style name="Widget.Application.Button.Container" parent="Widget.Application.Button">
+        <item name="android:background">@drawable/button_container</item>
+    </style>
+
     <style name="Widget.Application.FloatingActionButton" parent="Widget.Design.FloatingActionButton">
         <item name="android:tint">@color/material_color_white</item>
     </style>
