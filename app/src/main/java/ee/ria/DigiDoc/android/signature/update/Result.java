@@ -291,4 +291,23 @@ interface Result extends MviResult<ViewState> {
                     null, null);
         }
     }
+
+    @AutoValue
+    abstract class SendResult implements Result {
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state;
+        }
+
+        static SendResult success() {
+            return new AutoValue_Result_SendResult(null);
+        }
+
+        static SendResult failure(Throwable error) {
+            return new AutoValue_Result_SendResult(error);
+        }
+    }
 }

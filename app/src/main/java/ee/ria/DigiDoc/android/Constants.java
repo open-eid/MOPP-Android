@@ -15,7 +15,7 @@ public final class Constants {
      * Sub-directory name in {@link android.content.Context#getFilesDir() files dir} for signature
      * containers.
      */
-    public static final String DIR_SIGNATURE_CONTAINERS = "DigiDoc";
+    public static final String DIR_SIGNATURE_CONTAINERS = "signed_containers";
 
     private Constants() {}
 }

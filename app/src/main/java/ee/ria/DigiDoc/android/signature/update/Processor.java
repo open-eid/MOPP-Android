@@ -44,6 +44,7 @@ import io.reactivex.schedulers.Schedulers;
 import static android.app.Activity.RESULT_OK;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.io.Files.getFileExtension;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.toJson;
 import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
@@ -74,6 +75,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Action.SignatureAddAction,
                                         Result.SignatureAddResult> signatureAdd;
+
+    private final ObservableTransformer<Action.SendAction, Result.SendResult> send;
 
     @Inject Processor(SignatureContainerDataSource signatureContainerDataSource,
                       SettingsDataStore settingsDataStore, Application application,
@@ -179,14 +182,14 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     return signatureContainerDataSource
                             .addContainer(ImmutableList.of(FileStream.create(containerFile)), true)
                             .toObservable()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
                             .doOnNext(containerAdd ->
                                     navigator.execute(Transaction.push(SignatureUpdateScreen
                                             .create(containerAdd.isExistingContainer(),
                                                     containerAdd.containerFile()))))
                             .map(containerAdd -> Result.SignatureAddResult.creatingContainer())
                             .onErrorReturn(Result.SignatureAddResult::failure)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
                             .startWith(Result.SignatureAddResult.creatingContainer());
                 }
             } else {
@@ -219,6 +222,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .startWith(Result.SignatureAddResult.status(ProcessStatus.DEFAULT));
             }
         });
+
+        send = upstream -> upstream
+                .doOnNext(action ->
+                        navigator.execute(Transaction.activity(
+                                createSendIntent(application, action.containerFile()), null)))
+                .map(action -> Result.SendResult.success())
+                .onErrorReturn(Result.SendResult::failure);
     }
 
     @SuppressWarnings("unchecked")
@@ -230,7 +240,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.DocumentOpenAction.class).compose(documentOpen),
                 shared.ofType(Action.DocumentRemoveAction.class).compose(documentRemove),
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
-                shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd)));
+                shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd),
+                shared.ofType(Action.SendAction.class).compose(send)));
     }
 
     static final class MobileIdOnSubscribe implements

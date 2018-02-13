@@ -42,7 +42,6 @@ final class SignatureUpdateAdapter extends
     final Subject<Object> documentAddClicksSubject = PublishSubject.create();
     final Subject<DataFile> documentRemoveClicksSubject = PublishSubject.create();
     final Subject<Signature> signatureClicksSubject = PublishSubject.create();
-    final Subject<Object> signatureAddClicksSubject = PublishSubject.create();
     final Subject<Signature> signatureRemoveClicksSubject = PublishSubject.create();
 
     private ImmutableList<Item> items = ImmutableList.of();
@@ -100,10 +99,6 @@ final class SignatureUpdateAdapter extends
 
     Observable<Signature> signatureClicks() {
         return signatureClicksSubject;
-    }
-
-    Observable<Object> signatureAddClicks() {
-        return signatureAddClicksSubject;
     }
 
     Observable<Signature> signatureRemoveClicks() {
@@ -215,12 +210,13 @@ final class SignatureUpdateAdapter extends
         @Override
         void bind(SignatureUpdateAdapter adapter, SubheadItem item) {
             titleView.setText(item.titleRes());
-            buttonView.setContentDescription(buttonView.getResources().getString(item.buttonRes()));
-            buttonView.setVisibility(item.buttonVisible() ? View.VISIBLE : View.GONE);
             if (item.subheadItemType().equals(DOCUMENT)) {
+                buttonView.setContentDescription(buttonView.getResources().getString(
+                        item.buttonRes()));
+                buttonView.setVisibility(item.buttonVisible() ? View.VISIBLE : View.GONE);
                 clicks(buttonView).subscribe(adapter.documentAddClicksSubject);
             } else {
-                clicks(buttonView).subscribe(adapter.signatureAddClicksSubject);
+                buttonView.setVisibility(View.GONE);
             }
         }
     }
@@ -362,7 +358,7 @@ final class SignatureUpdateAdapter extends
                 buttonRes = R.string.signature_update_documents_button;
             } else {
                 titleRes = R.string.signature_update_signatures_title;
-                buttonRes = R.string.signature_update_signatures_button;
+                buttonRes = 0;
             }
             return new AutoValue_SignatureUpdateAdapter_SubheadItem(
                     R.layout.signature_update_list_item_subhead, subheadItemType, titleRes,

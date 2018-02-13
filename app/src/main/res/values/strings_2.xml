@@ -43,7 +43,6 @@
     <string name="signature_update_documents_title">Documents</string>
     <string name="signature_update_documents_button">Add documents</string>
     <string name="signature_update_signatures_title">Signatures</string>
-    <string name="signature_update_signatures_button">Add signature</string>
     <string name="signature_update_document_remove_button">Remove document</string>
     <string name="signature_update_document_remove_confirmation_message">Remove document from container?</string>
     <string name="signature_update_document_type_file">File</string>
@@ -54,6 +53,8 @@
     <string name="signature_update_signature_remove_button">Remove signature</string>
     <string name="signature_update_signature_remove_confirmation_message">Remove signature from container?</string>
     <string name="signature_update_signature_remove_error">Could not remove signature from the container</string>
+    <string name="signature_update_send_button">Share</string>
+    <string name="signature_update_signature_add_button">Sign</string>
 
     <string name="signature_update_load_container_error">Could not open signature container</string>
     <string name="signature_update_add_documents_error_exists">File already exists in the container</string>

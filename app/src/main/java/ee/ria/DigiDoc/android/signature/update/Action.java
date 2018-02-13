@@ -106,4 +106,14 @@ interface Action extends MviAction {
                     personalCode, rememberMe);
         }
     }
+
+    @AutoValue
+    abstract class SendAction implements Action {
+
+        abstract File containerFile();
+
+        static SendAction create(File containerFile) {
+            return new AutoValue_Action_SendAction(containerFile);
+        }
+    }
 }

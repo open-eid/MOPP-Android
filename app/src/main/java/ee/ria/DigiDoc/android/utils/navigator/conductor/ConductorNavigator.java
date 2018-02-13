@@ -118,6 +118,10 @@ public final class ConductorNavigator implements Navigator {
         } else if (transaction instanceof Transaction.ReplaceTransaction) {
             router.replaceTopController(routerTransaction(
                     ((Transaction.ReplaceTransaction) transaction).screen()));
+        } else if (transaction instanceof Transaction.ActivityTransaction) {
+            Transaction.ActivityTransaction activityTransaction =
+                    (Transaction.ActivityTransaction) transaction;
+            activity().startActivity(activityTransaction.intent(), activityTransaction.options());
         } else if (transaction instanceof Transaction.ActivityForResultTransaction) {
             Transaction.ActivityForResultTransaction activityForResultTransaction =
                     (Transaction.ActivityForResultTransaction) transaction;

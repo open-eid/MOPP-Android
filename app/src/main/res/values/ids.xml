@@ -55,6 +55,9 @@
     <item type="id" name="signatureUpdateMobileIdContainer" />
     <item type="id" name="signatureUpdateMobileIdStatus" />
     <item type="id" name="signatureUpdateMobileIdChallenge" />
+    <item type="id" name="signatureUpdateSendButton" />
+    <item type="id" name="signatureUpdateButtonSpace" />
+    <item type="id" name="signatureUpdateSignatureAddButton" />
 
     <!-- Signature Add -->
     <item type="id" name="signatureAdd" />

@@ -326,7 +326,7 @@ public abstract class SignedContainer {
      * @param file File to get the extension from.
      * @return MIME type of the file.
      */
-    private static String mimeType(File file) {
+    public static String mimeType(File file) {
         String extension = Files.getFileExtension(file.getName()).toLowerCase();
         if (EXTENSIONS.contains(extension)) {
             return CONTAINER_MIME_TYPE;
