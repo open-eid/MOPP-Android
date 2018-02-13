@@ -21,6 +21,10 @@ interface Result extends MviResult<ViewState> {
 
         @Nullable abstract SignedContainer container();
 
+        abstract boolean signatureAddVisible();
+
+        abstract boolean signatureAddSuccessMessageVisible();
+
         @Nullable abstract Throwable error();
 
         @Override
@@ -30,19 +34,23 @@ interface Result extends MviResult<ViewState> {
                     .containerLoadInProgress(inProgress())
                     .container(container())
                     .containerLoadError(error())
+                    .signatureAddVisible(signatureAddVisible())
+                    .signatureAddSuccessMessageVisible(signatureAddSuccessMessageVisible())
                     .build();
         }
 
         static ContainerLoadResult progress() {
-            return new AutoValue_Result_ContainerLoadResult(true, null, null);
+            return new AutoValue_Result_ContainerLoadResult(true, null, false, false, null);
         }
 
-        static ContainerLoadResult success(SignedContainer container) {
-            return new AutoValue_Result_ContainerLoadResult(false, container, null);
+        static ContainerLoadResult success(SignedContainer container, boolean signatureAddVisible,
+                                           boolean signatureAddSuccessMessageVisible) {
+            return new AutoValue_Result_ContainerLoadResult(false, container, signatureAddVisible,
+                    signatureAddSuccessMessageVisible, null);
         }
 
         static ContainerLoadResult failure(Throwable error) {
-            return new AutoValue_Result_ContainerLoadResult(false, null, error);
+            return new AutoValue_Result_ContainerLoadResult(false, null, false, false, error);
         }
     }
 

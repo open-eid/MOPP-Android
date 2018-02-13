@@ -31,8 +31,10 @@ public final class SignatureUpdateViewModel extends
     @Override
     protected Action action(Intent intent) {
         if (intent instanceof Intent.InitialIntent) {
+            Intent.InitialIntent initialIntent = (Intent.InitialIntent) intent;
             return Action.ContainerLoadAction
-                    .create(((Intent.InitialIntent) intent).containerFile());
+                    .create(initialIntent.containerFile(), initialIntent.signatureAddVisible(),
+                            initialIntent.signatureAddSuccessMessageVisible());
         } else if (intent instanceof Intent.DocumentsAddIntent) {
             return Action.DocumentsAddAction
                     .create(((Intent.DocumentsAddIntent) intent).containerFile());
@@ -52,8 +54,9 @@ public final class SignatureUpdateViewModel extends
         } else if (intent instanceof Intent.SignatureAddIntent) {
             Intent.SignatureAddIntent signatureAddIntent = (Intent.SignatureAddIntent) intent;
             return Action.SignatureAddAction.create(signatureAddIntent.show(),
-                    signatureAddIntent.containerFile(), signatureAddIntent.phoneNo(),
-                    signatureAddIntent.personalCode(), signatureAddIntent.rememberMe());
+                    signatureAddIntent.isExistingContainer(), signatureAddIntent.containerFile(),
+                    signatureAddIntent.phoneNo(), signatureAddIntent.personalCode(),
+                    signatureAddIntent.rememberMe());
         } else if (intent instanceof Intent.SendIntent) {
             return Action.SendAction.create(((Intent.SendIntent) intent).containerFile());
         } else {
