@@ -59,7 +59,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 .doOnNext(containerAdd ->
                                         navigator.execute(Transaction.replace(SignatureUpdateScreen
                                                 .create(containerAdd.isExistingContainer(),
-                                                        containerAdd.containerFile()))))
+                                                        containerAdd.containerFile(), false,
+                                                        false))))
                                 .doOnError(throwable1 -> {
                                     Timber.d(throwable1, "Add signed container failed");
                                     Toast.makeText(application, R.string.signature_create_error,

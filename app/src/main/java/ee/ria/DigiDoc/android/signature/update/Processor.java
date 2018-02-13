@@ -84,7 +84,20 @@ final class Processor implements ObservableTransformer<Action, Result> {
         containerLoad = upstream -> upstream.switchMap(action ->
                 signatureContainerDataSource.get(action.containerFile())
                         .toObservable()
-                        .map(Result.ContainerLoadResult::success)
+                        .flatMap(container -> {
+                            if (action.signatureAddSuccessMessageVisible()) {
+                                return Observable.timer(3, TimeUnit.SECONDS)
+                                        .map(ignored ->
+                                                Result.ContainerLoadResult.success(container, false,
+                                                        false))
+                                        .startWith(Result.ContainerLoadResult.success(container,
+                                                false, true));
+                            } else {
+                                return Observable.just(Result.ContainerLoadResult.success(container,
+                                        action.signatureAddVisible(),
+                                        action.signatureAddSuccessMessageVisible()));
+                            }
+                        })
                         .onErrorReturn(Result.ContainerLoadResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -187,7 +200,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             .doOnNext(containerAdd ->
                                     navigator.execute(Transaction.push(SignatureUpdateScreen
                                             .create(containerAdd.isExistingContainer(),
-                                                    containerAdd.containerFile()))))
+                                                    containerAdd.containerFile(), true, false))))
                             .map(containerAdd -> Result.SignatureAddResult.creatingContainer())
                             .onErrorReturn(Result.SignatureAddResult::failure)
                             .startWith(Result.SignatureAddResult.creatingContainer());
@@ -204,17 +217,33 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .onErrorReturn(Result.SignatureAddResult::failure)
                         .flatMap(result -> {
                             if (result.signature() != null) {
-                                return signatureContainerDataSource
-                                        .addSignature(containerFile, result.signature())
-                                        .toObservable()
-                                        .flatMap(container -> Observable.timer(3, TimeUnit.SECONDS)
-                                                .map(ignored -> Result.SignatureAddResult.clear())
-                                                .startWith(Result.SignatureAddResult
-                                                        .success(container)))
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .startWith(Result.SignatureAddResult
-                                                .status(ProcessStatus.SIGNATURE));
+                                if (action.isExistingContainer()) {
+                                    return signatureContainerDataSource
+                                            .addSignature(containerFile, result.signature())
+                                            .toObservable()
+                                            .flatMap(container -> Observable.timer(3, TimeUnit.SECONDS)
+                                                    .map(ignored -> Result.SignatureAddResult.clear())
+                                                    .startWith(Result.SignatureAddResult
+                                                            .success(container)))
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .startWith(Result.SignatureAddResult
+                                                    .status(ProcessStatus.SIGNATURE));
+                                } else {
+                                    return signatureContainerDataSource
+                                            .addSignature(containerFile, result.signature())
+                                            .toObservable()
+                                            .map(container -> Result.SignatureAddResult
+                                                    .status(ProcessStatus.SIGNATURE))
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .doOnNext(ignored ->
+                                                    navigator.execute(Transaction.replace(
+                                                            SignatureUpdateScreen.create(true,
+                                                                    containerFile, false, true))))
+                                            .startWith(Result.SignatureAddResult
+                                                    .status(ProcessStatus.SIGNATURE));
+                                }
                             } else {
                                 return Observable.just(result);
                             }

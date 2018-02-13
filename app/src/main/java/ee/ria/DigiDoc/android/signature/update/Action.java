@@ -22,8 +22,14 @@ interface Action extends MviAction {
 
         abstract File containerFile();
 
-        static ContainerLoadAction create(File containerFile) {
-            return new AutoValue_Action_ContainerLoadAction(containerFile);
+        abstract boolean signatureAddVisible();
+
+        abstract boolean signatureAddSuccessMessageVisible();
+
+        static ContainerLoadAction create(File containerFile, boolean signatureAddVisible,
+                                          boolean signatureAddSuccessMessageVisible) {
+            return new AutoValue_Action_ContainerLoadAction(containerFile, signatureAddVisible,
+                    signatureAddSuccessMessageVisible);
         }
     }
 
@@ -91,6 +97,8 @@ interface Action extends MviAction {
 
         abstract boolean show();
 
+        abstract boolean isExistingContainer();
+
         @Nullable abstract File containerFile();
 
         @Nullable abstract String phoneNo();
@@ -99,11 +107,12 @@ interface Action extends MviAction {
 
         @Nullable abstract Boolean rememberMe();
 
-        static SignatureAddAction create(boolean show, @Nullable File containerFile,
-                                         @Nullable String phoneNo, @Nullable String personalCode,
+        static SignatureAddAction create(boolean show, boolean isExistingContainer,
+                                         @Nullable File containerFile, @Nullable String phoneNo,
+                                         @Nullable String personalCode,
                                          @Nullable Boolean rememberMe) {
-            return new AutoValue_Action_SignatureAddAction(show, containerFile, phoneNo,
-                    personalCode, rememberMe);
+            return new AutoValue_Action_SignatureAddAction(show, isExistingContainer, containerFile,
+                    phoneNo, personalCode, rememberMe);
         }
     }
 

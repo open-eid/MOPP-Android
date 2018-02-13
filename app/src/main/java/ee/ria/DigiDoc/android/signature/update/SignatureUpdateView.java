@@ -44,6 +44,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private boolean isExistingContainer;
     private File containerFile;
+    private boolean signatureAddVisible;
+    private boolean signatureAddSuccessMessageVisible;
 
     private final Toolbar toolbarView;
     private final RecyclerView listView;
@@ -128,13 +130,24 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         statusMessageSource = new MobileSignStatusMessageSource(context.getResources());
     }
 
-    public SignatureUpdateView isExistingContainer(boolean isExistingContainer) {
+    SignatureUpdateView isExistingContainer(boolean isExistingContainer) {
         this.isExistingContainer = isExistingContainer;
         return this;
     }
 
-    public SignatureUpdateView containerFile(File containerFile) {
+    SignatureUpdateView containerFile(File containerFile) {
         this.containerFile = containerFile;
+        return this;
+    }
+
+    SignatureUpdateView signatureAddVisible(boolean signatureAddVisible) {
+        this.signatureAddVisible = signatureAddVisible;
+        return this;
+    }
+
+    SignatureUpdateView signatureAddSuccessMessageVisible(
+            boolean signatureAddSuccessMessageVisible) {
+        this.signatureAddSuccessMessageVisible = signatureAddSuccessMessageVisible;
         return this;
     }
 
@@ -246,7 +259,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
-        return Observable.just(Intent.InitialIntent.create(containerFile));
+        return Observable.just(Intent.InitialIntent.create(isExistingContainer, containerFile,
+                signatureAddVisible, signatureAddSuccessMessageVisible));
     }
 
     private Observable<Intent.DocumentsAddIntent> addDocumentsIntent() {
@@ -269,7 +283,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private Observable<Intent.SignatureAddIntent> signatureAddIntent() {
         return clicks(signatureAddButton)
-                .map(ignored -> Intent.SignatureAddIntent.showIntent(containerFile))
+                .map(ignored ->
+                        Intent.SignatureAddIntent.showIntent(isExistingContainer, containerFile))
                 .mergeWith(signatureAddIntentSubject);
     }
 
@@ -308,8 +323,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         disposables.add(signatureRemoveConfirmationDialog.cancels().subscribe(ignored ->
                 signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear())));
         disposables.add(signatureAddDialog.positiveButtonClicks().subscribe(data ->
-                signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.addIntent(containerFile,
-                        data.phoneNo(), data.personalCode(), data.rememberMe()))));
+                signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.addIntent(
+                        isExistingContainer, containerFile, data.phoneNo(), data.personalCode(),
+                        data.rememberMe()))));
         disposables.add(signatureAddDialog.cancels().subscribe(ignored -> {
             resetSignatureAddDialog();
             signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent());

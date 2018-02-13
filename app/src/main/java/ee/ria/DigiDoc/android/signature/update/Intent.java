@@ -15,10 +15,19 @@ interface Intent extends MviIntent {
     @AutoValue
     abstract class InitialIntent implements Intent {
 
+        abstract boolean isExistingContainer();
+
         abstract File containerFile();
 
-        static InitialIntent create(File containerFile) {
-            return new AutoValue_Intent_InitialIntent(containerFile);
+        abstract boolean signatureAddVisible();
+
+        abstract boolean signatureAddSuccessMessageVisible();
+
+        static InitialIntent create(boolean isExistingContainer, File containerFile,
+                                    boolean signatureAddVisible,
+                                    boolean signatureAddSuccessMessageVisible) {
+            return new AutoValue_Intent_InitialIntent(isExistingContainer, containerFile,
+                    signatureAddVisible, signatureAddSuccessMessageVisible);
         }
     }
 
@@ -101,6 +110,8 @@ interface Intent extends MviIntent {
 
         abstract boolean show();
 
+        abstract boolean isExistingContainer();
+
         @Nullable abstract File containerFile();
 
         @Nullable abstract String phoneNo();
@@ -109,18 +120,20 @@ interface Intent extends MviIntent {
 
         @Nullable abstract Boolean rememberMe();
 
-        static SignatureAddIntent showIntent(File containerFile) {
-            return new AutoValue_Intent_SignatureAddIntent(true, containerFile, null, null, null);
+        static SignatureAddIntent showIntent(boolean isExistingContainer, File containerFile) {
+            return new AutoValue_Intent_SignatureAddIntent(true, isExistingContainer, containerFile,
+                    null, null, null);
         }
 
-        static SignatureAddIntent addIntent(File containerFile, String phoneNo, String personalCode,
+        static SignatureAddIntent addIntent(boolean isExistingContainer, File containerFile,
+                                            String phoneNo, String personalCode,
                                             boolean rememberMe) {
-            return new AutoValue_Intent_SignatureAddIntent(false, containerFile, phoneNo,
-                    personalCode, rememberMe);
+            return new AutoValue_Intent_SignatureAddIntent(false, isExistingContainer,
+                    containerFile, phoneNo, personalCode, rememberMe);
         }
 
         static SignatureAddIntent clearIntent() {
-            return new AutoValue_Intent_SignatureAddIntent(false, null, null, null, null);
+            return new AutoValue_Intent_SignatureAddIntent(false, false, null, null, null, null);
         }
     }
 
