@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,17 +20,18 @@ import com.google.common.collect.ImmutableList;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.Constants;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
 import ee.ria.mopplib.data.SignatureStatus;
+import ee.ria.mopplib.data.SignedContainer;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 import static android.support.v4.content.res.ResourcesCompat.getColor;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static ee.ria.DigiDoc.android.Constants.VOID;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.DOCUMENT;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.SIGNATURE;
 import static ee.ria.DigiDoc.android.utils.Immutables.containsType;
@@ -46,9 +48,11 @@ final class SignatureUpdateAdapter extends
 
     private ImmutableList<Item> items = ImmutableList.of();
 
-    void setData(boolean isSuccess, boolean isWarning, @Nullable String name,
-                 ImmutableList<DataFile> documents, ImmutableList<Signature> signatures,
-                 boolean documentAddEnabled, boolean documentRemoveEnabled) {
+    void setData(boolean isSuccess, boolean isExistingContainer,
+                 @Nullable SignedContainer container) {
+        boolean isWarning = container != null && !container.signaturesValid();
+        String name = container == null ? null : container.name();
+
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (isSuccess) {
             builder.add(SuccessItem.create());
@@ -56,15 +60,20 @@ final class SignatureUpdateAdapter extends
         if (isWarning) {
             builder.add(WarningItem.create());
         }
-        if (name != null) {
-            builder.add(NameItem.create(name));
+        if (container != null) {
+            builder.add(NameItem.create(name))
+                    .add(SubheadItem.create(DOCUMENT,
+                            isExistingContainer && container.dataFileAddEnabled()))
+                    .addAll(DocumentItem.of(container.dataFiles(),
+                            container.dataFileRemoveEnabled()));
+            if (isExistingContainer) {
+                builder.add(SubheadItem.create(SIGNATURE, true))
+                        .addAll(SignatureItem.of(container.signatures()));
+            } else {
+                builder.add(DocumentsAddButtonItem.create());
+            }
         }
-        ImmutableList<Item> items = builder
-                .add(SubheadItem.create(DOCUMENT, documentAddEnabled))
-                .addAll(DocumentItem.of(documents, documentRemoveEnabled))
-                .add(SubheadItem.create(SIGNATURE, true))
-                .addAll(SignatureItem.of(signatures))
-                .build();
+        ImmutableList<Item> items = builder.build();
 
         boolean shouldScrollToTop = !this.items.isEmpty() &&
                 ((isSuccess && !containsType(this.items, SuccessItem.class)) ||
@@ -77,7 +86,7 @@ final class SignatureUpdateAdapter extends
         result.dispatchUpdatesTo(this);
 
         if (shouldScrollToTop) {
-            scrollToTopSubject.onNext(Constants.VOID);
+            scrollToTopSubject.onNext(VOID);
         }
     }
 
@@ -153,6 +162,8 @@ final class SignatureUpdateAdapter extends
                     return new DocumentViewHolder(itemView);
                 case R.layout.signature_update_list_item_signature:
                     return new SignatureViewHolder(itemView);
+                case R.layout.signature_update_list_item_documents_add_button:
+                    return new DocumentsAddButtonViewHolder(itemView);
                 default:
                     throw new IllegalArgumentException("Unknown view type " + viewType);
             }
@@ -299,6 +310,22 @@ final class SignatureUpdateAdapter extends
         }
     }
 
+    static final class DocumentsAddButtonViewHolder extends
+            UpdateViewHolder<DocumentsAddButtonItem> {
+
+        private final Button documentsAddButton;
+
+        DocumentsAddButtonViewHolder(View itemView) {
+            super(itemView);
+            documentsAddButton = itemView.findViewById(R.id.signatureUpdateListDocumentsAddButton);
+        }
+
+        @Override
+        void bind(SignatureUpdateAdapter adapter, DocumentsAddButtonItem item) {
+            clicks(documentsAddButton).subscribe(adapter.documentAddClicksSubject);
+        }
+    }
+
     @StringDef({DOCUMENT, SIGNATURE})
     @interface SubheadItemType {
         String DOCUMENT = "DOCUMENT";
@@ -404,6 +431,15 @@ final class SignatureUpdateAdapter extends
                 builder.add(create(signature));
             }
             return builder.build();
+        }
+    }
+
+    @AutoValue
+    static abstract class DocumentsAddButtonItem extends Item {
+
+        static DocumentsAddButtonItem create() {
+            return new AutoValue_SignatureUpdateAdapter_DocumentsAddButtonItem(
+                    R.layout.signature_update_list_item_documents_add_button);
         }
     }
 

@@ -48,15 +48,24 @@ public abstract class SignedContainer {
 
     public abstract ImmutableList<Signature> signatures();
 
-    public String name() {
+    public final boolean signaturesValid() {
+        for (Signature signature : signatures()) {
+            if (!signature.status().equals(SignatureStatus.VALID)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public final String name() {
         return file().getName();
     }
 
-    public boolean dataFileAddEnabled() {
+    public final boolean dataFileAddEnabled() {
         return signatures().size() == 0;
     }
 
-    public boolean dataFileRemoveEnabled() {
+    public final boolean dataFileRemoveEnabled() {
         return dataFileAddEnabled() && dataFiles().size() != 1;
     }
 
