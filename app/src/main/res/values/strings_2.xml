@@ -40,9 +40,9 @@
     <string name="signature_update_title_created">Container signing</string>
     <string name="signature_update_title_existing">Container validation</string>
     <string name="signature_update_name">Container</string>
-    <string name="signature_update_documents_title">Documents</string>
+    <string name="signature_update_documents_title">Container documents</string>
     <string name="signature_update_documents_button">Add documents</string>
-    <string name="signature_update_signatures_title">Signatures</string>
+    <string name="signature_update_signatures_title">Container signatures</string>
     <string name="signature_update_document_remove_button">Remove document</string>
     <string name="signature_update_document_remove_confirmation_message">Remove document from container?</string>
     <string name="signature_update_document_type_file">File</string>

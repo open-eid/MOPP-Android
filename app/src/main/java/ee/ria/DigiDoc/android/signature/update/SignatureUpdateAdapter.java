@@ -224,10 +224,10 @@ final class SignatureUpdateAdapter extends
             if (item.subheadItemType().equals(DOCUMENT)) {
                 buttonView.setContentDescription(buttonView.getResources().getString(
                         item.buttonRes()));
-                buttonView.setVisibility(item.buttonVisible() ? View.VISIBLE : View.GONE);
+                buttonView.setVisibility(item.buttonVisible() ? View.VISIBLE : View.INVISIBLE);
                 clicks(buttonView).subscribe(adapter.documentAddClicksSubject);
             } else {
-                buttonView.setVisibility(View.GONE);
+                buttonView.setVisibility(View.INVISIBLE);
             }
         }
     }
