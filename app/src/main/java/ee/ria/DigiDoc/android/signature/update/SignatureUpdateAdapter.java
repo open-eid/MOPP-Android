@@ -67,8 +67,12 @@ final class SignatureUpdateAdapter extends
                     .addAll(DocumentItem.of(container.dataFiles(),
                             container.dataFileRemoveEnabled()));
             if (isExistingContainer) {
-                builder.add(SubheadItem.create(SIGNATURE, true))
-                        .addAll(SignatureItem.of(container.signatures()));
+                builder.add(SubheadItem.create(SIGNATURE, true));
+                if (container.signatures().size() == 0) {
+                    builder.add(SignaturesEmptyItem.create());
+                } else {
+                    builder.addAll(SignatureItem.of(container.signatures()));
+                }
             } else {
                 builder.add(DocumentsAddButtonItem.create());
             }
@@ -162,6 +166,8 @@ final class SignatureUpdateAdapter extends
                     return new DocumentViewHolder(itemView);
                 case R.layout.signature_update_list_item_signature:
                     return new SignatureViewHolder(itemView);
+                case R.layout.signature_update_list_item_signatures_empty:
+                    return new SignaturesEmptyViewHolder(itemView);
                 case R.layout.signature_update_list_item_documents_add_button:
                     return new DocumentsAddButtonViewHolder(itemView);
                 default:
@@ -310,6 +316,17 @@ final class SignatureUpdateAdapter extends
         }
     }
 
+    static final class SignaturesEmptyViewHolder extends UpdateViewHolder<SignaturesEmptyItem> {
+
+        SignaturesEmptyViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        void bind(SignatureUpdateAdapter adapter, SignaturesEmptyItem item) {
+        }
+    }
+
     static final class DocumentsAddButtonViewHolder extends
             UpdateViewHolder<DocumentsAddButtonItem> {
 
@@ -431,6 +448,15 @@ final class SignatureUpdateAdapter extends
                 builder.add(create(signature));
             }
             return builder.build();
+        }
+    }
+
+    @AutoValue
+    static abstract class SignaturesEmptyItem extends Item {
+
+        static SignaturesEmptyItem create() {
+            return new AutoValue_SignatureUpdateAdapter_SignaturesEmptyItem(
+                    R.layout.signature_update_list_item_signatures_empty);
         }
     }
 

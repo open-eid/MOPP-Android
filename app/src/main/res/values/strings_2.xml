@@ -54,14 +54,13 @@
     <string name="signature_update_signature_remove_button">Remove signature</string>
     <string name="signature_update_signature_remove_confirmation_message">Remove signature from container?</string>
     <string name="signature_update_signature_remove_error">Could not remove signature from the container</string>
+    <string name="signature_update_signatures_empty">No signatures added to this container yet</string>
     <string name="signature_update_send_button">Share</string>
     <string name="signature_update_signature_add_button">Sign</string>
 
     <string name="signature_update_load_container_error">Could not open signature container</string>
     <string name="signature_update_add_documents_error_exists">File already exists in the container</string>
     <string name="signature_update_documents_remove_error_container_empty">Can\'t remove all documents from container</string>
-    <string name="signature_update_signature_summary_secondary_empty">No signatures added to this container yet</string>
-    <string name="signature_update_signature_summary_secondary_valid">All signatures are valid</string>
 
     <!-- Signature Add -->
     <string name="signature_add_title">Sign via Mobile-ID</string>
