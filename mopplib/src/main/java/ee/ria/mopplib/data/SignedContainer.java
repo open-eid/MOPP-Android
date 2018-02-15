@@ -24,11 +24,14 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Comparator;
 
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
 import ee.ria.libdigidocpp.Signatures;
 import timber.log.Timber;
+
+import static com.google.common.collect.ImmutableList.sortedCopyOf;
 
 @AutoValue
 public abstract class SignedContainer {
@@ -237,7 +240,7 @@ public abstract class SignedContainer {
         }
 
         return new AutoValue_SignedContainer(file, dataFileBuilder.build(),
-                signatureBuilder.build());
+                sortedCopyOf(SIGNATURE_COMPARATOR, signatureBuilder.build()));
     }
 
     /**
@@ -343,4 +346,13 @@ public abstract class SignedContainer {
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         return mimeType == null ? DEFAULT_MIME_TYPE : mimeType;
     }
+
+    private static final Comparator<Signature> SIGNATURE_COMPARATOR = (o1, o2) -> {
+        int v1 = SignatureStatus.ORDER.get(o1.status());
+        int v2 = SignatureStatus.ORDER.get(o2.status());
+        if (v1 == v2) {
+            return 0;
+        }
+        return v1 < v2 ? -1 : 1;
+    };
 }
