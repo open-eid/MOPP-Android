@@ -1,12 +1,22 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.annotation.StringRes;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.DynamicDrawableSpan;
+import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +27,8 @@ import android.widget.TextView;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
+
+import java.util.Locale;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -275,10 +287,10 @@ final class SignatureUpdateAdapter extends
 
         private final Formatter formatter;
 
+        private final ColorStateList textColor;
         private final ColorStateList colorValid;
         private final ColorStateList colorInvalid;
 
-        private final ImageView validityView;
         private final TextView nameView;
         private final TextView createdAtView;
         private final ImageButton removeButton;
@@ -287,9 +299,12 @@ final class SignatureUpdateAdapter extends
             super(itemView);
             formatter = Application.component(itemView.getContext()).formatter();
             Resources resources = itemView.getResources();
+            TypedArray a = itemView.getContext().obtainStyledAttributes(
+                    new int[]{android.R.attr.textColorPrimary});
+            textColor = a.getColorStateList(0);
+            a.recycle();
             colorValid = ColorStateList.valueOf(getColor(resources, R.color.success, null));
             colorInvalid = ColorStateList.valueOf(getColor(resources, R.color.error, null));
-            validityView = itemView.findViewById(R.id.signatureUpdateListSignatureValidity);
             nameView = itemView.findViewById(R.id.signatureUpdateListSignatureName);
             createdAtView = itemView.findViewById(R.id.signatureUpdateListSignatureCreatedAt);
             removeButton = itemView.findViewById(R.id.signatureUpdateListSignatureRemoveButton);
@@ -297,16 +312,26 @@ final class SignatureUpdateAdapter extends
 
         @Override
         void bind(SignatureUpdateAdapter adapter, SignatureItem item) {
+            Context context = itemView.getContext();
+            boolean valid = item.signature().status().equals(SignatureStatus.VALID);
+            Drawable validityIcon = valid
+                    ? context.getDrawable(R.drawable.ic_icon_check)
+                    : context.getDrawable(R.drawable.ic_icon_alert);
+            if (validityIcon == null) {
+                throw new IllegalStateException("Validity icon is null");
+            }
+            validityIcon.setTintList(valid ? colorValid : colorInvalid);
+            ImageSpan validitySpan = new ImageSpan(itemView.getContext(),
+                    drawableToBitmap(validityIcon), DynamicDrawableSpan.ALIGN_BASELINE);
+            SpannableString nameText = new SpannableString(String.format(Locale.US, "  %s",
+                    item.signature().name()));
+            nameText.setSpan(validitySpan, 0, 1, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
             clicks(itemView).map(ignored ->
                     ((SignatureItem) adapter.getItem(getAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
-            validityView.setImageResource(item.signature().status().equals(SignatureStatus.VALID)
-                    ? R.drawable.ic_check_circle
-                    : R.drawable.ic_error);
-            validityView.setImageTintList(item.signature().status().equals(SignatureStatus.VALID)
-                    ? colorValid
-                    : colorInvalid);
-            nameView.setText(item.signature().name());
+            nameView.setText(nameText, TextView.BufferType.SPANNABLE);
+            nameView.setTextColor(valid ? textColor : colorInvalid);
             createdAtView.setText(itemView.getResources().getString(
                     R.string.signature_update_signature_created_at,
                     formatter.instant(item.signature().createdAt())));
@@ -505,5 +530,22 @@ final class SignatureUpdateAdapter extends
         public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
             return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
         }
+    }
+
+    static Bitmap drawableToBitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable)drawable).getBitmap();
+        }
+        int width = drawable.getIntrinsicWidth();
+        width = width > 0 ? width : 1;
+        int height = drawable.getIntrinsicHeight();
+        height = height > 0 ? height : 1;
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
     }
 }

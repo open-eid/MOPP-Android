@@ -110,7 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/signature_update_send_button"
-            android:drawableTop="@drawable/ic_share" />
+            android:drawableTop="@drawable/ic_icon_share" />
 
         <android.support.v4.widget.Space
             android:id="@id/signatureUpdateButtonSpace"
@@ -124,7 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/signature_update_signature_add_button"
-            android:drawableTop="@drawable/ic_signature" />
+            android:drawableTop="@drawable/ic_icon_signature" />
 
     </LinearLayout>
 

@@ -47,6 +47,7 @@
     <string name="signature_update_document_remove_confirmation_message">Remove document from container?</string>
     <string name="signature_update_document_type_file">File</string>
     <string name="signature_update_documents_add_button">+ Add more documents</string>
+    <string name="signature_update_signature_type_signature">Signature</string>
     <string name="signature_update_signature_created_at">Signed %s</string>
     <string name="signature_update_signature_valid">Signature is valid</string>
     <string name="signature_update_signature_invalid">Signature is not valid</string>

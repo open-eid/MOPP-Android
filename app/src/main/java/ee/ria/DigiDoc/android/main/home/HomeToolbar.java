@@ -108,7 +108,7 @@ public final class HomeToolbar extends Toolbar {
             .add(MenuItem.create(R.id.mainHomeToolbarDocuments,
                     R.string.main_home_toolbar_documents, R.drawable.ic_folder_open))
             .add(MenuItem.create(R.id.mainHomeToolbarFirstRun,
-                    R.string.main_home_toolbar_first_run, R.drawable.ic_first_run))
+                    R.string.main_home_toolbar_first_run, R.drawable.ic_icon_first_run))
             .add(MenuItem.create(R.id.mainHomeToolbarSettings,
                     R.string.main_home_toolbar_settings, R.drawable.ic_settings))
             .add(MenuItem.create(R.id.mainHomeToolbarHelp,
