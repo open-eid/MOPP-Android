@@ -34,6 +34,12 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
+    <style name="Widget.Application.Subheader.Container">
+        <item name="android:textSize">@dimen/material_typography_regular_title_text_size</item>
+        <item name="android:textColor">@color/title</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="Widget.Application.ProgressBar" parent="Widget.AppCompat.ProgressBar">
     </style>
 

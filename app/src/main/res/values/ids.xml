@@ -48,10 +48,11 @@
     <item type="id" name="signatureUpdateListDocumentName" />
     <item type="id" name="signatureUpdateListDocumentSize" />
     <item type="id" name="signatureUpdateListDocumentRemoveButton" />
-    <item type="id" name="signatureUpdateListSignatureValidity" />
+    <item type="id" name="signatureUpdateListSignatureType" />
     <item type="id" name="signatureUpdateListSignatureName" />
     <item type="id" name="signatureUpdateListSignatureCreatedAt" />
     <item type="id" name="signatureUpdateListSignatureRemoveButton" />
+    <item type="id" name="signatureUpdateListDocumentsAddButton" />
     <item type="id" name="signatureUpdateMobileIdContainer" />
     <item type="id" name="signatureUpdateMobileIdStatus" />
     <item type="id" name="signatureUpdateMobileIdChallenge" />

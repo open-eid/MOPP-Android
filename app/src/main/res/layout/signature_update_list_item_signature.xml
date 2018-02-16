@@ -11,13 +11,14 @@
     android:background="?attr/selectableItemBackground">
 
     <ImageView
-        android:id="@id/signatureUpdateListSignatureValidity"
+        android:id="@id/signatureUpdateListSignatureType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/material_list_icon_first_position_margin_start"
         android:layout_marginEnd="@dimen/material_list_icon_first_position_margin_start"
-        android:src="@drawable/ic_check_circle"
-        android:contentDescription="@string/signature_update_signature_valid" />
+        android:src="@drawable/ic_icon_signature"
+        android:tint="?android:attr/textColorPrimary"
+        android:contentDescription="@string/signature_update_signature_type_signature" />
 
     <LinearLayout
         android:layout_width="0dp"

@@ -13,8 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.collect.ImmutableList;
-
 import java.io.File;
 
 import ee.ria.DigiDoc.R;
@@ -30,8 +28,6 @@ import ee.ria.DigiDoc.mid.MobileSignStatusMessageSource;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
-import ee.ria.mopplib.data.SignatureStatus;
-import ee.ria.mopplib.data.SignedContainer;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -182,26 +178,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         setActivity(state.containerLoadInProgress() || state.documentsAddInProgress()
                 || state.documentOpenInProgress() || state.documentRemoveInProgress()
                 || state.signatureRemoveInProgress() || state.signatureAddInProgress());
-
-        SignedContainer container = state.container();
-        String name = container == null ? null : container.name();
-        ImmutableList<DataFile> documents = container == null
-                ? ImmutableList.of()
-                : container.dataFiles();
-        ImmutableList<Signature> signatures = container == null
-                ? ImmutableList.of()
-                : container.signatures();
-        boolean documentAddEnabled = container != null && container.dataFileAddEnabled();
-        boolean documentRemoveEnabled = container != null && container.dataFileRemoveEnabled();
-        boolean allSignaturesValid = true;
-        for (Signature signature : signatures) {
-            if (!signature.status().equals(SignatureStatus.VALID)) {
-                allSignaturesValid = false;
-                break;
-            }
-        }
-        adapter.setData(state.signatureAddSuccessMessageVisible(), !allSignaturesValid, name,
-                documents, signatures, documentAddEnabled, documentRemoveEnabled);
+        adapter.setData(state.signatureAddSuccessMessageVisible(), isExistingContainer,
+                state.container());
 
         errorDialog.show(state.documentsAddError(), state.documentRemoveError(),
                 state.signatureAddError(), state.signatureRemoveError());
