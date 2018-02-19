@@ -12,7 +12,6 @@ import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.RDN;
 import org.spongycastle.asn1.x500.X500Name;
 import org.spongycastle.asn1.x500.style.BCStyle;
-import org.spongycastle.asn1.x500.style.IETFUtils;
 import org.spongycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.threeten.bp.Instant;
 
@@ -329,7 +328,7 @@ public abstract class SignedContainer {
             return null;
         }
 
-        return IETFUtils.valueToString(rdNs[0].getFirst().getValue());
+        return rdNs[0].getFirst().getValue().toString();
     }
 
     /**

@@ -20,7 +20,7 @@ dependencies {
     implementation "com.jakewharton.timber:timber:${timberVersion}"
 
     implementation "com.madgag.spongycastle:core:${spongycastleVersion}"
-    implementation "com.madgag.spongycastle:pkix:${spongycastleVersion}"
+    implementation "com.madgag.spongycastle:bcpkix-jdk15on:${spongycastleVersion}"
 
     implementation project(':scardcomlibrary')
     implementation project(':tokenlibrary')
