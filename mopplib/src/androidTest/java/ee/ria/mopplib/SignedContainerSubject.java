@@ -1,8 +1,7 @@
-package ee.ria.mopplib.data;
-
-import android.support.annotation.RawRes;
+package ee.ria.mopplib;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.CharStreams;
 import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.Subject;
 import com.google.common.truth.Truth;
@@ -15,23 +14,26 @@ import org.threeten.bp.Instant;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import javax.annotation.Nullable;
 
-import ee.ria.mopplib.Files;
+import ee.ria.mopplib.data.DataFile;
+import ee.ria.mopplib.data.Signature;
+import ee.ria.mopplib.data.SignedContainer;
 
 import static com.google.common.truth.Truth.assertAbout;
-import static ee.ria.mopplib.Files.readString;
 
 public final class SignedContainerSubject extends Subject<SignedContainerSubject, SignedContainer> {
 
-    public static SignedContainerSubject assertThat(File file, @RawRes int containerRes)
+    public static SignedContainerSubject assertThat(File file)
             throws IOException {
         return assertAbout(signedContainers())
-                .that(SignedContainer.open(Files.copyRaw(file, containerRes)));
+                .that(SignedContainer.open(file));
     }
 
-    public static Subject.Factory<SignedContainerSubject, SignedContainer> signedContainers() {
+    private static Subject.Factory<SignedContainerSubject, SignedContainer> signedContainers() {
         return SignedContainerSubject::new;
     }
 
@@ -39,27 +41,54 @@ public final class SignedContainerSubject extends Subject<SignedContainerSubject
         super(metadata, actual);
     }
 
-    public void matchesMetadata(@RawRes int metadataRes) throws IOException, JSONException {
-        JSONObject metadata = containerMetadata(metadataRes);
+    public void matchesMetadata(InputStream inputStream) throws IOException, JSONException {
+        JSONObject metadata = containerMetadata(inputStream);
+        hasName(metadata.getString("name"));
         hasDataFiles(dataFiles(metadata.getJSONArray("dataFiles")));
+        isDataFileAddEnabled(metadata.getBoolean("dataFileAddEnabled"));
+        isDataFileRemoveEnabled(metadata.getBoolean("dataFileRemoveEnabled"));
         hasSignatures(signatures(metadata.getJSONArray("signatures")));
+        areSignaturesValid(metadata.getBoolean("signaturesValid"));
     }
 
-    public void hasDataFiles(ImmutableList<DataFile> dataFiles) {
+    private void hasName(String name) {
+        Truth.assertThat(actual().name())
+                .isEqualTo(name);
+    }
+
+    private void hasDataFiles(ImmutableList<DataFile> dataFiles) {
         Truth.assertThat(actual().dataFiles())
                 .containsExactlyElementsIn(dataFiles)
                 .inOrder();
     }
 
-    public void hasSignatures(ImmutableList<Signature> signatures) {
+    private void isDataFileAddEnabled(boolean dataFileAddEnabled) {
+        Truth.assertThat(actual().dataFileAddEnabled())
+                .isEqualTo(dataFileAddEnabled);
+    }
+
+    private void isDataFileRemoveEnabled(boolean dataFileRemoveEnabled) {
+        Truth.assertThat(actual().dataFileRemoveEnabled())
+                .isEqualTo(dataFileRemoveEnabled);
+    }
+
+    private void hasSignatures(ImmutableList<Signature> signatures) {
         Truth.assertThat(actual().signatures())
                 .containsExactlyElementsIn(signatures)
                 .inOrder();
     }
 
-    private static JSONObject containerMetadata(@RawRes int metadataRes) throws IOException,
+    private void areSignaturesValid(boolean signaturesValid) {
+        Truth.assertThat(actual().signaturesValid())
+                .isEqualTo(signaturesValid);
+    }
+
+    private static JSONObject containerMetadata(InputStream inputStream) throws IOException,
             JSONException {
-        return (JSONObject) new JSONTokener(readString(metadataRes)).nextValue();
+        InputStreamReader reader = new InputStreamReader(inputStream);
+        String string = CharStreams.toString(reader);
+        reader.close();
+        return (JSONObject) new JSONTokener(string).nextValue();
     }
 
     private static ImmutableList<DataFile> dataFiles(JSONArray metadata) throws JSONException {

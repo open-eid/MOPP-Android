@@ -1,0 +1,21 @@
+{
+  "name": "example1.bdoc",
+  "dataFiles": [
+    {
+      "id": "example1.txt",
+      "name": "example1.txt",
+      "size": 9
+    }
+  ],
+  "dataFileAddEnabled": false,
+  "dataFileRemoveEnabled": false,
+  "signatures": [
+    {
+      "id": "S0",
+      "name": "VÄLI\\,MIKO\\,38802132727",
+      "createdAt": "2018-02-19T13:37:59Z",
+      "status": "VALID"
+    }
+  ],
+  "signaturesValid": true
+}

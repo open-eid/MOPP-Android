@@ -47,7 +47,19 @@ public abstract class SignedContainer {
 
     abstract File file();
 
+    public final String name() {
+        return file().getName();
+    }
+
     public abstract ImmutableList<DataFile> dataFiles();
+
+    public final boolean dataFileAddEnabled() {
+        return signatures().size() == 0;
+    }
+
+    public final boolean dataFileRemoveEnabled() {
+        return dataFileAddEnabled() && dataFiles().size() != 1;
+    }
 
     public abstract ImmutableList<Signature> signatures();
 
@@ -58,18 +70,6 @@ public abstract class SignedContainer {
             }
         }
         return true;
-    }
-
-    public final String name() {
-        return file().getName();
-    }
-
-    public final boolean dataFileAddEnabled() {
-        return signatures().size() == 0;
-    }
-
-    public final boolean dataFileRemoveEnabled() {
-        return dataFileAddEnabled() && dataFiles().size() != 1;
     }
 
     public final SignedContainer addDataFiles(ImmutableList<File> dataFiles) throws IOException {

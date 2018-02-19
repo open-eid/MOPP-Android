@@ -30,14 +30,12 @@ public abstract class Signature {
     /**
      * Creates a new signature object.
      *
-     * Should only be accessed from {@link SignedContainer}.
-     *
      * @param id Signature ID.
      * @param name Signature display name.
      * @param createdAt Signature created date and time.
      * @param status Signature status.
      */
-    static Signature create(String id, String name, Instant createdAt,
+    public static Signature create(String id, String name, Instant createdAt,
                             @SignatureStatus String status) {
         return new AutoValue_Signature(id, name, createdAt, status);
     }
