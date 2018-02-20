@@ -12,7 +12,6 @@ import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.RDN;
 import org.spongycastle.asn1.x500.X500Name;
 import org.spongycastle.asn1.x500.style.BCStyle;
-import org.spongycastle.asn1.x500.style.IETFUtils;
 import org.spongycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.threeten.bp.Instant;
 
@@ -47,7 +46,19 @@ public abstract class SignedContainer {
 
     abstract File file();
 
+    public final String name() {
+        return file().getName();
+    }
+
     public abstract ImmutableList<DataFile> dataFiles();
+
+    public final boolean dataFileAddEnabled() {
+        return signatures().size() == 0;
+    }
+
+    public final boolean dataFileRemoveEnabled() {
+        return dataFileAddEnabled() && dataFiles().size() != 1;
+    }
 
     public abstract ImmutableList<Signature> signatures();
 
@@ -58,18 +69,6 @@ public abstract class SignedContainer {
             }
         }
         return true;
-    }
-
-    public final String name() {
-        return file().getName();
-    }
-
-    public final boolean dataFileAddEnabled() {
-        return signatures().size() == 0;
-    }
-
-    public final boolean dataFileRemoveEnabled() {
-        return dataFileAddEnabled() && dataFiles().size() != 1;
     }
 
     public final SignedContainer addDataFiles(ImmutableList<File> dataFiles) throws IOException {
@@ -329,7 +328,7 @@ public abstract class SignedContainer {
             return null;
         }
 
-        return IETFUtils.valueToString(rdNs[0].getFirst().getValue());
+        return rdNs[0].getFirst().getValue().toString();
     }
 
     /**

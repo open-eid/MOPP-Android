@@ -65,7 +65,7 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
 
     implementation "com.madgag.spongycastle:core:${spongycastleVersion}"
-    implementation "com.madgag.spongycastle:pkix:${spongycastleVersion}"
+    implementation "com.madgag.spongycastle:bcpkix-jdk15on:${spongycastleVersion}"
 
     implementation "blue.aodev:material-values:${materialValuesVersion}"
 
