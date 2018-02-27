@@ -12,6 +12,11 @@ android {
         versionName appVersionName
 
         multiDexEnabled true
+
+        ndk {
+            abiFilters = []
+            abiFilters.addAll(appAbiFilters.split(';').collect{it as String})
+        }
     }
 
     signingConfigs {
