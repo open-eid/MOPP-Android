@@ -84,7 +84,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
         containerLoad = upstream -> upstream.switchMap(action ->
                 signatureContainerDataSource.get(action.containerFile())
                         .toObservable()
-                        .flatMap(container -> {
+                        .switchMap(container -> {
                             if (action.signatureAddSuccessMessageVisible()) {
                                 return Observable.timer(3, TimeUnit.SECONDS)
                                         .map(ignored ->
@@ -183,7 +183,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
         });
 
-        signatureAdd = upstream -> upstream.flatMap(action -> {
+        signatureAdd = upstream -> upstream.switchMap(action -> {
             File containerFile = action.containerFile();
             if (containerFile == null) {
                 return Observable.just(Result.SignatureAddResult.clear());
@@ -215,16 +215,19 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 action.phoneNo(), action.personalCode(),
                                 settingsDataStore.getSignatureProfile()))
                         .onErrorReturn(Result.SignatureAddResult::failure)
-                        .flatMap(result -> {
+                        .switchMap(result -> {
                             if (result.signature() != null) {
                                 if (action.isExistingContainer()) {
                                     return signatureContainerDataSource
                                             .addSignature(containerFile, result.signature())
                                             .toObservable()
-                                            .flatMap(container -> Observable.timer(3, TimeUnit.SECONDS)
-                                                    .map(ignored -> Result.SignatureAddResult.clear())
-                                                    .startWith(Result.SignatureAddResult
-                                                            .success(container)))
+                                            .switchMap(container ->
+                                                    Observable.timer(3, TimeUnit.SECONDS)
+                                                            .map(ignored ->
+                                                                    Result.SignatureAddResult
+                                                                            .clear())
+                                                            .startWith(Result.SignatureAddResult
+                                                                    .success(container)))
                                             .subscribeOn(Schedulers.io())
                                             .observeOn(AndroidSchedulers.mainThread())
                                             .startWith(Result.SignatureAddResult
@@ -329,6 +332,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 case SIGNATURE:
                                     e.onNext(Result.SignatureAddResult.signature(
                                             status.getSignature()));
+                                    e.onComplete();
                                     break;
                                 default:
                                     e.onError(new MobileIdMessageException(status.getStatus()));
@@ -340,7 +344,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
             };
 
             broadcastManager.registerReceiver(receiver, new IntentFilter(MID_BROADCAST_ACTION));
-            e.setCancellable(() -> broadcastManager.unregisterReceiver(receiver));
+            e.setCancellable(() -> {
+                broadcastManager.unregisterReceiver(receiver);
+            });
 
             String message = application.getString(R.string.action_sign) + " " +
                     containerFacade.getName();
