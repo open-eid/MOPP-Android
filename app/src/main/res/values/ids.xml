@@ -18,19 +18,30 @@
 
     <item type="id" name="mainHomeToolbarLogo" />
     <item type="id" name="mainHomeToolbarOverflow" />
-    <item type="id" name="mainHomeToolbarDocuments" />
-    <item type="id" name="mainHomeToolbarFirstRun" />
-    <item type="id" name="mainHomeToolbarSettings" />
-    <item type="id" name="mainHomeToolbarHelp" />
-    <item type="id" name="mainHomeToolbarAbout" />
+
+    <item type="id" name="mainHomeMenu" />
+    <item type="id" name="mainHomeMenuCloseButton" />
+    <item type="id" name="mainHomeMenuHelp" />
+    <item type="id" name="mainHomeMenuRecent" />
+    <item type="id" name="mainHomeMenuSettings" />
+    <item type="id" name="mainHomeMenuAbout" />
+
+    <!-- Main Help -->
+    <item type="id" name="mainHelpScreen" />
 
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsFragment" />
 
+    <!-- Main About -->
+    <item type="id" name="mainAboutScreen" />
+
     <!-- Signature Home -->
     <item type="id" name="signatureHomeScreen" />
     <item type="id" name="signatureHomeCreateButton" />
+
+    <!-- Signature List -->
+    <item type="id" name="signatureListScreen" />
 
     <!-- Signature Create -->
     <item type="id" name="signatureCreateScreen" />

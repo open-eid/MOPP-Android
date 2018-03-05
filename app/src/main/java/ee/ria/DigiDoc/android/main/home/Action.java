@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.main.home;
 
 import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
@@ -15,6 +16,18 @@ interface Action extends MviAction {
 
         static NavigationAction create(@IdRes int item) {
             return new AutoValue_Action_NavigationAction(item);
+        }
+    }
+
+    @AutoValue
+    abstract class MenuAction implements Action {
+
+        @Nullable abstract Boolean isOpen();
+
+        @Nullable @IdRes abstract Integer menuItem();
+
+        static MenuAction create(@Nullable Boolean isOpen, @Nullable @IdRes Integer menuItem) {
+            return new AutoValue_Action_MenuAction(isOpen, menuItem);
         }
     }
 }

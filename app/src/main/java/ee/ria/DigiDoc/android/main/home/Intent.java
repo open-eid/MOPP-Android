@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.main.home;
 
 import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
@@ -23,6 +24,27 @@ interface Intent extends MviIntent {
 
         static NavigationIntent create(@IdRes int item) {
             return new AutoValue_Intent_NavigationIntent(item);
+        }
+    }
+
+    @AutoValue
+    abstract class MenuIntent implements Intent {
+
+        @Nullable abstract Boolean isOpen();
+
+        @Nullable @IdRes abstract Integer menuItem();
+
+        static MenuIntent state(boolean isOpen) {
+            return create(isOpen, null);
+        }
+
+        static MenuIntent navigate(@IdRes int menuItem) {
+            return create(null, menuItem);
+        }
+
+        private static MenuIntent create(@Nullable Boolean isOpen,
+                                         @Nullable @IdRes Integer menuItem) {
+            return new AutoValue_Intent_MenuIntent(isOpen, menuItem);
         }
     }
 }

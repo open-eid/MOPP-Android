@@ -68,4 +68,25 @@
     <style name="TextAppearance.Application.Error" parent="TextAppearance.Design.Error">
     </style>
 
+    <style name="ThemeOverlay.Application.Dialog.Alert" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:backgroundDimAmount">0</item>
+        <item name="android:windowBackground">@color/menuBackground</item>
+        <item name="android:statusBarColor">@color/menuBackground</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="Widget.Application.MenuItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:paddingStart">?attr/dialogPreferredPadding</item>
+        <item name="android:paddingEnd">?attr/dialogPreferredPadding</item>
+        <item name="android:drawablePadding">@dimen/material_baseline_grid_1x</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:minHeight">@dimen/material_button_touch_target_height_minimum</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/material_color_white</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
 </resources>

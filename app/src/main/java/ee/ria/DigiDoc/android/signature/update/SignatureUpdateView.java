@@ -35,6 +35,7 @@ import io.reactivex.subjects.Subject;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
+import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
 
@@ -218,9 +219,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             mobileIdChallengeView.setText(R.string.signature_add_mobile_id_challenge_placeholder);
         }
 
-        sendButton.getCompoundDrawables()[1].setTintList(sendButton.getTextColors());
-        signatureAddButton.getCompoundDrawables()[1].setTintList(
-                signatureAddButton.getTextColors());
+        tintCompoundDrawables(sendButton);
+        tintCompoundDrawables(signatureAddButton);
     }
 
     private void setActivity(boolean activity) {

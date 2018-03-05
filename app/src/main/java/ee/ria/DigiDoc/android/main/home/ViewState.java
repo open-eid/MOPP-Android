@@ -11,11 +11,21 @@ abstract class ViewState implements MviViewState {
 
     abstract Screen screen();
 
-    static ViewState create(Screen screen) {
-        return new AutoValue_ViewState(screen);
-    }
+    abstract boolean menuOpen();
+
+    abstract Builder buildWith();
 
     static ViewState initial() {
-        return create(SignatureHomeScreen.create());
+        return new AutoValue_ViewState.Builder()
+                .screen(SignatureHomeScreen.create())
+                .menuOpen(false)
+                .build();
+    }
+
+    @AutoValue.Builder
+    interface Builder {
+        Builder screen(Screen screen);
+        Builder menuOpen(boolean menuOpen);
+        ViewState build();
     }
 }
