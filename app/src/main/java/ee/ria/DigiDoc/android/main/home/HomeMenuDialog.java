@@ -11,8 +11,7 @@ public final class HomeMenuDialog extends AlertDialog {
     private final HomeMenuView menuView;
 
     public HomeMenuDialog(@NonNull Context context) {
-        super(context, R.style.ThemeOverlay_Application_Dialog_Alert);
-
+        super(context, R.style.ThemeOverlay_Application_Menu);
         menuView = new HomeMenuView(getContext());
         menuView.setId(R.id.mainHomeMenu);
         setView(menuView);

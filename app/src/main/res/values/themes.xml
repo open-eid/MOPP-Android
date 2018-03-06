@@ -40,4 +40,17 @@
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
+    <style name="Base.ThemeOverlay.Application.Menu" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+    </style>
+
+    <style name="ThemeOverlay.Application.Menu" parent="Base.ThemeOverlay.Application.Menu">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:backgroundDimAmount">0</item>
+        <item name="android:windowBackground">@color/menuBackground</item>
+        <item name="android:statusBarColor">@color/menuBackground</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
 </resources>
