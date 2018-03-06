@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.auto.value.AutoValue;
@@ -252,19 +251,12 @@ final class SignatureUpdateAdapter extends
 
     static final class DocumentViewHolder extends UpdateViewHolder<DocumentItem> {
 
-        private final Formatter formatter;
-
-        private final ImageView iconView;
         private final TextView nameView;
-        private final TextView sizeView;
         private final ImageButton removeButton;
 
         DocumentViewHolder(View itemView) {
             super(itemView);
-            formatter = Application.component(itemView.getContext()).formatter();
-            iconView = itemView.findViewById(R.id.signatureUpdateListDocumentIcon);
             nameView = itemView.findViewById(R.id.signatureUpdateListDocumentName);
-            sizeView = itemView.findViewById(R.id.signatureUpdateListDocumentSize);
             removeButton = itemView.findViewById(R.id.signatureUpdateListDocumentRemoveButton);
         }
 
@@ -273,9 +265,7 @@ final class SignatureUpdateAdapter extends
             clicks(itemView).map(ignored ->
                     ((DocumentItem) adapter.getItem(getAdapterPosition())).document())
                     .subscribe(adapter.documentClicksSubject);
-            iconView.setImageResource(formatter.documentTypeImageRes(item.document()));
             nameView.setText(item.document().name());
-            sizeView.setText(formatter.fileSize(item.document().size()));
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton).map(ignored ->
                     ((DocumentItem) adapter.getItem(getAdapterPosition())).document())

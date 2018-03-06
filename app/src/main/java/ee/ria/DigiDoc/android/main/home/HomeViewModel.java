@@ -22,6 +22,9 @@ public final class HomeViewModel extends BaseMviViewModel<Intent, ViewState, Act
             return Action.NavigationAction.create(R.id.mainHomeNavigationSignature);
         } else if (intent instanceof Intent.NavigationIntent) {
             return Action.NavigationAction.create(((Intent.NavigationIntent) intent).item());
+        } else if (intent instanceof Intent.MenuIntent) {
+            Intent.MenuIntent menuIntent = (Intent.MenuIntent) intent;
+            return Action.MenuAction.create(menuIntent.isOpen(), menuIntent.menuItem());
         }
         throw new IllegalArgumentException("Unknown intent " + intent);
     }

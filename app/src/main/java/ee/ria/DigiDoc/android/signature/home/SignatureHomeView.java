@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.main.home.HomeToolbar;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -15,8 +16,10 @@ import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
-public final class SignatureHomeView extends CoordinatorLayout {
+public final class SignatureHomeView extends CoordinatorLayout implements
+        HomeToolbar.HomeToolbarAware {
 
+    private final HomeToolbar toolbarView;
     private final Button createButton;
 
     private final Navigator navigator;
@@ -34,9 +37,15 @@ public final class SignatureHomeView extends CoordinatorLayout {
     public SignatureHomeView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.signature_home, this);
+        toolbarView = findViewById(R.id.toolbar);
         createButton = findViewById(R.id.signatureHomeCreateButton);
         navigator = Application.component(context).navigator();
         disposables = new ViewDisposables();
+    }
+
+    @Override
+    public HomeToolbar homeToolbar() {
+        return toolbarView;
     }
 
     @Override
