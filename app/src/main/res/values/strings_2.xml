@@ -33,6 +33,11 @@
     <string name="signature_home_create_text">Choose a file to sign or check</string>
     <string name="signature_home_create_button">Choose file</string>
 
+    <!-- Signature List -->
+    <string name="signature_list_title">Recent documents</string>
+    <string name="signature_list_remove_button">Remove document</string>
+    <string name="signature_list_remove_confirmation_message">Remove document?</string>
+
     <!-- Signature Create -->
     <string name="signature_create_error">Could not load selected files</string>
 

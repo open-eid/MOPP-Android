@@ -44,6 +44,7 @@ import ee.ria.DigiDoc.android.main.home.HomeViewModel;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.data.source.FileSystemSignatureContainerDataSource;
+import ee.ria.DigiDoc.android.signature.list.SignatureListViewModel;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -145,6 +146,10 @@ public class Application extends android.app.Application {
         @SuppressWarnings("unused")
         @Binds @IntoMap @ClassKey(HomeViewModel.class)
         abstract ViewModel mainHomeViewModel(HomeViewModel homeViewModel);
+
+        @SuppressWarnings("unused")
+        @Binds @IntoMap @ClassKey(SignatureListViewModel.class)
+        abstract ViewModel signatureListViewModel(SignatureListViewModel viewModel);
 
         @SuppressWarnings("unused")
         @Binds @IntoMap @ClassKey(SignatureCreateViewModel.class)

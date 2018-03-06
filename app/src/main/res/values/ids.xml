@@ -42,6 +42,9 @@
 
     <!-- Signature List -->
     <item type="id" name="signatureListScreen" />
+    <item type="id" name="signatureList" />
+    <item type="id" name="signatureListItemName" />
+    <item type="id" name="signatureListItemRemoveButton" />
 
     <!-- Signature Create -->
     <item type="id" name="signatureCreateScreen" />
