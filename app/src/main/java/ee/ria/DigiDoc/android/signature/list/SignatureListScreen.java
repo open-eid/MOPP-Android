@@ -22,6 +22,8 @@ import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import io.reactivex.Observable;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 
 public final class SignatureListScreen extends Controller implements Screen,
@@ -37,6 +39,8 @@ public final class SignatureListScreen extends Controller implements Screen,
     private ConfirmationDialog removeConfirmationDialog;
     private Toolbar toolbarView;
     private SignatureListAdapter adapter;
+    private View activityIndicatorView;
+    private View activityOverlayView;
 
     @Nullable private File removeConfirmationContainerFile;
 
@@ -80,12 +84,19 @@ public final class SignatureListScreen extends Controller implements Screen,
     public void render(ViewState state) {
         removeConfirmationContainerFile = state.removeConfirmationContainerFile();
 
+        setActivity(state.containerLoadProgress() || state.containerRemoveProgress());
+
         adapter.setData(state.containerFiles());
         if (removeConfirmationContainerFile != null) {
             removeConfirmationDialog.show();
         } else {
             removeConfirmationDialog.dismiss();
         }
+    }
+
+    private void setActivity(boolean activity) {
+        activityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
+        activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
     }
 
     @Override
@@ -111,6 +122,8 @@ public final class SignatureListScreen extends Controller implements Screen,
         RecyclerView recyclerView = view.findViewById(R.id.signatureList);
         recyclerView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         recyclerView.setAdapter(adapter = new SignatureListAdapter());
+        activityIndicatorView = view.findViewById(R.id.activityIndicator);
+        activityOverlayView = view.findViewById(R.id.activityOverlay);
         return view;
     }
 

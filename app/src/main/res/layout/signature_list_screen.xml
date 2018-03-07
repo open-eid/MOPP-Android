@@ -29,4 +29,22 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:scrollbars="vertical" />
 
+    <FrameLayout
+        android:id="@id/activityOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/activityOverlayBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:translationZ="@dimen/material_elevation_dialog" />
+
+    <ProgressBar
+        android:id="@id/activityIndicator"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/appBar"
+        app:layout_anchorGravity="bottom"
+        android:indeterminate="true" />
+
 </android.support.design.widget.CoordinatorLayout>
