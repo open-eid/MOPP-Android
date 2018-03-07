@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 
 import com.google.common.collect.ImmutableList;
@@ -67,14 +68,15 @@ public final class IntentUtils {
      * @param context Context to use for {@link FileProvider#getUriForFile(Context, String, File)}
      *                and to get authority string.
      * @param file File to send.
+     * @param type Optional type for the content.
      * @return {@link Intent#ACTION_VIEW View intent} with content Uri of the file.
      */
-    public static Intent createViewIntent(Context context, File file) {
+    public static Intent createViewIntent(Context context, File file, @Nullable String type) {
         Uri uri = FileProvider.getUriForFile(context,
                 context.getString(R.string.file_provider_authority), file);
         return Intent
                 .createChooser(new Intent(Intent.ACTION_VIEW)
-                        .setData(uri)
+                        .setDataAndType(uri, type)
                         .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION), null);
     }
 
