@@ -6,6 +6,7 @@
     <item type="id" name="toolbar" />
     <item type="id" name="activityIndicator" />
     <item type="id" name="activityOverlay" />
+    <item type="id" name="listEmpty" />
 
     <!-- Main Home -->
     <item type="id" name="mainHomeScreen" />

@@ -38,7 +38,9 @@ public final class SignatureListScreen extends Controller implements Screen,
 
     private ConfirmationDialog removeConfirmationDialog;
     private Toolbar toolbarView;
+    private RecyclerView listView;
     private SignatureListAdapter adapter;
+    private View emptyView;
     private View activityIndicatorView;
     private View activityOverlayView;
 
@@ -92,11 +94,18 @@ public final class SignatureListScreen extends Controller implements Screen,
         } else {
             removeConfirmationDialog.dismiss();
         }
+
+        setEmpty(!state.containerLoadProgress() && state.containerFiles().size() == 0);
     }
 
     private void setActivity(boolean activity) {
         activityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
         activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
+    }
+
+    private void setEmpty(boolean empty) {
+        listView.setVisibility(empty ? GONE : VISIBLE);
+        emptyView.setVisibility(empty ? VISIBLE : GONE);
     }
 
     @Override
@@ -119,9 +128,10 @@ public final class SignatureListScreen extends Controller implements Screen,
                 R.string.signature_list_remove_confirmation_message);
         View view = inflater.inflate(R.layout.signature_list_screen, container, false);
         toolbarView = view.findViewById(R.id.toolbar);
-        RecyclerView recyclerView = view.findViewById(R.id.signatureList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(container.getContext()));
-        recyclerView.setAdapter(adapter = new SignatureListAdapter());
+        listView = view.findViewById(R.id.signatureList);
+        listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
+        listView.setAdapter(adapter = new SignatureListAdapter());
+        emptyView = view.findViewById(R.id.listEmpty);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         return view;
