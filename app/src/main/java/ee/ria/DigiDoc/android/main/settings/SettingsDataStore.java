@@ -6,7 +6,6 @@ import android.content.res.Resources;
 import android.support.v7.preference.PreferenceManager;
 
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableSet;
 
 import javax.inject.Inject;
 
@@ -38,11 +37,6 @@ public final class SettingsDataStore {
 
     public String getFileType() {
         return fileTypeMap.get(getSignatureProfile());
-    }
-
-    public ImmutableSet<String> getFileTypes() {
-        return ImmutableSet.copyOf(resources.getStringArray(
-                R.array.main_settings_file_type_entry_values));
     }
 
     public String getPhoneNo() {

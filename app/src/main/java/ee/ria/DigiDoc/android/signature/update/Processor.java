@@ -33,6 +33,7 @@ import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
 import ee.ria.mopp.androidmobileid.dto.response.ServiceFault;
 import ee.ria.mopp.androidmobileid.service.MobileSignService;
 import ee.ria.mopplib.MoppLib;
+import ee.ria.mopplib.data.SignedContainer;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -43,7 +44,6 @@ import io.reactivex.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
 import static com.google.common.base.MoreObjects.firstNonNull;
-import static com.google.common.io.Files.getFileExtension;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.toJson;
@@ -188,8 +188,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
             if (containerFile == null) {
                 return Observable.just(Result.SignatureAddResult.clear());
             } else if (action.show()) {
-                if (settingsDataStore.getFileTypes()
-                        .contains(getFileExtension(containerFile.getName()))) {
+                if (!SignedContainer.isLegacyContainer(containerFile)) {
                     return Observable.just(Result.SignatureAddResult.show());
                 } else {
                     return signatureContainerDataSource

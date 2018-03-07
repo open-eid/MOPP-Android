@@ -38,6 +38,9 @@ public abstract class SignedContainer {
     private static final ImmutableSet<String> EXTENSIONS = ImmutableSet.<String>builder()
             .add("asice", "asics", "sce", "scs", "adoc", "bdoc", "ddoc", "edoc")
             .build();
+    private static final ImmutableSet<String> NON_LEGACY_EXTENSIONS = ImmutableSet.<String>builder()
+            .add("asice", "sce", "bdoc")
+            .build();
 
     private static final String PDF_EXTENSION = "pdf";
 
@@ -269,6 +272,18 @@ public abstract class SignedContainer {
             }
         }
         return false;
+    }
+
+    /**
+     * Check whether this is a legacy container which needs to be wrapped in a valid container
+     * type before adding signature.
+     *
+     * @param file File to check.
+     * @return True if it is a legacy container, false otherwise.
+     */
+    public static boolean isLegacyContainer(File file) {
+        String extension = Files.getFileExtension(file.getName()).toLowerCase();
+        return !NON_LEGACY_EXTENSIONS.contains(extension);
     }
 
     private static DataFile dataFile(ee.ria.libdigidocpp.DataFile dataFile) {
