@@ -14,6 +14,8 @@ interface Result extends MviResult<ViewState> {
     @AutoValue
     abstract class ContainersLoadResult implements Result {
 
+        abstract boolean indicateActivity();
+
         abstract boolean inProgress();
 
         @Nullable abstract ImmutableList<File> containerFiles();
@@ -23,6 +25,7 @@ interface Result extends MviResult<ViewState> {
         @Override
         public ViewState reduce(ViewState state) {
             ViewState.Builder builder = state.buildWith()
+                    .indicateActivity(indicateActivity())
                     .containerLoadProgress(inProgress());
             if (containerFiles() != null) {
                 builder.containerFiles(containerFiles());
@@ -30,22 +33,23 @@ interface Result extends MviResult<ViewState> {
             return builder.build();
         }
 
-        static ContainersLoadResult progress() {
-            return create(true, null, null);
+        static ContainersLoadResult progress(boolean indicateActivity) {
+            return create(indicateActivity, true, null, null);
         }
 
         static ContainersLoadResult success(ImmutableList<File> containerFiles) {
-            return create(false, containerFiles, null);
+            return create(true, false, containerFiles, null);
         }
 
         static ContainersLoadResult failure(Throwable error) {
-            return create(false, null, error);
+            return create(true, false, null, error);
         }
 
-        private static ContainersLoadResult create(boolean inProgress,
+        private static ContainersLoadResult create(boolean indicateActivity, boolean inProgress,
                                                    @Nullable ImmutableList<File> containerFiles,
                                                    @Nullable Throwable error) {
-            return new AutoValue_Result_ContainersLoadResult(inProgress, containerFiles, error);
+            return new AutoValue_Result_ContainersLoadResult(indicateActivity, inProgress,
+                    containerFiles, error);
         }
     }
 

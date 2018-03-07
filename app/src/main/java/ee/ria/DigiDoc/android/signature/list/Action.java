@@ -16,8 +16,10 @@ interface Action extends MviAction {
     @AutoValue
     abstract class ContainersLoadAction implements Action {
 
-        static ContainersLoadAction create() {
-            return new AutoValue_Action_ContainersLoadAction();
+        abstract boolean indicateActivity();
+
+        static ContainersLoadAction create(boolean indicateActivity) {
+            return new AutoValue_Action_ContainersLoadAction(indicateActivity);
         }
     }
 

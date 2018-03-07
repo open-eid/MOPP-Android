@@ -75,18 +75,23 @@ public final class SignatureListScreen extends Controller implements Screen,
                         .map(ignored -> Intent.ContainerRemoveIntent.cancel()));
     }
 
+    private Observable<Intent.RefreshIntent> refreshIntent() {
+        return Observable.just(Intent.RefreshIntent.create());
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), upButtonIntent(), containerOpenIntent(),
-                containerRemoveIntent());
+                containerRemoveIntent(), refreshIntent());
     }
 
     @Override
     public void render(ViewState state) {
         removeConfirmationContainerFile = state.removeConfirmationContainerFile();
 
-        setActivity(state.containerLoadProgress() || state.containerRemoveProgress());
+        setActivity(state.indicateActivity()
+                && (state.containerLoadProgress() || state.containerRemoveProgress()));
 
         adapter.setData(state.containerFiles());
         if (removeConfirmationContainerFile != null) {

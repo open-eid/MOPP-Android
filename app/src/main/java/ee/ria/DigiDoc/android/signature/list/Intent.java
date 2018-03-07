@@ -60,4 +60,12 @@ interface Intent extends MviIntent {
             return new AutoValue_Intent_ContainerRemoveIntent(containerFile, confirmation);
         }
     }
+
+    @AutoValue
+    abstract class RefreshIntent implements Intent {
+
+        static RefreshIntent create() {
+            return new AutoValue_Intent_RefreshIntent();
+        }
+    }
 }

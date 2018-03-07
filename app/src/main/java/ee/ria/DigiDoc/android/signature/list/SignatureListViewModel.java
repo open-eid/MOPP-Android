@@ -19,7 +19,7 @@ public final class SignatureListViewModel extends
     @Override
     protected Action action(Intent intent) {
         if (intent instanceof Intent.InitialIntent) {
-            return Action.ContainersLoadAction.create();
+            return Action.ContainersLoadAction.create(true);
         } else if (intent instanceof Intent.UpButtonIntent) {
             return Action.NavigateUpAction.create();
         } else if (intent instanceof Intent.ContainerOpenIntent) {
@@ -30,6 +30,8 @@ public final class SignatureListViewModel extends
                     (Intent.ContainerRemoveIntent) intent;
             return Action.ContainerRemoveAction.create(containerRemoveIntent.containerFile(),
                     containerRemoveIntent.confirmation());
+        } else if (intent instanceof Intent.RefreshIntent) {
+            return Action.ContainersLoadAction.create(false);
         } else {
             throw new IllegalArgumentException("Unknown intent " + intent);
         }

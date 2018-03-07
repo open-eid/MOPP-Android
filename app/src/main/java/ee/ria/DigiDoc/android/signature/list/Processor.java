@@ -32,7 +32,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .onErrorReturn(Result.ContainersLoadResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.ContainersLoadResult.progress()));
+                        .startWith(Result.ContainersLoadResult
+                                .progress(action.indicateActivity())));
 
         navigateUp = upstream -> upstream
                 .doOnNext(action -> navigator.execute(action.transaction()))

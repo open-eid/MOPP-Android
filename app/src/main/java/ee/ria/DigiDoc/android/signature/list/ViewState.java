@@ -12,6 +12,8 @@ import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 @AutoValue
 abstract class ViewState implements MviViewState {
 
+    abstract boolean indicateActivity();
+
     abstract boolean containerLoadProgress();
 
     abstract ImmutableList<File> containerFiles();
@@ -24,6 +26,7 @@ abstract class ViewState implements MviViewState {
 
     static ViewState initial() {
         return new AutoValue_ViewState.Builder()
+                .indicateActivity(true)
                 .containerLoadProgress(false)
                 .containerFiles(ImmutableList.of())
                 .containerRemoveProgress(false)
@@ -32,6 +35,7 @@ abstract class ViewState implements MviViewState {
 
     @AutoValue.Builder
     interface Builder {
+        Builder indicateActivity(boolean indicateActivity);
         Builder containerLoadProgress(boolean containerLoadProgress);
         Builder containerFiles(ImmutableList<File> containerFiles);
         Builder removeConfirmationContainerFile(@Nullable File removeConfirmationContainerFile);
