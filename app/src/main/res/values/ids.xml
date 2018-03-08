@@ -6,6 +6,7 @@
     <item type="id" name="toolbar" />
     <item type="id" name="activityIndicator" />
     <item type="id" name="activityOverlay" />
+    <item type="id" name="listEmpty" />
 
     <!-- Main Home -->
     <item type="id" name="mainHomeScreen" />
@@ -42,6 +43,9 @@
 
     <!-- Signature List -->
     <item type="id" name="signatureListScreen" />
+    <item type="id" name="signatureList" />
+    <item type="id" name="signatureListItemName" />
+    <item type="id" name="signatureListItemRemoveButton" />
 
     <!-- Signature Create -->
     <item type="id" name="signatureCreateScreen" />

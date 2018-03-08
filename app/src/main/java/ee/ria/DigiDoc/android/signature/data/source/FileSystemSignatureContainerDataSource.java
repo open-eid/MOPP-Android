@@ -16,6 +16,7 @@ import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
 import ee.ria.mopplib.data.SignedContainer;
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 import static com.google.common.io.Files.getNameWithoutExtension;
@@ -29,6 +30,11 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
                                                    SettingsDataStore settingsDataStore) {
         this.fileSystem = fileSystem;
         this.settingsDataStore = settingsDataStore;
+    }
+
+    @Override
+    public Single<ImmutableList<File>> find() {
+        return Single.fromCallable(fileSystem::findSignatureContainerFiles);
     }
 
     @Override
@@ -57,6 +63,12 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
     @Override
     public Single<SignedContainer> get(File containerFile) {
         return Single.fromCallable(() -> SignedContainer.open(containerFile));
+    }
+
+    @Override
+    public Completable remove(File containerFile) {
+        //noinspection ResultOfMethodCallIgnored
+        return Completable.fromAction(containerFile::delete);
     }
 
     @Override

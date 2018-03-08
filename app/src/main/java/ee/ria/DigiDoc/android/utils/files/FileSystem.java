@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.utils.files;
 
 import android.app.Application;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
@@ -10,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Comparator;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -17,6 +19,13 @@ import javax.inject.Inject;
 import static ee.ria.DigiDoc.android.Constants.DIR_SIGNATURE_CONTAINERS;
 
 public final class FileSystem {
+
+    private static final Comparator<File> FILE_MODIFIED_DATE_COMPARATOR = (o1, o2) -> {
+        if (o1.lastModified() == o2.lastModified()) {
+            return 0;
+        }
+        return o1.lastModified() > o2.lastModified() ? -1 : 1;
+    };
 
     private final File cacheDir;
     private final File signatureContainersDir;
@@ -67,6 +76,18 @@ public final class FileSystem {
         File file = increaseCounterIfExists(new File(signatureContainersDir, name));
         Files.createParentDirs(file);
         return file;
+    }
+
+    /**
+     * Get all signature container files currently cached on the device.
+     *
+     * The files are sorted by modified date.
+     *
+     * @return File objects for signature containers.
+     */
+    public ImmutableList<File> findSignatureContainerFiles() {
+        return ImmutableList.sortedCopyOf(FILE_MODIFIED_DATE_COMPARATOR,
+                ImmutableList.copyOf(signatureContainersDir.listFiles()));
     }
 
     /**

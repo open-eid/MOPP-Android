@@ -147,7 +147,7 @@ public final class ConductorNavigator implements Navigator {
     }
 
     private static RouterTransaction routerTransaction(Screen screen) {
-        return RouterTransaction.with((ConductorScreen) screen);
+        return RouterTransaction.with((Controller) screen);
     }
 
     static final class ScreenViewModelProvider extends ViewModelProvider {
