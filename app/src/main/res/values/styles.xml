@@ -68,16 +68,6 @@
     <style name="TextAppearance.Application.Error" parent="TextAppearance.Design.Error">
     </style>
 
-    <style name="ThemeOverlay.Application.Dialog.Alert" parent="ThemeOverlay.AppCompat.Dialog.Alert">
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:backgroundDimAmount">0</item>
-        <item name="android:windowBackground">@color/menuBackground</item>
-        <item name="android:statusBarColor">@color/menuBackground</item>
-        <item name="android:colorBackground">@android:color/transparent</item>
-        <item name="android:background">@android:color/transparent</item>
-    </style>
-
     <style name="Widget.Application.MenuItem" parent="Widget.AppCompat.TextView.SpinnerItem">
         <item name="android:paddingStart">?attr/dialogPreferredPadding</item>
         <item name="android:paddingEnd">?attr/dialogPreferredPadding</item>
