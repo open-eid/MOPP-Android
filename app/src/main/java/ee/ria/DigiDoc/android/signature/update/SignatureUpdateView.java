@@ -28,6 +28,7 @@ import ee.ria.DigiDoc.mid.MobileSignStatusMessageSource;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
+import ee.ria.mopplib.data.SignedContainer;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -165,7 +166,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             return;
         }
         if (state.documentOpenFile() != null) {
-            getContext().startActivity(createViewIntent(getContext(), state.documentOpenFile()));
+            getContext().startActivity(createViewIntent(getContext(), state.documentOpenFile(),
+                    SignedContainer.mimeType(state.documentOpenFile())));
             documentOpenIntentSubject.onNext(Intent.DocumentOpenIntent.clear());
             return;
         }
