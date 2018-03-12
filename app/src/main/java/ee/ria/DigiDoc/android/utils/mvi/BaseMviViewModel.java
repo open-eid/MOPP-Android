@@ -5,7 +5,9 @@ import android.arch.lifecycle.ViewModel;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.observables.ConnectableObservable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 import timber.log.Timber;
@@ -17,7 +19,8 @@ public abstract class BaseMviViewModel<
         R extends MviResult<S>> extends ViewModel implements MviViewModel<I, S> {
 
     private final Subject<I> intentSubject;
-    private final Observable<S> viewStateObservable;
+    private final ConnectableObservable<S> viewStateObservable;
+    private final Disposable disposable;
 
     protected BaseMviViewModel(ObservableTransformer<A, R> processor) {
         logD("Constructor");
@@ -31,8 +34,8 @@ public abstract class BaseMviViewModel<
                 .doOnNext(mviLog("Result"))
                 .scan(initialViewState(), (viewState, result) -> result.reduce(viewState))
                 .doOnNext(mviLog("ViewState"))
-                .replay(1)
-                .autoConnect(0);
+                .replay(1);
+        disposable = viewStateObservable.connect();
     }
 
     @Override
@@ -50,6 +53,13 @@ public abstract class BaseMviViewModel<
     protected abstract A action(I intent);
 
     protected abstract S initialViewState();
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        logD("onCleared");
+        disposable.dispose();
+    }
 
     private ObservableSource<I> initialIntentFilter(Observable<I> intents) {
         Class<? extends I> initialIntentType = initialIntentType();
