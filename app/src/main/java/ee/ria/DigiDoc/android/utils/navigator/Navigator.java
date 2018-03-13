@@ -43,11 +43,12 @@ public interface Navigator {
     /**
      * Create or return an existing {@link ViewModel view model} for current screen.
      *
+     * @param screenId ID of the screen.
      * @param type Type of the view model.
      * @param <T> Type of the view model.
      * @return View model instance.
      */
-    <T extends ViewModel> T viewModel(Class<T> type);
+    <T extends ViewModel> T viewModel(String screenId, Class<T> type);
 
     /**
      * Execute {@link Transaction transaction}.

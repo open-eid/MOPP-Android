@@ -94,11 +94,7 @@ public final class ConductorNavigator implements Navigator {
     }
 
     @Override
-    public <T extends ViewModel> T viewModel(Class<T> type) {
-        String screenId = router.getBackstack()
-                .get(router.getBackstackSize() - 1)
-                .controller()
-                .getInstanceId();
+    public <T extends ViewModel> T viewModel(String screenId, Class<T> type) {
         if (!viewModelProviders.containsKey(screenId)) {
             viewModelProviders.put(screenId, ScreenViewModelProvider.create(viewModelFactory));
         }

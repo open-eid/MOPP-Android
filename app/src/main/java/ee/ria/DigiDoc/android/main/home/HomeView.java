@@ -1,9 +1,8 @@
 package ee.ria.DigiDoc.android.main.home;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -26,6 +25,7 @@ import static com.jakewharton.rxbinding2.support.design.widget.RxBottomNavigatio
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
+@SuppressLint("ViewConstructor")
 public final class HomeView extends LinearLayout implements MviView<Intent, ViewState> {
 
     private final FrameLayout navigationContainerView;
@@ -41,27 +41,16 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
     private final Subject<Intent.NavigationIntent> navigationIntentSubject =
             PublishSubject.create();
 
-    public HomeView(Context context) {
-        this(context, null);
-    }
-
-    public HomeView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public HomeView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
-    }
-
-    public HomeView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+    public HomeView(Context context, String screenId) {
+        super(context);
         setOrientation(VERTICAL);
         inflate(context, R.layout.main_home, this);
         navigationContainerView = findViewById(R.id.mainHomeNavigationContainer);
         navigationView = findViewById(R.id.mainHomeNavigation);
         menuDialog = new HomeMenuDialog(context);
         menuView = menuDialog.getMenuView();
-        viewModel = Application.component(context).navigator().viewModel(HomeViewModel.class);
+        viewModel = Application.component(context).navigator().viewModel(screenId,
+                HomeViewModel.class);
     }
 
     @SuppressWarnings("unchecked")

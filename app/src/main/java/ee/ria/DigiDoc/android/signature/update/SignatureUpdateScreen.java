@@ -47,7 +47,7 @@ public final class SignatureUpdateScreen extends ConductorScreen {
 
     @Override
     protected View view(Context context) {
-        return new SignatureUpdateView(context)
+        return new SignatureUpdateView(context, getInstanceId())
                 .isExistingContainer(isExistingContainer)
                 .containerFile(containerFile)
                 .signatureAddVisible(signatureAddVisible)
