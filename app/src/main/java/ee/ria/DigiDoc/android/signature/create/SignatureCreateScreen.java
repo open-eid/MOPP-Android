@@ -19,6 +19,6 @@ public final class SignatureCreateScreen extends ConductorScreen {
 
     @Override
     protected View view(Context context) {
-        return new SignatureCreateView(context);
+        return new SignatureCreateView(context, getInstanceId());
     }
 }

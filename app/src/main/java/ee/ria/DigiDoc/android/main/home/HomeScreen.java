@@ -19,6 +19,6 @@ public final class HomeScreen extends ConductorScreen {
 
     @Override
     protected View view(Context context) {
-        return new HomeView(context);
+        return new HomeView(context, getInstanceId());
     }
 }
