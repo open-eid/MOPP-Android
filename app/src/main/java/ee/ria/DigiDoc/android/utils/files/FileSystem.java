@@ -27,17 +27,14 @@ public final class FileSystem {
         return o1.lastModified() > o2.lastModified() ? -1 : 1;
     };
 
-    private final File cacheDir;
-    private final File signatureContainersDir;
+    private final Application application;
 
-    @Inject
-    FileSystem(Application application) {
-        this.cacheDir = application.getCacheDir();
-        this.signatureContainersDir = new File(application.getFilesDir(), DIR_SIGNATURE_CONTAINERS);
+    @Inject FileSystem(Application application) {
+        this.application = application;
     }
 
     public File getCacheDir() {
-        return cacheDir;
+        return application.getCacheDir();
     }
 
     /**
@@ -73,7 +70,7 @@ public final class FileSystem {
      * @throws IOException When something fails.
      */
     public File generateSignatureContainerFile(String name) throws IOException {
-        File file = increaseCounterIfExists(new File(signatureContainersDir, name));
+        File file = increaseCounterIfExists(new File(signatureContainersDir(), name));
         Files.createParentDirs(file);
         return file;
     }
@@ -87,7 +84,7 @@ public final class FileSystem {
      */
     public ImmutableList<File> findSignatureContainerFiles() {
         return ImmutableList.sortedCopyOf(FILE_MODIFIED_DATE_COMPARATOR,
-                ImmutableList.copyOf(signatureContainersDir.listFiles()));
+                ImmutableList.copyOf(signatureContainersDir().listFiles()));
     }
 
     /**
@@ -114,8 +111,15 @@ public final class FileSystem {
      * @param name Name of the file
      * @return File with absolute path to file in cache directory.
      */
-    public File getCacheFile(String name) {
-        return new File(cacheDir, name);
+    private File getCacheFile(String name) {
+        return new File(getCacheDir(), name);
+    }
+
+    private File signatureContainersDir() {
+        File dir = new File(application.getFilesDir(), DIR_SIGNATURE_CONTAINERS);
+        //noinspection ResultOfMethodCallIgnored
+        dir.mkdirs();
+        return dir;
     }
 
     private static File increaseCounterIfExists(File file) {
