@@ -64,6 +64,8 @@
     <string name="signature_update_signatures_empty">No signatures added to this container yet</string>
     <string name="signature_update_send_button">Share</string>
     <string name="signature_update_signature_add_button">Sign</string>
+    <string name="signature_update_signature_add_method_mobile_id">Mobile ID</string>
+    <string name="signature_update_signature_add_method_id_card">ID card</string>
 
     <string name="signature_update_load_container_error">Could not open signature container</string>
     <string name="signature_update_add_documents_error_exists">File already exists in the container</string>

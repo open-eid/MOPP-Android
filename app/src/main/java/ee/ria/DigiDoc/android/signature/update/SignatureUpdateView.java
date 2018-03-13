@@ -17,7 +17,6 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.signature.add.SignatureAddDialog;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
@@ -56,6 +55,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final Button sendButton;
     private final View buttonSpace;
     private final Button signatureAddButton;
+    private final ErrorDialog errorDialog;
+    private final ConfirmationDialog documentRemoveConfirmationDialog;
+    private final ConfirmationDialog signatureRemoveConfirmationDialog;
+    private final SignatureUpdateSignatureAddDialog signatureAddDialog;
 
     private final Navigator navigator;
     private final SignatureUpdateViewModel viewModel;
@@ -71,11 +74,6 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             PublishSubject.create();
     private final Subject<Intent.SignatureAddIntent> signatureAddIntentSubject =
             PublishSubject.create();
-
-    private final ErrorDialog errorDialog;
-    private final ConfirmationDialog documentRemoveConfirmationDialog;
-    private final ConfirmationDialog signatureRemoveConfirmationDialog;
-    private final SignatureAddDialog signatureAddDialog;
 
     @Nullable private DataFile documentRemoveConfirmation;
     @Nullable private Signature signatureRemoveConfirmation;
@@ -122,7 +120,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 R.string.signature_update_document_remove_confirmation_message);
         signatureRemoveConfirmationDialog = new ConfirmationDialog(context,
                 R.string.signature_update_signature_remove_confirmation_message);
-        signatureAddDialog = new SignatureAddDialog(context);
+        signatureAddDialog = new SignatureUpdateSignatureAddDialog(context);
         resetSignatureAddDialog();
 
         statusMessageSource = new MobileSignStatusMessageSource(context.getResources());
@@ -233,9 +231,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     }
 
     private void resetSignatureAddDialog() {
-        signatureAddDialog.setPhoneNo(viewModel.getPhoneNo());
-        signatureAddDialog.setPersonalCode(viewModel.getPersonalCode());
-        signatureAddDialog.setRememberMe(true);
+//        signatureAddDialog.setPhoneNo(viewModel.getPhoneNo());
+//        signatureAddDialog.setPersonalCode(viewModel.getPersonalCode());
+//        signatureAddDialog.setRememberMe(true);
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
@@ -302,14 +300,14 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                                 .remove(containerFile, signatureRemoveConfirmation))));
         disposables.add(signatureRemoveConfirmationDialog.cancels().subscribe(ignored ->
                 signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear())));
-        disposables.add(signatureAddDialog.positiveButtonClicks().subscribe(data ->
-                signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.addIntent(
-                        isExistingContainer, containerFile, data.phoneNo(), data.personalCode(),
-                        data.rememberMe()))));
-        disposables.add(signatureAddDialog.cancels().subscribe(ignored -> {
-            resetSignatureAddDialog();
-            signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent());
-        }));
+//        disposables.add(signatureAddDialog.positiveButtonClicks().subscribe(data ->
+//                signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.addIntent(
+//                        isExistingContainer, containerFile, data.phoneNo(), data.personalCode(),
+//                        data.rememberMe()))));
+//        disposables.add(signatureAddDialog.cancels().subscribe(ignored -> {
+//            resetSignatureAddDialog();
+//            signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent());
+//        }));
     }
 
     @Override

@@ -79,4 +79,13 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="Widget.Application.SignatureAddMethod" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:minHeight">@dimen/material_button_touch_target_height_minimum</item>
+        <item name="android:background">@drawable/signature_add_method_background</item>
+        <item name="android:textColor">@drawable/signature_add_method_text</item>
+    </style>
+
 </resources>

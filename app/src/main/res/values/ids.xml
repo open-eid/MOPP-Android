@@ -74,6 +74,10 @@
     <item type="id" name="signatureUpdateSendButton" />
     <item type="id" name="signatureUpdateButtonSpace" />
     <item type="id" name="signatureUpdateSignatureAddButton" />
+    <item type="id" name="signatureUpdateSignatureAdd" />
+    <item type="id" name="signatureUpdateSignatureAddMethod" />
+    <item type="id" name="signatureUpdateSignatureAddMethodMobileId" />
+    <item type="id" name="signatureUpdateSignatureAddMethodIdCard" />
 
     <!-- Signature Add -->
     <item type="id" name="signatureAdd" />
