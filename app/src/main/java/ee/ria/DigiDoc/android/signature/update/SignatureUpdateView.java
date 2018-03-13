@@ -1,12 +1,12 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -38,6 +38,7 @@ import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 
+@SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
 
     private boolean isExistingContainer;
@@ -82,22 +83,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private final MobileSignStatusMessageSource statusMessageSource;
 
-    public SignatureUpdateView(Context context) {
-        this(context, null);
-    }
-
-    public SignatureUpdateView(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public SignatureUpdateView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
-    }
-
-    public SignatureUpdateView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+    public SignatureUpdateView(Context context, String screenId) {
+        super(context);
         navigator = Application.component(context).navigator();
-        viewModel = navigator.viewModel(SignatureUpdateViewModel.class);
+        viewModel = navigator.viewModel(screenId, SignatureUpdateViewModel.class);
 
         setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update, this);

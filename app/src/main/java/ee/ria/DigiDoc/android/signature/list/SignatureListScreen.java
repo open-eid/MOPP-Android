@@ -117,7 +117,7 @@ public final class SignatureListScreen extends Controller implements Screen,
     protected void onContextAvailable(@NonNull Context context) {
         super.onContextAvailable(context);
         viewModel = Application.component(context).navigator()
-                .viewModel(SignatureListViewModel.class);
+                .viewModel(getInstanceId(), SignatureListViewModel.class);
     }
 
     @Override
