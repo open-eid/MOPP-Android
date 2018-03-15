@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.google.common.collect.ImmutableList;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
@@ -19,7 +17,6 @@ import javax.inject.Inject;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
-import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.container.ContainerFacade;
@@ -33,7 +30,6 @@ import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
 import ee.ria.mopp.androidmobileid.dto.response.ServiceFault;
 import ee.ria.mopp.androidmobileid.service.MobileSignService;
 import ee.ria.mopplib.MoppLib;
-import ee.ria.mopplib.data.SignedContainer;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -43,7 +39,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
-import static com.google.common.base.MoreObjects.firstNonNull;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.toJson;
@@ -183,76 +178,85 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
         });
 
-        signatureAdd = upstream -> upstream.switchMap(action -> {
-            File containerFile = action.containerFile();
-            if (containerFile == null) {
-                return Observable.just(Result.SignatureAddResult.clear());
-            } else if (action.show()) {
-                if (!SignedContainer.isLegacyContainer(containerFile)) {
-                    return Observable.just(Result.SignatureAddResult.show());
-                } else {
-                    return signatureContainerDataSource
-                            .addContainer(ImmutableList.of(FileStream.create(containerFile)), true)
-                            .toObservable()
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnNext(containerAdd ->
-                                    navigator.execute(Transaction.push(SignatureUpdateScreen
-                                            .create(containerAdd.isExistingContainer(),
-                                                    containerAdd.containerFile(), true, false))))
-                            .map(containerAdd -> Result.SignatureAddResult.creatingContainer())
-                            .onErrorReturn(Result.SignatureAddResult::failure)
-                            .startWith(Result.SignatureAddResult.creatingContainer());
-                }
+        signatureAdd = upstream -> upstream.map(action -> {
+            Integer method = action.method();
+            if (method == null) {
+                return Result.SignatureAddResult.clear();
             } else {
-                if (firstNonNull(action.rememberMe(), false)) {
-                    settingsDataStore.setPhoneNo(action.phoneNo());
-                    settingsDataStore.setPersonalCode(action.personalCode());
-                }
-                return Observable
-                        .create(new MobileIdOnSubscribe(application, containerFile,
-                                action.phoneNo(), action.personalCode(),
-                                settingsDataStore.getSignatureProfile()))
-                        .onErrorReturn(Result.SignatureAddResult::failure)
-                        .switchMap(result -> {
-                            if (result.signature() != null) {
-                                if (action.isExistingContainer()) {
-                                    return signatureContainerDataSource
-                                            .addSignature(containerFile, result.signature())
-                                            .toObservable()
-                                            .switchMap(container ->
-                                                    Observable.timer(3, TimeUnit.SECONDS)
-                                                            .map(ignored ->
-                                                                    Result.SignatureAddResult
-                                                                            .clear())
-                                                            .startWith(Result.SignatureAddResult
-                                                                    .success(container)))
-                                            .subscribeOn(Schedulers.io())
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .startWith(Result.SignatureAddResult
-                                                    .status(ProcessStatus.SIGNATURE));
-                                } else {
-                                    return signatureContainerDataSource
-                                            .addSignature(containerFile, result.signature())
-                                            .toObservable()
-                                            .map(container -> Result.SignatureAddResult
-                                                    .status(ProcessStatus.SIGNATURE))
-                                            .subscribeOn(Schedulers.io())
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .doOnNext(ignored ->
-                                                    navigator.execute(Transaction.replace(
-                                                            SignatureUpdateScreen.create(true,
-                                                                    containerFile, false, true))))
-                                            .startWith(Result.SignatureAddResult
-                                                    .status(ProcessStatus.SIGNATURE));
-                                }
-                            } else {
-                                return Observable.just(result);
-                            }
-                        })
-                        .startWith(Result.SignatureAddResult.status(ProcessStatus.DEFAULT));
+                return Result.SignatureAddResult.show(method);
             }
         });
+
+//        signatureAdd = upstream -> upstream.switchMap(action -> {
+//            File containerFile = action.containerFile();
+//            if (containerFile == null) {
+//                return Observable.just(Result.SignatureAddResult.clear());
+//            } else if (action.show()) {
+//                if (!SignedContainer.isLegacyContainer(containerFile)) {
+//                    return Observable.just(Result.SignatureAddResult.show());
+//                } else {
+//                    return signatureContainerDataSource
+//                            .addContainer(ImmutableList.of(FileStream.create(containerFile)), true)
+//                            .toObservable()
+//                            .subscribeOn(Schedulers.io())
+//                            .observeOn(AndroidSchedulers.mainThread())
+//                            .doOnNext(containerAdd ->
+//                                    navigator.execute(Transaction.push(SignatureUpdateScreen
+//                                            .create(containerAdd.isExistingContainer(),
+//                                                    containerAdd.containerFile(), true, false))))
+//                            .map(containerAdd -> Result.SignatureAddResult.creatingContainer())
+//                            .onErrorReturn(Result.SignatureAddResult::failure)
+//                            .startWith(Result.SignatureAddResult.creatingContainer());
+//                }
+//            } else {
+//                if (firstNonNull(action.rememberMe(), false)) {
+//                    settingsDataStore.setPhoneNo(action.phoneNo());
+//                    settingsDataStore.setPersonalCode(action.personalCode());
+//                }
+//                return Observable
+//                        .create(new MobileIdOnSubscribe(application, containerFile,
+//                                action.phoneNo(), action.personalCode(),
+//                                settingsDataStore.getSignatureProfile()))
+//                        .onErrorReturn(Result.SignatureAddResult::failure)
+//                        .switchMap(result -> {
+//                            if (result.signature() != null) {
+//                                if (action.isExistingContainer()) {
+//                                    return signatureContainerDataSource
+//                                            .addSignature(containerFile, result.signature())
+//                                            .toObservable()
+//                                            .switchMap(container ->
+//                                                    Observable.timer(3, TimeUnit.SECONDS)
+//                                                            .map(ignored ->
+//                                                                    Result.SignatureAddResult
+//                                                                            .clear())
+//                                                            .startWith(Result.SignatureAddResult
+//                                                                    .success(container)))
+//                                            .subscribeOn(Schedulers.io())
+//                                            .observeOn(AndroidSchedulers.mainThread())
+//                                            .startWith(Result.SignatureAddResult
+//                                                    .status(ProcessStatus.SIGNATURE));
+//                                } else {
+//                                    return signatureContainerDataSource
+//                                            .addSignature(containerFile, result.signature())
+//                                            .toObservable()
+//                                            .map(container -> Result.SignatureAddResult
+//                                                    .status(ProcessStatus.SIGNATURE))
+//                                            .subscribeOn(Schedulers.io())
+//                                            .observeOn(AndroidSchedulers.mainThread())
+//                                            .doOnNext(ignored ->
+//                                                    navigator.execute(Transaction.replace(
+//                                                            SignatureUpdateScreen.create(true,
+//                                                                    containerFile, false, true))))
+//                                            .startWith(Result.SignatureAddResult
+//                                                    .status(ProcessStatus.SIGNATURE));
+//                                }
+//                            } else {
+//                                return Observable.just(result);
+//                            }
+//                        })
+//                        .startWith(Result.SignatureAddResult.status(ProcessStatus.DEFAULT));
+//            }
+//        });
 
         send = upstream -> upstream
                 .doOnNext(action ->
@@ -317,8 +321,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         case CREATE_SIGNATURE_CHALLENGE:
                             MobileCreateSignatureResponse challenge = MobileCreateSignatureResponse
                                     .fromJson(intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE));
-                            e.onNext(Result.SignatureAddResult.challenge(
-                                    challenge.getChallengeID()));
+//                            e.onNext(Result.SignatureAddResult.challenge(
+//                                    challenge.getChallengeID()));
                             break;
                         case CREATE_SIGNATURE_STATUS:
                             GetMobileCreateSignatureStatusResponse status =
@@ -326,11 +330,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                             intent.getStringExtra(CREATE_SIGNATURE_STATUS));
                             switch (status.getStatus()) {
                                 case OUTSTANDING_TRANSACTION:
-                                    e.onNext(Result.SignatureAddResult.status(status.getStatus()));
+//                                    e.onNext(Result.SignatureAddResult.status(status.getStatus()));
                                     break;
                                 case SIGNATURE:
-                                    e.onNext(Result.SignatureAddResult.signature(
-                                            status.getSignature()));
+//                                    e.onNext(Result.SignatureAddResult.signature(
+//                                            status.getSignature()));
                                     e.onComplete();
                                     break;
                                 default:

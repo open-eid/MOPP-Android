@@ -90,7 +90,7 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
         } else if (TextUtils.equals(type, DOCUMENT_REMOVE)) {
             documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent.clear());
         } else if (TextUtils.equals(type, SIGNATURE_ADD)) {
-            signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent());
+            signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clear());
         } else if (TextUtils.equals(type, SIGNATURE_REMOVE)) {
             signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear());
         }

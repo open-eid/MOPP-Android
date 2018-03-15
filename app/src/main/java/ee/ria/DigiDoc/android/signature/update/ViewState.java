@@ -34,6 +34,8 @@ abstract class ViewState implements MviViewState {
     abstract boolean signatureRemoveInProgress();
     @Nullable abstract Throwable signatureRemoveError();
 
+    @Nullable abstract Integer signatureAddMethod();
+
     abstract boolean signatureAddCreateContainerInProgress();
     abstract boolean signatureAddVisible();
     abstract boolean signatureAddInProgress();
@@ -74,6 +76,7 @@ abstract class ViewState implements MviViewState {
         Builder signatureRemoveConfirmation(@Nullable Signature signatureRemoveConfirmation);
         Builder signatureRemoveInProgress(boolean signatureRemoveInProgress);
         Builder signatureRemoveError(@Nullable Throwable signatureRemoveError);
+        Builder signatureAddMethod(@Nullable Integer signatureAddMethod);
         Builder signatureAddCreateContainerInProgress(
                 boolean signatureAddCreateContainerInProgress);
         Builder signatureAddVisible(boolean signatureAddVisible);

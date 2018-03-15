@@ -24,7 +24,6 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.mid.MobileSignStatusMessageSource;
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
 import ee.ria.mopplib.data.SignedContainer;
@@ -36,6 +35,7 @@ import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationC
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
+import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
@@ -60,6 +60,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final ConfirmationDialog documentRemoveConfirmationDialog;
     private final ConfirmationDialog signatureRemoveConfirmationDialog;
     private final SignatureUpdateSignatureAddDialog signatureAddDialog;
+    private final SignatureUpdateSignatureAddView signatureAddView;
 
     private final Navigator navigator;
     private final SignatureUpdateViewModel viewModel;
@@ -110,6 +111,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         signatureRemoveConfirmationDialog = new ConfirmationDialog(context,
                 R.string.signature_update_signature_remove_confirmation_message);
         signatureAddDialog = new SignatureUpdateSignatureAddDialog(context);
+        signatureAddView = signatureAddDialog.view();
         resetSignatureAddDialog();
 
         statusMessageSource = new MobileSignStatusMessageSource(context.getResources());
@@ -188,25 +190,34 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             signatureRemoveConfirmationDialog.dismiss();
         }
 
-        if (state.signatureAddVisible()) {
-            signatureAddDialog.show();
-        } else {
+        Integer signatureAddMethod = state.signatureAddMethod();
+        if (signatureAddMethod == null) {
             signatureAddDialog.dismiss();
-        }
-        mobileIdContainerView.setVisibility(state.signatureAddInProgress() ? VISIBLE : GONE);
-        GetMobileCreateSignatureStatusResponse.ProcessStatus signatureAddStatus =
-                state.signatureAddStatus();
-        if (signatureAddStatus != null) {
-            mobileIdStatusView.setText(statusMessageSource.getMessage(signatureAddStatus));
         } else {
-            mobileIdStatusView.setText(statusMessageSource.getInitialStatusMessage());
+            signatureAddDialog.show();
+            signatureAddView.method(signatureAddMethod);
         }
-        String signatureAddChallenge = state.signatureAddChallenge();
-        if (signatureAddChallenge != null) {
-            mobileIdChallengeView.setText(signatureAddChallenge);
-        } else {
-            mobileIdChallengeView.setText(R.string.signature_add_mobile_id_challenge_placeholder);
-        }
+        mobileIdContainerView.setVisibility(GONE);
+
+//        if (state.signatureAddVisible()) {
+//            signatureAddDialog.show();
+//        } else {
+//            signatureAddDialog.dismiss();
+//        }
+//        mobileIdContainerView.setVisibility(state.signatureAddInProgress() ? VISIBLE : GONE);
+//        GetMobileCreateSignatureStatusResponse.ProcessStatus signatureAddStatus =
+//                state.signatureAddStatus();
+//        if (signatureAddStatus != null) {
+//            mobileIdStatusView.setText(statusMessageSource.getMessage(signatureAddStatus));
+//        } else {
+//            mobileIdStatusView.setText(statusMessageSource.getInitialStatusMessage());
+//        }
+//        String signatureAddChallenge = state.signatureAddChallenge();
+//        if (signatureAddChallenge != null) {
+//            mobileIdChallengeView.setText(signatureAddChallenge);
+//        } else {
+//            mobileIdChallengeView.setText(R.string.signature_add_mobile_id_challenge_placeholder);
+//        }
 
         tintCompoundDrawables(sendButton);
         tintCompoundDrawables(signatureAddButton);
@@ -249,10 +260,13 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     }
 
     private Observable<Intent.SignatureAddIntent> signatureAddIntent() {
-        return clicks(signatureAddButton)
-                .map(ignored ->
-                        Intent.SignatureAddIntent.showIntent(isExistingContainer, containerFile))
-                .mergeWith(signatureAddIntentSubject);
+        return Observable.merge(
+                clicks(signatureAddButton).map(ignored -> Intent.SignatureAddIntent.show()),
+                cancels(signatureAddDialog).map(ignored -> Intent.SignatureAddIntent.clear()),
+                signatureAddView.methodChanges().map(Intent.SignatureAddIntent::method));
+//        return clicks(signatureAddButton)
+//                .map(ignored -> Intent.SignatureAddIntent.show())
+//                .mergeWith(signatureAddIntentSubject);
     }
 
     private Observable<Intent.SendIntent> sendIntent() {

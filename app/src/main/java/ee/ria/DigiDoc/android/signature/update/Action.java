@@ -95,25 +95,31 @@ interface Action extends MviAction {
     @AutoValue
     abstract class SignatureAddAction implements Action {
 
-        abstract boolean show();
+        @Nullable abstract Integer method();
 
-        abstract boolean isExistingContainer();
-
-        @Nullable abstract File containerFile();
-
-        @Nullable abstract String phoneNo();
-
-        @Nullable abstract String personalCode();
-
-        @Nullable abstract Boolean rememberMe();
-
-        static SignatureAddAction create(boolean show, boolean isExistingContainer,
-                                         @Nullable File containerFile, @Nullable String phoneNo,
-                                         @Nullable String personalCode,
-                                         @Nullable Boolean rememberMe) {
-            return new AutoValue_Action_SignatureAddAction(show, isExistingContainer, containerFile,
-                    phoneNo, personalCode, rememberMe);
+        static SignatureAddAction create(@Nullable Integer method) {
+            return new AutoValue_Action_SignatureAddAction(method);
         }
+
+//        abstract boolean show();
+//
+//        abstract boolean isExistingContainer();
+//
+//        @Nullable abstract File containerFile();
+//
+//        @Nullable abstract String phoneNo();
+//
+//        @Nullable abstract String personalCode();
+//
+//        @Nullable abstract Boolean rememberMe();
+//
+//        static SignatureAddAction create(boolean show, boolean isExistingContainer,
+//                                         @Nullable File containerFile, @Nullable String phoneNo,
+//                                         @Nullable String personalCode,
+//                                         @Nullable Boolean rememberMe) {
+//            return new AutoValue_Action_SignatureAddAction(show, isExistingContainer, containerFile,
+//                    phoneNo, personalCode, rememberMe);
+//        }
     }
 
     @AutoValue

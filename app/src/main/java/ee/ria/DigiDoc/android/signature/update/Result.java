@@ -7,7 +7,6 @@ import com.google.auto.value.AutoValue;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
 import ee.ria.mopplib.data.SignedContainer;
@@ -217,87 +216,108 @@ interface Result extends MviResult<ViewState> {
     @AutoValue
     abstract class SignatureAddResult implements Result {
 
-        abstract boolean isCreatingContainer();
-
-        abstract boolean isVisible();
-
-        abstract boolean inProgress();
-
-        @Nullable abstract GetMobileCreateSignatureStatusResponse.ProcessStatus status();
-
-        @Nullable abstract String challenge();
-
-        @Nullable abstract String signature();
-
-        @Nullable abstract SignedContainer container();
-
-        @Nullable abstract Throwable error();
+        @Nullable abstract Integer method();
 
         @Override
         public ViewState reduce(ViewState state) {
-            ViewState.Builder builder = state.buildWith()
-                    .signatureAddCreateContainerInProgress(isCreatingContainer())
-                    .signatureAddVisible(isVisible())
-                    .signatureAddInProgress(inProgress())
-                    .signatureAddError(error());
-            if (container() != null) {
-                builder.signatureAddSuccessMessageVisible(true)
-                        .container(container());
-            } else {
-                builder.signatureAddSuccessMessageVisible(false);
-            }
-            if (status() != null) {
-                builder.signatureAddStatus(status());
-            }
-            if (challenge() != null) {
-                builder.signatureAddChallenge(challenge());
-            } else if (status() == null) {
-                builder.signatureAddChallenge(null);
-            }
-            return builder.build();
+            return state.buildWith()
+                    .signatureAddMethod(method())
+                    .build();
         }
 
-        static SignatureAddResult show() {
-            return new AutoValue_Result_SignatureAddResult(false, true, false, null, null, null,
-                    null, null);
-        }
-
-        static SignatureAddResult creatingContainer() {
-            return new AutoValue_Result_SignatureAddResult(true, false, false, null, null, null,
-                    null, null);
-        }
-
-        static SignatureAddResult status(
-                GetMobileCreateSignatureStatusResponse.ProcessStatus status) {
-            return new AutoValue_Result_SignatureAddResult(false, false, true, status, null, null,
-                    null, null);
-        }
-
-        static SignatureAddResult challenge(String challenge) {
-            return new AutoValue_Result_SignatureAddResult(false, false, true, null, challenge,
-                    null, null, null);
-        }
-
-        static SignatureAddResult signature(String signature) {
-            return new AutoValue_Result_SignatureAddResult(false, false, true,
-                    GetMobileCreateSignatureStatusResponse.ProcessStatus.SIGNATURE, null, signature,
-                    null, null);
-        }
-
-        static SignatureAddResult success(SignedContainer container) {
-            return new AutoValue_Result_SignatureAddResult(false, false, false, null, null, null,
-                    container, null);
-        }
-
-        static SignatureAddResult failure(Throwable error) {
-            return new AutoValue_Result_SignatureAddResult(false, false, false, null, null, null,
-                    null, error);
+        static SignatureAddResult show(int method) {
+            return create(method);
         }
 
         static SignatureAddResult clear() {
-            return new AutoValue_Result_SignatureAddResult(false, false, false, null, null, null,
-                    null, null);
+            return create(null);
         }
+
+        private static SignatureAddResult create(@Nullable Integer method) {
+            return new AutoValue_Result_SignatureAddResult(method);
+        }
+
+//        abstract boolean isCreatingContainer();
+//
+//        abstract boolean isVisible();
+//
+//        abstract boolean inProgress();
+//
+//        @Nullable abstract GetMobileCreateSignatureStatusResponse.ProcessStatus status();
+//
+//        @Nullable abstract String challenge();
+//
+//        @Nullable abstract String signature();
+//
+//        @Nullable abstract SignedContainer container();
+//
+//        @Nullable abstract Throwable error();
+//
+//        @Override
+//        public ViewState reduce(ViewState state) {
+//            ViewState.Builder builder = state.buildWith()
+//                    .signatureAddCreateContainerInProgress(isCreatingContainer())
+//                    .signatureAddVisible(isVisible())
+//                    .signatureAddInProgress(inProgress())
+//                    .signatureAddError(error());
+//            if (container() != null) {
+//                builder.signatureAddSuccessMessageVisible(true)
+//                        .container(container());
+//            } else {
+//                builder.signatureAddSuccessMessageVisible(false);
+//            }
+//            if (status() != null) {
+//                builder.signatureAddStatus(status());
+//            }
+//            if (challenge() != null) {
+//                builder.signatureAddChallenge(challenge());
+//            } else if (status() == null) {
+//                builder.signatureAddChallenge(null);
+//            }
+//            return builder.build();
+//        }
+//
+//        static SignatureAddResult show() {
+//            return new AutoValue_Result_SignatureAddResult(false, true, false, null, null, null,
+//                    null, null);
+//        }
+//
+//        static SignatureAddResult creatingContainer() {
+//            return new AutoValue_Result_SignatureAddResult(true, false, false, null, null, null,
+//                    null, null);
+//        }
+//
+//        static SignatureAddResult status(
+//                GetMobileCreateSignatureStatusResponse.ProcessStatus status) {
+//            return new AutoValue_Result_SignatureAddResult(false, false, true, status, null, null,
+//                    null, null);
+//        }
+//
+//        static SignatureAddResult challenge(String challenge) {
+//            return new AutoValue_Result_SignatureAddResult(false, false, true, null, challenge,
+//                    null, null, null);
+//        }
+//
+//        static SignatureAddResult signature(String signature) {
+//            return new AutoValue_Result_SignatureAddResult(false, false, true,
+//                    GetMobileCreateSignatureStatusResponse.ProcessStatus.SIGNATURE, null, signature,
+//                    null, null);
+//        }
+//
+//        static SignatureAddResult success(SignedContainer container) {
+//            return new AutoValue_Result_SignatureAddResult(false, false, false, null, null, null,
+//                    container, null);
+//        }
+//
+//        static SignatureAddResult failure(Throwable error) {
+//            return new AutoValue_Result_SignatureAddResult(false, false, false, null, null, null,
+//                    null, error);
+//        }
+//
+//        static SignatureAddResult clear() {
+//            return new AutoValue_Result_SignatureAddResult(false, false, false, null, null, null,
+//                    null, null);
+//        }
     }
 
     @AutoValue
