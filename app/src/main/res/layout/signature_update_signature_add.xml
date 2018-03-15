@@ -10,6 +10,7 @@
         android:id="@id/signatureUpdateSignatureAddMethod"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/material_dialog_content_area_title_content_margin"
         android:orientation="horizontal"
         android:background="@drawable/signature_add_methods_background">
 

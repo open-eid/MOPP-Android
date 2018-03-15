@@ -18,9 +18,8 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
     private static final SparseIntArray METHOD_IDS = new SparseIntArray();
     static {
         METHOD_IDS.put(R.id.signatureUpdateSignatureAddMethodMobileId,
-                R.id.signatureUpdateSignatureAddMobileId);
-        METHOD_IDS.put(R.id.signatureUpdateSignatureAddMethodIdCard,
-                R.id.signatureUpdateSignatureAddIdCard);
+                R.id.signatureUpdateMobileId);
+        METHOD_IDS.put(R.id.signatureUpdateSignatureAddMethodIdCard, R.id.signatureUpdateIdCard);
     }
 
     private final RadioGroup methodView;

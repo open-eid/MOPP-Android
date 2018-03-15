@@ -78,8 +78,15 @@
     <item type="id" name="signatureUpdateSignatureAddMethod" />
     <item type="id" name="signatureUpdateSignatureAddMethodMobileId" />
     <item type="id" name="signatureUpdateSignatureAddMethodIdCard" />
-    <item type="id" name="signatureUpdateSignatureAddMobileId" />
-    <item type="id" name="signatureUpdateSignatureAddIdCard" />
+
+    <item type="id" name="signatureUpdateMobileId" />
+    <item type="id" name="signatureUpdateMobileIdPhoneNoLabel" />
+    <item type="id" name="signatureUpdateMobileIdPhoneNo" />
+    <item type="id" name="signatureUpdateMobileIdPersonalCodeLabel" />
+    <item type="id" name="signatureUpdateMobileIdPersonalCode" />
+    <item type="id" name="signatureUpdateMobileIdRememberMe" />
+
+    <item type="id" name="signatureUpdateIdCard" />
 
     <!-- Signature Add -->
     <item type="id" name="signatureAdd" />

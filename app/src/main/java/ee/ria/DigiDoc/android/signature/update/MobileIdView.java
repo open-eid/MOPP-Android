@@ -3,11 +3,17 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.Gravity;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+
+import ee.ria.DigiDoc.R;
 
 public final class MobileIdView extends LinearLayout {
+
+    private final EditText phoneNoView;
+    private final EditText personalCodeView;
+    private final CheckBox rememberMeView;
 
     public MobileIdView(Context context) {
         this(context, null);
@@ -24,9 +30,10 @@ public final class MobileIdView extends LinearLayout {
     public MobileIdView(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                         int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        TextView view = new TextView(context);
-        view.setGravity(Gravity.CENTER);
-        view.setText("MOBILE ID YO");
-        addView(view, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        setOrientation(VERTICAL);
+        inflate(context, R.layout.signature_update_mobile_id, this);
+        phoneNoView = findViewById(R.id.signatureUpdateMobileIdPhoneNo);
+        personalCodeView = findViewById(R.id.signatureUpdateMobileIdPersonalCode);
+        rememberMeView = findViewById(R.id.signatureUpdateMobileIdRememberMe);
     }
 }

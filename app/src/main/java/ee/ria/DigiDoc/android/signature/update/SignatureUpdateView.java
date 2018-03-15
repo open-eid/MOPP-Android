@@ -263,7 +263,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         return Observable.merge(
                 clicks(signatureAddButton).map(ignored -> Intent.SignatureAddIntent.show()),
                 cancels(signatureAddDialog).map(ignored -> Intent.SignatureAddIntent.clear()),
-                signatureAddView.methodChanges().map(Intent.SignatureAddIntent::method));
+                signatureAddView.methodChanges().map(Intent.SignatureAddIntent::method),
+                signatureAddDialog.positiveButtonClicks()
+                        .map(ignored -> Intent.SignatureAddIntent.clear()));
 //        return clicks(signatureAddButton)
 //                .map(ignored -> Intent.SignatureAddIntent.show())
 //                .mergeWith(signatureAddIntentSubject);
