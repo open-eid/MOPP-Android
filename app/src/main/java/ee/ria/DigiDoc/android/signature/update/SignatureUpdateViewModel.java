@@ -33,7 +33,7 @@ public final class SignatureUpdateViewModel extends
         if (intent instanceof Intent.InitialIntent) {
             Intent.InitialIntent initialIntent = (Intent.InitialIntent) intent;
             return Action.ContainerLoadAction
-                    .create(initialIntent.containerFile(), initialIntent.signatureAddVisible(),
+                    .create(initialIntent.containerFile(), initialIntent.signatureAddMethod(),
                             initialIntent.signatureAddSuccessMessageVisible());
         } else if (intent instanceof Intent.DocumentsAddIntent) {
             return Action.DocumentsAddAction
@@ -53,7 +53,9 @@ public final class SignatureUpdateViewModel extends
                     signatureRemoveIntent.containerFile(), signatureRemoveIntent.signature());
         } else if (intent instanceof Intent.SignatureAddIntent) {
             Intent.SignatureAddIntent signatureAddIntent = (Intent.SignatureAddIntent) intent;
-            return Action.SignatureAddAction.create(signatureAddIntent.method());
+            return Action.SignatureAddAction.create(signatureAddIntent.method(),
+                    signatureAddIntent.existingContainer(), signatureAddIntent.containerFile(),
+                    signatureAddIntent.data());
         } else if (intent instanceof Intent.SendIntent) {
             return Action.SendAction.create(((Intent.SendIntent) intent).containerFile());
         } else {

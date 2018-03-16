@@ -7,7 +7,8 @@ import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public final class IdCardView extends LinearLayout {
+public final class IdCardView extends LinearLayout implements
+        SignatureUpdateSignatureAddView.SignatureAddView {
 
     public IdCardView(Context context) {
         this(context, null);
@@ -28,5 +29,10 @@ public final class IdCardView extends LinearLayout {
         view.setGravity(Gravity.CENTER);
         view.setText("ID CARD YO");
         addView(view, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+    }
+
+    @Override
+    public SignatureAddData data() {
+        return SignatureAddData.idCard();
     }
 }

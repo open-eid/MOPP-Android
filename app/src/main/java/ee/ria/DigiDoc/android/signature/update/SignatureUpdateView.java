@@ -40,6 +40,8 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
 
+    private static final int DEFAULT_SIGN_METHOD = R.id.signatureUpdateSignatureAddMethodMobileId;
+
     private boolean isExistingContainer;
     private File containerFile;
     private boolean signatureAddVisible;
@@ -238,7 +240,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private Observable<Intent.InitialIntent> initialIntent() {
         return Observable.just(Intent.InitialIntent.create(isExistingContainer, containerFile,
-                signatureAddVisible, signatureAddSuccessMessageVisible));
+                signatureAddVisible ? DEFAULT_SIGN_METHOD : null,
+                signatureAddSuccessMessageVisible));
     }
 
     private Observable<Intent.DocumentsAddIntent> addDocumentsIntent() {
@@ -261,11 +264,15 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private Observable<Intent.SignatureAddIntent> signatureAddIntent() {
         return Observable.merge(
-                clicks(signatureAddButton).map(ignored -> Intent.SignatureAddIntent.show()),
+                clicks(signatureAddButton).map(ignored ->
+                        Intent.SignatureAddIntent.show(DEFAULT_SIGN_METHOD, isExistingContainer,
+                                containerFile)),
                 cancels(signatureAddDialog).map(ignored -> Intent.SignatureAddIntent.clear()),
-                signatureAddView.methodChanges().map(Intent.SignatureAddIntent::method),
-                signatureAddDialog.positiveButtonClicks()
-                        .map(ignored -> Intent.SignatureAddIntent.clear()));
+                signatureAddView.methodChanges().map(method ->
+                        Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile)),
+                signatureAddDialog.positiveButtonClicks().map(ignored ->
+                        Intent.SignatureAddIntent.sign(signatureAddView.method(),
+                                isExistingContainer, containerFile, signatureAddView.data())));
 //        return clicks(signatureAddButton)
 //                .map(ignored -> Intent.SignatureAddIntent.show())
 //                .mergeWith(signatureAddIntentSubject);

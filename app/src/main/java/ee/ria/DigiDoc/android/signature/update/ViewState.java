@@ -35,9 +35,9 @@ abstract class ViewState implements MviViewState {
     @Nullable abstract Throwable signatureRemoveError();
 
     @Nullable abstract Integer signatureAddMethod();
+    abstract boolean signatureAddActivity();
 
     abstract boolean signatureAddCreateContainerInProgress();
-    abstract boolean signatureAddVisible();
     abstract boolean signatureAddInProgress();
     @Nullable abstract GetMobileCreateSignatureStatusResponse.ProcessStatus signatureAddStatus();
     @Nullable abstract String signatureAddChallenge();
@@ -53,8 +53,8 @@ abstract class ViewState implements MviViewState {
                 .documentOpenInProgress(false)
                 .documentRemoveInProgress(false)
                 .signatureRemoveInProgress(false)
+                .signatureAddActivity(false)
                 .signatureAddCreateContainerInProgress(false)
-                .signatureAddVisible(false)
                 .signatureAddInProgress(false)
                 .signatureAddSuccessMessageVisible(false)
                 .build();
@@ -77,9 +77,9 @@ abstract class ViewState implements MviViewState {
         Builder signatureRemoveInProgress(boolean signatureRemoveInProgress);
         Builder signatureRemoveError(@Nullable Throwable signatureRemoveError);
         Builder signatureAddMethod(@Nullable Integer signatureAddMethod);
+        Builder signatureAddActivity(boolean signatureAddActivity);
         Builder signatureAddCreateContainerInProgress(
                 boolean signatureAddCreateContainerInProgress);
-        Builder signatureAddVisible(boolean signatureAddVisible);
         Builder signatureAddInProgress(boolean signatureAddInProgress);
         Builder signatureAddStatus(
                 @Nullable GetMobileCreateSignatureStatusResponse.ProcessStatus signatureAddStatus);

@@ -6,7 +6,6 @@ import com.google.auto.value.AutoValue;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
@@ -20,15 +19,15 @@ interface Intent extends MviIntent {
 
         abstract File containerFile();
 
-        abstract boolean signatureAddVisible();
+        @Nullable abstract Integer signatureAddMethod();
 
         abstract boolean signatureAddSuccessMessageVisible();
 
         static InitialIntent create(boolean isExistingContainer, File containerFile,
-                                    boolean signatureAddVisible,
+                                    @Nullable Integer signatureAddMethod,
                                     boolean signatureAddSuccessMessageVisible) {
             return new AutoValue_Intent_InitialIntent(isExistingContainer, containerFile,
-                    signatureAddVisible, signatureAddSuccessMessageVisible);
+                    signatureAddMethod, signatureAddSuccessMessageVisible);
         }
     }
 
@@ -111,49 +110,32 @@ interface Intent extends MviIntent {
 
         @Nullable abstract Integer method();
 
-        static SignatureAddIntent show() {
-            return method(R.id.signatureUpdateSignatureAddMethodMobileId);
+        @Nullable abstract Boolean existingContainer();
+
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract SignatureAddData data();
+
+        static SignatureAddIntent show(int method, boolean existingContainer, File containerFile) {
+            return create(method, existingContainer, containerFile, null);
         }
 
-        static SignatureAddIntent method(int method) {
-            return create(method);
+        static SignatureAddIntent sign(int method, boolean existingContainer, File containerFile,
+                                       SignatureAddData data) {
+            return create(method, existingContainer, containerFile, data);
         }
 
         static SignatureAddIntent clear() {
-            return create(null);
+            return create(null, null, null, null);
         }
 
-        private static SignatureAddIntent create(@Nullable Integer method) {
-            return new AutoValue_Intent_SignatureAddIntent(method);
+        private static SignatureAddIntent create(@Nullable Integer method,
+                                                 @Nullable Boolean existingContainer,
+                                                 @Nullable File containerFile,
+                                                 @Nullable SignatureAddData data) {
+            return new AutoValue_Intent_SignatureAddIntent(method, existingContainer, containerFile,
+                    data);
         }
-
-//        abstract boolean show();
-//
-//        abstract boolean isExistingContainer();
-//
-//        @Nullable abstract File containerFile();
-//
-//        @Nullable abstract String phoneNo();
-//
-//        @Nullable abstract String personalCode();
-//
-//        @Nullable abstract Boolean rememberMe();
-//
-//        static SignatureAddIntent showIntent(boolean isExistingContainer, File containerFile) {
-//            return new AutoValue_Intent_SignatureAddIntent(true, isExistingContainer, containerFile,
-//                    null, null, null);
-//        }
-//
-//        static SignatureAddIntent addIntent(boolean isExistingContainer, File containerFile,
-//                                            String phoneNo, String personalCode,
-//                                            boolean rememberMe) {
-//            return new AutoValue_Intent_SignatureAddIntent(false, isExistingContainer,
-//                    containerFile, phoneNo, personalCode, rememberMe);
-//        }
-//
-//        static SignatureAddIntent clearIntent() {
-//            return new AutoValue_Intent_SignatureAddIntent(false, false, null, null, null, null);
-//        }
     }
 
     @AutoValue

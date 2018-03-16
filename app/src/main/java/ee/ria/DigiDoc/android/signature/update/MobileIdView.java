@@ -9,7 +9,8 @@ import android.widget.LinearLayout;
 
 import ee.ria.DigiDoc.R;
 
-public final class MobileIdView extends LinearLayout {
+public final class MobileIdView extends LinearLayout implements
+        SignatureUpdateSignatureAddView.SignatureAddView {
 
     private final EditText phoneNoView;
     private final EditText personalCodeView;
@@ -35,5 +36,11 @@ public final class MobileIdView extends LinearLayout {
         phoneNoView = findViewById(R.id.signatureUpdateMobileIdPhoneNo);
         personalCodeView = findViewById(R.id.signatureUpdateMobileIdPersonalCode);
         rememberMeView = findViewById(R.id.signatureUpdateMobileIdRememberMe);
+    }
+
+    @Override
+    public SignatureAddData data() {
+        return SignatureAddData.mobileId(phoneNoView.getText().toString(),
+                personalCodeView.getText().toString(), rememberMeView.isChecked());
     }
 }

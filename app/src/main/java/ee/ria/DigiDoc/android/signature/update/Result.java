@@ -20,7 +20,7 @@ interface Result extends MviResult<ViewState> {
 
         @Nullable abstract SignedContainer container();
 
-        abstract boolean signatureAddVisible();
+        @Nullable abstract Integer signatureAddMethod();
 
         abstract boolean signatureAddSuccessMessageVisible();
 
@@ -33,23 +33,24 @@ interface Result extends MviResult<ViewState> {
                     .containerLoadInProgress(inProgress())
                     .container(container())
                     .containerLoadError(error())
-                    .signatureAddVisible(signatureAddVisible())
+                    .signatureAddMethod(signatureAddMethod())
                     .signatureAddSuccessMessageVisible(signatureAddSuccessMessageVisible())
                     .build();
         }
 
         static ContainerLoadResult progress() {
-            return new AutoValue_Result_ContainerLoadResult(true, null, false, false, null);
+            return new AutoValue_Result_ContainerLoadResult(true, null, null, false, null);
         }
 
-        static ContainerLoadResult success(SignedContainer container, boolean signatureAddVisible,
+        static ContainerLoadResult success(SignedContainer container,
+                                           @Nullable Integer signatureAddMethod,
                                            boolean signatureAddSuccessMessageVisible) {
-            return new AutoValue_Result_ContainerLoadResult(false, container, signatureAddVisible,
+            return new AutoValue_Result_ContainerLoadResult(false, container, signatureAddMethod,
                     signatureAddSuccessMessageVisible, null);
         }
 
         static ContainerLoadResult failure(Throwable error) {
-            return new AutoValue_Result_ContainerLoadResult(false, null, false, false, error);
+            return new AutoValue_Result_ContainerLoadResult(false, null, null, false, error);
         }
     }
 
@@ -218,6 +219,10 @@ interface Result extends MviResult<ViewState> {
 
         @Nullable abstract Integer method();
 
+        abstract boolean active();
+
+        @Nullable abstract Throwable error();
+
         @Override
         public ViewState reduce(ViewState state) {
             return state.buildWith()
@@ -226,15 +231,24 @@ interface Result extends MviResult<ViewState> {
         }
 
         static SignatureAddResult show(int method) {
-            return create(method);
+            return create(method, false, null);
+        }
+
+        static SignatureAddResult activity() {
+            return create(null, true, null);
+        }
+
+        static SignatureAddResult failure(Throwable error) {
+            return create(null, false, error);
         }
 
         static SignatureAddResult clear() {
-            return create(null);
+            return create(null, false, null);
         }
 
-        private static SignatureAddResult create(@Nullable Integer method) {
-            return new AutoValue_Result_SignatureAddResult(method);
+        private static SignatureAddResult create(@Nullable Integer method, boolean active,
+                                                 @Nullable Throwable error) {
+            return new AutoValue_Result_SignatureAddResult(method, active, error);
         }
 
 //        abstract boolean isCreatingContainer();

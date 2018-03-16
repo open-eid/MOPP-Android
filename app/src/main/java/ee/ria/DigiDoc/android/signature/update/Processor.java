@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.google.common.collect.ImmutableList;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
@@ -17,6 +19,7 @@ import javax.inject.Inject;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
+import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.container.ContainerFacade;
@@ -30,6 +33,7 @@ import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
 import ee.ria.mopp.androidmobileid.dto.response.ServiceFault;
 import ee.ria.mopp.androidmobileid.service.MobileSignService;
 import ee.ria.mopplib.MoppLib;
+import ee.ria.mopplib.data.SignedContainer;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -83,13 +87,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             if (action.signatureAddSuccessMessageVisible()) {
                                 return Observable.timer(3, TimeUnit.SECONDS)
                                         .map(ignored ->
-                                                Result.ContainerLoadResult.success(container, false,
+                                                Result.ContainerLoadResult.success(container, null,
                                                         false))
                                         .startWith(Result.ContainerLoadResult.success(container,
-                                                false, true));
+                                                null, true));
                             } else {
                                 return Observable.just(Result.ContainerLoadResult.success(container,
-                                        action.signatureAddVisible(),
+                                        action.signatureAddMethod(),
                                         action.signatureAddSuccessMessageVisible()));
                             }
                         })
@@ -178,14 +182,45 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
         });
 
-        signatureAdd = upstream -> upstream.map(action -> {
+        signatureAdd = upstream -> upstream.switchMap(action -> {
             Integer method = action.method();
+            Boolean existingContainer = action.existingContainer();
+            File containerFile = action.containerFile();
+            SignatureAddData data = action.data();
             if (method == null) {
-                return Result.SignatureAddResult.clear();
+                return Observable.just(Result.SignatureAddResult.clear());
+            } else if (data == null && existingContainer != null && containerFile != null) {
+                if (SignedContainer.isLegacyContainer(containerFile)) {
+                    return signatureContainerDataSource
+                            .addContainer(ImmutableList.of(FileStream.create(containerFile)), true)
+                            .toObservable()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnNext(containerAdd ->
+                                    navigator.execute(Transaction.push(SignatureUpdateScreen.create(
+                                            containerAdd.isExistingContainer(),
+                                            containerAdd.containerFile(), true, false))))
+                            .map(containerAdd -> Result.SignatureAddResult.activity())
+                            .onErrorReturn(Result.SignatureAddResult::failure)
+                            .startWith(Result.SignatureAddResult.activity());
+                } else {
+                    return Observable.just(Result.SignatureAddResult.show(method));
+                }
+            } else if (existingContainer != null && containerFile != null) {
+                return Observable.just(Result.SignatureAddResult.clear());
             } else {
-                return Result.SignatureAddResult.show(method);
+                throw new IllegalArgumentException("Can't handle action " + action);
             }
         });
+
+//        signatureAdd = upstream -> upstream.map(action -> {
+//            Integer method = action.method();
+//            if (method == null) {
+//                return Result.SignatureAddResult.clear();
+//            } else {
+//                return Result.SignatureAddResult.show(method);
+//            }
+//        });
 
 //        signatureAdd = upstream -> upstream.switchMap(action -> {
 //            File containerFile = action.containerFile();

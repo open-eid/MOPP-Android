@@ -15,6 +15,12 @@ import static com.jakewharton.rxbinding2.widget.RxRadioGroup.checkedChanges;
 
 public final class SignatureUpdateSignatureAddView extends LinearLayout {
 
+    private static final int METHOD_VIEW_POSITION = 1;
+
+    interface SignatureAddView {
+        SignatureAddData data();
+    }
+
     private static final SparseIntArray METHOD_IDS = new SparseIntArray();
     static {
         METHOD_IDS.put(R.id.signatureUpdateSignatureAddMethodMobileId,
@@ -49,6 +55,10 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         return checkedChanges(methodView).skipInitialValue();
     }
 
+    public int method() {
+        return methodView.getCheckedRadioButtonId();
+    }
+
     public void method(int method) {
         int id = METHOD_IDS.get(method);
         if (findViewById(id) != null) {
@@ -66,9 +76,14 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
                 throw new IllegalArgumentException("Unknown method " + method);
         }
         view.setId(id);
-        if (getChildCount() == 2) {
-            removeViewAt(1);
+        if (getChildAt(METHOD_VIEW_POSITION) != null) {
+            removeViewAt(METHOD_VIEW_POSITION);
         }
-        addView(view, 1, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        addView(view, METHOD_VIEW_POSITION,
+                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+    }
+
+    public SignatureAddData data() {
+        return ((SignatureAddView) getChildAt(METHOD_VIEW_POSITION)).data();
     }
 }
