@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.view.Window;
+import android.view.WindowManager;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.ObservableDialogClickListener;
@@ -37,5 +39,16 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
 
     public Observable<Object> positiveButtonClicks() {
         return positiveButtonClicks.map(ignored -> VOID);
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        Window window = getWindow();
+        if (window != null) {
+            // https://stackoverflow.com/questions/9102074/android-edittext-in-dialog-doesnt-pull-up-soft-keyboard
+            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                    WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+        }
     }
 }

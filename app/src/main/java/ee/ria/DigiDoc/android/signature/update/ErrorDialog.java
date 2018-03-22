@@ -9,8 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.mid.MobileSignFaultMessageSource;
-import ee.ria.DigiDoc.mid.MobileSignStatusMessageSource;
 import io.reactivex.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.signature.update.ErrorDialog.Type.DOCUMENTS_ADD;
@@ -28,9 +26,6 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
         String SIGNATURE_REMOVE = "SIGNATURE_REMOVE";
     }
 
-    private final MobileSignStatusMessageSource statusMessageSource;
-    private final MobileSignFaultMessageSource faultMessageSource;
-
     private final Subject<Intent.DocumentsAddIntent> documentsAddIntentSubject;
     private final Subject<Intent.DocumentRemoveIntent> documentRemoveIntentSubject;
     private final Subject<Intent.SignatureAddIntent> signatureAddIntentSubject;
@@ -44,8 +39,6 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
                 Subject<Intent.SignatureAddIntent> signatureAddIntentSubject,
                 Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject) {
         super(context);
-        statusMessageSource = new MobileSignStatusMessageSource(context.getResources());
-        faultMessageSource = new MobileSignFaultMessageSource(context.getResources());
         this.documentsAddIntentSubject = documentsAddIntentSubject;
         this.documentRemoveIntentSubject = documentRemoveIntentSubject;
         this.signatureAddIntentSubject = signatureAddIntentSubject;
@@ -66,13 +59,7 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
                     R.string.signature_update_documents_remove_error_container_empty));
         } else if (signatureAddError != null) {
             type = SIGNATURE_ADD;
-            if (signatureAddError instanceof Processor.MobileIdFaultReasonMessageException) {
-                setMessage(faultMessageSource.getMessage((
-                        (Processor.MobileIdFaultReasonMessageException) signatureAddError).reason));
-            } else if (signatureAddError instanceof Processor.MobileIdMessageException) {
-                setMessage(statusMessageSource.getMessage((
-                        (Processor.MobileIdMessageException) signatureAddError).processStatus));
-            }
+            setMessage(signatureAddError.getMessage());
         } else if (signatureRemoveError != null) {
             type = SIGNATURE_REMOVE;
             setMessage(getContext().getString(R.string.signature_update_signature_remove_error));

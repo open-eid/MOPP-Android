@@ -7,7 +7,6 @@ import com.google.auto.value.AutoValue;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
 import ee.ria.mopplib.data.SignedContainer;
@@ -36,13 +35,9 @@ abstract class ViewState implements MviViewState {
 
     @Nullable abstract Integer signatureAddMethod();
     abstract boolean signatureAddActivity();
-
-    abstract boolean signatureAddCreateContainerInProgress();
-    abstract boolean signatureAddInProgress();
-    @Nullable abstract GetMobileCreateSignatureStatusResponse.ProcessStatus signatureAddStatus();
-    @Nullable abstract String signatureAddChallenge();
     abstract boolean signatureAddSuccessMessageVisible();
     @Nullable abstract Throwable signatureAddError();
+    @Nullable abstract SignatureAddResponse signatureAddResponse();
 
     abstract Builder buildWith();
 
@@ -54,8 +49,6 @@ abstract class ViewState implements MviViewState {
                 .documentRemoveInProgress(false)
                 .signatureRemoveInProgress(false)
                 .signatureAddActivity(false)
-                .signatureAddCreateContainerInProgress(false)
-                .signatureAddInProgress(false)
                 .signatureAddSuccessMessageVisible(false)
                 .build();
     }
@@ -78,14 +71,9 @@ abstract class ViewState implements MviViewState {
         Builder signatureRemoveError(@Nullable Throwable signatureRemoveError);
         Builder signatureAddMethod(@Nullable Integer signatureAddMethod);
         Builder signatureAddActivity(boolean signatureAddActivity);
-        Builder signatureAddCreateContainerInProgress(
-                boolean signatureAddCreateContainerInProgress);
-        Builder signatureAddInProgress(boolean signatureAddInProgress);
-        Builder signatureAddStatus(
-                @Nullable GetMobileCreateSignatureStatusResponse.ProcessStatus signatureAddStatus);
-        Builder signatureAddChallenge(@Nullable String signatureAddChallenge);
         Builder signatureAddSuccessMessageVisible(boolean signatureAddSuccessMessageVisible);
         Builder signatureAddError(@Nullable Throwable signatureAddError);
+        Builder signatureAddResponse(@Nullable SignatureAddResponse signatureAddResponse);
         ViewState build();
     }
 }
