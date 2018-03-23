@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.signature.update;
+package ee.ria.DigiDoc.android.signature.update.idcard;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -7,8 +7,9 @@ import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public final class IdCardView extends LinearLayout implements
-        SignatureUpdateSignatureAddView.SignatureAddView {
+import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
+
+public final class IdCardView extends LinearLayout implements SignatureAddView<IdCardRequest> {
 
     public IdCardView(Context context) {
         this(context, null);
@@ -25,6 +26,7 @@ public final class IdCardView extends LinearLayout implements
     public IdCardView(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                       int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        setOrientation(VERTICAL);
         TextView view = new TextView(context);
         view.setGravity(Gravity.CENTER);
         view.setText("ID CARD YO");
@@ -32,7 +34,11 @@ public final class IdCardView extends LinearLayout implements
     }
 
     @Override
-    public SignatureAddData data() {
-        return SignatureAddData.idCard();
+    public void init(IdCardRequest request) {
+    }
+
+    @Override
+    public IdCardRequest request() {
+        return IdCardRequest.create();
     }
 }

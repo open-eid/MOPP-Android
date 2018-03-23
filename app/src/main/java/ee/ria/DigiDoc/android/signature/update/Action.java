@@ -101,14 +101,14 @@ interface Action extends MviAction {
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract SignatureAddData data();
+        @Nullable abstract SignatureAddRequest request();
 
         static SignatureAddAction create(@Nullable Integer method,
                                          @Nullable Boolean existingContainer,
                                          @Nullable File containerFile,
-                                         @Nullable SignatureAddData data) {
+                                         @Nullable SignatureAddRequest request) {
             return new AutoValue_Action_SignatureAddAction(method, existingContainer, containerFile,
-                    data);
+                    request);
         }
     }
 

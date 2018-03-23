@@ -9,6 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.signature.update.idcard.IdCardView;
+import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdView;
 import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.widget.RxRadioGroup.checkedChanges;
@@ -16,10 +18,6 @@ import static com.jakewharton.rxbinding2.widget.RxRadioGroup.checkedChanges;
 public final class SignatureUpdateSignatureAddView extends LinearLayout {
 
     private static final int METHOD_VIEW_POSITION = 1;
-
-    interface SignatureAddView {
-        SignatureAddData data();
-    }
 
     private static final SparseIntArray METHOD_IDS = new SparseIntArray();
     static {
@@ -83,7 +81,7 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     }
 
-    public SignatureAddData data() {
-        return ((SignatureAddView) getChildAt(METHOD_VIEW_POSITION)).data();
+    public SignatureAddRequest request() {
+        return ((SignatureAddView) getChildAt(METHOD_VIEW_POSITION)).request();
     }
 }

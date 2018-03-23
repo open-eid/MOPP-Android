@@ -55,7 +55,7 @@ public final class SignatureUpdateViewModel extends
             Intent.SignatureAddIntent signatureAddIntent = (Intent.SignatureAddIntent) intent;
             return Action.SignatureAddAction.create(signatureAddIntent.method(),
                     signatureAddIntent.existingContainer(), signatureAddIntent.containerFile(),
-                    signatureAddIntent.data());
+                    signatureAddIntent.request());
         } else if (intent instanceof Intent.SendIntent) {
             return Action.SendAction.create(((Intent.SendIntent) intent).containerFile());
         } else {

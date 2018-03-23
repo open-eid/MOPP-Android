@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.signature.update;
+package ee.ria.DigiDoc.android.signature.update.mobileid;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -8,9 +8,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 
-public final class MobileIdView extends LinearLayout implements
-        SignatureUpdateSignatureAddView.SignatureAddView {
+public final class MobileIdView extends LinearLayout implements SignatureAddView<MobileIdRequest> {
 
     private final EditText phoneNoView;
     private final EditText personalCodeView;
@@ -39,8 +39,12 @@ public final class MobileIdView extends LinearLayout implements
     }
 
     @Override
-    public SignatureAddData data() {
-        return SignatureAddData.mobileId(phoneNoView.getText().toString(),
+    public void init(MobileIdRequest request) {
+    }
+
+    @Override
+    public MobileIdRequest request() {
+        return MobileIdRequest.create(phoneNoView.getText().toString(),
                 personalCodeView.getText().toString(), rememberMeView.isChecked());
     }
 }

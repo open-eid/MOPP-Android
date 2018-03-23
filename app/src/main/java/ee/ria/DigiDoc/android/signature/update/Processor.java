@@ -155,10 +155,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
             Integer method = action.method();
             Boolean existingContainer = action.existingContainer();
             File containerFile = action.containerFile();
-            SignatureAddData data = action.data();
+            SignatureAddRequest request = action.request();
             if (method == null) {
                 return Observable.just(Result.SignatureAddResult.clear());
-            } else if (data == null && existingContainer != null && containerFile != null) {
+            } else if (request == null && existingContainer != null && containerFile != null) {
                 if (SignedContainer.isLegacyContainer(containerFile)) {
                     return signatureContainerDataSource
                             .addContainer(ImmutableList.of(FileStream.create(containerFile)), true)
@@ -176,7 +176,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     return Observable.just(Result.SignatureAddResult.show(method));
                 }
             } else if (existingContainer != null && containerFile != null) {
-                return signatureAddSource.create(containerFile, data)
+                return signatureAddSource.create(containerFile, request)
                         .switchMap(response -> {
                             if (response.container() != null) {
                                 if (existingContainer) {

@@ -114,15 +114,15 @@ interface Intent extends MviIntent {
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract SignatureAddData data();
+        @Nullable abstract SignatureAddRequest request();
 
         static SignatureAddIntent show(int method, boolean existingContainer, File containerFile) {
             return create(method, existingContainer, containerFile, null);
         }
 
         static SignatureAddIntent sign(int method, boolean existingContainer, File containerFile,
-                                       SignatureAddData data) {
-            return create(method, existingContainer, containerFile, data);
+                                       SignatureAddRequest request) {
+            return create(method, existingContainer, containerFile, request);
         }
 
         static SignatureAddIntent clear() {
@@ -132,9 +132,9 @@ interface Intent extends MviIntent {
         private static SignatureAddIntent create(@Nullable Integer method,
                                                  @Nullable Boolean existingContainer,
                                                  @Nullable File containerFile,
-                                                 @Nullable SignatureAddData data) {
+                                                 @Nullable SignatureAddRequest request) {
             return new AutoValue_Intent_SignatureAddIntent(method, existingContainer, containerFile,
-                    data);
+                    request);
         }
     }
 

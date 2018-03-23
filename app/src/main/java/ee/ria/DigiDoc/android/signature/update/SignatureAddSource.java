@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdOnSubscribe;
+import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdRequest;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import io.reactivex.Observable;
@@ -29,10 +30,10 @@ final class SignatureAddSource {
         this.settingsDataStore = settingsDataStore;
     }
 
-    Observable<? extends SignatureAddResponse> create(File containerFile, SignatureAddData request) {
-        if (request instanceof SignatureAddData.MobileIdSignatureAddData) {
-            SignatureAddData.MobileIdSignatureAddData mobileIdRequest =
-                    (SignatureAddData.MobileIdSignatureAddData) request;
+    Observable<? extends SignatureAddResponse> create(File containerFile,
+                                                      SignatureAddRequest request) {
+        if (request instanceof MobileIdRequest) {
+            MobileIdRequest mobileIdRequest = (MobileIdRequest) request;
             if (mobileIdRequest.rememberMe()) {
                 settingsDataStore.setPhoneNo(mobileIdRequest.phoneNo());
                 settingsDataStore.setPersonalCode(mobileIdRequest.personalCode());

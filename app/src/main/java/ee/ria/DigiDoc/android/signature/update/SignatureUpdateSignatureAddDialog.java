@@ -18,7 +18,7 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
     private final SignatureUpdateSignatureAddView view;
     private final ObservableDialogClickListener positiveButtonClicks;
 
-    public SignatureUpdateSignatureAddDialog(@NonNull Context context) {
+    SignatureUpdateSignatureAddDialog(@NonNull Context context) {
         super(context);
         TypedArray a = context.obtainStyledAttributes(new int[]{R.attr.dialogPreferredPadding});
         int padding = a.getDimensionPixelSize(0, 0);
@@ -37,7 +37,7 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
         return view;
     }
 
-    public Observable<Object> positiveButtonClicks() {
+    Observable<Object> positiveButtonClicks() {
         return positiveButtonClicks.map(ignored -> VOID);
     }
 

@@ -275,7 +275,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                         Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile)),
                 signatureAddDialog.positiveButtonClicks().map(ignored ->
                         Intent.SignatureAddIntent.sign(signatureAddView.method(),
-                                isExistingContainer, containerFile, signatureAddView.data())),
+                                isExistingContainer, containerFile, signatureAddView.request())),
                 signatureAddIntentSubject);
     }
 
