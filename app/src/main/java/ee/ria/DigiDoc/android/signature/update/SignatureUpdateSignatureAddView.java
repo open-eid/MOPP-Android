@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.SparseIntArray;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
@@ -27,6 +26,8 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
     }
 
     private final RadioGroup methodView;
+    private final MobileIdView mobileIdView;
+    private final IdCardView idCardView;
 
     public SignatureUpdateSignatureAddView(Context context) {
         this(context, null);
@@ -47,6 +48,8 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update_signature_add, this);
         methodView = findViewById(R.id.signatureUpdateSignatureAddMethod);
+        mobileIdView = findViewById(R.id.signatureUpdateMobileId);
+        idCardView = findViewById(R.id.signatureUpdateIdCard);
     }
 
     public Observable<Integer> methodChanges() {
@@ -58,27 +61,23 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
     }
 
     public void method(int method) {
-        int id = METHOD_IDS.get(method);
-        if (findViewById(id) != null) {
-            return;
-        }
-        View view;
         switch (method) {
             case R.id.signatureUpdateSignatureAddMethodMobileId:
-                view = new MobileIdView(getContext());
+                mobileIdView.setVisibility(VISIBLE);
+                idCardView.setVisibility(GONE);
                 break;
             case R.id.signatureUpdateSignatureAddMethodIdCard:
-                view = new IdCardView(getContext());
+                mobileIdView.setVisibility(GONE);
+                idCardView.setVisibility(VISIBLE);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown method " + method);
         }
-        view.setId(id);
-        if (getChildAt(METHOD_VIEW_POSITION) != null) {
-            removeViewAt(METHOD_VIEW_POSITION);
-        }
-        addView(view, METHOD_VIEW_POSITION,
-                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+    }
+
+    public void reset(SignatureUpdateViewModel viewModel) {
+        mobileIdView.reset(viewModel);
+        idCardView.reset(viewModel);
     }
 
     public SignatureAddRequest request() {

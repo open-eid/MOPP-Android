@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
+import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 
 public final class IdCardView extends LinearLayout implements SignatureAddView<IdCardRequest> {
 
@@ -34,7 +35,7 @@ public final class IdCardView extends LinearLayout implements SignatureAddView<I
     }
 
     @Override
-    public void init(IdCardRequest request) {
+    public void reset(SignatureUpdateViewModel viewModel) {
     }
 
     @Override

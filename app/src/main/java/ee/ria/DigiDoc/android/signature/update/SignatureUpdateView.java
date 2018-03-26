@@ -235,9 +235,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     }
 
     private void resetSignatureAddDialog() {
-//        signatureAddDialog.setPhoneNo(viewModel.getPhoneNo());
-//        signatureAddDialog.setPersonalCode(viewModel.getPersonalCode());
-//        signatureAddDialog.setRememberMe(true);
+        signatureAddView.reset(viewModel);
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
@@ -270,7 +268,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 clicks(signatureAddButton).map(ignored ->
                         Intent.SignatureAddIntent.show(DEFAULT_SIGN_METHOD, isExistingContainer,
                                 containerFile)),
-                cancels(signatureAddDialog).map(ignored -> Intent.SignatureAddIntent.clear()),
+                cancels(signatureAddDialog)
+                        .doOnNext(ignored -> resetSignatureAddDialog())
+                        .map(ignored -> Intent.SignatureAddIntent.clear()),
                 signatureAddView.methodChanges().map(method ->
                         Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile)),
                 signatureAddDialog.positiveButtonClicks().map(ignored ->
@@ -313,14 +313,6 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                                 .remove(containerFile, signatureRemoveConfirmation))));
         disposables.add(signatureRemoveConfirmationDialog.cancels().subscribe(ignored ->
                 signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear())));
-//        disposables.add(signatureAddDialog.positiveButtonClicks().subscribe(data ->
-//                signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.addIntent(
-//                        isExistingContainer, containerFile, data.phoneNo(), data.personalCode(),
-//                        data.rememberMe()))));
-//        disposables.add(signatureAddDialog.cancels().subscribe(ignored -> {
-//            resetSignatureAddDialog();
-//            signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clearIntent());
-//        }));
     }
 
     @Override

@@ -33,4 +33,15 @@
 
     </RadioGroup>
 
+    <ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdView
+        android:id="@id/signatureUpdateMobileId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ee.ria.DigiDoc.android.signature.update.idcard.IdCardView
+        android:id="@id/signatureUpdateIdCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
 </merge>

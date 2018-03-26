@@ -15,11 +15,11 @@ public final class SignatureUpdateViewModel extends
         this.settingsDataStore = settingsDataStore;
     }
 
-    String getPhoneNo() {
+    public String phoneNo() {
         return settingsDataStore.getPhoneNo();
     }
 
-    String getPersonalCode() {
+    public String personalCode() {
         return settingsDataStore.getPersonalCode();
     }
 

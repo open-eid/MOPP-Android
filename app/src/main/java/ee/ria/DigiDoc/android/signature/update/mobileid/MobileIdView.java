@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
+import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 
 public final class MobileIdView extends LinearLayout implements SignatureAddView<MobileIdRequest> {
 
@@ -39,7 +40,10 @@ public final class MobileIdView extends LinearLayout implements SignatureAddView
     }
 
     @Override
-    public void init(MobileIdRequest request) {
+    public void reset(SignatureUpdateViewModel viewModel) {
+        phoneNoView.setText(viewModel.phoneNo());
+        personalCodeView.setText(viewModel.personalCode());
+        rememberMeView.setChecked(true);
     }
 
     @Override
