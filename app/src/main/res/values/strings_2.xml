@@ -74,7 +74,7 @@
     <string name="signature_update_id_card_progress_message_reader">Connect reader to the phone</string>
     <string name="signature_update_id_card_progress_message_card">Insert card to the reader</string>
     <string name="signature_update_id_card_sign_message">ID card is in the reader</string>
-    <string name="signature_update_id_card_sign_data">%2$s (%1$s)</string>
+    <string name="signature_update_id_card_sign_data">%1$s %2$s (%3$s)</string>
     <string name="signature_update_id_card_sign_pin">Insert PIN to sign</string>
 
     <string name="signature_update_load_container_error">Could not open signature container</string>

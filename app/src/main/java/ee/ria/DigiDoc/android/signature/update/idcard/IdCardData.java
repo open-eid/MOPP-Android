@@ -3,13 +3,15 @@ package ee.ria.DigiDoc.android.signature.update.idcard;
 import com.google.auto.value.AutoValue;
 
 @AutoValue
-abstract class IdCardData {
+public abstract class IdCardData {
 
-    abstract String personalCode();
+    public abstract String givenNames();
 
-    abstract String name();
+    public abstract String surname();
 
-    static IdCardData create(String personalCode, String name) {
-        return new AutoValue_IdCardData(personalCode, name);
+    public abstract String personalCode();
+
+    static IdCardData create(String givenNames, String surname, String personalCode) {
+        return new AutoValue_IdCardData(givenNames, surname, personalCode);
     }
 }

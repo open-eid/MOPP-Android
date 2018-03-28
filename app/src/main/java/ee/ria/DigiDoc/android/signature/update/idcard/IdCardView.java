@@ -66,7 +66,8 @@ public final class IdCardView extends LinearLayout implements
             progressContainerView.setVisibility(GONE);
             signContainerView.setVisibility(VISIBLE);
             signDataView.setText(getResources().getString(
-                    R.string.signature_update_id_card_sign_data, data.personalCode(), data.name()));
+                    R.string.signature_update_id_card_sign_data, data.givenNames(), data.surname(),
+                    data.personalCode()));
         }
     }
 }

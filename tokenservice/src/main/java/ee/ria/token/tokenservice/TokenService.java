@@ -151,9 +151,13 @@ public class TokenService extends Service {
         super.onDestroy();
     }
 
+    public SparseArray<String> readPersonalFile() {
+        return token.readPersonalFile();
+    }
+
     public void readPersonalFile(PersonalFileCallback callback) {
         try {
-            SparseArray<String> result = token.readPersonalFile();
+            SparseArray<String> result = readPersonalFile();
             callback.onPersonalFileResponse(result);
         } catch (Exception e) {
             Timber.e(e, "Error reading personal file from card");

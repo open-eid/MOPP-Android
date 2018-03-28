@@ -9,9 +9,9 @@ import javax.inject.Inject;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
-import ee.ria.DigiDoc.android.signature.update.idcard.IdCardOnSubscribe;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardRequest;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
+import ee.ria.DigiDoc.android.signature.update.idcard.TokenServiceObservable;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdOnSubscribe;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdRequest;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
@@ -38,9 +38,21 @@ final class SignatureAddSource {
         if (method == R.id.signatureUpdateSignatureAddMethodMobileId) {
             return Observable.just(Result.SignatureAddResult.show(method));
         } else if (method == R.id.signatureUpdateSignatureAddMethodIdCard) {
-            return Observable
-                    .create(new IdCardOnSubscribe(application))
-                    .map(response -> Result.SignatureAddResult.method(method, response))
+            return TokenServiceObservable.connect(application)
+                    .switchMap(connectData -> {
+                        if (connectData.cardPresent()) {
+                            return TokenServiceObservable
+                                    .read(connectData.tokenService())
+                                    .map(data ->
+                                            Result.SignatureAddResult.method(method,
+                                                    IdCardResponse.data(data)))
+                                    .startWith(Result.SignatureAddResult
+                                            .method(method, IdCardResponse.reader()));
+                        } else {
+                            return Observable.just(Result.SignatureAddResult
+                                    .method(method, IdCardResponse.reader()));
+                        }
+                    })
                     .startWith(Result.SignatureAddResult.method(method, IdCardResponse.initial()));
         } else {
             throw new IllegalArgumentException("Unknown method " + method);
@@ -75,8 +87,7 @@ final class SignatureAddSource {
                     .startWith(MobileIdResponse
                             .status(GetMobileCreateSignatureStatusResponse.ProcessStatus.DEFAULT));
         } else if (request instanceof IdCardRequest) {
-            return Observable
-                    .create(new IdCardOnSubscribe(application));
+            return Observable.just(IdCardResponse.initial());
         } else {
             throw new IllegalArgumentException("Unknown request " + request);
         }
