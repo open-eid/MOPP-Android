@@ -3,14 +3,21 @@ package ee.ria.DigiDoc.android.signature.update.idcard;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.Gravity;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 
-public final class IdCardView extends LinearLayout implements SignatureAddView<IdCardRequest> {
+public final class IdCardView extends LinearLayout implements
+        SignatureAddView<IdCardRequest, IdCardResponse> {
+
+    private final View progressContainerView;
+    private final TextView progressMessageView;
+    private final View signContainerView;
+    private final TextView signDataView;
 
     public IdCardView(Context context) {
         this(context, null);
@@ -28,10 +35,11 @@ public final class IdCardView extends LinearLayout implements SignatureAddView<I
                       int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         setOrientation(VERTICAL);
-        TextView view = new TextView(context);
-        view.setGravity(Gravity.CENTER);
-        view.setText("ID CARD YO");
-        addView(view, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        inflate(context, R.layout.signature_update_id_card, this);
+        progressContainerView = findViewById(R.id.signatureUpdateIdCardProgressContainer);
+        progressMessageView = findViewById(R.id.signatureUpdateIdCardProgressMessage);
+        signContainerView = findViewById(R.id.signatureUpdateIdCardSignContainer);
+        signDataView = findViewById(R.id.signatureUpdateIdCardSignData);
     }
 
     @Override
@@ -41,5 +49,24 @@ public final class IdCardView extends LinearLayout implements SignatureAddView<I
     @Override
     public IdCardRequest request() {
         return IdCardRequest.create();
+    }
+
+    @Override
+    public void response(@Nullable IdCardResponse response) {
+        IdCardData data = response == null ? null : response.data();
+        if (response == null || !response.readerConnected()) {
+            progressContainerView.setVisibility(VISIBLE);
+            progressMessageView.setText(R.string.signature_update_id_card_progress_message_reader);
+            signContainerView.setVisibility(GONE);
+        } else if (response.readerConnected() && data == null) {
+            progressContainerView.setVisibility(VISIBLE);
+            progressMessageView.setText(R.string.signature_update_id_card_progress_message_card);
+            signContainerView.setVisibility(GONE);
+        } else if (data != null) {
+            progressContainerView.setVisibility(GONE);
+            signContainerView.setVisibility(VISIBLE);
+            signDataView.setText(getResources().getString(
+                    R.string.signature_update_id_card_sign_data, data.personalCode(), data.name()));
+        }
     }
 }

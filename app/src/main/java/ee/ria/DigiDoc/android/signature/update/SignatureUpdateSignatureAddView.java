@@ -3,27 +3,19 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.SparseIntArray;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardView;
+import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdView;
 import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.widget.RxRadioGroup.checkedChanges;
 
 public final class SignatureUpdateSignatureAddView extends LinearLayout {
-
-    private static final int METHOD_VIEW_POSITION = 1;
-
-    private static final SparseIntArray METHOD_IDS = new SparseIntArray();
-    static {
-        METHOD_IDS.put(R.id.signatureUpdateSignatureAddMethodMobileId,
-                R.id.signatureUpdateMobileId);
-        METHOD_IDS.put(R.id.signatureUpdateSignatureAddMethodIdCard, R.id.signatureUpdateIdCard);
-    }
 
     private final RadioGroup methodView;
     private final MobileIdView mobileIdView;
@@ -76,11 +68,32 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
     }
 
     public void reset(SignatureUpdateViewModel viewModel) {
+        methodView.check(R.id.signatureUpdateSignatureAddMethodMobileId);
         mobileIdView.reset(viewModel);
         idCardView.reset(viewModel);
     }
 
     public SignatureAddRequest request() {
-        return ((SignatureAddView) getChildAt(METHOD_VIEW_POSITION)).request();
+        switch (method()) {
+            case R.id.signatureUpdateSignatureAddMethodMobileId:
+                return mobileIdView.request();
+            case R.id.signatureUpdateSignatureAddMethodIdCard:
+                return idCardView.request();
+            default:
+                throw new IllegalStateException("Unknown method " + method());
+        }
+    }
+
+    public void response(SignatureAddResponse response) {
+        if (response == null) {
+            mobileIdView.response(null);
+            idCardView.response(null);
+        } else if (response instanceof MobileIdResponse) {
+            mobileIdView.response((MobileIdResponse) response);
+        } else if (response instanceof IdCardResponse) {
+            idCardView.response((IdCardResponse) response);
+        } else {
+            throw new IllegalArgumentException("Unknown response " + response);
+        }
     }
 }

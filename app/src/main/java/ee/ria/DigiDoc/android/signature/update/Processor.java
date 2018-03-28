@@ -173,10 +173,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             .onErrorReturn(Result.SignatureAddResult::failure)
                             .startWith(Result.SignatureAddResult.activity());
                 } else {
-                    return Observable.just(Result.SignatureAddResult.show(method));
+                    return signatureAddSource.show(method);
                 }
             } else if (existingContainer != null && containerFile != null) {
-                return signatureAddSource.create(containerFile, request)
+                return signatureAddSource.sign(containerFile, request)
                         .switchMap(response -> {
                             if (response.container() != null) {
                                 if (existingContainer) {

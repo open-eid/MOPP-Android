@@ -202,9 +202,13 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             signatureAddView.method(signatureAddMethod);
         }
 
-        // should be in the MobileIdView in dialog
         SignatureAddResponse signatureAddResponse = state.signatureAddResponse();
-        mobileIdContainerView.setVisibility(signatureAddResponse == null ? GONE : VISIBLE);
+        signatureAddView.response(signatureAddResponse);
+        // should be in the MobileIdView in dialog
+        mobileIdContainerView.setVisibility(
+                signatureAddResponse != null && signatureAddResponse instanceof MobileIdResponse
+                        ? VISIBLE
+                        : GONE);
         if (signatureAddResponse instanceof MobileIdResponse) {
             MobileIdResponse mobileIdResponse = (MobileIdResponse) signatureAddResponse;
             GetMobileCreateSignatureStatusResponse.ProcessStatus mobileIdStatus =

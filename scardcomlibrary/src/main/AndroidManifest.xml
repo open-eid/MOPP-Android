@@ -1,7 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ee.ria.scardcomlibrary">
 
-    <uses-permission android:name="android.permission.NFC" />
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="false" />
 
     <application>
 

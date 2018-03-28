@@ -87,6 +87,11 @@
     <item type="id" name="signatureUpdateMobileIdRememberMe" />
 
     <item type="id" name="signatureUpdateIdCard" />
+    <item type="id" name="signatureUpdateIdCardProgressContainer" />
+    <item type="id" name="signatureUpdateIdCardProgressMessage" />
+    <item type="id" name="signatureUpdateIdCardSignContainer" />
+    <item type="id" name="signatureUpdateIdCardSignData" />
+    <item type="id" name="signatureUpdateIdCardSignPin" />
 
     <!-- Signature Add -->
     <item type="id" name="signatureAdd" />

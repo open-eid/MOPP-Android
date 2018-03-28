@@ -71,6 +71,12 @@
     <string name="signature_update_mobile_id_personal_code">Personal code</string>
     <string name="signature_update_mobile_id_remember_me">Remember me</string>
 
+    <string name="signature_update_id_card_progress_message_reader">Connect reader to the phone</string>
+    <string name="signature_update_id_card_progress_message_card">Insert card to the reader</string>
+    <string name="signature_update_id_card_sign_message">ID card is in the reader</string>
+    <string name="signature_update_id_card_sign_data">%2$s (%1$s)</string>
+    <string name="signature_update_id_card_sign_pin">Insert PIN to sign</string>
+
     <string name="signature_update_load_container_error">Could not open signature container</string>
     <string name="signature_update_add_documents_error_exists">File already exists in the container</string>
     <string name="signature_update_documents_remove_error_container_empty">Can\'t remove all documents from container</string>
