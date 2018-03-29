@@ -43,6 +43,7 @@ final class SignatureAddSource {
                         if (connectData.cardPresent()) {
                             return TokenServiceObservable
                                     .read(connectData.tokenService())
+                                    .toObservable()
                                     .map(data ->
                                             Result.SignatureAddResult.method(method,
                                                     IdCardResponse.data(data)))
@@ -87,7 +88,24 @@ final class SignatureAddSource {
                     .startWith(MobileIdResponse
                             .status(GetMobileCreateSignatureStatusResponse.ProcessStatus.DEFAULT));
         } else if (request instanceof IdCardRequest) {
-            return Observable.just(IdCardResponse.initial());
+            IdCardRequest idCardRequest = (IdCardRequest) request;
+            return TokenServiceObservable
+                    .connect(application)
+                    .switchMap(connectData -> {
+                        if (connectData.cardPresent()) {
+                            return signatureContainerDataSource
+                                    .get(containerFile)
+                                    .flatMap(container ->
+                                            TokenServiceObservable
+                                                    .sign(connectData.tokenService(), container,
+                                                            settingsDataStore.getSignatureProfile(),
+                                                            idCardRequest.pin2()))
+                                    .map(IdCardResponse::success)
+                                    .toObservable();
+                        } else {
+                            return Observable.empty();
+                        }
+                    });
         } else {
             throw new IllegalArgumentException("Unknown request " + request);
         }

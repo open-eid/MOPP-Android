@@ -91,7 +91,7 @@
     <item type="id" name="signatureUpdateIdCardProgressMessage" />
     <item type="id" name="signatureUpdateIdCardSignContainer" />
     <item type="id" name="signatureUpdateIdCardSignData" />
-    <item type="id" name="signatureUpdateIdCardSignPin" />
+    <item type="id" name="signatureUpdateIdCardSignPin2" />
 
     <!-- Signature Add -->
     <item type="id" name="signatureAdd" />

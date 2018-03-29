@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ public final class IdCardView extends LinearLayout implements
     private final TextView progressMessageView;
     private final View signContainerView;
     private final TextView signDataView;
+    private final EditText signPin2View;
 
     public IdCardView(Context context) {
         this(context, null);
@@ -40,15 +42,17 @@ public final class IdCardView extends LinearLayout implements
         progressMessageView = findViewById(R.id.signatureUpdateIdCardProgressMessage);
         signContainerView = findViewById(R.id.signatureUpdateIdCardSignContainer);
         signDataView = findViewById(R.id.signatureUpdateIdCardSignData);
+        signPin2View = findViewById(R.id.signatureUpdateIdCardSignPin2);
     }
 
     @Override
     public void reset(SignatureUpdateViewModel viewModel) {
+        signPin2View.setText(null);
     }
 
     @Override
     public IdCardRequest request() {
-        return IdCardRequest.create();
+        return IdCardRequest.create(signPin2View.getText().toString());
     }
 
     @Override

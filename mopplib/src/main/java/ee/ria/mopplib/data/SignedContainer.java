@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 import android.webkit.MimeTypeMap;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
@@ -28,6 +29,7 @@ import java.util.Comparator;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
 import ee.ria.libdigidocpp.Signatures;
+import okio.ByteString;
 import timber.log.Timber;
 
 import static com.google.common.collect.ImmutableList.sortedCopyOf;
@@ -155,6 +157,28 @@ public abstract class SignedContainer {
         } catch (Exception e) {
             throw new SignaturesLockedException();
         }
+        container.save();
+        return open(file());
+    }
+
+    @SuppressWarnings("Guava")
+    public final SignedContainer sign(ByteString certificate, String profile,
+                                      Function<ByteString, ByteString> signFunction) throws
+            IOException {
+        Container container;
+        try {
+            container = Container.open(file().getAbsolutePath());
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+        if (container == null) {
+            throw new IOException("Container.open returned null");
+        }
+        ee.ria.libdigidocpp.Signature signature = container
+                .prepareWebSignature(certificate.toByteArray(), profile);
+        ByteString signatureData = signFunction.apply(ByteString.of(signature.dataToSign()));
+        signature.setSignatureValue(signatureData.toByteArray());
+        signature.extendSignatureProfile(profile);
         container.save();
         return open(file());
     }

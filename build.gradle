@@ -26,6 +26,7 @@ ext {
     preferenceV7FixVersion = '27.1.0.0'
     guavaVersion = '24.1-android'
     commonsIoVersion = '2.6'
+    okioVersion = '1.14.0'
     timberVersion = '4.6.1'
     butterknifeVersion = '8.8.1'
     okhttpVersion = '3.10.0'

@@ -62,6 +62,7 @@ dependencies {
 
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation "com.squareup.okio:okio:${okioVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
     implementation "com.jakewharton:butterknife:${butterknifeVersion}"

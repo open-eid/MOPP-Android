@@ -116,9 +116,13 @@ public class TokenService extends Service {
         }
     }
 
+    public byte[] sign(String pin2, byte[] data) {
+        return token.sign(Token.PinType.PIN2, pin2, data);
+    }
+
     public void sign(Token.PinType pinType, String pin, byte[] data, SignCallback callback) {
         try {
-            byte[] sign = token.sign(pinType, pin, data);
+            byte[] sign = sign(pin, data);
             callback.onSignResponse(sign);
         } catch (PinVerificationException e) {
             Timber.e(e, "Invalid PIN provided for signing");
@@ -193,9 +197,13 @@ public class TokenService extends Service {
         }
     }
 
+    public byte[] readCert(Token.CertType type) {
+        return token.readCert(type);
+    }
+
     public void readCert(Token.CertType type, CertCallback certCallback) {
         try {
-            byte[] certBytes = token.readCert(type);
+            byte[] certBytes = readCert(type);
             certCallback.onCertificateResponse(certBytes);
         } catch (Exception e) {
             Timber.e(e, "Error reading certificate: %s from card", type.name());

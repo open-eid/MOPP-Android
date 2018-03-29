@@ -36,6 +36,10 @@ public abstract class IdCardResponse implements SignatureAddResponse {
         return create(null, false, true, data);
     }
 
+    public static IdCardResponse success(SignedContainer container) {
+        return create(container, false, false, null);
+    }
+
     private static IdCardResponse create(@Nullable SignedContainer container, boolean active,
                                          boolean readerConnected, @Nullable IdCardData data) {
         return new AutoValue_IdCardResponse(container, active, readerConnected, data);

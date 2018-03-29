@@ -50,11 +50,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="@string/signature_update_id_card_sign_pin"
-            android:labelFor="@id/signatureUpdateIdCardSignPin" />
+            android:text="@string/signature_update_id_card_sign_pin2"
+            android:labelFor="@id/signatureUpdateIdCardSignPin2" />
 
         <EditText
-            android:id="@id/signatureUpdateIdCardSignPin"
+            android:id="@id/signatureUpdateIdCardSignPin2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberPassword" />
