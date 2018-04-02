@@ -37,7 +37,7 @@ public class EstEIDv3d4 extends EstEIDToken {
     }
 
     @Override
-    public byte[] sign(PinType type, String pin, byte[] data) {
+    public byte[] sign(PinType type, String pin, byte[] data, boolean ellipticCurveCertificate) {
         verifyPin(type, pin.getBytes());
         try {
             selectMasterFile();
@@ -49,7 +49,7 @@ public class EstEIDv3d4 extends EstEIDToken {
                     byte[] challenge = {0x3F, 0x4B, (byte) 0xE6, 0x4B, (byte) 0xC9, 0x06, 0x6F, 0x14, (byte) 0x8A, 0x39, 0x21, (byte) 0xD8, 0x7C, (byte) 0x94, 0x41, 0x40, (byte) 0x99, 0x72, 0x4B, 0x58, 0x75, (byte) 0xA1, 0x15, 0x78};
                     return transmitExtended(Util.concat(new byte[]{0x00, (byte) 0x88, 0x00, 0x00, 0x24}, challenge));
                 case PIN2:
-                    byte[] padded = AlgorithmUtils.addPadding(data);
+                    byte[] padded = AlgorithmUtils.addPadding(data, ellipticCurveCertificate);
                     return transmitExtended(Util.concat(new byte[]{0x00, 0x2A, (byte) 0x9E, (byte) 0x9A, (byte) padded.length}, padded));
                 default:
                     throw new Exception("Unsupported");
