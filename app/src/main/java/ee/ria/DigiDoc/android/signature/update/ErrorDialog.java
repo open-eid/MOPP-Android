@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.tokenlibrary.exception.PinVerificationException;
 import io.reactivex.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.signature.update.ErrorDialog.Type.DOCUMENTS_ADD;
@@ -59,7 +60,12 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
                     R.string.signature_update_documents_remove_error_container_empty));
         } else if (signatureAddError != null) {
             type = SIGNATURE_ADD;
-            setMessage(signatureAddError.getMessage());
+            if (signatureAddError instanceof PinVerificationException) {
+                setMessage(getContext().getString(
+                        R.string.signature_update_id_card_sign_pin2_locked));
+            } else {
+                setMessage(signatureAddError.getMessage());
+            }
         } else if (signatureRemoveError != null) {
             type = SIGNATURE_REMOVE;
             setMessage(getContext().getString(R.string.signature_update_signature_remove_error));

@@ -104,12 +104,16 @@ public class TokenService extends Service {
         }
     }
 
+    public byte readRetryCounter(Token.PinType pinType) {
+        return token.readRetryCounter(pinType);
+    }
+
     public void readRetryCounter(Token.PinType pinType, RetryCounterCallback callback) {
         if (token == null) {
             return;
         }
         try {
-            byte counterByte = token.readRetryCounter(pinType);
+            byte counterByte = readRetryCounter(pinType);
             callback.onCounterRead(counterByte);
         } catch (Exception e) {
             Timber.e(e, "Error reading retry counter from card");

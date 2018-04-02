@@ -20,7 +20,6 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
 import okio.ByteString;
-import timber.log.Timber;
 
 public final class TokenServiceObservable {
 
@@ -31,8 +30,6 @@ public final class TokenServiceObservable {
     public static Single<IdCardData> read(TokenService tokenService) {
         return Single.fromCallable(() -> {
             SparseArray<String> data = tokenService.readPersonalFile();
-            Timber.e("DATA YO YO: %s", data);
-
             String givenName1 = data.get(2).trim();
             String givenName2 = data.get(3).trim();
             String surname = data.get(1).trim();

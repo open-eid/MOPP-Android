@@ -92,6 +92,7 @@
     <item type="id" name="signatureUpdateIdCardSignContainer" />
     <item type="id" name="signatureUpdateIdCardSignData" />
     <item type="id" name="signatureUpdateIdCardSignPin2" />
+    <item type="id" name="signatureUpdateIdCardSignPin2Error" />
 
     <!-- Signature Add -->
     <item type="id" name="signatureAdd" />

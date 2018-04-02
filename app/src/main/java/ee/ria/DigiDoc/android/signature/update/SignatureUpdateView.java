@@ -269,9 +269,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @SuppressWarnings("unchecked")
     private Observable<Intent.SignatureAddIntent> signatureAddIntent() {
         return Observable.mergeArray(
-                clicks(signatureAddButton).map(ignored ->
-                        Intent.SignatureAddIntent.show(DEFAULT_SIGN_METHOD, isExistingContainer,
-                                containerFile)),
+                clicks(signatureAddButton)
+                        .doOnNext(ignored -> resetSignatureAddDialog())
+                        .map(ignored -> Intent.SignatureAddIntent
+                                .show(DEFAULT_SIGN_METHOD, isExistingContainer, containerFile)),
                 cancels(signatureAddDialog)
                         .doOnNext(ignored -> resetSignatureAddDialog())
                         .map(ignored -> Intent.SignatureAddIntent.clear()),

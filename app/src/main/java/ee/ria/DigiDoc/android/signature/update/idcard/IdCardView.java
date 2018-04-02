@@ -20,6 +20,7 @@ public final class IdCardView extends LinearLayout implements
     private final View signContainerView;
     private final TextView signDataView;
     private final EditText signPin2View;
+    private final TextView signPin2ErrorView;
 
     public IdCardView(Context context) {
         this(context, null);
@@ -43,6 +44,7 @@ public final class IdCardView extends LinearLayout implements
         signContainerView = findViewById(R.id.signatureUpdateIdCardSignContainer);
         signDataView = findViewById(R.id.signatureUpdateIdCardSignData);
         signPin2View = findViewById(R.id.signatureUpdateIdCardSignPin2);
+        signPin2ErrorView = findViewById(R.id.signatureUpdateIdCardSignPin2Error);
     }
 
     @Override
@@ -62,16 +64,28 @@ public final class IdCardView extends LinearLayout implements
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(R.string.signature_update_id_card_progress_message_reader);
             signContainerView.setVisibility(GONE);
-        } else if (response.readerConnected() && data == null) {
+        } else if (response.readerConnected() && data == null && !response.signingActive()) {
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(R.string.signature_update_id_card_progress_message_card);
             signContainerView.setVisibility(GONE);
-        } else if (data != null) {
+        } else if (data != null && !response.signingActive()) {
             progressContainerView.setVisibility(GONE);
             signContainerView.setVisibility(VISIBLE);
             signDataView.setText(getResources().getString(
                     R.string.signature_update_id_card_sign_data, data.givenNames(), data.surname(),
                     data.personalCode()));
+            if (response.error() == null && response.retryCounter() == null) {
+                signPin2ErrorView.setVisibility(GONE);
+            } else {
+                signPin2ErrorView.setVisibility(VISIBLE);
+                signPin2ErrorView.setText(getResources().getString(
+                        R.string.signature_update_id_card_sign_pin2_invalid,
+                        response.retryCounter()));
+            }
+        } else if (response.signingActive()) {
+            progressContainerView.setVisibility(VISIBLE);
+            progressMessageView.setText(R.string.signature_update_id_card_progress_message_signing);
+            signContainerView.setVisibility(GONE);
         }
     }
 }

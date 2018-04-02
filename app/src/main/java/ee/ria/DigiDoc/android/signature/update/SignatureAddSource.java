@@ -16,7 +16,10 @@ import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdOnSubscribe;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdRequest;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
+import ee.ria.tokenlibrary.Token;
+import ee.ria.tokenlibrary.exception.PinVerificationException;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -101,11 +104,25 @@ final class SignatureAddSource {
                                                             settingsDataStore.getSignatureProfile(),
                                                             idCardRequest.pin2()))
                                     .map(IdCardResponse::success)
+                                    .onErrorResumeNext(throwable -> {
+                                        if (throwable instanceof PinVerificationException) {
+                                            byte retryCounter = connectData.tokenService()
+                                                    .readRetryCounter(Token.PinType.PIN2);
+                                            if (retryCounter > 0) {
+                                                return TokenServiceObservable
+                                                        .read(connectData.tokenService())
+                                                        .map(data -> IdCardResponse.failure(data,
+                                                                throwable, retryCounter));
+                                            }
+                                        }
+                                        return Single.error(throwable);
+                                    })
                                     .toObservable();
                         } else {
                             return Observable.empty();
                         }
-                    });
+                    })
+                    .startWith(IdCardResponse.signing());
         } else {
             throw new IllegalArgumentException("Unknown request " + request);
         }

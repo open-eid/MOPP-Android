@@ -14,6 +14,12 @@ public abstract class IdCardResponse implements SignatureAddResponse {
 
     @Nullable public abstract IdCardData data();
 
+    public abstract boolean signingActive();
+
+    @Nullable public abstract Throwable error();
+
+    @Nullable public abstract Byte retryCounter();
+
     @Override
     public boolean showDialog() {
         return true;
@@ -25,23 +31,34 @@ public abstract class IdCardResponse implements SignatureAddResponse {
     }
 
     public static IdCardResponse initial() {
-        return create(null, false, false, null);
+        return create(null, false, false, null, false, null, null);
     }
 
     public static IdCardResponse reader() {
-        return create(null, false, true, null);
+        return create(null, false, true, null, false, null, null);
     }
 
     public static IdCardResponse data(IdCardData data) {
-        return create(null, false, true, data);
+        return create(null, false, true, data, false, null, null);
+    }
+
+    public static IdCardResponse signing() {
+        return create(null, false, true, null, true, null, null);
     }
 
     public static IdCardResponse success(SignedContainer container) {
-        return create(container, false, false, null);
+        return create(container, false, false, null, false, null, null);
+    }
+
+    public static IdCardResponse failure(IdCardData data, Throwable error, byte retryCounter) {
+        return create(null, false, true, data, false, error, retryCounter);
     }
 
     private static IdCardResponse create(@Nullable SignedContainer container, boolean active,
-                                         boolean readerConnected, @Nullable IdCardData data) {
-        return new AutoValue_IdCardResponse(container, active, readerConnected, data);
+                                         boolean readerConnected, @Nullable IdCardData data,
+                                         boolean signingActive, @Nullable Throwable error,
+                                         @Nullable Byte retryCounter) {
+        return new AutoValue_IdCardResponse(container, active, readerConnected, data,
+                signingActive, error, retryCounter);
     }
 }
