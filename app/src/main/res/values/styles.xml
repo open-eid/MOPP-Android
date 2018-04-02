@@ -15,7 +15,7 @@
     </style>
 
     <style name="Widget.Application.Button.ButtonBar" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/accent</item>
+        <item name="android:textColor">@drawable/btn_borderless</item>
     </style>
 
     <style name="Widget.Application.Button.Container" parent="Widget.Application.Button">

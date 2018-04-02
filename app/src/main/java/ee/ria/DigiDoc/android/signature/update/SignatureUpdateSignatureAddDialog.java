@@ -8,6 +8,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.ObservableDialogClickListener;
 import io.reactivex.Observable;
 
@@ -17,6 +18,8 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
 
     private final SignatureUpdateSignatureAddView view;
     private final ObservableDialogClickListener positiveButtonClicks;
+
+    private final ViewDisposables disposables = new ViewDisposables();
 
     SignatureUpdateSignatureAddDialog(@NonNull Context context) {
         super(context);
@@ -50,5 +53,19 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                     WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         }
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        disposables.attach();
+        disposables.add(view.positiveButtonEnabled().subscribe(enabled ->
+                getButton(BUTTON_POSITIVE).setEnabled(enabled)));
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        disposables.detach();
+        super.onDetachedFromWindow();
     }
 }

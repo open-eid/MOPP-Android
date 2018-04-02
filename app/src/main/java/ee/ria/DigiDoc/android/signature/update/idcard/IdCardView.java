@@ -11,6 +11,9 @@ import android.widget.TextView;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 public final class IdCardView extends LinearLayout implements
         SignatureAddView<IdCardRequest, IdCardResponse> {
@@ -21,6 +24,8 @@ public final class IdCardView extends LinearLayout implements
     private final TextView signDataView;
     private final EditText signPin2View;
     private final TextView signPin2ErrorView;
+
+    private final Subject<Boolean> positiveButtonEnabledSubject = PublishSubject.create();
 
     public IdCardView(Context context) {
         this(context, null);
@@ -47,6 +52,10 @@ public final class IdCardView extends LinearLayout implements
         signPin2ErrorView = findViewById(R.id.signatureUpdateIdCardSignPin2Error);
     }
 
+    public Observable<Boolean> positiveButtonEnabled() {
+        return positiveButtonEnabledSubject;
+    }
+
     @Override
     public void reset(SignatureUpdateViewModel viewModel) {
         signPin2View.setText(null);
@@ -64,10 +73,12 @@ public final class IdCardView extends LinearLayout implements
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(R.string.signature_update_id_card_progress_message_reader);
             signContainerView.setVisibility(GONE);
+            positiveButtonEnabledSubject.onNext(false);
         } else if (response.readerConnected() && data == null && !response.signingActive()) {
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(R.string.signature_update_id_card_progress_message_card);
             signContainerView.setVisibility(GONE);
+            positiveButtonEnabledSubject.onNext(false);
         } else if (data != null && !response.signingActive()) {
             progressContainerView.setVisibility(GONE);
             signContainerView.setVisibility(VISIBLE);
@@ -82,10 +93,12 @@ public final class IdCardView extends LinearLayout implements
                         R.string.signature_update_id_card_sign_pin2_invalid,
                         response.retryCounter()));
             }
+            positiveButtonEnabledSubject.onNext(true);
         } else if (response.signingActive()) {
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(R.string.signature_update_id_card_progress_message_signing);
             signContainerView.setVisibility(GONE);
+            positiveButtonEnabledSubject.onNext(false);
         }
     }
 }

@@ -21,6 +21,8 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
     private final MobileIdView mobileIdView;
     private final IdCardView idCardView;
 
+    private final Observable<Integer> methodChanges;
+
     public SignatureUpdateSignatureAddView(Context context) {
         this(context, null);
     }
@@ -42,10 +44,22 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         methodView = findViewById(R.id.signatureUpdateSignatureAddMethod);
         mobileIdView = findViewById(R.id.signatureUpdateMobileId);
         idCardView = findViewById(R.id.signatureUpdateIdCard);
+        methodChanges = checkedChanges(methodView).skipInitialValue().publish().autoConnect();
     }
 
     public Observable<Integer> methodChanges() {
-        return checkedChanges(methodView).skipInitialValue();
+        return methodChanges;
+    }
+
+    public Observable<Boolean> positiveButtonEnabled() {
+        return methodChanges()
+                .switchMap(integer -> {
+                    if (integer == R.id.signatureUpdateSignatureAddMethodMobileId) {
+                        return Observable.just(true);
+                    } else {
+                        return idCardView.positiveButtonEnabled();
+                    }
+                });
     }
 
     public int method() {
