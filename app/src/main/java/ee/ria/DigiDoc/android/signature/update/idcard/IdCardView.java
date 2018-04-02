@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.signature.update.idcard;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.text.Editable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
@@ -14,6 +15,8 @@ import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
+
+import static com.jakewharton.rxbinding2.widget.RxTextView.afterTextChangeEvents;
 
 public final class IdCardView extends LinearLayout implements
         SignatureAddView<IdCardRequest, IdCardResponse> {
@@ -53,7 +56,13 @@ public final class IdCardView extends LinearLayout implements
     }
 
     public Observable<Boolean> positiveButtonEnabled() {
-        return positiveButtonEnabledSubject;
+        return Observable.merge(
+                afterTextChangeEvents(signPin2View).map(event -> {
+                    Editable editable = event.editable();
+                    return editable != null && editable.length() >= 4;
+                }),
+                positiveButtonEnabledSubject
+                        .map(enabled-> enabled && signPin2View.getText().length() >= 4));
     }
 
     @Override

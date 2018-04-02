@@ -57,7 +57,9 @@
             android:id="@id/signatureUpdateIdCardSignPin2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberPassword" />
+            android:gravity="center_horizontal"
+            android:inputType="numberPassword"
+            android:maxLength="12" />
 
         <TextView
             android:id="@id/signatureUpdateIdCardSignPin2Error"
