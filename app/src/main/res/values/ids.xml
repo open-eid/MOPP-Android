@@ -74,6 +74,25 @@
     <item type="id" name="signatureUpdateSendButton" />
     <item type="id" name="signatureUpdateButtonSpace" />
     <item type="id" name="signatureUpdateSignatureAddButton" />
+    <item type="id" name="signatureUpdateSignatureAdd" />
+    <item type="id" name="signatureUpdateSignatureAddMethod" />
+    <item type="id" name="signatureUpdateSignatureAddMethodMobileId" />
+    <item type="id" name="signatureUpdateSignatureAddMethodIdCard" />
+
+    <item type="id" name="signatureUpdateMobileId" />
+    <item type="id" name="signatureUpdateMobileIdPhoneNoLabel" />
+    <item type="id" name="signatureUpdateMobileIdPhoneNo" />
+    <item type="id" name="signatureUpdateMobileIdPersonalCodeLabel" />
+    <item type="id" name="signatureUpdateMobileIdPersonalCode" />
+    <item type="id" name="signatureUpdateMobileIdRememberMe" />
+
+    <item type="id" name="signatureUpdateIdCard" />
+    <item type="id" name="signatureUpdateIdCardProgressContainer" />
+    <item type="id" name="signatureUpdateIdCardProgressMessage" />
+    <item type="id" name="signatureUpdateIdCardSignContainer" />
+    <item type="id" name="signatureUpdateIdCardSignData" />
+    <item type="id" name="signatureUpdateIdCardSignPin2" />
+    <item type="id" name="signatureUpdateIdCardSignPin2Error" />
 
     <!-- Signature Add -->
     <item type="id" name="signatureAdd" />

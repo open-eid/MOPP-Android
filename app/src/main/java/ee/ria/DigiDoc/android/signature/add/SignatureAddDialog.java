@@ -14,6 +14,7 @@ import io.reactivex.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.Constants.VOID;
 
+@Deprecated
 public final class SignatureAddDialog extends AlertDialog implements
         DialogInterface.OnClickListener {
 

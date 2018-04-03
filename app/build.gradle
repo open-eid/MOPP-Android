@@ -58,12 +58,11 @@ dependencies {
 
     implementation "android.arch.lifecycle:viewmodel:${androidArchVersion}"
 
-    implementation "com.google.firebase:firebase-appindexing:${firebaseVersion}"
-
     implementation "com.takisoft.fix:preference-v7:${preferenceV7FixVersion}"
 
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation "com.squareup.okio:okio:${okioVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
     implementation "com.jakewharton:butterknife:${butterknifeVersion}"

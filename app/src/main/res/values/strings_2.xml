@@ -64,6 +64,21 @@
     <string name="signature_update_signatures_empty">No signatures added to this container yet</string>
     <string name="signature_update_send_button">Share</string>
     <string name="signature_update_signature_add_button">Sign</string>
+    <string name="signature_update_signature_add_method_mobile_id">Mobile ID</string>
+    <string name="signature_update_signature_add_method_id_card">ID card</string>
+
+    <string name="signature_update_mobile_id_phone_no">Phone number</string>
+    <string name="signature_update_mobile_id_personal_code">Personal code</string>
+    <string name="signature_update_mobile_id_remember_me">Remember me</string>
+
+    <string name="signature_update_id_card_progress_message_reader">Please connect your card reader and insert your ID-card into the reader</string>
+    <string name="signature_update_id_card_progress_message_card">Card reader detected. Insert your ID-card into the reader.</string>
+    <string name="signature_update_id_card_progress_message_signing">Signing…</string>
+    <string name="signature_update_id_card_sign_message">Ready to sign with ID card</string>
+    <string name="signature_update_id_card_sign_data">%1$s %2$s (%3$s)</string>
+    <string name="signature_update_id_card_sign_pin2">Please enter PIN2</string>
+    <string name="signature_update_id_card_sign_pin2_invalid">Wrong PIN2. %1$d attempts left. Typing wrong PIN2 %1$d more times, your PIN2 will be locked</string>
+    <string name="signature_update_id_card_sign_pin2_locked">PIN2 locked. Go to My eID to unlock your PIN2</string>
 
     <string name="signature_update_load_container_error">Could not open signature container</string>
     <string name="signature_update_add_documents_error_exists">File already exists in the container</string>

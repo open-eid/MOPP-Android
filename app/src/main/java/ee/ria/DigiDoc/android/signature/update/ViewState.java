@@ -7,7 +7,6 @@ import com.google.auto.value.AutoValue;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
 import ee.ria.mopplib.data.SignedContainer;
@@ -34,13 +33,11 @@ abstract class ViewState implements MviViewState {
     abstract boolean signatureRemoveInProgress();
     @Nullable abstract Throwable signatureRemoveError();
 
-    abstract boolean signatureAddCreateContainerInProgress();
-    abstract boolean signatureAddVisible();
-    abstract boolean signatureAddInProgress();
-    @Nullable abstract GetMobileCreateSignatureStatusResponse.ProcessStatus signatureAddStatus();
-    @Nullable abstract String signatureAddChallenge();
+    @Nullable abstract Integer signatureAddMethod();
+    abstract boolean signatureAddActivity();
     abstract boolean signatureAddSuccessMessageVisible();
     @Nullable abstract Throwable signatureAddError();
+    @Nullable abstract SignatureAddResponse signatureAddResponse();
 
     abstract Builder buildWith();
 
@@ -51,9 +48,7 @@ abstract class ViewState implements MviViewState {
                 .documentOpenInProgress(false)
                 .documentRemoveInProgress(false)
                 .signatureRemoveInProgress(false)
-                .signatureAddCreateContainerInProgress(false)
-                .signatureAddVisible(false)
-                .signatureAddInProgress(false)
+                .signatureAddActivity(false)
                 .signatureAddSuccessMessageVisible(false)
                 .build();
     }
@@ -74,15 +69,11 @@ abstract class ViewState implements MviViewState {
         Builder signatureRemoveConfirmation(@Nullable Signature signatureRemoveConfirmation);
         Builder signatureRemoveInProgress(boolean signatureRemoveInProgress);
         Builder signatureRemoveError(@Nullable Throwable signatureRemoveError);
-        Builder signatureAddCreateContainerInProgress(
-                boolean signatureAddCreateContainerInProgress);
-        Builder signatureAddVisible(boolean signatureAddVisible);
-        Builder signatureAddInProgress(boolean signatureAddInProgress);
-        Builder signatureAddStatus(
-                @Nullable GetMobileCreateSignatureStatusResponse.ProcessStatus signatureAddStatus);
-        Builder signatureAddChallenge(@Nullable String signatureAddChallenge);
+        Builder signatureAddMethod(@Nullable Integer signatureAddMethod);
+        Builder signatureAddActivity(boolean signatureAddActivity);
         Builder signatureAddSuccessMessageVisible(boolean signatureAddSuccessMessageVisible);
         Builder signatureAddError(@Nullable Throwable signatureAddError);
+        Builder signatureAddResponse(@Nullable SignatureAddResponse signatureAddResponse);
         ViewState build();
     }
 }

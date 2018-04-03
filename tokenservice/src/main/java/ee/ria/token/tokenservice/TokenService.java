@@ -104,21 +104,29 @@ public class TokenService extends Service {
         }
     }
 
+    public byte readRetryCounter(Token.PinType pinType) {
+        return token.readRetryCounter(pinType);
+    }
+
     public void readRetryCounter(Token.PinType pinType, RetryCounterCallback callback) {
         if (token == null) {
             return;
         }
         try {
-            byte counterByte = token.readRetryCounter(pinType);
+            byte counterByte = readRetryCounter(pinType);
             callback.onCounterRead(counterByte);
         } catch (Exception e) {
             Timber.e(e, "Error reading retry counter from card");
         }
     }
 
+    public byte[] sign(String pin2, byte[] data) {
+        return token.sign(Token.PinType.PIN2, pin2, data);
+    }
+
     public void sign(Token.PinType pinType, String pin, byte[] data, SignCallback callback) {
         try {
-            byte[] sign = token.sign(pinType, pin, data);
+            byte[] sign = sign(pin, data);
             callback.onSignResponse(sign);
         } catch (PinVerificationException e) {
             Timber.e(e, "Invalid PIN provided for signing");
@@ -151,9 +159,13 @@ public class TokenService extends Service {
         super.onDestroy();
     }
 
+    public SparseArray<String> readPersonalFile() {
+        return token.readPersonalFile();
+    }
+
     public void readPersonalFile(PersonalFileCallback callback) {
         try {
-            SparseArray<String> result = token.readPersonalFile();
+            SparseArray<String> result = readPersonalFile();
             callback.onPersonalFileResponse(result);
         } catch (Exception e) {
             Timber.e(e, "Error reading personal file from card");
@@ -189,9 +201,13 @@ public class TokenService extends Service {
         }
     }
 
+    public byte[] readCert(Token.CertType type) {
+        return token.readCert(type);
+    }
+
     public void readCert(Token.CertType type, CertCallback certCallback) {
         try {
-            byte[] certBytes = token.readCert(type);
+            byte[] certBytes = readCert(type);
             certCallback.onCertificateResponse(certBytes);
         } catch (Exception e) {
             Timber.e(e, "Error reading certificate: %s from card", type.name());

@@ -15,7 +15,7 @@
     </style>
 
     <style name="Widget.Application.Button.ButtonBar" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/accent</item>
+        <item name="android:textColor">@drawable/btn_borderless</item>
     </style>
 
     <style name="Widget.Application.Button.Container" parent="Widget.Application.Button">
@@ -77,6 +77,15 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">@color/material_color_white</item>
         <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="Widget.Application.SignatureAddMethod" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:minHeight">@dimen/material_button_touch_target_height_minimum</item>
+        <item name="android:background">@drawable/signature_add_method_background</item>
+        <item name="android:textColor">@drawable/signature_add_method_text</item>
     </style>
 
 </resources>

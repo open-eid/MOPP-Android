@@ -22,13 +22,13 @@ interface Action extends MviAction {
 
         abstract File containerFile();
 
-        abstract boolean signatureAddVisible();
+        @Nullable abstract Integer signatureAddMethod();
 
         abstract boolean signatureAddSuccessMessageVisible();
 
-        static ContainerLoadAction create(File containerFile, boolean signatureAddVisible,
+        static ContainerLoadAction create(File containerFile, @Nullable Integer signatureAddMethod,
                                           boolean signatureAddSuccessMessageVisible) {
-            return new AutoValue_Action_ContainerLoadAction(containerFile, signatureAddVisible,
+            return new AutoValue_Action_ContainerLoadAction(containerFile, signatureAddMethod,
                     signatureAddSuccessMessageVisible);
         }
     }
@@ -95,24 +95,20 @@ interface Action extends MviAction {
     @AutoValue
     abstract class SignatureAddAction implements Action {
 
-        abstract boolean show();
+        @Nullable abstract Integer method();
 
-        abstract boolean isExistingContainer();
+        @Nullable abstract Boolean existingContainer();
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract String phoneNo();
+        @Nullable abstract SignatureAddRequest request();
 
-        @Nullable abstract String personalCode();
-
-        @Nullable abstract Boolean rememberMe();
-
-        static SignatureAddAction create(boolean show, boolean isExistingContainer,
-                                         @Nullable File containerFile, @Nullable String phoneNo,
-                                         @Nullable String personalCode,
-                                         @Nullable Boolean rememberMe) {
-            return new AutoValue_Action_SignatureAddAction(show, isExistingContainer, containerFile,
-                    phoneNo, personalCode, rememberMe);
+        static SignatureAddAction create(@Nullable Integer method,
+                                         @Nullable Boolean existingContainer,
+                                         @Nullable File containerFile,
+                                         @Nullable SignatureAddRequest request) {
+            return new AutoValue_Action_SignatureAddAction(method, existingContainer, containerFile,
+                    request);
         }
     }
 

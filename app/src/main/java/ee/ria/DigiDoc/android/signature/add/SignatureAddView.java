@@ -11,6 +11,7 @@ import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.R;
 
+@Deprecated
 public final class SignatureAddView extends LinearLayout {
 
     private final EditText phoneNoView;

@@ -38,6 +38,10 @@ public final class MoppLib {
         initLibDigiDocpp(context);
     }
 
+    public static File accessCertificateDir(Context context) {
+        return new File(getSchemaDir(context), ACCESS_CERTIFICATE_NAME);
+    }
+
     private static void initNativeLibs() {
         System.loadLibrary("c++_shared");
         System.loadLibrary("digidoc_java");
@@ -58,11 +62,9 @@ public final class MoppLib {
     }
 
     private static void initAccessCertificate(Context context) throws IOException {
-        File schemaDir = getSchemaDir(context);
-        File accessCertificateFile = new File(schemaDir, ACCESS_CERTIFICATE_NAME);
         try (
                 InputStream inputStream = context.getResources().openRawResource(R.raw.sk878252);
-                FileOutputStream outputStream = new FileOutputStream(accessCertificateFile)
+                FileOutputStream outputStream = new FileOutputStream(accessCertificateDir(context))
         ) {
             ByteStreams.copy(inputStream, outputStream);
         }
@@ -72,7 +74,7 @@ public final class MoppLib {
         digidoc.initializeLib("libdigidoc Android", getSchemaDir(context).getAbsolutePath());
     }
 
-    public static File getSchemaDir(Context context) {
+    private static File getSchemaDir(Context context) {
         File schemaDir = new File(context.getCacheDir(), SCHEMA_DIR);
         //noinspection ResultOfMethodCallIgnored
         schemaDir.mkdirs();

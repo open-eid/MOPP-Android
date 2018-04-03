@@ -19,15 +19,15 @@ interface Intent extends MviIntent {
 
         abstract File containerFile();
 
-        abstract boolean signatureAddVisible();
+        @Nullable abstract Integer signatureAddMethod();
 
         abstract boolean signatureAddSuccessMessageVisible();
 
         static InitialIntent create(boolean isExistingContainer, File containerFile,
-                                    boolean signatureAddVisible,
+                                    @Nullable Integer signatureAddMethod,
                                     boolean signatureAddSuccessMessageVisible) {
             return new AutoValue_Intent_InitialIntent(isExistingContainer, containerFile,
-                    signatureAddVisible, signatureAddSuccessMessageVisible);
+                    signatureAddMethod, signatureAddSuccessMessageVisible);
         }
     }
 
@@ -108,32 +108,33 @@ interface Intent extends MviIntent {
     @AutoValue
     abstract class SignatureAddIntent implements Intent {
 
-        abstract boolean show();
+        @Nullable abstract Integer method();
 
-        abstract boolean isExistingContainer();
+        @Nullable abstract Boolean existingContainer();
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract String phoneNo();
+        @Nullable abstract SignatureAddRequest request();
 
-        @Nullable abstract String personalCode();
-
-        @Nullable abstract Boolean rememberMe();
-
-        static SignatureAddIntent showIntent(boolean isExistingContainer, File containerFile) {
-            return new AutoValue_Intent_SignatureAddIntent(true, isExistingContainer, containerFile,
-                    null, null, null);
+        static SignatureAddIntent show(int method, boolean existingContainer, File containerFile) {
+            return create(method, existingContainer, containerFile, null);
         }
 
-        static SignatureAddIntent addIntent(boolean isExistingContainer, File containerFile,
-                                            String phoneNo, String personalCode,
-                                            boolean rememberMe) {
-            return new AutoValue_Intent_SignatureAddIntent(false, isExistingContainer,
-                    containerFile, phoneNo, personalCode, rememberMe);
+        static SignatureAddIntent sign(int method, boolean existingContainer, File containerFile,
+                                       SignatureAddRequest request) {
+            return create(method, existingContainer, containerFile, request);
         }
 
-        static SignatureAddIntent clearIntent() {
-            return new AutoValue_Intent_SignatureAddIntent(false, false, null, null, null, null);
+        static SignatureAddIntent clear() {
+            return create(null, null, null, null);
+        }
+
+        private static SignatureAddIntent create(@Nullable Integer method,
+                                                 @Nullable Boolean existingContainer,
+                                                 @Nullable File containerFile,
+                                                 @Nullable SignatureAddRequest request) {
+            return new AutoValue_Intent_SignatureAddIntent(method, existingContainer, containerFile,
+                    request);
         }
     }
 

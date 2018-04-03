@@ -27,6 +27,7 @@ dependencies {
     implementation "com.android.support:support-annotations:${androidSupportLibraryVersion}"
 
     implementation "com.google.guava:guava:${guavaVersion}"
+    implementation "com.squareup.okio:okio:${okioVersion}"
     implementation "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
