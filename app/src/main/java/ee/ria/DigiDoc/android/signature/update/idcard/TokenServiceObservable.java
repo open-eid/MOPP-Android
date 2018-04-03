@@ -57,8 +57,8 @@ public final class TokenServiceObservable {
         return cert(tokenService, Token.CertType.CertSign)
                 .map(certData ->
                         container.sign(certData.data(), profile,
-                                input -> ByteString.of(tokenService
-                                        .sign(pin2, input.toByteArray()))));
+                                input -> ByteString.of(tokenService.sign(pin2, input.toByteArray(),
+                                        certData.ellipticCurve()))));
     }
 
     static final class ConnectOnSubscribe implements

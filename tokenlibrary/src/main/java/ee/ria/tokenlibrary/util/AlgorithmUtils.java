@@ -44,7 +44,10 @@ public class AlgorithmUtils {
         }
     }
 
-    public static byte[] addPadding(byte[] hash) {
+    public static byte[] addPadding(byte[] hash, boolean ellipticCurveCertificate) {
+        if (ellipticCurveCertificate) {
+            return hash;
+        }
         try (ByteArrayOutputStream toSign = new ByteArrayOutputStream()) {
             toSign.write(getAlgorithm(hash.length).padding);
             toSign.write(hash);

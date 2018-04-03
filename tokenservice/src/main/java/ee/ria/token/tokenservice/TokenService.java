@@ -120,13 +120,13 @@ public class TokenService extends Service {
         }
     }
 
-    public byte[] sign(String pin2, byte[] data) {
-        return token.sign(Token.PinType.PIN2, pin2, data);
+    public byte[] sign(String pin2, byte[] data, boolean ellipticCurveCertificate) {
+        return token.sign(Token.PinType.PIN2, pin2, data, ellipticCurveCertificate);
     }
 
     public void sign(Token.PinType pinType, String pin, byte[] data, SignCallback callback) {
         try {
-            byte[] sign = sign(pin, data);
+            byte[] sign = sign(pin, data, false);
             callback.onSignResponse(sign);
         } catch (PinVerificationException e) {
             Timber.e(e, "Invalid PIN provided for signing");

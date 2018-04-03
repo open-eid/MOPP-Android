@@ -23,7 +23,7 @@ import android.util.SparseArray;
 
 public interface Token {
 
-	byte[] sign(PinType type, String pin, byte[] data);
+	byte[] sign(PinType type, String pin, byte[] data, boolean ellipticCurveCertificate);
 	SparseArray<String> readPersonalFile();
 	boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin);
 	byte[] readCert(CertType type);
