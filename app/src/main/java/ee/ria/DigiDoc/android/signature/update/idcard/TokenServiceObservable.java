@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
 
+import ee.ria.DigiDoc.android.model.IdCardData;
 import ee.ria.mopplib.data.SignedContainer;
 import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.token.tokenservice.TokenService;

@@ -19,7 +19,7 @@ public final class EIDHomeScreen extends ConductorScreen {
 
     @Override
     protected View view(Context context) {
-        return new EIDHomeView(context);
+        return new EIDHomeView(context, getInstanceId());
     }
 
     @Override

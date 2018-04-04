@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.signature.update.idcard;
+package ee.ria.DigiDoc.android.model;
 
 import com.google.auto.value.AutoValue;
 
@@ -11,7 +11,7 @@ public abstract class IdCardData {
 
     public abstract String personalCode();
 
-    static IdCardData create(String givenNames, String surname, String personalCode) {
+    public static IdCardData create(String givenNames, String surname, String personalCode) {
         return new AutoValue_IdCardData(givenNames, surname, personalCode);
     }
 }

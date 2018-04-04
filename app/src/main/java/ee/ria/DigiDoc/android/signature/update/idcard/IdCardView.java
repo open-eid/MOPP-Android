@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.model.IdCardData;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import io.reactivex.Observable;

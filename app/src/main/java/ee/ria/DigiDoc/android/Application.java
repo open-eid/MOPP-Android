@@ -40,6 +40,7 @@ import dagger.Provides;
 import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
 import ee.ria.DigiDoc.BuildConfig;
+import ee.ria.DigiDoc.android.eid.EIDHomeViewModel;
 import ee.ria.DigiDoc.android.main.home.HomeViewModel;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
@@ -158,6 +159,10 @@ public class Application extends android.app.Application {
         @SuppressWarnings("unused")
         @Binds @IntoMap @ClassKey(SignatureUpdateViewModel.class)
         abstract ViewModel signatureUpdateModel(SignatureUpdateViewModel viewModel);
+
+        @SuppressWarnings("unused")
+        @Binds @IntoMap @ClassKey(EIDHomeViewModel.class)
+        abstract ViewModel eidHomeViewModel(EIDHomeViewModel viewModel);
     }
 
     static final class ViewModelFactory implements ViewModelProvider.Factory {
