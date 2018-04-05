@@ -6,12 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.annotation.Nullable;
+import android.util.SparseArray;
 
 import com.google.auto.value.AutoValue;
+
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.DateTimeFormatterBuilder;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import ee.ria.DigiDoc.android.model.EIDType;
 import ee.ria.scardcomlibrary.CardReader;
 import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.tokenlibrary.Token;
@@ -21,6 +27,7 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 @Singleton
 public final class IdCardService {
@@ -41,8 +48,7 @@ public final class IdCardService {
                     if (token != null) {
                         return Observable
                                 .fromCallable(() ->
-                                        IdCardDataResponse.data(IdCardData
-                                                .create(token.readPersonalFile())))
+                                        IdCardDataResponse.data(data(token.readPersonalFile())))
                                 .startWith(IdCardDataResponse.cardDetected())
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread());
@@ -116,5 +122,41 @@ public final class IdCardService {
         static TokenResponse create(CardReader cardReader, @Nullable Token token) {
             return new AutoValue_IdCardService_TokenResponse(cardReader, token);
         }
+    }
+
+    private static final DateTimeFormatter EXPIRY_DATE_FORMAT = new DateTimeFormatterBuilder()
+            .appendPattern("dd.MM.yyyy")
+            .toFormatter();
+
+    /**
+     * TODO Make this private when signing flow is moved to this system.
+     */
+    public static IdCardData data(SparseArray<String> personalFile) {
+        String surname = personalFile.get(1).trim();
+        String givenName1 = personalFile.get(2).trim();
+        String givenName2 = personalFile.get(3).trim();
+        String citizenship = personalFile.get(5).trim();
+        String personalCode = personalFile.get(7).trim();
+        String documentNumber = personalFile.get(8).trim();
+        String expiryDateString = personalFile.get(9).trim();
+
+        StringBuilder givenNames = new StringBuilder(givenName1);
+        if (givenName2.length() > 0) {
+            if (givenNames.length() > 0) {
+                givenNames.append(" ");
+            }
+            givenNames.append(givenName2);
+        }
+
+        LocalDate expiryDate;
+        try {
+            expiryDate = LocalDate.parse(expiryDateString, EXPIRY_DATE_FORMAT);
+        } catch (Exception e) {
+            expiryDate = null;
+            Timber.e("Could not parse expiry date %s", expiryDateString);
+        }
+
+        return IdCardData.create(EIDType.ID_CARD, givenNames.toString(), surname, personalCode,
+                citizenship, documentNumber, expiryDate);
     }
 }

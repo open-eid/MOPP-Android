@@ -20,38 +20,31 @@
     </android.support.design.widget.AppBarLayout>
 
     <ScrollView
+        android:id="@id/eidHomeScreenScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-            android:orientation="vertical"
-            android:gravity="center_vertical">
+            android:padding="@dimen/material_content_edge_margin_horizontal">
 
             <TextView
+                android:id="@id/eidHomeProgressMessage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textAppearance="@style/TextAppearance.Application.Value"
+                android:gravity="center" />
+
+            <ee.ria.DigiDoc.android.eid.EIDDataView
+                android:id="@id/eidHomeData"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/eid_home_text" />
+                android:visibility="gone" />
 
-            <Button
-                android:id="@id/eidHomeMobileIdButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/eid_home_mobile_id_button" />
-
-            <Button
-                android:id="@id/eidHomeIdCardButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/eid_home_id_card_button" />
-
-        </LinearLayout>
+        </FrameLayout>
 
     </ScrollView>
 

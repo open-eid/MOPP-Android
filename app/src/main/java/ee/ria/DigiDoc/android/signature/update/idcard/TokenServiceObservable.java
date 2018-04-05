@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
+import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.mopplib.data.SignedContainer;
 import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.token.tokenservice.TokenService;
@@ -28,7 +29,7 @@ public final class TokenServiceObservable {
     }
 
     public static Single<IdCardData> read(TokenService tokenService) {
-        return Single.fromCallable(() -> IdCardData.create(tokenService.readPersonalFile()));
+        return Single.fromCallable(() -> IdCardService.data(tokenService.readPersonalFile()));
     }
 
     public static Single<IdCardCertData> cert(TokenService tokenService, Token.CertType type) {

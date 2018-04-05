@@ -3,10 +3,15 @@ package ee.ria.DigiDoc.android.eid;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;
+import android.widget.TextView;
+
+import com.google.common.collect.ImmutableMap;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.main.home.HomeToolbar;
+import ee.ria.DigiDoc.android.model.idcard.IdCardData;
+import ee.ria.DigiDoc.android.model.idcard.IdCardStatus;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import io.reactivex.Observable;
@@ -15,7 +20,18 @@ import io.reactivex.Observable;
 public final class EIDHomeView extends CoordinatorLayout implements MviView<Intent, ViewState>,
         HomeToolbar.HomeToolbarAware {
 
+    private static final ImmutableMap<String, Integer> STATUS_MESSAGES =
+            ImmutableMap.<String, Integer>builder()
+                    .put(IdCardStatus.INITIAL, R.string.eid_home_id_card_status_initial_message)
+                    .put(IdCardStatus.READER_DETECTED,
+                            R.string.eid_home_id_card_status_reader_detected_message)
+                    .put(IdCardStatus.CARD_DETECTED,
+                            R.string.eid_home_id_card_status_card_detected_message)
+                    .build();
+
     private final HomeToolbar toolbarView;
+    private final TextView progressMessageView;
+    private final EIDDataView dataView;
 
     private final ViewDisposables disposables = new ViewDisposables();
     private final EIDHomeViewModel viewModel;
@@ -24,6 +40,8 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
         super(context);
         inflate(context, R.layout.eid_home, this);
         toolbarView = findViewById(R.id.toolbar);
+        progressMessageView = findViewById(R.id.eidHomeProgressMessage);
+        dataView = findViewById(R.id.eidHomeData);
         viewModel = Application.component(context).navigator().viewModel(screenId,
                 EIDHomeViewModel.class);
     }
@@ -40,6 +58,13 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
 
     @Override
     public void render(ViewState state) {
+        progressMessageView.setText(STATUS_MESSAGES.get(state.idCardDataResponse().status()));
+        IdCardData data = state.idCardDataResponse().data();
+        if (data != null) {
+            dataView.setData(data);
+        }
+        progressMessageView.setVisibility(data == null ? VISIBLE : GONE);
+        dataView.setVisibility(data == null ? GONE : VISIBLE);
     }
 
     @Override

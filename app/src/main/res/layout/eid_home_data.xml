@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.LinearLayout"
+    tools:layout_width="match_parent"
+    tools:layout_height="match_parent"
+    tools:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Application.Label"
+        android:labelFor="@id/eidHomeDataType"
+        android:text="@string/eid_home_data_type" />
+
+    <TextView
+        android:id="@id/eidHomeDataType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Application.Value"
+        tools:text="ID-CARD" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_baseline_grid_1x"
+        android:textAppearance="@style/TextAppearance.Application.Label"
+        android:labelFor="@id/eidHomeDataGivenNames"
+        android:text="@string/eid_home_data_given_names" />
+
+    <TextView
+        android:id="@id/eidHomeDataGivenNames"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Application.Value"
+        tools:text="MIKO" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_baseline_grid_1x"
+        android:textAppearance="@style/TextAppearance.Application.Label"
+        android:labelFor="@id/eidHomeDataSurname"
+        android:text="@string/eid_home_data_surname" />
+
+    <TextView
+        android:id="@id/eidHomeDataSurname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Application.Value"
+        tools:text="VÄLI" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_baseline_grid_1x"
+        android:textAppearance="@style/TextAppearance.Application.Label"
+        android:labelFor="@id/eidHomeDataPersonalCode"
+        android:text="@string/eid_home_data_personal_code" />
+
+    <TextView
+        android:id="@id/eidHomeDataPersonalCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Application.Value"
+        tools:text="38802132712" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_baseline_grid_1x"
+        android:textAppearance="@style/TextAppearance.Application.Label"
+        android:labelFor="@id/eidHomeDataCitizenship"
+        android:text="@string/eid_home_data_citizenship" />
+
+    <TextView
+        android:id="@id/eidHomeDataCitizenship"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Application.Value"
+        tools:text="EST" />
+
+    <TextView
+        android:id="@id/eidHomeDataDocumentNumberLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_baseline_grid_1x"
+        android:textAppearance="@style/TextAppearance.Application.Label"
+        android:labelFor="@id/eidHomeDataDocumentNumber"
+        android:text="@string/eid_home_data_document_number" />
+
+    <TextView
+        android:id="@id/eidHomeDataDocumentNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Application.Value"
+        tools:text="A202112" />
+
+    <TextView
+        android:id="@id/eidHomeDataExpiryDateLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_baseline_grid_1x"
+        android:textAppearance="@style/TextAppearance.Application.Label"
+        android:labelFor="@id/eidHomeDataExpiryDate"
+        android:text="@string/eid_home_data_expiry_date" />
+
+    <TextView
+        android:id="@id/eidHomeDataExpiryDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Application.Value"
+        tools:text="2019-02-11 | Valid" />
+
+</merge>

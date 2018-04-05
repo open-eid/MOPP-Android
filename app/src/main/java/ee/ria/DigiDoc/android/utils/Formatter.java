@@ -2,19 +2,29 @@ package ee.ria.DigiDoc.android.utils;
 
 import android.app.Application;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
+import android.support.v4.content.res.ResourcesCompat;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
 
 import org.threeten.bp.Instant;
+import org.threeten.bp.LocalDate;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.model.EIDType;
 import ee.ria.mopplib.data.DataFile;
 
 import static com.google.common.io.Files.getFileExtension;
@@ -37,6 +47,31 @@ public final class Formatter {
         return android.text.format.Formatter.formatShortFileSize(application, fileSize);
     }
 
+    public CharSequence eidType(@EIDType String eidType) {
+        return application.getString(EID_TYPES.getOrDefault(eidType, R.string.eid_type_unknown));
+    }
+
+    public CharSequence idCardExpiryDate(@Nullable LocalDate expiryDate) {
+        if (expiryDate == null) {
+            return application.getString(R.string.eid_home_data_expiry_date_invalid);
+        }
+        String date = dateFormat().format(new GregorianCalendar(expiryDate.getYear(),
+                expiryDate.getMonthValue() - 1, expiryDate.getDayOfMonth()).getTime());
+        boolean expired = LocalDate.now().isAfter(expiryDate);
+        int color = ResourcesCompat.getColor(application.getResources(),
+                expired ? R.color.error : R.color.success, null);
+        int stringRes = expired
+                ? R.string.eid_home_data_expiry_date_expired
+                : R.string.eid_home_data_expiry_date_valid;
+        SpannableString validityIndicator = new SpannableString(application.getString(stringRes));
+        validityIndicator.setSpan(new ForegroundColorSpan(color), 0, validityIndicator.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        return new SpannableStringBuilder()
+                .append(date)
+                .append(" | ")
+                .append(validityIndicator);
+    }
+
     @DrawableRes public int documentTypeImageRes(DataFile document) {
         String extension = getFileExtension(document.name()).toLowerCase(Locale.US);
         for (Map.Entry<Integer, String> entry : DOCUMENT_TYPE_MAP.entries()) {
@@ -54,6 +89,13 @@ public final class Formatter {
     private DateFormat timeFormat() {
         return android.text.format.DateFormat.getTimeFormat(application);
     }
+
+    private static final ImmutableMap<String, Integer> EID_TYPES =
+            ImmutableMap.<String, Integer>builder()
+                    .put(EIDType.ID_CARD, R.string.eid_type_id_card)
+                    .put(EIDType.DIGI_ID, R.string.eid_type_digi_id)
+                    .put(EIDType.MOBILE_ID, R.string.eid_type_mobile_id)
+                    .build();
 
     @DrawableRes private static final int DEFAULT_FILE_TYPE = R.drawable.ic_insert_drive_file;
 
