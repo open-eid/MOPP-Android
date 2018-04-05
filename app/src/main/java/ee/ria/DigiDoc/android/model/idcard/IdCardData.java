@@ -16,7 +16,7 @@ public abstract class IdCardData implements EIDData {
 
     @Nullable public abstract LocalDate expiryDate();
 
-    static IdCardData create(@EIDType String type, String givenNames, String surname,
+    static IdCardData create(@Nullable @EIDType String type, String givenNames, String surname,
                              String personalCode, String citizenship, String documentNumber,
                              @Nullable LocalDate expiryDate) {
         return new AutoValue_IdCardData(type, givenNames, surname, personalCode, citizenship,

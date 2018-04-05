@@ -47,7 +47,7 @@ public final class Formatter {
         return android.text.format.Formatter.formatShortFileSize(application, fileSize);
     }
 
-    public CharSequence eidType(@EIDType String eidType) {
+    public CharSequence eidType(@Nullable @EIDType String eidType) {
         return application.getString(EID_TYPES.getOrDefault(eidType, R.string.eid_type_unknown));
     }
 

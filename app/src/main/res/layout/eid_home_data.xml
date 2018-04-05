@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.Application.Label"
+        android:textAllCaps="false"
         android:labelFor="@id/eidHomeDataType"
         android:text="@string/eid_home_data_type" />
 

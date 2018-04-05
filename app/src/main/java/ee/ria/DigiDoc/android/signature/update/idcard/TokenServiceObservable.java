@@ -29,7 +29,7 @@ public final class TokenServiceObservable {
     }
 
     public static Single<IdCardData> read(TokenService tokenService) {
-        return Single.fromCallable(() -> IdCardService.data(tokenService.readPersonalFile()));
+        return Single.fromCallable(() -> IdCardService.data(tokenService.getToken()));
     }
 
     public static Single<IdCardCertData> cert(TokenService tokenService, Token.CertType type) {

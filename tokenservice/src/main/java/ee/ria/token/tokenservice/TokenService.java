@@ -57,6 +57,13 @@ public class TokenService extends Service {
         return token != null;
     }
 
+    /**
+     * TODO Remove this when signing flow is moved to this system.
+     */
+    public Token getToken() {
+        return token;
+    }
+
     public class LocalBinder extends Binder {
         public TokenService getService() {
             if (cardReader != null) {
