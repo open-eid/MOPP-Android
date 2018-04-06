@@ -9,8 +9,10 @@ interface Action extends MviAction {
     @AutoValue
     abstract class LoadAction implements Action {
 
-        static LoadAction create() {
-            return new AutoValue_Action_LoadAction();
+        abstract boolean clear();
+
+        static LoadAction create(boolean clear) {
+            return new AutoValue_Action_LoadAction(clear);
         }
     }
 }

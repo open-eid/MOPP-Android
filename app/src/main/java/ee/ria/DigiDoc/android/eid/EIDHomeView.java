@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.eid;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v7.app.AlertDialog;
 import android.widget.TextView;
 
 import com.google.common.collect.ImmutableMap;
@@ -15,6 +16,8 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardStatus;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import io.reactivex.Observable;
+
+import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 @SuppressLint("ViewConstructor")
 public final class EIDHomeView extends CoordinatorLayout implements MviView<Intent, ViewState>,
@@ -32,6 +35,7 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
     private final HomeToolbar toolbarView;
     private final TextView progressMessageView;
     private final EIDDataView dataView;
+    private final AlertDialog errorDialog;
 
     private final ViewDisposables disposables = new ViewDisposables();
     private final EIDHomeViewModel viewModel;
@@ -42,6 +46,10 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
         toolbarView = findViewById(R.id.toolbar);
         progressMessageView = findViewById(R.id.eidHomeProgressMessage);
         dataView = findViewById(R.id.eidHomeData);
+        errorDialog = new AlertDialog.Builder(context)
+                .setMessage(R.string.eid_home_error)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.cancel())
+                .create();
         viewModel = Application.component(context).navigator().viewModel(screenId,
                 EIDHomeViewModel.class);
     }
@@ -50,10 +58,15 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
         return Observable.just(Intent.InitialIntent.create());
     }
 
+    public Observable<Intent.LoadIntent> loadIntent() {
+        return cancels(errorDialog)
+                .map(ignored -> Intent.LoadIntent.create());
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
-        return Observable.mergeArray(initialIntent());
+        return Observable.mergeArray(initialIntent(), loadIntent());
     }
 
     @Override
@@ -65,6 +78,12 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
         }
         progressMessageView.setVisibility(data == null ? VISIBLE : GONE);
         dataView.setVisibility(data == null ? GONE : VISIBLE);
+
+        if (state.error() != null) {
+            errorDialog.show();
+        } else {
+            errorDialog.dismiss();
+        }
     }
 
     @Override
@@ -82,6 +101,7 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
 
     @Override
     public void onDetachedFromWindow() {
+        errorDialog.dismiss();
         disposables.detach();
         super.onDetachedFromWindow();
     }

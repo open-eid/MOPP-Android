@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.eid;
 
+import android.support.annotation.Nullable;
+
 import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
@@ -10,17 +12,41 @@ interface Result extends MviResult<ViewState> {
     @AutoValue
     abstract class LoadResult implements Result {
 
-        abstract IdCardDataResponse idCardDataResponse();
+        @Nullable abstract IdCardDataResponse idCardDataResponse();
+
+        @Nullable abstract Throwable error();
 
         @Override
         public ViewState reduce(ViewState state) {
-            return state.buildWith()
-                    .idCardDataResponse(idCardDataResponse())
-                    .build();
+            ViewState.Builder builder = state.buildWith();
+
+            if (idCardDataResponse() == null && error() == null) {
+                builder
+                        .idCardDataResponse(IdCardDataResponse.initial())
+                        .error(null);
+            } else if (idCardDataResponse() != null) {
+                builder.idCardDataResponse(idCardDataResponse());
+            } else if (error() != null) {
+                builder.error(error());
+            }
+            return builder.build();
         }
 
-        static LoadResult create(IdCardDataResponse idCardDataResponse) {
-            return new AutoValue_Result_LoadResult(idCardDataResponse);
+        static LoadResult success(IdCardDataResponse idCardDataResponse) {
+            return create(idCardDataResponse, null);
+        }
+
+        static LoadResult failure(Throwable error) {
+            return create(null, error);
+        }
+
+        static LoadResult clear() {
+            return create(null, null);
+        }
+
+        private static LoadResult create(@Nullable IdCardDataResponse idCardDataResponse,
+                                         @Nullable Throwable error) {
+            return new AutoValue_Result_LoadResult(idCardDataResponse, error);
         }
     }
 }
