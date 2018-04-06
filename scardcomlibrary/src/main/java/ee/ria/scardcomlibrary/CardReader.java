@@ -67,7 +67,7 @@ public abstract class CardReader implements SmartCardComChannel {
                 }
                 break;
         }
-        return null;
+        throw new IllegalArgumentException("Unknown provider " + provider);
     }
 
     @Override

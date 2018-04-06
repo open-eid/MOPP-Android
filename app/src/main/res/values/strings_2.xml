@@ -95,8 +95,24 @@
     <string name="crypto_home_create_button">Choose file</string>
 
     <!-- EID Home -->
-    <string name="eid_home_text">Sign in to see your eID information</string>
-    <string name="eid_home_mobile_id_button">Sign in via Mobile-ID</string>
-    <string name="eid_home_id_card_button">Sign in via ID card</string>
+    <string name="eid_home_id_card_status_initial_message">Make sure your ID-card reader is connected with the smartphone</string>
+    <string name="eid_home_id_card_status_reader_detected_message">Make sure your ID-card is properly in the reader</string>
+    <string name="eid_home_id_card_status_card_detected_message">ID-card found. Requesting information</string>
+
+    <string name="eid_home_data_type">MY eID</string>
+    <string name="eid_home_data_given_names">Given names</string>
+    <string name="eid_home_data_surname">Surname</string>
+    <string name="eid_home_data_personal_code">Personal code</string>
+    <string name="eid_home_data_citizenship">Citizenship</string>
+    <string name="eid_home_data_document_number">Document number</string>
+    <string name="eid_home_data_expiry_date">Date of expiry</string>
+    <string name="eid_home_data_expiry_date_valid">Valid</string>
+    <string name="eid_home_data_expiry_date_expired">Expired</string>
+    <string name="eid_home_data_expiry_date_invalid">Unknown</string>
+
+    <string name="eid_type_id_card">ID-CARD</string>
+    <string name="eid_type_digi_id">DIGI-ID</string>
+    <string name="eid_type_mobile_id">MOBILE-ID</string>
+    <string name="eid_type_unknown">UNKNOWN</string>
 
 </resources>

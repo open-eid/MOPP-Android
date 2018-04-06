@@ -9,8 +9,9 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.SparseArray;
 
+import ee.ria.DigiDoc.android.model.idcard.IdCardData;
+import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.mopplib.data.SignedContainer;
 import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.token.tokenservice.TokenService;
@@ -28,23 +29,7 @@ public final class TokenServiceObservable {
     }
 
     public static Single<IdCardData> read(TokenService tokenService) {
-        return Single.fromCallable(() -> {
-            SparseArray<String> data = tokenService.readPersonalFile();
-            String givenName1 = data.get(2).trim();
-            String givenName2 = data.get(3).trim();
-            String surname = data.get(1).trim();
-            String personalCode = data.get(7).trim();
-
-            StringBuilder givenNames = new StringBuilder(givenName1);
-            if (givenName2.length() > 0) {
-                if (givenNames.length() > 0) {
-                    givenNames.append(" ");
-                }
-                givenNames.append(givenName2);
-            }
-
-            return IdCardData.create(givenNames.toString(), surname, personalCode);
-        });
+        return Single.fromCallable(() -> IdCardService.data(tokenService.getToken()));
     }
 
     public static Single<IdCardCertData> cert(TokenService tokenService, Token.CertType type) {

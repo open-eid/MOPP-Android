@@ -53,6 +53,16 @@
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
+    <style name="TextAppearance.Application.Label" parent="TextAppearance.Application.ListItemSecondary">
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TextAppearance.Application.Value" parent="TextAppearance.Application.Label">
+        <item name="android:textColor">@color/title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
     <style name="Widget.Application.Button.Borderless" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:tint">?android:attr/textColorSecondary</item>
