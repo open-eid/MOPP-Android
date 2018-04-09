@@ -18,7 +18,9 @@ public final class EIDHomeViewModel extends BaseMviViewModel<Intent, ViewState, 
     @Override
     protected Action action(Intent intent) {
         if (intent instanceof Intent.InitialIntent) {
-            return Action.LoadAction.create();
+            return Action.LoadAction.create(false);
+        } else if (intent instanceof Intent.LoadIntent) {
+            return Action.LoadAction.create(true);
         } else {
             throw new IllegalArgumentException("Unknown intent " + intent);
         }

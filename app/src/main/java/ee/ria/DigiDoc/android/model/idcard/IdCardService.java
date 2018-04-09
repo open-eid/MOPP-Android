@@ -58,10 +58,11 @@ public final class IdCardService {
                     Token token = tokenResponse.token();
                     if (token != null) {
                         return Observable
-                                .fromCallable(() -> IdCardDataResponse.data(data(token)))
-                                .startWith(IdCardDataResponse.cardDetected())
+                                .fromCallable(() -> IdCardDataResponse.success(data(token)))
                                 .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread());
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .startWith(IdCardDataResponse.cardDetected())
+                                .onErrorReturn(IdCardDataResponse::failure);
                     } else {
                         return Observable.just(IdCardDataResponse.readerDetected());
                     }

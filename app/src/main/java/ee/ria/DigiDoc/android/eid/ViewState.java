@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.eid;
 
+import android.support.annotation.Nullable;
+
 import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
@@ -9,6 +11,8 @@ import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 abstract class ViewState implements MviViewState {
 
     abstract IdCardDataResponse idCardDataResponse();
+
+    @Nullable abstract Throwable error();
 
     abstract Builder buildWith();
 
@@ -21,6 +25,7 @@ abstract class ViewState implements MviViewState {
     @AutoValue.Builder
     interface Builder {
         Builder idCardDataResponse(IdCardDataResponse idCardDataResponse);
+        Builder error(@Nullable Throwable error);
         ViewState build();
     }
 }

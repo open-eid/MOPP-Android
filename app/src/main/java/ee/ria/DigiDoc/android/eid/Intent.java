@@ -13,4 +13,12 @@ interface Intent extends MviIntent {
             return new AutoValue_Intent_InitialIntent();
         }
     }
+
+    @AutoValue
+    abstract class LoadIntent implements Intent {
+
+        static LoadIntent create() {
+            return new AutoValue_Intent_LoadIntent();
+        }
+    }
 }
