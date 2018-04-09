@@ -71,8 +71,9 @@
     <string name="signature_update_mobile_id_personal_code">Personal code</string>
     <string name="signature_update_mobile_id_remember_me">Remember me</string>
 
-    <string name="signature_update_id_card_progress_message_reader">Please connect your card reader and insert your ID-card into the reader</string>
-    <string name="signature_update_id_card_progress_message_card">Card reader detected. Insert your ID-card into the reader.</string>
+    <string name="signature_update_id_card_progress_message_initial">Please connect your card reader and insert your ID-card into the reader</string>
+    <string name="signature_update_id_card_progress_message_reader_detected">Card reader detected. Insert your ID-card into the reader.</string>
+    <string name="signature_update_id_card_progress_message_card_detected">ID-card found. Requesting information.</string>
     <string name="signature_update_id_card_progress_message_signing">Signing…</string>
     <string name="signature_update_id_card_sign_message">Ready to sign with ID card</string>
     <string name="signature_update_id_card_sign_data">%1$s %2$s (%3$s)</string>

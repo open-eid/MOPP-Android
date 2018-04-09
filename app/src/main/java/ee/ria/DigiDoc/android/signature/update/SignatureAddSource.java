@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
+import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardRequest;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
@@ -28,35 +29,25 @@ final class SignatureAddSource {
     private final Application application;
     private final SignatureContainerDataSource signatureContainerDataSource;
     private final SettingsDataStore settingsDataStore;
+    private final IdCardService idCardService;
 
     @Inject SignatureAddSource(Application application,
                                SignatureContainerDataSource signatureContainerDataSource,
-                               SettingsDataStore settingsDataStore) {
+                               SettingsDataStore settingsDataStore, IdCardService idCardService) {
         this.application = application;
         this.signatureContainerDataSource = signatureContainerDataSource;
         this.settingsDataStore = settingsDataStore;
+        this.idCardService = idCardService;
     }
 
     Observable<Result.SignatureAddResult> show(int method) {
         if (method == R.id.signatureUpdateSignatureAddMethodMobileId) {
             return Observable.just(Result.SignatureAddResult.show(method));
         } else if (method == R.id.signatureUpdateSignatureAddMethodIdCard) {
-            return TokenServiceObservable.connect(application)
-                    .switchMap(connectData -> {
-                        if (connectData.cardPresent()) {
-                            return TokenServiceObservable
-                                    .read(connectData.tokenService())
-                                    .toObservable()
-                                    .map(data ->
-                                            Result.SignatureAddResult.method(method,
-                                                    IdCardResponse.data(data)))
-                                    .startWith(Result.SignatureAddResult
-                                            .method(method, IdCardResponse.reader()));
-                        } else {
-                            return Observable.just(Result.SignatureAddResult
-                                    .method(method, IdCardResponse.reader()));
-                        }
-                    })
+            return idCardService.data()
+                    .map(dataResponse ->
+                            Result.SignatureAddResult
+                                    .method(method, IdCardResponse.data(dataResponse)))
                     .startWith(Result.SignatureAddResult.method(method, IdCardResponse.initial()));
         } else {
             throw new IllegalArgumentException("Unknown method " + method);
@@ -111,7 +102,7 @@ final class SignatureAddSource {
                                             if (retryCounter > 0) {
                                                 return TokenServiceObservable
                                                         .read(connectData.tokenService())
-                                                        .map(data -> IdCardResponse.failure(data,
+                                                        .map(data -> IdCardResponse.failure(
                                                                 throwable, retryCounter));
                                             }
                                         }
