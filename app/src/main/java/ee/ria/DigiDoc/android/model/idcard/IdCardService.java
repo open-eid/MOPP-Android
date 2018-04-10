@@ -29,6 +29,7 @@ import ee.ria.tokenlibrary.TokenFactory;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okio.ByteString;
@@ -63,30 +64,18 @@ public final class IdCardService {
                 });
     }
 
-    public Observable<IdCardSignResponse> sign(SignedContainer container, String profile,
-                                               String pin2) {
-        return data()
-                .switchMap(dataResponse -> {
-                    IdCardData data = dataResponse.data();
-                    Token token = dataResponse.token();
-                    if (data != null && token != null) {
-                        return Observable
-                                .fromCallable(() ->
-                                        container.sign(data.signCertificate().data(), profile,
-                                                signData -> ByteString.of(token.sign(
-                                                        Token.PinType.PIN2, pin2,
-                                                        signData.toByteArray(),
-                                                        data.signCertificate().ellipticCurve()))))
-                                .map(IdCardSignResponse::success)
-                                .onErrorReturn(error ->
-                                        IdCardSignResponse.failure(error, data(token)))
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .startWith(IdCardSignResponse.activity());
-                    } else {
-                        return Observable.just(IdCardSignResponse.activity());
-                    }
-                });
+    public Single<SignedContainer> sign(Token token, SignedContainer container, String profile,
+                                        String pin2) {
+        return Single
+                .fromCallable(() -> {
+                    IdCardData data = data(token);
+                    return container.sign(data.signCertificate().data(), profile,
+                            signData -> ByteString.of(token.sign(Token.PinType.PIN2, pin2,
+                                    signData.toByteArray(),
+                                    data.signCertificate().ellipticCurve())));
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     static final class TokeOnSubscribe implements ObservableOnSubscribe<TokenResponse> {

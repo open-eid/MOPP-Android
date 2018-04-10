@@ -16,6 +16,7 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardSignResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardStatus;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
+import ee.ria.tokenlibrary.Token;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -31,6 +32,8 @@ public final class IdCardView extends LinearLayout implements
     private final TextView signDataView;
     private final EditText signPin2View;
     private final TextView signPin2ErrorView;
+
+    @Nullable private Token token;
 
     private final Subject<Boolean> positiveButtonEnabledSubject = PublishSubject.create();
 
@@ -76,7 +79,7 @@ public final class IdCardView extends LinearLayout implements
 
     @Override
     public IdCardRequest request() {
-        return IdCardRequest.create(signPin2View.getText().toString());
+        return IdCardRequest.create(token, signPin2View.getText().toString());
     }
 
     @Override
@@ -87,6 +90,10 @@ public final class IdCardView extends LinearLayout implements
         IdCardData data = dataResponse == null ? null : dataResponse.data();
         if (data == null && signResponse != null) {
             data = signResponse.data();
+        }
+        token = dataResponse == null ? null : dataResponse.token();
+        if (token == null && signResponse != null) {
+            token = signResponse.token();
         }
 
         if (signResponse != null && signResponse.active()) {

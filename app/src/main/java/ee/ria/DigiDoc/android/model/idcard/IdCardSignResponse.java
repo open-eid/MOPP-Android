@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 
 import ee.ria.mopplib.data.SignedContainer;
+import ee.ria.tokenlibrary.Token;
 
 @AutoValue
 public abstract class IdCardSignResponse {
@@ -17,20 +18,23 @@ public abstract class IdCardSignResponse {
 
     @Nullable public abstract IdCardData data();
 
+    @Nullable public abstract Token token();
+
     public static IdCardSignResponse activity() {
-        return create(true, null, null, null);
+        return create(true, null, null, null, null);
     }
 
     public static IdCardSignResponse success(SignedContainer container) {
-        return create(false, container, null, null);
+        return create(false, container, null, null, null);
     }
 
-    public static IdCardSignResponse failure(Throwable error, IdCardData data) {
-        return create(false, null, error, data);
+    public static IdCardSignResponse failure(Throwable error, IdCardData data, Token token) {
+        return create(false, null, error, data, token);
     }
 
     private static IdCardSignResponse create(boolean active, @Nullable SignedContainer container,
-                                             @Nullable Throwable error, @Nullable IdCardData data) {
-        return new AutoValue_IdCardSignResponse(active, container, error, data);
+                                             @Nullable Throwable error, @Nullable IdCardData data,
+                                             @Nullable Token token) {
+        return new AutoValue_IdCardSignResponse(active, container, error, data, token);
     }
 }
