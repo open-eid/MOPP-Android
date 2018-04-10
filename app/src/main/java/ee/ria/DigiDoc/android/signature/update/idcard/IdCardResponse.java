@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
+import ee.ria.DigiDoc.android.model.idcard.IdCardSignResponse;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddResponse;
 import ee.ria.mopplib.data.SignedContainer;
 
@@ -13,11 +14,7 @@ public abstract class IdCardResponse implements SignatureAddResponse {
 
     @Nullable public abstract IdCardDataResponse dataResponse();
 
-    public abstract boolean signingActive();
-
-    @Nullable public abstract Throwable error();
-
-    @Nullable public abstract Byte retryCounter();
+    @Nullable public abstract IdCardSignResponse signResponse();
 
     @Override
     public boolean active() {
@@ -39,26 +36,20 @@ public abstract class IdCardResponse implements SignatureAddResponse {
     }
 
     public static IdCardResponse data(IdCardDataResponse dataResponse) {
-        return create(null, dataResponse, false, null, null);
+        return create(null, dataResponse, null);
     }
 
-    public static IdCardResponse signing() {
-        return create(null, null, true, null, null);
+    public static IdCardResponse sign(IdCardSignResponse signResponse) {
+        return create(null, null, signResponse);
     }
 
     public static IdCardResponse success(SignedContainer container) {
-        return create(container, null, false, null, null);
-    }
-
-    public static IdCardResponse failure(Throwable error, byte retryCounter) {
-        return create(null, null, false, error, retryCounter);
+        return create(container, null, null);
     }
 
     private static IdCardResponse create(@Nullable SignedContainer container,
                                          @Nullable IdCardDataResponse dataResponse,
-                                         boolean signingActive, @Nullable Throwable error,
-                                         @Nullable Byte retryCounter) {
-        return new AutoValue_IdCardResponse(container, dataResponse, signingActive, error,
-                retryCounter);
+                                         @Nullable IdCardSignResponse signResponse) {
+        return new AutoValue_IdCardResponse(container, dataResponse, signResponse);
     }
 }

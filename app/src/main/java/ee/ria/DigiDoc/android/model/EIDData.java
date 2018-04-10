@@ -13,4 +13,8 @@ public interface EIDData {
     String personalCode();
 
     String citizenship();
+
+    CertificateData authCertificate();
+
+    CertificateData signCertificate();
 }

@@ -10,25 +10,18 @@ import android.util.SparseArray;
 
 import com.google.auto.value.AutoValue;
 
-import org.spongycastle.asn1.ASN1ObjectIdentifier;
-import org.spongycastle.asn1.x500.RDN;
-import org.spongycastle.asn1.x500.X500Name;
-import org.spongycastle.asn1.x500.style.BCStyle;
-import org.spongycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeFormatterBuilder;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import ee.ria.DigiDoc.android.model.CertificateData;
 import ee.ria.DigiDoc.android.model.EIDType;
+import ee.ria.mopplib.data.SignedContainer;
 import ee.ria.scardcomlibrary.CardReader;
 import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.tokenlibrary.Token;
@@ -38,6 +31,7 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import okio.ByteString;
 import timber.log.Timber;
 
 @Singleton
@@ -54,17 +48,43 @@ public final class IdCardService {
 
     public final Observable<IdCardDataResponse> data() {
         return tokenObservable
-                .flatMap(tokenResponse -> {
+                .switchMap(tokenResponse -> {
                     Token token = tokenResponse.token();
                     if (token != null) {
                         return Observable
-                                .fromCallable(() -> IdCardDataResponse.success(data(token)))
+                                .fromCallable(() -> IdCardDataResponse.success(data(token), token))
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .startWith(IdCardDataResponse.cardDetected())
                                 .onErrorReturn(IdCardDataResponse::failure);
                     } else {
                         return Observable.just(IdCardDataResponse.readerDetected());
+                    }
+                });
+    }
+
+    public Observable<IdCardSignResponse> sign(SignedContainer container, String profile,
+                                               String pin2) {
+        return data()
+                .switchMap(dataResponse -> {
+                    IdCardData data = dataResponse.data();
+                    Token token = dataResponse.token();
+                    if (data != null && token != null) {
+                        return Observable
+                                .fromCallable(() ->
+                                        container.sign(data.signCertificate().data(), profile,
+                                                signData -> ByteString.of(token.sign(
+                                                        Token.PinType.PIN2, pin2,
+                                                        signData.toByteArray(),
+                                                        data.signCertificate().ellipticCurve()))))
+                                .map(IdCardSignResponse::success)
+                                .onErrorReturn(error ->
+                                        IdCardSignResponse.failure(error, data(token)))
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .startWith(IdCardSignResponse.activity());
+                    } else {
+                        return Observable.just(IdCardSignResponse.activity());
                     }
                 });
     }
@@ -142,9 +162,12 @@ public final class IdCardService {
     /**
      * TODO Make this private when signing flow is moved to this system.
      */
-    public static IdCardData data(Token token) throws IOException, CertificateException {
+    public static IdCardData data(Token token) throws CertificateException {
         SparseArray<String> personalFile = token.readPersonalFile();
-        byte[] authCertificateData = token.readCert(Token.CertType.CertAuth);
+        ByteString authCertificateData = ByteString.of(token.readCert(Token.CertType.CertAuth));
+        ByteString signCertificateData = ByteString.of(token.readCert(Token.CertType.CertSign));
+        byte pin1RetryCounter = token.readRetryCounter(Token.PinType.PIN1);
+        byte pin2RetryCounter = token.readRetryCounter(Token.PinType.PIN2);
 
         String surname = personalFile.get(1).trim();
         String givenName1 = personalFile.get(2).trim();
@@ -170,17 +193,14 @@ public final class IdCardService {
             Timber.e("Could not parse expiry date %s", expiryDateString);
         }
 
-        X509Certificate certificate = (X509Certificate) CertificateFactory.getInstance("X.509")
-                .generateCertificate(new ByteArrayInputStream(authCertificateData));
-        X500Name x500name = new JcaX509CertificateHolder(certificate).getSubject();
-        RDN[] rdNs = x500name.getRDNs(ASN1ObjectIdentifier.getInstance(BCStyle.O));
-        String authCertificateO = rdNs[0].getFirst().getValue().toString().trim();
+        CertificateData authCertificate = CertificateData.create(authCertificateData);
+        CertificateData signCertificate = CertificateData.create(signCertificateData);
 
         String type = null;
-        if (authCertificateO.startsWith("ESTEID")) {
-            if (authCertificateO.contains("MOBIIL-ID")) {
+        if (authCertificate.organization().startsWith("ESTEID")) {
+            if (authCertificate.organization().contains("MOBIIL-ID")) {
                 type = EIDType.MOBILE_ID;
-            } else if (authCertificateO.contains("DIGI-ID")) {
+            } else if (authCertificate.organization().contains("DIGI-ID")) {
                 type = EIDType.DIGI_ID;
             } else {
                 type = EIDType.ID_CARD;
@@ -188,6 +208,7 @@ public final class IdCardService {
         }
 
         return IdCardData.create(type, givenNames.toString(), surname, personalCode, citizenship,
+                authCertificate, signCertificate, pin1RetryCounter, pin2RetryCounter,
                 documentNumber, expiryDate);
     }
 }
