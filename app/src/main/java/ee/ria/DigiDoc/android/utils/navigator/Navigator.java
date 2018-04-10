@@ -50,6 +50,8 @@ public interface Navigator {
      */
     <T extends ViewModel> T viewModel(String screenId, Class<T> type);
 
+    void clearViewModel(String screenId);
+
     /**
      * Execute {@link Transaction transaction}.
      *

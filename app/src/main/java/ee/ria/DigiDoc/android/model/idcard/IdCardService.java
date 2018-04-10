@@ -14,8 +14,6 @@ import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeFormatterBuilder;
 
-import java.security.cert.CertificateException;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -53,11 +51,18 @@ public final class IdCardService {
                     Token token = tokenResponse.token();
                     if (token != null) {
                         return Observable
-                                .fromCallable(() -> IdCardDataResponse.success(data(token), token))
+                                .fromCallable(() -> {
+                                    // don't know why try-catch is necessary
+                                    try {
+                                        return IdCardDataResponse.success(data(token), token);
+                                    } catch (Exception e) {
+                                        return IdCardDataResponse.failure(e);
+                                    }
+                                })
+                                .onErrorReturn(IdCardDataResponse::failure)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .startWith(IdCardDataResponse.cardDetected())
-                                .onErrorReturn(IdCardDataResponse::failure);
+                                .startWith(IdCardDataResponse.cardDetected());
                     } else {
                         return Observable.just(IdCardDataResponse.readerDetected());
                     }
@@ -151,7 +156,7 @@ public final class IdCardService {
     /**
      * TODO Make this private when signing flow is moved to this system.
      */
-    public static IdCardData data(Token token) throws CertificateException {
+    public static IdCardData data(Token token) throws Exception {
         SparseArray<String> personalFile = token.readPersonalFile();
         ByteString authCertificateData = ByteString.of(token.readCert(Token.CertType.CertAuth));
         ByteString signCertificateData = ByteString.of(token.readCert(Token.CertType.CertSign));

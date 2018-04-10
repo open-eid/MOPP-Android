@@ -28,7 +28,7 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 @SuppressLint("ViewConstructor")
 public final class HomeView extends LinearLayout implements MviView<Intent, ViewState> {
 
-    private final String screenId;
+    private final String eidScreenId;
 
     private final FrameLayout navigationContainerView;
     private final BottomNavigationView navigationView;
@@ -45,7 +45,7 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
 
     public HomeView(Context context, String screenId) {
         super(context);
-        this.screenId = screenId;
+        eidScreenId = screenId + "eid";
         setOrientation(VERTICAL);
         inflate(context, R.layout.main_home, this);
         navigationContainerView = findViewById(R.id.mainHomeNavigationContainer);
@@ -72,7 +72,7 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         } else if (state.screen() instanceof CryptoHomeScreen) {
             view = new CryptoHomeView(getContext());
         } else if (state.screen() instanceof EIDHomeScreen) {
-            view = new EIDHomeView(getContext(), screenId);
+            view = new EIDHomeView(getContext(), eidScreenId);
         } else {
             throw new IllegalArgumentException("Unknown screen " + state.screen());
         }
