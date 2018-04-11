@@ -44,9 +44,14 @@ final class SignatureAddSource {
             return Observable.just(Result.SignatureAddResult.show(method));
         } else if (method == R.id.signatureUpdateSignatureAddMethodIdCard) {
             return idCardService.data()
-                    .map(dataResponse ->
-                            Result.SignatureAddResult
-                                    .method(method, IdCardResponse.data(dataResponse)))
+                    .map(dataResponse -> {
+                        if (dataResponse.error() == null) {
+                            return Result.SignatureAddResult
+                                    .method(method, IdCardResponse.data(dataResponse));
+                        } else {
+                            return Result.SignatureAddResult.failure(dataResponse.error());
+                        }
+                    })
                     .startWith(Result.SignatureAddResult.method(method, IdCardResponse.initial()));
         } else {
             throw new IllegalArgumentException("Unknown method " + method);

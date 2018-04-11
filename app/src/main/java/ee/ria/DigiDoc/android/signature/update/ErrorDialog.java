@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
 import ee.ria.tokenlibrary.exception.PinVerificationException;
 import io.reactivex.subjects.Subject;
 
@@ -63,8 +64,10 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
             if (signatureAddError instanceof PinVerificationException) {
                 setMessage(getContext().getString(
                         R.string.signature_update_id_card_sign_pin2_locked));
-            } else {
+            } else if (signatureAddError instanceof MobileIdMessageException) {
                 setMessage(signatureAddError.getMessage());
+            } else {
+                setMessage(getContext().getString(R.string.signature_update_signature_add_error));
             }
         } else if (signatureRemoveError != null) {
             type = SIGNATURE_REMOVE;

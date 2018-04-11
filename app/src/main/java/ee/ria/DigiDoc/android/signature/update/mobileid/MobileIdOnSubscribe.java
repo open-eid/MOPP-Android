@@ -13,6 +13,7 @@ import java.util.Locale;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
+import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
 import ee.ria.DigiDoc.container.ContainerFacade;
 import ee.ria.DigiDoc.mid.CreateSignatureRequestBuilder;
 import ee.ria.DigiDoc.mid.MobileSignFaultMessageSource;
@@ -78,8 +79,8 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                     case SERVICE_FAULT:
                         ServiceFault fault = ServiceFault
                                 .fromJson(intent.getStringExtra(SERVICE_FAULT));
-                        emitter.onError(new Exception(faultMessageSource.getMessage(
-                                fault.getReason())));
+                        emitter.onError(new MobileIdMessageException(
+                                faultMessageSource.getMessage(fault.getReason())));
                         break;
                     case CREATE_SIGNATURE_CHALLENGE:
                         MobileCreateSignatureResponse challenge = MobileCreateSignatureResponse
@@ -99,8 +100,8 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                                 emitter.onComplete();
                                 break;
                             default:
-                                emitter.onError(new Exception(statusMessageSource.getMessage(
-                                        status.getStatus())));
+                                emitter.onError(new MobileIdMessageException(
+                                        statusMessageSource.getMessage(status.getStatus())));
                                 break;
                         }
                         break;

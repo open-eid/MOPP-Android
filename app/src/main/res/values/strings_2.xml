@@ -66,6 +66,7 @@
     <string name="signature_update_signature_add_button">Sign</string>
     <string name="signature_update_signature_add_method_mobile_id">Mobile ID</string>
     <string name="signature_update_signature_add_method_id_card">ID card</string>
+    <string name="signature_update_signature_add_error">Something went wrong. Please try again.</string>
 
     <string name="signature_update_mobile_id_phone_no">Phone number</string>
     <string name="signature_update_mobile_id_personal_code">Personal code</string>
@@ -99,7 +100,7 @@
     <string name="eid_home_id_card_status_initial_message">Make sure your ID-card reader is connected with the smartphone</string>
     <string name="eid_home_id_card_status_reader_detected_message">Make sure your ID-card is properly in the reader</string>
     <string name="eid_home_id_card_status_card_detected_message">ID-card found. Requesting information</string>
-    <string name="eid_home_error">Something went wrong</string>
+    <string name="eid_home_error">Something went wrong. Please try again.</string>
 
     <string name="eid_home_data_type">MY eID</string>
     <string name="eid_home_data_given_names">Given names</string>
