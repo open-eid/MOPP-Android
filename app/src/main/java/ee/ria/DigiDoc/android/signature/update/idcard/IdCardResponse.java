@@ -4,22 +4,22 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
-import ee.ria.DigiDoc.android.model.idcard.IdCardData;
+import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
+import ee.ria.DigiDoc.android.model.idcard.IdCardSignResponse;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddResponse;
 import ee.ria.mopplib.data.SignedContainer;
 
 @AutoValue
 public abstract class IdCardResponse implements SignatureAddResponse {
 
-    public abstract boolean readerConnected();
+    @Nullable public abstract IdCardDataResponse dataResponse();
 
-    @Nullable public abstract IdCardData data();
+    @Nullable public abstract IdCardSignResponse signResponse();
 
-    public abstract boolean signingActive();
-
-    @Nullable public abstract Throwable error();
-
-    @Nullable public abstract Byte retryCounter();
+    @Override
+    public boolean active() {
+        return false;
+    }
 
     @Override
     public boolean showDialog() {
@@ -32,34 +32,24 @@ public abstract class IdCardResponse implements SignatureAddResponse {
     }
 
     public static IdCardResponse initial() {
-        return create(null, false, false, null, false, null, null);
+        return data(IdCardDataResponse.initial());
     }
 
-    public static IdCardResponse reader() {
-        return create(null, false, true, null, false, null, null);
+    public static IdCardResponse data(IdCardDataResponse dataResponse) {
+        return create(null, dataResponse, null);
     }
 
-    public static IdCardResponse data(IdCardData data) {
-        return create(null, false, true, data, false, null, null);
-    }
-
-    public static IdCardResponse signing() {
-        return create(null, false, true, null, true, null, null);
+    public static IdCardResponse sign(IdCardSignResponse signResponse) {
+        return create(null, null, signResponse);
     }
 
     public static IdCardResponse success(SignedContainer container) {
-        return create(container, false, false, null, false, null, null);
+        return create(container, null, null);
     }
 
-    public static IdCardResponse failure(IdCardData data, Throwable error, byte retryCounter) {
-        return create(null, false, true, data, false, error, retryCounter);
-    }
-
-    private static IdCardResponse create(@Nullable SignedContainer container, boolean active,
-                                         boolean readerConnected, @Nullable IdCardData data,
-                                         boolean signingActive, @Nullable Throwable error,
-                                         @Nullable Byte retryCounter) {
-        return new AutoValue_IdCardResponse(container, active, readerConnected, data,
-                signingActive, error, retryCounter);
+    private static IdCardResponse create(@Nullable SignedContainer container,
+                                         @Nullable IdCardDataResponse dataResponse,
+                                         @Nullable IdCardSignResponse signResponse) {
+        return new AutoValue_IdCardResponse(container, dataResponse, signResponse);
     }
 }

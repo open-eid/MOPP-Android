@@ -66,10 +66,7 @@ public final class ConductorNavigator implements Navigator {
                         isPush, stack(router));
                 if (!isPush && from != null) {
                     String screenId = from.getInstanceId();
-                    if (viewModelProviders.containsKey(screenId)) {
-                        viewModelProviders.get(screenId).clear();
-                        viewModelProviders.remove(screenId);
-                    }
+                    clearViewModel(screenId);
                 }
             }
         });
@@ -99,6 +96,14 @@ public final class ConductorNavigator implements Navigator {
             viewModelProviders.put(screenId, ScreenViewModelProvider.create(viewModelFactory));
         }
         return viewModelProviders.get(screenId).get(type);
+    }
+
+    @Override
+    public void clearViewModel(String screenId) {
+        if (viewModelProviders.containsKey(screenId)) {
+            viewModelProviders.get(screenId).clear();
+            viewModelProviders.remove(screenId);
+        }
     }
 
     @Override

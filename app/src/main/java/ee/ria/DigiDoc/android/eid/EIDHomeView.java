@@ -15,6 +15,7 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardStatus;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import io.reactivex.Observable;
 
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
@@ -32,16 +33,20 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
                             R.string.eid_home_id_card_status_card_detected_message)
                     .build();
 
+    private final String screenId;
+
     private final HomeToolbar toolbarView;
     private final TextView progressMessageView;
     private final EIDDataView dataView;
     private final AlertDialog errorDialog;
 
     private final ViewDisposables disposables = new ViewDisposables();
-    private final EIDHomeViewModel viewModel;
+    private final Navigator navigator;
+    private EIDHomeViewModel viewModel;
 
     public EIDHomeView(Context context, String screenId) {
         super(context);
+        this.screenId = screenId;
         inflate(context, R.layout.eid_home, this);
         toolbarView = findViewById(R.id.toolbar);
         progressMessageView = findViewById(R.id.eidHomeProgressMessage);
@@ -50,8 +55,7 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
                 .setMessage(R.string.eid_home_error)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.cancel())
                 .create();
-        viewModel = Application.component(context).navigator().viewModel(screenId,
-                EIDHomeViewModel.class);
+        navigator = Application.component(context).navigator();
     }
 
     public Observable<Intent.InitialIntent> initialIntent() {
@@ -94,6 +98,7 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
+        viewModel = navigator.viewModel(screenId, EIDHomeViewModel.class);
         disposables.attach();
         disposables.add(viewModel.viewStates().subscribe(this::render));
         viewModel.process(intents());
@@ -103,6 +108,7 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
     public void onDetachedFromWindow() {
         errorDialog.dismiss();
         disposables.detach();
+        navigator.clearViewModel(screenId);
         super.onDetachedFromWindow();
     }
 }
