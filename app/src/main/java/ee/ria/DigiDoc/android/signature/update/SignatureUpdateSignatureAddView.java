@@ -52,14 +52,12 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
     }
 
     public Observable<Boolean> positiveButtonEnabled() {
-        return methodChanges()
-                .switchMap(integer -> {
-                    if (integer == R.id.signatureUpdateSignatureAddMethodMobileId) {
-                        return Observable.just(true);
-                    } else {
-                        return idCardView.positiveButtonEnabled();
-                    }
-                });
+        return Observable
+                .merge(methodChanges().startWith(Observable.fromCallable(this::method)),
+                        idCardView.positiveButtonState())
+                .map(ignored ->
+                        method() == R.id.signatureUpdateSignatureAddMethodMobileId
+                                || idCardView.positiveButtonEnabled());
     }
 
     public int method() {
