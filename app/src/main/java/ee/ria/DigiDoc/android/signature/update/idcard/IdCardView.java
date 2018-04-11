@@ -2,7 +2,6 @@ package ee.ria.DigiDoc.android.signature.update.idcard;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.text.Editable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
@@ -22,6 +21,7 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 import static com.jakewharton.rxbinding2.widget.RxTextView.afterTextChangeEvents;
+import static ee.ria.DigiDoc.android.Constants.VOID;
 
 public final class IdCardView extends LinearLayout implements
         SignatureAddView<IdCardRequest, IdCardResponse> {
@@ -35,7 +35,7 @@ public final class IdCardView extends LinearLayout implements
 
     @Nullable private Token token;
 
-    private final Subject<Boolean> positiveButtonEnabledSubject = PublishSubject.create();
+    private final Subject<Object> positiveButtonStateSubject = PublishSubject.create();
 
     public IdCardView(Context context) {
         this(context, null);
@@ -62,14 +62,12 @@ public final class IdCardView extends LinearLayout implements
         signPin2ErrorView = findViewById(R.id.signatureUpdateIdCardSignPin2Error);
     }
 
-    public Observable<Boolean> positiveButtonEnabled() {
-        return Observable.merge(
-                afterTextChangeEvents(signPin2View).map(event -> {
-                    Editable editable = event.editable();
-                    return editable != null && editable.length() >= 4;
-                }),
-                positiveButtonEnabledSubject
-                        .map(enabled-> enabled && signPin2View.getText().length() >= 4));
+    public Observable<Object> positiveButtonState() {
+        return Observable.merge(positiveButtonStateSubject, afterTextChangeEvents(signPin2View));
+    }
+
+    public boolean positiveButtonEnabled() {
+        return token != null && signPin2View.getText().length() >= 4;
     }
 
     @Override
@@ -91,17 +89,18 @@ public final class IdCardView extends LinearLayout implements
         if (data == null && signResponse != null) {
             data = signResponse.data();
         }
+
         token = dataResponse == null ? null : dataResponse.token();
         if (token == null && signResponse != null) {
             token = signResponse.token();
         }
+        positiveButtonStateSubject.onNext(VOID);
 
         if (signResponse != null && signResponse.active()) {
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(
                     R.string.signature_update_id_card_progress_message_signing);
             signContainerView.setVisibility(GONE);
-            positiveButtonEnabledSubject.onNext(false);
         } else if (signResponse != null && signResponse.error() != null && data != null) {
             progressContainerView.setVisibility(GONE);
             signContainerView.setVisibility(VISIBLE);
@@ -111,7 +110,6 @@ public final class IdCardView extends LinearLayout implements
             signPin2ErrorView.setVisibility(VISIBLE);
             signPin2ErrorView.setText(getResources().getString(
                     R.string.signature_update_id_card_sign_pin2_invalid, data.pin2RetryCounter()));
-            positiveButtonEnabledSubject.onNext(true);
         } else if (dataResponse != null && data != null) {
             progressContainerView.setVisibility(GONE);
             signContainerView.setVisibility(VISIBLE);
@@ -119,26 +117,22 @@ public final class IdCardView extends LinearLayout implements
                     R.string.signature_update_id_card_sign_data, data.givenNames(), data.surname(),
                     data.personalCode()));
             signPin2ErrorView.setVisibility(GONE);
-            positiveButtonEnabledSubject.onNext(true);
         } else if (dataResponse != null
                 && dataResponse.status().equals(IdCardStatus.CARD_DETECTED)) {
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(
                     R.string.signature_update_id_card_progress_message_card_detected);
             signContainerView.setVisibility(GONE);
-            positiveButtonEnabledSubject.onNext(false);
         } else if (dataResponse != null
                 && dataResponse.status().equals(IdCardStatus.READER_DETECTED)) {
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(
                     R.string.signature_update_id_card_progress_message_reader_detected);
             signContainerView.setVisibility(GONE);
-            positiveButtonEnabledSubject.onNext(false);
         } else {
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(R.string.signature_update_id_card_progress_message_initial);
             signContainerView.setVisibility(GONE);
-            positiveButtonEnabledSubject.onNext(false);
         }
     }
 }
