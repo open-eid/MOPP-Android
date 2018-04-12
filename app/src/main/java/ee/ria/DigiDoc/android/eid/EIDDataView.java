@@ -13,6 +13,7 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.EIDData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import ee.ria.tokenlibrary.Token;
 
 public final class EIDDataView extends LinearLayout {
 
@@ -25,6 +26,8 @@ public final class EIDDataView extends LinearLayout {
     private final TextView documentNumberView;
     private final View expiryDateLabelView;
     private final TextView expiryDateView;
+    private final CertificateDataView authCertificateDataView;
+    private final CertificateDataView signCertificateDataView;
 
     private final Formatter formatter;
 
@@ -54,6 +57,8 @@ public final class EIDDataView extends LinearLayout {
         documentNumberView = findViewById(R.id.eidHomeDataDocumentNumber);
         expiryDateLabelView = findViewById(R.id.eidHomeDataExpiryDateLabel);
         expiryDateView = findViewById(R.id.eidHomeDataExpiryDate);
+        authCertificateDataView = findViewById(R.id.eidHomeDataCertificatesAuth);
+        signCertificateDataView = findViewById(R.id.eidHomeDataCertificatesSign);
 
         formatter = Application.component(context).formatter();
     }
@@ -64,6 +69,10 @@ public final class EIDDataView extends LinearLayout {
         surnameView.setText(data.surname());
         personalCodeView.setText(data.personalCode());
         citizenshipView.setText(data.citizenship());
+        authCertificateDataView.data(Token.CertType.CertAuth, data.authCertificate(),
+                data.pukRetryCount());
+        signCertificateDataView.data(Token.CertType.CertSign, data.signCertificate(),
+                data.pukRetryCount());
         if (data instanceof IdCardData) {
             IdCardData idCardData = (IdCardData) data;
             documentNumberView.setText(idCardData.documentNumber());

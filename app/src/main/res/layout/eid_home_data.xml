@@ -113,4 +113,30 @@
         android:textAppearance="@style/TextAppearance.Application.Value"
         tools:text="2019-02-11 | Valid" />
 
+    <TextView
+        android:id="@id/eidHomeDataCertificatesTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/material_button_touch_target_height_minimum"
+        android:gravity="center_vertical"
+        android:text="@string/eid_home_data_certificates_title" />
+
+    <LinearLayout
+        android:id="@id/eidHomeDataCertificatesContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ee.ria.DigiDoc.android.eid.CertificateDataView
+            android:id="@id/eidHomeDataCertificatesAuth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ee.ria.DigiDoc.android.eid.CertificateDataView
+            android:id="@id/eidHomeDataCertificatesSign"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
 </merge>
