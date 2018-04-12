@@ -162,6 +162,7 @@ public final class IdCardService {
         ByteString signCertificateData = ByteString.of(token.readCert(Token.CertType.CertSign));
         byte pin1RetryCounter = token.readRetryCounter(Token.PinType.PIN1);
         byte pin2RetryCounter = token.readRetryCounter(Token.PinType.PIN2);
+        byte pukRetryCounter = token.readRetryCounter(Token.PinType.PUK);
 
         String surname = personalFile.get(1).trim();
         String givenName1 = personalFile.get(2).trim();
@@ -187,8 +188,10 @@ public final class IdCardService {
             Timber.e("Could not parse expiry date %s", expiryDateString);
         }
 
-        CertificateData authCertificate = CertificateData.create(authCertificateData);
-        CertificateData signCertificate = CertificateData.create(signCertificateData);
+        CertificateData authCertificate = CertificateData
+                .create(pin1RetryCounter, authCertificateData);
+        CertificateData signCertificate = CertificateData
+                .create(pin2RetryCounter, signCertificateData);
 
         String type = null;
         if (authCertificate.organization().startsWith("ESTEID")) {
@@ -202,7 +205,6 @@ public final class IdCardService {
         }
 
         return IdCardData.create(type, givenNames.toString(), surname, personalCode, citizenship,
-                authCertificate, signCertificate, pin1RetryCounter, pin2RetryCounter,
-                documentNumber, expiryDate);
+                authCertificate, signCertificate, pukRetryCounter, documentNumber, expiryDate);
     }
 }

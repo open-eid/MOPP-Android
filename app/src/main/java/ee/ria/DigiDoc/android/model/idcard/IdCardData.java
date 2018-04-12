@@ -13,10 +13,6 @@ import ee.ria.DigiDoc.android.model.EIDType;
 @AutoValue
 public abstract class IdCardData implements EIDData {
 
-    public abstract int pin1RetryCounter();
-
-    public abstract int pin2RetryCounter();
-
     public abstract String documentNumber();
 
     @Nullable public abstract LocalDate expiryDate();
@@ -24,10 +20,9 @@ public abstract class IdCardData implements EIDData {
     static IdCardData create(@Nullable @EIDType String type, String givenNames, String surname,
                              String personalCode, String citizenship,
                              CertificateData authCertificate, CertificateData signCertificate,
-                             int pin1RetryCounter, int pin2RetryCounter, String documentNumber,
+                             int pukRetryCount, String documentNumber,
                              @Nullable LocalDate expiryDate) {
         return new AutoValue_IdCardData(type, givenNames, surname, personalCode, citizenship,
-                authCertificate, signCertificate, pin1RetryCounter, pin2RetryCounter,
-                documentNumber, expiryDate);
+                authCertificate, signCertificate, pukRetryCount, documentNumber, expiryDate);
     }
 }

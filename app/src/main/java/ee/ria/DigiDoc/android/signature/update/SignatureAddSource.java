@@ -97,7 +97,7 @@ final class SignatureAddSource {
                     .onErrorResumeNext(error -> {
                         if (error instanceof PinVerificationException) {
                             IdCardData data = IdCardService.data(idCardRequest.token());
-                            if (data.pin2RetryCounter() > 0) {
+                            if (data.signCertificate().pinRetryCount() > 0) {
                                 return Observable.just(IdCardResponse.sign(IdCardSignResponse
                                         .failure(error, data, idCardRequest.token())));
                             }
