@@ -49,15 +49,43 @@ public final class CertificateDataView extends LinearLayout {
     }
 
     public void data(Token.CertType type, CertificateData data, int pukRetryCount) {
+        boolean pinBlocked = data.pinRetryCount() == 0;
+        boolean pukBlocked = pukRetryCount == 0;
+
         titleView.setText(type == Token.CertType.CertAuth
                 ? R.string.eid_home_certificate_data_title_auth
                 : R.string.eid_home_certificate_data_title_sign);
         validityView.setText(formatter.certificateDataValidity(data));
+        int buttonChange = type == Token.CertType.CertAuth
+                ? R.string.eid_home_certificate_data_button_change_auth
+                : R.string.eid_home_certificate_data_button_change_sign;
+        int buttonUnblock = type == Token.CertType.CertAuth
+                ? R.string.eid_home_certificate_data_button_unblock_auth
+                : R.string.eid_home_certificate_data_button_unblock_sign;
+        buttonView.setText(pinBlocked && !pukBlocked ? buttonUnblock : buttonChange);
         linkView.setText(type == Token.CertType.CertAuth
                 ? R.string.eid_home_certificate_data_link_auth
                 : R.string.eid_home_certificate_data_link_sign);
         errorView.setText(type == Token.CertType.CertAuth
                 ? R.string.eid_home_certificate_data_error_auth
                 : R.string.eid_home_certificate_data_error_sign);
+
+        if (!pinBlocked && !pukBlocked) {
+            buttonView.setVisibility(VISIBLE);
+            linkView.setVisibility(VISIBLE);
+            errorView.setVisibility(GONE);
+        } else if (pinBlocked && pukBlocked) {
+            buttonView.setVisibility(GONE);
+            linkView.setVisibility(GONE);
+            errorView.setVisibility(VISIBLE);
+        } else if (!pinBlocked) {
+            buttonView.setVisibility(VISIBLE);
+            linkView.setVisibility(GONE);
+            errorView.setVisibility(GONE);
+        } else {
+            buttonView.setVisibility(VISIBLE);
+            linkView.setVisibility(GONE);
+            errorView.setVisibility(VISIBLE);
+        }
     }
 }

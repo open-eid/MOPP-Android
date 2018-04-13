@@ -125,7 +125,7 @@
     <string name="eid_home_certificate_data_link_auth">Forgot your PIN1?</string>
     <string name="eid_home_certificate_data_link_sign">Forgot your PIN2?</string>
     <string name="eid_home_certificate_data_error_auth">You have entered 3 times wrong PIN1 code. PIN1 is blocked.</string>
-    <string name="eid_home_certificate_data_error_sign">You have entered 3 times wrong PIN1 code. PIN2 is blocked.</string>
+    <string name="eid_home_certificate_data_error_sign">You have entered 3 times wrong PIN2 code. PIN2 is blocked.</string>
 
     <string name="eid_type_id_card">ID-CARD</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
