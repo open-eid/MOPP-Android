@@ -116,8 +116,8 @@
 
     <string name="eid_home_certificate_data_title_auth">PIN1 - Authentication certificate</string>
     <string name="eid_home_certificate_data_title_sign">PIN2 - Signing certificate</string>
-    <string name="eid_home_certificate_data_valid">Certificate valid until %1$s</string>
-    <string name="eid_home_certificate_data_expired">Certificate expired, was valid until %1$s</string>
+    <string name="eid_home_certificate_data_valid">Certificate &lt;c>valid&lt;/c> until %1$s</string>
+    <string name="eid_home_certificate_data_expired">Certificate &lt;c>expired&lt;/c>, was valid until %1$s</string>
     <string name="eid_home_certificate_data_button_change_auth">Change PIN1</string>
     <string name="eid_home_certificate_data_button_change_sign">Change PIN2</string>
     <string name="eid_home_certificate_data_button_unblock_auth">Unblock PIN1</string>

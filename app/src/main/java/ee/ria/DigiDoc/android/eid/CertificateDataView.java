@@ -8,10 +8,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.CertificateData;
+import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.tokenlibrary.Token;
 
 public final class CertificateDataView extends LinearLayout {
+
+    private final Formatter formatter;
 
     private final TextView titleView;
     private final TextView validityView;
@@ -34,6 +38,7 @@ public final class CertificateDataView extends LinearLayout {
     public CertificateDataView(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                                int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        formatter = Application.component(context).formatter();
         setOrientation(VERTICAL);
         inflate(context, R.layout.eid_home_certificate_data, this);
         titleView = findViewById(R.id.eidHomeCertificateDataTitle);
@@ -47,6 +52,7 @@ public final class CertificateDataView extends LinearLayout {
         titleView.setText(type == Token.CertType.CertAuth
                 ? R.string.eid_home_certificate_data_title_auth
                 : R.string.eid_home_certificate_data_title_sign);
+        validityView.setText(formatter.certificateDataValidity(data));
         linkView.setText(type == Token.CertType.CertAuth
                 ? R.string.eid_home_certificate_data_link_auth
                 : R.string.eid_home_certificate_data_link_sign);

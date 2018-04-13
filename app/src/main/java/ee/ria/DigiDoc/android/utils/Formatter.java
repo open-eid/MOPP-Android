@@ -1,9 +1,14 @@
 package ee.ria.DigiDoc.android.utils;
 
 import android.app.Application;
+import android.os.Build;
+import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.content.res.ResourcesCompat;
+import android.text.Editable;
+import android.text.Html;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -14,6 +19,9 @@ import com.google.common.collect.ImmutableSetMultimap;
 
 import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.ZonedDateTime;
+import org.xml.sax.XMLReader;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -24,6 +32,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.model.CertificateData;
 import ee.ria.DigiDoc.android.model.EIDType;
 import ee.ria.mopplib.data.DataFile;
 
@@ -55,8 +64,8 @@ public final class Formatter {
         if (expiryDate == null) {
             return application.getString(R.string.eid_home_data_expiry_date_invalid);
         }
-        String date = dateFormat().format(new GregorianCalendar(expiryDate.getYear(),
-                expiryDate.getMonthValue() - 1, expiryDate.getDayOfMonth()).getTime());
+        String date = dateFormat(expiryDate.getYear(), expiryDate.getMonthValue() - 1,
+                expiryDate.getDayOfMonth());
         boolean expired = LocalDate.now().isAfter(expiryDate);
         int color = ResourcesCompat.getColor(application.getResources(),
                 expired ? R.color.error : R.color.success, null);
@@ -72,6 +81,19 @@ public final class Formatter {
                 .append(validityIndicator);
     }
 
+    public CharSequence certificateDataValidity(CertificateData certificateData) {
+        ZonedDateTime notAfter = certificateData.notAfter().atZone(ZoneId.systemDefault());
+        String date = dateFormat(notAfter.getYear(), notAfter.getMonthValue() - 1,
+                notAfter.getDayOfMonth());
+        boolean expired = notAfter.isBefore(ZonedDateTime.now());
+        int color = ResourcesCompat.getColor(application.getResources(),
+                expired ? R.color.error : R.color.success, null);
+        String string = application.getString(expired
+                ? R.string.eid_home_certificate_data_expired
+                : R.string.eid_home_certificate_data_valid, date);
+        return fromHtml(string, new ForegroundColorTagHandler(color));
+    }
+
     @DrawableRes public int documentTypeImageRes(DataFile document) {
         String extension = getFileExtension(document.name()).toLowerCase(Locale.US);
         for (Map.Entry<Integer, String> entry : DOCUMENT_TYPE_MAP.entries()) {
@@ -80,6 +102,10 @@ public final class Formatter {
             }
         }
         return DEFAULT_FILE_TYPE;
+    }
+
+    private String dateFormat(int year, int month, int day) {
+        return dateFormat().format(new GregorianCalendar(year, month, day).getTime());
     }
 
     private DateFormat dateFormat() {
@@ -117,4 +143,58 @@ public final class Formatter {
                     .putAll(R.drawable.ic_file_pdf, "pdf")
                     .putAll(R.drawable.ic_file_xml, "xml", "html", "java", "c", "cpp", "php")
                     .build();
+
+    static final class ForegroundColorTagHandler implements Html.TagHandler {
+
+        private final int color;
+
+        ForegroundColorTagHandler(@ColorInt int color) {
+            this.color = color;
+        }
+
+        @Override
+        public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
+            if (tag.equals("c")) {
+                processStrike(opening, output);
+            }
+        }
+
+        private void processStrike(boolean opening, Editable output) {
+            int len = output.length();
+            if (opening) {
+                output.setSpan(new ForegroundColorSpan(color), len, len, Spannable.SPAN_MARK_MARK);
+            } else {
+                Object obj = getLast(output, ForegroundColorSpan.class);
+                int where = output.getSpanStart(obj);
+                output.removeSpan(obj);
+                if (where != len) {
+                    output.setSpan(new ForegroundColorSpan(color), where, len,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+        }
+
+        private Object getLast(Editable text, Class<?> kind) {
+            Object[] spans = text.getSpans(0, text.length(), kind);
+            if (spans.length == 0) {
+                return null;
+            } else {
+                for(int i = spans.length; i > 0; i--) {
+                    if(text.getSpanFlags(spans[i - 1]) == Spannable.SPAN_MARK_MARK) {
+                        return spans[i - 1];
+                    }
+                }
+                return null;
+            }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static Spanned fromHtml(String source, Html.TagHandler tagHandler) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(source, 0, null, tagHandler);
+        } else {
+            return Html.fromHtml(source, null, tagHandler);
+        }
+    }
 }
