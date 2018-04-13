@@ -85,7 +85,7 @@ public final class Formatter {
         ZonedDateTime notAfter = certificateData.notAfter().atZone(ZoneId.systemDefault());
         String date = dateFormat(notAfter.getYear(), notAfter.getMonthValue() - 1,
                 notAfter.getDayOfMonth());
-        boolean expired = notAfter.isBefore(ZonedDateTime.now());
+        boolean expired = certificateData.expired();
         int color = ResourcesCompat.getColor(application.getResources(),
                 expired ? R.color.error : R.color.success, null);
         String string = application.getString(expired

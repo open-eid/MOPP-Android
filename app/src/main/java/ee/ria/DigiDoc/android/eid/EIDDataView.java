@@ -28,6 +28,9 @@ public final class EIDDataView extends LinearLayout {
     private final TextView expiryDateView;
     private final CertificateDataView authCertificateDataView;
     private final CertificateDataView signCertificateDataView;
+    private final View pukButtonView;
+    private final View pukErrorView;
+    private final View pukLinkView;
 
     private final Formatter formatter;
 
@@ -59,6 +62,9 @@ public final class EIDDataView extends LinearLayout {
         expiryDateView = findViewById(R.id.eidHomeDataExpiryDate);
         authCertificateDataView = findViewById(R.id.eidHomeDataCertificatesAuth);
         signCertificateDataView = findViewById(R.id.eidHomeDataCertificatesSign);
+        pukButtonView = findViewById(R.id.eidHomeDataCertificatesPukButton);
+        pukErrorView = findViewById(R.id.eidHomeDataCertificatesPukError);
+        pukLinkView = findViewById(R.id.eidHomeDataCertificatesPukLink);
 
         formatter = Application.component(context).formatter();
     }
@@ -73,6 +79,19 @@ public final class EIDDataView extends LinearLayout {
                 data.pukRetryCount());
         signCertificateDataView.data(Token.CertType.CertSign, data.signCertificate(),
                 data.pukRetryCount());
+        if (data.authCertificate().expired() && data.signCertificate().expired()) {
+            pukButtonView.setVisibility(GONE);
+            pukErrorView.setVisibility(GONE);
+            pukLinkView.setVisibility(GONE);
+        } else if (data.pukRetryCount() == 0) {
+            pukButtonView.setVisibility(GONE);
+            pukErrorView.setVisibility(VISIBLE);
+            pukLinkView.setVisibility(VISIBLE);
+        } else {
+            pukButtonView.setVisibility(VISIBLE);
+            pukErrorView.setVisibility(GONE);
+            pukLinkView.setVisibility(GONE);
+        }
         if (data instanceof IdCardData) {
             IdCardData idCardData = (IdCardData) data;
             documentNumberView.setText(idCardData.documentNumber());

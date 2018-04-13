@@ -113,6 +113,11 @@
     <string name="eid_home_data_expiry_date_expired">Expired</string>
     <string name="eid_home_data_expiry_date_invalid">Unknown</string>
     <string name="eid_home_data_certificates_title">PIN/PUK codes and certificate check</string>
+    <string name="eid_home_data_certificates_puk_title">PUK code</string>
+    <string name="eid_home_data_certificates_puk_text">PUK code is located in your code envelope</string>
+    <string name="eid_home_data_certificates_puk_button">Change PUK</string>
+    <string name="eid_home_data_certificates_puk_error">You have entered 3 times wrong PUK code. PUK code is blocked.</string>
+    <string name="eid_home_data_certificates_puk_link">See how to get new codes</string>
 
     <string name="eid_home_certificate_data_title_auth">PIN1 - Authentication certificate</string>
     <string name="eid_home_certificate_data_title_sign">PIN2 - Signing certificate</string>

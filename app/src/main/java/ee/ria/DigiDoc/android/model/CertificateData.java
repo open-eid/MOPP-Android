@@ -30,6 +30,10 @@ public abstract class CertificateData {
 
     public abstract String organization();
 
+    public boolean expired() {
+        return notAfter().isBefore(Instant.now());
+    }
+
     public static CertificateData create(int pinRetryCount, ByteString data) throws
             CertificateException {
         X509Certificate certificate = (X509Certificate) CertificateFactory.getInstance("X.509")
