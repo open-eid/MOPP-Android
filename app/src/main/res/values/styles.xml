@@ -98,4 +98,22 @@
         <item name="android:textColor">@drawable/signature_add_method_text</item>
     </style>
 
+    <style name="Widget.Application.EID.Title" parent="Widget.Application.Subheader.Container">
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">@null</item>
+    </style>
+
+    <style name="Widget.Application.EID.Link" parent="TextAppearance.AppCompat">
+        <item name="android:minHeight">@dimen/material_button_touch_target_height_minimum</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="Widget.Application.EID.Error" parent="TextAppearance.Application.Error">
+        <item name="android:paddingTop">@dimen/material_baseline_grid_0.5x</item>
+        <item name="android:paddingBottom">@dimen/material_baseline_grid_0.5x</item>
+        <item name="android:gravity">center</item>
+    </style>
+
 </resources>

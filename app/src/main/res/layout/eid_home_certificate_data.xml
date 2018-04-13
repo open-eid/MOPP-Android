@@ -8,9 +8,9 @@
 
     <TextView
         android:id="@id/eidHomeCertificateDataTitle"
+        style="@style/Widget.Application.EID.Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:text="@string/eid_home_certificate_data_title_auth" />
 
     <TextView
@@ -24,20 +24,21 @@
         android:id="@id/eidHomeCertificateDataButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_baseline_grid_1x"
         android:text="@string/eid_home_certificate_data_button_change_auth" />
 
     <TextView
         android:id="@id/eidHomeCertificateDataLink"
+        style="@style/Widget.Application.EID.Link"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:text="@string/eid_home_certificate_data_link_auth" />
 
     <TextView
         android:id="@id/eidHomeCertificateDataError"
+        style="@style/Widget.Application.EID.Error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:text="@string/eid_home_certificate_data_error_auth" />
 
 </merge>

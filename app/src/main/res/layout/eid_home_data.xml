@@ -132,16 +132,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginTop="@dimen/material_baseline_grid_1x"
+            android:layout_marginBottom="@dimen/material_baseline_grid_1.5x"
+            android:background="@color/divider" />
+
         <ee.ria.DigiDoc.android.eid.CertificateDataView
             android:id="@id/eidHomeDataCertificatesSign"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginTop="@dimen/material_baseline_grid_1x"
+            android:layout_marginBottom="@dimen/material_baseline_grid_1.5x"
+            android:background="@color/divider" />
+
         <TextView
             android:id="@id/eidHomeDataCertificatesPukTitle"
+            style="@style/Widget.Application.EID.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:text="@string/eid_home_data_certificates_puk_title" />
 
         <TextView
@@ -155,20 +169,21 @@
             android:id="@id/eidHomeDataCertificatesPukButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_baseline_grid_1x"
             android:text="@string/eid_home_data_certificates_puk_button" />
 
         <TextView
             android:id="@id/eidHomeDataCertificatesPukError"
+            style="@style/Widget.Application.EID.Error"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:text="@string/eid_home_data_certificates_puk_error" />
 
         <TextView
             android:id="@id/eidHomeDataCertificatesPukLink"
+            style="@style/Widget.Application.EID.Link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:text="@string/eid_home_data_certificates_puk_link" />
 
     </LinearLayout>

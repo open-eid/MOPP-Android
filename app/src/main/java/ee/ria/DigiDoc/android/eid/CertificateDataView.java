@@ -46,6 +46,8 @@ public final class CertificateDataView extends LinearLayout {
         buttonView = findViewById(R.id.eidHomeCertificateDataButton);
         linkView = findViewById(R.id.eidHomeCertificateDataLink);
         errorView = findViewById(R.id.eidHomeCertificateDataError);
+
+        formatter.underline(linkView);
     }
 
     public void data(Token.CertType type, CertificateData data, int pukRetryCount) {

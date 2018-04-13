@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.utils;
 
 import android.app.Application;
+import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
@@ -13,6 +14,7 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.widget.TextView;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
@@ -44,6 +46,10 @@ public final class Formatter {
 
     @Inject Formatter(Application application) {
         this.application = application;
+    }
+
+    public void underline(TextView textView) {
+        textView.setPaintFlags(textView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
     }
 
     public CharSequence instant(Instant instant) {

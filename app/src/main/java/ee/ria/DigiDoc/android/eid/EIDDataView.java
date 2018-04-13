@@ -17,6 +17,8 @@ import ee.ria.tokenlibrary.Token;
 
 public final class EIDDataView extends LinearLayout {
 
+    private final Formatter formatter;
+
     private final TextView typeView;
     private final TextView givenNamesView;
     private final TextView surnameView;
@@ -30,9 +32,7 @@ public final class EIDDataView extends LinearLayout {
     private final CertificateDataView signCertificateDataView;
     private final View pukButtonView;
     private final View pukErrorView;
-    private final View pukLinkView;
-
-    private final Formatter formatter;
+    private final TextView pukLinkView;
 
     public EIDDataView(Context context) {
         this(context, null);
@@ -49,6 +49,7 @@ public final class EIDDataView extends LinearLayout {
     public EIDDataView(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                        int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        formatter = Application.component(context).formatter();
         setOrientation(VERTICAL);
         inflate(context, R.layout.eid_home_data, this);
         typeView = findViewById(R.id.eidHomeDataType);
@@ -66,7 +67,7 @@ public final class EIDDataView extends LinearLayout {
         pukErrorView = findViewById(R.id.eidHomeDataCertificatesPukError);
         pukLinkView = findViewById(R.id.eidHomeDataCertificatesPukLink);
 
-        formatter = Application.component(context).formatter();
+        formatter.underline(pukLinkView);
     }
 
     public void setData(@NonNull EIDData data) {
