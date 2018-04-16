@@ -1,12 +1,16 @@
 package ee.ria.DigiDoc.android.eid;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import net.cachapa.expandablelayout.ExpandableLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -17,6 +21,7 @@ import ee.ria.tokenlibrary.Token;
 import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 
 public final class EIDDataView extends LinearLayout {
 
@@ -32,7 +37,7 @@ public final class EIDDataView extends LinearLayout {
     private final View expiryDateLabelView;
     private final TextView expiryDateView;
     private final TextView certificatesTitleView;
-    private final View certificatesContainerView;
+    private final ExpandableLayout certificatesContainerView;
     private final CertificateDataView authCertificateDataView;
     private final CertificateDataView signCertificateDataView;
     private final View pukButtonView;
@@ -74,6 +79,7 @@ public final class EIDDataView extends LinearLayout {
         pukErrorView = findViewById(R.id.eidHomeDataCertificatesPukError);
         pukLinkView = findViewById(R.id.eidHomeDataCertificatesPukLink);
 
+        tintCompoundDrawables(certificatesTitleView);
         formatter.underline(pukLinkView);
     }
 
@@ -121,10 +127,21 @@ public final class EIDDataView extends LinearLayout {
     }
 
     public boolean certificateContainerExpanded() {
-        return certificatesContainerView.getVisibility() == VISIBLE;
+        return certificatesContainerView.isExpanded();
     }
 
     public void certificateContainerExpanded(boolean certificateContainerExpanded) {
-        certificatesContainerView.setVisibility(certificateContainerExpanded ? VISIBLE : GONE);
+        int colorAttr = certificateContainerExpanded
+                ? R.attr.colorAccent
+                : android.R.attr.textColorSecondary;
+        TypedArray a = getContext().obtainStyledAttributes(new int[]{colorAttr});
+        certificatesTitleView.setTextColor(a.getColor(0, Color.BLACK));
+        a.recycle();
+        int drawable = certificateContainerExpanded
+                ? R.drawable.ic_icon_accordion_expanded
+                : R.drawable.ic_icon_accordion_collapsed;
+        certificatesTitleView.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, 0, 0, 0);
+        tintCompoundDrawables(certificatesTitleView);
+        certificatesContainerView.setExpanded(certificateContainerExpanded);
     }
 }
