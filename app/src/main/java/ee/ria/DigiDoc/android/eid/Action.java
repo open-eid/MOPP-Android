@@ -15,4 +15,14 @@ interface Action extends MviAction {
             return new AutoValue_Action_LoadAction(clear);
         }
     }
+
+    @AutoValue
+    abstract class CertificatesTitleClickAction implements Action {
+
+        abstract boolean expand();
+
+        static CertificatesTitleClickAction create(boolean expand) {
+            return new AutoValue_Action_CertificatesTitleClickAction(expand);
+        }
+    }
 }

@@ -58,19 +58,27 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
         navigator = Application.component(context).navigator();
     }
 
-    public Observable<Intent.InitialIntent> initialIntent() {
+    private Observable<Intent.InitialIntent> initialIntent() {
         return Observable.just(Intent.InitialIntent.create());
     }
 
-    public Observable<Intent.LoadIntent> loadIntent() {
+    private Observable<Intent.LoadIntent> loadIntent() {
         return cancels(errorDialog)
                 .map(ignored -> Intent.LoadIntent.create());
+    }
+
+    private Observable<Intent.CertificatesTitleClickIntent> certificatesTitleClickIntent() {
+        return dataView
+                .certificateTitleClicks()
+                .map(ignored ->
+                        Intent.CertificatesTitleClickIntent
+                                .create(!dataView.certificateContainerExpanded()));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
-        return Observable.mergeArray(initialIntent(), loadIntent());
+        return Observable.mergeArray(initialIntent(), loadIntent(), certificatesTitleClickIntent());
     }
 
     @Override
@@ -80,6 +88,7 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
         if (data != null) {
             dataView.setData(data);
         }
+        dataView.certificateContainerExpanded(state.certificatesContainerExpanded());
         progressMessageView.setVisibility(data == null ? VISIBLE : GONE);
         dataView.setVisibility(data == null ? GONE : VISIBLE);
 

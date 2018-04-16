@@ -119,13 +119,15 @@
         android:layout_height="wrap_content"
         android:minHeight="@dimen/material_button_touch_target_height_minimum"
         android:gravity="center_vertical"
+        android:background="?attr/selectableItemBackground"
         android:text="@string/eid_home_data_certificates_title" />
 
     <LinearLayout
         android:id="@id/eidHomeDataCertificatesContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ee.ria.DigiDoc.android.eid.CertificateDataView
             android:id="@id/eidHomeDataCertificatesAuth"

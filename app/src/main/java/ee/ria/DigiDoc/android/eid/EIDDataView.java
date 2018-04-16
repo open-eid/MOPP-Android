@@ -14,6 +14,9 @@ import ee.ria.DigiDoc.android.model.EIDData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.tokenlibrary.Token;
+import io.reactivex.Observable;
+
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
 public final class EIDDataView extends LinearLayout {
 
@@ -28,6 +31,8 @@ public final class EIDDataView extends LinearLayout {
     private final TextView documentNumberView;
     private final View expiryDateLabelView;
     private final TextView expiryDateView;
+    private final TextView certificatesTitleView;
+    private final View certificatesContainerView;
     private final CertificateDataView authCertificateDataView;
     private final CertificateDataView signCertificateDataView;
     private final View pukButtonView;
@@ -61,6 +66,8 @@ public final class EIDDataView extends LinearLayout {
         documentNumberView = findViewById(R.id.eidHomeDataDocumentNumber);
         expiryDateLabelView = findViewById(R.id.eidHomeDataExpiryDateLabel);
         expiryDateView = findViewById(R.id.eidHomeDataExpiryDate);
+        certificatesTitleView = findViewById(R.id.eidHomeDataCertificatesTitle);
+        certificatesContainerView = findViewById(R.id.eidHomeDataCertificatesContainer);
         authCertificateDataView = findViewById(R.id.eidHomeDataCertificatesAuth);
         signCertificateDataView = findViewById(R.id.eidHomeDataCertificatesSign);
         pukButtonView = findViewById(R.id.eidHomeDataCertificatesPukButton);
@@ -107,5 +114,17 @@ public final class EIDDataView extends LinearLayout {
             expiryDateLabelView.setVisibility(GONE);
             expiryDateView.setVisibility(GONE);
         }
+    }
+
+    public Observable<Object> certificateTitleClicks() {
+        return clicks(certificatesTitleView);
+    }
+
+    public boolean certificateContainerExpanded() {
+        return certificatesContainerView.getVisibility() == VISIBLE;
+    }
+
+    public void certificateContainerExpanded(boolean certificateContainerExpanded) {
+        certificatesContainerView.setVisibility(certificateContainerExpanded ? VISIBLE : GONE);
     }
 }

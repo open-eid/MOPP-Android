@@ -14,11 +14,14 @@ abstract class ViewState implements MviViewState {
 
     @Nullable abstract Throwable error();
 
+    abstract boolean certificatesContainerExpanded();
+
     abstract Builder buildWith();
 
     static ViewState initial() {
         return new AutoValue_ViewState.Builder()
                 .idCardDataResponse(IdCardDataResponse.initial())
+                .certificatesContainerExpanded(false)
                 .build();
     }
 
@@ -26,6 +29,7 @@ abstract class ViewState implements MviViewState {
     interface Builder {
         Builder idCardDataResponse(IdCardDataResponse idCardDataResponse);
         Builder error(@Nullable Throwable error);
+        Builder certificatesContainerExpanded(boolean certificatesContainerExpanded);
         ViewState build();
     }
 }

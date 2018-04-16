@@ -11,6 +11,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Action.LoadAction, Result.LoadResult> load;
 
+    private final ObservableTransformer<Action.CertificatesTitleClickAction,
+                                        Result.CertificatesTitleClickResult> certificatesTitleClick;
+
     @Inject Processor(IdCardService idCardService) {
         load = upstream -> upstream.switchMap(action -> {
             Observable<Result.LoadResult> resultObservable = idCardService.data()
@@ -28,12 +31,17 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
             return resultObservable;
         });
+
+        certificatesTitleClick = upstream -> upstream.map(action ->
+                Result.CertificatesTitleClickResult.create(action.expand()));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public ObservableSource<Result> apply(Observable<Action> upstream) {
         return upstream.publish(shared -> Observable.mergeArray(
-                shared.ofType(Action.LoadAction.class).compose(load)));
+                shared.ofType(Action.LoadAction.class).compose(load),
+                shared.ofType(Action.CertificatesTitleClickAction.class)
+                        .compose(certificatesTitleClick)));
     }
 }

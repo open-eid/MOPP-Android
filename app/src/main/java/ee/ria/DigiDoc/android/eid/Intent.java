@@ -21,4 +21,14 @@ interface Intent extends MviIntent {
             return new AutoValue_Intent_LoadIntent();
         }
     }
+
+    @AutoValue
+    abstract class CertificatesTitleClickIntent implements Intent {
+
+        abstract boolean expand();
+
+        static CertificatesTitleClickIntent create(boolean expand) {
+            return new AutoValue_Intent_CertificatesTitleClickIntent(expand);
+        }
+    }
 }
