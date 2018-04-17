@@ -109,7 +109,8 @@ public final class IdCardView extends LinearLayout implements
                     data.personalCode()));
             signPin2ErrorView.setVisibility(VISIBLE);
             signPin2ErrorView.setText(getResources().getString(
-                    R.string.signature_update_id_card_sign_pin2_invalid, data.pin2RetryCounter()));
+                    R.string.signature_update_id_card_sign_pin2_invalid,
+                    data.signCertificate().pinRetryCount()));
         } else if (dataResponse != null && data != null) {
             progressContainerView.setVisibility(GONE);
             signContainerView.setVisibility(VISIBLE);

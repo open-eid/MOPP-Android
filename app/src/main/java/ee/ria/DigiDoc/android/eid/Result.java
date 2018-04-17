@@ -49,4 +49,21 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_LoadResult(idCardDataResponse, error);
         }
     }
+
+    @AutoValue
+    abstract class CertificatesTitleClickResult implements Result {
+
+        abstract boolean expanded();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .certificatesContainerExpanded(expanded())
+                    .build();
+        }
+
+        static CertificatesTitleClickResult create(boolean expanded) {
+            return new AutoValue_Result_CertificatesTitleClickResult(expanded);
+        }
+    }
 }

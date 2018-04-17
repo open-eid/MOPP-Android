@@ -41,6 +41,7 @@ ext {
     autoValueVersion = '1.5.3'
     autoValueParcelVersion = '0.2.6'
     threetenabpVersion = '1.0.5'
+    expandablelayoutVersion = '2.9.2'
     junitVersion = '4.12'
     truthVersion = '0.39'
 }

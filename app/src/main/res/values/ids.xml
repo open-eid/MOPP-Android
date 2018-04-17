@@ -120,5 +120,20 @@
     <item type="id" name="eidHomeDataDocumentNumber" />
     <item type="id" name="eidHomeDataExpiryDateLabel" />
     <item type="id" name="eidHomeDataExpiryDate" />
+    <item type="id" name="eidHomeDataCertificatesTitle" />
+    <item type="id" name="eidHomeDataCertificatesContainer" />
+    <item type="id" name="eidHomeDataCertificatesAuth" />
+    <item type="id" name="eidHomeDataCertificatesSign" />
+    <item type="id" name="eidHomeDataCertificatesPukTitle" />
+    <item type="id" name="eidHomeDataCertificatesPukText" />
+    <item type="id" name="eidHomeDataCertificatesPukButton" />
+    <item type="id" name="eidHomeDataCertificatesPukError" />
+    <item type="id" name="eidHomeDataCertificatesPukLink" />
+
+    <item type="id" name="eidHomeCertificateDataTitle" />
+    <item type="id" name="eidHomeCertificateDataValidity" />
+    <item type="id" name="eidHomeCertificateDataButton" />
+    <item type="id" name="eidHomeCertificateDataLink" />
+    <item type="id" name="eidHomeCertificateDataError" />
 
 </resources>

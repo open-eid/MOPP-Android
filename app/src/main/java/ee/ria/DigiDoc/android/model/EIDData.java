@@ -17,4 +17,6 @@ public interface EIDData {
     CertificateData authCertificate();
 
     CertificateData signCertificate();
+
+    int pukRetryCount();
 }

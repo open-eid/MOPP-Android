@@ -90,6 +90,8 @@ dependencies {
 
     implementation "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
 
+    implementation "net.cachapa.expandablelayout:expandablelayout:${expandablelayoutVersion}"
+
     implementation project(':mopplib')
     implementation project(':scardcomlibrary')
     implementation project(':tokenlibrary')
