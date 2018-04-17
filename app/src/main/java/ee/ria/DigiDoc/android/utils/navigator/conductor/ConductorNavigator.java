@@ -115,7 +115,10 @@ public final class ConductorNavigator implements Navigator {
             router.pushController(routerTransaction(
                     ((Transaction.PushTransaction) transaction).screen()));
         } else if (transaction instanceof Transaction.PopTransaction) {
-            router.popCurrentController();
+            Activity activity = router.getActivity();
+            if (activity != null) {
+                activity.onBackPressed();
+            }
         } else if (transaction instanceof Transaction.ReplaceTransaction) {
             router.replaceTopController(routerTransaction(
                     ((Transaction.ReplaceTransaction) transaction).screen()));
