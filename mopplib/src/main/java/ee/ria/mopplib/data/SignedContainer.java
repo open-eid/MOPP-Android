@@ -7,7 +7,6 @@ import com.google.auto.value.AutoValue;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Files;
 
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
 import org.spongycastle.asn1.x500.RDN;
@@ -33,6 +32,7 @@ import okio.ByteString;
 import timber.log.Timber;
 
 import static com.google.common.collect.ImmutableList.sortedCopyOf;
+import static com.google.common.io.Files.getFileExtension;
 
 @AutoValue
 public abstract class SignedContainer {
@@ -58,7 +58,8 @@ public abstract class SignedContainer {
     public abstract ImmutableList<DataFile> dataFiles();
 
     public final boolean dataFileAddEnabled() {
-        return signatures().size() == 0;
+        return NON_LEGACY_EXTENSIONS.contains(getFileExtension(file().getName()).toLowerCase())
+                && signatures().size() == 0;
     }
 
     public final boolean dataFileRemoveEnabled() {
@@ -277,7 +278,7 @@ public abstract class SignedContainer {
      * @return True if it is a container, false otherwise.
      */
     public static boolean isContainer(File file) {
-        String extension = Files.getFileExtension(file.getName()).toLowerCase();
+        String extension = getFileExtension(file.getName()).toLowerCase();
         if (EXTENSIONS.contains(extension)) {
             return true;
         }
@@ -306,7 +307,7 @@ public abstract class SignedContainer {
      * @return True if it is a legacy container, false otherwise.
      */
     public static boolean isLegacyContainer(File file) {
-        String extension = Files.getFileExtension(file.getName()).toLowerCase();
+        String extension = getFileExtension(file.getName()).toLowerCase();
         return !NON_LEGACY_EXTENSIONS.contains(extension);
     }
 
@@ -377,7 +378,7 @@ public abstract class SignedContainer {
      * @return MIME type of the file.
      */
     public static String mimeType(File file) {
-        String extension = Files.getFileExtension(file.getName()).toLowerCase();
+        String extension = getFileExtension(file.getName()).toLowerCase();
         if (EXTENSIONS.contains(extension)) {
             return CONTAINER_MIME_TYPE;
         }
