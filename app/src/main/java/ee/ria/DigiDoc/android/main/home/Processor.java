@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.main.home;
 
 import android.app.Application;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.IdRes;
 
@@ -19,7 +20,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
-import android.content.Intent;
+
 final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Action.NavigationAction, Result.NavigationResult>
@@ -39,9 +40,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return Observable.just(Result.MenuResult.create(isOpen));
             } else if (item != null) {
                 if(item == R.id.mainHomeMenuHelp){
-                    navigator.execute(Transaction.
-                            activity(new Intent(Intent.ACTION_VIEW, Uri.parse(application.getString(R.string.help_url))),
-                            null));
+                    Intent intent = getBrowserIntent(application.getString(R.string.help_url));
+                    navigator.execute(Transaction.activity(intent, null));
                 } else {
                     navigator.execute(Transaction.push(menuItemToScreen(item)));
                 }
@@ -70,6 +70,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
             default:
                 throw new IllegalArgumentException("Unknown navigation item: " + item);
         }
+    }
+
+    private Intent getBrowserIntent(String url) {
+        return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
     }
 
     private Screen menuItemToScreen(@IdRes int item) {
