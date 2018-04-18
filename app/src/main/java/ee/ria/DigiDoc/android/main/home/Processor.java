@@ -22,6 +22,8 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createBrowserIntent;
+
 final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Action.NavigationAction, Result.NavigationResult>
@@ -41,8 +43,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return Observable.just(Result.MenuResult.create(isOpen));
             } else if (item != null) {
                 if(item == R.id.mainHomeMenuHelp){
-                    Intent browserIntent = IntentUtils.
-                            createBrowserIntent(application, R.string.help_url);
+                    Intent browserIntent = createBrowserIntent(application, R.string.help_url);
                     navigator.execute(Transaction.activity(browserIntent, null));
                 } else {
                     navigator.execute(Transaction.push(menuItemToScreen(item)));
@@ -72,10 +73,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
             default:
                 throw new IllegalArgumentException("Unknown navigation item: " + item);
         }
-    }
-
-    private Intent getBrowserIntent(String url) {
-        return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
     }
 
     private Screen menuItemToScreen(@IdRes int item) {
