@@ -6,10 +6,10 @@
         android:title="@string/main_home_navigation_signature"
         android:icon="@drawable/ic_icon_signature" />
 
-    <item
-        android:id="@id/mainHomeNavigationCrypto"
-        android:title="@string/main_home_navigation_crypto"
-        android:icon="@drawable/ic_icon_crypto" />
+    <!--<item-->
+        <!--android:id="@id/mainHomeNavigationCrypto"-->
+        <!--android:title="@string/main_home_navigation_crypto"-->
+        <!--android:icon="@drawable/ic_icon_crypto" />-->
 
     <item
         android:id="@id/mainHomeNavigationEID"
