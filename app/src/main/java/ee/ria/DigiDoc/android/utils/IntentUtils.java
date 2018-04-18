@@ -89,5 +89,10 @@ public final class IntentUtils {
                         .setType(SignedContainer.mimeType(file)), null);
     }
 
+    public static Intent createBrowserIntent(Context context, int stringRes){
+        String url = context.getResources().getString(stringRes);
+        return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+    }
+
     private IntentUtils() {}
 }
