@@ -33,11 +33,11 @@ public final class SettingsFragment extends PreferenceFragmentCompatDividers {
         setPreferencesFromResource(R.xml.main_settings, null);
         bindSummary(R.string.main_settings_phone_no_key);
         bindSummary(R.string.main_settings_personal_code_key);
-        bindSummary(R.string.main_settings_role_key);
-        bindSummary(R.string.main_settings_city_key);
-        bindSummary(R.string.main_settings_county_key);
-        bindSummary(R.string.main_settings_country_key);
-        bindSummary(R.string.main_settings_postal_code_key);
+//        bindSummary(R.string.main_settings_role_key);
+//        bindSummary(R.string.main_settings_city_key);
+//        bindSummary(R.string.main_settings_county_key);
+//        bindSummary(R.string.main_settings_country_key);
+//        bindSummary(R.string.main_settings_postal_code_key);
         bindSummary(R.string.main_settings_signature_profile_key);
     }
 
