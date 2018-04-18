@@ -58,8 +58,7 @@ public abstract class SignedContainer {
     public abstract ImmutableList<DataFile> dataFiles();
 
     public final boolean dataFileAddEnabled() {
-        return NON_LEGACY_EXTENSIONS.contains(getFileExtension(file().getName()).toLowerCase())
-                && signatures().size() == 0;
+        return !isLegacyContainer(file()) && signatures().size() == 0;
     }
 
     public final boolean dataFileRemoveEnabled() {

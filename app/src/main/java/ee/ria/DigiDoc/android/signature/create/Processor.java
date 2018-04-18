@@ -62,7 +62,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .doOnNext(containerAdd ->
                                         navigator.execute(Transaction.replace(SignatureUpdateScreen
-                                                .create(containerAdd.isExistingContainer(),
+                                                .create(containerAdd.isExistingContainer(), false,
                                                         containerAdd.containerFile(), false,
                                                         false))))
                                 .doOnError(throwable1 -> {

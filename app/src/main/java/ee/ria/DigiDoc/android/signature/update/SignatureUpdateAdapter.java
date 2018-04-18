@@ -59,7 +59,7 @@ final class SignatureUpdateAdapter extends
 
     private ImmutableList<Item> items = ImmutableList.of();
 
-    void setData(boolean isSuccess, boolean isExistingContainer,
+    void setData(boolean isSuccess, boolean isExistingContainer, boolean isNestedContainer,
                  @Nullable SignedContainer container) {
         boolean isWarning = container != null && !container.signaturesValid();
         String name = container == null ? null : container.name();
@@ -74,15 +74,16 @@ final class SignatureUpdateAdapter extends
         if (container != null) {
             builder.add(NameItem.create(name))
                     .add(SubheadItem.create(DOCUMENT,
-                            isExistingContainer && container.dataFileAddEnabled()))
+                            isExistingContainer && !isNestedContainer
+                                    && container.dataFileAddEnabled()))
                     .addAll(DocumentItem.of(container.dataFiles(),
-                            container.dataFileRemoveEnabled()));
+                            !isNestedContainer && container.dataFileRemoveEnabled()));
             if (isExistingContainer) {
                 builder.add(SubheadItem.create(SIGNATURE, true));
                 if (container.signatures().size() == 0) {
                     builder.add(SignaturesEmptyItem.create());
                 } else {
-                    builder.addAll(SignatureItem.of(container.signatures()));
+                    builder.addAll(SignatureItem.of(container.signatures(), !isNestedContainer));
                 }
             } else {
                 builder.add(DocumentsAddButtonItem.create());
@@ -325,6 +326,7 @@ final class SignatureUpdateAdapter extends
             createdAtView.setText(itemView.getResources().getString(
                     R.string.signature_update_signature_created_at,
                     formatter.instant(item.signature().createdAt())));
+            removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton).map(ignored ->
                     ((SignatureItem) adapter.getItem(getAdapterPosition())).signature())
                     .subscribe(adapter.signatureRemoveClicksSubject);
@@ -452,15 +454,18 @@ final class SignatureUpdateAdapter extends
 
         abstract Signature signature();
 
-        static SignatureItem create(Signature signature) {
+        abstract boolean removeButtonVisible();
+
+        static SignatureItem create(Signature signature, boolean removeButtonVisible) {
             return new AutoValue_SignatureUpdateAdapter_SignatureItem(
-                    R.layout.signature_update_list_item_signature, signature);
+                    R.layout.signature_update_list_item_signature, signature, removeButtonVisible);
         }
 
-        static ImmutableList<SignatureItem> of(ImmutableList<Signature> signatures) {
+        static ImmutableList<SignatureItem> of(ImmutableList<Signature> signatures,
+                                               boolean removeButtonVisible) {
             ImmutableList.Builder<SignatureItem> builder = ImmutableList.builder();
             for (Signature signature : signatures) {
-                builder.add(create(signature));
+                builder.add(create(signature, removeButtonVisible));
             }
             return builder.build();
         }
