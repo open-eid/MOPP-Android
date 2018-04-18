@@ -14,6 +14,7 @@ import ee.ria.DigiDoc.android.main.about.AboutScreen;
 import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
 import ee.ria.DigiDoc.android.signature.home.SignatureHomeScreen;
 import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
+import ee.ria.DigiDoc.android.utils.IntentUtils;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
@@ -40,8 +41,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return Observable.just(Result.MenuResult.create(isOpen));
             } else if (item != null) {
                 if(item == R.id.mainHomeMenuHelp){
-                    Intent intent = getBrowserIntent(application.getString(R.string.help_url));
-                    navigator.execute(Transaction.activity(intent, null));
+                    Intent browserIntent = IntentUtils.
+                            createBrowserIntent(application, R.string.help_url);
+                    navigator.execute(Transaction.activity(browserIntent, null));
                 } else {
                     navigator.execute(Transaction.push(menuItemToScreen(item)));
                 }
