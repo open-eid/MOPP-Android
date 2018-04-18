@@ -66,9 +66,11 @@ final class SignatureAddSource {
                 settingsDataStore.setPhoneNo(mobileIdRequest.phoneNo());
                 settingsDataStore.setPersonalCode(mobileIdRequest.personalCode());
             }
-            return Observable
-                    .create(new MobileIdOnSubscribe(application, settingsDataStore, containerFile,
-                            mobileIdRequest.personalCode(), mobileIdRequest.phoneNo()))
+            return signatureContainerDataSource
+                    .get(containerFile)
+                    .flatMapObservable(container ->
+                            Observable.create(new MobileIdOnSubscribe(application, container,
+                                    mobileIdRequest.personalCode(), mobileIdRequest.phoneNo())))
                     .switchMap(response -> {
                         String signature = response.signature();
                         if (signature != null) {
@@ -90,8 +92,8 @@ final class SignatureAddSource {
             return signatureContainerDataSource
                     .get(containerFile)
                     .flatMap(container ->
-                            idCardService.sign(idCardRequest.token(), container,
-                                    settingsDataStore.getSignatureProfile(), idCardRequest.pin2()))
+                            idCardService
+                                    .sign(idCardRequest.token(), container, idCardRequest.pin2()))
                     .toObservable()
                     .map(IdCardResponse::success)
                     .onErrorResumeNext(error -> {

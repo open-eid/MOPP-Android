@@ -6,6 +6,7 @@ import android.webkit.MimeTypeMap;
 import com.google.auto.value.AutoValue;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import org.spongycastle.asn1.ASN1ObjectIdentifier;
@@ -43,13 +44,22 @@ public abstract class SignedContainer {
     private static final ImmutableSet<String> NON_LEGACY_EXTENSIONS = ImmutableSet.<String>builder()
             .add("asice", "sce", "bdoc")
             .build();
-
     private static final String PDF_EXTENSION = "pdf";
 
     private static final String CONTAINER_MIME_TYPE = "application/octet-stream";
     private static final String DEFAULT_MIME_TYPE = "text/plain";
 
-    abstract File file();
+    private static final String SIGNATURE_PROFILE_TS = "time-stamp";
+    private static final String SIGNATURE_PROFILE_TM = "time-mark";
+
+    private static final ImmutableMap<String, String> SIGNATURE_PROFILES =
+            ImmutableMap.<String, String>builder()
+                    .put("asice", SIGNATURE_PROFILE_TS)
+                    .put("sce", SIGNATURE_PROFILE_TS)
+                    .put("bdoc", SIGNATURE_PROFILE_TM)
+                    .build();
+
+    public abstract File file();
 
     public final String name() {
         return file().getName();
@@ -74,6 +84,34 @@ public abstract class SignedContainer {
             }
         }
         return true;
+    }
+
+    public final String signatureProfile() {
+        String extension = getFileExtension(file().getName());
+        ImmutableList<Signature> signatures = signatures();
+
+        if (signatures.size() == 1) {
+            if (extension.equals("bdoc")) {
+                return signatures.get(0).profile();
+            } else {
+                return SIGNATURE_PROFILE_TS;
+            }
+        } else if (signatures.size() > 1) {
+            boolean same = true;
+            String previous = null;
+            for (Signature signature : signatures) {
+                if (previous != null && !previous.equals(signature.profile())) {
+                    same = false;
+                    break;
+                }
+                previous = signature.profile();
+            }
+            if (same) {
+                return previous;
+            }
+        }
+
+        return SIGNATURE_PROFILES.get(extension);
     }
 
     public final SignedContainer addDataFiles(ImmutableList<File> dataFiles) throws IOException {
@@ -162,7 +200,7 @@ public abstract class SignedContainer {
     }
 
     @SuppressWarnings("Guava")
-    public final SignedContainer sign(ByteString certificate, String profile,
+    public final SignedContainer sign(ByteString certificate,
                                       Function<ByteString, ByteString> signFunction) throws
             IOException {
         Container container;
@@ -175,10 +213,10 @@ public abstract class SignedContainer {
             throw new IOException("Container.open returned null");
         }
         ee.ria.libdigidocpp.Signature signature = container
-                .prepareWebSignature(certificate.toByteArray(), profile);
+                .prepareWebSignature(certificate.toByteArray(), signatureProfile());
         ByteString signatureData = signFunction.apply(ByteString.of(signature.dataToSign()));
         signature.setSignatureValue(signatureData.toByteArray());
-        signature.extendSignatureProfile(profile);
+        signature.extendSignatureProfile(signatureProfile());
         container.save();
         return open(file());
     }
@@ -327,7 +365,8 @@ public abstract class SignedContainer {
                     id, name, createdAt);
             status = SignatureStatus.INVALID;
         }
-        return Signature.create(id, name, createdAt, status);
+        String profile = signature.profile();
+        return Signature.create(id, name, createdAt, status, profile);
     }
 
     private static String signatureName(ee.ria.libdigidocpp.Signature signature) {

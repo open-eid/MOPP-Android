@@ -69,12 +69,11 @@ public final class IdCardService {
                 });
     }
 
-    public Single<SignedContainer> sign(Token token, SignedContainer container, String profile,
-                                        String pin2) {
+    public Single<SignedContainer> sign(Token token, SignedContainer container, String pin2) {
         return Single
                 .fromCallable(() -> {
                     IdCardData data = data(token);
-                    return container.sign(data.signCertificate().data(), profile,
+                    return container.sign(data.signCertificate().data(),
                             signData -> ByteString.of(token.sign(Token.PinType.PIN2, pin2,
                                     signData.toByteArray(),
                                     data.signCertificate().ellipticCurve())));
