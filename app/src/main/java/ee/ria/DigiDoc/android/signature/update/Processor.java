@@ -177,7 +177,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     navigator.execute(Transaction.push(SignatureUpdateScreen.create(
                                             containerAdd.isExistingContainer(), false,
                                             containerAdd.containerFile(), true, false))))
-                            .map(containerAdd -> Result.SignatureAddResult.activity())
+                            .map(containerAdd -> Result.SignatureAddResult.clear())
                             .onErrorReturn(Result.SignatureAddResult::failure)
                             .startWith(Result.SignatureAddResult.activity());
                 } else {
