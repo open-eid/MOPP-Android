@@ -111,7 +111,8 @@ public final class SignedContainerSubject extends Subject<SignedContainerSubject
                     signatureMetadata.getString("id"),
                     signatureMetadata.getString("name"),
                     Instant.parse(signatureMetadata.getString("createdAt")),
-                    signatureMetadata.getString("status")));
+                    signatureMetadata.getString("status"),
+                    signatureMetadata.getString("profile")));
         }
         return builder.build();
     }
