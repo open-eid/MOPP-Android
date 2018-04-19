@@ -116,6 +116,8 @@ public class Application extends android.app.Application {
 
         Formatter formatter();
 
+        Activity.RootScreenFactory rootScreenFactory();
+
         @Component.Builder
         interface Builder {
 

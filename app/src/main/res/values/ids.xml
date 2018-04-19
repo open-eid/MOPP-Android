@@ -27,9 +27,6 @@
     <item type="id" name="mainHomeMenuSettings" />
     <item type="id" name="mainHomeMenuAbout" />
 
-    <!-- Main Help -->
-    <item type="id" name="mainHelpScreen" />
-
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsFragment" />

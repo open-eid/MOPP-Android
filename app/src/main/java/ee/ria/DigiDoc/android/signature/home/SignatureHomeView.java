@@ -53,7 +53,7 @@ public final class SignatureHomeView extends CoordinatorLayout implements
         super.onAttachedToWindow();
         disposables.attach();
         disposables.add(clicks(createButton).subscribe(o ->
-                navigator.execute(Transaction.push(SignatureCreateScreen.create()))));
+                navigator.execute(Transaction.push(SignatureCreateScreen.create(null)))));
     }
 
     @Override

@@ -38,7 +38,7 @@ interface Action extends MviAction {
 
         static NavigateToContainerUpdateAction create(File containerFile) {
             return new AutoValue_Action_NavigateToContainerUpdateAction(Transaction
-                    .push(SignatureUpdateScreen.create(true, containerFile, false, false)));
+                    .push(SignatureUpdateScreen.create(true, false, containerFile, false, false)));
         }
     }
 

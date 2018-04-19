@@ -44,10 +44,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private static final int DEFAULT_SIGN_METHOD = R.id.signatureUpdateSignatureAddMethodMobileId;
 
-    private boolean isExistingContainer;
-    private File containerFile;
-    private boolean signatureAddVisible;
-    private boolean signatureAddSuccessMessageVisible;
+    private final boolean isExistingContainer;
+    private final boolean isNestedContainer;
+    private final File containerFile;
+    private final boolean signatureAddVisible;
+    private final boolean signatureAddSuccessMessageVisible;
 
     private final Toolbar toolbarView;
     private final RecyclerView listView;
@@ -86,8 +87,17 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private final MobileSignStatusMessageSource statusMessageSource;
 
-    public SignatureUpdateView(Context context, String screenId) {
+    public SignatureUpdateView(Context context, String screenId, boolean isExistingContainer,
+                               boolean isNestedContainer, File containerFile,
+                               boolean signatureAddVisible,
+                               boolean signatureAddSuccessMessageVisible) {
         super(context);
+        this.isExistingContainer = isExistingContainer;
+        this.isNestedContainer = isNestedContainer;
+        this.containerFile = containerFile;
+        this.signatureAddVisible = signatureAddVisible;
+        this.signatureAddSuccessMessageVisible = signatureAddSuccessMessageVisible;
+
         navigator = Application.component(context).navigator();
         viewModel = navigator.viewModel(screenId, SignatureUpdateViewModel.class);
 
@@ -121,27 +131,6 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         statusMessageSource = new MobileSignStatusMessageSource(context.getResources());
     }
 
-    SignatureUpdateView isExistingContainer(boolean isExistingContainer) {
-        this.isExistingContainer = isExistingContainer;
-        return this;
-    }
-
-    SignatureUpdateView containerFile(File containerFile) {
-        this.containerFile = containerFile;
-        return this;
-    }
-
-    SignatureUpdateView signatureAddVisible(boolean signatureAddVisible) {
-        this.signatureAddVisible = signatureAddVisible;
-        return this;
-    }
-
-    SignatureUpdateView signatureAddSuccessMessageVisible(
-            boolean signatureAddSuccessMessageVisible) {
-        this.signatureAddSuccessMessageVisible = signatureAddSuccessMessageVisible;
-        return this;
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
@@ -168,14 +157,21 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         toolbarView.setTitle(isExistingContainer
                 ? R.string.signature_update_title_existing
                 : R.string.signature_update_title_created);
-        sendButton.setVisibility(isExistingContainer ? VISIBLE : GONE);
-        buttonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
+        if (isNestedContainer) {
+            sendButton.setVisibility(GONE);
+            buttonSpace.setVisibility(GONE);
+            signatureAddButton.setVisibility(GONE);
+        } else {
+            sendButton.setVisibility(isExistingContainer ? VISIBLE : GONE);
+            buttonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
+            signatureAddButton.setVisibility(VISIBLE);
+        }
 
         setActivity(state.containerLoadInProgress() || state.documentsAddInProgress()
                 || state.documentOpenInProgress() || state.documentRemoveInProgress()
                 || state.signatureRemoveInProgress() || state.signatureAddActivity());
         adapter.setData(state.signatureAddSuccessMessageVisible(), isExistingContainer,
-                state.container());
+                isNestedContainer, state.container());
 
         errorDialog.show(state.documentsAddError(), state.documentRemoveError(),
                 state.signatureAddError(), state.signatureRemoveError());

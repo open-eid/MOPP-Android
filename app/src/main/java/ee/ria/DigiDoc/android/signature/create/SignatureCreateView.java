@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.signature.create;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.FrameLayout;
 
 import ee.ria.DigiDoc.R;
@@ -14,18 +15,22 @@ import io.reactivex.Observable;
 @SuppressLint("ViewConstructor")
 public final class SignatureCreateView extends FrameLayout implements MviView<Intent, ViewState> {
 
+    @Nullable private final android.content.Intent intent;
+
     private final ViewDisposables disposables = new ViewDisposables();
     private final SignatureCreateViewModel viewModel;
 
-    public SignatureCreateView(@NonNull Context context, String screenId) {
+    public SignatureCreateView(@NonNull Context context, String screenId,
+                               @Nullable android.content.Intent intent) {
         super(context);
+        this.intent = intent;
         viewModel = Application.component(context).navigator()
                 .viewModel(screenId, SignatureCreateViewModel.class);
         inflate(context, R.layout.signature_create, this);
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
-        return Observable.just(Intent.InitialIntent.create());
+        return Observable.just(Intent.InitialIntent.create(intent));
     }
 
     @SuppressWarnings("unchecked")

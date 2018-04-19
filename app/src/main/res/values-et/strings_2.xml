@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation"> <!-- remove when translations are available -->
+    <string name="help_url">https://www.id.ee/index.php?id=10583</string>
+</resources>

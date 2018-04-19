@@ -19,7 +19,7 @@ public final class SignatureCreateViewModel extends
     @Override
     protected Action action(Intent intent) {
         if (intent instanceof Intent.InitialIntent) {
-            return Action.ChooseFilesAction.create();
+            return Action.ChooseFilesAction.create(((Intent.InitialIntent) intent).intent());
         } else {
             throw new IllegalArgumentException("Unknown intent " + intent);
         }

@@ -108,10 +108,18 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return signatureContainerDataSource
                         .getDocumentFile(action.containerFile(), action.document())
                         .toObservable()
-                        .map(Result.DocumentOpenResult::success)
-                        .onErrorReturn(Result.DocumentOpenResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
+                        .map(documentFile -> {
+                            if (SignedContainer.isContainer(documentFile)) {
+                                navigator.execute(Transaction.push(SignatureUpdateScreen
+                                        .create(true, true, documentFile, false, false)));
+                                return Result.DocumentOpenResult.clear();
+                            } else {
+                                return Result.DocumentOpenResult.success(documentFile);
+                            }
+                        })
+                        .onErrorReturn(Result.DocumentOpenResult::failure)
                         .startWith(Result.DocumentOpenResult.opening());
             }
         });
@@ -167,9 +175,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             .observeOn(AndroidSchedulers.mainThread())
                             .doOnNext(containerAdd ->
                                     navigator.execute(Transaction.push(SignatureUpdateScreen.create(
-                                            containerAdd.isExistingContainer(),
+                                            containerAdd.isExistingContainer(), false,
                                             containerAdd.containerFile(), true, false))))
-                            .map(containerAdd -> Result.SignatureAddResult.activity())
+                            .map(containerAdd -> Result.SignatureAddResult.clear())
                             .onErrorReturn(Result.SignatureAddResult::failure)
                             .startWith(Result.SignatureAddResult.activity());
                 } else {
@@ -188,7 +196,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 } else {
                                     return Observable.fromCallable(() -> {
                                         navigator.execute(Transaction.replace(SignatureUpdateScreen
-                                                .create(true, containerFile, false, true)));
+                                                .create(true, false, containerFile, false, true)));
                                         return Result.SignatureAddResult.method(method, response);
                                     });
                                 }

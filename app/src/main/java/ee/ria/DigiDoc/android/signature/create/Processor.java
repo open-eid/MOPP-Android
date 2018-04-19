@@ -32,6 +32,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                       Application application) {
         chooseFiles = upstream -> upstream
                 .switchMap(action -> {
+                    if (action.intent() != null) {
+                        throw new ActivityResultException(ActivityResult.create(
+                                action.transaction().requestCode(), RESULT_OK, action.intent()));
+                    }
                     navigator.execute(action.transaction());
                     return navigator.activityResults()
                             .filter(activityResult ->
@@ -58,7 +62,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .doOnNext(containerAdd ->
                                         navigator.execute(Transaction.replace(SignatureUpdateScreen
-                                                .create(containerAdd.isExistingContainer(),
+                                                .create(containerAdd.isExistingContainer(), false,
                                                         containerAdd.containerFile(), false,
                                                         false))))
                                 .doOnError(throwable1 -> {
