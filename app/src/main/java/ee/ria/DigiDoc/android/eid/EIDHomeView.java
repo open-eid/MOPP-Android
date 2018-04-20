@@ -42,7 +42,6 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
 
     private final ViewDisposables disposables = new ViewDisposables();
     private final Navigator navigator;
-    private EIDHomeViewModel viewModel;
 
     public EIDHomeView(Context context, String screenId) {
         super(context);
@@ -107,7 +106,7 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-        viewModel = navigator.viewModel(screenId, EIDHomeViewModel.class);
+        EIDHomeViewModel viewModel = navigator.viewModel(screenId, EIDHomeViewModel.class);
         disposables.attach();
         disposables.add(viewModel.viewStates().subscribe(this::render));
         viewModel.process(intents());
@@ -117,7 +116,6 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
     public void onDetachedFromWindow() {
         errorDialog.dismiss();
         disposables.detach();
-        navigator.clearViewModel(screenId);
         super.onDetachedFromWindow();
     }
 }

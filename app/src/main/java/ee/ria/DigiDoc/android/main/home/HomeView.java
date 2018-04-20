@@ -40,9 +40,6 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
 
     private final Subject<Intent.MenuIntent> menuIntentSubject = PublishSubject.create();
 
-    private final Subject<Intent.NavigationIntent> navigationIntentSubject =
-            PublishSubject.create();
-
     public HomeView(Context context, String screenId) {
         super(context);
         eidScreenId = screenId + "eid";
@@ -54,6 +51,7 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         menuView = menuDialog.getMenuView();
         viewModel = Application.component(context).navigator().viewModel(screenId,
                 HomeViewModel.class);
+        viewModel.eidScreenId(eidScreenId);
     }
 
     @SuppressWarnings("unchecked")
@@ -93,7 +91,9 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
     }
 
     private Observable<Intent.NavigationIntent> navigationIntent() {
-        return navigationIntentSubject;
+        return itemSelections(navigationView)
+                .filter(duplicates())
+                .map(item -> Intent.NavigationIntent.create(item.getItemId()));
     }
 
     private Observable<Intent.MenuIntent> menuIntent() {
@@ -110,8 +110,6 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         disposables.attach();
         disposables.add(viewModel.viewStates().filter(duplicates()).subscribe(this::render));
         viewModel.process(intents());
-        disposables.add(itemSelections(navigationView).filter(duplicates()).subscribe(item ->
-                navigationIntentSubject.onNext(Intent.NavigationIntent.create(item.getItemId()))));
     }
 
     @Override

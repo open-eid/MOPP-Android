@@ -2,8 +2,8 @@ package ee.ria.DigiDoc.android.main.home;
 
 import android.app.Application;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 
@@ -14,7 +14,6 @@ import ee.ria.DigiDoc.android.main.about.AboutScreen;
 import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
 import ee.ria.DigiDoc.android.signature.home.SignatureHomeScreen;
 import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
-import ee.ria.DigiDoc.android.utils.IntentUtils;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
@@ -26,15 +25,24 @@ import static ee.ria.DigiDoc.android.utils.IntentUtils.createBrowserIntent;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
+    private final Navigator navigator;
+
     private final ObservableTransformer<Action.NavigationAction, Result.NavigationResult>
             navigation;
 
     private final ObservableTransformer<Action.MenuAction, Result.MenuResult> menu;
 
+    @Nullable private String eidScreenId;
+
     @Inject Processor(Application application, Navigator navigator) {
-        navigation = upstream -> upstream.switchMap(action ->
-                Observable.just(Result.NavigationResult
-                        .create(navigationItemToScreen(action.item()))));
+        this.navigator = navigator;
+        navigation = upstream -> upstream.switchMap(action -> {
+            if (action.item() != R.id.mainHomeNavigationEID) {
+                clearEidViewModel();
+            }
+            return Observable.just(Result.NavigationResult
+                    .create(navigationItemToScreen(action.item())));
+        });
 
         menu = upstream -> upstream.switchMap(action -> {
             Boolean isOpen = action.isOpen();
@@ -42,7 +50,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
             if (isOpen != null) {
                 return Observable.just(Result.MenuResult.create(isOpen));
             } else if (item != null) {
-                if(item == R.id.mainHomeMenuHelp){
+                clearEidViewModel();
+                if (item == R.id.mainHomeMenuHelp) {
                     Intent browserIntent = createBrowserIntent(application, R.string.help_url);
                     navigator.execute(Transaction.activity(browserIntent, null));
                 } else {
@@ -60,6 +69,16 @@ final class Processor implements ObservableTransformer<Action, Result> {
         return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Action.NavigationAction.class).compose(navigation),
                 shared.ofType(Action.MenuAction.class).compose(menu)));
+    }
+
+    void eidScreenId(@Nullable String eidScreenId) {
+        this.eidScreenId = eidScreenId;
+    }
+
+    private void clearEidViewModel() {
+        if (eidScreenId != null) {
+            navigator.clearViewModel(eidScreenId);
+        }
     }
 
     private Screen navigationItemToScreen(@IdRes int item) {
