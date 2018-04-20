@@ -139,11 +139,28 @@
     <string name="help_url">https://www.id.ee/index.php?id=30466</string>
 
     <string name="eid_home_code_update_title_pin1_edit">Change PIN1</string>
-    <string name="eid_home_code_update_text_pin1_edit">Long text here for PIN1 edit yo</string>
+    <string name="eid_home_code_update_title_pin1_unblock">Unblock PIN1</string>
+    <string name="eid_home_code_update_title_pin2_edit">Change PIN2</string>
+    <string name="eid_home_code_update_title_pin2_unblock">Unblock PIN2</string>
+    <string name="eid_home_code_update_title_puk_edit">Change PUK</string>
+    <string name="eid_home_code_update_text_pin1_edit">Long text here for PIN1 change yo</string>
+    <string name="eid_home_code_update_text_pin1_unblock">Long text here for PIN1 unblock yo</string>
+    <string name="eid_home_code_update_text_pin2_edit">Long text here for PIN2 change yo</string>
+    <string name="eid_home_code_update_text_pin2_unblock">Long text here for PIN2 unblock yo</string>
+    <string name="eid_home_code_update_text_puk_edit">Long text here for PUK change yo</string>
     <string name="eid_home_code_update_current_pin1_edit">Current PIN1</string>
+    <string name="eid_home_code_update_current_pin1_unblock">Current PUK</string>
+    <string name="eid_home_code_update_current_pin2_edit">Current PIN2</string>
+    <string name="eid_home_code_update_current_pin2_unblock">Current PUK</string>
+    <string name="eid_home_code_update_current_puk_edit">Current PUK</string>
     <string name="eid_home_code_update_new_pin1">New PIN1</string>
+    <string name="eid_home_code_update_new_pin2">New PIN2</string>
+    <string name="eid_home_code_update_new_puk">New PUK</string>
     <string name="eid_home_code_update_repeat_pin1">Repeat new PIN1</string>
+    <string name="eid_home_code_update_repeat_pin2">Repeat new PIN2</string>
+    <string name="eid_home_code_update_repeat_puk">Repeat new PUK</string>
     <string name="eid_home_code_update_negative_button">Cancel</string>
     <string name="eid_home_code_update_positive_button_edit">Change</string>
+    <string name="eid_home_code_update_positive_button_unblock">Unblock</string>
 
 </resources>

@@ -1,8 +1,10 @@
 package ee.ria.DigiDoc.android.eid;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +16,6 @@ import com.bluelinelabs.conductor.Controller;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
-import timber.log.Timber;
 
 public final class CodeUpdateScreen extends Controller implements Screen {
 
@@ -28,6 +29,7 @@ public final class CodeUpdateScreen extends Controller implements Screen {
 
     private final CodeUpdateAction action;
 
+    private Toolbar toolbarView;
     private TextView textView;
     private TextInputLayout currentLabelView;
     private EditText currentView;
@@ -47,7 +49,10 @@ public final class CodeUpdateScreen extends Controller implements Screen {
     @NonNull
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
+        Resources resources = inflater.getContext().getResources();
+
         View view = inflater.inflate(R.layout.eid_home_code_update_screen, container, false);
+        toolbarView = view.findViewById(R.id.toolbar);
         textView = view.findViewById(R.id.eidHomeCodeUpdateText);
         currentLabelView = view.findViewById(R.id.eidHomeCodeUpdateCurrentLabel);
         currentView = view.findViewById(R.id.eidHomeCodeUpdateCurrent);
@@ -58,7 +63,12 @@ public final class CodeUpdateScreen extends Controller implements Screen {
         negativeButton = view.findViewById(R.id.eidHomeCodeUpdateNegativeButton);
         positiveButton = view.findViewById(R.id.eidHomeCodeUpdatePositiveButton);
 
-        Timber.e("ACTION: %s", action);
+        toolbarView.setTitle(action.titleRes());
+        textView.setText(action.textRes());
+        currentLabelView.setHint(resources.getString(action.currentRes()));
+        newLabelView.setHint(resources.getString(action.newRes()));
+        repeatLabelView.setHint(resources.getString(action.repeatRes()));
+        positiveButton.setText(action.positiveButtonRes());
 
         return view;
     }
