@@ -138,4 +138,12 @@
     <string name="eid_type_unknown">UNKNOWN</string>
     <string name="help_url">https://www.id.ee/index.php?id=30466</string>
 
+    <string name="eid_home_code_update_title_pin1_edit">Change PIN1</string>
+    <string name="eid_home_code_update_text_pin1_edit">Long text here for PIN1 edit yo</string>
+    <string name="eid_home_code_update_current_pin1_edit">Current PIN1</string>
+    <string name="eid_home_code_update_new_pin1">New PIN1</string>
+    <string name="eid_home_code_update_repeat_pin1">Repeat new PIN1</string>
+    <string name="eid_home_code_update_negative_button">Cancel</string>
+    <string name="eid_home_code_update_positive_button_edit">Change</string>
+
 </resources>

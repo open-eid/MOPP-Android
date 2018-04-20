@@ -24,6 +24,8 @@ public final class EIDHomeViewModel extends BaseMviViewModel<Intent, ViewState, 
         } else if (intent instanceof Intent.CertificatesTitleClickIntent) {
             return Action.CertificatesTitleClickAction
                     .create(((Intent.CertificatesTitleClickIntent) intent).expand());
+        } else if (intent instanceof Action) {
+            return (Action) intent;
         } else {
             throw new IllegalArgumentException("Unknown intent " + intent);
         }

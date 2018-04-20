@@ -66,4 +66,17 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_CertificatesTitleClickResult(expanded);
         }
     }
+
+    @AutoValue
+    abstract class CodeUpdateResult implements Result {
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state;
+        }
+
+        static CodeUpdateResult create() {
+            return new AutoValue_Result_CodeUpdateResult();
+        }
+    }
 }

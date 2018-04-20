@@ -144,4 +144,20 @@ public final class EIDDataView extends LinearLayout {
         tintCompoundDrawables(certificatesTitleView);
         certificatesContainerView.setExpanded(certificateContainerExpanded);
     }
+
+    @SuppressWarnings("unchecked")
+    public Observable<CodeUpdateAction> actions() {
+        return Observable.mergeArray(
+                authCertificateDataView.updateTypes()
+                        .map(updateType -> CodeUpdateAction.create(Token.PinType.PIN1, updateType)),
+                signCertificateDataView.updateTypes()
+                        .map(updateType -> CodeUpdateAction.create(Token.PinType.PIN2, updateType)),
+                clicks(pukButtonView)
+                        .map(ignored ->
+                                CodeUpdateAction.create(Token.PinType.PUK, CodeUpdateType.EDIT)),
+                clicks(pukLinkView)
+                        .map(ignored ->
+                                CodeUpdateAction.create(Token.PinType.PUK, CodeUpdateType.UNBLOCK))
+        );
+    }
 }

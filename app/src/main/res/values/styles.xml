@@ -38,6 +38,7 @@
         <item name="android:textSize">@dimen/material_typography_regular_title_text_size</item>
         <item name="android:textColor">@color/title</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:paddingStart">0dp</item>
     </style>
 
     <style name="Widget.Application.ProgressBar" parent="Widget.AppCompat.ProgressBar">

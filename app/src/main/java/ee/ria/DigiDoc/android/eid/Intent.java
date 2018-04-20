@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.eid;
 
+import android.support.annotation.Nullable;
+
 import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
@@ -29,6 +31,16 @@ interface Intent extends MviIntent {
 
         static CertificatesTitleClickIntent create(boolean expand) {
             return new AutoValue_Intent_CertificatesTitleClickIntent(expand);
+        }
+    }
+
+    @AutoValue
+    abstract class CodeUpdateIntent implements Intent, Action {
+
+        @Nullable abstract CodeUpdateAction action();
+
+        static CodeUpdateIntent create(CodeUpdateAction action) {
+            return new AutoValue_Intent_CodeUpdateIntent(action);
         }
     }
 }

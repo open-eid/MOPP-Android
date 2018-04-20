@@ -74,10 +74,15 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
                                 .create(!dataView.certificateContainerExpanded()));
     }
 
+    private Observable<Intent.CodeUpdateIntent> codeUpdateIntent() {
+        return dataView.actions().map(Intent.CodeUpdateIntent::create);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
-        return Observable.mergeArray(initialIntent(), loadIntent(), certificatesTitleClickIntent());
+        return Observable.mergeArray(initialIntent(), loadIntent(), certificatesTitleClickIntent(),
+                codeUpdateIntent());
     }
 
     @Override

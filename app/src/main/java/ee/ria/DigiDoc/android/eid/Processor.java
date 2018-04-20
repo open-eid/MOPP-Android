@@ -3,6 +3,8 @@ package ee.ria.DigiDoc.android.eid;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -14,7 +16,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<Action.CertificatesTitleClickAction,
                                         Result.CertificatesTitleClickResult> certificatesTitleClick;
 
-    @Inject Processor(IdCardService idCardService) {
+    private final ObservableTransformer<Intent.CodeUpdateIntent, Result.CodeUpdateResult>
+            codeUpdate;
+
+    @Inject Processor(IdCardService idCardService, Navigator navigator) {
         load = upstream -> upstream.switchMap(action -> {
             Observable<Result.LoadResult> resultObservable = idCardService.data()
                     .map(idCardDataResponse -> {
@@ -34,6 +39,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         certificatesTitleClick = upstream -> upstream.map(action ->
                 Result.CertificatesTitleClickResult.create(action.expand()));
+
+        codeUpdate = upstream -> upstream.flatMap(action -> {
+            navigator.execute(Transaction.push(CodeUpdateScreen.create(action.action())));
+            return Observable.empty();
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -42,6 +52,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
         return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Action.LoadAction.class).compose(load),
                 shared.ofType(Action.CertificatesTitleClickAction.class)
-                        .compose(certificatesTitleClick)));
+                        .compose(certificatesTitleClick),
+                shared.ofType(Intent.CodeUpdateIntent.class).compose(codeUpdate)));
     }
 }
