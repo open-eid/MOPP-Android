@@ -17,6 +17,10 @@
     <item type="id" name="mainHomeNavigationCrypto" />
     <item type="id" name="mainHomeNavigationEID" />
 
+    <item type="id" name="mainHomeSignature" />
+    <item type="id" name="mainHomeCrypto" />
+    <item type="id" name="mainHomeEID" />
+
     <item type="id" name="mainHomeToolbarLogo" />
     <item type="id" name="mainHomeToolbarOverflow" />
 
@@ -35,7 +39,6 @@
     <item type="id" name="mainAboutScreen" />
 
     <!-- Signature Home -->
-    <item type="id" name="signatureHomeScreen" />
     <item type="id" name="signatureHomeCreateButton" />
 
     <!-- Signature List -->
@@ -100,12 +103,10 @@
     <item type="id" name="signatureAddRememberMe" />
 
     <!-- Crypto Home -->
-    <item type="id" name="cryptoHomeScreen" />
     <item type="id" name="cryptoHomeCreateButton" />
 
     <!-- EID Home -->
-    <item type="id" name="eidHomeScreen" />
-    <item type="id" name="eidHomeScreenScroll" />
+    <item type="id" name="eidHomeScroll" />
     <item type="id" name="eidHomeProgressMessage" />
     <item type="id" name="eidHomeData" />
     <item type="id" name="eidHomeDataType" />

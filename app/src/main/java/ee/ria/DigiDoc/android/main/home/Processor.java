@@ -4,15 +4,13 @@ import android.app.Application;
 import android.content.Intent;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.util.SparseIntArray;
 
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.crypto.CryptoHomeScreen;
-import ee.ria.DigiDoc.android.eid.EIDHomeScreen;
 import ee.ria.DigiDoc.android.main.about.AboutScreen;
 import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
-import ee.ria.DigiDoc.android.signature.home.SignatureHomeScreen;
 import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
@@ -24,6 +22,13 @@ import io.reactivex.ObservableTransformer;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createBrowserIntent;
 
 final class Processor implements ObservableTransformer<Action, Result> {
+
+    private static final SparseIntArray NAVIGATION_ITEM_VIEWS = new SparseIntArray();
+    static {
+        NAVIGATION_ITEM_VIEWS.put(R.id.mainHomeNavigationSignature, R.id.mainHomeSignature);
+        NAVIGATION_ITEM_VIEWS.put(R.id.mainHomeNavigationCrypto, R.id.mainHomeCrypto);
+        NAVIGATION_ITEM_VIEWS.put(R.id.mainHomeNavigationEID, R.id.mainHomeEID);
+    }
 
     private final Navigator navigator;
 
@@ -41,7 +46,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 clearEidViewModel();
             }
             return Observable.just(Result.NavigationResult
-                    .create(navigationItemToScreen(action.item())));
+                    .create(NAVIGATION_ITEM_VIEWS.get(action.item())));
         });
 
         menu = upstream -> upstream.switchMap(action -> {
@@ -78,19 +83,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private void clearEidViewModel() {
         if (eidScreenId != null) {
             navigator.clearViewModel(eidScreenId);
-        }
-    }
-
-    private Screen navigationItemToScreen(@IdRes int item) {
-        switch (item) {
-            case R.id.mainHomeNavigationSignature:
-                return SignatureHomeScreen.create();
-            case R.id.mainHomeNavigationCrypto:
-                return CryptoHomeScreen.create();
-            case R.id.mainHomeNavigationEID:
-                return EIDHomeScreen.create();
-            default:
-                throw new IllegalArgumentException("Unknown navigation item: " + item);
         }
     }
 

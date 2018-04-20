@@ -1,26 +1,27 @@
 package ee.ria.DigiDoc.android.main.home;
 
+import android.support.annotation.IdRes;
+
 import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
-import ee.ria.DigiDoc.android.utils.navigator.Screen;
 
 interface Result extends MviResult<ViewState> {
 
     @AutoValue
     abstract class NavigationResult implements Result {
 
-        abstract Screen screen();
+        @IdRes abstract int viewId();
 
         @Override
         public ViewState reduce(ViewState state) {
             return state.buildWith()
-                    .screen(screen())
+                    .viewId(viewId())
                     .build();
         }
 
-        static NavigationResult create(Screen screen) {
-            return new AutoValue_Result_NavigationResult(screen);
+        static NavigationResult create(@IdRes int viewId) {
+            return new AutoValue_Result_NavigationResult(viewId);
         }
     }
 

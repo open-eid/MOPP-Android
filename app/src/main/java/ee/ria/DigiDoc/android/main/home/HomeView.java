@@ -9,11 +9,8 @@ import android.widget.LinearLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.crypto.CryptoHomeScreen;
 import ee.ria.DigiDoc.android.crypto.CryptoHomeView;
-import ee.ria.DigiDoc.android.eid.EIDHomeScreen;
 import ee.ria.DigiDoc.android.eid.EIDHomeView;
-import ee.ria.DigiDoc.android.signature.home.SignatureHomeScreen;
 import ee.ria.DigiDoc.android.signature.home.SignatureHomeView;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
@@ -65,15 +62,16 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         View view;
-        if (state.screen() instanceof SignatureHomeScreen) {
+        if (state.viewId() == R.id.mainHomeSignature) {
             view = new SignatureHomeView(getContext());
-        } else if (state.screen() instanceof CryptoHomeScreen) {
+        } else if (state.viewId() == R.id.mainHomeCrypto) {
             view = new CryptoHomeView(getContext());
-        } else if (state.screen() instanceof EIDHomeScreen) {
+        } else if (state.viewId() == R.id.mainHomeEID) {
             view = new EIDHomeView(getContext(), eidScreenId);
         } else {
-            throw new IllegalArgumentException("Unknown screen " + state.screen());
+            throw new IllegalArgumentException("Unknown view ID " + state.viewId());
         }
+        view.setId(state.viewId());
         navigationContainerView.removeAllViews();
         navigationContainerView.addView(view, layoutParams);
         ((HomeToolbar.HomeToolbarAware) view).homeToolbar().overflowButtonClicks()
