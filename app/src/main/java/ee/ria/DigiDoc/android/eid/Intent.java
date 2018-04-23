@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
+import ee.ria.DigiDoc.android.model.EIDData;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 
 interface Intent extends MviIntent {
@@ -39,16 +40,27 @@ interface Intent extends MviIntent {
 
         @Nullable abstract CodeUpdateAction action();
 
+        @Nullable abstract CodeUpdateRequest request();
+
+        @Nullable abstract EIDData data();
+
         static CodeUpdateIntent show(CodeUpdateAction action) {
-            return create(action);
+            return create(action, null, null);
+        }
+
+        static CodeUpdateIntent request(CodeUpdateAction action, CodeUpdateRequest request,
+                                        EIDData data) {
+            return create(action, request, data);
         }
 
         static CodeUpdateIntent clear() {
-            return create(null);
+            return create(null, null, null);
         }
 
-        static CodeUpdateIntent create(@Nullable CodeUpdateAction action) {
-            return new AutoValue_Intent_CodeUpdateIntent(action);
+        static CodeUpdateIntent create(@Nullable CodeUpdateAction action,
+                                       @Nullable CodeUpdateRequest request,
+                                       @Nullable EIDData data) {
+            return new AutoValue_Intent_CodeUpdateIntent(action, request, data);
         }
     }
 }

@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.eid;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AlertDialog;
 import android.widget.FrameLayout;
@@ -53,6 +54,9 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
             PublishSubject.create();
     private final Subject<Boolean> navigationViewVisibilitySubject = PublishSubject.create();
 
+    @Nullable private IdCardData data;
+    @Nullable private CodeUpdateAction codeUpdateAction;
+
     public EIDHomeView(Context context, String screenId) {
         super(context);
         this.screenId = screenId;
@@ -89,7 +93,12 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     private Observable<Intent.CodeUpdateIntent> codeUpdateIntent() {
         return Observable
                 .merge(dataView.actions().map(Intent.CodeUpdateIntent::show),
-                        codeUpdateView.upClicks().map(ignored -> Intent.CodeUpdateIntent.clear()),
+                        codeUpdateView.closes().map(ignored -> Intent.CodeUpdateIntent.clear()),
+                        codeUpdateView.requests()
+                                .filter(ignored -> codeUpdateAction != null && data != null)
+                                .map(request ->
+                                        Intent.CodeUpdateIntent
+                                                .request(codeUpdateAction, request, data)),
                         codeUpdateIntentSubject);
     }
 
@@ -103,7 +112,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     @Override
     public void render(ViewState state) {
         progressMessageView.setText(STATUS_MESSAGES.get(state.idCardDataResponse().status()));
-        IdCardData data = state.idCardDataResponse().data();
+        data = state.idCardDataResponse().data();
         if (data != null) {
             dataView.setData(data);
         }
@@ -117,7 +126,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
             errorDialog.dismiss();
         }
 
-        CodeUpdateAction codeUpdateAction = state.codeUpdateAction();
+        codeUpdateAction = state.codeUpdateAction();
         navigationViewVisibilitySubject.onNext(codeUpdateAction == null);
         coordinatorView.setVisibility(codeUpdateAction == null ? VISIBLE : GONE);
         codeUpdateView.setVisibility(codeUpdateAction == null ? GONE : VISIBLE);

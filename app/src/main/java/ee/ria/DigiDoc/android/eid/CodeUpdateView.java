@@ -10,10 +10,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.jakewharton.rxbinding2.support.v7.widget.RxToolbar;
-
 import ee.ria.DigiDoc.R;
 import io.reactivex.Observable;
+
+import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
 public final class CodeUpdateView extends CoordinatorLayout {
 
@@ -60,7 +61,14 @@ public final class CodeUpdateView extends CoordinatorLayout {
         positiveButton.setText(action.positiveButtonRes());
     }
 
-    public Observable<Object> upClicks() {
-        return RxToolbar.navigationClicks(toolbarView);
+    public Observable<Object> closes() {
+        return Observable.merge(navigationClicks(toolbarView), clicks(negativeButton));
+    }
+
+    public Observable<CodeUpdateRequest> requests() {
+        return clicks(positiveButton).map(ignored ->
+                CodeUpdateRequest.create(currentView.getText().toString().trim(),
+                        newView.getText().toString().trim(),
+                        repeatView.getText().toString().trim()));
     }
 }

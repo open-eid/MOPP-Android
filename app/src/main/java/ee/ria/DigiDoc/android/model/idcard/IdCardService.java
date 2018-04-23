@@ -148,7 +148,7 @@ public final class IdCardService {
         }
     }
 
-    private static final DateTimeFormatter EXPIRY_DATE_FORMAT = new DateTimeFormatterBuilder()
+    private static final DateTimeFormatter CARD_DATE_FORMAT = new DateTimeFormatterBuilder()
             .appendPattern("dd.MM.yyyy")
             .toFormatter();
 
@@ -167,6 +167,7 @@ public final class IdCardService {
         String givenName1 = personalFile.get(2).trim();
         String givenName2 = personalFile.get(3).trim();
         String citizenship = personalFile.get(5).trim();
+        String dateOfBirthString = personalFile.get(6).trim();
         String personalCode = personalFile.get(7).trim();
         String documentNumber = personalFile.get(8).trim();
         String expiryDateString = personalFile.get(9).trim();
@@ -179,12 +180,20 @@ public final class IdCardService {
             givenNames.append(givenName2);
         }
 
+        LocalDate dateOfBirth;
+        try {
+            dateOfBirth = LocalDate.parse(dateOfBirthString, CARD_DATE_FORMAT);
+        } catch (Exception e) {
+            dateOfBirth = null;
+            Timber.e(e, "Could not parse date of birth %s", dateOfBirthString);
+        }
+
         LocalDate expiryDate;
         try {
-            expiryDate = LocalDate.parse(expiryDateString, EXPIRY_DATE_FORMAT);
+            expiryDate = LocalDate.parse(expiryDateString, CARD_DATE_FORMAT);
         } catch (Exception e) {
             expiryDate = null;
-            Timber.e("Could not parse expiry date %s", expiryDateString);
+            Timber.e(e, "Could not parse expiry date %s", expiryDateString);
         }
 
         CertificateData authCertificate = CertificateData
@@ -204,6 +213,7 @@ public final class IdCardService {
         }
 
         return IdCardData.create(type, givenNames.toString(), surname, personalCode, citizenship,
-                authCertificate, signCertificate, pukRetryCounter, documentNumber, expiryDate);
+                dateOfBirth, authCertificate, signCertificate, pukRetryCounter, documentNumber,
+                expiryDate);
     }
 }

@@ -19,10 +19,11 @@ public abstract class IdCardData implements EIDData {
 
     static IdCardData create(@Nullable @EIDType String type, String givenNames, String surname,
                              String personalCode, String citizenship,
-                             CertificateData authCertificate, CertificateData signCertificate,
-                             int pukRetryCount, String documentNumber,
-                             @Nullable LocalDate expiryDate) {
+                             @Nullable LocalDate dateOfBirth, CertificateData authCertificate,
+                             CertificateData signCertificate, int pukRetryCount,
+                             String documentNumber, @Nullable LocalDate expiryDate) {
         return new AutoValue_IdCardData(type, givenNames, surname, personalCode, citizenship,
-                authCertificate, signCertificate, pukRetryCount, documentNumber, expiryDate);
+                dateOfBirth, authCertificate, signCertificate, pukRetryCount, documentNumber,
+                expiryDate);
     }
 }

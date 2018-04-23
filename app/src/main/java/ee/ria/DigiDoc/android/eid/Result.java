@@ -73,6 +73,10 @@ interface Result extends MviResult<ViewState> {
 
         @Nullable abstract CodeUpdateAction action();
 
+        @Nullable abstract CodeUpdateResponse response();
+
+        abstract boolean inProgress();
+
         @Override
         public ViewState reduce(ViewState state) {
             return state.buildWith()
@@ -80,8 +84,26 @@ interface Result extends MviResult<ViewState> {
                     .build();
         }
 
-        static CodeUpdateResult create(@Nullable CodeUpdateAction action) {
-            return new AutoValue_Result_CodeUpdateResult(action);
+        static CodeUpdateResult action(CodeUpdateAction action) {
+            return create(action, null, false);
+        }
+
+        static CodeUpdateResult progress(CodeUpdateAction action) {
+            return create(action, null, true);
+        }
+
+        static CodeUpdateResult response(CodeUpdateAction action, CodeUpdateResponse response) {
+            return create(action, response, false);
+        }
+
+        static CodeUpdateResult clear() {
+            return create(null, null, false);
+        }
+
+        private static CodeUpdateResult create(@Nullable CodeUpdateAction action,
+                                               @Nullable CodeUpdateResponse response,
+                                               boolean inProgress) {
+            return new AutoValue_Result_CodeUpdateResult(action, response, inProgress);
         }
     }
 }
