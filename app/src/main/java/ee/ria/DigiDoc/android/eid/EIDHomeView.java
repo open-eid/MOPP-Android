@@ -26,7 +26,7 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 @SuppressLint("ViewConstructor")
 public final class EIDHomeView extends FrameLayout implements MviView<Intent, ViewState>,
-        HomeView.HomeViewChild {
+        HomeView.HomeViewChild, Navigator.BackButtonClickListener {
 
     private static final ImmutableMap<String, Integer> STATUS_MESSAGES =
             ImmutableMap.<String, Integer>builder()
@@ -49,6 +49,8 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     private final ViewDisposables disposables = new ViewDisposables();
     private final Navigator navigator;
 
+    private final Subject<Intent.CodeUpdateIntent> codeUpdateIntentSubject =
+            PublishSubject.create();
     private final Subject<Boolean> navigationViewVisibilitySubject = PublishSubject.create();
 
     public EIDHomeView(Context context, String screenId) {
@@ -87,7 +89,8 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     private Observable<Intent.CodeUpdateIntent> codeUpdateIntent() {
         return Observable
                 .merge(dataView.actions().map(Intent.CodeUpdateIntent::show),
-                        codeUpdateView.upClicks().map(ignored -> Intent.CodeUpdateIntent.clear()));
+                        codeUpdateView.upClicks().map(ignored -> Intent.CodeUpdateIntent.clear()),
+                        codeUpdateIntentSubject);
     }
 
     @SuppressWarnings("unchecked")
@@ -124,6 +127,15 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     }
 
     @Override
+    public boolean onBackButtonClick() {
+        if (codeUpdateView.getVisibility() == VISIBLE) {
+            codeUpdateIntentSubject.onNext(Intent.CodeUpdateIntent.clear());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public HomeToolbar homeToolbar() {
         return toolbarView;
     }
@@ -136,6 +148,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
+        navigator.addBackButtonClickListener(this);
         EIDHomeViewModel viewModel = navigator.viewModel(screenId, EIDHomeViewModel.class);
         disposables.attach();
         disposables.add(viewModel.viewStates().subscribe(this::render));
@@ -146,6 +159,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     public void onDetachedFromWindow() {
         errorDialog.dismiss();
         disposables.detach();
+        navigator.removeBackButtonClickListener(this);
         super.onDetachedFromWindow();
     }
 }

@@ -11,6 +11,17 @@ import io.reactivex.Observable;
 
 public interface Navigator {
 
+    interface BackButtonClickListener {
+
+        /**
+         * Called when back button is clicked.
+         *
+         * @return Return true if this listener takes care of the back button handling,
+         * false for default behavior.
+         */
+        boolean onBackButtonClick();
+    }
+
     /**
      * Has to be called in {@link Activity#onCreate(Bundle)}.
      *
@@ -60,4 +71,8 @@ public interface Navigator {
     void execute(Transaction transaction);
 
     Observable<ActivityResult> activityResults();
+
+    void addBackButtonClickListener(BackButtonClickListener listener);
+
+    void removeBackButtonClickListener(BackButtonClickListener listener);
 }
