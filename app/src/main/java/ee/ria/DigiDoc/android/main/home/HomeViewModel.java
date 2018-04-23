@@ -40,6 +40,8 @@ public final class HomeViewModel extends BaseMviViewModel<Intent, ViewState, Act
         } else if (intent instanceof Intent.MenuIntent) {
             Intent.MenuIntent menuIntent = (Intent.MenuIntent) intent;
             return Action.MenuAction.create(menuIntent.isOpen(), menuIntent.menuItem());
+        } else if (intent instanceof Action) {
+            return (Action) intent;
         }
         throw new IllegalArgumentException("Unknown intent " + intent);
     }

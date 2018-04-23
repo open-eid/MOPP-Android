@@ -14,12 +14,15 @@ abstract class ViewState implements MviViewState {
 
     abstract boolean menuOpen();
 
+    abstract boolean navigationVisible();
+
     abstract Builder buildWith();
 
     static ViewState initial() {
         return new AutoValue_ViewState.Builder()
                 .viewId(R.id.mainHomeSignature)
                 .menuOpen(false)
+                .navigationVisible(true)
                 .build();
     }
 
@@ -27,6 +30,7 @@ abstract class ViewState implements MviViewState {
     interface Builder {
         Builder viewId(@IdRes int viewId);
         Builder menuOpen(boolean menuOpen);
+        Builder navigationVisible(boolean navigationVisible);
         ViewState build();
     }
 }

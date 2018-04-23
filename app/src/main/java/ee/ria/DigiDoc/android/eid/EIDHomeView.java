@@ -12,18 +12,21 @@ import com.google.common.collect.ImmutableMap;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.main.home.HomeToolbar;
+import ee.ria.DigiDoc.android.main.home.HomeView;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardStatus;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 @SuppressLint("ViewConstructor")
 public final class EIDHomeView extends FrameLayout implements MviView<Intent, ViewState>,
-        HomeToolbar.HomeToolbarAware {
+        HomeView.HomeViewChild {
 
     private static final ImmutableMap<String, Integer> STATUS_MESSAGES =
             ImmutableMap.<String, Integer>builder()
@@ -45,6 +48,8 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
 
     private final ViewDisposables disposables = new ViewDisposables();
     private final Navigator navigator;
+
+    private final Subject<Boolean> navigationViewVisibilitySubject = PublishSubject.create();
 
     public EIDHomeView(Context context, String screenId) {
         super(context);
@@ -110,6 +115,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
         }
 
         CodeUpdateAction codeUpdateAction = state.codeUpdateAction();
+        navigationViewVisibilitySubject.onNext(codeUpdateAction == null);
         coordinatorView.setVisibility(codeUpdateAction == null ? VISIBLE : GONE);
         codeUpdateView.setVisibility(codeUpdateAction == null ? GONE : VISIBLE);
         if (codeUpdateAction != null) {
@@ -120,6 +126,11 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     @Override
     public HomeToolbar homeToolbar() {
         return toolbarView;
+    }
+
+    @Override
+    public Observable<Boolean> navigationViewVisibility() {
+        return navigationViewVisibilitySubject;
     }
 
     @Override

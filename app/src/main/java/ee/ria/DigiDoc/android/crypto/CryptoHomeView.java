@@ -7,9 +7,10 @@ import android.util.AttributeSet;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.home.HomeToolbar;
+import ee.ria.DigiDoc.android.main.home.HomeView;
+import io.reactivex.Observable;
 
-public final class CryptoHomeView extends CoordinatorLayout implements
-        HomeToolbar.HomeToolbarAware {
+public final class CryptoHomeView extends CoordinatorLayout implements HomeView.HomeViewChild {
 
     private final HomeToolbar toolbarView;
 
@@ -30,5 +31,10 @@ public final class CryptoHomeView extends CoordinatorLayout implements
     @Override
     public HomeToolbar homeToolbar() {
         return toolbarView;
+    }
+
+    @Override
+    public Observable<Boolean> navigationViewVisibility() {
+        return Observable.never();
     }
 }

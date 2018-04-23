@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.about.AboutScreen;
+import ee.ria.DigiDoc.android.main.home.Intent.NavigationVisibilityIntent;
 import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
 import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -36,6 +37,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
             navigation;
 
     private final ObservableTransformer<Action.MenuAction, Result.MenuResult> menu;
+
+    private final ObservableTransformer<NavigationVisibilityIntent,
+                                        Result.NavigationVisibilityResult> navigationVisibility;
 
     @Nullable private String eidScreenId;
 
@@ -66,6 +70,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
             throw new IllegalStateException("Action is in invalid state: " + action);
         });
+
+        navigationVisibility = upstream -> upstream.map(action ->
+                Result.NavigationVisibilityResult.create(action.visible()));
     }
 
     @SuppressWarnings("unchecked")
@@ -73,7 +80,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
     public ObservableSource<Result> apply(Observable<Action> upstream) {
         return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Action.NavigationAction.class).compose(navigation),
-                shared.ofType(Action.MenuAction.class).compose(menu)));
+                shared.ofType(Action.MenuAction.class).compose(menu),
+                shared.ofType(NavigationVisibilityIntent.class).compose(navigationVisibility)));
     }
 
     void eidScreenId(@Nullable String eidScreenId) {

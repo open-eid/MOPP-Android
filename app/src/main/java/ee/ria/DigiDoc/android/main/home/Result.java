@@ -41,4 +41,19 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_MenuResult(isOpen);
         }
     }
+
+    @AutoValue
+    abstract class NavigationVisibilityResult implements Result {
+
+        abstract boolean visible();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith().navigationVisible(visible()).build();
+        }
+
+        static NavigationVisibilityResult create(boolean visible) {
+            return new AutoValue_Result_NavigationVisibilityResult(visible);
+        }
+    }
 }
