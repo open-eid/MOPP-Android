@@ -106,6 +106,8 @@
     <item type="id" name="cryptoHomeCreateButton" />
 
     <!-- EID Home -->
+    <item type="id" name="eidHomeCoordinator" />
+    <item type="id" name="eidHomeCodeUpdate" />
     <item type="id" name="eidHomeScroll" />
     <item type="id" name="eidHomeProgressMessage" />
     <item type="id" name="eidHomeData" />
@@ -134,7 +136,6 @@
     <item type="id" name="eidHomeCertificateDataLink" />
     <item type="id" name="eidHomeCertificateDataError" />
 
-    <item type="id" name="eidHomeCodeUpdateScreen" />
     <item type="id" name="eidHomeCodeUpdateScroll" />
     <item type="id" name="eidHomeCodeUpdateText" />
     <item type="id" name="eidHomeCodeUpdateCurrentLabel" />

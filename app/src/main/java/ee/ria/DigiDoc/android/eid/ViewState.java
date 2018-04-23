@@ -16,6 +16,8 @@ abstract class ViewState implements MviViewState {
 
     abstract boolean certificatesContainerExpanded();
 
+    @Nullable abstract CodeUpdateAction codeUpdateAction();
+
     abstract Builder buildWith();
 
     static ViewState initial() {
@@ -30,6 +32,7 @@ abstract class ViewState implements MviViewState {
         Builder idCardDataResponse(IdCardDataResponse idCardDataResponse);
         Builder error(@Nullable Throwable error);
         Builder certificatesContainerExpanded(boolean certificatesContainerExpanded);
+        Builder codeUpdateAction(@Nullable CodeUpdateAction codeUpdateAction);
         ViewState build();
     }
 }

@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
-import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -40,10 +39,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
         certificatesTitleClick = upstream -> upstream.map(action ->
                 Result.CertificatesTitleClickResult.create(action.expand()));
 
-        codeUpdate = upstream -> upstream.flatMap(action -> {
-            navigator.execute(Transaction.push(CodeUpdateScreen.create(action.action())));
-            return Observable.empty();
-        });
+        codeUpdate = upstream -> upstream
+                .map(action -> Result.CodeUpdateResult.create(action.action()));
     }
 
     @SuppressWarnings("unchecked")

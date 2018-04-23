@@ -39,7 +39,15 @@ interface Intent extends MviIntent {
 
         @Nullable abstract CodeUpdateAction action();
 
-        static CodeUpdateIntent create(CodeUpdateAction action) {
+        static CodeUpdateIntent show(CodeUpdateAction action) {
+            return create(action);
+        }
+
+        static CodeUpdateIntent clear() {
+            return create(null);
+        }
+
+        static CodeUpdateIntent create(@Nullable CodeUpdateAction action) {
             return new AutoValue_Intent_CodeUpdateIntent(action);
         }
     }

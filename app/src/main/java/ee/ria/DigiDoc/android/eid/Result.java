@@ -23,11 +23,12 @@ interface Result extends MviResult<ViewState> {
             if (idCardDataResponse() == null && error() == null) {
                 builder
                         .idCardDataResponse(IdCardDataResponse.initial())
-                        .error(null);
+                        .error(null)
+                        .codeUpdateAction(null);
             } else if (idCardDataResponse() != null) {
                 builder.idCardDataResponse(idCardDataResponse());
             } else if (error() != null) {
-                builder.error(error());
+                builder.error(error()).codeUpdateAction(null);
             }
             return builder.build();
         }
@@ -70,13 +71,17 @@ interface Result extends MviResult<ViewState> {
     @AutoValue
     abstract class CodeUpdateResult implements Result {
 
+        @Nullable abstract CodeUpdateAction action();
+
         @Override
         public ViewState reduce(ViewState state) {
-            return state;
+            return state.buildWith()
+                    .codeUpdateAction(action())
+                    .build();
         }
 
-        static CodeUpdateResult create() {
-            return new AutoValue_Result_CodeUpdateResult();
+        static CodeUpdateResult create(@Nullable CodeUpdateAction action) {
+            return new AutoValue_Result_CodeUpdateResult(action);
         }
     }
 }

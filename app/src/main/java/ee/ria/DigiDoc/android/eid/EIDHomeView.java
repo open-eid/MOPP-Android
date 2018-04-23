@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AlertDialog;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.common.collect.ImmutableMap;
@@ -21,7 +22,7 @@ import io.reactivex.Observable;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 @SuppressLint("ViewConstructor")
-public final class EIDHomeView extends CoordinatorLayout implements MviView<Intent, ViewState>,
+public final class EIDHomeView extends FrameLayout implements MviView<Intent, ViewState>,
         HomeToolbar.HomeToolbarAware {
 
     private static final ImmutableMap<String, Integer> STATUS_MESSAGES =
@@ -35,10 +36,12 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
 
     private final String screenId;
 
+    private final CoordinatorLayout coordinatorView;
     private final HomeToolbar toolbarView;
     private final TextView progressMessageView;
     private final EIDDataView dataView;
     private final AlertDialog errorDialog;
+    private final CodeUpdateView codeUpdateView;
 
     private final ViewDisposables disposables = new ViewDisposables();
     private final Navigator navigator;
@@ -47,6 +50,7 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
         super(context);
         this.screenId = screenId;
         inflate(context, R.layout.eid_home, this);
+        coordinatorView = findViewById(R.id.eidHomeCoordinator);
         toolbarView = findViewById(R.id.toolbar);
         progressMessageView = findViewById(R.id.eidHomeProgressMessage);
         dataView = findViewById(R.id.eidHomeData);
@@ -54,6 +58,7 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
                 .setMessage(R.string.eid_home_error)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.cancel())
                 .create();
+        codeUpdateView = findViewById(R.id.eidHomeCodeUpdate);
         navigator = Application.component(context).navigator();
     }
 
@@ -75,7 +80,9 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
     }
 
     private Observable<Intent.CodeUpdateIntent> codeUpdateIntent() {
-        return dataView.actions().map(Intent.CodeUpdateIntent::create);
+        return Observable
+                .merge(dataView.actions().map(Intent.CodeUpdateIntent::show),
+                        codeUpdateView.upClicks().map(ignored -> Intent.CodeUpdateIntent.clear()));
     }
 
     @SuppressWarnings("unchecked")
@@ -100,6 +107,13 @@ public final class EIDHomeView extends CoordinatorLayout implements MviView<Inte
             errorDialog.show();
         } else {
             errorDialog.dismiss();
+        }
+
+        CodeUpdateAction codeUpdateAction = state.codeUpdateAction();
+        coordinatorView.setVisibility(codeUpdateAction == null ? VISIBLE : GONE);
+        codeUpdateView.setVisibility(codeUpdateAction == null ? GONE : VISIBLE);
+        if (codeUpdateAction != null) {
+            codeUpdateView.action(codeUpdateAction);
         }
     }
 
