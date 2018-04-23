@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeMinLengthError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfDateOfBirthError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfPersonalCodeError;
-import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeSameAsCurrentError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeTooEasyError;
 import ee.ria.DigiDoc.android.model.EIDData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
@@ -100,8 +99,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
         // new
         if (request.newValue().length() < action.newMinLength()) {
             builder.newError(CodeMinLengthError.create(action.newMinLength()));
-        } else if (request.currentValue().equals(request.newValue())) {
-            builder.newError(CodeSameAsCurrentError.create());
         } else if (data.personalCode().contains(request.newValue())) {
             builder.newError(CodePartOfPersonalCodeError.create());
         } else if (dateOfBirthValues.contains(request.newValue())) {

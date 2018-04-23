@@ -11,6 +11,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeMinLengthError;
+import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfDateOfBirthError;
+import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfPersonalCodeError;
+import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeRepeatMismatchError;
+import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeTooEasyError;
 import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
@@ -52,13 +57,50 @@ public final class CodeUpdateView extends CoordinatorLayout {
         positiveButton = findViewById(R.id.eidHomeCodeUpdatePositiveButton);
     }
 
-    public void action(CodeUpdateAction action) {
+    public void action(CodeUpdateAction action, @Nullable CodeUpdateResponse response) {
         toolbarView.setTitle(action.titleRes());
         textView.setText(action.textRes());
         currentLabelView.setHint(getResources().getString(action.currentRes()));
         newLabelView.setHint(getResources().getString(action.newRes()));
         repeatLabelView.setHint(getResources().getString(action.repeatRes()));
         positiveButton.setText(action.positiveButtonRes());
+
+        if (response == null) {
+            currentLabelView.setError(null);
+            newLabelView.setError(null);
+            repeatLabelView.setError(null);
+        } else {
+            CodeUpdateError currentError = response.currentError();
+            CodeUpdateError newError = response.newError();
+            CodeUpdateError repeatError = response.repeatError();
+
+            if (currentError == null) {
+                currentLabelView.setError(null);
+            } else if (currentError instanceof CodeMinLengthError) {
+                currentLabelView.setError(
+                        getResources().getString(action.currentMinLengthErrorRes(),
+                                ((CodeMinLengthError) currentError).minLength()));
+            }
+
+            if (newError == null) {
+                newLabelView.setError(null);
+            } else if (newError instanceof CodeMinLengthError) {
+                newLabelView.setError(getResources().getString(action.newMinLengthErrorRes(),
+                        ((CodeMinLengthError) newError).minLength()));
+            } else if (newError instanceof CodePartOfPersonalCodeError) {
+                newLabelView.setError(getResources().getString(action.newPersonalCodeErrorRes()));
+            } else if (newError instanceof CodePartOfDateOfBirthError) {
+                newLabelView.setError(getResources().getString(action.newDateOfBirthErrorRes()));
+            } else if (newError instanceof CodeTooEasyError) {
+                newLabelView.setError(getResources().getString(action.newTooEasyErrorRes()));
+            }
+
+            if (repeatError == null) {
+                repeatLabelView.setError(null);
+            } else if (repeatError instanceof CodeRepeatMismatchError) {
+                repeatLabelView.setError(getResources().getString(action.repeatMismatchErrorRes()));
+            }
+        }
     }
 
     public Observable<Object> closes() {

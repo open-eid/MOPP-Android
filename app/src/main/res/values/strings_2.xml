@@ -163,4 +163,27 @@
     <string name="eid_home_code_update_positive_button_edit">Change</string>
     <string name="eid_home_code_update_positive_button_unblock">Unblock</string>
 
+    <string name="eid_home_code_update_current_error_min_length_pin1_edit">Current PIN1 code must be at least %1$d digits long</string>
+    <string name="eid_home_code_update_current_error_min_length_pin1_unblock">Current PUK code must be at least %1$d digits long</string>
+    <string name="eid_home_code_update_current_error_min_length_pin2_edit">Current PIN2 code must be at least %1$d digits long</string>
+    <string name="eid_home_code_update_current_error_min_length_pin2_unblock">Current PUK code must be at least %1$d digits long</string>
+    <string name="eid_home_code_update_current_error_min_length_puk_edit">Current PUK code must be at least %1$d digits long</string>
+
+    <string name="eid_home_code_update_new_error_min_length_pin1">New PIN1 code must be at least %1$d digits long</string>
+    <string name="eid_home_code_update_new_error_min_length_pin2">New PIN2 code must be at least %1$d digits long</string>
+    <string name="eid_home_code_update_new_error_min_length_puk">New PUK code must be at least %1$d digits long</string>
+    <string name="eid_home_code_update_new_error_personal_code_pin1">New PIN1 code can\'t be part of your personal code</string>
+    <string name="eid_home_code_update_new_error_personal_code_pin2">New PIN2 code can\'t be part of your personal code</string>
+    <string name="eid_home_code_update_new_error_personal_code_puk">New PUK code can\'t be part of your personal code</string>
+    <string name="eid_home_code_update_new_error_date_of_birth_pin1">New PIN1 code can\'t be your date of birth</string>
+    <string name="eid_home_code_update_new_error_date_of_birth_pin2">New PIN2 code can\'t be your date of birth</string>
+    <string name="eid_home_code_update_new_error_date_of_birth_puk">New PUK code can\'t be your date of birth</string>
+    <string name="eid_home_code_update_new_error_too_easy_pin1">New PIN1 code can\'t be so easy</string>
+    <string name="eid_home_code_update_new_error_too_easy_pin2">New PIN2 code can\'t be so easy</string>
+    <string name="eid_home_code_update_new_error_too_easy_puk">New PUK code can\'t be so easy</string>
+
+    <string name="eid_home_code_update_repeat_error_mismatch_pin1">New PIN1 codes must match</string>
+    <string name="eid_home_code_update_repeat_error_mismatch_pin2">New PIN2 codes must match</string>
+    <string name="eid_home_code_update_repeat_error_mismatch_puk">New PUK codes must match</string>
+
 </resources>

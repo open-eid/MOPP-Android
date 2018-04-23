@@ -81,6 +81,7 @@ interface Result extends MviResult<ViewState> {
         public ViewState reduce(ViewState state) {
             return state.buildWith()
                     .codeUpdateAction(action())
+                    .codeUpdateResponse(response())
                     .build();
         }
 
