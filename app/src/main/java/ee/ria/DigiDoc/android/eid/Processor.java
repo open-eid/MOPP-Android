@@ -93,7 +93,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
                             CodeUpdateResponse.Builder builder = CodeUpdateResponse.valid()
                                     .buildWith();
-                            if (throwable instanceof PinVerificationException) {
+                            if (throwable instanceof PinVerificationException && retryCount > 0) {
                                 builder.currentError(CodeInvalidError.create(retryCount));
                             } else {
                                 builder.error(throwable);

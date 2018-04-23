@@ -6,6 +6,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -35,6 +36,8 @@ public final class CodeUpdateView extends CoordinatorLayout {
     private final EditText repeatView;
     private final Button negativeButton;
     private final Button positiveButton;
+    private final View activityOverlayView;
+    private final View activityIndicatorView;
 
     public CodeUpdateView(Context context) {
         this(context, null);
@@ -57,15 +60,20 @@ public final class CodeUpdateView extends CoordinatorLayout {
         repeatView = findViewById(R.id.eidHomeCodeUpdateRepeat);
         negativeButton = findViewById(R.id.eidHomeCodeUpdateNegativeButton);
         positiveButton = findViewById(R.id.eidHomeCodeUpdatePositiveButton);
+        activityOverlayView = findViewById(R.id.activityOverlay);
+        activityIndicatorView = findViewById(R.id.activityIndicator);
     }
 
-    public void action(CodeUpdateAction action, @Nullable CodeUpdateResponse response) {
+    public void render(CodeUpdateAction action, @Nullable CodeUpdateResponse response,
+                       boolean activity) {
         toolbarView.setTitle(action.titleRes());
         textView.setText(action.textRes());
         currentLabelView.setHint(getResources().getString(action.currentRes()));
         newLabelView.setHint(getResources().getString(action.newRes()));
         repeatLabelView.setHint(getResources().getString(action.repeatRes()));
         positiveButton.setText(action.positiveButtonRes());
+        activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
+        activityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
 
         if (response == null) {
             currentLabelView.setError(null);
