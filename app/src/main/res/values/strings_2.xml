@@ -168,6 +168,11 @@
     <string name="eid_home_code_update_current_error_min_length_pin2_edit">Current PIN2 code must be at least %1$d digits long</string>
     <string name="eid_home_code_update_current_error_min_length_pin2_unblock">Current PUK code must be at least %1$d digits long</string>
     <string name="eid_home_code_update_current_error_min_length_puk_edit">Current PUK code must be at least %1$d digits long</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_edit">Wrong PIN1. %1$d attempts left. Typing %1$d more times wrong PIN1, your PIN1 will be blocked.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_unblock">Wrong PUK. %1$d attempts left. Typing %1$d more times wrong PUK, your PUK will be blocked.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_edit">Wrong PIN2. %1$d attempts left. Typing %1$d more times wrong PIN2, your PIN2 will be blocked.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_unblock">Wrong PUK. %1$d attempts left. Typing %1$d more times wrong PUK, your PUK will be blocked.</string>
+    <string name="eid_home_code_update_current_error_invalid_puk_edit">Wrong PUK. %1$d attempts left. Typing %1$d more times wrong PUK, your PUK will be blocked.</string>
 
     <string name="eid_home_code_update_new_error_min_length_pin1">New PIN1 code must be at least %1$d digits long</string>
     <string name="eid_home_code_update_new_error_min_length_pin2">New PIN2 code must be at least %1$d digits long</string>
@@ -181,6 +186,9 @@
     <string name="eid_home_code_update_new_error_too_easy_pin1">New PIN1 code can\'t be so easy</string>
     <string name="eid_home_code_update_new_error_too_easy_pin2">New PIN2 code can\'t be so easy</string>
     <string name="eid_home_code_update_new_error_too_easy_puk">New PUK code can\'t be so easy</string>
+    <string name="eid_home_code_update_new_error_same_as_current_pin1">Current PIN1 code and new PIN1 code must be different</string>
+    <string name="eid_home_code_update_new_error_same_as_current_pin2">Current PIN2 code and new PIN2 code must be different</string>
+    <string name="eid_home_code_update_new_error_same_as_current_puk">Current PUK code and new PUK code must be different</string>
 
     <string name="eid_home_code_update_repeat_error_mismatch_pin1">New PIN1 codes must match</string>
     <string name="eid_home_code_update_repeat_error_mismatch_pin2">New PIN2 codes must match</string>

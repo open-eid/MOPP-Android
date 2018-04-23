@@ -19,6 +19,7 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardStatus;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.tokenlibrary.Token;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -54,6 +55,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
             PublishSubject.create();
     private final Subject<Boolean> navigationViewVisibilitySubject = PublishSubject.create();
 
+    @Nullable private Token token;
     @Nullable private IdCardData data;
     @Nullable private CodeUpdateAction codeUpdateAction;
 
@@ -95,10 +97,11 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
                 .merge(dataView.actions().map(Intent.CodeUpdateIntent::show),
                         codeUpdateView.closes().map(ignored -> Intent.CodeUpdateIntent.clear()),
                         codeUpdateView.requests()
-                                .filter(ignored -> codeUpdateAction != null && data != null)
+                                .filter(ignored ->
+                                        codeUpdateAction != null && data != null && token != null)
                                 .map(request ->
                                         Intent.CodeUpdateIntent
-                                                .request(codeUpdateAction, request, data)),
+                                                .request(codeUpdateAction, request, data, token)),
                         codeUpdateIntentSubject);
     }
 
@@ -112,6 +115,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     @Override
     public void render(ViewState state) {
         progressMessageView.setText(STATUS_MESSAGES.get(state.idCardDataResponse().status()));
+        token = state.idCardDataResponse().token();
         data = state.idCardDataResponse().data();
         if (data != null) {
             dataView.setData(data);

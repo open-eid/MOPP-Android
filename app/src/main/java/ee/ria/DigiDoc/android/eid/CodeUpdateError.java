@@ -23,14 +23,6 @@ abstract class CodeUpdateError extends Exception {
     }
 
     @AutoValue
-    abstract static class CodeSameAsCurrentError extends CodeUpdateError {
-
-        static CodeSameAsCurrentError create() {
-            return new AutoValue_CodeUpdateError_CodeSameAsCurrentError();
-        }
-    }
-
-    @AutoValue
     abstract static class CodePartOfPersonalCodeError extends CodeUpdateError {
 
         static CodePartOfPersonalCodeError create() {
@@ -51,6 +43,24 @@ abstract class CodeUpdateError extends Exception {
 
         static CodeTooEasyError create() {
             return new AutoValue_CodeUpdateError_CodeTooEasyError();
+        }
+    }
+
+    @AutoValue
+    abstract static class CodeSameAsCurrentError extends CodeUpdateError {
+
+        static CodeSameAsCurrentError create() {
+            return new AutoValue_CodeUpdateError_CodeSameAsCurrentError();
+        }
+    }
+
+    @AutoValue
+    abstract static class CodeInvalidError extends CodeUpdateError {
+
+        abstract int retryCount();
+
+        static CodeInvalidError create(int retryCount) {
+            return new AutoValue_CodeUpdateError_CodeInvalidError(retryCount);
         }
     }
 }

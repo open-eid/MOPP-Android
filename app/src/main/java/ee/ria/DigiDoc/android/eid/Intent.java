@@ -6,6 +6,7 @@ import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.model.EIDData;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
+import ee.ria.tokenlibrary.Token;
 
 interface Intent extends MviIntent {
 
@@ -44,23 +45,25 @@ interface Intent extends MviIntent {
 
         @Nullable abstract EIDData data();
 
+        @Nullable abstract Token token();
+
         static CodeUpdateIntent show(CodeUpdateAction action) {
-            return create(action, null, null);
+            return create(action, null, null, null);
         }
 
         static CodeUpdateIntent request(CodeUpdateAction action, CodeUpdateRequest request,
-                                        EIDData data) {
-            return create(action, request, data);
+                                        EIDData data, Token token) {
+            return create(action, request, data, token);
         }
 
         static CodeUpdateIntent clear() {
-            return create(null, null, null);
+            return create(null, null, null, null);
         }
 
         static CodeUpdateIntent create(@Nullable CodeUpdateAction action,
                                        @Nullable CodeUpdateRequest request,
-                                       @Nullable EIDData data) {
-            return new AutoValue_Intent_CodeUpdateIntent(action, request, data);
+                                       @Nullable EIDData data, @Nullable Token token) {
+            return new AutoValue_Intent_CodeUpdateIntent(action, request, data, token);
         }
     }
 }

@@ -24,6 +24,7 @@ import ee.ria.scardcomlibrary.CardReader;
 import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.tokenlibrary.Token;
 import ee.ria.tokenlibrary.TokenFactory;
+import ee.ria.tokenlibrary.exception.PinVerificationException;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -80,6 +81,32 @@ public final class IdCardService {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Single<IdCardData> editPin(Token token, Token.PinType pinType, String currentPin,
+                                      String newPin) {
+        return Single
+                .fromCallable(() -> {
+                    boolean result = token
+                            .changePin(pinType, currentPin.getBytes(), newPin.getBytes());
+                    if (!result) {
+                        throw new PinVerificationException(pinType);
+                    }
+                    return data(token);
+                });
+    }
+
+    public Single<IdCardData> unblockPin(Token token, Token.PinType pinType, String puk,
+                                         String newPin) {
+        return Single
+                .fromCallable(() -> {
+                    boolean result = token.unblockAndChangePin(pinType, puk.getBytes(),
+                            newPin.getBytes());
+                    if (!result) {
+                        throw new PinVerificationException(pinType);
+                    }
+                    return data(token);
+                });
     }
 
     static final class TokeOnSubscribe implements ObservableOnSubscribe<TokenResponse> {

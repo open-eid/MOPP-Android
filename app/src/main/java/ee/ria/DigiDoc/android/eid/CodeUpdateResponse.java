@@ -8,7 +8,8 @@ import com.google.auto.value.AutoValue;
 abstract class CodeUpdateResponse {
 
     boolean success() {
-        return currentError() == null && newError() == null && repeatError() == null;
+        return currentError() == null && newError() == null && repeatError() == null
+                && error() == null;
     }
 
     @Nullable abstract CodeUpdateError currentError();
@@ -16,6 +17,8 @@ abstract class CodeUpdateResponse {
     @Nullable abstract CodeUpdateError newError();
 
     @Nullable abstract CodeUpdateError repeatError();
+
+    @Nullable abstract Throwable error();
 
     abstract Builder buildWith();
 
@@ -28,6 +31,7 @@ abstract class CodeUpdateResponse {
         abstract Builder currentError(@Nullable CodeUpdateError currentError);
         abstract Builder newError(@Nullable CodeUpdateError newError);
         abstract Builder repeatError(@Nullable CodeUpdateError repeatError);
+        abstract Builder error(@Nullable Throwable error);
         abstract CodeUpdateResponse build();
     }
 }

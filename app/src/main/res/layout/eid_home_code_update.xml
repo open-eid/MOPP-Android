@@ -50,6 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberPassword"
+                    android:maxLength="12"
                     android:hint="@string/eid_home_code_update_current_pin1_edit" />
 
             </android.support.design.widget.TextInputLayout>
@@ -64,6 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberPassword"
+                    android:maxLength="12"
                     android:hint="@string/eid_home_code_update_new_pin1" />
 
             </android.support.design.widget.TextInputLayout>
@@ -78,6 +80,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberPassword"
+                    android:maxLength="12"
                     android:hint="@string/eid_home_code_update_repeat_pin1" />
 
             </android.support.design.widget.TextInputLayout>

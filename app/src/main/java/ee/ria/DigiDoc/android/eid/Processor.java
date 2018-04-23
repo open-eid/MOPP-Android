@@ -7,15 +7,23 @@ import org.threeten.bp.format.DateTimeFormatter;
 
 import javax.inject.Inject;
 
+import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeInvalidError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeMinLengthError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfDateOfBirthError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfPersonalCodeError;
+import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeSameAsCurrentError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeTooEasyError;
 import ee.ria.DigiDoc.android.model.EIDData;
+import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
+import ee.ria.tokenlibrary.Token;
+import ee.ria.tokenlibrary.exception.PinVerificationException;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
@@ -52,17 +60,51 @@ final class Processor implements ObservableTransformer<Action, Result> {
             CodeUpdateAction updateAction = action.action();
             CodeUpdateRequest request = action.request();
             EIDData data = action.data();
+            Token token = action.token();
             if (updateAction == null) {
                 return Observable.just(Result.CodeUpdateResult.clear());
-            } else if (request == null || data == null) {
+            } else if (request == null || data == null || token == null) {
                 return Observable.just(Result.CodeUpdateResult.action(updateAction));
             } else {
                 CodeUpdateResponse response = validate(updateAction, request, data);
                 if (!response.success()) {
                     return Observable.just(Result.CodeUpdateResult
-                            .response(updateAction, response));
+                            .response(updateAction, response, null, null));
                 }
-                return Observable.just(Result.CodeUpdateResult.progress(updateAction));
+
+                Single<IdCardData> operation;
+                if (updateAction.updateType().equals(CodeUpdateType.EDIT)) {
+                    operation = idCardService
+                            .editPin(token, updateAction.pinType(), request.currentValue(),
+                                    request.newValue());
+                } else {
+                    operation = idCardService
+                            .unblockPin(token, updateAction.pinType(), request.currentValue(),
+                                    request.newValue());
+                }
+                return operation
+                        .toObservable()
+                        .map(idCardData ->
+                                Result.CodeUpdateResult.response(updateAction,
+                                        CodeUpdateResponse.valid(), idCardData, token))
+                        .onErrorReturn(throwable -> {
+                            IdCardData idCardData = IdCardService.data(token);
+                            int retryCount = retryCount(updateAction, idCardData);
+
+                            CodeUpdateResponse.Builder builder = CodeUpdateResponse.valid()
+                                    .buildWith();
+                            if (throwable instanceof PinVerificationException) {
+                                builder.currentError(CodeInvalidError.create(retryCount));
+                            } else {
+                                builder.error(throwable);
+                            }
+
+                            return Result.CodeUpdateResult
+                                    .response(updateAction, builder.build(), idCardData, token);
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(Result.CodeUpdateResult.progress(updateAction));
             }
         });
     }
@@ -99,6 +141,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
         // new
         if (request.newValue().length() < action.newMinLength()) {
             builder.newError(CodeMinLengthError.create(action.newMinLength()));
+        } else if (action.updateType().equals(CodeUpdateType.EDIT)
+                && request.newValue().equals(request.currentValue())) {
+            builder.newError(CodeSameAsCurrentError.create());
         } else if (data.personalCode().contains(request.newValue())) {
             builder.newError(CodePartOfPersonalCodeError.create());
         } else if (dateOfBirthValues.contains(request.newValue())) {
@@ -137,5 +182,17 @@ final class Processor implements ObservableTransformer<Action, Result> {
             delta = d;
         }
         return true;
+    }
+
+    private int retryCount(CodeUpdateAction action, IdCardData data) {
+        Token.PinType pinType = action.pinType();
+        String updateType = action.updateType();
+        if (updateType.equals(CodeUpdateType.UNBLOCK) || pinType.equals(Token.PinType.PUK)) {
+            return data.pukRetryCount();
+        } else if (pinType.equals(Token.PinType.PIN1)) {
+            return data.authCertificate().pinRetryCount();
+        } else {
+            return data.signCertificate().pinRetryCount();
+        }
     }
 }

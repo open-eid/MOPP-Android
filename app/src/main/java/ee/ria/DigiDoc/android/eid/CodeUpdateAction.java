@@ -14,7 +14,9 @@ abstract class CodeUpdateAction implements Parcelable {
     private static final int PIN1_MIN_LENGTH = 4;
     private static final int PIN2_MIN_LENGTH = 5;
     private static final int PUK_MIN_LENGTH = 8;
-    private static final int MAX_LENGTH = 12;
+
+    abstract Token.PinType pinType();
+    @CodeUpdateType abstract String updateType();
 
     @StringRes abstract int titleRes();
     @StringRes abstract int textRes();
@@ -24,18 +26,17 @@ abstract class CodeUpdateAction implements Parcelable {
     @StringRes abstract int positiveButtonRes();
 
     abstract int currentMinLength();
-    abstract int currentMaxLength();
     abstract int newMinLength();
-    abstract int newMaxLength();
     abstract int repeatMinLength();
-    abstract int repeatMaxLength();
 
     @StringRes abstract int currentMinLengthErrorRes();
+    @StringRes abstract int currentInvalidErrorRes();
 
     @StringRes abstract int newMinLengthErrorRes();
     @StringRes abstract int newPersonalCodeErrorRes();
     @StringRes abstract int newDateOfBirthErrorRes();
     @StringRes abstract int newTooEasyErrorRes();
+    @StringRes abstract int newSameAsCurrentErrorRes();
 
     @StringRes abstract int repeatMismatchErrorRes();
 
@@ -52,10 +53,12 @@ abstract class CodeUpdateAction implements Parcelable {
         int newMinLength;
         int repeatMinLength;
         int currentMinLengthErrorRes;
+        int currentInvalidErrorRes;
         int newMinLengthErrorRes;
         int newPersonalCodeErrorRes;
         int newDateOfBirthErrorRes;
         int newTooEasyErrorRes;
+        int newSameAsCurrentErrorRes;
         int repeatMismatchErrorRes;
 
         if (pinType == Token.PinType.PIN1) {
@@ -68,6 +71,8 @@ abstract class CodeUpdateAction implements Parcelable {
                 repeatMinLength = PIN1_MIN_LENGTH;
                 currentMinLengthErrorRes =
                         R.string.eid_home_code_update_current_error_min_length_pin1_edit;
+                currentInvalidErrorRes =
+                        R.string.eid_home_code_update_current_error_invalid_pin1_edit;
             } else {
                 titleRes = R.string.eid_home_code_update_title_pin1_unblock;
                 textRes = R.string.eid_home_code_update_text_pin1_unblock;
@@ -77,6 +82,8 @@ abstract class CodeUpdateAction implements Parcelable {
                 repeatMinLength = PIN1_MIN_LENGTH;
                 currentMinLengthErrorRes =
                         R.string.eid_home_code_update_current_error_min_length_pin1_unblock;
+                currentInvalidErrorRes =
+                        R.string.eid_home_code_update_current_error_invalid_pin1_unblock;
             }
             newRes = R.string.eid_home_code_update_new_pin1;
             repeatRes = R.string.eid_home_code_update_repeat_pin1;
@@ -84,6 +91,7 @@ abstract class CodeUpdateAction implements Parcelable {
             newPersonalCodeErrorRes = R.string.eid_home_code_update_new_error_personal_code_pin1;
             newDateOfBirthErrorRes = R.string.eid_home_code_update_new_error_date_of_birth_pin1;
             newTooEasyErrorRes = R.string.eid_home_code_update_new_error_too_easy_pin1;
+            newSameAsCurrentErrorRes = R.string.eid_home_code_update_new_error_same_as_current_pin1;
             repeatMismatchErrorRes = R.string.eid_home_code_update_repeat_error_mismatch_pin1;
         } else if (pinType == Token.PinType.PIN2) {
             if (updateType.equals(CodeUpdateType.EDIT)) {
@@ -95,6 +103,8 @@ abstract class CodeUpdateAction implements Parcelable {
                 repeatMinLength = PIN2_MIN_LENGTH;
                 currentMinLengthErrorRes =
                         R.string.eid_home_code_update_current_error_min_length_pin2_edit;
+                currentInvalidErrorRes =
+                        R.string.eid_home_code_update_current_error_invalid_pin2_edit;
             } else {
                 titleRes = R.string.eid_home_code_update_title_pin2_unblock;
                 textRes = R.string.eid_home_code_update_text_pin2_unblock;
@@ -104,6 +114,8 @@ abstract class CodeUpdateAction implements Parcelable {
                 repeatMinLength = PIN2_MIN_LENGTH;
                 currentMinLengthErrorRes =
                         R.string.eid_home_code_update_current_error_min_length_pin2_unblock;
+                currentInvalidErrorRes =
+                        R.string.eid_home_code_update_current_error_invalid_pin2_unblock;
             }
             newRes = R.string.eid_home_code_update_new_pin2;
             repeatRes = R.string.eid_home_code_update_repeat_pin2;
@@ -111,6 +123,7 @@ abstract class CodeUpdateAction implements Parcelable {
             newPersonalCodeErrorRes = R.string.eid_home_code_update_new_error_personal_code_pin2;
             newDateOfBirthErrorRes = R.string.eid_home_code_update_new_error_date_of_birth_pin2;
             newTooEasyErrorRes = R.string.eid_home_code_update_new_error_too_easy_pin2;
+            newSameAsCurrentErrorRes = R.string.eid_home_code_update_new_error_same_as_current_pin2;
             repeatMismatchErrorRes = R.string.eid_home_code_update_repeat_error_mismatch_pin2;
         } else {
             titleRes = R.string.eid_home_code_update_title_puk_edit;
@@ -123,17 +136,19 @@ abstract class CodeUpdateAction implements Parcelable {
             repeatMinLength = PUK_MIN_LENGTH;
             currentMinLengthErrorRes =
                     R.string.eid_home_code_update_current_error_min_length_puk_edit;
+            currentInvalidErrorRes = R.string.eid_home_code_update_current_error_invalid_puk_edit;
             newMinLengthErrorRes = R.string.eid_home_code_update_new_error_min_length_puk;
             newPersonalCodeErrorRes = R.string.eid_home_code_update_new_error_personal_code_puk;
             newDateOfBirthErrorRes = R.string.eid_home_code_update_new_error_date_of_birth_puk;
             newTooEasyErrorRes = R.string.eid_home_code_update_new_error_too_easy_puk;
+            newSameAsCurrentErrorRes = R.string.eid_home_code_update_new_error_same_as_current_puk;
             repeatMismatchErrorRes = R.string.eid_home_code_update_repeat_error_mismatch_puk;
         }
 
-        return new AutoValue_CodeUpdateAction(titleRes, textRes, currentRes, newRes, repeatRes,
-                positiveButtonRes, currentMinLength, MAX_LENGTH, newMinLength, MAX_LENGTH,
-                repeatMinLength, MAX_LENGTH, currentMinLengthErrorRes, newMinLengthErrorRes,
-                newPersonalCodeErrorRes, newDateOfBirthErrorRes, newTooEasyErrorRes,
-                repeatMismatchErrorRes);
+        return new AutoValue_CodeUpdateAction(pinType, updateType, titleRes, textRes, currentRes,
+                newRes, repeatRes, positiveButtonRes, currentMinLength, newMinLength,
+                repeatMinLength, currentMinLengthErrorRes, currentInvalidErrorRes,
+                newMinLengthErrorRes, newPersonalCodeErrorRes, newDateOfBirthErrorRes,
+                newTooEasyErrorRes, newSameAsCurrentErrorRes, repeatMismatchErrorRes);
     }
 }

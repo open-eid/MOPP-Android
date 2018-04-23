@@ -11,10 +11,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeInvalidError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeMinLengthError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfDateOfBirthError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfPersonalCodeError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeRepeatMismatchError;
+import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeSameAsCurrentError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeTooEasyError;
 import io.reactivex.Observable;
 
@@ -80,6 +82,9 @@ public final class CodeUpdateView extends CoordinatorLayout {
                 currentLabelView.setError(
                         getResources().getString(action.currentMinLengthErrorRes(),
                                 ((CodeMinLengthError) currentError).minLength()));
+            } else if (currentError instanceof CodeInvalidError) {
+                currentLabelView.setError(getResources().getString(action.currentInvalidErrorRes(),
+                        ((CodeInvalidError) currentError).retryCount()));
             }
 
             if (newError == null) {
@@ -93,6 +98,8 @@ public final class CodeUpdateView extends CoordinatorLayout {
                 newLabelView.setError(getResources().getString(action.newDateOfBirthErrorRes()));
             } else if (newError instanceof CodeTooEasyError) {
                 newLabelView.setError(getResources().getString(action.newTooEasyErrorRes()));
+            } else if (newError instanceof CodeSameAsCurrentError) {
+                newLabelView.setError(getResources().getString(action.newSameAsCurrentErrorRes()));
             }
 
             if (repeatError == null) {
