@@ -136,7 +136,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
         codeUpdateView.setVisibility(codeUpdateAction == null ? GONE : VISIBLE);
         if (codeUpdateAction != null) {
             codeUpdateView.render(state.codeUpdateState(), codeUpdateAction,
-                    state.codeUpdateResponse());
+                    state.codeUpdateResponse(), state.codeUpdateSuccessMessageVisible());
         }
     }
 

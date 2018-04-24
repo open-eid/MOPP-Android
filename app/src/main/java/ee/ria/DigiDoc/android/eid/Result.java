@@ -84,6 +84,8 @@ interface Result extends MviResult<ViewState> {
 
         @Nullable abstract Token token();
 
+        @Nullable abstract Boolean success();
+
         @Override
         public ViewState reduce(ViewState state) {
             ViewState.Builder builder = state.buildWith()
@@ -93,39 +95,57 @@ interface Result extends MviResult<ViewState> {
             if (idCardData() != null && token() != null) {
                 builder.idCardDataResponse(IdCardDataResponse.success(idCardData(), token()));
             }
+            Boolean success = success();
+            if (success != null) {
+                builder.codeUpdateSuccessMessageVisible(success);
+            }
             return builder.build();
         }
 
         static CodeUpdateResult action(CodeUpdateAction action) {
-            return create(State.IDLE, action, null, null, null);
+            return create(State.IDLE, action, null, null, null, null);
         }
 
         static CodeUpdateResult progress(CodeUpdateAction action) {
-            return create(State.ACTIVE, action, null, null, null);
+            return create(State.ACTIVE, action, null, null, null, null);
         }
 
         static CodeUpdateResult response(CodeUpdateAction action, CodeUpdateResponse response,
                                          @Nullable IdCardData idCardData, @Nullable Token token) {
-            return create(State.IDLE, action, response, idCardData, token);
+            return create(State.IDLE, action, response, idCardData, token, null);
         }
 
         static CodeUpdateResult clearResponse(CodeUpdateAction action, CodeUpdateResponse response,
                                               @Nullable IdCardData idCardData,
                                               @Nullable Token token) {
-            return create(State.CLEAR, action, response, idCardData, token);
+            return create(State.CLEAR, action, response, idCardData, token, null);
+        }
+
+        static CodeUpdateResult successResponse(CodeUpdateAction action,
+                                                CodeUpdateResponse response,
+                                                @Nullable IdCardData idCardData,
+                                                @Nullable Token token) {
+            return create(State.IDLE, action, response, idCardData, token, true);
+        }
+
+        static CodeUpdateResult hideSuccessResponse(CodeUpdateAction action,
+                                                    CodeUpdateResponse response,
+                                                    @Nullable IdCardData idCardData,
+                                                    @Nullable Token token) {
+            return create(State.IDLE, action, response, idCardData, token, false);
         }
 
         static CodeUpdateResult clear() {
-            return create(State.IDLE, null, null, null, null);
+            return create(State.IDLE, null, null, null, null, null);
         }
 
         private static CodeUpdateResult create(@State String state,
                                                @Nullable CodeUpdateAction action,
                                                @Nullable CodeUpdateResponse response,
                                                @Nullable IdCardData idCardData,
-                                               @Nullable Token token) {
+                                               @Nullable Token token, @Nullable Boolean success) {
             return new AutoValue_Result_CodeUpdateResult(state, action, response, idCardData,
-                    token);
+                    token, success);
         }
     }
 }

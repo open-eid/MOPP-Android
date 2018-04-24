@@ -20,6 +20,7 @@ abstract class ViewState implements MviViewState {
     @State abstract String codeUpdateState();
     @Nullable abstract CodeUpdateAction codeUpdateAction();
     @Nullable abstract CodeUpdateResponse codeUpdateResponse();
+    abstract boolean codeUpdateSuccessMessageVisible();
 
     abstract Builder buildWith();
 
@@ -28,6 +29,7 @@ abstract class ViewState implements MviViewState {
                 .idCardDataResponse(IdCardDataResponse.initial())
                 .certificatesContainerExpanded(false)
                 .codeUpdateState(State.IDLE)
+                .codeUpdateSuccessMessageVisible(false)
                 .build();
     }
 
@@ -39,6 +41,7 @@ abstract class ViewState implements MviViewState {
         Builder codeUpdateState(@State String codeUpdateState);
         Builder codeUpdateAction(@Nullable CodeUpdateAction codeUpdateAction);
         Builder codeUpdateResponse(@Nullable CodeUpdateResponse codeUpdateResponse);
+        Builder codeUpdateSuccessMessageVisible(boolean codeUpdateSuccessMessageVisible);
         ViewState build();
     }
 }

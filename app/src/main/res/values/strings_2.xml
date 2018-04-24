@@ -163,6 +163,10 @@
     <string name="eid_home_code_update_positive_button_edit">Change</string>
     <string name="eid_home_code_update_positive_button_unblock">Unblock</string>
 
+    <string name="eid_home_code_update_success_pin1">PIN1 changed</string>
+    <string name="eid_home_code_update_success_pin2">PIN2 changed</string>
+    <string name="eid_home_code_update_success_puk">PUK changed</string>
+
     <string name="eid_home_code_update_current_error_min_length_pin1_edit">Current PIN1 code must be at least %1$d digits long</string>
     <string name="eid_home_code_update_current_error_min_length_pin1_unblock">Current PUK code must be at least %1$d digits long</string>
     <string name="eid_home_code_update_current_error_min_length_pin2_edit">Current PIN2 code must be at least %1$d digits long</string>

@@ -28,6 +28,7 @@ import static com.jakewharton.rxbinding2.view.RxView.clicks;
 public final class CodeUpdateView extends CoordinatorLayout {
 
     private final Toolbar toolbarView;
+    private final TextView successMessageView;
     private final TextView textView;
     private final TextInputLayout currentLabelView;
     private final EditText currentView;
@@ -52,6 +53,7 @@ public final class CodeUpdateView extends CoordinatorLayout {
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.eid_home_code_update, this);
         toolbarView = findViewById(R.id.toolbar);
+        successMessageView = findViewById(R.id.eidHomeCodeUpdateSuccessMessage);
         textView = findViewById(R.id.eidHomeCodeUpdateText);
         currentLabelView = findViewById(R.id.eidHomeCodeUpdateCurrentLabel);
         currentView = findViewById(R.id.eidHomeCodeUpdateCurrent);
@@ -66,8 +68,9 @@ public final class CodeUpdateView extends CoordinatorLayout {
     }
 
     public void render(@State String state, CodeUpdateAction action,
-                       @Nullable CodeUpdateResponse response) {
+                       @Nullable CodeUpdateResponse response, boolean successMessageVisible) {
         toolbarView.setTitle(action.titleRes());
+        successMessageView.setText(action.successMessageRes());
         textView.setText(action.textRes());
         currentLabelView.setHint(getResources().getString(action.currentRes()));
         newLabelView.setHint(getResources().getString(action.newRes()));
@@ -75,6 +78,8 @@ public final class CodeUpdateView extends CoordinatorLayout {
         positiveButton.setText(action.positiveButtonRes());
         activityOverlayView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);
         activityIndicatorView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);
+
+        successMessageView.setVisibility(successMessageVisible ? VISIBLE : GONE);
 
         if (state.equals(State.CLEAR)) {
             currentView.setText(null);

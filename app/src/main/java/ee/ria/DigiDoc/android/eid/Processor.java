@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableSet;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeInvalidError;
@@ -84,13 +86,23 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 }
                 return operation
                         .toObservable()
-                        .flatMap(idCardData -> Observable.just(
-                                Result.CodeUpdateResult
-                                        .clearResponse(updateAction, CodeUpdateResponse.valid(),
-                                                idCardData, token),
-                                Result.CodeUpdateResult
-                                        .response(updateAction, CodeUpdateResponse.valid(),
-                                                idCardData, token)))
+                        .flatMap(idCardData ->
+                                Observable
+                                        .timer(3, TimeUnit.SECONDS)
+                                        .map(ignored ->
+                                                Result.CodeUpdateResult
+                                                        .hideSuccessResponse(updateAction,
+                                                                CodeUpdateResponse.valid(),
+                                                                idCardData, token))
+                                        .startWithArray(
+                                                Result.CodeUpdateResult
+                                                        .clearResponse(updateAction,
+                                                                CodeUpdateResponse.valid(),
+                                                                idCardData, token),
+                                                Result.CodeUpdateResult
+                                                        .successResponse(updateAction,
+                                                                CodeUpdateResponse.valid(),
+                                                                idCardData, token)))
                         .onErrorReturn(throwable -> {
                             IdCardData idCardData = IdCardService.data(token);
                             int retryCount = retryCount(updateAction, idCardData);

@@ -137,6 +137,7 @@
     <item type="id" name="eidHomeCertificateDataError" />
 
     <item type="id" name="eidHomeCodeUpdateScroll" />
+    <item type="id" name="eidHomeCodeUpdateSuccessMessage" />
     <item type="id" name="eidHomeCodeUpdateText" />
     <item type="id" name="eidHomeCodeUpdateCurrentLabel" />
     <item type="id" name="eidHomeCodeUpdateCurrent" />
