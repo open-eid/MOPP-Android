@@ -84,9 +84,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 }
                 return operation
                         .toObservable()
-                        .map(idCardData ->
-                                Result.CodeUpdateResult.response(updateAction,
-                                        CodeUpdateResponse.valid(), idCardData, token))
+                        .flatMap(idCardData -> Observable.just(
+                                Result.CodeUpdateResult
+                                        .clearResponse(updateAction, CodeUpdateResponse.valid(),
+                                                idCardData, token),
+                                Result.CodeUpdateResult
+                                        .response(updateAction, CodeUpdateResponse.valid(),
+                                                idCardData, token)))
                         .onErrorReturn(throwable -> {
                             IdCardData idCardData = IdCardService.data(token);
                             int retryCount = retryCount(updateAction, idCardData);

@@ -6,6 +6,7 @@ import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
+import ee.ria.DigiDoc.android.utils.mvi.State;
 
 @AutoValue
 abstract class ViewState implements MviViewState {
@@ -16,11 +17,9 @@ abstract class ViewState implements MviViewState {
 
     abstract boolean certificatesContainerExpanded();
 
+    @State abstract String codeUpdateState();
     @Nullable abstract CodeUpdateAction codeUpdateAction();
-
     @Nullable abstract CodeUpdateResponse codeUpdateResponse();
-
-    abstract boolean codeUpdateActivity();
 
     abstract Builder buildWith();
 
@@ -28,7 +27,7 @@ abstract class ViewState implements MviViewState {
         return new AutoValue_ViewState.Builder()
                 .idCardDataResponse(IdCardDataResponse.initial())
                 .certificatesContainerExpanded(false)
-                .codeUpdateActivity(false)
+                .codeUpdateState(State.IDLE)
                 .build();
     }
 
@@ -37,9 +36,9 @@ abstract class ViewState implements MviViewState {
         Builder idCardDataResponse(IdCardDataResponse idCardDataResponse);
         Builder error(@Nullable Throwable error);
         Builder certificatesContainerExpanded(boolean certificatesContainerExpanded);
+        Builder codeUpdateState(@State String codeUpdateState);
         Builder codeUpdateAction(@Nullable CodeUpdateAction codeUpdateAction);
         Builder codeUpdateResponse(@Nullable CodeUpdateResponse codeUpdateResponse);
-        Builder codeUpdateActivity(boolean codeUpdateActivity);
         ViewState build();
     }
 }

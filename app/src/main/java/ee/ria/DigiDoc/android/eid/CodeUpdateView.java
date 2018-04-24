@@ -19,6 +19,7 @@ import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfPersonalCodeError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeRepeatMismatchError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeSameAsCurrentError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeTooEasyError;
+import ee.ria.DigiDoc.android.utils.mvi.State;
 import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
@@ -64,16 +65,22 @@ public final class CodeUpdateView extends CoordinatorLayout {
         activityIndicatorView = findViewById(R.id.activityIndicator);
     }
 
-    public void render(CodeUpdateAction action, @Nullable CodeUpdateResponse response,
-                       boolean activity) {
+    public void render(@State String state, CodeUpdateAction action,
+                       @Nullable CodeUpdateResponse response) {
         toolbarView.setTitle(action.titleRes());
         textView.setText(action.textRes());
         currentLabelView.setHint(getResources().getString(action.currentRes()));
         newLabelView.setHint(getResources().getString(action.newRes()));
         repeatLabelView.setHint(getResources().getString(action.repeatRes()));
         positiveButton.setText(action.positiveButtonRes());
-        activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
-        activityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
+        activityOverlayView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);
+        activityIndicatorView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);
+
+        if (state.equals(State.CLEAR)) {
+            currentView.setText(null);
+            newView.setText(null);
+            repeatView.setText(null);
+        }
 
         if (response == null) {
             currentLabelView.setError(null);
