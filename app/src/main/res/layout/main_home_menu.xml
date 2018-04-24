@@ -48,4 +48,12 @@
         android:text="@string/main_home_menu_about"
         android:drawableStart="@drawable/ic_info_outline" />
 
+    <TextView
+        android:id="@id/mainHomeMenuDiagnostics"
+        style="@style/Widget.Application.MenuItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_diagnostics_screen_title"
+        android:drawableStart="@drawable/ic_icon_graph_white" />
+
 </LinearLayout>
