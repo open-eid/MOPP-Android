@@ -2,7 +2,6 @@ package ee.ria.DigiDoc.android.main.home;
 
 import android.app.Application;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.IdRes;
 
 import javax.inject.Inject;
@@ -11,10 +10,10 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.crypto.CryptoHomeScreen;
 import ee.ria.DigiDoc.android.eid.EIDHomeScreen;
 import ee.ria.DigiDoc.android.main.about.AboutScreen;
+import ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen;
 import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
 import ee.ria.DigiDoc.android.signature.home.SignatureHomeScreen;
 import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
-import ee.ria.DigiDoc.android.utils.IntentUtils;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
@@ -83,6 +82,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return SettingsScreen.create();
             case R.id.mainHomeMenuAbout:
                 return AboutScreen.create();
+            case R.id.mainHomeMenuDiagnostics:
+                return DiagnosticsScreen.create();
             default:
                 throw new IllegalArgumentException("Unknown menu item: " + item);
         }

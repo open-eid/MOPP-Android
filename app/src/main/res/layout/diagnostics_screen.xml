@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.Application.ActionBar"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:navigationContentDescription="@string/back"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:title="@string/main_diagnostics_screen_title" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/material_content_edge_margin_horizontal"
+        android:background="@color/material_color_white"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/MaterialTypography.Dense.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/main_diagnostics_application_version_title"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@id/mainDiagnosticsApplicationVersion"
+                style="@style/MaterialTypography.Dense.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/MaterialTypography.Dense.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/main_diagnostics_operating_system_title"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@id/mainDiagnosticsAndroidVersion"
+                style="@style/MaterialTypography.Dense.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/MaterialTypography.Dense.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_stepper_padding_top"
+            android:text="@string/main_diagnostics_libraries_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@id/mainDiagnosticsLibdigidocppVersion"
+            style="@style/MaterialTypography.Dense.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>
