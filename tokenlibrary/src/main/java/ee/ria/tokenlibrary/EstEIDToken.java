@@ -52,7 +52,7 @@ abstract class EstEIDToken implements Token {
 
     private byte[] readCertRecords() {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        for (byte i = 0; i <= 5; ++i) {
+        for (byte i = 0; i <= 6; ++i) {
             byte[] data = transmitExtended(new byte[]{0x00, (byte) 0xB0, i, 0x00, 0x00});
             try {
                 byteStream.write(data);
