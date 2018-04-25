@@ -30,10 +30,16 @@
     <item type="id" name="mainHomeMenuRecent" />
     <item type="id" name="mainHomeMenuSettings" />
     <item type="id" name="mainHomeMenuAbout" />
+    <item type="id" name="mainHomeMenuDiagnostics" />
 
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsFragment" />
+
+    <!-- Main Diagnostics -->
+    <item type="id" name="mainDiagnosticsApplicationVersion" />
+    <item type="id" name="mainDiagnosticsAndroidVersion" />
+    <item type="id" name="mainDiagnosticsLibdigidocppVersion" />
 
     <!-- Main About -->
     <item type="id" name="mainAboutScreen" />

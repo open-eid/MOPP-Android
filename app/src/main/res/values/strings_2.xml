@@ -29,6 +29,12 @@
     <string name="main_settings_postal_code_title">Postal code</string>
     <string name="main_settings_signature_profile_title">Default file type</string>
 
+    <!-- Main Diagnostics -->
+    <string name="main_diagnostics_screen_title">Diagnostics</string>
+    <string name="main_diagnostics_application_version_title">Application version:\u0020</string>
+    <string name="main_diagnostics_operating_system_title">Operating system:\u0020</string>
+    <string name="main_diagnostics_libraries_title">Libraries</string>
+
     <!-- Signature Home -->
     <string name="signature_home_create_text">Choose a file to sign or check</string>
     <string name="signature_home_create_button">Choose file</string>

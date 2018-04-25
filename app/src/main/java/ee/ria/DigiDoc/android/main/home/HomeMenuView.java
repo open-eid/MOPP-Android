@@ -22,6 +22,7 @@ public final class HomeMenuView extends NestedScrollView {
     private final TextView recentView;
     private final TextView settingsView;
     private final TextView aboutView;
+    private final TextView diagnosticsView;
 
     public HomeMenuView(@NonNull Context context) {
         this(context, null);
@@ -39,11 +40,13 @@ public final class HomeMenuView extends NestedScrollView {
         recentView = findViewById(R.id.mainHomeMenuRecent);
         settingsView = findViewById(R.id.mainHomeMenuSettings);
         aboutView = findViewById(R.id.mainHomeMenuAbout);
+        diagnosticsView = findViewById(R.id.mainHomeMenuDiagnostics);
 
         tintCompoundDrawables(helpView);
         tintCompoundDrawables(recentView);
         tintCompoundDrawables(settingsView);
         tintCompoundDrawables(aboutView);
+        tintCompoundDrawables(diagnosticsView);
     }
 
     public Observable<Object> closeButtonClicks() {
@@ -56,6 +59,7 @@ public final class HomeMenuView extends NestedScrollView {
                 clicks(helpView).map(ignored -> R.id.mainHomeMenuHelp),
                 clicks(recentView).map(ignored -> R.id.mainHomeMenuRecent),
                 clicks(settingsView).map(ignored -> R.id.mainHomeMenuSettings),
-                clicks(aboutView).map(ignored -> R.id.mainHomeMenuAbout));
+                clicks(aboutView).map(ignored -> R.id.mainHomeMenuAbout),
+                clicks(diagnosticsView).map(ignored -> R.id.mainHomeMenuDiagnostics));
     }
 }
