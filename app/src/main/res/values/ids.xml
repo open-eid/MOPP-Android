@@ -39,6 +39,28 @@
 
     <!-- Main About -->
     <item type="id" name="mainAboutScreen" />
+    <item type="id" name="mainAboutRiaDigiDocVersionTitle" />
+    <item type="id" name="mainAboutPreferenceV7FixVersionTitle" />
+    <item type="id" name="mainAboutGuavaVersionTitle" />
+    <item type="id" name="mainAboutCommonsIoVersionTitle" />
+    <item type="id" name="mainAboutOkioVersionTitle" />
+    <item type="id" name="mainAboutTimberVersionTitle" />
+    <item type="id" name="mainAboutButterknifeVersionTitle" />
+    <item type="id" name="mainAboutOkHttpVersionTitle" />
+    <item type="id" name="mainAboutRetrofitVersionTitle" />
+    <item type="id" name="mainAboutSpongyCastleVersionTitle" />
+    <item type="id" name="mainAboutMaterialValuesVersionTitle" />
+    <item type="id" name="mainAboutDaggerVersionTitle" />
+    <item type="id" name="mainAboutConductorVersionTitle" />
+    <item type="id" name="mainAboutRxJavaVersionTitle" />
+    <item type="id" name="mainAboutRxAndroidVersionTitle" />
+    <item type="id" name="mainAboutRxBindingVersionTitle" />
+    <item type="id" name="mainAboutAutoValueVersionTitle" />
+    <item type="id" name="mainAboutAutoValueParcelVersionTitle" />
+    <item type="id" name="mainAboutThreeTenAbpVersionTitle" />
+    <item type="id" name="mainAboutExpandableLayoutVersionTitle" />
+    <item type="id" name="mainAboutJunitVersionTitle" />
+    <item type="id" name="mainAboutTruthVersionTitle" />
 
     <!-- Signature Home -->
     <item type="id" name="signatureHomeScreen" />
