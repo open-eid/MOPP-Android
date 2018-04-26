@@ -6,6 +6,7 @@ import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
+import ee.ria.DigiDoc.android.model.idcard.IdCardStatus;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.tokenlibrary.Token;
@@ -21,15 +22,20 @@ interface Result extends MviResult<ViewState> {
 
         @Override
         public ViewState reduce(ViewState state) {
+            IdCardDataResponse idCardDataResponse = idCardDataResponse();
+
             ViewState.Builder builder = state.buildWith();
 
-            if (idCardDataResponse() == null && error() == null) {
+            if (idCardDataResponse == null && error() == null) {
                 builder
                         .idCardDataResponse(IdCardDataResponse.initial())
                         .error(null)
                         .codeUpdateAction(null);
-            } else if (idCardDataResponse() != null) {
-                builder.idCardDataResponse(idCardDataResponse());
+            } else if (idCardDataResponse != null) {
+                builder.idCardDataResponse(idCardDataResponse);
+                if (!idCardDataResponse.status().equals(IdCardStatus.CARD_DETECTED)) {
+                    builder.codeUpdateAction(null);
+                }
             } else if (error() != null) {
                 builder.error(error()).codeUpdateAction(null);
             }
