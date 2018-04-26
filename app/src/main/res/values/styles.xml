@@ -117,4 +117,11 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <style name="Widget.Application.EID.Button.Positive" parent="Widget.Application.Button.Container">
+    </style>
+
+    <style name="Widget.Application.EID.Button.Negative" parent="Widget.Application.EID.Button.Positive">
+        <item name="android:background">@drawable/button_eid_negative</item>
+    </style>
+
 </resources>

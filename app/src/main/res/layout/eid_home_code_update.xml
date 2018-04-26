@@ -48,12 +48,18 @@
             <ee.ria.DigiDoc.android.eid.OrderedListView
                 android:id="@id/eidHomeCodeUpdateText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginTop="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@id/eidHomeCodeUpdateCurrentLabel"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginTop="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@id/eidHomeCodeUpdateCurrent"
@@ -68,7 +74,10 @@
             <android.support.design.widget.TextInputLayout
                 android:id="@id/eidHomeCodeUpdateNewLabel"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginTop="@dimen/material_baseline_grid_1x"
+                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@id/eidHomeCodeUpdateNew"
@@ -83,7 +92,10 @@
             <android.support.design.widget.TextInputLayout
                 android:id="@id/eidHomeCodeUpdateRepeatLabel"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginTop="@dimen/material_baseline_grid_1x"
+                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@id/eidHomeCodeUpdateRepeat"
@@ -98,16 +110,19 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:layout_marginTop="@dimen/material_content_edge_margin_horizontal">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    tools:ignore="UselessParent">
 
                     <Button
                         android:id="@id/eidHomeCodeUpdateNegativeButton"
+                        style="@style/Widget.Application.EID.Button.Negative"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -115,6 +130,7 @@
 
                     <Button
                         android:id="@id/eidHomeCodeUpdatePositiveButton"
+                        style="@style/Widget.Application.EID.Button.Positive"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

@@ -51,7 +51,7 @@ public final class OrderedListView extends LinearLayout {
         LinearLayout container = new LinearLayout(getContext());
         container.setOrientation(HORIZONTAL);
         container.addView(iconView, new LayoutParams(
-                getResources().getDimensionPixelSize(R.dimen.material_baseline_grid_1x),
+                getResources().getDimensionPixelSize(R.dimen.material_baseline_grid_2x),
                 LayoutParams.WRAP_CONTENT));
         container.addView(textView, new LayoutParams(0, LayoutParams.WRAP_CONTENT, 1.0f));
 
