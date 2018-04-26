@@ -20,10 +20,12 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.tokenlibrary.Token;
+import ee.ria.tokenlibrary.exception.PinVerificationException;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
+import static ee.ria.DigiDoc.android.utils.InputMethodUtils.hideSoftKeyboard;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 @SuppressLint("ViewConstructor")
@@ -47,6 +49,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     private final EIDDataView dataView;
     private final AlertDialog errorDialog;
     private final CodeUpdateView codeUpdateView;
+    private final AlertDialog codeUpdateErrorDialog;
 
     private final ViewDisposables disposables = new ViewDisposables();
     private final Navigator navigator;
@@ -72,6 +75,9 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.cancel())
                 .create();
         codeUpdateView = findViewById(R.id.eidHomeCodeUpdate);
+        codeUpdateErrorDialog = new AlertDialog.Builder(context)
+                .setPositiveButton(android.R.string.ok, ((dialog, which) -> dialog.cancel()))
+                .create();
         navigator = Application.component(context).navigator();
     }
 
@@ -93,8 +99,9 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     }
 
     private Observable<Intent.CodeUpdateIntent> codeUpdateIntent() {
+        //noinspection unchecked
         return Observable
-                .merge(dataView.actions().map(Intent.CodeUpdateIntent::show),
+                .mergeArray(dataView.actions().map(Intent.CodeUpdateIntent::show),
                         codeUpdateView.closes().map(ignored -> Intent.CodeUpdateIntent.clear()),
                         codeUpdateView.requests()
                                 .filter(ignored ->
@@ -102,6 +109,9 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
                                 .map(request ->
                                         Intent.CodeUpdateIntent
                                                 .request(codeUpdateAction, request, data, token)),
+                        cancels(codeUpdateErrorDialog)
+                                .doOnNext(ignored -> hideSoftKeyboard(this))
+                                .map(ignored -> Intent.CodeUpdateIntent.clear()),
                         codeUpdateIntentSubject);
     }
 
@@ -124,19 +134,33 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
         progressMessageView.setVisibility(data == null ? VISIBLE : GONE);
         dataView.setVisibility(data == null ? GONE : VISIBLE);
 
-        if (state.error() != null) {
-            errorDialog.show();
-        } else {
-            errorDialog.dismiss();
-        }
-
         codeUpdateAction = state.codeUpdateAction();
+        CodeUpdateResponse codeUpdateResponse = state.codeUpdateResponse();
         navigationViewVisibilitySubject.onNext(codeUpdateAction == null);
         coordinatorView.setVisibility(codeUpdateAction == null ? VISIBLE : GONE);
         codeUpdateView.setVisibility(codeUpdateAction == null ? GONE : VISIBLE);
         if (codeUpdateAction != null) {
-            codeUpdateView.render(state.codeUpdateState(), codeUpdateAction,
-                    state.codeUpdateResponse(), state.codeUpdateSuccessMessageVisible());
+            codeUpdateView.render(state.codeUpdateState(), codeUpdateAction, codeUpdateResponse,
+                    state.codeUpdateSuccessMessageVisible());
+        }
+
+        Throwable error = state.error();
+        Throwable codeUpdateError = codeUpdateResponse == null ? null : codeUpdateResponse.error();
+        if (error != null) {
+            codeUpdateErrorDialog.dismiss();
+            errorDialog.show();
+        } else if (codeUpdateAction != null && codeUpdateError != null) {
+            errorDialog.dismiss();
+            if (codeUpdateError instanceof PinVerificationException) {
+                codeUpdateErrorDialog.setMessage(getResources()
+                        .getString(codeUpdateAction.currentBlockedErrorRes()));
+            } else {
+                codeUpdateErrorDialog.setMessage(getResources().getString(R.string.eid_home_error));
+            }
+            codeUpdateErrorDialog.show();
+        } else {
+            errorDialog.dismiss();
+            codeUpdateErrorDialog.dismiss();
         }
     }
 
@@ -172,6 +196,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     @Override
     public void onDetachedFromWindow() {
         errorDialog.dismiss();
+        codeUpdateErrorDialog.dismiss();
         disposables.detach();
         navigator.removeBackButtonClickListener(this);
         super.onDetachedFromWindow();

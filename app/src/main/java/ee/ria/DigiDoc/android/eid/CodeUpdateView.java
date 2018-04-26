@@ -24,6 +24,7 @@ import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static ee.ria.DigiDoc.android.utils.InputMethodUtils.hideSoftKeyboard;
 
 public final class CodeUpdateView extends CoordinatorLayout {
 
@@ -85,6 +86,7 @@ public final class CodeUpdateView extends CoordinatorLayout {
             currentView.setText(null);
             newView.setText(null);
             repeatView.setText(null);
+            hideSoftKeyboard(this);
         }
 
         if (response == null) {

@@ -194,6 +194,11 @@
     <string name="eid_home_code_update_current_error_invalid_pin2_edit">Wrong PIN2. %1$d attempts left. Typing %1$d more times wrong PIN2, your PIN2 will be blocked.</string>
     <string name="eid_home_code_update_current_error_invalid_pin2_unblock">Wrong PUK. %1$d attempts left. Typing %1$d more times wrong PUK, your PUK will be blocked.</string>
     <string name="eid_home_code_update_current_error_invalid_puk_edit">Wrong PUK. %1$d attempts left. Typing %1$d more times wrong PUK, your PUK will be blocked.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin1_edit">PIN1 blocked. Use your PUK code to unblock your PIN1</string>
+    <string name="eid_home_code_update_current_error_blocked_pin1_unblock">PUK code is blocked. See how to get new codes</string>
+    <string name="eid_home_code_update_current_error_blocked_pin2_edit">PIN2 blocked. Use your PUK code to unblock your PIN2</string>
+    <string name="eid_home_code_update_current_error_blocked_pin2_unblock">PUK code is blocked. See how to get new codes</string>
+    <string name="eid_home_code_update_current_error_blocked_puk_edit">PUK code is blocked. See how to get new codes</string>
 
     <string name="eid_home_code_update_new_error_min_length_pin1">New PIN1 code must be at least %1$d digits long</string>
     <string name="eid_home_code_update_new_error_min_length_pin2">New PIN2 code must be at least %1$d digits long</string>
@@ -214,5 +219,7 @@
     <string name="eid_home_code_update_repeat_error_mismatch_pin1">New PIN1 codes must match</string>
     <string name="eid_home_code_update_repeat_error_mismatch_pin2">New PIN2 codes must match</string>
     <string name="eid_home_code_update_repeat_error_mismatch_puk">New PUK codes must match</string>
+
+
 
 </resources>
