@@ -4,8 +4,11 @@ import android.os.Parcelable;
 import android.support.annotation.StringRes;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
+import com.ryanharter.auto.value.parcel.ParcelAdapter;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.utils.parcel.ImmutableIntegerListTypeAdapter;
 import ee.ria.tokenlibrary.Token;
 
 @AutoValue
@@ -19,7 +22,8 @@ abstract class CodeUpdateAction implements Parcelable {
     @CodeUpdateType abstract String updateType();
 
     @StringRes abstract int titleRes();
-    @StringRes abstract int textRes();
+    @ParcelAdapter(ImmutableIntegerListTypeAdapter.class)
+    abstract ImmutableList<Integer> textRowsRes();
     @StringRes abstract int currentRes();
     @StringRes abstract int newRes();
     @StringRes abstract int repeatRes();
@@ -44,7 +48,7 @@ abstract class CodeUpdateAction implements Parcelable {
 
     static CodeUpdateAction create(Token.PinType pinType, @CodeUpdateType String updateType) {
         int titleRes;
-        int textRes;
+        ImmutableList<Integer> textRowsRes;
         int currentRes;
         int newRes;
         int repeatRes;
@@ -67,7 +71,10 @@ abstract class CodeUpdateAction implements Parcelable {
         if (pinType == Token.PinType.PIN1) {
             if (updateType.equals(CodeUpdateType.EDIT)) {
                 titleRes = R.string.eid_home_code_update_title_pin1_edit;
-                textRes = R.string.eid_home_code_update_text_pin1_edit;
+                textRowsRes = ImmutableList.of(
+                        R.string.eid_home_code_update_text_row1_pin1_edit,
+                        R.string.eid_home_code_update_text_row2_pin1_edit,
+                        R.string.eid_home_code_update_text_row3_pin1_edit);
                 currentRes = R.string.eid_home_code_update_current_pin1_edit;
                 currentMinLength = PIN1_MIN_LENGTH;
                 newMinLength = PIN1_MIN_LENGTH;
@@ -78,7 +85,11 @@ abstract class CodeUpdateAction implements Parcelable {
                         R.string.eid_home_code_update_current_error_invalid_pin1_edit;
             } else {
                 titleRes = R.string.eid_home_code_update_title_pin1_unblock;
-                textRes = R.string.eid_home_code_update_text_pin1_unblock;
+                textRowsRes = ImmutableList.of(
+                        R.string.eid_home_code_update_text_row1_pin1_unblock,
+                        R.string.eid_home_code_update_text_row2_pin1_unblock,
+                        R.string.eid_home_code_update_text_row3_pin1_unblock,
+                        R.string.eid_home_code_update_text_row4_pin1_unblock);
                 currentRes = R.string.eid_home_code_update_current_pin1_unblock;
                 currentMinLength = PUK_MIN_LENGTH;
                 newMinLength = PIN1_MIN_LENGTH;
@@ -100,7 +111,10 @@ abstract class CodeUpdateAction implements Parcelable {
         } else if (pinType == Token.PinType.PIN2) {
             if (updateType.equals(CodeUpdateType.EDIT)) {
                 titleRes = R.string.eid_home_code_update_title_pin2_edit;
-                textRes = R.string.eid_home_code_update_text_pin2_edit;
+                textRowsRes = ImmutableList.of(
+                        R.string.eid_home_code_update_text_row1_pin2_edit,
+                        R.string.eid_home_code_update_text_row2_pin2_edit,
+                        R.string.eid_home_code_update_text_row3_pin2_edit);
                 currentRes = R.string.eid_home_code_update_current_pin2_edit;
                 currentMinLength = PIN2_MIN_LENGTH;
                 newMinLength = PIN2_MIN_LENGTH;
@@ -111,7 +125,11 @@ abstract class CodeUpdateAction implements Parcelable {
                         R.string.eid_home_code_update_current_error_invalid_pin2_edit;
             } else {
                 titleRes = R.string.eid_home_code_update_title_pin2_unblock;
-                textRes = R.string.eid_home_code_update_text_pin2_unblock;
+                textRowsRes = ImmutableList.of(
+                        R.string.eid_home_code_update_text_row1_pin2_unblock,
+                        R.string.eid_home_code_update_text_row2_pin2_unblock,
+                        R.string.eid_home_code_update_text_row3_pin2_unblock,
+                        R.string.eid_home_code_update_text_row4_pin2_unblock);
                 currentRes = R.string.eid_home_code_update_current_pin2_unblock;
                 currentMinLength = PUK_MIN_LENGTH;
                 newMinLength = PIN2_MIN_LENGTH;
@@ -132,7 +150,9 @@ abstract class CodeUpdateAction implements Parcelable {
             repeatMismatchErrorRes = R.string.eid_home_code_update_repeat_error_mismatch_pin2;
         } else {
             titleRes = R.string.eid_home_code_update_title_puk_edit;
-            textRes = R.string.eid_home_code_update_text_puk_edit;
+            textRowsRes = ImmutableList.of(
+                    R.string.eid_home_code_update_text_row1_puk_edit,
+                    R.string.eid_home_code_update_text_row2_puk_edit);
             currentRes = R.string.eid_home_code_update_current_puk_edit;
             newRes = R.string.eid_home_code_update_new_puk;
             repeatRes = R.string.eid_home_code_update_repeat_puk;
@@ -151,8 +171,8 @@ abstract class CodeUpdateAction implements Parcelable {
             repeatMismatchErrorRes = R.string.eid_home_code_update_repeat_error_mismatch_puk;
         }
 
-        return new AutoValue_CodeUpdateAction(pinType, updateType, titleRes, textRes, currentRes,
-                newRes, repeatRes, positiveButtonRes, currentMinLength, newMinLength,
+        return new AutoValue_CodeUpdateAction(pinType, updateType, titleRes, textRowsRes,
+                currentRes, newRes, repeatRes, positiveButtonRes, currentMinLength, newMinLength,
                 repeatMinLength, successMessageRes, currentMinLengthErrorRes,
                 currentInvalidErrorRes, newMinLengthErrorRes, newPersonalCodeErrorRes,
                 newDateOfBirthErrorRes, newTooEasyErrorRes, newSameAsCurrentErrorRes,

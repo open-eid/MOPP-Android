@@ -45,11 +45,10 @@
                 android:text="@string/eid_home_code_update_success_pin1"
                 android:visibility="gone" />
 
-            <TextView
+            <ee.ria.DigiDoc.android.eid.OrderedListView
                 android:id="@id/eidHomeCodeUpdateText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/eid_home_code_update_text_pin1_edit" />
+                android:layout_height="wrap_content" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@id/eidHomeCodeUpdateCurrentLabel"

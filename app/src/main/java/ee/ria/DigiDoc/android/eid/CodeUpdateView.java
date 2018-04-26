@@ -29,7 +29,7 @@ public final class CodeUpdateView extends CoordinatorLayout {
 
     private final Toolbar toolbarView;
     private final TextView successMessageView;
-    private final TextView textView;
+    private final OrderedListView textView;
     private final TextInputLayout currentLabelView;
     private final EditText currentView;
     private final TextInputLayout newLabelView;
@@ -71,7 +71,7 @@ public final class CodeUpdateView extends CoordinatorLayout {
                        @Nullable CodeUpdateResponse response, boolean successMessageVisible) {
         toolbarView.setTitle(action.titleRes());
         successMessageView.setText(action.successMessageRes());
-        textView.setText(action.textRes());
+        textView.itemsRes(action.textRowsRes());
         currentLabelView.setHint(getResources().getString(action.currentRes()));
         newLabelView.setHint(getResources().getString(action.newRes()));
         repeatLabelView.setHint(getResources().getString(action.repeatRes()));
