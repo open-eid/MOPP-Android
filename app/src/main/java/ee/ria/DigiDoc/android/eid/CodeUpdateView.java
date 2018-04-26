@@ -142,4 +142,18 @@ public final class CodeUpdateView extends CoordinatorLayout {
                         newView.getText().toString().trim(),
                         repeatView.getText().toString().trim()));
     }
+
+    @Override
+    public void onDetachedFromWindow() {
+        /*
+         * On some devices (Nexus 6, Android 7.1.1),
+         * exception is thrown without closing the keyboard.
+         *
+         * java.lang.NullPointerException: Attempt to invoke interface method
+         * 'void android.view.inputmethod.InputConnection.closeConnection()'
+         * on a null object reference
+         */
+        hideSoftKeyboard(this);
+        super.onDetachedFromWindow();
+    }
 }
