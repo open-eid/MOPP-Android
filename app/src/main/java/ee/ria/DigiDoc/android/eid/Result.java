@@ -96,7 +96,6 @@ interface Result extends MviResult<ViewState> {
         public ViewState reduce(ViewState state) {
             ViewState.Builder builder = state.buildWith()
                     .codeUpdateState(state())
-                    .codeUpdateAction(action())
                     .codeUpdateResponse(response());
             if (idCardData() != null && token() != null) {
                 builder.idCardDataResponse(IdCardDataResponse.success(idCardData(), token()));
@@ -104,6 +103,8 @@ interface Result extends MviResult<ViewState> {
             Boolean success = success();
             if (success != null) {
                 builder.codeUpdateSuccessMessageVisible(success);
+            } else {
+                builder.codeUpdateAction(action());
             }
             return builder.build();
         }
