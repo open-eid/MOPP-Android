@@ -91,11 +91,8 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     }
 
     private Observable<Intent.CertificatesTitleClickIntent> certificatesTitleClickIntent() {
-        return dataView
-                .certificateTitleClicks()
-                .map(ignored ->
-                        Intent.CertificatesTitleClickIntent
-                                .create(!dataView.certificateContainerExpanded()));
+        return dataView.certificateContainerStates()
+                .map(Intent.CertificatesTitleClickIntent::create);
     }
 
     private Observable<Intent.CodeUpdateIntent> codeUpdateIntent() {
@@ -128,9 +125,8 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
         token = state.idCardDataResponse().token();
         data = state.idCardDataResponse().data();
         if (data != null) {
-            dataView.setData(data);
+            dataView.render(data, state.certificatesContainerExpanded());
         }
-        dataView.certificateContainerExpanded(state.certificatesContainerExpanded());
         progressMessageView.setVisibility(data == null ? VISIBLE : GONE);
         dataView.setVisibility(data == null ? GONE : VISIBLE);
 

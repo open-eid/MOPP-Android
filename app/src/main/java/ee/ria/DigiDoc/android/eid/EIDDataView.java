@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.eid;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -44,6 +45,9 @@ public final class EIDDataView extends LinearLayout {
     private final View pukErrorView;
     private final TextView pukLinkView;
 
+    @ColorInt private final int collapsedTitleColor;
+    @ColorInt private final int expandedTitleColor;
+
     public EIDDataView(Context context) {
         this(context, null);
     }
@@ -81,14 +85,31 @@ public final class EIDDataView extends LinearLayout {
 
         tintCompoundDrawables(certificatesTitleView);
         formatter.underline(pukLinkView);
+
+        TypedArray a = getContext().obtainStyledAttributes(new int[] {
+                android.R.attr.textColorSecondary, R.attr.colorAccent});
+        collapsedTitleColor = a.getColor(0, Color.BLACK);
+        expandedTitleColor = a.getColor(1, Color.BLACK);
+        a.recycle();
     }
 
-    public void setData(@NonNull EIDData data) {
+    public void render(@NonNull EIDData data, boolean certificateContainerExpanded) {
         typeView.setText(formatter.eidType(data.type()));
         givenNamesView.setText(data.givenNames());
         surnameView.setText(data.surname());
         personalCodeView.setText(data.personalCode());
         citizenshipView.setText(data.citizenship());
+
+        certificatesTitleView.setTextColor(certificateContainerExpanded
+                ? expandedTitleColor
+                : collapsedTitleColor);
+        int drawable = certificateContainerExpanded
+                ? R.drawable.ic_icon_accordion_expanded
+                : R.drawable.ic_icon_accordion_collapsed;
+        certificatesTitleView.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, 0, 0, 0);
+        tintCompoundDrawables(certificatesTitleView);
+        certificatesContainerView.setExpanded(certificateContainerExpanded);
+
         authCertificateDataView.data(Token.CertType.CertAuth, data.authCertificate(),
                 data.pukRetryCount());
         signCertificateDataView.data(Token.CertType.CertSign, data.signCertificate(),
@@ -122,27 +143,9 @@ public final class EIDDataView extends LinearLayout {
         }
     }
 
-    public Observable<Object> certificateTitleClicks() {
-        return clicks(certificatesTitleView);
-    }
-
-    public boolean certificateContainerExpanded() {
-        return certificatesContainerView.isExpanded();
-    }
-
-    public void certificateContainerExpanded(boolean certificateContainerExpanded) {
-        int colorAttr = certificateContainerExpanded
-                ? R.attr.colorAccent
-                : android.R.attr.textColorSecondary;
-        TypedArray a = getContext().obtainStyledAttributes(new int[]{colorAttr});
-        certificatesTitleView.setTextColor(a.getColor(0, Color.BLACK));
-        a.recycle();
-        int drawable = certificateContainerExpanded
-                ? R.drawable.ic_icon_accordion_expanded
-                : R.drawable.ic_icon_accordion_collapsed;
-        certificatesTitleView.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, 0, 0, 0);
-        tintCompoundDrawables(certificatesTitleView);
-        certificatesContainerView.setExpanded(certificateContainerExpanded);
+    public Observable<Boolean> certificateContainerStates() {
+        return clicks(certificatesTitleView)
+                .map(ignored -> !certificatesContainerView.isExpanded());
     }
 
     @SuppressWarnings("unchecked")

@@ -62,29 +62,32 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
 
     @Override
     public void render(ViewState state) {
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-        View view;
-        if (state.viewId() == R.id.mainHomeSignature) {
-            view = new SignatureHomeView(getContext());
-        } else if (state.viewId() == R.id.mainHomeCrypto) {
-            view = new CryptoHomeView(getContext());
-        } else if (state.viewId() == R.id.mainHomeEID) {
-            view = new EIDHomeView(getContext(), eidScreenId);
-        } else {
-            throw new IllegalArgumentException("Unknown view ID " + state.viewId());
-        }
-        view.setId(state.viewId());
-        navigationContainerView.removeAllViews();
-        navigationContainerView.addView(view, layoutParams);
+        View currentNavigationView = navigationContainerView.getChildAt(0);
+        if (currentNavigationView == null || currentNavigationView.getId() != state.viewId()) {
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+            View view;
+            if (state.viewId() == R.id.mainHomeSignature) {
+                view = new SignatureHomeView(getContext());
+            } else if (state.viewId() == R.id.mainHomeCrypto) {
+                view = new CryptoHomeView(getContext());
+            } else if (state.viewId() == R.id.mainHomeEID) {
+                view = new EIDHomeView(getContext(), eidScreenId);
+            } else {
+                throw new IllegalArgumentException("Unknown view ID " + state.viewId());
+            }
+            view.setId(state.viewId());
+            navigationContainerView.removeAllViews();
+            navigationContainerView.addView(view, layoutParams);
 
-        HomeViewChild homeViewChild = (HomeViewChild) view;
-        homeViewChild.homeToolbar().overflowButtonClicks()
-                .map(ignored -> Intent.MenuIntent.state(true))
-                .subscribe(menuIntentSubject);
-        homeViewChild.navigationViewVisibility()
-                .map(Intent.NavigationVisibilityIntent::create)
-                .subscribe(navigationVisibilityIntentSubject);
+            HomeViewChild homeViewChild = (HomeViewChild) view;
+            homeViewChild.homeToolbar().overflowButtonClicks()
+                    .map(ignored -> Intent.MenuIntent.state(true))
+                    .subscribe(menuIntentSubject);
+            homeViewChild.navigationViewVisibility()
+                    .map(Intent.NavigationVisibilityIntent::create)
+                    .subscribe(navigationVisibilityIntentSubject);
+        }
 
         if (state.menuOpen()) {
             menuDialog.show();
