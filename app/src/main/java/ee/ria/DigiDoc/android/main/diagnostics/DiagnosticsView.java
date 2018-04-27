@@ -16,7 +16,7 @@ import ee.ria.libdigidocpp.digidoc;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 
-public class DiagnosticsView extends ScrollView {
+public final class DiagnosticsView extends ScrollView {
 
     private final Toolbar toolbarView;
 
