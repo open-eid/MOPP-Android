@@ -19,6 +19,17 @@
     <string name="main_home_menu_about">About</string>
     <string name="main_home_menu_diagnostics">Diagnostics</string>
 
+    <!-- Main Settings -->
+    <string name="main_settings_title">Settings</string>
+    <string name="main_settings_phone_no_title">Mobile-ID phone number</string>
+    <string name="main_settings_personal_code_title">Personal code</string>
+    <string name="main_settings_role_title">Role</string>
+    <string name="main_settings_city_title">City</string>
+    <string name="main_settings_county_title">County</string>
+    <string name="main_settings_country_title">Country</string>
+    <string name="main_settings_postal_code_title">Postal code</string>
+    <string name="main_settings_signature_profile_title">Default file type</string>
+
     <!-- Main About -->
     <string name="main_about_title">Info</string>
     <string name="main_about_ria_digidoc_version_title">RIA DigiDoc</string>
@@ -52,17 +63,6 @@
     <string name="main_about_mit_license_url">https://opensource.org/licenses/MIT</string>
     <string name="main_about_eclipse_license_title">Eclipse license version 1.0</string>
     <string name="main_about_eclipse_license_url">https://www.eclipse.org/legal/epl-v10.html</string>
-
-    <!-- Main Settings -->
-    <string name="main_settings_title">Settings</string>
-    <string name="main_settings_phone_no_title">Mobile-ID phone number</string>
-    <string name="main_settings_personal_code_title">Personal code</string>
-    <string name="main_settings_role_title">Role</string>
-    <string name="main_settings_city_title">City</string>
-    <string name="main_settings_county_title">County</string>
-    <string name="main_settings_country_title">Country</string>
-    <string name="main_settings_postal_code_title">Postal code</string>
-    <string name="main_settings_signature_profile_title">Default file type</string>
 
     <!-- Main Diagnostics -->
     <string name="main_diagnostics_title">Diagnostics</string>

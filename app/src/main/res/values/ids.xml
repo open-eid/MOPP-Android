@@ -36,11 +36,6 @@
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsFragment" />
 
-    <!-- Main Diagnostics -->
-    <item type="id" name="mainDiagnosticsApplicationVersion" />
-    <item type="id" name="mainDiagnosticsAndroidVersion" />
-    <item type="id" name="mainDiagnosticsLibdigidocppVersion" />
-
     <!-- Main About -->
     <item type="id" name="mainAboutScreen" />
     <item type="id" name="mainAboutRiaDigiDocVersionTitle" />
@@ -65,6 +60,12 @@
     <item type="id" name="mainAboutExpandableLayoutVersionTitle" />
     <item type="id" name="mainAboutJunitVersionTitle" />
     <item type="id" name="mainAboutTruthVersionTitle" />
+
+    <!-- Main Diagnostics -->
+    <item type="id" name="mainDiagnosticsScreen" />
+    <item type="id" name="mainDiagnosticsApplicationVersion" />
+    <item type="id" name="mainDiagnosticsAndroidVersion" />
+    <item type="id" name="mainDiagnosticsLibdigidocppVersion" />
 
     <!-- Signature Home -->
     <item type="id" name="signatureHomeCreateButton" />

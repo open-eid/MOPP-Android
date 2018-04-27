@@ -1,11 +1,9 @@
 package ee.ria.DigiDoc.android.main.about;
 
 import android.content.Context;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
-import android.widget.ScrollView;
 import android.widget.TextView;
-
-import com.jakewharton.rxbinding2.support.v7.widget.RxToolbar;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
@@ -14,7 +12,9 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 
-public final class AboutView extends ScrollView {
+import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+
+public final class AboutView extends CoordinatorLayout {
 
     private final Toolbar toolbarView;
 
@@ -86,7 +86,7 @@ public final class AboutView extends ScrollView {
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         disposables.attach();
-        disposables.add(RxToolbar.navigationClicks(toolbarView).subscribe(o ->
+        disposables.add(navigationClicks(toolbarView).subscribe(o ->
                 navigator.execute(Transaction.pop())));
     }
 
