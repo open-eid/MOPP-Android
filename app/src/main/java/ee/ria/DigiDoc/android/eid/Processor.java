@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.eid;
 
+import android.app.Application;
+
 import com.google.common.collect.ImmutableSet;
 
 import org.threeten.bp.LocalDate;
@@ -9,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeInvalidError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeMinLengthError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfDateOfBirthError;
@@ -18,6 +21,8 @@ import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeTooEasyError;
 import ee.ria.DigiDoc.android.model.EIDData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.tokenlibrary.Token;
 import ee.ria.tokenlibrary.exception.PinVerificationException;
 import io.reactivex.Observable;
@@ -26,6 +31,8 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createBrowserIntent;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
@@ -37,7 +44,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<Intent.CodeUpdateIntent, Result.CodeUpdateResult>
             codeUpdate;
 
-    @Inject Processor(IdCardService idCardService) {
+    @Inject Processor(Application application, Navigator navigator, IdCardService idCardService) {
         load = upstream -> upstream.switchMap(action -> {
             Observable<Result.LoadResult> resultObservable = idCardService.data()
                     .map(idCardDataResponse -> {
@@ -66,7 +73,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
             if (updateAction == null) {
                 return Observable.just(Result.CodeUpdateResult.clear());
             } else if (request == null || data == null || token == null) {
-                return Observable.just(Result.CodeUpdateResult.action(updateAction));
+                if (updateAction.pinType().equals(Token.PinType.PUK)
+                        && updateAction.updateType().equals(CodeUpdateType.UNBLOCK)) {
+                    navigator.execute(Transaction
+                            .activity(createBrowserIntent(application,
+                                    R.string.eid_home_data_certificates_puk_link_url), null));
+                    return Observable.just(Result.CodeUpdateResult.clear());
+                } else {
+                    return Observable.just(Result.CodeUpdateResult.action(updateAction));
+                }
             } else {
                 CodeUpdateResponse response = validate(updateAction, request, data);
                 if (!response.success()) {

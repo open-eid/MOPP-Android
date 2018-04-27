@@ -53,7 +53,7 @@
         style="@style/Widget.Application.MenuItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/main_diagnostics_screen_title"
+        android:text="@string/main_home_menu_diagnostics"
         android:drawableStart="@drawable/ic_icon_graph_white" />
 
 </LinearLayout>

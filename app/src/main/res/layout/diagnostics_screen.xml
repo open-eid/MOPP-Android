@@ -18,7 +18,7 @@
             app:layout_scrollFlags="scroll|enterAlways|snap"
             app:navigationContentDescription="@string/back"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:title="@string/main_diagnostics_screen_title" />
+            app:title="@string/main_diagnostics_title" />
 
     </android.support.design.widget.AppBarLayout>
 

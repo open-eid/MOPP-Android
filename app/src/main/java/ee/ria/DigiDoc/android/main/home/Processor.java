@@ -1,7 +1,7 @@
 package ee.ria.DigiDoc.android.main.home;
 
 import android.app.Application;
-import android.content.Intent;
+import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.util.SparseIntArray;
@@ -15,7 +15,6 @@ import ee.ria.DigiDoc.android.main.home.Intent.NavigationVisibilityIntent;
 import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
 import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
-import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -61,12 +60,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return Observable.just(Result.MenuResult.create(isOpen));
             } else if (item != null) {
                 clearEidViewModel();
-                if (item == R.id.mainHomeMenuHelp) {
-                    Intent browserIntent = createBrowserIntent(application, R.string.help_url);
-                    navigator.execute(Transaction.activity(browserIntent, null));
-                } else {
-                    navigator.execute(Transaction.push(menuItemToScreen(item)));
-                }
+                navigator.execute(menuItemToTransaction(application, item));
                 return Observable.just(Result.MenuResult.create(false));
             }
             throw new IllegalStateException("Action is in invalid state: " + action);
@@ -95,16 +89,20 @@ final class Processor implements ObservableTransformer<Action, Result> {
         }
     }
 
-    private Screen menuItemToScreen(@IdRes int item) {
+    private static Transaction menuItemToTransaction(Context context, @IdRes int item) {
         switch (item) {
+            case R.id.mainHomeMenuHelp:
+                return Transaction
+                        .activity(createBrowserIntent(context, R.string.main_home_menu_help_url),
+                                null);
             case R.id.mainHomeMenuRecent:
-                return SignatureListScreen.create();
+                return Transaction.push(SignatureListScreen.create());
             case R.id.mainHomeMenuSettings:
-                return SettingsScreen.create();
+                return Transaction.push(SettingsScreen.create());
             case R.id.mainHomeMenuAbout:
-                return AboutScreen.create();
+                return Transaction.push(AboutScreen.create());
             case R.id.mainHomeMenuDiagnostics:
-                return DiagnosticsScreen.create();
+                return Transaction.push(DiagnosticsScreen.create());
             default:
                 throw new IllegalArgumentException("Unknown menu item: " + item);
         }
