@@ -106,9 +106,10 @@ dependencies {
     implementation "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:${rxBindingVersion}"
     implementation "com.jakewharton.rxbinding2:rxbinding-design:${rxBindingVersion}"
 
-    implementation "com.google.auto.value:auto-value:${autoValueVersion}"
+    implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
     annotationProcessor "com.ryanharter.auto.value:auto-value-parcel:${autoValueParcelVersion}"
+    implementation "com.ryanharter.auto.value:auto-value-parcel-adapter:${autoValueParcelVersion}"
 
     implementation "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
 

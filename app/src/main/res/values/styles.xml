@@ -38,6 +38,7 @@
         <item name="android:textSize">@dimen/material_typography_regular_title_text_size</item>
         <item name="android:textColor">@color/title</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:paddingStart">0dp</item>
     </style>
 
     <style name="Widget.Application.ProgressBar" parent="Widget.AppCompat.ProgressBar">
@@ -114,6 +115,13 @@
         <item name="android:paddingTop">@dimen/material_baseline_grid_0.5x</item>
         <item name="android:paddingBottom">@dimen/material_baseline_grid_0.5x</item>
         <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Widget.Application.EID.Button.Positive" parent="Widget.Application.Button.Container">
+    </style>
+
+    <style name="Widget.Application.EID.Button.Negative" parent="Widget.Application.EID.Button.Positive">
+        <item name="android:background">@drawable/button_eid_negative</item>
     </style>
 
 </resources>

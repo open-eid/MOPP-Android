@@ -32,7 +32,7 @@ dependencies {
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
 
-    implementation "com.google.auto.value:auto-value:${autoValueVersion}"
+    implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
     implementation "com.madgag.spongycastle:core:${spongycastleVersion}"

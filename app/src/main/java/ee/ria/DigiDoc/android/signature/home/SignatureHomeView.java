@@ -9,15 +9,16 @@ import android.widget.Button;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.main.home.HomeToolbar;
+import ee.ria.DigiDoc.android.main.home.HomeView;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
-public final class SignatureHomeView extends CoordinatorLayout implements
-        HomeToolbar.HomeToolbarAware {
+public final class SignatureHomeView extends CoordinatorLayout implements HomeView.HomeViewChild {
 
     private final HomeToolbar toolbarView;
     private final Button createButton;
@@ -46,6 +47,11 @@ public final class SignatureHomeView extends CoordinatorLayout implements
     @Override
     public HomeToolbar homeToolbar() {
         return toolbarView;
+    }
+
+    @Override
+    public Observable<Boolean> navigationViewVisibility() {
+        return Observable.never();
     }
 
     @Override

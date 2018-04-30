@@ -2,8 +2,8 @@ package ee.ria.DigiDoc.android.main.diagnostics;
 
 import android.content.Context;
 import android.os.Build;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import ee.ria.DigiDoc.BuildConfig;
@@ -16,7 +16,7 @@ import ee.ria.libdigidocpp.digidoc;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 
-public final class DiagnosticsView extends ScrollView {
+public final class DiagnosticsView extends CoordinatorLayout {
 
     private final Toolbar toolbarView;
 
@@ -26,7 +26,7 @@ public final class DiagnosticsView extends ScrollView {
 
     public DiagnosticsView(Context context) {
         super(context);
-        inflate(context, R.layout.diagnostics_screen, this);
+        inflate(context, R.layout.main_diagnostics, this);
         toolbarView = findViewById(R.id.toolbar);
         navigator = Application.component(context).navigator();
         disposables = new ViewDisposables();

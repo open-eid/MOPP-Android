@@ -47,4 +47,14 @@ interface Intent extends MviIntent {
             return new AutoValue_Intent_MenuIntent(isOpen, menuItem);
         }
     }
+
+    @AutoValue
+    abstract class NavigationVisibilityIntent implements Intent, Action {
+
+        abstract boolean visible();
+
+        static NavigationVisibilityIntent create(boolean visible) {
+            return new AutoValue_Intent_NavigationVisibilityIntent(visible);
+        }
+    }
 }

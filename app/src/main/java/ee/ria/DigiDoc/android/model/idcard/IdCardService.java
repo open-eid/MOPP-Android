@@ -24,6 +24,7 @@ import ee.ria.scardcomlibrary.CardReader;
 import ee.ria.scardcomlibrary.impl.ACS;
 import ee.ria.tokenlibrary.Token;
 import ee.ria.tokenlibrary.TokenFactory;
+import ee.ria.tokenlibrary.exception.PinVerificationException;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -80,6 +81,32 @@ public final class IdCardService {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Single<IdCardData> editPin(Token token, Token.PinType pinType, String currentPin,
+                                      String newPin) {
+        return Single
+                .fromCallable(() -> {
+                    boolean result = token
+                            .changePin(pinType, currentPin.getBytes(), newPin.getBytes());
+                    if (!result) {
+                        throw new PinVerificationException(pinType);
+                    }
+                    return data(token);
+                });
+    }
+
+    public Single<IdCardData> unblockPin(Token token, Token.PinType pinType, String puk,
+                                         String newPin) {
+        return Single
+                .fromCallable(() -> {
+                    boolean result = token.unblockAndChangePin(pinType, puk.getBytes(),
+                            newPin.getBytes());
+                    if (!result) {
+                        throw new PinVerificationException(pinType);
+                    }
+                    return data(token);
+                });
     }
 
     static final class TokeOnSubscribe implements ObservableOnSubscribe<TokenResponse> {
@@ -148,7 +175,7 @@ public final class IdCardService {
         }
     }
 
-    private static final DateTimeFormatter EXPIRY_DATE_FORMAT = new DateTimeFormatterBuilder()
+    private static final DateTimeFormatter CARD_DATE_FORMAT = new DateTimeFormatterBuilder()
             .appendPattern("dd.MM.yyyy")
             .toFormatter();
 
@@ -167,6 +194,7 @@ public final class IdCardService {
         String givenName1 = personalFile.get(2).trim();
         String givenName2 = personalFile.get(3).trim();
         String citizenship = personalFile.get(5).trim();
+        String dateOfBirthString = personalFile.get(6).trim();
         String personalCode = personalFile.get(7).trim();
         String documentNumber = personalFile.get(8).trim();
         String expiryDateString = personalFile.get(9).trim();
@@ -179,12 +207,20 @@ public final class IdCardService {
             givenNames.append(givenName2);
         }
 
+        LocalDate dateOfBirth;
+        try {
+            dateOfBirth = LocalDate.parse(dateOfBirthString, CARD_DATE_FORMAT);
+        } catch (Exception e) {
+            dateOfBirth = null;
+            Timber.e(e, "Could not parse date of birth %s", dateOfBirthString);
+        }
+
         LocalDate expiryDate;
         try {
-            expiryDate = LocalDate.parse(expiryDateString, EXPIRY_DATE_FORMAT);
+            expiryDate = LocalDate.parse(expiryDateString, CARD_DATE_FORMAT);
         } catch (Exception e) {
             expiryDate = null;
-            Timber.e("Could not parse expiry date %s", expiryDateString);
+            Timber.e(e, "Could not parse expiry date %s", expiryDateString);
         }
 
         CertificateData authCertificate = CertificateData
@@ -204,6 +240,7 @@ public final class IdCardService {
         }
 
         return IdCardData.create(type, givenNames.toString(), surname, personalCode, citizenship,
-                authCertificate, signCertificate, pukRetryCounter, documentNumber, expiryDate);
+                dateOfBirth, authCertificate, signCertificate, pukRetryCounter, documentNumber,
+                expiryDate);
     }
 }

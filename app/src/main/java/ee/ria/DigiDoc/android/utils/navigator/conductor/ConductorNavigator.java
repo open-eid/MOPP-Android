@@ -37,6 +37,7 @@ public final class ConductorNavigator implements Navigator {
     private final ViewModelProvider.Factory viewModelFactory;
     private final Map<String, ScreenViewModelProvider> viewModelProviders;
     private final Subject<ActivityResult> activityResultSubject;
+    private final List<BackButtonClickListener> backButtonClickListeners = new ArrayList<>();
 
     private Router router;
 
@@ -81,6 +82,11 @@ public final class ConductorNavigator implements Navigator {
 
     @Override
     public boolean onBackPressed() {
+        for (int i = backButtonClickListeners.size() - 1; i >= 0; i--) {
+            if (backButtonClickListeners.get(i).onBackButtonClick()) {
+                return true;
+            }
+        }
         return router.handleBack();
     }
 
@@ -140,6 +146,16 @@ public final class ConductorNavigator implements Navigator {
     @Override
     public Observable<ActivityResult> activityResults() {
         return activityResultSubject;
+    }
+
+    @Override
+    public void addBackButtonClickListener(BackButtonClickListener listener) {
+        backButtonClickListeners.add(listener);
+    }
+
+    @Override
+    public void removeBackButtonClickListener(BackButtonClickListener listener) {
+        backButtonClickListeners.remove(listener);
     }
 
     private Activity activity() {

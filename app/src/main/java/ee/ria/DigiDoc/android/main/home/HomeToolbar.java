@@ -16,10 +16,6 @@ import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
 public final class HomeToolbar extends Toolbar {
 
-    public interface HomeToolbarAware {
-        HomeToolbar homeToolbar();
-    }
-
     private final ImageButton overflowButton;
 
     public HomeToolbar(Context context) {

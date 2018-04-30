@@ -1,31 +1,36 @@
 package ee.ria.DigiDoc.android.main.home;
 
+import android.support.annotation.IdRes;
+
 import com.google.auto.value.AutoValue;
 
-import ee.ria.DigiDoc.android.signature.home.SignatureHomeScreen;
+import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
-import ee.ria.DigiDoc.android.utils.navigator.Screen;
 
 @AutoValue
 abstract class ViewState implements MviViewState {
 
-    abstract Screen screen();
+    @IdRes abstract int viewId();
 
     abstract boolean menuOpen();
+
+    abstract boolean navigationVisible();
 
     abstract Builder buildWith();
 
     static ViewState initial() {
         return new AutoValue_ViewState.Builder()
-                .screen(SignatureHomeScreen.create())
+                .viewId(R.id.mainHomeSignature)
                 .menuOpen(false)
+                .navigationVisible(true)
                 .build();
     }
 
     @AutoValue.Builder
     interface Builder {
-        Builder screen(Screen screen);
+        Builder viewId(@IdRes int viewId);
         Builder menuOpen(boolean menuOpen);
+        Builder navigationVisible(boolean navigationVisible);
         ViewState build();
     }
 }

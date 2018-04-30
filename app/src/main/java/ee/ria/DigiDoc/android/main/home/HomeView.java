@@ -9,11 +9,8 @@ import android.widget.LinearLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.crypto.CryptoHomeScreen;
 import ee.ria.DigiDoc.android.crypto.CryptoHomeView;
-import ee.ria.DigiDoc.android.eid.EIDHomeScreen;
 import ee.ria.DigiDoc.android.eid.EIDHomeView;
-import ee.ria.DigiDoc.android.signature.home.SignatureHomeScreen;
 import ee.ria.DigiDoc.android.signature.home.SignatureHomeView;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
@@ -28,6 +25,13 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 @SuppressLint("ViewConstructor")
 public final class HomeView extends LinearLayout implements MviView<Intent, ViewState> {
 
+    public interface HomeViewChild {
+
+        HomeToolbar homeToolbar();
+
+        Observable<Boolean> navigationViewVisibility();
+    }
+
     private final String eidScreenId;
 
     private final FrameLayout navigationContainerView;
@@ -39,8 +43,7 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
     private final ViewDisposables disposables = new ViewDisposables();
 
     private final Subject<Intent.MenuIntent> menuIntentSubject = PublishSubject.create();
-
-    private final Subject<Intent.NavigationIntent> navigationIntentSubject =
+    private final Subject<Intent.NavigationVisibilityIntent> navigationVisibilityIntentSubject =
             PublishSubject.create();
 
     public HomeView(Context context, String screenId) {
@@ -54,38 +57,45 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         menuView = menuDialog.getMenuView();
         viewModel = Application.component(context).navigator().viewModel(screenId,
                 HomeViewModel.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Observable<Intent> intents() {
-        return Observable.mergeArray(initialIntent(), navigationIntent(), menuIntent());
+        viewModel.eidScreenId(eidScreenId);
     }
 
     @Override
     public void render(ViewState state) {
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-        View view;
-        if (state.screen() instanceof SignatureHomeScreen) {
-            view = new SignatureHomeView(getContext());
-        } else if (state.screen() instanceof CryptoHomeScreen) {
-            view = new CryptoHomeView(getContext());
-        } else if (state.screen() instanceof EIDHomeScreen) {
-            view = new EIDHomeView(getContext(), eidScreenId);
-        } else {
-            throw new IllegalArgumentException("Unknown screen " + state.screen());
+        View currentNavigationView = navigationContainerView.getChildAt(0);
+        if (currentNavigationView == null || currentNavigationView.getId() != state.viewId()) {
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+            View view;
+            if (state.viewId() == R.id.mainHomeSignature) {
+                view = new SignatureHomeView(getContext());
+            } else if (state.viewId() == R.id.mainHomeCrypto) {
+                view = new CryptoHomeView(getContext());
+            } else if (state.viewId() == R.id.mainHomeEID) {
+                view = new EIDHomeView(getContext(), eidScreenId);
+            } else {
+                throw new IllegalArgumentException("Unknown view ID " + state.viewId());
+            }
+            view.setId(state.viewId());
+            navigationContainerView.removeAllViews();
+            navigationContainerView.addView(view, layoutParams);
+
+            HomeViewChild homeViewChild = (HomeViewChild) view;
+            homeViewChild.homeToolbar().overflowButtonClicks()
+                    .map(ignored -> Intent.MenuIntent.state(true))
+                    .subscribe(menuIntentSubject);
+            homeViewChild.navigationViewVisibility()
+                    .map(Intent.NavigationVisibilityIntent::create)
+                    .subscribe(navigationVisibilityIntentSubject);
         }
-        navigationContainerView.removeAllViews();
-        navigationContainerView.addView(view, layoutParams);
-        ((HomeToolbar.HomeToolbarAware) view).homeToolbar().overflowButtonClicks()
-                .map(ignored -> Intent.MenuIntent.state(true))
-                .subscribe(menuIntentSubject);
+
         if (state.menuOpen()) {
             menuDialog.show();
         } else {
             menuDialog.dismiss();
         }
+
+        navigationView.setVisibility(state.navigationVisible() ? VISIBLE : GONE);
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
@@ -93,7 +103,9 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
     }
 
     private Observable<Intent.NavigationIntent> navigationIntent() {
-        return navigationIntentSubject;
+        return itemSelections(navigationView)
+                .filter(duplicates())
+                .map(item -> Intent.NavigationIntent.create(item.getItemId()));
     }
 
     private Observable<Intent.MenuIntent> menuIntent() {
@@ -104,14 +116,23 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
                 menuView.itemClicks().map(Intent.MenuIntent::navigate));
     }
 
+    private Observable<Intent.NavigationVisibilityIntent> navigationVisibilityIntent() {
+        return navigationVisibilityIntentSubject;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Observable<Intent> intents() {
+        return Observable.mergeArray(initialIntent(), navigationIntent(), menuIntent(),
+                navigationVisibilityIntent());
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         disposables.attach();
         disposables.add(viewModel.viewStates().filter(duplicates()).subscribe(this::render));
         viewModel.process(intents());
-        disposables.add(itemSelections(navigationView).filter(duplicates()).subscribe(item ->
-                navigationIntentSubject.onNext(Intent.NavigationIntent.create(item.getItemId()))));
     }
 
     @Override

@@ -12,6 +12,9 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.CertificateData;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.tokenlibrary.Token;
+import io.reactivex.Observable;
+
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
 public final class CertificateDataView extends LinearLayout {
 
@@ -22,6 +25,8 @@ public final class CertificateDataView extends LinearLayout {
     private final Button buttonView;
     private final TextView linkView;
     private final TextView errorView;
+
+    private boolean buttonUnblocks = false;
 
     public CertificateDataView(Context context) {
         this(context, null);
@@ -53,6 +58,7 @@ public final class CertificateDataView extends LinearLayout {
     public void data(Token.CertType type, CertificateData data, int pukRetryCount) {
         boolean pinBlocked = data.pinRetryCount() == 0;
         boolean pukBlocked = pukRetryCount == 0;
+        buttonUnblocks = pinBlocked && !pukBlocked;
 
         titleView.setText(type == Token.CertType.CertAuth
                 ? R.string.eid_home_certificate_data_title_auth
@@ -64,7 +70,7 @@ public final class CertificateDataView extends LinearLayout {
         int buttonUnblock = type == Token.CertType.CertAuth
                 ? R.string.eid_home_certificate_data_button_unblock_auth
                 : R.string.eid_home_certificate_data_button_unblock_sign;
-        buttonView.setText(pinBlocked && !pukBlocked ? buttonUnblock : buttonChange);
+        buttonView.setText(buttonUnblocks ? buttonUnblock : buttonChange);
         linkView.setText(type == Token.CertType.CertAuth
                 ? R.string.eid_home_certificate_data_link_auth
                 : R.string.eid_home_certificate_data_link_sign);
@@ -89,5 +95,13 @@ public final class CertificateDataView extends LinearLayout {
             linkView.setVisibility(GONE);
             errorView.setVisibility(VISIBLE);
         }
+    }
+
+    public Observable<String> updateTypes() {
+        return Observable.merge(
+                clicks(buttonView)
+                        .map(ignored ->
+                                buttonUnblocks ? CodeUpdateType.UNBLOCK : CodeUpdateType.EDIT),
+                clicks(linkView).map(ignored -> CodeUpdateType.UNBLOCK));
     }
 }
