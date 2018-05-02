@@ -1,6 +1,7 @@
 package ee.ria.mopplib.data;
 
 import android.support.annotation.Nullable;
+import android.util.Base64;
 import android.webkit.MimeTypeMap;
 
 import com.google.auto.value.AutoValue;
@@ -179,6 +180,28 @@ public abstract class SignedContainer {
                 " in container " + file());
     }
 
+    public final String calculateDataFileDigest(DataFile dataFile, String method) throws
+            IOException {
+        Container container;
+        try {
+            container = Container.open(file().getAbsolutePath());
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+        if (container == null) {
+            throw new IOException("Container.open returned null");
+        }
+        DataFiles dataFiles = container.dataFiles();
+        for (int i = 0; i < dataFiles.size(); i++) {
+            ee.ria.libdigidocpp.DataFile containerDataFile = dataFiles.get(i);
+            if (dataFile.name().equals(containerDataFile.fileName())) {
+                return Base64.encodeToString(containerDataFile.calcDigest(method), Base64.DEFAULT);
+            }
+        }
+        throw new IllegalArgumentException("Could not find file " + dataFile.name() +
+                " in container " + file());
+    }
+
     public final SignedContainer addAdEsSignature(byte[] adEsSignature) throws
             SignaturesLockedException, IOException {
         Container container;
@@ -349,7 +372,8 @@ public abstract class SignedContainer {
     }
 
     private static DataFile dataFile(ee.ria.libdigidocpp.DataFile dataFile) {
-        return DataFile.create(dataFile.id(), dataFile.fileName(), dataFile.fileSize());
+        return DataFile.create(dataFile.id(), dataFile.fileName(), dataFile.fileSize(),
+                dataFile.mediaType());
     }
 
     private static Signature signature(ee.ria.libdigidocpp.Signature signature) {
