@@ -17,6 +17,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.model.mobileid.MobileIdStatusMessages;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
@@ -24,8 +25,7 @@ import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
-import ee.ria.DigiDoc.mid.MobileSignStatusMessageSource;
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
+import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse.ProcessStatus;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
 import ee.ria.mopplib.data.SignedContainer;
@@ -85,8 +85,6 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @Nullable private DataFile documentRemoveConfirmation;
     @Nullable private Signature signatureRemoveConfirmation;
 
-    private final MobileSignStatusMessageSource statusMessageSource;
-
     public SignatureUpdateView(Context context, String screenId, boolean isExistingContainer,
                                boolean isNestedContainer, File containerFile,
                                boolean signatureAddVisible,
@@ -127,8 +125,6 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         signatureAddDialog = new SignatureUpdateSignatureAddDialog(context);
         signatureAddView = signatureAddDialog.view();
         resetSignatureAddDialog();
-
-        statusMessageSource = new MobileSignStatusMessageSource(context.getResources());
     }
 
     @SuppressWarnings("unchecked")
@@ -207,13 +203,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                         : GONE);
         if (signatureAddResponse instanceof MobileIdResponse) {
             MobileIdResponse mobileIdResponse = (MobileIdResponse) signatureAddResponse;
-            GetMobileCreateSignatureStatusResponse.ProcessStatus mobileIdStatus =
-                    mobileIdResponse.status();
-            if (mobileIdStatus != null) {
-                mobileIdStatusView.setText(statusMessageSource.getMessage(mobileIdStatus));
-            } else {
-                mobileIdStatusView.setText(statusMessageSource.getInitialStatusMessage());
-            }
+            ProcessStatus mobileIdStatus = mobileIdResponse.status() == null
+                    ? ProcessStatus.DEFAULT
+                    : mobileIdResponse.status();
+            mobileIdStatusView.setText(
+                    MobileIdStatusMessages.message(getContext(), mobileIdStatus));
             String mobileIdChallenge = mobileIdResponse.challenge();
             if (mobileIdChallenge != null) {
                 mobileIdChallengeView.setText(mobileIdChallenge);

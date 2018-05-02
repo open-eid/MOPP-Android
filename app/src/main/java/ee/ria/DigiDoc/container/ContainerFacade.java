@@ -79,10 +79,6 @@ public class ContainerFacade {
         return containerFile.getName();
     }
 
-    public long fileSize() {
-        return containerFile.length();
-    }
-
     private DataFile getContainerDataFile(String filename) {
         DataFiles containerDataFiles = container.dataFiles();
         DataFile dataFile = null;

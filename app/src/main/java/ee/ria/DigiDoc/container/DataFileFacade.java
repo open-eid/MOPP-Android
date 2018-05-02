@@ -30,14 +30,6 @@ public class DataFileFacade {
         this.containerDataFile = containerDataFile;
     }
 
-    public String getFileName() {
-        return containerDataFile.fileName();
-    }
-
-    public long getFileSize() {
-        return containerDataFile.fileSize();
-    }
-
     public String getId() {
         return containerDataFile.id();
     }

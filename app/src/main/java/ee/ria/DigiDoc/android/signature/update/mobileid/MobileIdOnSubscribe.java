@@ -14,8 +14,6 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
 import ee.ria.DigiDoc.container.ContainerFacade;
 import ee.ria.DigiDoc.mid.CreateSignatureRequestBuilder;
-import ee.ria.DigiDoc.mid.MobileSignFaultMessageSource;
-import ee.ria.DigiDoc.mid.MobileSignStatusMessageSource;
 import ee.ria.libdigidocpp.Conf;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
@@ -45,8 +43,6 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
     private final LocalBroadcastManager broadcastManager;
     private final String personalCode;
     private final String phoneNo;
-    private final MobileSignStatusMessageSource statusMessageSource;
-    private final MobileSignFaultMessageSource faultMessageSource;
 
     public MobileIdOnSubscribe(Application application, SignedContainer container,
                                String personalCode, String phoneNo) {
@@ -55,8 +51,6 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         this.broadcastManager = LocalBroadcastManager.getInstance(application);
         this.personalCode = personalCode;
         this.phoneNo = phoneNo;
-        this.statusMessageSource = new MobileSignStatusMessageSource(application.getResources());
-        this.faultMessageSource = new MobileSignFaultMessageSource(application.getResources());
     }
 
     @Override
@@ -77,8 +71,8 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                     case SERVICE_FAULT:
                         ServiceFault fault = ServiceFault
                                 .fromJson(intent.getStringExtra(SERVICE_FAULT));
-                        emitter.onError(new MobileIdMessageException(
-                                faultMessageSource.getMessage(fault.getReason())));
+                        emitter.onError(MobileIdMessageException
+                                .create(application, fault.getReason()));
                         break;
                     case CREATE_SIGNATURE_CHALLENGE:
                         MobileCreateSignatureResponse challenge = MobileCreateSignatureResponse
@@ -98,8 +92,8 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                                 emitter.onComplete();
                                 break;
                             default:
-                                emitter.onError(new MobileIdMessageException(
-                                        statusMessageSource.getMessage(status.getStatus())));
+                                emitter.onError(MobileIdMessageException
+                                        .create(application, status.getStatus()));
                                 break;
                         }
                         break;
