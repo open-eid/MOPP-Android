@@ -14,10 +14,4 @@
     <color name="divider">#DEE4E9</color>
     <color name="menuBackground">#E6023664</color>
 
-
-
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="grey">#f2f2f2</color>
 </resources>

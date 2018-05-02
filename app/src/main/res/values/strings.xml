@@ -92,12 +92,9 @@
     <string name="signature_update_signatures_title">Container signatures</string>
     <string name="signature_update_document_remove_button">Remove document</string>
     <string name="signature_update_document_remove_confirmation_message">Remove document from container?</string>
-    <string name="signature_update_document_type_file">File</string>
     <string name="signature_update_documents_add_button">+ Add more documents</string>
     <string name="signature_update_signature_type_signature">Signature</string>
     <string name="signature_update_signature_created_at">Signed %s</string>
-    <string name="signature_update_signature_valid">Signature is valid</string>
-    <string name="signature_update_signature_invalid">Signature is not valid</string>
     <string name="signature_update_signatures_invalid">Some signatures are invalid</string>
     <string name="signature_update_signature_remove_button">Remove signature</string>
     <string name="signature_update_signature_remove_confirmation_message">Remove signature from container?</string>
@@ -162,12 +159,6 @@
     <string name="signature_update_load_container_error">Could not open signature container</string>
     <string name="signature_update_add_documents_error_exists">File already exists in the container</string>
     <string name="signature_update_documents_remove_error_container_empty">Can\'t remove all documents from container</string>
-
-    <!-- Signature Add -->
-    <string name="signature_add_title">Sign via Mobile-ID</string>
-    <string name="signature_add_phone_no">Phone number</string>
-    <string name="signature_add_personal_code">Personal code</string>
-    <string name="signature_add_remember_me">Remember me</string>
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Choose a file to crypt or decrypt</string>
