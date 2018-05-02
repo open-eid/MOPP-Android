@@ -33,19 +33,19 @@ public class MobileSignStatusMessageSource {
 
     private static Map<ProcessStatus, Integer> createMessageMap() {
         Map<ProcessStatus, Integer> messageMap = new HashMap<>();
-        messageMap.put(ProcessStatus.DEFAULT, R.string.status_request_sent);
-        messageMap.put(ProcessStatus.REQUEST_OK, R.string.status_request_ok);
-        messageMap.put(ProcessStatus.EXPIRED_TRANSACTION, R.string.status_expired_transaction);
-        messageMap.put(ProcessStatus.USER_CANCEL, R.string.status_user_cancel);
-        messageMap.put(ProcessStatus.SIGNATURE, R.string.status_signature);
-        messageMap.put(ProcessStatus.OUTSTANDING_TRANSACTION, R.string.status_outstanding_transaction);
-        messageMap.put(ProcessStatus.MID_NOT_READY, R.string.status_mid_not_ready);
-        messageMap.put(ProcessStatus.PHONE_ABSENT, R.string.status_phone_absent);
-        messageMap.put(ProcessStatus.SENDING_ERROR, R.string.status_sending_error);
-        messageMap.put(ProcessStatus.SIM_ERROR, R.string.status_sim_error);
-        messageMap.put(ProcessStatus.NOT_VALID, R.string.status_not_valid);
-        messageMap.put(ProcessStatus.REVOKED_CERTIFICATE, R.string.status_revoked_certificate);
-        messageMap.put(ProcessStatus.INTERNAL_ERROR, R.string.status_internal_error);
+        messageMap.put(ProcessStatus.DEFAULT, R.string.signature_update_mobile_id_status_request_sent);
+        messageMap.put(ProcessStatus.REQUEST_OK, R.string.signature_update_mobile_id_status_request_ok);
+        messageMap.put(ProcessStatus.EXPIRED_TRANSACTION, R.string.signature_update_mobile_id_status_expired_transaction);
+        messageMap.put(ProcessStatus.USER_CANCEL, R.string.signature_update_mobile_id_status_user_cancel);
+        messageMap.put(ProcessStatus.SIGNATURE, R.string.signature_update_mobile_id_status_signature);
+        messageMap.put(ProcessStatus.OUTSTANDING_TRANSACTION, R.string.signature_update_mobile_id_status_outstanding_transaction);
+        messageMap.put(ProcessStatus.MID_NOT_READY, R.string.signature_update_mobile_id_status_mid_not_ready);
+        messageMap.put(ProcessStatus.PHONE_ABSENT, R.string.signature_update_mobile_id_status_phone_absent);
+        messageMap.put(ProcessStatus.SENDING_ERROR, R.string.signature_update_mobile_id_status_sending_error);
+        messageMap.put(ProcessStatus.SIM_ERROR, R.string.signature_update_mobile_id_status_sim_error);
+        messageMap.put(ProcessStatus.NOT_VALID, R.string.signature_update_mobile_id_status_not_valid);
+        messageMap.put(ProcessStatus.REVOKED_CERTIFICATE, R.string.signature_update_mobile_id_status_revoked_certificate);
+        messageMap.put(ProcessStatus.INTERNAL_ERROR, R.string.signature_update_mobile_id_status_internal_error);
         return messageMap;
     }
 

@@ -110,8 +110,9 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         broadcastManager.registerReceiver(receiver, new IntentFilter(MID_BROADCAST_ACTION));
         emitter.setCancellable(() -> broadcastManager.unregisterReceiver(receiver));
 
-        String message = application.getString(R.string.action_sign) + " " +
-                containerFacade.getName();
+        String message =
+                application.getString(R.string.signature_update_mobile_id_display_message) + " " +
+                        containerFacade.getName();
         MobileCreateSignatureRequest request = CreateSignatureRequestBuilder
                 .aCreateSignatureRequest()
                 .withContainer(containerFacade)
