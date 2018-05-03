@@ -6,112 +6,89 @@
     <string name="close">Close</string>
 
     <!-- Main Home -->
-    <string name="main_home_navigation_signature">Signing</string>
-    <string name="main_home_navigation_crypto">Crypto</string>
-    <string name="main_home_navigation_eid">My eID</string>
+    <string name="main_home_navigation_signature">SIGNATURE</string>
+    <string name="main_home_navigation_crypto">CRYPTO</string>
+    <string name="main_home_navigation_eid">MY eID</string>
 
-    <string name="main_home_toolbar_overflow">More options</string>
-
-    <string name="main_home_menu_help">Help</string>
+    <string name="main_home_menu_button">Menu</string>
+    <string name="main_home_menu_help">HELP</string>
     <string name="main_home_menu_help_url">https://www.id.ee/index.php?id=30466</string>
-    <string name="main_home_menu_recent">Recent documents</string>
-    <string name="main_home_menu_settings">Settings</string>
-    <string name="main_home_menu_about">About</string>
-    <string name="main_home_menu_diagnostics">Diagnostics</string>
+    <string name="main_home_menu_recent">RECENT DOCUMENTS</string>
+    <string name="main_home_menu_settings">SETTINGS</string>
+    <string name="main_home_menu_about">INFO</string>
+    <string name="main_home_menu_diagnostics">DIAGNOSTICS</string>
 
     <!-- Main Settings -->
     <string name="main_settings_title">Settings</string>
-    <string name="main_settings_phone_no_title">Mobile-ID phone number</string>
+    <string name="main_settings_phone_no_title">Country code and phone number</string>
     <string name="main_settings_personal_code_title">Personal code</string>
     <string name="main_settings_role_title">Role</string>
     <string name="main_settings_city_title">City</string>
-    <string name="main_settings_county_title">County</string>
+    <string name="main_settings_county_title">State</string>
     <string name="main_settings_country_title">Country</string>
-    <string name="main_settings_postal_code_title">Postal code</string>
+    <string name="main_settings_postal_code_title">ZIP code</string>
     <string name="main_settings_signature_profile_title">Default file type</string>
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
     <string name="main_about_ria_digidoc_version_title">RIA DigiDoc</string>
-    <string name="main_about_software_developed_by_title">ID software is developed by Estonian Information System Authority</string>
-    <string name="main_about_contact_information_title">In case of questions contact the ID help-line by e-mail abi@id.ee or call 1777 within Estonia, (+372) 677 3377 abroad.</string>
-    <string name="main_about_licenses_title">Licenses and components</string>
-    <string name="main_about_support_preference_v7_fix_title">Android Support Preference v7 Fix</string>
-    <string name="main_about_guava_title">Google Guava</string>
-    <string name="main_about_apache_commons_title">Apache Commons</string>
-    <string name="main_about_square_okio_title">Square Okio</string>
-    <string name="main_about_timber_title">Timber</string>
-    <string name="main_about_butterknife_title">Butterknife</string>
-    <string name="main_about_square_okhttp_title">Square OkHttp</string>
-    <string name="main_about_retrofit_title">Square Retrofit</string>
-    <string name="main_about_spongy_castle_title">Spongy Castle</string>
-    <string name="main_about_material_values_title">Material Values</string>
-    <string name="main_about_dagger_title">Google Dagger</string>
-    <string name="main_about_conductor_title">BlueLine Labs Conductor</string>
-    <string name="main_about_rxjava_title">RxJava</string>
-    <string name="main_about_rxandroid_title">RxAndroid</string>
-    <string name="main_about_rxbinding_title">RxBinding</string>
-    <string name="main_about_autovalue_title">Google AutoValue</string>
-    <string name="main_about_autovalue_parcel_title">AutoValue Parcel</string>
-    <string name="main_about_threetenabp_title">ThreeTenAbp</string>
-    <string name="main_about_expandable_layout">ExpandableLayout</string>
-    <string name="main_about_junit_title">JUnit</string>
-    <string name="main_about_truth_title">Google Truth</string>
-    <string name="main_about_apache_2_license_title">Apache Software License, Version 2.0</string>
-    <string name="main_about_apache2_license_url">https://www.apache.org/licenses/LICENSE-2.0</string>
-    <string name="main_about_mit_license_title">MIT License</string>
-    <string name="main_about_mit_license_url">https://opensource.org/licenses/MIT</string>
-    <string name="main_about_eclipse_license_title">Eclipse license version 1.0</string>
-    <string name="main_about_eclipse_license_url">https://www.eclipse.org/legal/epl-v10.html</string>
+    <string name="main_about_software_developed_by_title">Estonian ID-software is released by Information System Authority</string>
+    <string name="main_about_contact_information_title">Contact for assistance by email abi@id.ee or call 1777 (only from Estonia), (+372) 677 3377 when calling from abroad.</string>
+    <string name="main_about_licenses_title">Additional licenses and components</string>
 
     <!-- Main Diagnostics -->
     <string name="main_diagnostics_title">Diagnostics</string>
     <string name="main_diagnostics_application_version_title">Application version:\u0020</string>
-    <string name="main_diagnostics_operating_system_title">Operating system:\u0020</string>
-    <string name="main_diagnostics_libraries_title">Libraries</string>
+    <string name="main_diagnostics_operating_system_title">OS:\u0020</string>
+    <string name="main_diagnostics_libraries_title">Libraries:</string>
 
     <!-- Signature Home -->
-    <string name="signature_home_create_text">Choose a file to sign or check</string>
-    <string name="signature_home_create_button">Choose file</string>
+    <string name="signature_home_create_text">Choose a file to sign or validate</string>
+    <string name="signature_home_create_button">CHOOSE FILE</string>
 
     <!-- Signature List -->
     <string name="signature_list_title">Recent documents</string>
+    <string name="signature_list_empty_message">No recent documents</string>
     <string name="signature_list_remove_button">Remove document</string>
     <string name="signature_list_remove_confirmation_message">Remove document?</string>
-    <string name="signature_list_empty_message">No recent documents</string>
 
     <!-- Signature Create -->
     <string name="signature_create_error">Could not load selected files</string>
 
     <!-- Signature Update -->
-    <string name="signature_update_title_created">Container signing</string>
-    <string name="signature_update_title_existing">Container validation</string>
-    <string name="signature_update_name">Container</string>
-    <string name="signature_update_documents_title">Container documents</string>
-    <string name="signature_update_documents_button">Add documents</string>
+    <string name="signature_update_title_created">Signing</string>
+    <string name="signature_update_title_existing">Container verification</string>
+    <string name="signature_update_name">CONTAINER:</string>
+    <string name="signature_update_documents_title">Container files</string>
+    <string name="signature_update_documents_button">ADD MORE FILES</string>
+    <string name="signature_update_documents_add_button">+ ADD MORE FILES</string>
+    <string name="signature_update_documents_add_error_exists">File already exists in the container</string>
+    <string name="signature_update_document_remove_button">Remove file</string>
+    <string name="signature_update_document_remove_confirmation_message">Remove file from container?</string>
+    <string name="signature_update_document_remove_error">Can\'t remove file from container</string>
     <string name="signature_update_signatures_title">Container signatures</string>
-    <string name="signature_update_document_remove_button">Remove document</string>
-    <string name="signature_update_document_remove_confirmation_message">Remove document from container?</string>
-    <string name="signature_update_documents_add_button">+ Add more documents</string>
+    <string name="signature_update_signatures_empty">Container is not signed</string>
+    <string name="signature_update_signatures_invalid">%d INVALID SIGNATURES</string>
     <string name="signature_update_signature_type_signature">Signature</string>
     <string name="signature_update_signature_created_at">Signed %s</string>
-    <string name="signature_update_signatures_invalid">Some signatures are invalid</string>
     <string name="signature_update_signature_remove_button">Remove signature</string>
     <string name="signature_update_signature_remove_confirmation_message">Remove signature from container?</string>
     <string name="signature_update_signature_remove_error">Could not remove signature from the container</string>
-    <string name="signature_update_signatures_empty">Container is not signed</string>
-    <string name="signature_update_send_button">Share</string>
-    <string name="signature_update_signature_add_button">Sign</string>
-    <string name="signature_update_signature_add_method_mobile_id">Mobile ID</string>
-    <string name="signature_update_signature_add_method_id_card">ID card</string>
-    <string name="signature_update_signature_add_success">Signature added</string>
+    <string name="signature_update_container_load_error">Error opening container</string>
+    <string name="signature_update_send_button">SHARE</string>
+    <string name="signature_update_signature_add_button">SIGN</string>
+
+    <string name="signature_update_signature_add_method_mobile_id">Mobile-ID</string>
+    <string name="signature_update_signature_add_method_id_card">ID-card</string>
+    <string name="signature_update_signature_add_success">SIGNATURE ADDED</string>
     <string name="signature_update_signature_add_error">Something went wrong. Please try again.</string>
 
-    <string name="signature_update_mobile_id_phone_no">Phone number</string>
+    <string name="signature_update_mobile_id_message">Enter your mobile number and personal code to sign with Mobile-ID</string>
+    <string name="signature_update_mobile_id_phone_no">Country code and phone number</string>
     <string name="signature_update_mobile_id_personal_code">Personal code</string>
     <string name="signature_update_mobile_id_remember_me">Remember me</string>
-    <string name="signature_update_mobile_id_info">Make sure the control code above matches and enter Mobile-ID PIN2-code</string>
-    <string name="signature_update_mobile_id_display_message">Sign</string>
+    <string name="signature_update_mobile_id_info">Make sure the control code matches the one on phone screen and enter Mobile-ID PIN2-code</string>
+    <string name="signature_update_mobile_id_display_message">Sign %s</string>
 
     <string name="signature_update_mobile_id_status_request_sent">Signing request sent</string>
     <string name="signature_update_mobile_id_status_request_ok">Request accepted</string>
@@ -127,7 +104,7 @@
     <string name="signature_update_mobile_id_status_revoked_certificate">Certificate revoked</string>
     <string name="signature_update_mobile_id_status_internal_error">Technical error</string>
 
-    <string name="signature_update_mobile_id_error_unknown">Unknown error occurred when signing with Mobile ID</string>
+    <string name="signature_update_mobile_id_error_unknown">Unknown error occurred when signing with Mobile-ID</string>
     <string name="signature_update_mobile_id_error_local_service_exception">Something went wrong, try again later</string>
     <string name="signature_update_mobile_id_error_general_client">Something went wrong, try again</string>
     <string name="signature_update_mobile_id_error_incorrect_input_parameters">Incorrect mobile number and/or personal code, non-Estonian mobile numbers must be prefixed with the country code</string>
@@ -146,60 +123,56 @@
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Too many datafiles in container</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Simultaneous requests limit exceeded</string>
 
-    <string name="signature_update_id_card_progress_message_initial">Please connect your card reader and insert your ID-card into the reader</string>
-    <string name="signature_update_id_card_progress_message_reader_detected">Card reader detected. Insert your ID-card into the reader.</string>
+    <string name="signature_update_id_card_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>
+    <string name="signature_update_id_card_progress_message_reader_detected">Reader found. Insert your ID-card into the reader.</string>
     <string name="signature_update_id_card_progress_message_card_detected">ID-card found. Requesting information.</string>
-    <string name="signature_update_id_card_progress_message_signing">Signing…</string>
     <string name="signature_update_id_card_sign_message">Ready to sign with ID card</string>
     <string name="signature_update_id_card_sign_data">%1$s %2$s (%3$s)</string>
-    <string name="signature_update_id_card_sign_pin2">Please enter PIN2</string>
-    <string name="signature_update_id_card_sign_pin2_invalid">Wrong PIN2. %1$d attempts left. Typing wrong PIN2 %1$d more times, your PIN2 will be locked</string>
-    <string name="signature_update_id_card_sign_pin2_locked">PIN2 locked. Go to My eID to unlock your PIN2</string>
-
-    <string name="signature_update_load_container_error">Could not open signature container</string>
-    <string name="signature_update_add_documents_error_exists">File already exists in the container</string>
-    <string name="signature_update_documents_remove_error_container_empty">Can\'t remove all documents from container</string>
+    <string name="signature_update_id_card_sign_pin2">Enter PIN2</string>
+    <string name="signature_update_id_card_progress_message_signing">Signing in progress. Please wait.</string>
+    <string name="signature_update_id_card_sign_pin2_invalid">Wrong PIN2. You have %1$d attempts left.</string>
+    <string name="signature_update_id_card_sign_pin2_locked">PIN2 blocked. Go to My eID to unblock it.</string>
 
     <!-- Crypto Home -->
-    <string name="crypto_home_create_text">Choose a file to crypt or decrypt</string>
-    <string name="crypto_home_create_button">Choose file</string>
+    <string name="crypto_home_create_text">Choose a file to encrypt or decrypt</string>
+    <string name="crypto_home_create_button">CHOOSE FILE</string>
 
     <!-- EID Home -->
-    <string name="eid_home_id_card_status_initial_message">Make sure your ID-card reader is connected with the smartphone</string>
-    <string name="eid_home_id_card_status_reader_detected_message">Make sure your ID-card is properly in the reader</string>
-    <string name="eid_home_id_card_status_card_detected_message">ID-card found. Requesting information</string>
+    <string name="eid_home_id_card_status_initial_message">Connect the card reader and insert your ID-card into the reader.</string>
+    <string name="eid_home_id_card_status_reader_detected_message">Reader found. Insert your ID-card into the reader.</string>
+    <string name="eid_home_id_card_status_card_detected_message">ID-card found. Requesting information.</string>
     <string name="eid_home_error">Something went wrong. Please try again.</string>
 
     <string name="eid_home_data_type">MY eID</string>
-    <string name="eid_home_data_given_names">Given names</string>
-    <string name="eid_home_data_surname">Surname</string>
-    <string name="eid_home_data_personal_code">Personal code</string>
-    <string name="eid_home_data_citizenship">Citizenship</string>
-    <string name="eid_home_data_document_number">Document number</string>
-    <string name="eid_home_data_expiry_date">Date of expiry</string>
+    <string name="eid_home_data_given_names">GIVEN NAMES</string>
+    <string name="eid_home_data_surname">SURNAME</string>
+    <string name="eid_home_data_personal_code">PERSONAL CODE</string>
+    <string name="eid_home_data_citizenship">CITIZENSHIP</string>
+    <string name="eid_home_data_document_number">DOCUMENT NUMBER</string>
+    <string name="eid_home_data_expiry_date">DATE OF EXPIRY</string>
     <string name="eid_home_data_expiry_date_valid">Valid</string>
     <string name="eid_home_data_expiry_date_expired">Expired</string>
     <string name="eid_home_data_expiry_date_invalid">Unknown</string>
-    <string name="eid_home_data_certificates_title">PIN/PUK codes and certificate check</string>
+    <string name="eid_home_data_certificates_title">PIN/PUK CODES AND CERTIFICATES</string>
     <string name="eid_home_data_certificates_puk_title">PUK code</string>
-    <string name="eid_home_data_certificates_puk_text">PUK code is located in your code envelope</string>
-    <string name="eid_home_data_certificates_puk_button">Change PUK</string>
-    <string name="eid_home_data_certificates_puk_error">You have entered 3 times wrong PUK code. PUK code is blocked.</string>
-    <string name="eid_home_data_certificates_puk_link">See how to get new codes</string>
+    <string name="eid_home_data_certificates_puk_text">PUK code is in your code envelope</string>
+    <string name="eid_home_data_certificates_puk_button">CHANGE PUK</string>
+    <string name="eid_home_data_certificates_puk_error">PUK is blocked, because PUK code has been inserted 3 times incorrectly.</string>
+    <string name="eid_home_data_certificates_puk_link">You can find instructions on how to get a new document from here.</string>
     <string name="eid_home_data_certificates_puk_link_url">https://www.id.ee/?lang=en&amp;id=31027</string>
 
-    <string name="eid_home_certificate_data_title_auth">PIN1 - Authentication certificate</string>
-    <string name="eid_home_certificate_data_title_sign">PIN2 - Signing certificate</string>
+    <string name="eid_home_certificate_data_title_auth">Authentication certificate</string>
+    <string name="eid_home_certificate_data_title_sign">Signing certificate</string>
     <string name="eid_home_certificate_data_valid">Certificate &lt;c>valid&lt;/c> until %1$s</string>
     <string name="eid_home_certificate_data_expired">Certificate &lt;c>expired&lt;/c>, was valid until %1$s</string>
-    <string name="eid_home_certificate_data_button_change_auth">Change PIN1</string>
-    <string name="eid_home_certificate_data_button_change_sign">Change PIN2</string>
-    <string name="eid_home_certificate_data_button_unblock_auth">Unblock PIN1</string>
-    <string name="eid_home_certificate_data_button_unblock_sign">Unblock PIN2</string>
-    <string name="eid_home_certificate_data_link_auth">Forgot your PIN1?</string>
-    <string name="eid_home_certificate_data_link_sign">Forgot your PIN2?</string>
-    <string name="eid_home_certificate_data_error_auth">You have entered 3 times wrong PIN1 code. PIN1 is blocked.</string>
-    <string name="eid_home_certificate_data_error_sign">You have entered 3 times wrong PIN2 code. PIN2 is blocked.</string>
+    <string name="eid_home_certificate_data_button_change_auth">CHANGE PIN1</string>
+    <string name="eid_home_certificate_data_button_change_sign">CHANGE PIN2</string>
+    <string name="eid_home_certificate_data_button_unblock_auth">UNBLOCK</string>
+    <string name="eid_home_certificate_data_button_unblock_sign">UNBLOCK</string>
+    <string name="eid_home_certificate_data_link_auth">Forgot PIN1?</string>
+    <string name="eid_home_certificate_data_link_sign">Forgot PIN2?</string>
+    <string name="eid_home_certificate_data_error_auth">PIN1 is blocked, because PIN1 has been inserted 3 times incorrectly.</string>
+    <string name="eid_home_certificate_data_error_sign">PIN2 is blocked, because PIN2 has been inserted 3 times incorrectly.</string>
 
     <string name="eid_type_id_card">ID-CARD</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
@@ -211,56 +184,58 @@
     <string name="eid_home_code_update_title_pin2_edit">Change PIN2</string>
     <string name="eid_home_code_update_title_pin2_unblock">Unblock PIN2</string>
     <string name="eid_home_code_update_title_puk_edit">Change PUK</string>
-    <string name="eid_home_code_update_text_row1_pin1_edit">New PIN1 must be different from the current one</string>
-    <string name="eid_home_code_update_text_row2_pin1_edit">PIN1 is used to access authentication certificate</string>
-    <string name="eid_home_code_update_text_row3_pin1_edit">If you enter wrong PIN1 three times then authentication certificate will be blocked and ID-card can\'t be used for authentication before unblocking PIN1 with PUK code</string>
-    <string name="eid_home_code_update_text_row1_pin1_unblock">New PIN1 must be different from the current one</string>
-    <string name="eid_home_code_update_text_row2_pin1_unblock">PIN1 is used to access authentication certificate</string>
-    <string name="eid_home_code_update_text_row3_pin1_unblock">If you have forgot PIN1 but know the PUK code you can choose new PIN1</string>
-    <string name="eid_home_code_update_text_row4_pin1_unblock">You can find your PUK code from within your PIN codes envelope if you haven\'t changed it</string>
-    <string name="eid_home_code_update_text_row1_pin2_edit">New PIN2 must be different from the current one</string>
-    <string name="eid_home_code_update_text_row2_pin2_edit">PIN2 is used for digital signing</string>
-    <string name="eid_home_code_update_text_row3_pin2_edit">If you have entered wrong PIN2 three times then you can\'t use your PIN2 to digitally sign documents before you haven\'t unblocked it using PUK code</string>
-    <string name="eid_home_code_update_text_row1_pin2_unblock">New PIN2 must be different from the current one</string>
-    <string name="eid_home_code_update_text_row2_pin2_unblock">PIN2 is used for digital signing</string>
-    <string name="eid_home_code_update_text_row3_pin2_unblock">If you have forgot PIN2 but know the PUK code you can choose new PIN2</string>
-    <string name="eid_home_code_update_text_row4_pin2_unblock">You can find your PUK code from within your PIN codes envelope if you haven\'t changed it</string>
-    <string name="eid_home_code_update_text_row1_puk_edit">Use PUK code to unblock blocked PIN1 or PIN2</string>
-    <string name="eid_home_code_update_text_row2_puk_edit">You need visit ID-card issuing office when your PUK code is blocked and you have entered three times wrong PIN1 or PIN2 in order to use them again</string>
-    <string name="eid_home_code_update_current_pin1_edit">Current PIN1</string>
-    <string name="eid_home_code_update_current_pin1_unblock">Current PUK</string>
-    <string name="eid_home_code_update_current_pin2_edit">Current PIN2</string>
-    <string name="eid_home_code_update_current_pin2_unblock">Current PUK</string>
-    <string name="eid_home_code_update_current_puk_edit">Current PUK</string>
-    <string name="eid_home_code_update_new_pin1">New PIN1</string>
-    <string name="eid_home_code_update_new_pin2">New PIN2</string>
-    <string name="eid_home_code_update_new_puk">New PUK</string>
-    <string name="eid_home_code_update_repeat_pin1">Repeat new PIN1</string>
-    <string name="eid_home_code_update_repeat_pin2">Repeat new PIN2</string>
-    <string name="eid_home_code_update_repeat_puk">Repeat new PUK</string>
-    <string name="eid_home_code_update_negative_button">Cancel</string>
-    <string name="eid_home_code_update_positive_button_edit">Change</string>
-    <string name="eid_home_code_update_positive_button_unblock">Unblock</string>
+    <string name="eid_home_code_update_text_row1_pin1_edit">New PIN1 must be different from current PIN1.</string>
+    <string name="eid_home_code_update_text_row2_pin1_edit">PIN1 code is used for authentication.</string>
+    <string name="eid_home_code_update_text_row3_pin1_edit">If PIN1 is inserted incorrectly 3 times, the identification certificate will be blocked and it will be impossible to use ID-card to verify identification, until it is unblocked via the PUK code.</string>
+    <string name="eid_home_code_update_text_row1_pin1_unblock">New PIN1 must be different from current PIN1.</string>
+    <string name="eid_home_code_update_text_row2_pin1_unblock">PIN1 code is used for authentication.</string>
+    <string name="eid_home_code_update_text_row3_pin1_unblock">If you have forgotten PIN1 code, but you know your PUK code, then here you can change your PIN1 with PUK code.</string>
+    <string name="eid_home_code_update_text_row4_pin1_unblock">PUK code is written in the envelope that is given with the ID-card.</string>
+    <string name="eid_home_code_update_text_row1_pin2_edit">New PIN2 must be different from current PIN2.</string>
+    <string name="eid_home_code_update_text_row2_pin2_edit">PIN2 code is used to digitally sign documents.</string>
+    <string name="eid_home_code_update_text_row3_pin2_edit">If PIN2 is inserted incorrectly 3 times, the signing certificate will be blocked and it will be impossible to use ID-card for digital signatures, until it is unblocked via the PUK code.</string>
+    <string name="eid_home_code_update_text_row1_pin2_unblock">New PIN2 must be different from current PIN2.</string>
+    <string name="eid_home_code_update_text_row2_pin2_unblock">PIN2 code is used to digitally sign documents.</string>
+    <string name="eid_home_code_update_text_row3_pin2_unblock">If you have forgotten PIN2 code, but you know your PUK code, then here you can change your PIN2 with PUK code.</string>
+    <string name="eid_home_code_update_text_row4_pin2_unblock">PUK code is written in the envelope that is given with the ID-card.</string>
+    <string name="eid_home_code_update_text_row1_puk_edit">PUK code is used for unblocking the certificates when PIN1 or PIN2 has been entered 3 times incorrectly.</string>
+    <string name="eid_home_code_update_text_row2_puk_edit">If you forget the PUK code or the certificates remain blocked, you have to visit the service center to obtain new codes.</string>
+    <string name="eid_home_code_update_current_pin1_edit">CURRENT PIN1 CODE</string>
+    <string name="eid_home_code_update_current_pin1_unblock">CURRENT PUK CODE</string>
+    <string name="eid_home_code_update_current_pin2_edit">CURRENT PIN2 CODE</string>
+    <string name="eid_home_code_update_current_pin2_unblock">CURRENT PUK CODE</string>
+    <string name="eid_home_code_update_current_puk_edit">CURRENT PUK CODE</string>
+    <string name="eid_home_code_update_new_pin1">NEW PIN1 CODE (at least %1$d symbols)</string>
+    <string name="eid_home_code_update_new_pin2">NEW PIN2 CODE (at least %1$d symbols)</string>
+    <string name="eid_home_code_update_new_puk">NEW PUK CODE (at least %1$d symbols)</string>
+    <string name="eid_home_code_update_repeat_pin1">REPEAT NEW PIN1 CODE</string>
+    <string name="eid_home_code_update_repeat_pin2">REPEAT NEW PIN2 CODE</string>
+    <string name="eid_home_code_update_repeat_puk">REPEAT NEW PUK CODE</string>
+    <string name="eid_home_code_update_negative_button" tools:ignore="ButtonCase">CANCEL</string>
+    <string name="eid_home_code_update_positive_button_edit">CHANGE</string>
+    <string name="eid_home_code_update_positive_button_unblock">UNBLOCK</string>
 
-    <string name="eid_home_code_update_success_pin1">PIN1 changed</string>
-    <string name="eid_home_code_update_success_pin2">PIN2 changed</string>
-    <string name="eid_home_code_update_success_puk">PUK changed</string>
+    <string name="eid_home_code_update_success_pin1_edit">PIN1 SUCCESSFULLY CHANGED</string>
+    <string name="eid_home_code_update_success_pin1_unblock">PIN1 SUCCESSFULLY UNBLOCKED</string>
+    <string name="eid_home_code_update_success_pin2_edit">PIN2 SUCCESSFULLY CHANGED</string>
+    <string name="eid_home_code_update_success_pin2_unblock">PIN2 SUCCESSFULLY UNBLOCKED</string>
+    <string name="eid_home_code_update_success_puk_edit">PUK SUCCESSFULLY CHANGED</string>
 
     <string name="eid_home_code_update_current_error_min_length_pin1_edit">Current PIN1 code must be at least %1$d digits long</string>
     <string name="eid_home_code_update_current_error_min_length_pin1_unblock">Current PUK code must be at least %1$d digits long</string>
     <string name="eid_home_code_update_current_error_min_length_pin2_edit">Current PIN2 code must be at least %1$d digits long</string>
     <string name="eid_home_code_update_current_error_min_length_pin2_unblock">Current PUK code must be at least %1$d digits long</string>
     <string name="eid_home_code_update_current_error_min_length_puk_edit">Current PUK code must be at least %1$d digits long</string>
-    <string name="eid_home_code_update_current_error_invalid_pin1_edit">Wrong PIN1. %1$d attempts left. Typing %1$d more times wrong PIN1, your PIN1 will be blocked.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin1_unblock">Wrong PUK. %1$d attempts left. Typing %1$d more times wrong PUK, your PUK will be blocked.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin2_edit">Wrong PIN2. %1$d attempts left. Typing %1$d more times wrong PIN2, your PIN2 will be blocked.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin2_unblock">Wrong PUK. %1$d attempts left. Typing %1$d more times wrong PUK, your PUK will be blocked.</string>
-    <string name="eid_home_code_update_current_error_invalid_puk_edit">Wrong PUK. %1$d attempts left. Typing %1$d more times wrong PUK, your PUK will be blocked.</string>
-    <string name="eid_home_code_update_current_error_blocked_pin1_edit">PIN1 blocked. Use your PUK code to unblock your PIN1</string>
-    <string name="eid_home_code_update_current_error_blocked_pin1_unblock">PUK code is blocked</string>
-    <string name="eid_home_code_update_current_error_blocked_pin2_edit">PIN2 blocked. Use your PUK code to unblock your PIN2</string>
-    <string name="eid_home_code_update_current_error_blocked_pin2_unblock">PUK code is blocked</string>
-    <string name="eid_home_code_update_current_error_blocked_puk_edit">PUK code is blocked</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_edit">Wrong PIN1 code. You can try %1$d more times.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_unblock">Wrong PUK code. You can try %1$d more times.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_edit">Wrong PIN2 code. You can try %1$d more times.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_unblock">Wrong PUK code. You can try %1$d more times.</string>
+    <string name="eid_home_code_update_current_error_invalid_puk_edit">Wrong PUK code. You can try %1$d more times.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin1_edit">PIN1 has been blocked because PIN1 code has been entered incorrectly 3 times. Unblock to reuse PIN1.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin1_unblock">PUK has been blocked because PUK code has been entered incorrectly 3 times. Unblock to reuse PUK.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin2_edit">PIN2 has been blocked because PIN2 code has been entered incorrectly 3 times. Unblock to reuse PIN2.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin2_unblock">PUK has been blocked because PUK code has been entered incorrectly 3 times. Unblock to reuse PUK.</string>
+    <string name="eid_home_code_update_current_error_blocked_puk_edit">PUK has been blocked because PUK code has been entered incorrectly 3 times. Unblock to reuse PUK.</string>
 
     <string name="eid_home_code_update_new_error_min_length_pin1">New PIN1 code must be at least %1$d digits long</string>
     <string name="eid_home_code_update_new_error_min_length_pin2">New PIN2 code must be at least %1$d digits long</string>
@@ -274,9 +249,9 @@
     <string name="eid_home_code_update_new_error_too_easy_pin1">New PIN1 code can\'t be so easy</string>
     <string name="eid_home_code_update_new_error_too_easy_pin2">New PIN2 code can\'t be so easy</string>
     <string name="eid_home_code_update_new_error_too_easy_puk">New PUK code can\'t be so easy</string>
-    <string name="eid_home_code_update_new_error_same_as_current_pin1">Current PIN1 code and new PIN1 code must be different</string>
-    <string name="eid_home_code_update_new_error_same_as_current_pin2">Current PIN2 code and new PIN2 code must be different</string>
-    <string name="eid_home_code_update_new_error_same_as_current_puk">Current PUK code and new PUK code must be different</string>
+    <string name="eid_home_code_update_new_error_same_as_current_pin1">Old and new PIN1 have to be different</string>
+    <string name="eid_home_code_update_new_error_same_as_current_pin2">Old and new PIN2 have to be different</string>
+    <string name="eid_home_code_update_new_error_same_as_current_puk">Old and new PUK have to be different</string>
 
     <string name="eid_home_code_update_repeat_error_mismatch_pin1">New PIN1 codes must match</string>
     <string name="eid_home_code_update_repeat_error_mismatch_pin2">New PIN2 codes must match</string>

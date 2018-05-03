@@ -42,7 +42,7 @@
                 android:padding="@dimen/material_subheader_padding_start"
                 android:background="@color/success"
                 android:textColor="@color/material_color_white"
-                android:text="@string/eid_home_code_update_success_pin1"
+                android:text="@string/eid_home_code_update_success_pin1_edit"
                 android:visibility="gone" />
 
             <ee.ria.DigiDoc.android.eid.OrderedListView

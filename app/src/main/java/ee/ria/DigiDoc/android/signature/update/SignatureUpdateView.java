@@ -138,7 +138,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @Override
     public void render(ViewState state) {
         if (state.containerLoadError() != null) {
-            Toast.makeText(getContext(), R.string.signature_update_load_container_error,
+            Toast.makeText(getContext(), R.string.signature_update_container_load_error,
                     Toast.LENGTH_LONG).show();
             navigator.execute(Transaction.pop());
             return;
