@@ -244,8 +244,7 @@ public abstract class SignedContainer {
         return open(file());
     }
 
-    public final SignedContainer removeSignature(Signature signature) throws
-            SignaturesLockedException, IOException {
+    public final SignedContainer removeSignature(Signature signature) throws IOException {
         Container container;
         try {
             container = Container.open(file().getAbsolutePath());

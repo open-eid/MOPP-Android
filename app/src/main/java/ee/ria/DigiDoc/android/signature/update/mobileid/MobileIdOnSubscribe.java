@@ -48,7 +48,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
     }
 
     @Override
-    public void subscribe(ObservableEmitter<MobileIdResponse> emitter) throws Exception {
+    public void subscribe(ObservableEmitter<MobileIdResponse> emitter) {
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
