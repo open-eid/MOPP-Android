@@ -19,11 +19,7 @@
     </style>
 
     <style name="Widget.Application.Button.Container" parent="Widget.Application.Button">
-        <item name="android:background">@drawable/button_container</item>
-    </style>
-
-    <style name="Widget.Application.FloatingActionButton" parent="Widget.Design.FloatingActionButton">
-        <item name="android:tint">@color/material_color_white</item>
+        <item name="android:background">@drawable/btn_container</item>
     </style>
 
     <style name="Widget.Application.Subheader" parent="android:Widget.TextView">
@@ -121,7 +117,7 @@
     </style>
 
     <style name="Widget.Application.EID.Button.Negative" parent="Widget.Application.EID.Button.Positive">
-        <item name="android:background">@drawable/button_eid_negative</item>
+        <item name="android:background">@drawable/btn_eid_negative</item>
     </style>
 
 </resources>

@@ -6,10 +6,17 @@
     tools:layout_height="wrap_content"
     tools:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/signature_update_mobile_id_message" />
+
     <android.support.design.widget.TextInputLayout
         android:id="@id/signatureUpdateMobileIdPhoneNoLabel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/material_baseline_grid_1.5x">
 
         <android.support.design.widget.TextInputEditText
             android:id="@id/signatureUpdateMobileIdPhoneNo"

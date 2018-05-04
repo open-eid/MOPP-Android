@@ -74,7 +74,7 @@ public final class CodeUpdateView extends CoordinatorLayout {
         successMessageView.setText(action.successMessageRes());
         textView.itemsRes(action.textRowsRes());
         currentLabelView.setHint(getResources().getString(action.currentRes()));
-        newLabelView.setHint(getResources().getString(action.newRes()));
+        newLabelView.setHint(getResources().getString(action.newRes(), action.newMinLength()));
         repeatLabelView.setHint(getResources().getString(action.repeatRes()));
         positiveButton.setText(action.positiveButtonRes());
         activityOverlayView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);

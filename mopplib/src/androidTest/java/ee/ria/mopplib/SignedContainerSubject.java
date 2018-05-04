@@ -98,7 +98,8 @@ public final class SignedContainerSubject extends Subject<SignedContainerSubject
             builder.add(DataFile.create(
                     dataFileMetadata.getString("id"),
                     dataFileMetadata.getString("name"),
-                    dataFileMetadata.getLong("size")));
+                    dataFileMetadata.getLong("size"),
+                    dataFileMetadata.getString("mimeType")));
         }
         return builder.build();
     }

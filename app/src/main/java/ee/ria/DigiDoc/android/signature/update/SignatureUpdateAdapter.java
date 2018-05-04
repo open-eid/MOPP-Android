@@ -61,15 +61,15 @@ final class SignatureUpdateAdapter extends
 
     void setData(boolean isSuccess, boolean isExistingContainer, boolean isNestedContainer,
                  @Nullable SignedContainer container) {
-        boolean isWarning = container != null && !container.signaturesValid();
+        int invalidSignaturesCount = container == null ? 0 : container.invalidSignaturesCount();
         String name = container == null ? null : container.name();
 
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (isSuccess) {
             builder.add(SuccessItem.create());
         }
-        if (isWarning) {
-            builder.add(WarningItem.create());
+        if (invalidSignaturesCount > 0) {
+            builder.add(WarningItem.create(invalidSignaturesCount));
         }
         if (container != null) {
             builder.add(NameItem.create(name))
@@ -93,7 +93,7 @@ final class SignatureUpdateAdapter extends
 
         boolean shouldScrollToTop = !this.items.isEmpty() &&
                 ((isSuccess && !containsType(this.items, SuccessItem.class)) ||
-                (isWarning && !containsType(this.items, WarningItem.class)) ||
+                (invalidSignaturesCount > 0 && !containsType(this.items, WarningItem.class)) ||
                 (name != null && !containsType(this.items, NameItem.class)));
 
         DiffUtil.DiffResult result = DiffUtil
@@ -201,12 +201,17 @@ final class SignatureUpdateAdapter extends
 
     static final class WarningViewHolder extends UpdateViewHolder<WarningItem> {
 
+        private final TextView messageView;
+
         WarningViewHolder(View itemView) {
             super(itemView);
+            messageView = itemView.findViewById(R.id.signatureUpdateListWarningMessage);
         }
 
         @Override
         void bind(SignatureUpdateAdapter adapter, WarningItem item) {
+            messageView.setText(messageView.getResources()
+                    .getString(R.string.signature_update_signatures_invalid, item.invalidCount()));
         }
     }
 
@@ -383,9 +388,11 @@ final class SignatureUpdateAdapter extends
     @AutoValue
     static abstract class WarningItem extends Item {
 
-        static WarningItem create() {
+        abstract int invalidCount();
+
+        static WarningItem create(int invalidCount) {
             return new AutoValue_SignatureUpdateAdapter_WarningItem(
-                    R.layout.signature_update_list_item_warning);
+                    R.layout.signature_update_list_item_warning, invalidCount);
         }
     }
 

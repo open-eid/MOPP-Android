@@ -32,4 +32,37 @@
 
     <string name="signature_add_mobile_id_challenge_placeholder">____</string>
 
+    <!-- Main About -->
+    <string name="main_about_support_preference_v7_fix_title">Android Support Preference v7 Fix</string>
+    <string name="main_about_guava_title">Google Guava</string>
+    <string name="main_about_apache_commons_title">Apache Commons</string>
+    <string name="main_about_square_okio_title">Square Okio</string>
+    <string name="main_about_timber_title">Timber</string>
+    <string name="main_about_butterknife_title">Butterknife</string>
+    <string name="main_about_square_okhttp_title">Square OkHttp</string>
+    <string name="main_about_retrofit_title">Square Retrofit</string>
+    <string name="main_about_spongy_castle_title">Spongy Castle</string>
+    <string name="main_about_material_values_title">Material Values</string>
+    <string name="main_about_dagger_title">Google Dagger</string>
+    <string name="main_about_conductor_title">BlueLine Labs Conductor</string>
+    <string name="main_about_rxjava_title">RxJava</string>
+    <string name="main_about_rxandroid_title">RxAndroid</string>
+    <string name="main_about_rxbinding_title">RxBinding</string>
+    <string name="main_about_autovalue_title">Google AutoValue</string>
+    <string name="main_about_autovalue_parcel_title">AutoValue Parcel</string>
+    <string name="main_about_threetenabp_title">ThreeTenAbp</string>
+    <string name="main_about_expandable_layout">ExpandableLayout</string>
+    <string name="main_about_junit_title">JUnit</string>
+    <string name="main_about_truth_title">Google Truth</string>
+    <string name="main_about_apache_2_license_title">Apache Software License, Version 2.0</string>
+    <string name="main_about_apache2_license_url">https://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="main_about_mit_license_title">MIT License</string>
+    <string name="main_about_mit_license_url">https://opensource.org/licenses/MIT</string>
+    <string name="main_about_eclipse_license_title">Eclipse license version 1.0</string>
+    <string name="main_about_eclipse_license_url">https://www.eclipse.org/legal/epl-v10.html</string>
+
+    <!-- EID Home -->
+    <string name="eid_home_certificate_pin_auth">PIN1</string>
+    <string name="eid_home_certificate_pin_sign">PIN2</string>
+
 </resources>

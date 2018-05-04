@@ -17,7 +17,7 @@ public final class Predicates {
         @Nullable private T previous;
 
         @Override
-        public boolean test(T t) throws Exception {
+        public boolean test(T t) {
             if (previous != null && previous.equals(t)) {
                 return false;
             } else {

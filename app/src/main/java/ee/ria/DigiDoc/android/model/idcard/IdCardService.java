@@ -121,7 +121,7 @@ public final class IdCardService {
         }
 
         @Override
-        public void subscribe(ObservableEmitter<TokenResponse> emitter) throws Exception {
+        public void subscribe(ObservableEmitter<TokenResponse> emitter) {
             cardReader = CardReader.getInstance(application, CardReader.Provider.ACS);
 
             BroadcastReceiver tokenAvailableReceiver = new BroadcastReceiver() {
