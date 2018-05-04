@@ -99,6 +99,198 @@
                 android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
                 android:gravity="center"
                 android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_lgpl_2_1_license_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:autoLink="web"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_icon_action_gutter"
+                android:text="@string/main_about_lgpl_2_1_license_url"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:id="@id/mainAboutXercesCVersionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_xerces_c_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_apache_2_license_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:autoLink="web"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_icon_action_gutter"
+                android:text="@string/main_about_apache2_license_url"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:id="@id/mainAboutApacheXmlSecurityVersionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_apache_xml_security_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_apache_2_license_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:autoLink="web"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_icon_action_gutter"
+                android:text="@string/main_about_apache2_license_url"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:id="@id/mainAboutXsdVersionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_xsd_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_gpl_license_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:autoLink="web"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_icon_action_gutter"
+                android:text="@string/main_about_xsd_license_url"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:id="@id/mainAboutOpensslVersionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_openssl_license_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_openssl_license_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:autoLink="web"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_icon_action_gutter"
+                android:text="@string/main_about_openssl_license_url"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:id="@id/mainAboutLibxmlVersionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_libxml_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_mit_license_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:autoLink="web"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_icon_action_gutter"
+                android:text="@string/main_about_mit_license_url"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:id="@id/mainAboutPodofoVersionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_podofo_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
                 android:text="@string/main_about_lgpl_license_title"
                 android:textAppearance="@style/TextAppearance.Application.Value" />
 
@@ -111,6 +303,38 @@
                 android:gravity="center"
                 android:paddingBottom="@dimen/material_card_actions_icon_action_gutter"
                 android:text="@string/main_about_lgpl_license_url"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:id="@id/mainAboutZLibVersionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_z_lib_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_z_lib_license_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:autoLink="web"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_icon_action_gutter"
+                android:text="@string/main_about_z_lib_license_url"
                 android:textAppearance="@style/TextAppearance.Application.Value" />
 
             <TextView

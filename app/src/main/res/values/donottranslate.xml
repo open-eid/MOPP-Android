@@ -34,6 +34,18 @@
 
     <!-- Main About -->
     <string name="main_about_libdigidocpp_title">libdigidocpp %s</string>
+    <string name="main_about_xerces_c_title">Xerces-C++ XML Parser %s</string>
+    <string name="main_about_apache_xml_security_title">Apache XML Security for C++ %s</string>
+    <string name="main_about_xsd_title">XSD: XML Data Binding for C++ %s</string>
+    <string name="main_about_xsd_license_url">https://www.codesynthesis.com/products/xsd/license.xhtml</string>
+    <string name="main_about_openssl_title">The OpenSSL project %s</string>
+    <string name="main_about_openssl_license_title">OpenSSL License</string>
+    <string name="main_about_openssl_license_url">https://www.openssl.org/source/license.html</string>
+    <string name="main_about_libxml_title">libxml - The XML C parser and toolkit of Gnome %s</string>
+    <string name="main_about_podofo_title">PoDoFo %s</string>
+    <string name="main_about_z_lib_title">zlib - A Massively Spiffy Yet Delicately Unobtrusive Compression Library %s</string>
+    <string name="main_about_z_lib_license_title">zlib License</string>
+    <string name="main_about_z_lib_license_url">https://zlib.net/zlib_license.html</string>
     <string name="main_about_support_preference_v7_fix_title">Android Support Preference v7 Fix %s</string>
     <string name="main_about_guava_title">Google Guava %s</string>
     <string name="main_about_apache_commons_io_title">Apache Commons IO %s</string>
@@ -61,8 +73,11 @@
     <string name="main_about_mit_license_url">https://opensource.org/licenses/MIT</string>
     <string name="main_about_eclipse_license_title">Eclipse license version 1.0</string>
     <string name="main_about_eclipse_license_url">https://www.eclipse.org/legal/epl-v10.html</string>
-    <string name="main_about_lgpl_license_title">GNU LESSER GENERAL PUBLIC LICENSE Version 2.1</string>
-    <string name="main_about_lgpl_license_url">https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html</string>
+    <string name="main_about_gpl_license_title">GNU General Public License, version 2</string>
+    <string name="main_about_lgpl_license_title">GNU Lesser General Public License</string>
+    <string name="main_about_lgpl_license_url">https://www.gnu.org/copyleft/lesser.html</string>
+    <string name="main_about_lgpl_2_1_license_title">GNU Lesser General Public License Version 2.1</string>
+    <string name="main_about_lgpl_2_1_license_url">https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html</string>
 
     <!-- EID Home -->
     <string name="eid_home_certificate_pin_auth">PIN1</string>

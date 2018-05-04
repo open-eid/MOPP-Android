@@ -23,29 +23,36 @@ public final class AboutView extends CoordinatorLayout {
 
     private final ViewDisposables disposables;
 
-    private TextView libDigidocppVersionTitle;
-    private TextView riaDigiDocVersionTitle;
-    private TextView preferenceV7FixVersionTitle;
-    private TextView guavaVersionTitle;
-    private TextView commonsIoVersionTitle;
-    private TextView okioVersionTitle;
-    private TextView timberVersionTitle;
-    private TextView butterknifeVersionTitle;
-    private TextView okHttpVersionTitle;
-    private TextView retrofitVersionTitle;
-    private TextView spongyCastleVersionTitle;
-    private TextView materialValuesVersionTitle;
-    private TextView daggerVersionTitle;
-    private TextView conductorVersionTitle;
-    private TextView rxJavaVersionTitle;
-    private TextView rxAndroidVersionTitle;
-    private TextView rxBindingVersionTitle;
-    private TextView autoValueVersionTitle;
-    private TextView autoValueParcelVersionTitle;
-    private TextView threeTenAbpVersionTitle;
-    private TextView expandableLayoutVersionTitle;
-    private TextView junitVersionTitle;
-    private TextView truthVersionTitle;
+    private final TextView riaDigiDocVersionTitleView;
+    private final TextView libDigidocppVersionTitleView;
+    private final TextView xercesCVersionTitleView;
+    private final TextView apacheXmlSecurityVersionTitleView;
+    private final TextView xsdVersionTitleView;
+    private final TextView opensslVersionTitleView;
+    private final TextView libxmlVersionTitleView;
+    private final TextView podofoVersionTitleView;
+    private final TextView zLibVersionTitleView;
+    private final TextView preferenceV7FixVersionTitleView;
+    private final TextView guavaVersionTitleView;
+    private final TextView commonsIoVersionTitleView;
+    private final TextView okioVersionTitleView;
+    private final TextView timberVersionTitleView;
+    private final TextView butterknifeVersionTitleView;
+    private final TextView okHttpVersionTitleView;
+    private final TextView retrofitVersionTitleView;
+    private final TextView spongyCastleVersionTitleView;
+    private final TextView materialValuesVersionTitleView;
+    private final TextView daggerVersionTitleView;
+    private final TextView conductorVersionTitleView;
+    private final TextView rxJavaVersionTitleView;
+    private final TextView rxAndroidVersionTitleView;
+    private final TextView rxBindingVersionTitleView;
+    private final TextView autoValueVersionTitleView;
+    private final TextView autoValueParcelVersionTitleView;
+    private final TextView threeTenAbpVersionTitleView;
+    private final TextView expandableLayoutVersionTitleView;
+    private final TextView junitVersionTitleView;
+    private final TextView truthVersionTitleView;
 
     public AboutView(Context context) {
         super(context);
@@ -54,33 +61,41 @@ public final class AboutView extends CoordinatorLayout {
         navigator = Application.component(context).navigator();
         disposables = new ViewDisposables();
 
-        libDigidocppVersionTitle = findViewById(R.id.mainAboutLibdigidocppVersionTitle);
-        riaDigiDocVersionTitle = findViewById(R.id.mainAboutRiaDigiDocVersionTitle);
-        preferenceV7FixVersionTitle =
+        riaDigiDocVersionTitleView = findViewById(R.id.mainAboutRiaDigiDocVersionTitle);
+        libDigidocppVersionTitleView = findViewById(R.id.mainAboutLibdigidocppVersionTitle);
+        xercesCVersionTitleView = findViewById(R.id.mainAboutXercesCVersionTitle);
+        apacheXmlSecurityVersionTitleView =
+                findViewById(R.id.mainAboutApacheXmlSecurityVersionTitle);
+        xsdVersionTitleView = findViewById(R.id.mainAboutXsdVersionTitle);
+        opensslVersionTitleView = findViewById(R.id.mainAboutOpensslVersionTitle);
+        libxmlVersionTitleView = findViewById(R.id.mainAboutLibxmlVersionTitle);
+        podofoVersionTitleView = findViewById(R.id.mainAboutPodofoVersionTitle);
+        zLibVersionTitleView = findViewById(R.id.mainAboutZLibVersionTitle);
+        preferenceV7FixVersionTitleView =
                 findViewById(R.id.mainAboutPreferenceV7FixVersionTitle);
-        guavaVersionTitle = findViewById(R.id.mainAboutGuavaVersionTitle);
-        commonsIoVersionTitle = findViewById(R.id.mainAboutCommonsIoVersionTitle);
-        okioVersionTitle = findViewById(R.id.mainAboutOkioVersionTitle);
-        timberVersionTitle = findViewById(R.id.mainAboutTimberVersionTitle);
-        butterknifeVersionTitle = findViewById(R.id.mainAboutButterknifeVersionTitle);
-        okHttpVersionTitle = findViewById(R.id.mainAboutOkHttpVersionTitle);
-        retrofitVersionTitle = findViewById(R.id.mainAboutRetrofitVersionTitle);
-        spongyCastleVersionTitle = findViewById(R.id.mainAboutSpongyCastleVersionTitle);
-        materialValuesVersionTitle =
+        guavaVersionTitleView = findViewById(R.id.mainAboutGuavaVersionTitle);
+        commonsIoVersionTitleView = findViewById(R.id.mainAboutCommonsIoVersionTitle);
+        okioVersionTitleView = findViewById(R.id.mainAboutOkioVersionTitle);
+        timberVersionTitleView = findViewById(R.id.mainAboutTimberVersionTitle);
+        butterknifeVersionTitleView = findViewById(R.id.mainAboutButterknifeVersionTitle);
+        okHttpVersionTitleView = findViewById(R.id.mainAboutOkHttpVersionTitle);
+        retrofitVersionTitleView = findViewById(R.id.mainAboutRetrofitVersionTitle);
+        spongyCastleVersionTitleView = findViewById(R.id.mainAboutSpongyCastleVersionTitle);
+        materialValuesVersionTitleView =
                 findViewById(R.id.mainAboutMaterialValuesVersionTitle);
-        daggerVersionTitle = findViewById(R.id.mainAboutDaggerVersionTitle);
-        conductorVersionTitle = findViewById(R.id.mainAboutConductorVersionTitle);
-        rxJavaVersionTitle = findViewById(R.id.mainAboutRxJavaVersionTitle);
-        rxAndroidVersionTitle = findViewById(R.id.mainAboutRxAndroidVersionTitle);
-        rxBindingVersionTitle = findViewById(R.id.mainAboutRxBindingVersionTitle);
-        autoValueVersionTitle = findViewById(R.id.mainAboutAutoValueVersionTitle);
-        autoValueParcelVersionTitle =
+        daggerVersionTitleView = findViewById(R.id.mainAboutDaggerVersionTitle);
+        conductorVersionTitleView = findViewById(R.id.mainAboutConductorVersionTitle);
+        rxJavaVersionTitleView = findViewById(R.id.mainAboutRxJavaVersionTitle);
+        rxAndroidVersionTitleView = findViewById(R.id.mainAboutRxAndroidVersionTitle);
+        rxBindingVersionTitleView = findViewById(R.id.mainAboutRxBindingVersionTitle);
+        autoValueVersionTitleView = findViewById(R.id.mainAboutAutoValueVersionTitle);
+        autoValueParcelVersionTitleView =
                 findViewById(R.id.mainAboutAutoValueParcelVersionTitle);
-        threeTenAbpVersionTitle = findViewById(R.id.mainAboutThreeTenAbpVersionTitle);
-        expandableLayoutVersionTitle =
+        threeTenAbpVersionTitleView = findViewById(R.id.mainAboutThreeTenAbpVersionTitle);
+        expandableLayoutVersionTitleView =
                 findViewById(R.id.mainAboutExpandableLayoutVersionTitle);
-        junitVersionTitle = findViewById(R.id.mainAboutJunitVersionTitle);
-        truthVersionTitle = findViewById(R.id.mainAboutTruthVersionTitle);
+        junitVersionTitleView = findViewById(R.id.mainAboutJunitVersionTitle);
+        truthVersionTitleView = findViewById(R.id.mainAboutTruthVersionTitle);
 
         appendTitleVersions();
     }
@@ -100,53 +115,67 @@ public final class AboutView extends CoordinatorLayout {
     }
 
     private void appendTitleVersions() {
-        riaDigiDocVersionTitle.setText(getResources().getString(
+        riaDigiDocVersionTitleView.setText(getResources().getString(
                 R.string.main_about_ria_digidoc_version_title, BuildConfig.VERSION_NAME));
-        libDigidocppVersionTitle.setText(getResources().getString(
+        libDigidocppVersionTitleView.setText(getResources().getString(
                 R.string.main_about_libdigidocpp_title, digidoc.version()));
-        preferenceV7FixVersionTitle.setText(getResources().getString(
+        xercesCVersionTitleView.setText(getResources().getString(
+                R.string.main_about_xerces_c_title, "3.2.1"));
+        apacheXmlSecurityVersionTitleView.setText(getResources().getString(
+                R.string.main_about_apache_xml_security_title, "1.7.3"));
+        xsdVersionTitleView.setText(getResources().getString(
+                R.string.main_about_xsd_title, "4.0.0"));
+        opensslVersionTitleView.setText(getResources().getString(
+                R.string.main_about_openssl_title, "1.0.2o"));
+        libxmlVersionTitleView.setText(getResources().getString(
+                R.string.main_about_libxml_title, "2-2.9.8"));
+        podofoVersionTitleView.setText(getResources().getString(
+                R.string.main_about_podofo_title, "0.9.4"));
+        zLibVersionTitleView.setText(getResources().getString(
+                R.string.main_about_z_lib_title, "1.2.11"));
+        preferenceV7FixVersionTitleView.setText(getResources().getString(
                 R.string.main_about_support_preference_v7_fix_title,
                 BuildConfig.PREFERENCE_V7_FIX_VERSION));
-        guavaVersionTitle.setText(getResources().getString(
+        guavaVersionTitleView.setText(getResources().getString(
                 R.string.main_about_guava_title, BuildConfig.GUAVA_VERSION));
-        commonsIoVersionTitle.setText(getResources().getString(
+        commonsIoVersionTitleView.setText(getResources().getString(
                 R.string.main_about_apache_commons_io_title, BuildConfig.COMMONS_IO_VERSION));
-        okioVersionTitle.setText(getResources().getString(
+        okioVersionTitleView.setText(getResources().getString(
                 R.string.main_about_square_okio_title, BuildConfig.OKIO_VERSION));
-        timberVersionTitle.setText(getResources().getString(
+        timberVersionTitleView.setText(getResources().getString(
                 R.string.main_about_timber_title, BuildConfig.TIMBER_VERSION));
-        butterknifeVersionTitle.setText(getResources().getString(
+        butterknifeVersionTitleView.setText(getResources().getString(
                 R.string.main_about_butterknife_title, BuildConfig.BUTTERKNIFE_VERSION));
-        okHttpVersionTitle.setText(getResources().getString(
+        okHttpVersionTitleView.setText(getResources().getString(
                 R.string.main_about_square_okhttp_title, BuildConfig.OK_HTTP_VERSION));
-        retrofitVersionTitle.setText(getResources().getString(
+        retrofitVersionTitleView.setText(getResources().getString(
                 R.string.main_about_retrofit_title, BuildConfig.RETROFIT_VERSION));
-        spongyCastleVersionTitle.setText(getResources().getString(
+        spongyCastleVersionTitleView.setText(getResources().getString(
                 R.string.main_about_spongy_castle_title, BuildConfig.SPONGY_CASTLE_VERSION));
-        materialValuesVersionTitle.setText(getResources().getString(
+        materialValuesVersionTitleView.setText(getResources().getString(
                 R.string.main_about_material_values_title, BuildConfig.MATERIAL_VALUES_VERSION));
-        daggerVersionTitle.setText(getResources().getString(
+        daggerVersionTitleView.setText(getResources().getString(
                 R.string.main_about_dagger_title, BuildConfig.DAGGER_VERSION));
-        conductorVersionTitle.setText(getResources().getString(
+        conductorVersionTitleView.setText(getResources().getString(
                 R.string.main_about_conductor_title, BuildConfig.CONDUCTOR_VERSION));
-        rxJavaVersionTitle.setText(getResources().getString(
+        rxJavaVersionTitleView.setText(getResources().getString(
                 R.string.main_about_rxjava_title, BuildConfig.RX_JAVA_VERSION));
-        rxAndroidVersionTitle.setText(getResources().getString(
+        rxAndroidVersionTitleView.setText(getResources().getString(
                 R.string.main_about_rxandroid_title, BuildConfig.RX_ANDROID_VERSION));
-        rxBindingVersionTitle.setText(getResources().getString(
+        rxBindingVersionTitleView.setText(getResources().getString(
                 R.string.main_about_rxbinding_title, BuildConfig.RX_BINDER_VERSION));
-        autoValueVersionTitle.setText(getResources().getString(
+        autoValueVersionTitleView.setText(getResources().getString(
                 R.string.main_about_autovalue_title, BuildConfig.AUTO_VALUE_VERSION));
-        autoValueParcelVersionTitle.setText(getResources().getString(
+        autoValueParcelVersionTitleView.setText(getResources().getString(
                 R.string.main_about_autovalue_parcel_title, BuildConfig.AUTO_VALUE_PARCEL_VERSION));
-        threeTenAbpVersionTitle.setText(getResources().getString(
+        threeTenAbpVersionTitleView.setText(getResources().getString(
                 R.string.main_about_threetenabp_title, BuildConfig.THREE_TEN_ABP_VERSION));
-        expandableLayoutVersionTitle.setText(getResources().getString(
+        expandableLayoutVersionTitleView.setText(getResources().getString(
                 R.string.main_about_expandable_layout_title,
                 BuildConfig.EXPANDABLE_LAYOUT_VERSION));
-        junitVersionTitle.setText(getResources().getString(
+        junitVersionTitleView.setText(getResources().getString(
                 R.string.main_about_junit_title, BuildConfig.JUNIT_VERSION));
-        truthVersionTitle.setText(getResources().getString(
+        truthVersionTitleView.setText(getResources().getString(
                 R.string.main_about_truth_title, BuildConfig.TRUTH_VERSION));
     }
 }
