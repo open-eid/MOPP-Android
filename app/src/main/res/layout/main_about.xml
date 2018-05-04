@@ -82,6 +82,38 @@
                 android:textSize="@dimen/material_typography_tall_title_text_size" />
 
             <TextView
+                android:id="@id/mainAboutLibdigidocppVersionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_libdigidocpp_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_row_padding"
+                android:text="@string/main_about_lgpl_license_title"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
+                android:autoLink="web"
+                android:gravity="center"
+                android:paddingBottom="@dimen/material_card_actions_icon_action_gutter"
+                android:text="@string/main_about_lgpl_license_url"
+                android:textAppearance="@style/TextAppearance.Application.Value" />
+
+            <TextView
                 android:id="@id/mainAboutPreferenceV7FixVersionTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -153,7 +185,7 @@
                 android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
                 android:gravity="center"
                 android:paddingBottom="@dimen/material_card_actions_row_padding"
-                android:text="@string/main_about_apache_commons_title"
+                android:text="@string/main_about_apache_commons_io_title"
                 android:textAppearance="@style/TextAppearance.Application.Value" />
 
             <TextView
@@ -665,7 +697,7 @@
                 android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
                 android:gravity="center"
                 android:paddingBottom="@dimen/material_card_actions_row_padding"
-                android:text="@string/main_about_expandable_layout"
+                android:text="@string/main_about_expandable_layout_title"
                 android:textAppearance="@style/TextAppearance.Application.Value" />
 
             <TextView

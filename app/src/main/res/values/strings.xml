@@ -30,7 +30,7 @@
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
-    <string name="main_about_ria_digidoc_version_title">RIA DigiDoc</string>
+    <string name="main_about_ria_digidoc_version_title">RIA DigiDoc version %s</string>
     <string name="main_about_software_developed_by_title">Estonian ID-software is released by Information System Authority</string>
     <string name="main_about_contact_information_title">Contact for assistance by email abi@id.ee or call 1777 (only from Estonia), (+372) 677 3377 when calling from abroad.</string>
     <string name="main_about_licenses_title">Additional licenses and components</string>

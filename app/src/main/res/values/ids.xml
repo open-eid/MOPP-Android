@@ -39,6 +39,7 @@
     <!-- Main About -->
     <item type="id" name="mainAboutScreen" />
     <item type="id" name="mainAboutRiaDigiDocVersionTitle" />
+    <item type="id" name="mainAboutLibdigidocppVersionTitle" />
     <item type="id" name="mainAboutPreferenceV7FixVersionTitle" />
     <item type="id" name="mainAboutGuavaVersionTitle" />
     <item type="id" name="mainAboutCommonsIoVersionTitle" />
