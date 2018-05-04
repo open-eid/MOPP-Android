@@ -63,7 +63,7 @@ public final class CertificateDataView extends LinearLayout {
         titleView.setText(type == Token.CertType.CertAuth
                 ? R.string.eid_home_certificate_data_title_auth
                 : R.string.eid_home_certificate_data_title_sign);
-        validityView.setText(formatter.certificateDataValidity(data));
+        validityView.setText(formatter.certificateDataValidity(type, data));
         int buttonChange = type == Token.CertType.CertAuth
                 ? R.string.eid_home_certificate_data_button_change_auth
                 : R.string.eid_home_certificate_data_button_change_sign;

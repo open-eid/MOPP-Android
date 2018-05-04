@@ -61,4 +61,8 @@
     <string name="main_about_eclipse_license_title">Eclipse license version 1.0</string>
     <string name="main_about_eclipse_license_url">https://www.eclipse.org/legal/epl-v10.html</string>
 
+    <!-- EID Home -->
+    <string name="eid_home_certificate_pin_auth">PIN1</string>
+    <string name="eid_home_certificate_pin_sign">PIN2</string>
+
 </resources>

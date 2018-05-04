@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingTranslation"> <!-- remove when translations are available -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="back">Back</string>
     <string name="close">Close</string>
@@ -163,8 +162,8 @@
 
     <string name="eid_home_certificate_data_title_auth">Authentication certificate</string>
     <string name="eid_home_certificate_data_title_sign">Signing certificate</string>
-    <string name="eid_home_certificate_data_valid">Certificate &lt;c>valid&lt;/c> until %1$s</string>
-    <string name="eid_home_certificate_data_expired">Certificate &lt;c>expired&lt;/c>, was valid until %1$s</string>
+    <string name="eid_home_certificate_data_valid">Certificate is &lt;c>valid&lt;/c> until %1$s</string>
+    <string name="eid_home_certificate_data_expired">Certificate has &lt;c>expired&lt;/c>! %1$s cannot be used because the certificate has expired.</string>
     <string name="eid_home_certificate_data_button_change_auth">CHANGE PIN1</string>
     <string name="eid_home_certificate_data_button_change_sign">CHANGE PIN2</string>
     <string name="eid_home_certificate_data_button_unblock_auth">UNBLOCK</string>
@@ -215,11 +214,11 @@
     <string name="eid_home_code_update_positive_button_edit">CHANGE</string>
     <string name="eid_home_code_update_positive_button_unblock">UNBLOCK</string>
 
-    <string name="eid_home_code_update_success_pin1_edit">PIN1 SUCCESSFULLY CHANGED</string>
-    <string name="eid_home_code_update_success_pin1_unblock">PIN1 SUCCESSFULLY UNBLOCKED</string>
-    <string name="eid_home_code_update_success_pin2_edit">PIN2 SUCCESSFULLY CHANGED</string>
-    <string name="eid_home_code_update_success_pin2_unblock">PIN2 SUCCESSFULLY UNBLOCKED</string>
-    <string name="eid_home_code_update_success_puk_edit">PUK SUCCESSFULLY CHANGED</string>
+    <string name="eid_home_code_update_success_pin1_edit">PIN1 CHANGED</string>
+    <string name="eid_home_code_update_success_pin1_unblock">PIN1 UNBLOCKED</string>
+    <string name="eid_home_code_update_success_pin2_edit">PIN2 CHANGED</string>
+    <string name="eid_home_code_update_success_pin2_unblock">PIN2 UNBLOCKED</string>
+    <string name="eid_home_code_update_success_puk_edit">PUK CHANGED</string>
 
     <string name="eid_home_code_update_current_error_min_length_pin1_edit">Current PIN1 code must be at least %1$d digits long</string>
     <string name="eid_home_code_update_current_error_min_length_pin1_unblock">Current PUK code must be at least %1$d digits long</string>

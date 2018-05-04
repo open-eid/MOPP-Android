@@ -79,12 +79,17 @@ public abstract class SignedContainer {
     public abstract ImmutableList<Signature> signatures();
 
     public final boolean signaturesValid() {
+        return invalidSignaturesCount() == 0;
+    }
+
+    public final int invalidSignaturesCount() {
+        int count = 0;
         for (Signature signature : signatures()) {
             if (!signature.status().equals(SignatureStatus.VALID)) {
-                return false;
+                count++;
             }
         }
-        return true;
+        return count;
     }
 
     public final String signatureProfile() {
