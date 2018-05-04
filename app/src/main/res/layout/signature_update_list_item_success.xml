@@ -7,4 +7,4 @@
     android:padding="@dimen/material_subheader_padding_start"
     android:background="@color/success"
     android:textColor="@color/material_color_white"
-    android:text="@string/signature_added" />
+    android:text="@string/signature_update_signature_add_success" />

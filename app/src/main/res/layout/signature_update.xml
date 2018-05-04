@@ -75,7 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="@string/status_request_sent" />
+                    android:text="@string/signature_update_mobile_id_status_request_sent" />
 
                 <TextView
                     android:id="@id/signatureUpdateMobileIdChallenge"
@@ -89,7 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="@string/mobile_sign_info" />
+                    android:text="@string/signature_update_mobile_id_info" />
 
             </LinearLayout>
 

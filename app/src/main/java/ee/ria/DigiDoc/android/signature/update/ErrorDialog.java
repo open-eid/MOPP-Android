@@ -54,11 +54,10 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
         if (documentsAddError != null) {
             type = DOCUMENTS_ADD;
             setMessage(getContext().getString(
-                    R.string.signature_update_add_documents_error_exists));
+                    R.string.signature_update_documents_add_error_exists));
         } else if (documentRemoveError != null) {
             type = DOCUMENT_REMOVE;
-            setMessage(getContext().getString(
-                    R.string.signature_update_documents_remove_error_container_empty));
+            setMessage(getContext().getString(R.string.signature_update_document_remove_error));
         } else if (signatureAddError != null) {
             type = SIGNATURE_ADD;
             if (signatureAddError instanceof PinVerificationException) {

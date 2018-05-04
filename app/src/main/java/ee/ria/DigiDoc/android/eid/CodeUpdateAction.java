@@ -81,6 +81,7 @@ abstract class CodeUpdateAction implements Parcelable {
                 currentMinLength = PIN1_MIN_LENGTH;
                 newMinLength = PIN1_MIN_LENGTH;
                 repeatMinLength = PIN1_MIN_LENGTH;
+                successMessageRes = R.string.eid_home_code_update_success_pin1_edit;
                 currentMinLengthErrorRes =
                         R.string.eid_home_code_update_current_error_min_length_pin1_edit;
                 currentInvalidErrorRes =
@@ -98,6 +99,7 @@ abstract class CodeUpdateAction implements Parcelable {
                 currentMinLength = PUK_MIN_LENGTH;
                 newMinLength = PIN1_MIN_LENGTH;
                 repeatMinLength = PIN1_MIN_LENGTH;
+                successMessageRes = R.string.eid_home_code_update_success_pin1_unblock;
                 currentMinLengthErrorRes =
                         R.string.eid_home_code_update_current_error_min_length_pin1_unblock;
                 currentInvalidErrorRes =
@@ -107,7 +109,6 @@ abstract class CodeUpdateAction implements Parcelable {
             }
             newRes = R.string.eid_home_code_update_new_pin1;
             repeatRes = R.string.eid_home_code_update_repeat_pin1;
-            successMessageRes = R.string.eid_home_code_update_success_pin1;
             newMinLengthErrorRes = R.string.eid_home_code_update_new_error_min_length_pin1;
             newPersonalCodeErrorRes = R.string.eid_home_code_update_new_error_personal_code_pin1;
             newDateOfBirthErrorRes = R.string.eid_home_code_update_new_error_date_of_birth_pin1;
@@ -125,6 +126,7 @@ abstract class CodeUpdateAction implements Parcelable {
                 currentMinLength = PIN2_MIN_LENGTH;
                 newMinLength = PIN2_MIN_LENGTH;
                 repeatMinLength = PIN2_MIN_LENGTH;
+                successMessageRes = R.string.eid_home_code_update_success_pin2_edit;
                 currentMinLengthErrorRes =
                         R.string.eid_home_code_update_current_error_min_length_pin2_edit;
                 currentInvalidErrorRes =
@@ -142,6 +144,7 @@ abstract class CodeUpdateAction implements Parcelable {
                 currentMinLength = PUK_MIN_LENGTH;
                 newMinLength = PIN2_MIN_LENGTH;
                 repeatMinLength = PIN2_MIN_LENGTH;
+                successMessageRes = R.string.eid_home_code_update_success_pin2_unblock;
                 currentMinLengthErrorRes =
                         R.string.eid_home_code_update_current_error_min_length_pin2_unblock;
                 currentInvalidErrorRes =
@@ -151,7 +154,6 @@ abstract class CodeUpdateAction implements Parcelable {
             }
             newRes = R.string.eid_home_code_update_new_pin2;
             repeatRes = R.string.eid_home_code_update_repeat_pin2;
-            successMessageRes = R.string.eid_home_code_update_success_pin2;
             newMinLengthErrorRes = R.string.eid_home_code_update_new_error_min_length_pin2;
             newPersonalCodeErrorRes = R.string.eid_home_code_update_new_error_personal_code_pin2;
             newDateOfBirthErrorRes = R.string.eid_home_code_update_new_error_date_of_birth_pin2;
@@ -169,7 +171,7 @@ abstract class CodeUpdateAction implements Parcelable {
             currentMinLength = PUK_MIN_LENGTH;
             newMinLength = PUK_MIN_LENGTH;
             repeatMinLength = PUK_MIN_LENGTH;
-            successMessageRes = R.string.eid_home_code_update_success_puk;
+            successMessageRes = R.string.eid_home_code_update_success_puk_edit;
             currentMinLengthErrorRes =
                     R.string.eid_home_code_update_current_error_min_length_puk_edit;
             currentInvalidErrorRes = R.string.eid_home_code_update_current_error_invalid_puk_edit;

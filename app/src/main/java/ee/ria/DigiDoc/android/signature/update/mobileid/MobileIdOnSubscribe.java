@@ -7,17 +7,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
-import java.io.IOException;
-import java.util.Locale;
-
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
-import ee.ria.DigiDoc.container.ContainerFacade;
-import ee.ria.DigiDoc.mid.CreateSignatureRequestBuilder;
-import ee.ria.DigiDoc.mid.MobileSignFaultMessageSource;
-import ee.ria.DigiDoc.mid.MobileSignStatusMessageSource;
 import ee.ria.libdigidocpp.Conf;
-import ee.ria.libdigidocpp.Container;
 import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
@@ -45,8 +37,6 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
     private final LocalBroadcastManager broadcastManager;
     private final String personalCode;
     private final String phoneNo;
-    private final MobileSignStatusMessageSource statusMessageSource;
-    private final MobileSignFaultMessageSource faultMessageSource;
 
     public MobileIdOnSubscribe(Application application, SignedContainer container,
                                String personalCode, String phoneNo) {
@@ -55,21 +45,10 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         this.broadcastManager = LocalBroadcastManager.getInstance(application);
         this.personalCode = personalCode;
         this.phoneNo = phoneNo;
-        this.statusMessageSource = new MobileSignStatusMessageSource(application.getResources());
-        this.faultMessageSource = new MobileSignFaultMessageSource(application.getResources());
     }
 
     @Override
-    public void subscribe(ObservableEmitter<MobileIdResponse> emitter) throws Exception {
-        Container container = Container.open(this.container.file().getAbsolutePath());
-        if (container == null) {
-            emitter.onError(new IOException("Could not open signature container " +
-                    this.container.file()));
-            return;
-        }
-        Conf conf = Conf.instance();
-        ContainerFacade containerFacade = new ContainerFacade(container, this.container.file());
-
+    public void subscribe(ObservableEmitter<MobileIdResponse> emitter) {
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -77,8 +56,8 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                     case SERVICE_FAULT:
                         ServiceFault fault = ServiceFault
                                 .fromJson(intent.getStringExtra(SERVICE_FAULT));
-                        emitter.onError(new MobileIdMessageException(
-                                faultMessageSource.getMessage(fault.getReason())));
+                        emitter.onError(MobileIdMessageException
+                                .create(application, fault.getReason()));
                         break;
                     case CREATE_SIGNATURE_CHALLENGE:
                         MobileCreateSignatureResponse challenge = MobileCreateSignatureResponse
@@ -98,8 +77,8 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                                 emitter.onComplete();
                                 break;
                             default:
-                                emitter.onError(new MobileIdMessageException(
-                                        statusMessageSource.getMessage(status.getStatus())));
+                                emitter.onError(MobileIdMessageException
+                                        .create(application, status.getStatus()));
                                 break;
                         }
                         break;
@@ -110,17 +89,12 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         broadcastManager.registerReceiver(receiver, new IntentFilter(MID_BROADCAST_ACTION));
         emitter.setCancellable(() -> broadcastManager.unregisterReceiver(receiver));
 
-        String message = application.getString(R.string.action_sign) + " " +
-                containerFacade.getName();
-        MobileCreateSignatureRequest request = CreateSignatureRequestBuilder
-                .aCreateSignatureRequest()
-                .withContainer(containerFacade)
-                .withIdCode(personalCode)
-                .withPhoneNr(phoneNo)
-                .withDesiredMessageToDisplay(message)
-                .withLocale(Locale.getDefault())
-                .withLocalSigningProfile(this.container.signatureProfile())
-                .build();
+        Conf conf = Conf.instance();
+        String displayMessage = application
+                .getString(R.string.signature_update_mobile_id_display_message, container.name());
+        MobileCreateSignatureRequest request = MobileCreateSignatureRequestHelper
+                .create(container, personalCode, phoneNo, displayMessage);
+
         android.content.Intent intent = new Intent(application, MobileSignService.class);
         intent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));
         intent.putExtra(ACCESS_TOKEN_PASS, conf == null ? "" : conf.PKCS12Pass());

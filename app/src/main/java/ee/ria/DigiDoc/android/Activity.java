@@ -56,7 +56,7 @@ public final class Activity extends AppCompatActivity {
         }
 
         @Override
-        public Screen call() throws Exception {
+        public Screen call() {
             if (intent != null && TextUtils.equals(intent.getAction(), Intent.ACTION_VIEW)
                     && intent.getData() != null) {
                 return SignatureCreateScreen.create(intent);
