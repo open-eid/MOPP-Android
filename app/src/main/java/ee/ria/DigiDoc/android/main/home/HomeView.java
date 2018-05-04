@@ -2,7 +2,10 @@ package ee.ria.DigiDoc.android.main.home;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -46,6 +49,8 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
     private final Subject<Intent.NavigationVisibilityIntent> navigationVisibilityIntentSubject =
             PublishSubject.create();
 
+    @Nullable private SparseArray<Parcelable> hierarchyState;
+
     public HomeView(Context context, String screenId) {
         super(context);
         eidScreenId = screenId + "eid";
@@ -78,6 +83,10 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
             }
             view.setId(state.viewId());
             navigationContainerView.removeAllViews();
+            if (hierarchyState != null) {
+                view.restoreHierarchyState(hierarchyState);
+                hierarchyState = null;
+            }
             navigationContainerView.addView(view, layoutParams);
 
             HomeViewChild homeViewChild = (HomeViewChild) view;
@@ -140,5 +149,11 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         menuDialog.dismiss();
         disposables.detach();
         super.onDetachedFromWindow();
+    }
+
+    @Override
+    public void restoreHierarchyState(SparseArray<Parcelable> container) {
+        super.restoreHierarchyState(container);
+        this.hierarchyState = container;
     }
 }
