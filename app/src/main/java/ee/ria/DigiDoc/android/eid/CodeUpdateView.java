@@ -83,10 +83,7 @@ public final class CodeUpdateView extends CoordinatorLayout {
         successMessageView.setVisibility(successMessageVisible ? VISIBLE : GONE);
 
         if (state.equals(State.CLEAR)) {
-            currentView.setText(null);
-            newView.setText(null);
-            repeatView.setText(null);
-            hideSoftKeyboard(this);
+            clear();
         }
 
         if (response == null) {
@@ -130,6 +127,13 @@ public final class CodeUpdateView extends CoordinatorLayout {
                 repeatLabelView.setError(getResources().getString(action.repeatMismatchErrorRes()));
             }
         }
+    }
+
+    public void clear() {
+        currentView.setText(null);
+        newView.setText(null);
+        repeatView.setText(null);
+        hideSoftKeyboard(this);
     }
 
     public Observable<Object> closes() {
