@@ -125,7 +125,7 @@
     <string name="signature_update_id_card_progress_message_initial">Ühenda kaardilugeja telefoniga ja sisesta ID-kaart lugejasse</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>
     <string name="signature_update_id_card_progress_message_card_detected">ID-kaart leitud. Pärin andmeid.</string>
-    <string name="signature_update_id_card_sign_message">ID-kaart on valmis allkrijastamiseks</string>
+    <string name="signature_update_id_card_sign_message">ID-kaart on valmis allkirjastamiseks</string>
     <string name="signature_update_id_card_sign_data">%1$s %2$s (%3$s)</string>
     <string name="signature_update_id_card_sign_pin2">Sisesta PIN2</string>
     <string name="signature_update_id_card_progress_message_signing">Toimub allkirjastamine. Palun oota.</string>
