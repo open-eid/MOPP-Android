@@ -138,6 +138,8 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
         if (codeUpdateAction != null) {
             codeUpdateView.render(state.codeUpdateState(), codeUpdateAction, codeUpdateResponse,
                     state.codeUpdateSuccessMessageVisible());
+        } else {
+            codeUpdateView.clear();
         }
 
         Throwable error = state.error();

@@ -15,6 +15,7 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardSignResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardStatus;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
+import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.tokenlibrary.Token;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -71,7 +72,7 @@ public final class IdCardView extends LinearLayout implements
     }
 
     @Override
-    public void reset(SignatureUpdateViewModel viewModel) {
+    public void reset(@Nullable SignatureUpdateViewModel viewModel) {
         signPin2View.setText(null);
     }
 
@@ -85,6 +86,10 @@ public final class IdCardView extends LinearLayout implements
         IdCardDataResponse dataResponse = response == null ? null : response.dataResponse();
         IdCardSignResponse signResponse = response == null ? null : response.signResponse();
 
+        if (signResponse != null && signResponse.state().equals(State.CLEAR)) {
+            reset(null);
+        }
+
         IdCardData data = dataResponse == null ? null : dataResponse.data();
         if (data == null && signResponse != null) {
             data = signResponse.data();
@@ -96,7 +101,7 @@ public final class IdCardView extends LinearLayout implements
         }
         positiveButtonStateSubject.onNext(VOID);
 
-        if (signResponse != null && signResponse.active()) {
+        if (signResponse != null && signResponse.state().equals(State.ACTIVE)) {
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(
                     R.string.signature_update_id_card_progress_message_signing);

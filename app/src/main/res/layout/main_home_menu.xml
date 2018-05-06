@@ -54,6 +54,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/main_home_menu_diagnostics"
-        android:drawableStart="@drawable/ic_icon_graph_white" />
+        android:drawableStart="@drawable/ic_icon_diagnostics" />
 
 </LinearLayout>
