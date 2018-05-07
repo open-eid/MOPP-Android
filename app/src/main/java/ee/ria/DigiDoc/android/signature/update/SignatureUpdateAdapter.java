@@ -210,8 +210,9 @@ final class SignatureUpdateAdapter extends
 
         @Override
         void bind(SignatureUpdateAdapter adapter, WarningItem item) {
-            messageView.setText(messageView.getResources()
-                    .getString(R.string.signature_update_signatures_invalid, item.invalidCount()));
+            messageView.setText(messageView.getResources().getQuantityString(
+                    R.plurals.signature_update_signatures_invalid, item.invalidCount(),
+                    item.invalidCount()));
         }
     }
 

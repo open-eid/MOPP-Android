@@ -30,7 +30,7 @@
 
     <!-- Main About -->
     <string name="main_about_title">Информация</string>
-    <string name="main_about_ria_digidoc_version_title">RIA DigiDoc версия %s</string>
+    <string name="main_about_ria_digidoc_version_title">RIA DigiDoc версия %1$s</string>
     <string name="main_about_software_developed_by_title">Эстонское программное обеспечение ID выпущено Государственным департаментом инфосистем</string>
     <string name="main_about_contact_information_title">В случае вопросов обращайтесь по адресу abi@id.ee или звоните по телефону 1777 из Эстонии или (+372) 677 3377 из других стран.</string>
     <string name="main_about_licenses_title">Дополнительные лицензии и компоненты</string>
@@ -67,9 +67,14 @@
     <string name="signature_update_document_remove_error">Файл не может быть удалён из контейнера</string>
     <string name="signature_update_signatures_title">Подписи контейнера</string>
     <string name="signature_update_signatures_empty">Контейнер не подписан</string>
-    <string name="signature_update_signatures_invalid">%d НЕВЕРНАЯ ПОДПИСЬ</string>
+    <plurals name="signature_update_signatures_invalid">
+        <item quantity="one">%1$d НЕВЕРНАЯ ПОДПИСЬ</item>
+        <item quantity="other">%1$d НЕВЕРНАЯ ПОДПИСЬ</item>
+        <item quantity="few">%1$d НЕВЕРНАЯ ПОДПИСЬ</item>
+        <item quantity="many">%1$d НЕВЕРНАЯ ПОДПИСЬ</item>
+    </plurals>
     <string name="signature_update_signature_type_signature">Подпись</string>
-    <string name="signature_update_signature_created_at">Подписано %s</string>
+    <string name="signature_update_signature_created_at">Подписано %1$s</string>
     <string name="signature_update_signature_remove_button">Удалить подпись</string>
     <string name="signature_update_signature_remove_confirmation_message">Удалить подпись из контейнера?</string>
     <string name="signature_update_signature_remove_error">Не удалось удалить подпись из контейнера</string>
@@ -79,6 +84,7 @@
 
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>
     <string name="signature_update_signature_add_method_id_card">ID-карта</string>
+    <string name="signature_update_signature_add_positive_button">ПОДПИСАТЬ</string>
     <string name="signature_update_signature_add_success">ПОДПИСЬ ДОБАВЛЕНА</string>
     <string name="signature_update_signature_add_error">Что-то пошло не так. Пожалуйста, попробуйте снова.</string>
 
@@ -87,7 +93,7 @@
     <string name="signature_update_mobile_id_personal_code">Личный код</string>
     <string name="signature_update_mobile_id_remember_me">Запомни меня</string>
     <string name="signature_update_mobile_id_info">Убедитесь в правильности контрольного кодa и введите PIN2-код для Mobiil-ID</string>
-    <string name="signature_update_mobile_id_display_message">Подписать %s</string>
+    <string name="signature_update_mobile_id_display_message">Подписать %1$s</string>
 
     <string name="signature_update_mobile_id_status_request_sent">Запрос на подпись отправлен</string>
     <string name="signature_update_mobile_id_status_request_ok">Запрос принят</string>
@@ -130,6 +136,7 @@
     <string name="signature_update_id_card_sign_pin2">Введите PIN2</string>
     <string name="signature_update_id_card_progress_message_signing">Происходит подписание. Пожалуйста, подождите.</string>
     <string name="signature_update_id_card_sign_pin2_invalid">Неверный PIN2. У Вас осталось %1$d попыток.</string>
+    <string name="signature_update_id_card_sign_pin2_invalid_final">Неверный PIN2. У Вас осталась 1 попытка до блокировки Вашего PIN2.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 заблокирован. Зайдите в Мой eID, чтобы разблокировать его.</string>
 
     <!-- Crypto Home -->
@@ -230,6 +237,11 @@
     <string name="eid_home_code_update_current_error_invalid_pin2_edit">Неверный PIN2 код. Вы можете попробовать ещё %1$d раз.</string>
     <string name="eid_home_code_update_current_error_invalid_pin2_unblock">Неверный PUK код. Вы можете попробовать ещё %1$d раз.</string>
     <string name="eid_home_code_update_current_error_invalid_puk_edit">Неверный PUK код. Вы можете попробовать ещё %1$d раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_edit_final">Неверный PIN1 код. Вы можете попробовать ещё 1 раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_unblock_final">Неверный PUK код. Вы можете попробовать ещё 1 раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_edit_final">Неверный PIN2 код. Вы можете попробовать ещё 1 раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_unblock_final">Неверный PUK код. Вы можете попробовать ещё 1 раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_puk_edit_final">Неверный PUK код. Вы можете попробовать ещё %1$d раз.</string>
     <string name="eid_home_code_update_current_error_blocked_pin1_edit">PIN1 заблокирован, потому что PIN1 код был введён неверно 3 раза. Разблокируйте, чтобы использовать PIN1.</string>
     <string name="eid_home_code_update_current_error_blocked_pin1_unblock">PUK заблокирован, потому что PUK код был введён неверно 3 раза. Разблокируйте, чтобы использовать PUK.</string>
     <string name="eid_home_code_update_current_error_blocked_pin2_edit">PIN2 заблокирован, потому что PIN2 код был введён неверно 3 раза. Разблокируйте, чтобы использовать PIN2.</string>
