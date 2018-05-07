@@ -19,23 +19,16 @@
 
 package ee.ria.scardcomlibrary.impl;
 
-
 import android.nfc.Tag;
-import android.nfc.tech.IsoDep;
-import android.util.Log;
-
-import java.io.IOException;
 
 import ee.ria.scardcomlibrary.CardReader;
-import ee.ria.scardcomlibrary.SmartCardCommunicationException;
-import timber.log.Timber;
 
 public class NFC extends CardReader {
-    private IsoDep nfc;
+//    private IsoDep nfc;
 
     public NFC(Tag tag) {
-        nfc = IsoDep.get(tag);
-        Timber.tag(NFC.class.getName());
+//        nfc = IsoDep.get(tag);
+//        Timber.tag(NFC.class.getName());
     }
 
     @Override
@@ -45,30 +38,31 @@ public class NFC extends CardReader {
 
     @Override
     public byte[] transmit(byte[] apdu) {
-        try {
-            return nfc.transceive(apdu);
-        } catch (IOException e) {
-            throw new SmartCardCommunicationException(e);
-        }
+        return null;
+//        try {
+//            return nfc.transceive(apdu);
+//        } catch (IOException e) {
+//            throw new SmartCardCommunicationException(e);
+//        }
     }
 
     @Override
     public void connect(Connected connected) {
-        try {
-            nfc.connect();
-            nfc.setTimeout(5000);
-            connected.connected();
-        } catch(IOException e) {
-            Timber.e(e, "Error connecting to NFC");
-        }
+//        try {
+//            nfc.connect();
+//            nfc.setTimeout(5000);
+//            connected.connected();
+//        } catch(IOException e) {
+//            Timber.e(e, "Error connecting to NFC");
+//        }
     }
 
     @Override
     public void close() {
-        try {
-            nfc.close();
-        } catch (IOException e) {
-            Timber.e(e, "Error closing nfc");
-        }
+//        try {
+//            nfc.close();
+//        } catch (IOException e) {
+//            Timber.e(e, "Error closing nfc");
+//        }
     }
 }
