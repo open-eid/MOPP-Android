@@ -84,6 +84,7 @@
 
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>
     <string name="signature_update_signature_add_method_id_card">ID-kaart</string>
+    <string name="signature_update_signature_add_positive_button">ALLKIRJASTA</string>
     <string name="signature_update_signature_add_success">ALLKIRI LISATUD</string>
     <string name="signature_update_signature_add_error">Midagi läks valesti. Palun proovi uuesti.</string>
 
