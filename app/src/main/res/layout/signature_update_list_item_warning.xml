@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@id/signatureUpdateListWarningMessage"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:padding="@dimen/material_subheader_padding_start"
     android:background="@color/warning"
-    android:text="@string/signature_update_signatures_invalid" />
+    tools:text="3 SIGNATURES INVALID" />

@@ -30,7 +30,7 @@
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
-    <string name="main_about_ria_digidoc_version_title">RIA DigiDoc version %s</string>
+    <string name="main_about_ria_digidoc_version_title">RIA DigiDoc version %1$s</string>
     <string name="main_about_software_developed_by_title">Estonian ID-software is released by Information System Authority</string>
     <string name="main_about_contact_information_title">Contact for assistance by email abi@id.ee or call 1777 (only from Estonia), (+372) 677 3377 when calling from abroad.</string>
     <string name="main_about_licenses_title">Additional licenses and components</string>
@@ -67,9 +67,14 @@
     <string name="signature_update_document_remove_error">Can\'t remove file from container</string>
     <string name="signature_update_signatures_title">Container signatures</string>
     <string name="signature_update_signatures_empty">Container is not signed</string>
-    <string name="signature_update_signatures_invalid">%d INVALID SIGNATURES</string>
+    <plurals name="signature_update_signatures_invalid">
+        <item quantity="one">%1$d INVALID SIGNATURE</item>
+        <item quantity="other">%1$d INVALID SIGNATURES</item>
+        <!-- placeholder to keep line numbers same in different locales -->
+        <!-- placeholder to keep line numbers same in different locales -->
+    </plurals>
     <string name="signature_update_signature_type_signature">Signature</string>
-    <string name="signature_update_signature_created_at">Signed %s</string>
+    <string name="signature_update_signature_created_at">Signed %1$s</string>
     <string name="signature_update_signature_remove_button">Remove signature</string>
     <string name="signature_update_signature_remove_confirmation_message">Remove signature from container?</string>
     <string name="signature_update_signature_remove_error">Could not remove signature from the container</string>
@@ -87,7 +92,7 @@
     <string name="signature_update_mobile_id_personal_code">Personal code</string>
     <string name="signature_update_mobile_id_remember_me">Remember me</string>
     <string name="signature_update_mobile_id_info">Make sure the control code matches the one on phone screen and enter Mobile-ID PIN2-code</string>
-    <string name="signature_update_mobile_id_display_message">Sign %s</string>
+    <string name="signature_update_mobile_id_display_message">Sign %1$s</string>
 
     <string name="signature_update_mobile_id_status_request_sent">Signing request sent</string>
     <string name="signature_update_mobile_id_status_request_ok">Request accepted</string>
@@ -130,6 +135,7 @@
     <string name="signature_update_id_card_sign_pin2">Enter PIN2</string>
     <string name="signature_update_id_card_progress_message_signing">Signing in progress. Please wait.</string>
     <string name="signature_update_id_card_sign_pin2_invalid">Wrong PIN2. You have %1$d attempts left.</string>
+    <string name="signature_update_id_card_sign_pin2_invalid_final">Wrong PIN2. You have 1 attempt left until your PIN2 is blocked.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 blocked. Go to My eID to unblock it.</string>
 
     <!-- Crypto Home -->
@@ -230,6 +236,11 @@
     <string name="eid_home_code_update_current_error_invalid_pin2_edit">Wrong PIN2 code. You can try %1$d more times.</string>
     <string name="eid_home_code_update_current_error_invalid_pin2_unblock">Wrong PUK code. You can try %1$d more times.</string>
     <string name="eid_home_code_update_current_error_invalid_puk_edit">Wrong PUK code. You can try %1$d more times.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_edit_final">Wrong PIN1 code. You can try 1 more time.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_unblock_final">Wrong PUK code. You can try 1 more time.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_edit_final">Wrong PIN2 code. You can try 1 more time.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_unblock_final">Wrong PUK code. You can try 1 more time.</string>
+    <string name="eid_home_code_update_current_error_invalid_puk_edit_final">Wrong PUK code. You can try %1$d more times.</string>
     <string name="eid_home_code_update_current_error_blocked_pin1_edit">PIN1 has been blocked because PIN1 code has been entered incorrectly 3 times. Unblock to reuse PIN1.</string>
     <string name="eid_home_code_update_current_error_blocked_pin1_unblock">PUK has been blocked because PUK code has been entered incorrectly 3 times. Unblock to reuse PUK.</string>
     <string name="eid_home_code_update_current_error_blocked_pin2_edit">PIN2 has been blocked because PIN2 code has been entered incorrectly 3 times. Unblock to reuse PIN2.</string>

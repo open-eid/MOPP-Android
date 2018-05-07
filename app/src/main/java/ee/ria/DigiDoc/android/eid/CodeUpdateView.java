@@ -102,8 +102,14 @@ public final class CodeUpdateView extends CoordinatorLayout {
                         getResources().getString(action.currentMinLengthErrorRes(),
                                 ((CodeMinLengthError) currentError).minLength()));
             } else if (currentError instanceof CodeInvalidError) {
-                currentLabelView.setError(getResources().getString(action.currentInvalidErrorRes(),
-                        ((CodeInvalidError) currentError).retryCount()));
+                int retryCount = ((CodeInvalidError) currentError).retryCount();
+                if (retryCount == 1) {
+                    currentLabelView.setError(getResources().getString(
+                            action.currentInvalidFinalErrorRes()));
+                } else {
+                    currentLabelView.setError(getResources().getString(
+                            action.currentInvalidErrorRes(), retryCount));
+                }
             }
 
             if (newError == null) {
