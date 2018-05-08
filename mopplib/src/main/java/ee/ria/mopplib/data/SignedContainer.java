@@ -26,6 +26,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
@@ -80,17 +82,27 @@ public abstract class SignedContainer {
     public abstract ImmutableList<Signature> signatures();
 
     public final boolean signaturesValid() {
-        return invalidSignaturesCount() == 0;
-    }
-
-    public final int invalidSignaturesCount() {
-        int count = 0;
-        for (Signature signature : signatures()) {
-            if (!signature.status().equals(SignatureStatus.VALID)) {
-                count++;
+        for (int count : invalidSignatureCounts().values()) {
+            if (count > 0) {
+                return false;
             }
         }
-        return count;
+        return true;
+    }
+
+    public final ImmutableMap<String, Integer> invalidSignatureCounts() {
+        Map<String, Integer> counts = new HashMap<>();
+        counts.put(SignatureStatus.UNKNOWN, 0);
+        counts.put(SignatureStatus.INVALID, 0);
+        counts.put(SignatureStatus.WARNING, 0);
+        counts.put(SignatureStatus.NON_QSCD, 0);
+        for (Signature signature : signatures()) {
+            if (signature.status().equals(SignatureStatus.VALID)) {
+                continue;
+            }
+            counts.put(signature.status(), counts.get(signature.status()) + 1);
+        }
+        return ImmutableMap.copyOf(counts);
     }
 
     public final String signatureProfile() {

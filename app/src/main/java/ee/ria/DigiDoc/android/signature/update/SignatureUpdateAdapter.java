@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -53,15 +54,15 @@ final class SignatureUpdateAdapter extends
 
     void setData(boolean isSuccess, boolean isExistingContainer, boolean isNestedContainer,
                  @Nullable SignedContainer container) {
-        int invalidSignaturesCount = container == null ? 0 : container.invalidSignaturesCount();
+        boolean signaturesValid = container == null || container.signaturesValid();
         String name = container == null ? null : container.name();
 
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (isSuccess) {
             builder.add(SuccessItem.create());
         }
-        if (invalidSignaturesCount > 0) {
-            builder.add(WarningItem.create(invalidSignaturesCount));
+        if (!signaturesValid) {
+            builder.add(StatusItem.create(container.invalidSignatureCounts()));
         }
         if (container != null) {
             builder.add(NameItem.create(name))
@@ -85,7 +86,7 @@ final class SignatureUpdateAdapter extends
 
         boolean shouldScrollToTop = !this.items.isEmpty() &&
                 ((isSuccess && !containsType(this.items, SuccessItem.class)) ||
-                (invalidSignaturesCount > 0 && !containsType(this.items, WarningItem.class)) ||
+                (!signaturesValid && !containsType(this.items, StatusItem.class)) ||
                 (name != null && !containsType(this.items, NameItem.class)));
 
         DiffUtil.DiffResult result = DiffUtil
@@ -160,8 +161,8 @@ final class SignatureUpdateAdapter extends
             switch (viewType) {
                 case R.layout.signature_update_list_item_success:
                     return new SuccessViewHolder(itemView);
-                case R.layout.signature_update_list_item_warning:
-                    return new WarningViewHolder(itemView);
+                case R.layout.signature_update_list_item_status:
+                    return new StatusViewHolder(itemView);
                 case R.layout.signature_update_list_item_name:
                     return new NameViewHolder(itemView);
                 case R.layout.signature_update_list_item_subhead:
@@ -191,20 +192,44 @@ final class SignatureUpdateAdapter extends
         }
     }
 
-    static final class WarningViewHolder extends UpdateViewHolder<WarningItem> {
+    static final class StatusViewHolder extends UpdateViewHolder<StatusItem> {
 
-        private final TextView messageView;
+        private final Resources resources;
 
-        WarningViewHolder(View itemView) {
+        private final TextView unknownView;
+        private final TextView invalidView;
+        private final TextView warningView;
+        private final TextView nonQscdView;
+
+        StatusViewHolder(View itemView) {
             super(itemView);
-            messageView = itemView.findViewById(R.id.signatureUpdateListWarningMessage);
+            resources = itemView.getResources();
+            unknownView = itemView.findViewById(R.id.signatureUpdateListStatusUnknown);
+            invalidView = itemView.findViewById(R.id.signatureUpdateListStatusInvalid);
+            warningView = itemView.findViewById(R.id.signatureUpdateListStatusWarning);
+            nonQscdView = itemView.findViewById(R.id.signatureUpdateListStatusNonQscd);
         }
 
         @Override
-        void bind(SignatureUpdateAdapter adapter, WarningItem item) {
-            messageView.setText(messageView.getResources().getQuantityString(
-                    R.plurals.signature_update_signatures_invalid, item.invalidCount(),
-                    item.invalidCount()));
+        void bind(SignatureUpdateAdapter adapter, StatusItem item) {
+            int unknownCount = item.counts().get(SignatureStatus.UNKNOWN);
+            int invalidCount = item.counts().get(SignatureStatus.INVALID);
+            int warningCount = item.counts().get(SignatureStatus.WARNING);
+            int nonQscdCount = item.counts().get(SignatureStatus.NON_QSCD);
+
+            unknownView.setText(resources.getQuantityString(
+                    R.plurals.signature_update_signatures_unknown, unknownCount, unknownCount));
+            invalidView.setText(resources.getQuantityString(
+                    R.plurals.signature_update_signatures_invalid, invalidCount, invalidCount));
+            warningView.setText(resources.getQuantityString(
+                    R.plurals.signature_update_signatures_warning, warningCount, warningCount));
+            nonQscdView.setText(resources.getQuantityString(
+                    R.plurals.signature_update_signatures_non_qscd, nonQscdCount, nonQscdCount));
+
+            unknownView.setVisibility(unknownCount == 0 ? View.GONE : View.VISIBLE);
+            invalidView.setVisibility(invalidCount == 0 ? View.GONE : View.VISIBLE);
+            warningView.setVisibility(warningCount == 0 ? View.GONE : View.VISIBLE);
+            nonQscdView.setVisibility(nonQscdCount == 0 ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -388,13 +413,13 @@ final class SignatureUpdateAdapter extends
     }
 
     @AutoValue
-    static abstract class WarningItem extends Item {
+    static abstract class StatusItem extends Item {
 
-        abstract int invalidCount();
+        abstract ImmutableMap<String, Integer> counts();
 
-        static WarningItem create(int invalidCount) {
-            return new AutoValue_SignatureUpdateAdapter_WarningItem(
-                    R.layout.signature_update_list_item_warning, invalidCount);
+        static StatusItem create(ImmutableMap<String, Integer> counts) {
+            return new AutoValue_SignatureUpdateAdapter_StatusItem(
+                    R.layout.signature_update_list_item_status, counts);
         }
     }
 
