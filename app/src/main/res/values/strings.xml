@@ -74,6 +74,11 @@
         <!-- placeholder to keep line numbers same in different locales -->
     </plurals>
     <string name="signature_update_signature_type_signature">Signature</string>
+    <string name="signature_update_signature_status_valid">Signature is valid</string>
+    <string name="signature_update_signature_status_warning">(Warnings)</string>
+    <string name="signature_update_signature_status_non_qscd">(Restrictions)</string>
+    <string name="signature_update_signature_status_invalid">Signature is invalid</string>
+    <string name="signature_update_signature_status_unknown">Signature is unknown</string>
     <string name="signature_update_signature_created_at">Signed %1$s</string>
     <string name="signature_update_signature_remove_button">Remove signature</string>
     <string name="signature_update_signature_remove_confirmation_message">Remove signature from container?</string>

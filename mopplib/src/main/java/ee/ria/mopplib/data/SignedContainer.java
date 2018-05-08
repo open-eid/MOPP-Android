@@ -29,6 +29,7 @@ import java.util.Comparator;
 
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
+import ee.ria.libdigidocpp.Signature.Validator;
 import ee.ria.libdigidocpp.Signatures;
 import okio.ByteString;
 import timber.log.Timber;
@@ -384,15 +385,7 @@ public abstract class SignedContainer {
         String id = signature.id();
         String name = signatureName(signature);
         Instant createdAt = Instant.parse(signature.trustedSigningTime());
-        @SignatureStatus String status;
-        try {
-            signature.validate();
-            status = SignatureStatus.VALID;
-        } catch (Exception e) {
-            Timber.d(e, "Validation failed for signature {id: %s, name: %s, createdAt: %s}",
-                    id, name, createdAt);
-            status = SignatureStatus.INVALID;
-        }
+        @SignatureStatus String status = signatureStatus(signature);
         String profile = signature.profile();
         return Signature.create(id, name, createdAt, status, profile);
     }
@@ -435,6 +428,25 @@ public abstract class SignedContainer {
         }
 
         return rdNs[0].getFirst().getValue().toString();
+    }
+
+    @SignatureStatus private static String signatureStatus(
+            ee.ria.libdigidocpp.Signature signature) {
+        Validator validator = new Validator(signature);
+        int status = validator.status().swigValue();
+        validator.delete();
+
+        if (status == Validator.Status.Valid.swigValue()) {
+            return SignatureStatus.VALID;
+        } else if (status == Validator.Status.Warning.swigValue()) {
+            return SignatureStatus.WARNING;
+        } else if (status == Validator.Status.NonQSCD.swigValue()) {
+            return SignatureStatus.NON_QSCD;
+        } else if (status == Validator.Status.Invalid.swigValue()) {
+            return SignatureStatus.INVALID;
+        } else {
+            return SignatureStatus.UNKNOWN;
+        }
     }
 
     /**

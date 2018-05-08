@@ -102,6 +102,8 @@
     <item type="id" name="signatureUpdateListDocumentRemoveButton" />
     <item type="id" name="signatureUpdateListSignatureType" />
     <item type="id" name="signatureUpdateListSignatureName" />
+    <item type="id" name="signatureUpdateListSignatureStatus" />
+    <item type="id" name="signatureUpdateListSignatureStatusCaution" />
     <item type="id" name="signatureUpdateListSignatureCreatedAt" />
     <item type="id" name="signatureUpdateListSignatureRemoveButton" />
     <item type="id" name="signatureUpdateListDocumentsAddButton" />

@@ -28,6 +28,25 @@ public abstract class Signature {
     @SignatureStatus public abstract String status();
 
     /**
+     * Whether this signature is valid or invalid.
+     *
+     * Valid statuses:
+     * {@link SignatureStatus#VALID}
+     * {@link SignatureStatus#WARNING}
+     * {@link SignatureStatus#NON_QSCD}
+     *
+     * Invalid statuses:
+     * {@link SignatureStatus#INVALID}
+     * {@link SignatureStatus#UNKNOWN}
+     *
+     * @return Validity of the signature.
+     */
+    public final boolean valid() {
+        return !status().equals(SignatureStatus.INVALID)
+                && !status().equals(SignatureStatus.UNKNOWN);
+    }
+
+    /**
      * Signature profile.
      */
     public abstract String profile();
