@@ -21,18 +21,4 @@
         android:gravity="center_horizontal"
         tools:text="3 SIGNATURES INVALID" />
 
-    <TextView
-        android:id="@id/signatureUpdateListStatusWarning"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        tools:text="3 SIGNATURES WITH WARNINGS" />
-
-    <TextView
-        android:id="@id/signatureUpdateListStatusNonQscd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        tools:text="3 SIGNATURES WITH RESTRICTIONS" />
-
 </LinearLayout>

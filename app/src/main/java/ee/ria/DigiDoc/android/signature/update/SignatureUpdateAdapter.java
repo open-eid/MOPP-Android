@@ -198,38 +198,26 @@ final class SignatureUpdateAdapter extends
 
         private final TextView unknownView;
         private final TextView invalidView;
-        private final TextView warningView;
-        private final TextView nonQscdView;
 
         StatusViewHolder(View itemView) {
             super(itemView);
             resources = itemView.getResources();
             unknownView = itemView.findViewById(R.id.signatureUpdateListStatusUnknown);
             invalidView = itemView.findViewById(R.id.signatureUpdateListStatusInvalid);
-            warningView = itemView.findViewById(R.id.signatureUpdateListStatusWarning);
-            nonQscdView = itemView.findViewById(R.id.signatureUpdateListStatusNonQscd);
         }
 
         @Override
         void bind(SignatureUpdateAdapter adapter, StatusItem item) {
             int unknownCount = item.counts().get(SignatureStatus.UNKNOWN);
             int invalidCount = item.counts().get(SignatureStatus.INVALID);
-            int warningCount = item.counts().get(SignatureStatus.WARNING);
-            int nonQscdCount = item.counts().get(SignatureStatus.NON_QSCD);
 
             unknownView.setText(resources.getQuantityString(
                     R.plurals.signature_update_signatures_unknown, unknownCount, unknownCount));
             invalidView.setText(resources.getQuantityString(
                     R.plurals.signature_update_signatures_invalid, invalidCount, invalidCount));
-            warningView.setText(resources.getQuantityString(
-                    R.plurals.signature_update_signatures_warning, warningCount, warningCount));
-            nonQscdView.setText(resources.getQuantityString(
-                    R.plurals.signature_update_signatures_non_qscd, nonQscdCount, nonQscdCount));
 
             unknownView.setVisibility(unknownCount == 0 ? View.GONE : View.VISIBLE);
             invalidView.setVisibility(invalidCount == 0 ? View.GONE : View.VISIBLE);
-            warningView.setVisibility(warningCount == 0 ? View.GONE : View.VISIBLE);
-            nonQscdView.setVisibility(nonQscdCount == 0 ? View.GONE : View.VISIBLE);
         }
     }
 

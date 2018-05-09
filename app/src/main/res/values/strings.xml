@@ -79,18 +79,6 @@
         <!-- placeholder to keep line numbers same in different locales -->
         <!-- placeholder to keep line numbers same in different locales -->
     </plurals>
-    <plurals name="signature_update_signatures_warning">
-        <item quantity="one">%1$d SIGNATURE WITH WARNINGS</item>
-        <item quantity="other">%1$d SIGNATURES WITH WARNINGS</item>
-        <!-- placeholder to keep line numbers same in different locales -->
-        <!-- placeholder to keep line numbers same in different locales -->
-    </plurals>
-    <plurals name="signature_update_signatures_non_qscd">
-        <item quantity="one">%1$d SIGNATURE WITH RESTRICTIONS</item>
-        <item quantity="other">%1$d SIGNATURES WITH RESTRICTIONS</item>
-        <!-- placeholder to keep line numbers same in different locales -->
-        <!-- placeholder to keep line numbers same in different locales -->
-    </plurals>
     <string name="signature_update_signature_type_signature">Signature</string>
     <string name="signature_update_signature_status_valid">Signature is valid</string>
     <string name="signature_update_signature_status_warning">(Warnings)</string>

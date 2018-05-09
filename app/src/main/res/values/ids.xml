@@ -94,8 +94,6 @@
     <item type="id" name="signatureUpdateListSuccessMessage" />
     <item type="id" name="signatureUpdateListStatusUnknown" />
     <item type="id" name="signatureUpdateListStatusInvalid" />
-    <item type="id" name="signatureUpdateListStatusWarning" />
-    <item type="id" name="signatureUpdateListStatusNonQscd" />
     <item type="id" name="signatureUpdateListName" />
     <item type="id" name="signatureUpdateListSubheadTitle" />
     <item type="id" name="signatureUpdateListSubheadButton" />

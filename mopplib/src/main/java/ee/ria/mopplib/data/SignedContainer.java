@@ -94,13 +94,10 @@ public abstract class SignedContainer {
         Map<String, Integer> counts = new HashMap<>();
         counts.put(SignatureStatus.UNKNOWN, 0);
         counts.put(SignatureStatus.INVALID, 0);
-        counts.put(SignatureStatus.WARNING, 0);
-        counts.put(SignatureStatus.NON_QSCD, 0);
         for (Signature signature : signatures()) {
-            if (signature.status().equals(SignatureStatus.VALID)) {
-                continue;
+            if (counts.containsKey(signature.status())) {
+                counts.put(signature.status(), counts.get(signature.status()) + 1);
             }
-            counts.put(signature.status(), counts.get(signature.status()) + 1);
         }
         return ImmutableMap.copyOf(counts);
     }
@@ -480,7 +477,7 @@ public abstract class SignedContainer {
         int v1 = SignatureStatus.ORDER.get(o1.status());
         int v2 = SignatureStatus.ORDER.get(o2.status());
         if (v1 == v2) {
-            return 0;
+            return o1.createdAt().compareTo(o2.createdAt());
         }
         return v1 < v2 ? -1 : 1;
     };
