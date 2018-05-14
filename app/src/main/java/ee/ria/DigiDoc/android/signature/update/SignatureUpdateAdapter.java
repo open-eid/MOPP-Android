@@ -51,6 +51,7 @@ final class SignatureUpdateAdapter extends
         RecyclerView.Adapter<SignatureUpdateAdapter.UpdateViewHolder<SignatureUpdateAdapter.Item>> {
 
     final Subject<Object> scrollToTopSubject = PublishSubject.create();
+    final Subject<Object> nameUpdateClicksSubject = PublishSubject.create();
     final Subject<DataFile> documentClicksSubject = PublishSubject.create();
     final Subject<Object> documentAddClicksSubject = PublishSubject.create();
     final Subject<DataFile> documentRemoveClicksSubject = PublishSubject.create();
@@ -108,6 +109,10 @@ final class SignatureUpdateAdapter extends
 
     Observable<Object> scrollToTop() {
         return scrollToTopSubject;
+    }
+
+    Observable<Object> nameUpdateClicks() {
+        return nameUpdateClicksSubject;
     }
 
     Observable<DataFile> documentClicks() {
@@ -219,15 +224,18 @@ final class SignatureUpdateAdapter extends
     static final class NameViewHolder extends UpdateViewHolder<NameItem> {
 
         private final TextView nameView;
+        private final View updateButton;
 
         NameViewHolder(View itemView) {
             super(itemView);
             nameView = itemView.findViewById(R.id.signatureUpdateListName);
+            updateButton = itemView.findViewById(R.id.signatureUpdateListNameUpdateButton);
         }
 
         @Override
         void bind(SignatureUpdateAdapter adapter, NameItem item) {
             nameView.setText(item.name());
+            clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
         }
     }
 

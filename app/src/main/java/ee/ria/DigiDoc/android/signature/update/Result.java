@@ -55,6 +55,46 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
+    abstract class NameUpdateResult implements Result {
+
+        @Nullable abstract File containerFile();
+
+        abstract boolean inProgress();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .nameUpdateShowing(containerFile() != null)
+                    .nameUpdateInProgress(inProgress())
+                    .nameUpdateError(error())
+                    .build();
+        }
+
+        static NameUpdateResult show(File containerFile) {
+            return create(containerFile, false, null);
+        }
+
+        static NameUpdateResult hide() {
+            return create(null, false, null);
+        }
+
+        static NameUpdateResult progress(File containerFile) {
+            return create(containerFile, true, null);
+        }
+
+        static NameUpdateResult failure(File containerFile, Throwable error) {
+            return create(containerFile, false, error);
+        }
+
+        private static NameUpdateResult create(@Nullable File containerFile, boolean inProgress,
+                                               @Nullable Throwable error) {
+            return new AutoValue_Result_NameUpdateResult(containerFile, inProgress, error);
+        }
+    }
+
+    @AutoValue
     abstract class DocumentsAddResult implements Result {
 
         abstract boolean inProgress();

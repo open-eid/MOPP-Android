@@ -32,6 +32,31 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
+    abstract class NameUpdateIntent implements Intent, Action {
+
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract String name();
+
+        static NameUpdateIntent show(File file) {
+            return create(file, null);
+        }
+
+        static NameUpdateIntent update(File file, String name) {
+            return create(file, name);
+        }
+
+        static NameUpdateIntent clear() {
+            return create(null, null);
+        }
+
+        private static NameUpdateIntent create(@Nullable File containerFile,
+                                               @Nullable String name) {
+            return new AutoValue_Intent_NameUpdateIntent(containerFile, name);
+        }
+    }
+
+    @AutoValue
     abstract class DocumentsAddIntent implements Intent {
 
         @Nullable abstract File containerFile();

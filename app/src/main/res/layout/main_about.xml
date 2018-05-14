@@ -402,38 +402,6 @@
                 android:textAppearance="@style/TextAppearance.Application.Value" />
 
             <TextView
-                android:id="@id/mainAboutCommonsIoVersionTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
-                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
-                android:gravity="center"
-                android:paddingBottom="@dimen/material_card_actions_row_padding"
-                android:text="@string/main_about_apache_commons_io_title"
-                android:textAppearance="@style/TextAppearance.Application.Value" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
-                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
-                android:gravity="center"
-                android:paddingBottom="@dimen/material_card_actions_row_padding"
-                android:text="@string/main_about_apache_2_license_title"
-                android:textAppearance="@style/TextAppearance.Application.Value" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
-                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
-                android:autoLink="web"
-                android:gravity="center"
-                android:paddingBottom="@dimen/material_card_actions_icon_action_gutter"
-                android:text="@string/main_about_apache2_license_url"
-                android:textAppearance="@style/TextAppearance.Application.Value" />
-
-            <TextView
                 android:id="@id/mainAboutOkioVersionTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -474,38 +442,6 @@
                 android:gravity="center"
                 android:paddingBottom="@dimen/material_card_actions_row_padding"
                 android:text="@string/main_about_timber_title"
-                android:textAppearance="@style/TextAppearance.Application.Value" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
-                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
-                android:gravity="center"
-                android:paddingBottom="@dimen/material_card_actions_row_padding"
-                android:text="@string/main_about_apache_2_license_title"
-                android:textAppearance="@style/TextAppearance.Application.Value" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
-                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
-                android:autoLink="web"
-                android:gravity="center"
-                android:paddingBottom="@dimen/material_card_actions_icon_action_gutter"
-                android:text="@string/main_about_apache2_license_url"
-                android:textAppearance="@style/TextAppearance.Application.Value" />
-
-            <TextView
-                android:id="@id/mainAboutButterknifeVersionTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
-                android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
-                android:gravity="center"
-                android:paddingBottom="@dimen/material_card_actions_row_padding"
-                android:text="@string/main_about_butterknife_title"
                 android:textAppearance="@style/TextAppearance.Application.Value" />
 
             <TextView

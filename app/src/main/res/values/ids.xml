@@ -49,10 +49,8 @@
     <item type="id" name="mainAboutZLibVersionTitle" />
     <item type="id" name="mainAboutPreferenceV7FixVersionTitle" />
     <item type="id" name="mainAboutGuavaVersionTitle" />
-    <item type="id" name="mainAboutCommonsIoVersionTitle" />
     <item type="id" name="mainAboutOkioVersionTitle" />
     <item type="id" name="mainAboutTimberVersionTitle" />
-    <item type="id" name="mainAboutButterknifeVersionTitle" />
     <item type="id" name="mainAboutOkHttpVersionTitle" />
     <item type="id" name="mainAboutRetrofitVersionTitle" />
     <item type="id" name="mainAboutSpongyCastleVersionTitle" />
@@ -94,6 +92,7 @@
     <item type="id" name="signatureUpdateListSuccessMessage" />
     <item type="id" name="signatureUpdateListWarningMessage" />
     <item type="id" name="signatureUpdateListName" />
+    <item type="id" name="signatureUpdateListNameUpdateButton" />
     <item type="id" name="signatureUpdateListSubheadTitle" />
     <item type="id" name="signatureUpdateListSubheadButton" />
     <item type="id" name="signatureUpdateListDocumentIcon" />
@@ -115,6 +114,9 @@
     <item type="id" name="signatureUpdateSignatureAddMethod" />
     <item type="id" name="signatureUpdateSignatureAddMethodMobileId" />
     <item type="id" name="signatureUpdateSignatureAddMethodIdCard" />
+
+    <item type="id" name="signatureUpdateNameUpdateNameLabel" />
+    <item type="id" name="signatureUpdateNameUpdateName" />
 
     <item type="id" name="signatureUpdateMobileId" />
     <item type="id" name="signatureUpdateMobileIdPhoneNoLabel" />

@@ -18,6 +18,10 @@ abstract class ViewState implements MviViewState {
     abstract boolean containerLoadInProgress();
     @Nullable abstract Throwable containerLoadError();
 
+    abstract boolean nameUpdateShowing();
+    abstract boolean nameUpdateInProgress();
+    @Nullable abstract Throwable nameUpdateError();
+
     abstract boolean documentsAddInProgress();
     @Nullable abstract Throwable documentsAddError();
 
@@ -44,6 +48,8 @@ abstract class ViewState implements MviViewState {
     static ViewState initial() {
         return new AutoValue_ViewState.Builder()
                 .containerLoadInProgress(false)
+                .nameUpdateShowing(false)
+                .nameUpdateInProgress(false)
                 .documentsAddInProgress(false)
                 .documentOpenInProgress(false)
                 .documentRemoveInProgress(false)
@@ -58,6 +64,9 @@ abstract class ViewState implements MviViewState {
         Builder container(@Nullable SignedContainer container);
         Builder containerLoadInProgress(boolean containerLoadInProgress);
         Builder containerLoadError(@Nullable Throwable containerLoadError);
+        Builder nameUpdateShowing(boolean nameUpdateShowing);
+        Builder nameUpdateInProgress(boolean nameUpdateInProgress);
+        Builder nameUpdateError(@Nullable Throwable nameUpdateError);
         Builder documentsAddInProgress(boolean documentsAddInProgress);
         Builder documentsAddError(@Nullable Throwable documentsAddError);
         Builder documentOpenFile(@Nullable File documentOpenFile);
