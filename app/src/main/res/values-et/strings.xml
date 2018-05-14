@@ -58,6 +58,10 @@
     <string name="signature_update_title_created">Allkirjastamine</string>
     <string name="signature_update_title_existing">Ümbriku valideerimine</string>
     <string name="signature_update_name">ÜMBRIK:</string>
+    <!-- TODO <string name="signature_update_name_update_button">Edit container name</string>-->
+    <!-- TODO <string name="signature_update_name_update_name">Container name</string>-->
+    <!-- TODO <string name="signature_update_name_update_error_exists">Container with this name already exists</string>-->
+    <!-- TODO <string name="signature_update_name_update_error_invalid">Container name invalid</string>-->
     <string name="signature_update_documents_title">Ümbriku sisu</string>
     <string name="signature_update_documents_button">LISA VEEL FAILE</string>
     <string name="signature_update_documents_add_button">+ LISA VEEL FAILE</string>
