@@ -96,16 +96,23 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             if (newFile.createNewFile()) {
                                 //noinspection ResultOfMethodCallIgnored
                                 newFile.delete();
+                                if (!containerFile.renameTo(newFile)) {
+                                    throw new IOException();
+                                }
                                 return newFile;
                             } else {
                                 throw new FileAlreadyExistsException(newFile);
                             }
                         })
-                        .map(file -> Result.NameUpdateResult.hide())
-                        .onErrorReturn(throwable ->
-                                Result.NameUpdateResult.failure(containerFile, throwable))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
+                        .map(newFile -> {
+                            navigator.execute(Transaction.replace(SignatureUpdateScreen
+                                    .create(true, false, newFile, false, false)));
+                            return Result.NameUpdateResult.progress(newFile);
+                        })
+                        .onErrorReturn(throwable ->
+                                Result.NameUpdateResult.failure(containerFile, throwable))
                         .startWith(Result.NameUpdateResult.progress(containerFile));
             }
         });

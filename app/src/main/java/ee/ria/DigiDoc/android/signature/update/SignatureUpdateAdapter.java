@@ -73,7 +73,7 @@ final class SignatureUpdateAdapter extends
             builder.add(WarningItem.create(invalidSignaturesCount));
         }
         if (container != null) {
-            builder.add(NameItem.create(name))
+            builder.add(NameItem.create(name, !isNestedContainer))
                     .add(SubheadItem.create(DOCUMENT,
                             isExistingContainer && !isNestedContainer
                                     && container.dataFileAddEnabled()))
@@ -235,6 +235,7 @@ final class SignatureUpdateAdapter extends
         @Override
         void bind(SignatureUpdateAdapter adapter, NameItem item) {
             nameView.setText(item.name());
+            updateButton.setVisibility(item.updateButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
         }
     }
@@ -410,9 +411,11 @@ final class SignatureUpdateAdapter extends
 
         abstract String name();
 
-        static NameItem create(String name) {
+        abstract boolean updateButtonVisible();
+
+        static NameItem create(String name, boolean updateButtonVisible) {
             return new AutoValue_SignatureUpdateAdapter_NameItem(
-                    R.layout.signature_update_list_item_name, name);
+                    R.layout.signature_update_list_item_name, name, updateButtonVisible);
         }
     }
 
