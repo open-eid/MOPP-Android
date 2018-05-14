@@ -152,7 +152,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             return;
         }
 
-        nameUpdateDialog.render(state.nameUpdateShowing(), state.nameUpdateInProgress(),
+        nameUpdateDialog.render(state.nameUpdateShowing(), state.nameUpdateName(),
                 state.nameUpdateError(), state.container());
 
         toolbarView.setTitle(isExistingContainer

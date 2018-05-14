@@ -21,8 +21,6 @@ public final class NameUpdateDialog extends AlertDialog {
     private final NameUpdateView view;
     private final Subject<Object> positiveButtonClicksSubject = PublishSubject.create();
 
-    private boolean hasRestoredState = false;
-
     NameUpdateDialog(@NonNull Context context) {
         super(context);
         TypedArray a = context.obtainStyledAttributes(new int[]{R.attr.dialogPreferredPadding});
@@ -39,13 +37,12 @@ public final class NameUpdateDialog extends AlertDialog {
                 (dialog, which) -> cancel());
     }
 
-    public void render(boolean showing, boolean inProgress, @Nullable Throwable error,
+    public void render(boolean showing, @Nullable String name, @Nullable Throwable error,
                        @Nullable SignedContainer container) {
+        if (name != null) {
+            view.name(name);
+        }
         if (showing && container != null) {
-            if (!hasRestoredState) {
-                view.name(container.name());
-                hasRestoredState = true;
-            }
             show();
             Integer errorRes;
             if (error == null) {
@@ -70,17 +67,5 @@ public final class NameUpdateDialog extends AlertDialog {
         super.onCreate(savedInstanceState);
         // override default click listener to prevent dialog dismiss
         clicks(getButton(BUTTON_POSITIVE)).subscribe(positiveButtonClicksSubject);
-    }
-
-    @Override
-    public void cancel() {
-        super.cancel();
-        hasRestoredState = false;
-    }
-
-    @Override
-    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        hasRestoredState = true;
     }
 }

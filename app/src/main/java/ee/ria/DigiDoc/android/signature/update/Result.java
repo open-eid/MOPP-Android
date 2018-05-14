@@ -59,6 +59,8 @@ interface Result extends MviResult<ViewState> {
 
         @Nullable abstract File containerFile();
 
+        @Nullable abstract String name();
+
         abstract boolean inProgress();
 
         @Nullable abstract Throwable error();
@@ -67,30 +69,35 @@ interface Result extends MviResult<ViewState> {
         public ViewState reduce(ViewState state) {
             return state.buildWith()
                     .nameUpdateShowing(containerFile() != null)
+                    .nameUpdateName(name())
                     .nameUpdateInProgress(inProgress())
                     .nameUpdateError(error())
                     .build();
         }
 
+        static NameUpdateResult name(File containerFile) {
+            return create(containerFile, containerFile.getName(), false, null);
+        }
+
         static NameUpdateResult show(File containerFile) {
-            return create(containerFile, false, null);
+            return create(containerFile, null, false, null);
         }
 
         static NameUpdateResult hide() {
-            return create(null, false, null);
+            return create(null, null, false, null);
         }
 
         static NameUpdateResult progress(File containerFile) {
-            return create(containerFile, true, null);
+            return create(containerFile, null, true, null);
         }
 
         static NameUpdateResult failure(File containerFile, Throwable error) {
-            return create(containerFile, false, error);
+            return create(containerFile, null, false, error);
         }
 
-        private static NameUpdateResult create(@Nullable File containerFile, boolean inProgress,
-                                               @Nullable Throwable error) {
-            return new AutoValue_Result_NameUpdateResult(containerFile, inProgress, error);
+        private static NameUpdateResult create(@Nullable File containerFile, @Nullable String name,
+                                               boolean inProgress, @Nullable Throwable error) {
+            return new AutoValue_Result_NameUpdateResult(containerFile, name, inProgress, error);
         }
     }
 

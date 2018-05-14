@@ -83,7 +83,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
             if (containerFile == null) {
                 return Observable.just(Result.NameUpdateResult.hide());
             } else if (name == null) {
-                return Observable.just(Result.NameUpdateResult.show(containerFile));
+                return Observable.just(
+                        Result.NameUpdateResult.name(containerFile),
+                        Result.NameUpdateResult.show(containerFile));
             } else if (name.equals(containerFile.getName())) {
                 return Observable.just(Result.NameUpdateResult.hide());
             } else if (name.isEmpty()) {

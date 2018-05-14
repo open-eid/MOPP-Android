@@ -19,6 +19,7 @@ abstract class ViewState implements MviViewState {
     @Nullable abstract Throwable containerLoadError();
 
     abstract boolean nameUpdateShowing();
+    @Nullable abstract String nameUpdateName();
     abstract boolean nameUpdateInProgress();
     @Nullable abstract Throwable nameUpdateError();
 
@@ -65,6 +66,7 @@ abstract class ViewState implements MviViewState {
         Builder containerLoadInProgress(boolean containerLoadInProgress);
         Builder containerLoadError(@Nullable Throwable containerLoadError);
         Builder nameUpdateShowing(boolean nameUpdateShowing);
+        Builder nameUpdateName(@Nullable String nameUpdateName);
         Builder nameUpdateInProgress(boolean nameUpdateInProgress);
         Builder nameUpdateError(@Nullable Throwable nameUpdateError);
         Builder documentsAddInProgress(boolean documentsAddInProgress);
