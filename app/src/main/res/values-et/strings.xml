@@ -67,12 +67,12 @@
     <string name="signature_update_document_remove_error">Faili ümbrikust eemaldamine ebaõnnestus</string>
     <string name="signature_update_signatures_title">Ümbriku allkirjad</string>
     <string name="signature_update_signatures_empty">Allkirjad puuduvad</string>
-    <plurals name="signature_update_signatures_unknown">
-        <item quantity="one">%1$d TODO</item> <!-- TODO ET -->
-        <item quantity="other">%1$d TODO</item> <!-- TODO ET -->
+    <!--<plurals name="signature_update_signatures_unknown">-->
+        <!-- TODO <item quantity="one">%1$d UNKNOWN SIGNATURE</item>-->
+        <!-- TODO <item quantity="other">%1$d UNKNOWN SIGNATURES</item>-->
         <!-- placeholder to keep line numbers same in different locales -->
         <!-- placeholder to keep line numbers same in different locales -->
-    </plurals>
+    <!--</plurals>-->
     <plurals name="signature_update_signatures_invalid">
         <item quantity="one">%1$d ALLKIRI EI KEHTI</item>
         <item quantity="other">%1$d ALLKIRJA EI KEHTI</item>
