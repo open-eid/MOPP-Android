@@ -1,9 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update;
 
-import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,10 +11,6 @@ import android.support.annotation.StringDef;
 import android.support.annotation.StringRes;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.DynamicDrawableSpan;
-import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +20,7 @@ import android.widget.TextView;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
-
-import java.util.Locale;
+import com.google.common.collect.ImmutableMap;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -61,15 +54,15 @@ final class SignatureUpdateAdapter extends
 
     void setData(boolean isSuccess, boolean isExistingContainer, boolean isNestedContainer,
                  @Nullable SignedContainer container) {
-        int invalidSignaturesCount = container == null ? 0 : container.invalidSignaturesCount();
+        boolean signaturesValid = container == null || container.signaturesValid();
         String name = container == null ? null : container.name();
 
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (isSuccess) {
             builder.add(SuccessItem.create());
         }
-        if (invalidSignaturesCount > 0) {
-            builder.add(WarningItem.create(invalidSignaturesCount));
+        if (!signaturesValid) {
+            builder.add(StatusItem.create(container.invalidSignatureCounts()));
         }
         if (container != null) {
             builder.add(NameItem.create(name))
@@ -93,7 +86,7 @@ final class SignatureUpdateAdapter extends
 
         boolean shouldScrollToTop = !this.items.isEmpty() &&
                 ((isSuccess && !containsType(this.items, SuccessItem.class)) ||
-                (invalidSignaturesCount > 0 && !containsType(this.items, WarningItem.class)) ||
+                (!signaturesValid && !containsType(this.items, StatusItem.class)) ||
                 (name != null && !containsType(this.items, NameItem.class)));
 
         DiffUtil.DiffResult result = DiffUtil
@@ -168,8 +161,8 @@ final class SignatureUpdateAdapter extends
             switch (viewType) {
                 case R.layout.signature_update_list_item_success:
                     return new SuccessViewHolder(itemView);
-                case R.layout.signature_update_list_item_warning:
-                    return new WarningViewHolder(itemView);
+                case R.layout.signature_update_list_item_status:
+                    return new StatusViewHolder(itemView);
                 case R.layout.signature_update_list_item_name:
                     return new NameViewHolder(itemView);
                 case R.layout.signature_update_list_item_subhead:
@@ -199,20 +192,32 @@ final class SignatureUpdateAdapter extends
         }
     }
 
-    static final class WarningViewHolder extends UpdateViewHolder<WarningItem> {
+    static final class StatusViewHolder extends UpdateViewHolder<StatusItem> {
 
-        private final TextView messageView;
+        private final Resources resources;
 
-        WarningViewHolder(View itemView) {
+        private final TextView unknownView;
+        private final TextView invalidView;
+
+        StatusViewHolder(View itemView) {
             super(itemView);
-            messageView = itemView.findViewById(R.id.signatureUpdateListWarningMessage);
+            resources = itemView.getResources();
+            unknownView = itemView.findViewById(R.id.signatureUpdateListStatusUnknown);
+            invalidView = itemView.findViewById(R.id.signatureUpdateListStatusInvalid);
         }
 
         @Override
-        void bind(SignatureUpdateAdapter adapter, WarningItem item) {
-            messageView.setText(messageView.getResources().getQuantityString(
-                    R.plurals.signature_update_signatures_invalid, item.invalidCount(),
-                    item.invalidCount()));
+        void bind(SignatureUpdateAdapter adapter, StatusItem item) {
+            int unknownCount = item.counts().get(SignatureStatus.UNKNOWN);
+            int invalidCount = item.counts().get(SignatureStatus.INVALID);
+
+            unknownView.setText(resources.getQuantityString(
+                    R.plurals.signature_update_signatures_unknown, unknownCount, unknownCount));
+            invalidView.setText(resources.getQuantityString(
+                    R.plurals.signature_update_signatures_invalid, invalidCount, invalidCount));
+
+            unknownView.setVisibility(unknownCount == 0 ? View.GONE : View.VISIBLE);
+            invalidView.setVisibility(invalidCount == 0 ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -284,11 +289,12 @@ final class SignatureUpdateAdapter extends
 
         private final Formatter formatter;
 
-        private final ColorStateList textColor;
         private final ColorStateList colorValid;
         private final ColorStateList colorInvalid;
 
         private final TextView nameView;
+        private final TextView statusView;
+        private final TextView statusCautionView;
         private final TextView createdAtView;
         private final ImageButton removeButton;
 
@@ -296,39 +302,47 @@ final class SignatureUpdateAdapter extends
             super(itemView);
             formatter = Application.component(itemView.getContext()).formatter();
             Resources resources = itemView.getResources();
-            TypedArray a = itemView.getContext().obtainStyledAttributes(
-                    new int[]{android.R.attr.textColorPrimary});
-            textColor = a.getColorStateList(0);
-            a.recycle();
             colorValid = ColorStateList.valueOf(getColor(resources, R.color.success, null));
             colorInvalid = ColorStateList.valueOf(getColor(resources, R.color.error, null));
             nameView = itemView.findViewById(R.id.signatureUpdateListSignatureName);
+            statusView = itemView.findViewById(R.id.signatureUpdateListSignatureStatus);
+            statusCautionView = itemView
+                    .findViewById(R.id.signatureUpdateListSignatureStatusCaution);
             createdAtView = itemView.findViewById(R.id.signatureUpdateListSignatureCreatedAt);
             removeButton = itemView.findViewById(R.id.signatureUpdateListSignatureRemoveButton);
         }
 
         @Override
         void bind(SignatureUpdateAdapter adapter, SignatureItem item) {
-            Context context = itemView.getContext();
-            boolean valid = item.signature().status().equals(SignatureStatus.VALID);
-            Drawable validityIcon = valid
-                    ? context.getDrawable(R.drawable.ic_icon_check)
-                    : context.getDrawable(R.drawable.ic_icon_alert);
-            if (validityIcon == null) {
-                throw new IllegalStateException("Validity icon is null");
-            }
-            validityIcon.setTintList(valid ? colorValid : colorInvalid);
-            ImageSpan validitySpan = new ImageSpan(itemView.getContext(),
-                    drawableToBitmap(validityIcon), DynamicDrawableSpan.ALIGN_BASELINE);
-            SpannableString nameText = new SpannableString(String.format(Locale.US, "  %s",
-                    item.signature().name()));
-            nameText.setSpan(validitySpan, 0, 1, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-
             clicks(itemView).map(ignored ->
                     ((SignatureItem) adapter.getItem(getAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
-            nameView.setText(nameText, TextView.BufferType.SPANNABLE);
-            nameView.setTextColor(valid ? textColor : colorInvalid);
+            nameView.setText(item.signature().name());
+            switch (item.signature().status()) {
+                case SignatureStatus.INVALID:
+                    statusView.setText(R.string.signature_update_signature_status_invalid);
+                    break;
+                case SignatureStatus.UNKNOWN:
+                    statusView.setText(R.string.signature_update_signature_status_unknown);
+                    break;
+                default:
+                    statusView.setText(R.string.signature_update_signature_status_valid);
+                    break;
+            }
+            statusView.setTextColor(item.signature().valid() ? colorValid : colorInvalid);
+            switch (item.signature().status()) {
+                case SignatureStatus.WARNING:
+                    statusCautionView.setVisibility(View.VISIBLE);
+                    statusCautionView.setText(R.string.signature_update_signature_status_warning);
+                    break;
+                case SignatureStatus.NON_QSCD:
+                    statusCautionView.setVisibility(View.VISIBLE);
+                    statusCautionView.setText(R.string.signature_update_signature_status_non_qscd);
+                    break;
+                default:
+                    statusCautionView.setVisibility(View.GONE);
+                    break;
+            }
             createdAtView.setText(itemView.getResources().getString(
                     R.string.signature_update_signature_created_at,
                     formatter.instant(item.signature().createdAt())));
@@ -387,13 +401,13 @@ final class SignatureUpdateAdapter extends
     }
 
     @AutoValue
-    static abstract class WarningItem extends Item {
+    static abstract class StatusItem extends Item {
 
-        abstract int invalidCount();
+        abstract ImmutableMap<String, Integer> counts();
 
-        static WarningItem create(int invalidCount) {
-            return new AutoValue_SignatureUpdateAdapter_WarningItem(
-                    R.layout.signature_update_list_item_warning, invalidCount);
+        static StatusItem create(ImmutableMap<String, Integer> counts) {
+            return new AutoValue_SignatureUpdateAdapter_StatusItem(
+                    R.layout.signature_update_list_item_status, counts);
         }
     }
 
