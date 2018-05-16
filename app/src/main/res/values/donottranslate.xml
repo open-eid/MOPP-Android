@@ -48,10 +48,8 @@
     <string name="main_about_z_lib_license_url">https://zlib.net/zlib_license.html</string>
     <string name="main_about_support_preference_v7_fix_title">Android Support Preference v7 Fix %1$s</string>
     <string name="main_about_guava_title">Google Guava %1$s</string>
-    <string name="main_about_apache_commons_io_title">Apache Commons IO %1$s</string>
     <string name="main_about_square_okio_title">Square Okio %1$s</string>
     <string name="main_about_timber_title">Timber %1$s</string>
-    <string name="main_about_butterknife_title">Butterknife %1$s</string>
     <string name="main_about_square_okhttp_title">Square OkHttp %1$s</string>
     <string name="main_about_retrofit_title">Square Retrofit %1$s</string>
     <string name="main_about_spongy_castle_title">Spongy Castle %1$s</string>

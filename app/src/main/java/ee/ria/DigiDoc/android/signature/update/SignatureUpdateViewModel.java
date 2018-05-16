@@ -58,6 +58,8 @@ public final class SignatureUpdateViewModel extends
                     signatureAddIntent.request());
         } else if (intent instanceof Intent.SendIntent) {
             return Action.SendAction.create(((Intent.SendIntent) intent).containerFile());
+        } else if (intent instanceof Action) {
+            return (Action) intent;
         } else {
             throw new IllegalArgumentException("Unknown intent " + intent);
         }

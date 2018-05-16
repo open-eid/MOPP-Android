@@ -44,6 +44,7 @@ final class SignatureUpdateAdapter extends
         RecyclerView.Adapter<SignatureUpdateAdapter.UpdateViewHolder<SignatureUpdateAdapter.Item>> {
 
     final Subject<Object> scrollToTopSubject = PublishSubject.create();
+    final Subject<Object> nameUpdateClicksSubject = PublishSubject.create();
     final Subject<DataFile> documentClicksSubject = PublishSubject.create();
     final Subject<Object> documentAddClicksSubject = PublishSubject.create();
     final Subject<DataFile> documentRemoveClicksSubject = PublishSubject.create();
@@ -65,7 +66,7 @@ final class SignatureUpdateAdapter extends
             builder.add(StatusItem.create(container.invalidSignatureCounts()));
         }
         if (container != null) {
-            builder.add(NameItem.create(name))
+            builder.add(NameItem.create(name, !isNestedContainer))
                     .add(SubheadItem.create(DOCUMENT,
                             isExistingContainer && !isNestedContainer
                                     && container.dataFileAddEnabled()))
@@ -101,6 +102,10 @@ final class SignatureUpdateAdapter extends
 
     Observable<Object> scrollToTop() {
         return scrollToTopSubject;
+    }
+
+    Observable<Object> nameUpdateClicks() {
+        return nameUpdateClicksSubject;
     }
 
     Observable<DataFile> documentClicks() {
@@ -224,15 +229,19 @@ final class SignatureUpdateAdapter extends
     static final class NameViewHolder extends UpdateViewHolder<NameItem> {
 
         private final TextView nameView;
+        private final View updateButton;
 
         NameViewHolder(View itemView) {
             super(itemView);
             nameView = itemView.findViewById(R.id.signatureUpdateListName);
+            updateButton = itemView.findViewById(R.id.signatureUpdateListNameUpdateButton);
         }
 
         @Override
         void bind(SignatureUpdateAdapter adapter, NameItem item) {
             nameView.setText(item.name());
+            updateButton.setVisibility(item.updateButtonVisible() ? View.VISIBLE : View.GONE);
+            clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
         }
     }
 
@@ -416,9 +425,11 @@ final class SignatureUpdateAdapter extends
 
         abstract String name();
 
-        static NameItem create(String name) {
+        abstract boolean updateButtonVisible();
+
+        static NameItem create(String name, boolean updateButtonVisible) {
             return new AutoValue_SignatureUpdateAdapter_NameItem(
-                    R.layout.signature_update_list_item_name, name);
+                    R.layout.signature_update_list_item_name, name, updateButtonVisible);
         }
     }
 

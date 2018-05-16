@@ -58,6 +58,10 @@
     <string name="signature_update_title_created">Signing</string>
     <string name="signature_update_title_existing">Container verification</string>
     <string name="signature_update_name">CONTAINER:</string>
+    <string name="signature_update_name_update_button">Edit container name</string> <!-- TODO TRANSLATE -->
+    <string name="signature_update_name_update_name">Container name</string> <!-- TODO TRANSLATE -->
+    <string name="signature_update_name_update_error_exists">Container with this name already exists</string> <!-- TODO TRANSLATE -->
+    <string name="signature_update_name_update_error_invalid">Container name invalid</string> <!-- TODO TRANSLATE -->
     <string name="signature_update_documents_title">Container files</string>
     <string name="signature_update_documents_button">ADD MORE FILES</string>
     <string name="signature_update_documents_add_button">+ ADD MORE FILES</string>

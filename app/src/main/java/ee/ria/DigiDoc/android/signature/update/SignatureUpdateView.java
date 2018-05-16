@@ -51,6 +51,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final boolean signatureAddSuccessMessageVisible;
 
     private final Toolbar toolbarView;
+    private final NameUpdateDialog nameUpdateDialog;
     private final RecyclerView listView;
     private final SignatureUpdateAdapter adapter;
     private final View activityIndicatorView;
@@ -102,6 +103,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update, this);
         toolbarView = findViewById(R.id.toolbar);
+        nameUpdateDialog = new NameUpdateDialog(context);
         listView = findViewById(R.id.signatureUpdateList);
         activityIndicatorView = findViewById(R.id.activityIndicator);
         activityOverlayView = findViewById(R.id.activityOverlay);
@@ -130,9 +132,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
-        return Observable.mergeArray(initialIntent(), addDocumentsIntent(), openDocumentIntent(),
-                documentRemoveIntent(), signatureRemoveIntent(), signatureAddIntent(),
-                sendIntent());
+        return Observable.mergeArray(initialIntent(), nameUpdateIntent(), addDocumentsIntent(),
+                openDocumentIntent(), documentRemoveIntent(), signatureRemoveIntent(),
+                signatureAddIntent(), sendIntent());
     }
 
     @Override
@@ -149,6 +151,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             documentOpenIntentSubject.onNext(Intent.DocumentOpenIntent.clear());
             return;
         }
+
+        nameUpdateDialog.render(state.nameUpdateShowing(), state.nameUpdateName(),
+                state.nameUpdateError(), state.container());
 
         toolbarView.setTitle(isExistingContainer
                 ? R.string.signature_update_title_existing
@@ -238,6 +243,16 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 signatureAddSuccessMessageVisible));
     }
 
+    @SuppressWarnings("unchecked")
+    private Observable<Intent.NameUpdateIntent> nameUpdateIntent() {
+        return Observable.mergeArray(
+                adapter.nameUpdateClicks()
+                        .map(ignored -> Intent.NameUpdateIntent.show(containerFile)),
+                cancels(nameUpdateDialog).map(ignored -> Intent.NameUpdateIntent.clear()),
+                nameUpdateDialog.updates()
+                        .map(name -> Intent.NameUpdateIntent.update(containerFile, name)));
+    }
+
     private Observable<Intent.DocumentsAddIntent> addDocumentsIntent() {
         return adapter.documentAddClicks()
                 .map(ignored -> Intent.DocumentsAddIntent.create(containerFile))
@@ -318,19 +333,24 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         documentRemoveConfirmationDialog.dismiss();
         errorDialog.setOnDismissListener(null);
         errorDialog.dismiss();
+        nameUpdateDialog.dismiss();
         super.onDetachedFromWindow();
     }
 
     @Override
     protected Parcelable onSaveInstanceState() {
-        return ViewSavedState.onSaveInstanceState(super.onSaveInstanceState(), parcel ->
-                parcel.writeBundle(signatureAddDialog.onSaveInstanceState()));
+        return ViewSavedState.onSaveInstanceState(super.onSaveInstanceState(), parcel -> {
+            parcel.writeBundle(signatureAddDialog.onSaveInstanceState());
+            parcel.writeBundle(nameUpdateDialog.onSaveInstanceState());
+        });
     }
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        super.onRestoreInstanceState(ViewSavedState.onRestoreInstanceState(state, parcel ->
-                signatureAddDialog.onRestoreInstanceState(
-                        parcel.readBundle(getClass().getClassLoader()))));
+        super.onRestoreInstanceState(ViewSavedState.onRestoreInstanceState(state, parcel -> {
+            signatureAddDialog.onRestoreInstanceState(
+                    parcel.readBundle(getClass().getClassLoader()));
+            nameUpdateDialog.onRestoreInstanceState(parcel.readBundle(getClass().getClassLoader()));
+        }));
     }
 }

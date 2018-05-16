@@ -34,10 +34,8 @@ public final class AboutView extends CoordinatorLayout {
     private final TextView zLibVersionTitleView;
     private final TextView preferenceV7FixVersionTitleView;
     private final TextView guavaVersionTitleView;
-    private final TextView commonsIoVersionTitleView;
     private final TextView okioVersionTitleView;
     private final TextView timberVersionTitleView;
-    private final TextView butterknifeVersionTitleView;
     private final TextView okHttpVersionTitleView;
     private final TextView retrofitVersionTitleView;
     private final TextView spongyCastleVersionTitleView;
@@ -74,10 +72,8 @@ public final class AboutView extends CoordinatorLayout {
         preferenceV7FixVersionTitleView =
                 findViewById(R.id.mainAboutPreferenceV7FixVersionTitle);
         guavaVersionTitleView = findViewById(R.id.mainAboutGuavaVersionTitle);
-        commonsIoVersionTitleView = findViewById(R.id.mainAboutCommonsIoVersionTitle);
         okioVersionTitleView = findViewById(R.id.mainAboutOkioVersionTitle);
         timberVersionTitleView = findViewById(R.id.mainAboutTimberVersionTitle);
-        butterknifeVersionTitleView = findViewById(R.id.mainAboutButterknifeVersionTitle);
         okHttpVersionTitleView = findViewById(R.id.mainAboutOkHttpVersionTitle);
         retrofitVersionTitleView = findViewById(R.id.mainAboutRetrofitVersionTitle);
         spongyCastleVersionTitleView = findViewById(R.id.mainAboutSpongyCastleVersionTitle);
@@ -138,14 +134,10 @@ public final class AboutView extends CoordinatorLayout {
                 BuildConfig.PREFERENCE_V7_FIX_VERSION));
         guavaVersionTitleView.setText(getResources().getString(
                 R.string.main_about_guava_title, BuildConfig.GUAVA_VERSION));
-        commonsIoVersionTitleView.setText(getResources().getString(
-                R.string.main_about_apache_commons_io_title, BuildConfig.COMMONS_IO_VERSION));
         okioVersionTitleView.setText(getResources().getString(
                 R.string.main_about_square_okio_title, BuildConfig.OKIO_VERSION));
         timberVersionTitleView.setText(getResources().getString(
                 R.string.main_about_timber_title, BuildConfig.TIMBER_VERSION));
-        butterknifeVersionTitleView.setText(getResources().getString(
-                R.string.main_about_butterknife_title, BuildConfig.BUTTERKNIFE_VERSION));
         okHttpVersionTitleView.setText(getResources().getString(
                 R.string.main_about_square_okhttp_title, BuildConfig.OK_HTTP_VERSION));
         retrofitVersionTitleView.setText(getResources().getString(

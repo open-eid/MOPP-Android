@@ -20,10 +20,8 @@ android {
 
         buildConfigField 'String', 'PREFERENCE_V7_FIX_VERSION', "\"$preferenceV7FixVersion\""
         buildConfigField 'String', 'GUAVA_VERSION', "\"$guavaVersion\""
-        buildConfigField 'String', 'COMMONS_IO_VERSION', "\"$commonsIoVersion\""
         buildConfigField 'String', 'OKIO_VERSION', "\"$okioVersion\""
         buildConfigField 'String', 'TIMBER_VERSION', "\"$timberVersion\""
-        buildConfigField 'String', 'BUTTERKNIFE_VERSION', "\"$butterknifeVersion\""
         buildConfigField 'String', 'OK_HTTP_VERSION', "\"$okhttpVersion\""
         buildConfigField 'String', 'RETROFIT_VERSION', "\"$retrofitVersion\""
         buildConfigField 'String', 'SPONGY_CASTLE_VERSION', "\"$spongycastleVersion\""
@@ -83,12 +81,9 @@ dependencies {
     implementation "com.takisoft.fix:preference-v7:${preferenceV7FixVersion}"
 
     implementation "com.google.guava:guava:${guavaVersion}"
-    implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "com.squareup.okio:okio:${okioVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
-    implementation "com.jakewharton:butterknife:${butterknifeVersion}"
-    annotationProcessor "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
 
     implementation "com.madgag.spongycastle:core:${spongycastleVersion}"
     implementation "com.madgag.spongycastle:bcpkix-jdk15on:${spongycastleVersion}"

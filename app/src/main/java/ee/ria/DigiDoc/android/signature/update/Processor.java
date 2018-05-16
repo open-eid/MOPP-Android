@@ -5,11 +5,13 @@ import android.app.Application;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
+import ee.ria.DigiDoc.android.utils.files.FileAlreadyExistsException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
@@ -28,6 +30,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Action.ContainerLoadAction,
                                         Result.ContainerLoadResult> containerLoad;
+
+    private final ObservableTransformer<Intent.NameUpdateIntent, Result.NameUpdateResult>
+            nameUpdate;
 
     private final ObservableTransformer<Action.DocumentsAddAction,
                                         Result.DocumentsAddResult> documentsAdd;
@@ -70,6 +75,49 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .startWith(Result.ContainerLoadResult.progress()));
+
+        nameUpdate = upstream -> upstream.switchMap(action -> {
+            File containerFile = action.containerFile();
+            String name = action.name();
+
+            if (containerFile == null) {
+                return Observable.just(Result.NameUpdateResult.hide());
+            } else if (name == null) {
+                return Observable.just(
+                        Result.NameUpdateResult.name(containerFile),
+                        Result.NameUpdateResult.show(containerFile));
+            } else if (name.equals(containerFile.getName())) {
+                return Observable.just(Result.NameUpdateResult.hide());
+            } else if (name.isEmpty()) {
+                return Observable.just(Result.NameUpdateResult
+                        .failure(containerFile, new IOException()));
+            } else {
+                return Observable
+                        .fromCallable(() -> {
+                            File newFile = new File(containerFile.getParentFile(), name);
+                            if (newFile.createNewFile()) {
+                                //noinspection ResultOfMethodCallIgnored
+                                newFile.delete();
+                                if (!containerFile.renameTo(newFile)) {
+                                    throw new IOException();
+                                }
+                                return newFile;
+                            } else {
+                                throw new FileAlreadyExistsException(newFile);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .map(newFile -> {
+                            navigator.execute(Transaction.replace(SignatureUpdateScreen
+                                    .create(true, false, newFile, false, false)));
+                            return Result.NameUpdateResult.progress(newFile);
+                        })
+                        .onErrorReturn(throwable ->
+                                Result.NameUpdateResult.failure(containerFile, throwable))
+                        .startWith(Result.NameUpdateResult.progress(containerFile));
+            }
+        });
 
         documentsAdd = upstream -> upstream
                 .switchMap(action -> {
@@ -227,6 +275,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
     public ObservableSource<Result> apply(Observable<Action> upstream) {
         return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Action.ContainerLoadAction.class).compose(containerLoad),
+                shared.ofType(Intent.NameUpdateIntent.class).compose(nameUpdate),
                 shared.ofType(Action.DocumentsAddAction.class).compose(documentsAdd),
                 shared.ofType(Action.DocumentOpenAction.class).compose(documentOpen),
                 shared.ofType(Action.DocumentRemoveAction.class).compose(documentRemove),
