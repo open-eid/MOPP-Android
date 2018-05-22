@@ -19,19 +19,17 @@
 
 package ee.ria.tokenlibrary;
 
-import ee.ria.scardcomlibrary.CardReader;
+import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.tokenlibrary.util.TokenVersion;
 import ee.ria.tokenlibrary.util.Util;
 import timber.log.Timber;
 
 public class TokenFactory {
 
-    private static final String TAG = TokenFactory.class.getName();
-    public static Token getTokenImpl(CardReader cardReader) {
-
+    public static Token getTokenImpl(SmartCardReader reader) {
         String cardVersion = null;
         try {
-            byte[] versionBytes = cardReader.transmitExtended(new byte[]{0x00, (byte) 0xCA, 0x01, 0x00, 0x03});
+            byte[] versionBytes = reader.transmitExtended(new byte[]{0x00, (byte) 0xCA, 0x01, 0x00, 0x03});
             cardVersion = Util.toHex(versionBytes);
         } catch (Exception e) {
             Timber.e(e, "Error retrieving token implementation");
@@ -42,11 +40,10 @@ public class TokenFactory {
         }
         Token token = null;
         if (cardVersion.startsWith(TokenVersion.V3D5.getVersion())) {
-            token = new EstEIDv3d5(cardReader);
+            token = new EstEIDv3d5(reader);
         } else if (cardVersion.startsWith(TokenVersion.V3D4.getVersion()) || cardVersion.startsWith(TokenVersion.V3D0.getVersion())) {
-            token = new EstEIDv3d4(cardReader);
+            token = new EstEIDv3d4(reader);
         }
         return token;
     }
-
 }

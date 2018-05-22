@@ -6,6 +6,9 @@ import android.hardware.usb.UsbManager;
 import com.acs.smartcard.Reader;
 import com.acs.smartcard.ReaderException;
 
+import java.util.Arrays;
+
+import ee.ria.scardcomlibrary.SmartCardCommunicationException;
 import ee.ria.scardcomlibrary.SmartCardReader;
 import timber.log.Timber;
 
@@ -45,5 +48,22 @@ public final class AcsSmartCardReader implements SmartCardReader {
             }
         }
         return reader.isOpened() && reader.getState(SLOT) == Reader.CARD_SPECIFIC;
+    }
+
+    @Override
+    public boolean isSecureChannel() {
+        return true;
+    }
+
+    @Override
+    public byte[] transmit(byte[] apdu) {
+        byte[] recv = new byte[1024];
+        int len;
+        try {
+            len = reader.transmit(SLOT, apdu, apdu.length, recv, recv.length);
+        } catch (ReaderException e) {
+            throw new SmartCardCommunicationException(e);
+        }
+        return Arrays.copyOf(recv, len);
     }
 }

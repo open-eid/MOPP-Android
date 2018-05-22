@@ -23,7 +23,7 @@ import android.util.SparseArray;
 
 import java.io.UnsupportedEncodingException;
 
-import ee.ria.scardcomlibrary.SmartCardComChannel;
+import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.tokenlibrary.exception.SecureOperationOverUnsecureChannelException;
 import ee.ria.tokenlibrary.exception.SignOperationFailedException;
 import ee.ria.tokenlibrary.exception.TokenException;
@@ -32,8 +32,8 @@ import ee.ria.tokenlibrary.util.Util;
 
 public class EstEIDv3d5 extends EstEIDToken {
 
-    public EstEIDv3d5(SmartCardComChannel comChannel) {
-        super(comChannel);
+    EstEIDv3d5(SmartCardReader reader) {
+        super(reader);
     }
 
     @Override
@@ -124,5 +124,4 @@ public class EstEIDv3d5 extends EstEIDToken {
     void selectPersonalDataFile() {
         transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x0C, 0x02, (byte) 0x50, (byte) 0x44});
     }
-
 }

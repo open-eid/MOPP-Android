@@ -7,7 +7,9 @@ import android.hardware.usb.UsbManager;
 import com.identive.libs.SCard;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import ee.ria.scardcomlibrary.SmartCardCommunicationException;
 import ee.ria.scardcomlibrary.SmartCardReader;
 
 import static com.identive.libs.WinDefs.SCARD_LEAVE_CARD;
@@ -53,6 +55,7 @@ public final class IdentivSmartCardReader implements SmartCardReader {
 
     @Override
     public boolean connected() {
+        sCard.SCardEstablishContext(context);
         ArrayList<String> readers = new ArrayList<>();
         sCard.SCardListReaders(context, readers);
         if (readers.size() > 0) {
@@ -62,5 +65,33 @@ public final class IdentivSmartCardReader implements SmartCardReader {
             return state.getnState() == SCARD_SPECIFIC;
         }
         return false;
+    }
+
+    @Override
+    public boolean isSecureChannel() {
+        return true;
+    }
+
+    @Override
+    public byte[] transmit(byte[] apdu) {
+        SCard.SCardIOBuffer io = sCard.new SCardIOBuffer();
+        io.setAbyInBuffer(apdu);
+        io.setnBytesReturned(apdu.length);
+        io.setAbyOutBuffer(new byte[0x8000]);
+        io.setnOutBufferSize(0x8000);
+        sCard.SCardTransmit(io);
+        if (io.getnBytesReturned() == 0) {
+            throw new SmartCardCommunicationException("Failed to send apdu");
+        }
+        String rstr = "";
+        for (int k = 0; k < io.getnBytesReturned(); k++) {
+            int temp = io.getAbyOutBuffer()[k] & 0xFF;
+            if (temp < 16) {
+                rstr = rstr.toUpperCase() + "0" + Integer.toHexString(io.getAbyOutBuffer()[k]);
+            } else {
+                rstr = rstr.toUpperCase() + Integer.toHexString(temp);
+            }
+        }
+        return Arrays.copyOf(io.getAbyOutBuffer(), io.getnBytesReturned());
     }
 }
