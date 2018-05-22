@@ -4,10 +4,14 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 
 import com.acs.smartcard.Reader;
+import com.acs.smartcard.ReaderException;
 
 import ee.ria.scardcomlibrary.SmartCardReader;
+import timber.log.Timber;
 
 public final class AcsSmartCardReader implements SmartCardReader {
+
+    private static final int SLOT = 0;
 
     private final Reader reader;
 
@@ -21,5 +25,25 @@ public final class AcsSmartCardReader implements SmartCardReader {
     }
 
     @Override
-    public void close() {}
+    public void open(UsbDevice usbDevice) {
+        reader.open(usbDevice);
+    }
+
+    @Override
+    public void close() {
+        reader.close();
+    }
+
+    @Override
+    public boolean connected() {
+        if (reader.isOpened() && reader.getState(SLOT) == Reader.CARD_PRESENT) {
+            try {
+                reader.power(SLOT, Reader.CARD_WARM_RESET);
+                reader.setProtocol(SLOT, Reader.PROTOCOL_TX);
+            } catch (ReaderException e) {
+                Timber.e(e, "Connecting to ACS reader");
+            }
+        }
+        return reader.isOpened() && reader.getState(SLOT) == Reader.CARD_SPECIFIC;
+    }
 }

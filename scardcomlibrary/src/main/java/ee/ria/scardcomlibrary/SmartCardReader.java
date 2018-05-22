@@ -2,9 +2,11 @@ package ee.ria.scardcomlibrary;
 
 import android.hardware.usb.UsbDevice;
 
-public interface SmartCardReader {
+public interface SmartCardReader extends AutoCloseable {
 
     boolean supports(UsbDevice usbDevice);
 
-    void close();
+    void open(UsbDevice usbDevice);
+
+    boolean connected();
 }

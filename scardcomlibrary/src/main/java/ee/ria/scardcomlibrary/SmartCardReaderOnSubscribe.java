@@ -15,7 +15,6 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import timber.log.Timber;
 
-@SuppressWarnings("Guava")
 final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional<SmartCardReader>> {
 
     private static final String ACTION_USB_DEVICE_PERMISSION = BuildConfig.APPLICATION_ID +
@@ -35,7 +34,7 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
     }
 
     @Override
-    public void subscribe(ObservableEmitter<Optional<SmartCardReader>> emitter) throws Exception {
+    public void subscribe(ObservableEmitter<Optional<SmartCardReader>> emitter) {
         BroadcastReceiver deviceAttachReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -60,9 +59,12 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
         BroadcastReceiver devicePermissionReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                boolean permissionGranted = intent.getBooleanExtra(
+                        UsbManager.EXTRA_PERMISSION_GRANTED, false);
                 UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
-                        && smartCardReaderManager.supports(device)) {
+                Timber.d("Smart card device permission: granted: %s; device: %s", permissionGranted,
+                        device);
+                if (permissionGranted && smartCardReaderManager.supports(device)) {
                     clearCurrent();
                     currentDevice = device;
                     currentReader = smartCardReaderManager.reader(device);
@@ -82,6 +84,7 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
             context.unregisterReceiver(deviceAttachReceiver);
             context.unregisterReceiver(deviceDetachReceiver);
             context.unregisterReceiver(devicePermissionReceiver);
+            clearCurrent();
         });
 
         for (UsbDevice device : usbManager.getDeviceList().values()) {
@@ -101,7 +104,11 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
     private void clearCurrent() {
         currentDevice = null;
         if (currentReader != null) {
-            currentReader.close();
+            try {
+                currentReader.close();
+            } catch (Exception e) {
+                Timber.e(e, "Closing current reader %s", currentReader);
+            }
             currentReader = null;
         }
     }

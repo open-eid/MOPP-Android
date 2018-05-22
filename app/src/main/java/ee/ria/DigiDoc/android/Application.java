@@ -190,9 +190,10 @@ public class Application extends android.app.Application {
 
         @Provides @Singleton
         static SmartCardReaderManager smartCardReaderManager(
-                android.app.Application application, AcsSmartCardReader acsSmartCardReader,
+                android.app.Application application, UsbManager usbManager,
+                AcsSmartCardReader acsSmartCardReader,
                 IdentivSmartCardReader identivSmartCardReader) {
-            return new SmartCardReaderManager(application,
+            return new SmartCardReaderManager(application, usbManager,
                     ImmutableList.of(acsSmartCardReader, identivSmartCardReader));
         }
 
