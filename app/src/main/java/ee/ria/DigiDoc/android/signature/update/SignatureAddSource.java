@@ -91,21 +91,28 @@ final class SignatureAddSource {
             IdCardRequest idCardRequest = (IdCardRequest) request;
             return signatureContainerDataSource
                     .get(containerFile)
-                    .flatMap(container ->
-                            idCardService
-                                    .sign(idCardRequest.token(), container, idCardRequest.pin2()))
-                    .toObservable()
+                    .flatMapObservable(container ->
+                            idCardService.data()
+                                    .filter(dataResponse -> dataResponse.token() != null)
+                                    .switchMapSingle(dataResponse ->
+                                            idCardService.sign(dataResponse.token(), container,
+                                                    idCardRequest.pin2())))
                     .map(IdCardResponse::success)
                     .onErrorResumeNext(error -> {
                         if (error instanceof PinVerificationException) {
-                            IdCardData data = IdCardService.data(idCardRequest.token());
-                            if (data.signCertificate().pinRetryCount() > 0) {
-                                return Observable.just(
-                                        IdCardResponse.sign(IdCardSignResponse
-                                                .clear(error, data, idCardRequest.token())),
-                                        IdCardResponse.sign(IdCardSignResponse
-                                                .failure(error, data, idCardRequest.token())));
-                            }
+                            return idCardService.data()
+                                    .filter(dataResponse -> dataResponse.data() != null)
+                                    .switchMap(dataResponse -> {
+                                        IdCardData data = dataResponse.data();
+                                        if (data.signCertificate().pinRetryCount() > 0) {
+                                            return Observable.just(
+                                                    IdCardResponse.sign(IdCardSignResponse
+                                                            .clear(error, data, idCardRequest.token())),
+                                                    IdCardResponse.sign(IdCardSignResponse
+                                                            .failure(error, data, idCardRequest.token())));
+                                        }
+                                        return Observable.error(error);
+                                    });
                         }
                         return Observable.error(error);
                     })
