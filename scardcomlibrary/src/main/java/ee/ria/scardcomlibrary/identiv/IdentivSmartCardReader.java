@@ -56,13 +56,17 @@ public final class IdentivSmartCardReader implements SmartCardReader {
     @Override
     public boolean connected() {
         sCard.SCardEstablishContext(context);
+
+        SCard.SCardState state = sCard.new SCardState();
+        sCard.SCardStatus(state);
+        if (state.getnState() == SCARD_SPECIFIC) {
+            return true;
+        }
+
         ArrayList<String> readers = new ArrayList<>();
         sCard.SCardListReaders(context, readers);
         if (readers.size() > 0) {
             sCard.SCardConnect(readers.get(0), SCARD_SHARE_EXCLUSIVE, (int) SCARD_PROTOCOL_TX);
-            SCard.SCardState state = sCard.new SCardState();
-            sCard.SCardStatus(state);
-            return state.getnState() == SCARD_SPECIFIC;
         }
         return false;
     }
@@ -76,7 +80,7 @@ public final class IdentivSmartCardReader implements SmartCardReader {
     public byte[] transmit(byte[] apdu) {
         SCard.SCardIOBuffer io = sCard.new SCardIOBuffer();
         io.setAbyInBuffer(apdu);
-        io.setnBytesReturned(apdu.length);
+        io.setnInBufferSize(apdu.length);
         io.setAbyOutBuffer(new byte[0x8000]);
         io.setnOutBufferSize(0x8000);
         sCard.SCardTransmit(io);
