@@ -152,6 +152,8 @@
     <item type="id" name="cryptoCreateCoordinator" />
     <item type="id" name="cryptoCreateList" />
     <item type="id" name="cryptoCreateEncryptButton" />
+    <item type="id" name="cryptoCreateListSuccessMessage" />
+    <item type="id" name="cryptoCreateListName" />
 
     <!-- EID Home -->
     <item type="id" name="eidHomeCoordinator" />

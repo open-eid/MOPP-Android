@@ -9,7 +9,8 @@
     <android.support.design.widget.CoordinatorLayout
         android:id="@id/cryptoCreateCoordinator"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <android.support.design.widget.AppBarLayout
             android:id="@id/appBar"
