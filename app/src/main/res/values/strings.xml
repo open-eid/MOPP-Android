@@ -158,6 +158,10 @@
     <string name="crypto_home_create_text">Choose a file to encrypt or decrypt</string>
     <string name="crypto_home_create_button">CHOOSE FILE</string>
 
+    <!-- Crypto Create -->
+    <string name="crypto_create_title" tools:ignore="MissingTranslation">Encryption</string>
+    <string name="crypto_create_encrypt_button" tools:ignore="MissingTranslation">Encrypt</string>
+
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Connect the card reader and insert your ID-card into the reader.</string>
     <string name="eid_home_id_card_status_reader_detected_message">Reader found. Insert your ID-card into the reader.</string>

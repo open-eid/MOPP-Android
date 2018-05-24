@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.crypto.CryptoHomeView;
+import ee.ria.DigiDoc.android.crypto.home.CryptoHomeView;
 import ee.ria.DigiDoc.android.eid.EIDHomeView;
 import ee.ria.DigiDoc.android.signature.home.SignatureHomeView;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;

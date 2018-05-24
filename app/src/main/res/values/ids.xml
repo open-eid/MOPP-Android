@@ -147,6 +147,12 @@
     <!-- Crypto Home -->
     <item type="id" name="cryptoHomeCreateButton" />
 
+    <!-- Crypto Create -->
+    <item type="id" name="cryptoCreateScreen" />
+    <item type="id" name="cryptoCreateCoordinator" />
+    <item type="id" name="cryptoCreateList" />
+    <item type="id" name="cryptoCreateEncryptButton" />
+
     <!-- EID Home -->
     <item type="id" name="eidHomeCoordinator" />
     <item type="id" name="eidHomeCodeUpdate" />
