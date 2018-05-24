@@ -11,13 +11,23 @@ android {
     lintOptions {
         lintConfig file('../lint.xml')
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation "com.android.support:support-annotations:${androidSupportLibraryVersion}"
-    implementation "com.android.support:appcompat-v7:${androidSupportLibraryVersion}"
 
+    api "com.google.guava:guava:${guavaVersion}"
     implementation "com.jakewharton.timber:timber:${timberVersion}"
+    api "io.reactivex.rxjava2:rxjava:${rxJavaVersion}"
 
-    implementation files('libs/acssmc-1.1.3.jar', 'libs/AndroidSCard.jar', 'libs/JSR268Library.jar')
+    implementation files(
+            'libs/acssmc-1.1.4.jar', // ACS
+            'libs/androidSCardV1.2.jar', // Identive
+            'libs/JSR268Library.jar' // Omnikey
+    )
 }

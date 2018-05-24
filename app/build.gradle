@@ -113,7 +113,6 @@ dependencies {
     implementation project(':mopplib')
     implementation project(':scardcomlibrary')
     implementation project(':tokenlibrary')
-    implementation project(':tokenservice')
     implementation project(':androidmobileid')
 
     testAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"

@@ -21,6 +21,7 @@ package ee.ria.scardcomlibrary;
 
 
 public class SmartCardCommunicationException extends RuntimeException {
+
     public SmartCardCommunicationException(String message) {
         super(message);
     }

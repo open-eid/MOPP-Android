@@ -22,18 +22,18 @@ package ee.ria.tokenlibrary;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import ee.ria.scardcomlibrary.SmartCardComChannel;
 import ee.ria.scardcomlibrary.SmartCardCommunicationException;
+import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.tokenlibrary.exception.PinVerificationException;
 import ee.ria.tokenlibrary.exception.TokenException;
 import ee.ria.tokenlibrary.util.Util;
 
 abstract class EstEIDToken implements Token {
 
-    private SmartCardComChannel comChannel;
+    private SmartCardReader reader;
 
-    EstEIDToken(SmartCardComChannel comChannel) {
-        this.comChannel = comChannel;
+    EstEIDToken(SmartCardReader reader) {
+        this.reader = reader;
     }
 
     void verifyPin(PinType type, byte[] pin) {
@@ -118,15 +118,15 @@ abstract class EstEIDToken implements Token {
     }
 
     byte[] transmit(byte[] apdu) {
-        return comChannel.transmit(apdu);
+        return reader.transmit(apdu);
     }
 
     byte[] transmitExtended(byte[] apdu) {
-        return comChannel.transmitExtended(apdu);
+        return reader.transmitExtended(apdu);
     }
 
     boolean isSecureChannel() {
-        return comChannel.isSecureChannel();
+        return reader.isSecureChannel();
     }
 
     boolean checkSW(byte[] resp) {

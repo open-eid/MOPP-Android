@@ -22,9 +22,11 @@ package ee.ria.DigiDoc.android;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
+import android.hardware.usb.UsbManager;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.util.Map;
@@ -51,6 +53,9 @@ import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
 import ee.ria.mopplib.MoppLib;
+import ee.ria.scardcomlibrary.SmartCardReaderManager;
+import ee.ria.scardcomlibrary.acs.AcsSmartCardReader;
+import ee.ria.scardcomlibrary.identiv.IdentivSmartCardReader;
 import timber.log.Timber;
 
 public class Application extends android.app.Application {
@@ -109,7 +114,11 @@ public class Application extends android.app.Application {
     }
 
     @Singleton
-    @Component(modules = ApplicationModule.class)
+    @Component(modules = {
+            AndroidModule.class,
+            ApplicationModule.class,
+            SmartCardModule.class
+    })
     public interface ApplicationComponent {
 
         Navigator navigator();
@@ -124,6 +133,15 @@ public class Application extends android.app.Application {
             @BindsInstance Builder application(android.app.Application application);
 
             ApplicationComponent build();
+        }
+    }
+
+    @Module
+    static abstract class AndroidModule {
+
+        @Provides
+        static UsbManager usbManager(android.app.Application application) {
+            return (UsbManager) application.getSystemService(Context.USB_SERVICE);
         }
     }
 
@@ -165,6 +183,30 @@ public class Application extends android.app.Application {
         @SuppressWarnings("unused")
         @Binds @IntoMap @ClassKey(EIDHomeViewModel.class)
         abstract ViewModel eidHomeViewModel(EIDHomeViewModel viewModel);
+    }
+
+    @Module
+    static abstract class SmartCardModule {
+
+        @Provides @Singleton
+        static SmartCardReaderManager smartCardReaderManager(
+                android.app.Application application, UsbManager usbManager,
+                AcsSmartCardReader acsSmartCardReader,
+                IdentivSmartCardReader identivSmartCardReader) {
+            return new SmartCardReaderManager(application, usbManager,
+                    ImmutableList.of(acsSmartCardReader, identivSmartCardReader));
+        }
+
+        @Provides @Singleton
+        static AcsSmartCardReader acsSmartCardReader(UsbManager usbManager) {
+            return new AcsSmartCardReader(usbManager);
+        }
+
+        @Provides @Singleton
+        static IdentivSmartCardReader identivSmartCardReader(android.app.Application application,
+                                                             UsbManager usbManager) {
+            return new IdentivSmartCardReader(application, usbManager);
+        }
     }
 
     static final class ViewModelFactory implements ViewModelProvider.Factory {
