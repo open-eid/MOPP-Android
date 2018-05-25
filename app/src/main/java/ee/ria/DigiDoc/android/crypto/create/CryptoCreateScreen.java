@@ -19,6 +19,8 @@ public final class CryptoCreateScreen extends Controller implements Screen {
     }
 
     private CryptoCreateAdapter adapter;
+    private View activityOverlayView;
+    private View activityIndicatorView;
 
     @SuppressWarnings("WeakerAccess")
     public CryptoCreateScreen() {}
@@ -28,8 +30,19 @@ public final class CryptoCreateScreen extends Controller implements Screen {
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
         View view = inflater.inflate(R.layout.crypto_create_screen, container, false);
         RecyclerView listView = view.findViewById(R.id.cryptoCreateList);
+        activityOverlayView = view.findViewById(R.id.activityOverlay);
+        activityIndicatorView = view.findViewById(R.id.activityIndicator);
+
         listView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());
+
+        setActivity(false);
+
         return view;
+    }
+
+    private void setActivity(boolean activity) {
+        activityOverlayView.setVisibility(activity ? View.VISIBLE : View.GONE);
+        activityIndicatorView.setVisibility(activity ? View.VISIBLE : View.GONE);
     }
 }

@@ -165,8 +165,12 @@
     <string name="crypto_create_name" tools:ignore="MissingTranslation">CONTAINER:</string>
     <string name="crypto_create_data_files_title" tools:ignore="MissingTranslation">Data files</string>
     <string name="crypto_create_data_files_add_button" tools:ignore="MissingTranslation">+ ADD MORE FILES</string>
+    <string name="crypto_create_data_file_remove_button" tools:ignore="MissingTranslation">Remove data file</string>
     <string name="crypto_create_recipients_title" tools:ignore="MissingTranslation">Recipients</string>
     <string name="crypto_create_recipients_add_button" tools:ignore="MissingTranslation">+ ADD RECIPIENT</string>
+    <string name="crypto_create_recipient_type" tools:ignore="MissingTranslation">Recipient</string>
+    <string name="crypto_create_recipient_info" tools:ignore="MissingTranslation">%1$s (valid until %2$s)</string>
+    <string name="crypto_create_recipient_remove_button" tools:ignore="MissingTranslation">Remove recipient</string>
 
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Connect the card reader and insert your ID-card into the reader.</string>

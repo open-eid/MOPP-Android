@@ -156,6 +156,12 @@
     <item type="id" name="cryptoCreateName" />
     <item type="id" name="cryptoCreateSubheadTitle" />
     <item type="id" name="cryptoCreateAddButton" />
+    <item type="id" name="cryptoCreateDataFileName" />
+    <item type="id" name="cryptoCreateDataFileRemoveButton" />
+    <item type="id" name="cryptoCreateRecipientType" />
+    <item type="id" name="cryptoCreateRecipientName" />
+    <item type="id" name="cryptoCreateRecipientInfo" />
+    <item type="id" name="cryptoCreateRecipientRemoveButton" />
 
     <!-- EID Home -->
     <item type="id" name="eidHomeCoordinator" />

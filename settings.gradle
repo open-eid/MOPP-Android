@@ -1,1 +1,1 @@
-include ':app', ':mopplib', ':tokenlibrary', ':scardcomlibrary', ':androidmobileid'
+include ':app', ':mopplib', ':cryptolib', ':tokenlibrary', ':scardcomlibrary', ':androidmobileid'

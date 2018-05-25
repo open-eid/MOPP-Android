@@ -111,6 +111,7 @@ dependencies {
     implementation "net.cachapa.expandablelayout:expandablelayout:${expandablelayoutVersion}"
 
     implementation project(':mopplib')
+    implementation project(':cryptolib')
     implementation project(':scardcomlibrary')
     implementation project(':tokenlibrary')
     implementation project(':androidmobileid')
