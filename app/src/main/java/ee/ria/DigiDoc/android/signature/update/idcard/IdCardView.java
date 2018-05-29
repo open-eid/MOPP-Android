@@ -12,10 +12,10 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardSignResponse;
-import ee.ria.DigiDoc.android.model.idcard.IdCardStatus;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.scardcomlibrary.SmartCardReaderStatus;
 import ee.ria.tokenlibrary.Token;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -129,13 +129,13 @@ public final class IdCardView extends LinearLayout implements
                     data.personalCode()));
             signPin2ErrorView.setVisibility(GONE);
         } else if (dataResponse != null
-                && dataResponse.status().equals(IdCardStatus.CARD_DETECTED)) {
+                && dataResponse.status().equals(SmartCardReaderStatus.CARD_DETECTED)) {
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(
                     R.string.signature_update_id_card_progress_message_card_detected);
             signContainerView.setVisibility(GONE);
         } else if (dataResponse != null
-                && dataResponse.status().equals(IdCardStatus.READER_DETECTED)) {
+                && dataResponse.status().equals(SmartCardReaderStatus.READER_DETECTED)) {
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(
                     R.string.signature_update_id_card_progress_message_reader_detected);

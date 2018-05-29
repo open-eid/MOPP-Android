@@ -15,10 +15,10 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.main.home.HomeToolbar;
 import ee.ria.DigiDoc.android.main.home.HomeView;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
-import ee.ria.DigiDoc.android.model.idcard.IdCardStatus;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.scardcomlibrary.SmartCardReaderStatus;
 import ee.ria.tokenlibrary.Token;
 import ee.ria.tokenlibrary.exception.PinVerificationException;
 import io.reactivex.Observable;
@@ -34,10 +34,11 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
 
     private static final ImmutableMap<String, Integer> STATUS_MESSAGES =
             ImmutableMap.<String, Integer>builder()
-                    .put(IdCardStatus.INITIAL, R.string.eid_home_id_card_status_initial_message)
-                    .put(IdCardStatus.READER_DETECTED,
+                    .put(SmartCardReaderStatus.IDLE,
+                            R.string.eid_home_id_card_status_initial_message)
+                    .put(SmartCardReaderStatus.READER_DETECTED,
                             R.string.eid_home_id_card_status_reader_detected_message)
-                    .put(IdCardStatus.CARD_DETECTED,
+                    .put(SmartCardReaderStatus.CARD_DETECTED,
                             R.string.eid_home_id_card_status_card_detected_message)
                     .build();
 
