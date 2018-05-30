@@ -2,8 +2,6 @@ package ee.ria.DigiDoc.android.model.idcard;
 
 import android.util.SparseArray;
 
-import com.google.common.base.Optional;
-
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeFormatterBuilder;
@@ -14,55 +12,51 @@ import javax.inject.Singleton;
 import ee.ria.DigiDoc.android.model.CertificateData;
 import ee.ria.DigiDoc.android.model.EIDType;
 import ee.ria.mopplib.data.SignedContainer;
-import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.scardcomlibrary.SmartCardReaderManager;
+import ee.ria.scardcomlibrary.SmartCardReaderStatus;
 import ee.ria.tokenlibrary.Token;
 import ee.ria.tokenlibrary.TokenFactory;
 import ee.ria.tokenlibrary.exception.PinVerificationException;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import okio.ByteString;
 import timber.log.Timber;
 
+import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
+
 @Singleton
 public final class IdCardService {
 
-    private final Observable<Optional<SmartCardReader>> readerObservable;
+    private final SmartCardReaderManager smartCardReaderManager;
 
     @Inject IdCardService(SmartCardReaderManager smartCardReaderManager) {
-        readerObservable = smartCardReaderManager.reader()
-                .publish()
-                .refCount();
+        this.smartCardReaderManager  = smartCardReaderManager;
     }
 
     public final Observable<IdCardDataResponse> data() {
-        return readerObservable
-                .filter(new SmartCardReaderPredicate())
-                .switchMap(readerOptional -> {
-                    if (readerOptional.isPresent() && readerOptional.get().connected()) {
-                        Token token = TokenFactory.getTokenImpl(readerOptional.get());
-                        if (token != null) {
-                            return Observable
-                                    .fromCallable(() -> {
-                                        // don't know why try-catch is necessary
-                                        try {
-                                            return IdCardDataResponse.success(data(token), token);
-                                        } catch (Exception e) {
-                                            return IdCardDataResponse.failure(e);
-                                        }
-                                    })
-                                    .onErrorReturn(IdCardDataResponse::failure)
-                                    .subscribeOn(Schedulers.io())
-                                    .startWith(IdCardDataResponse.cardDetected());
-                        }
-                    } else if (readerOptional.isPresent()) {
+        return smartCardReaderManager.status()
+                .filter(duplicates())
+                .switchMap(status -> {
+                    if (status.equals(SmartCardReaderStatus.IDLE)) {
+                        return Observable.just(IdCardDataResponse.initial());
+                    } else if (status.equals(SmartCardReaderStatus.READER_DETECTED)) {
                         return Observable.just(IdCardDataResponse.readerDetected());
                     }
-                    return Observable.just(IdCardDataResponse.initial());
+                    return Observable
+                            .fromCallable(() -> {
+                                Token token = TokenFactory
+                                        .getTokenImpl(smartCardReaderManager.connectedReader());
+                                if (token == null) {
+                                    throw new IllegalStateException("Token is null");
+                                }
+                                return IdCardDataResponse.success(data(token), token);
+                            })
+                            .subscribeOn(Schedulers.io())
+                            .startWith(IdCardDataResponse.cardDetected());
                 })
+                .onErrorReturn(IdCardDataResponse::failure)
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
@@ -169,24 +163,5 @@ public final class IdCardService {
         return IdCardData.create(type, givenNames.toString(), surname, personalCode, citizenship,
                 dateOfBirth, authCertificate, signCertificate, pukRetryCounter, documentNumber,
                 expiryDate);
-    }
-
-    static final class SmartCardReaderPredicate implements Predicate<Optional<SmartCardReader>> {
-
-        private boolean present = false;
-        private boolean connected = false;
-
-        @Override
-        public boolean test(Optional<SmartCardReader> current) {
-            boolean present = current.isPresent();
-            boolean connected = current.isPresent() && current.get().connected();
-
-            boolean result = this.present == present && this.connected == connected;
-
-            this.present = present;
-            this.connected = connected;
-
-            return !result;
-        }
     }
 }

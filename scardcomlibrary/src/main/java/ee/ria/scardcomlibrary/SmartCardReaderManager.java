@@ -5,7 +5,6 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.support.annotation.Nullable;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
 import java.util.concurrent.TimeUnit;
@@ -19,15 +18,46 @@ public final class SmartCardReaderManager {
      */
     private static final int CONNECT_RETRY = 2500;
 
-    private final Context context;
     private final UsbManager usbManager;
     private final ImmutableList<SmartCardReader> readers;
 
+    private final Observable<String> statusObservable;
+
+    private SmartCardReader reader;
+
     public SmartCardReaderManager(Context context, UsbManager usbManager,
                                   ImmutableList<SmartCardReader> readers) {
-        this.context = context;
         this.usbManager = usbManager;
         this.readers = readers;
+        statusObservable = Observable
+                .create(new SmartCardReaderOnSubscribe(context, this))
+                .switchMap(readerOptional -> {
+                    if (readerOptional.isPresent()) {
+                        return Observable
+                                .fromCallable(() -> {
+                                    readerOptional.get().connected();
+                                    return readerOptional;
+                                })
+                                .repeatWhen(completed ->
+                                        completed.delay(CONNECT_RETRY, TimeUnit.MILLISECONDS));
+                    } else {
+                        return Observable.just(readerOptional);
+                    }
+                })
+                .map(readerOptional -> {
+                    if (!readerOptional.isPresent()) {
+                        reader = null;
+                        return SmartCardReaderStatus.IDLE;
+                    }
+                    reader = readerOptional.get();
+                    if (reader.connected()) {
+                        return SmartCardReaderStatus.CARD_DETECTED;
+                    } else {
+                        return SmartCardReaderStatus.READER_DETECTED;
+                    }
+                })
+                .replay(1)
+                .refCount();
     }
 
     public boolean supports(UsbDevice usbDevice) {
@@ -47,21 +77,14 @@ public final class SmartCardReaderManager {
         return null;
     }
 
-    public Observable<Optional<SmartCardReader>> reader() {
-        return Observable
-                .create(new SmartCardReaderOnSubscribe(context, this))
-                .switchMap(readerOptional -> {
-                    if (readerOptional.isPresent()) {
-                        return Observable
-                                .fromCallable(() -> {
-                                    readerOptional.get().connected();
-                                    return readerOptional;
-                                })
-                                .repeatWhen(completed ->
-                                        completed.delay(CONNECT_RETRY, TimeUnit.MILLISECONDS));
-                    } else {
-                        return Observable.just(readerOptional);
-                    }
-                });
+    public Observable<String> status() {
+        return statusObservable;
+    }
+
+    public SmartCardReader connectedReader() throws SmartCardCommunicationException {
+        if (reader == null || !reader.connected()) {
+            throw new SmartCardCommunicationException("Reader or card is not connected");
+        }
+        return reader;
     }
 }
