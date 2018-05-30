@@ -56,6 +56,7 @@ import ee.ria.mopplib.MoppLib;
 import ee.ria.scardcomlibrary.SmartCardReaderManager;
 import ee.ria.scardcomlibrary.acs.AcsSmartCardReader;
 import ee.ria.scardcomlibrary.identiv.IdentivSmartCardReader;
+import io.reactivex.plugins.RxJavaPlugins;
 import timber.log.Timber;
 
 public class Application extends android.app.Application {
@@ -67,6 +68,7 @@ public class Application extends android.app.Application {
         setupTimber();
         setupThreeTenAbp();
         setupMoppLib();
+        setupRxJava();
         setupDagger();
     }
 
@@ -97,6 +99,10 @@ public class Application extends android.app.Application {
 
     private void setupMoppLib() {
         MoppLib.init(this);
+    }
+
+    private void setupRxJava() {
+        RxJavaPlugins.setErrorHandler(throwable -> Timber.e(throwable, "RxJava error handler"));
     }
 
     // Dagger
