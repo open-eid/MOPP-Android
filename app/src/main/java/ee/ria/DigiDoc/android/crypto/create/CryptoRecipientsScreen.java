@@ -35,6 +35,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen {
         View view = inflater.inflate(R.layout.crypto_recipients_screen, container, false);
         RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
+        listView.setAdapter(new CryptoRecipientsAdapter());
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
 

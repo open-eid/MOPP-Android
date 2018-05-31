@@ -154,14 +154,16 @@
     <item type="id" name="cryptoCreateEncryptButton" />
     <item type="id" name="cryptoCreateSuccessMessage" />
     <item type="id" name="cryptoCreateName" />
-    <item type="id" name="cryptoCreateSubheadTitle" />
     <item type="id" name="cryptoCreateAddButton" />
     <item type="id" name="cryptoCreateDataFileName" />
     <item type="id" name="cryptoCreateDataFileRemoveButton" />
-    <item type="id" name="cryptoCreateRecipientType" />
-    <item type="id" name="cryptoCreateRecipientName" />
-    <item type="id" name="cryptoCreateRecipientInfo" />
-    <item type="id" name="cryptoCreateRecipientRemoveButton" />
+
+    <item type="id" name="cryptoSubheadTitle" />
+    <item type="id" name="cryptoRecipientType" />
+    <item type="id" name="cryptoRecipientName" />
+    <item type="id" name="cryptoRecipientInfo" />
+    <item type="id" name="cryptoRecipientRemoveButton" />
+    <item type="id" name="cryptoRecipientAddButton" />
 
     <item type="id" name="cryptoRecipientsScreen" />
     <item type="id" name="cryptoRecipientsSearch" />

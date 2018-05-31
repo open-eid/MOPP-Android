@@ -10,7 +10,7 @@
         android:background="@color/divider" />
 
     <TextView
-        android:id="@id/cryptoCreateSubheadTitle"
+        android:id="@id/cryptoSubheadTitle"
         style="@style/Widget.Application.Subheader.Container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

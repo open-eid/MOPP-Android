@@ -168,12 +168,16 @@
     <string name="crypto_create_data_file_remove_button" tools:ignore="MissingTranslation">Remove data file</string>
     <string name="crypto_create_recipients_title" tools:ignore="MissingTranslation">Recipients</string>
     <string name="crypto_create_recipients_add_button" tools:ignore="MissingTranslation">+ ADD RECIPIENT</string>
-    <string name="crypto_create_recipient_type" tools:ignore="MissingTranslation">Recipient</string>
-    <string name="crypto_create_recipient_info" tools:ignore="MissingTranslation">%1$s (valid until %2$s)</string>
-    <string name="crypto_create_recipient_remove_button" tools:ignore="MissingTranslation">Remove recipient</string>
+
+    <string name="crypto_recipient_type" tools:ignore="MissingTranslation">Recipient</string>
+    <string name="crypto_recipient_info" tools:ignore="MissingTranslation">%1$s (valid until %2$s)</string>
+    <string name="crypto_recipient_remove_button" tools:ignore="MissingTranslation">Remove recipient</string>
+    <string name="crypto_recipient_add_button" tools:ignore="MissingTranslation">Add</string>
+    <string name="crypto_recipient_add_button_added" tools:ignore="MissingTranslation">Added</string>
 
     <string name="crypto_recipients_title">Manage recipients</string>
     <string name="crypto_recipients_search">Enter personal code</string>
+    <string name="crypto_recipients_selected_subhead">Selected recipients</string>
     <string name="crypto_recipients_done_button">Done</string>
 
     <!-- EID Home -->

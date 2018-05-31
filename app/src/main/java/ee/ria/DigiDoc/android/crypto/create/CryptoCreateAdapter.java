@@ -83,19 +83,19 @@ final class CryptoCreateAdapter extends
 
         abstract void bind(CryptoCreateAdapter adapter, T item);
 
-        static CreateViewHolder create(int viewType, View itemView) {
+        static CreateViewHolder create(@LayoutRes int viewType, View itemView) {
             switch (viewType) {
                 case R.layout.crypto_create_list_item_success:
                     return new SuccessViewHolder(itemView);
                 case R.layout.crypto_create_list_item_name:
                     return new NameViewHolder(itemView);
-                case R.layout.crypto_create_list_item_subhead:
+                case R.layout.crypto_list_item_subhead:
                     return new SubheadViewHolder(itemView);
                 case R.layout.crypto_create_list_item_add_button:
                     return new AddButtonViewHolder(itemView);
                 case R.layout.crypto_create_list_item_data_file:
                     return new DataFileViewHolder(itemView);
-                case R.layout.crypto_create_list_item_recipient:
+                case R.layout.crypto_list_item_recipient:
                     return new RecipientViewHolder(itemView);
                 default:
                     throw new IllegalArgumentException("Unknown view type " + viewType);
@@ -134,7 +134,7 @@ final class CryptoCreateAdapter extends
 
         SubheadViewHolder(View itemView) {
             super(itemView);
-            titleView = itemView.findViewById(R.id.cryptoCreateSubheadTitle);
+            titleView = itemView.findViewById(R.id.cryptoSubheadTitle);
         }
 
         @Override
@@ -187,15 +187,15 @@ final class CryptoCreateAdapter extends
         RecipientViewHolder(View itemView) {
             super(itemView);
             formatter = Application.component(itemView.getContext()).formatter();
-            nameView = itemView.findViewById(R.id.cryptoCreateRecipientName);
-            infoView = itemView.findViewById(R.id.cryptoCreateRecipientInfo);
+            nameView = itemView.findViewById(R.id.cryptoRecipientName);
+            infoView = itemView.findViewById(R.id.cryptoRecipientInfo);
         }
 
         @Override
         void bind(CryptoCreateAdapter adapter, RecipientItem item) {
             nameView.setText(item.recipient().name());
             infoView.setText(itemView.getResources().getString(
-                    R.string.crypto_create_recipient_info,
+                    R.string.crypto_recipient_info,
                     formatter.eidType(item.recipient().type()), item.recipient().expiryDate()));
         }
     }
@@ -232,7 +232,7 @@ final class CryptoCreateAdapter extends
 
         static SubheadItem create(@StringRes int title) {
             return new AutoValue_CryptoCreateAdapter_SubheadItem(
-                    R.layout.crypto_create_list_item_subhead, title);
+                    R.layout.crypto_list_item_subhead, title);
         }
     }
 
@@ -265,7 +265,7 @@ final class CryptoCreateAdapter extends
 
         static RecipientItem create(Recipient recipient) {
             return new AutoValue_CryptoCreateAdapter_RecipientItem(
-                    R.layout.crypto_create_list_item_recipient, recipient);
+                    R.layout.crypto_list_item_recipient, recipient);
         }
     }
 }
