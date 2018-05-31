@@ -42,6 +42,7 @@ import dagger.Provides;
 import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
 import ee.ria.DigiDoc.BuildConfig;
+import ee.ria.DigiDoc.android.crypto.create.CryptoCreateViewModel;
 import ee.ria.DigiDoc.android.eid.EIDHomeViewModel;
 import ee.ria.DigiDoc.android.main.home.HomeViewModel;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
@@ -185,6 +186,10 @@ public class Application extends android.app.Application {
         @SuppressWarnings("unused")
         @Binds @IntoMap @ClassKey(SignatureUpdateViewModel.class)
         abstract ViewModel signatureUpdateModel(SignatureUpdateViewModel viewModel);
+
+        @SuppressWarnings("unused")
+        @Binds @IntoMap @ClassKey(CryptoCreateViewModel.class)
+        abstract ViewModel cryptoCreateViewModel(CryptoCreateViewModel viewModel);
 
         @SuppressWarnings("unused")
         @Binds @IntoMap @ClassKey(EIDHomeViewModel.class)

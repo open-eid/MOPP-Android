@@ -21,9 +21,17 @@ import ee.ria.DigiDoc.android.model.EIDType;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.cryptolib.DataFile;
 import ee.ria.cryptolib.Recipient;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
-public final class CryptoCreateAdapter extends
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static ee.ria.DigiDoc.android.Constants.VOID;
+
+final class CryptoCreateAdapter extends
         RecyclerView.Adapter<CryptoCreateAdapter.CreateViewHolder<CryptoCreateAdapter.Item>> {
+
+    final Subject<Integer> addButtonClicksSubject = PublishSubject.create();
 
     private ImmutableList<Item> items = ImmutableList
             .of(SuccessItem.create(), NameItem.create("some_cool_name.cdoc"),
@@ -37,6 +45,12 @@ public final class CryptoCreateAdapter extends
                     RecipientItem.create(Recipient.create("Jüri Juurikas, 38405050123",
                             EIDType.ID_CARD, LocalDate.now())),
                     AddButtonItem.create(R.string.crypto_create_recipients_add_button));
+
+    public Observable<Object> recipientsAddButtonClicks() {
+        return addButtonClicksSubject
+                .filter(text -> text == R.string.crypto_create_recipients_add_button)
+                .map(ignored -> VOID);
+    }
 
     @Override
     public int getItemViewType(int position) {
@@ -141,6 +155,10 @@ public final class CryptoCreateAdapter extends
         @Override
         void bind(CryptoCreateAdapter adapter, AddButtonItem item) {
             buttonView.setText(item.text());
+            clicks(buttonView)
+                    .map(ignored ->
+                            ((AddButtonItem) adapter.items.get(getAdapterPosition())).text())
+                    .subscribe(adapter.addButtonClicksSubject);
         }
     }
 

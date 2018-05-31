@@ -163,6 +163,11 @@
     <item type="id" name="cryptoCreateRecipientInfo" />
     <item type="id" name="cryptoCreateRecipientRemoveButton" />
 
+    <item type="id" name="cryptoRecipientsScreen" />
+    <item type="id" name="cryptoRecipientsSearch" />
+    <item type="id" name="cryptoRecipientsList" />
+    <item type="id" name="cryptoRecipientsDoneButton" />
+
     <!-- EID Home -->
     <item type="id" name="eidHomeCoordinator" />
     <item type="id" name="eidHomeCodeUpdate" />
