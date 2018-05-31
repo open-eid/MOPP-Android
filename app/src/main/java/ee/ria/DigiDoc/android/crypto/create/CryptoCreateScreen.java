@@ -36,7 +36,7 @@ public final class CryptoCreateScreen extends Controller implements Screen, MviV
     @Override
     public Observable<Intent> intents() {
         return adapter.recipientsAddButtonClicks()
-                .map(ignored -> Intent.RecipientsAddButtonClickIntent.create());
+                .map(ignored -> Intent.RecipientsAddButtonClickIntent.create(getInstanceId()));
     }
 
     @Override

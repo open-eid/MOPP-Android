@@ -18,8 +18,20 @@ interface Intent extends MviIntent, MviAction {
     @AutoValue
     abstract class RecipientsAddButtonClickIntent implements Intent {
 
-        static RecipientsAddButtonClickIntent create() {
-            return new AutoValue_Intent_RecipientsAddButtonClickIntent();
+        abstract String cryptoCreateScreenId();
+
+        static RecipientsAddButtonClickIntent create(String cryptoCreateScreenId) {
+            return new AutoValue_Intent_RecipientsAddButtonClickIntent(cryptoCreateScreenId);
+        }
+    }
+
+    @AutoValue
+    abstract class RecipientsSearchIntent implements Intent {
+
+        abstract CharSequence query();
+
+        static RecipientsSearchIntent create(CharSequence query) {
+            return new AutoValue_Intent_RecipientsSearchIntent(query);
         }
     }
 }
