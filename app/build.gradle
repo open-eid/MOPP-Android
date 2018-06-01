@@ -1,3 +1,9 @@
+buildscript {
+    dependencies {
+        classpath "com.android.tools.build:gradle:${androidGradlePluginVersion}"
+    }
+}
+
 apply plugin: 'com.android.application'
 
 android {
@@ -110,6 +116,7 @@ dependencies {
 
     implementation "net.cachapa.expandablelayout:expandablelayout:${expandablelayoutVersion}"
 
+    implementation project(':corelib')
     implementation project(':mopplib')
     implementation project(':cryptolib')
     implementation project(':scardcomlibrary')

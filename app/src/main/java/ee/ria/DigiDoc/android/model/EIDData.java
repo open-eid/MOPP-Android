@@ -4,9 +4,11 @@ import android.support.annotation.Nullable;
 
 import org.threeten.bp.LocalDate;
 
+import ee.ria.DigiDoc.EIDType;
+
 public interface EIDData {
 
-    @Nullable @EIDType String type();
+    @Nullable EIDType type();
 
     String givenNames();
 

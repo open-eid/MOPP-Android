@@ -1,0 +1,11 @@
+apply plugin: 'java-library'
+
+dependencies {
+    api "com.android.support:support-annotations:${androidSupportLibraryVersion}"
+
+    testImplementation "junit:junit:${junitVersion}"
+    testImplementation "com.google.truth:truth:${truthVersion}"
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8

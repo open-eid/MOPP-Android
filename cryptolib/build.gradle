@@ -1,3 +1,9 @@
+buildscript {
+    dependencies {
+        classpath "com.android.tools.build:gradle:${androidGradlePluginVersion}"
+    }
+}
+
 apply plugin: 'com.android.library'
 
 android {
@@ -31,4 +37,6 @@ dependencies {
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
     implementation "org.apache.directory.api:api-ldap-client-all:${apacheDirectoryVersion}"
+
+    api project(':corelib')
 }

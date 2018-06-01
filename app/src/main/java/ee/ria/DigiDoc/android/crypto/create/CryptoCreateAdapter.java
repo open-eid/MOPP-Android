@@ -15,9 +15,9 @@ import com.google.common.collect.ImmutableList;
 
 import org.threeten.bp.LocalDate;
 
+import ee.ria.DigiDoc.EIDType;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.model.EIDType;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.cryptolib.DataFile;
 import ee.ria.cryptolib.Recipient;
@@ -40,10 +40,10 @@ final class CryptoCreateAdapter extends
                     DataFileItem.create(DataFile.create("data-file.pdf")),
                     AddButtonItem.create(R.string.crypto_create_data_files_add_button),
                     SubheadItem.create(R.string.crypto_create_recipients_title),
-                    RecipientItem.create(Recipient.create("Mari Maasikas, 48405050123",
-                            EIDType.DIGI_ID, LocalDate.now())),
-                    RecipientItem.create(Recipient.create("Jüri Juurikas, 38405050123",
-                            EIDType.ID_CARD, LocalDate.now())),
+                    RecipientItem.create(Recipient.create(
+                            EIDType.DIGI_ID, "Mari Maasikas, 48405050123", LocalDate.now())),
+                    RecipientItem.create(Recipient.create(
+                            EIDType.ID_CARD, "Jüri Juurikas, 38405050123", LocalDate.now())),
                     AddButtonItem.create(R.string.crypto_create_recipients_add_button));
 
     public Observable<Object> recipientsAddButtonClicks() {

@@ -9,8 +9,8 @@ import org.threeten.bp.format.DateTimeFormatterBuilder;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import ee.ria.DigiDoc.EIDType;
 import ee.ria.DigiDoc.android.model.CertificateData;
-import ee.ria.DigiDoc.android.model.EIDType;
 import ee.ria.mopplib.data.SignedContainer;
 import ee.ria.scardcomlibrary.SmartCardReaderManager;
 import ee.ria.scardcomlibrary.SmartCardReaderStatus;
@@ -149,19 +149,8 @@ public final class IdCardService {
         CertificateData signCertificate = CertificateData
                 .create(pin2RetryCounter, signCertificateData);
 
-        String type = null;
-        if (authCertificate.organization().startsWith("ESTEID")) {
-            if (authCertificate.organization().contains("MOBIIL-ID")) {
-                type = EIDType.MOBILE_ID;
-            } else if (authCertificate.organization().contains("DIGI-ID")) {
-                type = EIDType.DIGI_ID;
-            } else {
-                type = EIDType.ID_CARD;
-            }
-        }
-
-        return IdCardData.create(type, givenNames.toString(), surname, personalCode, citizenship,
-                dateOfBirth, authCertificate, signCertificate, pukRetryCounter, documentNumber,
-                expiryDate);
+        return IdCardData.create(EIDType.parseOrganization(authCertificate.organization()),
+                givenNames.toString(), surname, personalCode, citizenship, dateOfBirth,
+                authCertificate, signCertificate, pukRetryCounter, documentNumber, expiryDate);
     }
 }

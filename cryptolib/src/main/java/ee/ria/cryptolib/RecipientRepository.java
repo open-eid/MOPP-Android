@@ -14,6 +14,7 @@ import org.threeten.bp.LocalDate;
 
 import java.util.Locale;
 
+import ee.ria.DigiDoc.EIDType;
 import timber.log.Timber;
 
 public final class RecipientRepository {
@@ -34,8 +35,8 @@ public final class RecipientRepository {
                 Entry entry = cursor.get();
                 Timber.e("ENTRY: %s", entry);
 
-                builder.add(Recipient.create(entry.get("cn").getString(), "DIGI-ID",
-                        LocalDate.now()));
+                builder.add(Recipient.create(
+                        EIDType.ID_CARD, entry.get("cn").getString(), LocalDate.now()));
             }
 
             cursor.close();

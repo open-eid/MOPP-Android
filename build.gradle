@@ -4,9 +4,6 @@ allprojects {
             google()
             jcenter()
         }
-        dependencies {
-            classpath 'com.android.tools.build:gradle:3.1.2'
-        }
     }
     repositories {
         google()
@@ -19,6 +16,7 @@ ext {
     minSdkVersion = 21
     targetSdkVersion = 27
 
+    androidGradlePluginVersion = '3.1.2'
     androidSupportLibraryVersion = '27.1.1'
     androidArchVersion= '1.1.1'
     androidSupportTestVersion = '1.0.1'
