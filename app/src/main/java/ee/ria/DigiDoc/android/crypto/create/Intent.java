@@ -28,9 +28,9 @@ interface Intent extends MviIntent, MviAction {
     @AutoValue
     abstract class RecipientsSearchIntent implements Intent {
 
-        abstract CharSequence query();
+        abstract String query();
 
-        static RecipientsSearchIntent create(CharSequence query) {
+        static RecipientsSearchIntent create(String query) {
             return new AutoValue_Intent_RecipientsSearchIntent(query);
         }
     }

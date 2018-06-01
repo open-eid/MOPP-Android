@@ -175,10 +175,9 @@
     <string name="crypto_recipient_add_button" tools:ignore="MissingTranslation">Add</string>
     <string name="crypto_recipient_add_button_added" tools:ignore="MissingTranslation">Added</string>
 
-    <string name="crypto_recipients_title">Manage recipients</string>
+    <string name="crypto_recipients_title">Add recipients</string>
     <string name="crypto_recipients_search">Enter personal code</string>
     <string name="crypto_recipients_selected_subhead">Selected recipients</string>
-    <string name="crypto_recipients_done_button">Done</string>
 
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Connect the card reader and insert your ID-card into the reader.</string>

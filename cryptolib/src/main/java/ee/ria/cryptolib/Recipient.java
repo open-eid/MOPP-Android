@@ -9,6 +9,9 @@ public abstract class Recipient {
 
     public abstract String name();
 
+    /**
+     * TODO Should use constants (EIDType).
+     */
     public abstract String type();
 
     public abstract LocalDate expiryDate();

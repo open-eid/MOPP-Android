@@ -11,10 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.Controller;
+import com.google.common.collect.ImmutableList;
 import com.jakewharton.rxbinding2.support.v7.widget.SearchViewQueryTextEvent;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -39,6 +41,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
     private final ViewDisposables disposables = new ViewDisposables();
     private CryptoCreateViewModel viewModel;
+    private Formatter formatter;
 
     private SearchView searchView;
     private View activityOverlayView;
@@ -55,7 +58,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         return queryTextChangeEvents(searchView)
                 .filter(SearchViewQueryTextEvent::isSubmitted)
                 .doOnNext(ignored -> hideSoftKeyboard(searchView))
-                .map(event -> Intent.RecipientsSearchIntent.create(event.queryText()));
+                .map(event -> Intent.RecipientsSearchIntent.create(event.queryText().toString()));
     }
 
     @Override
@@ -73,6 +76,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         super.onContextAvailable(context);
         viewModel = Application.component(context).navigator()
                 .viewModel(cryptoCreateScreenId, CryptoCreateViewModel.class);
+        formatter = Application.component(context).formatter();
     }
 
     @Override
@@ -89,7 +93,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         searchView.setSubmitButtonEnabled(true);
         RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
-        listView.setAdapter(new CryptoRecipientsAdapter());
+        listView.setAdapter(new CryptoRecipientsAdapter(formatter, ImmutableList.of()));
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         return view;

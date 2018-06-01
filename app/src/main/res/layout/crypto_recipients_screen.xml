@@ -17,7 +17,7 @@
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:navigationIcon="@drawable/ic_clear"
+            app:navigationIcon="?attr/homeAsUpIndicator"
             app:navigationContentDescription="@string/back"
             app:title="@string/crypto_recipients_title" />
 
@@ -33,6 +33,7 @@
             android:id="@id/cryptoRecipientsSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textFilter"
             app:queryHint="@string/crypto_recipients_search"
             app:iconifiedByDefault="false" />
 
@@ -42,13 +43,6 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:scrollbars="vertical" />
-
-        <Button
-            android:id="@id/cryptoRecipientsDoneButton"
-            style="@style/Widget.Application.Button.Container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/crypto_recipients_done_button" />
 
     </LinearLayout>
 

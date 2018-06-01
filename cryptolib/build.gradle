@@ -29,4 +29,6 @@ dependencies {
 
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+
+    implementation "org.apache.directory.api:api-ldap-client-all:${apacheDirectoryVersion}"
 }

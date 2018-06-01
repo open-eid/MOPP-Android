@@ -53,6 +53,7 @@ import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
+import ee.ria.cryptolib.RecipientRepository;
 import ee.ria.mopplib.MoppLib;
 import ee.ria.scardcomlibrary.SmartCardReaderManager;
 import ee.ria.scardcomlibrary.acs.AcsSmartCardReader;
@@ -124,7 +125,8 @@ public class Application extends android.app.Application {
     @Component(modules = {
             AndroidModule.class,
             ApplicationModule.class,
-            SmartCardModule.class
+            SmartCardModule.class,
+            CryptoLibModule.class
     })
     public interface ApplicationComponent {
 
@@ -217,6 +219,15 @@ public class Application extends android.app.Application {
         static IdentivSmartCardReader identivSmartCardReader(android.app.Application application,
                                                              UsbManager usbManager) {
             return new IdentivSmartCardReader(application, usbManager);
+        }
+    }
+
+    @Module
+    static abstract class CryptoLibModule {
+
+        @Provides @Singleton
+        static RecipientRepository recipientRepository() {
+            return new RecipientRepository();
         }
     }
 

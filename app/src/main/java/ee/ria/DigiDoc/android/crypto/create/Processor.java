@@ -1,17 +1,10 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
-import android.os.SystemClock;
-
-import com.google.common.collect.ImmutableList;
-
-import org.threeten.bp.LocalDate;
-
 import javax.inject.Inject;
 
-import ee.ria.DigiDoc.android.model.EIDType;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
-import ee.ria.cryptolib.Recipient;
+import ee.ria.cryptolib.RecipientRepository;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -29,7 +22,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                         Result.RecipientsSearchResult> recipientsSearch;
 
     @Inject
-    Processor(Navigator navigator) {
+    Processor(Navigator navigator, RecipientRepository recipientRepository) {
         initial = upstream -> upstream.map(intent -> Result.VoidResult.create());
 
         recipientsAddButtonClick = upstream -> upstream.switchMap(intent -> {
@@ -40,14 +33,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
         recipientsSearch = upstream -> upstream.switchMap(intent ->
                 Observable
-                        .fromCallable(() -> {
-                            SystemClock.sleep(3000);
-                            return ImmutableList.of(
-                                    Recipient.create("Mari Maasikas, 48405050123", EIDType.DIGI_ID,
-                                            LocalDate.now()),
-                                    Recipient.create("Jüri Juurikas, 38405050123", EIDType.ID_CARD,
-                                            LocalDate.now()));
-                        })
+                        .fromCallable(() -> recipientRepository.find(intent.query()))
                         .map(Result.RecipientsSearchResult::success)
                         .onErrorReturn(Result.RecipientsSearchResult::failure)
                         .subscribeOn(Schedulers.io())
