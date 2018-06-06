@@ -1,7 +1,10 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import com.google.common.collect.ImmutableList;
+
 import javax.inject.Inject;
 
+import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.cryptolib.RecipientRepository;
@@ -19,7 +22,10 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             recipientsAddButtonClick;
 
     private final ObservableTransformer<Intent.RecipientsSearchIntent,
-                                        Result.RecipientsSearchResult> recipientsSearch;
+            Result.RecipientsSearchResult> recipientsSearch;
+
+    private final ObservableTransformer<Intent.RecipientAddIntent,
+            Result.RecipientAddResult> recipientAdd;
 
     @Inject
     Processor(Navigator navigator, RecipientRepository recipientRepository) {
@@ -39,6 +45,15 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .startWith(Result.RecipientsSearchResult.activity()));
+
+        recipientAdd = upstream -> upstream.switchMap(intent ->
+                Observable
+                        .fromCallable(() ->
+                                Result.RecipientAddResult.success(
+                                        ImmutableList.<Certificate>builder()
+                                                .add(intent.recipient())
+                                                .addAll(intent.recipients())
+                                                .build())));
     }
 
     @SuppressWarnings("unchecked")
@@ -48,6 +63,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.InitialIntent.class).compose(initial),
                 shared.ofType(Intent.RecipientsAddButtonClickIntent.class)
                         .compose(recipientsAddButtonClick),
-                shared.ofType(Intent.RecipientsSearchIntent.class).compose(recipientsSearch)));
+                shared.ofType(Intent.RecipientsSearchIntent.class).compose(recipientsSearch),
+                shared.ofType(Intent.RecipientAddIntent.class).compose(recipientAdd)));
     }
 }

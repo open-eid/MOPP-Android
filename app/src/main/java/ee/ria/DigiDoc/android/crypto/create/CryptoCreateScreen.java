@@ -40,7 +40,9 @@ public final class CryptoCreateScreen extends Controller implements Screen, MviV
     }
 
     @Override
-    public void render(ViewState state) {}
+    public void render(ViewState state) {
+        adapter.setData(state.recipients());
+    }
 
     private void setActivity(boolean activity) {
         activityOverlayView.setVisibility(activity ? View.VISIBLE : View.GONE);

@@ -11,8 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.Controller;
+import com.google.common.collect.ImmutableList;
 import com.jakewharton.rxbinding2.support.v7.widget.SearchViewQueryTextEvent;
 
+import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.Formatter;
@@ -47,29 +49,42 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     private View activityOverlayView;
     private View activityIndicatorView;
 
+    private ImmutableList<Certificate> recipients = ImmutableList.of();
+
     @SuppressWarnings("WeakerAccess")
     public CryptoRecipientsScreen(Bundle args) {
         super(args);
         cryptoCreateScreenId = args.getString(KEY_CRYPTO_CREATE_SCREEN_ID);
     }
 
-    @Override
-    public Observable<Intent> intents() {
+    private void setActivity(boolean activity) {
+        activityOverlayView.setVisibility(activity ? View.VISIBLE : View.GONE);
+        activityIndicatorView.setVisibility(activity ? View.VISIBLE : View.GONE);
+    }
+
+    private Observable<Intent.RecipientsSearchIntent> recipientsSearchIntent() {
         return queryTextChangeEvents(searchView)
                 .filter(SearchViewQueryTextEvent::isSubmitted)
                 .doOnNext(ignored -> hideSoftKeyboard(searchView))
                 .map(event -> Intent.RecipientsSearchIntent.create(event.queryText().toString()));
     }
 
-    @Override
-    public void render(ViewState state) {
-        setActivity(state.recipientsSearchState().equals(State.ACTIVE));
-        adapter.setData(state.recipients(), state.recipientsSearchResult());
+    private Observable<Intent.RecipientAddIntent> recipientAddIntent() {
+        return adapter.addButtonClicks()
+                .map(recipient -> Intent.RecipientAddIntent.create(recipients, recipient));
     }
 
-    private void setActivity(boolean activity) {
-        activityOverlayView.setVisibility(activity ? View.VISIBLE : View.GONE);
-        activityIndicatorView.setVisibility(activity ? View.VISIBLE : View.GONE);
+    @Override
+    public Observable<Intent> intents() {
+        return Observable.merge(recipientsSearchIntent(), recipientAddIntent());
+    }
+
+    @Override
+    public void render(ViewState state) {
+        recipients = state.recipients();
+
+        setActivity(state.recipientsSearchState().equals(State.ACTIVE));
+        adapter.setData(state.recipients(), state.recipientsSearchResult());
     }
 
     @Override

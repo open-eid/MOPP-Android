@@ -13,11 +13,11 @@ import android.widget.TextView;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
+import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.cryptolib.DataFile;
-import ee.ria.cryptolib.Recipient;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -30,16 +30,24 @@ final class CryptoCreateAdapter extends
 
     final Subject<Integer> addButtonClicksSubject = PublishSubject.create();
 
-    private ImmutableList<Item> items = ImmutableList
-            .of(SuccessItem.create(), NameItem.create("some_cool_name.cdoc"),
-                    SubheadItem.create(R.string.crypto_create_data_files_title),
-                    DataFileItem.create(DataFile.create("data_file.xml")),
-                    DataFileItem.create(DataFile.create("data-file.pdf")),
-                    AddButtonItem.create(R.string.crypto_create_data_files_add_button),
-                    SubheadItem.create(R.string.crypto_create_recipients_title),
-                    AddButtonItem.create(R.string.crypto_create_recipients_add_button));
+    private ImmutableList<Item> items = ImmutableList.of();
 
-    public Observable<Object> recipientsAddButtonClicks() {
+    void setData(ImmutableList<Certificate> recipients) {
+        ImmutableList.Builder<Item> builder = ImmutableList.<Item>builder()
+                .add(SubheadItem.create(R.string.crypto_create_data_files_title))
+                .add(DataFileItem.create(DataFile.create("data_file.xml")))
+                .add(AddButtonItem.create(R.string.crypto_create_data_files_add_button))
+                .add(SubheadItem.create(R.string.crypto_create_recipients_title));
+        for (Certificate recipient : recipients) {
+            builder.add(RecipientItem.create(recipient));
+        }
+        builder.add(AddButtonItem.create(R.string.crypto_create_recipients_add_button));
+
+        items = builder.build();
+        notifyDataSetChanged();
+    }
+
+    Observable<Object> recipientsAddButtonClicks() {
         return addButtonClicksSubject
                 .filter(text -> text == R.string.crypto_create_recipients_add_button)
                 .map(ignored -> VOID);
@@ -186,11 +194,10 @@ final class CryptoCreateAdapter extends
 
         @Override
         void bind(CryptoCreateAdapter adapter, RecipientItem item) {
-            nameView.setText(item.recipient().name());
+            nameView.setText(item.recipient().commonName());
             infoView.setText(itemView.getResources().getString(
-                    R.string.crypto_recipient_info,
-                    formatter.eidType(item.recipient().certificate().type()),
-                    item.recipient().certificate().notAfter()));
+                    R.string.crypto_recipient_info, formatter.eidType(item.recipient().type()),
+                    item.recipient().notAfter()));
         }
     }
 
@@ -255,9 +262,9 @@ final class CryptoCreateAdapter extends
     @AutoValue
     static abstract class RecipientItem extends Item {
 
-        abstract Recipient recipient();
+        abstract Certificate recipient();
 
-        static RecipientItem create(Recipient recipient) {
+        static RecipientItem create(Certificate recipient) {
             return new AutoValue_CryptoCreateAdapter_RecipientItem(
                     R.layout.crypto_list_item_recipient, recipient);
         }

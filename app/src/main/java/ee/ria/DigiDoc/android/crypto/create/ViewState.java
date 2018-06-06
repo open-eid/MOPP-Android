@@ -18,6 +18,9 @@ abstract class ViewState implements MviViewState {
     abstract ImmutableList<Certificate> recipientsSearchResult();
     @Nullable abstract Throwable recipientsSearchError();
 
+    @State abstract String recipientAddState();
+    @Nullable abstract Throwable recipientAddError();
+
     abstract Builder buildWith();
 
     static ViewState initial() {
@@ -25,6 +28,7 @@ abstract class ViewState implements MviViewState {
                 .recipients(ImmutableList.of())
                 .recipientsSearchState(State.IDLE)
                 .recipientsSearchResult(ImmutableList.of())
+                .recipientAddState(State.IDLE)
                 .build();
     }
 
@@ -34,6 +38,8 @@ abstract class ViewState implements MviViewState {
         Builder recipientsSearchState(@State String recipientsSearchState);
         Builder recipientsSearchResult(ImmutableList<Certificate> recipientsSearchResult);
         Builder recipientsSearchError(@Nullable Throwable recipientsSearchError);
+        Builder recipientAddState(@State String recipientAddState);
+        Builder recipientAddError(@Nullable Throwable recipientAddError);
         ViewState build();
     }
 }

@@ -13,9 +13,16 @@ import com.google.common.collect.ImmutableList;
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
+
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
 final class CryptoRecipientsAdapter extends
         RecyclerView.Adapter<CryptoRecipientsAdapter.RecipientsViewHolder> {
+
+    private final Subject<Certificate> addButtonClicksSubject = PublishSubject.create();
 
     private final Formatter formatter;
 
@@ -30,6 +37,10 @@ final class CryptoRecipientsAdapter extends
         this.existing = existing;
         this.result = result;
         notifyDataSetChanged();
+    }
+
+    Observable<Certificate> addButtonClicks() {
+        return addButtonClicksSubject;
     }
 
     @NonNull
@@ -54,6 +65,9 @@ final class CryptoRecipientsAdapter extends
             holder.addButton.setEnabled(true);
             holder.addButton.setText(R.string.crypto_recipient_add_button);
         }
+        clicks(holder.addButton)
+                .map(ignored -> result.get(holder.getAdapterPosition()))
+                .subscribe(addButtonClicksSubject);
     }
 
     @Override
@@ -72,6 +86,7 @@ final class CryptoRecipientsAdapter extends
             nameView = itemView.findViewById(R.id.cryptoRecipientName);
             infoView = itemView.findViewById(R.id.cryptoRecipientInfo);
             addButton = itemView.findViewById(R.id.cryptoRecipientAddButton);
+            addButton.setVisibility(View.VISIBLE);
             itemView.findViewById(R.id.cryptoRecipientRemoveButton).setVisibility(View.GONE);
         }
     }
