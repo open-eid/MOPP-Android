@@ -29,6 +29,8 @@ final class CryptoCreateAdapter extends
         RecyclerView.Adapter<CryptoCreateAdapter.CreateViewHolder<CryptoCreateAdapter.Item>> {
 
     final Subject<Integer> addButtonClicksSubject = PublishSubject.create();
+    final Subject<Certificate> recipientClicksSubject = PublishSubject.create();
+    final Subject<Certificate> recipientRemoveClicksSubject = PublishSubject.create();
 
     private ImmutableList<Item> items = ImmutableList.of();
 
@@ -51,6 +53,10 @@ final class CryptoCreateAdapter extends
         return addButtonClicksSubject
                 .filter(text -> text == R.string.crypto_create_recipients_add_button)
                 .map(ignored -> VOID);
+    }
+
+    Observable<Certificate> recipientRemoveClicks() {
+        return recipientRemoveClicksSubject;
     }
 
     @Override
@@ -184,20 +190,30 @@ final class CryptoCreateAdapter extends
 
         private final TextView nameView;
         private final TextView infoView;
+        private final View removeButton;
 
         RecipientViewHolder(View itemView) {
             super(itemView);
             formatter = Application.component(itemView.getContext()).formatter();
             nameView = itemView.findViewById(R.id.cryptoRecipientName);
             infoView = itemView.findViewById(R.id.cryptoRecipientInfo);
+            removeButton = itemView.findViewById(R.id.cryptoRecipientRemoveButton);
         }
 
         @Override
         void bind(CryptoCreateAdapter adapter, RecipientItem item) {
+            clicks(itemView)
+                    .map(ignored ->
+                            ((RecipientItem) adapter.items.get(getAdapterPosition())).recipient())
+                    .subscribe(adapter.recipientClicksSubject);
             nameView.setText(item.recipient().commonName());
             infoView.setText(itemView.getResources().getString(
                     R.string.crypto_recipient_info, formatter.eidType(item.recipient().type()),
                     item.recipient().notAfter()));
+            clicks(removeButton)
+                    .map(ignored ->
+                            ((RecipientItem) adapter.items.get(getAdapterPosition())).recipient())
+                    .subscribe(adapter.recipientRemoveClicksSubject);
         }
     }
 

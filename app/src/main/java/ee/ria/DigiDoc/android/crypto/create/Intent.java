@@ -49,4 +49,17 @@ interface Intent extends MviIntent, MviAction {
             return new AutoValue_Intent_RecipientAddIntent(recipients, recipient);
         }
     }
+
+    @AutoValue
+    abstract class RecipientRemoveIntent implements Intent {
+
+        abstract ImmutableList<Certificate> recipients();
+
+        abstract Certificate recipient();
+
+        static RecipientRemoveIntent create(ImmutableList<Certificate> recipients,
+                                         Certificate recipient) {
+            return new AutoValue_Intent_RecipientRemoveIntent(recipients, recipient);
+        }
+    }
 }

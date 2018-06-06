@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.Controller;
+import com.google.common.collect.ImmutableList;
 
+import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -30,17 +32,30 @@ public final class CryptoCreateScreen extends Controller implements Screen, MviV
     private View activityOverlayView;
     private View activityIndicatorView;
 
+    private ImmutableList<Certificate> recipients = ImmutableList.of();
+
     @SuppressWarnings("WeakerAccess")
     public CryptoCreateScreen() {}
 
-    @Override
-    public Observable<Intent> intents() {
+    private Observable<Intent.RecipientsAddButtonClickIntent> recipientsAddButtonClickIntent() {
         return adapter.recipientsAddButtonClicks()
                 .map(ignored -> Intent.RecipientsAddButtonClickIntent.create(getInstanceId()));
     }
 
+    private Observable<Intent.RecipientRemoveIntent> recipientRemoveIntent() {
+        return adapter.recipientRemoveClicks()
+                .map(recipient -> Intent.RecipientRemoveIntent.create(recipients, recipient));
+    }
+
+    @Override
+    public Observable<Intent> intents() {
+        return Observable.merge(recipientsAddButtonClickIntent(), recipientRemoveIntent());
+    }
+
     @Override
     public void render(ViewState state) {
+        recipients = state.recipients();
+
         adapter.setData(state.recipients());
     }
 

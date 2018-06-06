@@ -98,4 +98,43 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_RecipientAddResult(state, recipients, error);
         }
     }
+
+    @AutoValue
+    abstract class RecipientRemoveResult implements Result {
+
+        @State abstract String state();
+
+        @Nullable abstract ImmutableList<Certificate> recipients();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            ViewState.Builder builder = state.buildWith()
+                    .recipientAddState(state())
+                    .recipientAddError(error());
+            if (recipients() != null) {
+                builder.recipients(recipients());
+            }
+            return builder.build();
+        }
+
+        static RecipientRemoveResult activity() {
+            return create(State.ACTIVE, null, null);
+        }
+
+        static RecipientRemoveResult success(ImmutableList<Certificate> recipients) {
+            return create(State.IDLE, recipients, null);
+        }
+
+        static RecipientRemoveResult failure(Throwable error) {
+            return create(State.IDLE, null, error);
+        }
+
+        private static RecipientRemoveResult create(@State String state,
+                                                 @Nullable ImmutableList<Certificate> recipients,
+                                                 @Nullable Throwable error) {
+            return new AutoValue_Result_RecipientRemoveResult(state, recipients, error);
+        }
+    }
 }

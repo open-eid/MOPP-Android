@@ -1,10 +1,7 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
-import com.google.common.collect.ImmutableList;
-
 import javax.inject.Inject;
 
-import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.cryptolib.RecipientRepository;
@@ -13,6 +10,9 @@ import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+
+import static ee.ria.DigiDoc.android.utils.Immutables.with;
+import static ee.ria.DigiDoc.android.utils.Immutables.without;
 
 final class Processor implements ObservableTransformer<Intent, Result> {
 
@@ -26,6 +26,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ObservableTransformer<Intent.RecipientAddIntent,
             Result.RecipientAddResult> recipientAdd;
+
+    private final ObservableTransformer<Intent.RecipientRemoveIntent,
+                                        Result.RecipientRemoveResult> recipientRemove;
 
     @Inject
     Processor(Navigator navigator, RecipientRepository recipientRepository) {
@@ -47,13 +50,14 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .startWith(Result.RecipientsSearchResult.activity()));
 
         recipientAdd = upstream -> upstream.switchMap(intent ->
-                Observable
-                        .fromCallable(() ->
-                                Result.RecipientAddResult.success(
-                                        ImmutableList.<Certificate>builder()
-                                                .add(intent.recipient())
-                                                .addAll(intent.recipients())
-                                                .build())));
+                Observable.fromCallable(() ->
+                        Result.RecipientAddResult.success(
+                                with(intent.recipients(), intent.recipient(), false))));
+
+        recipientRemove = upstream -> upstream.switchMap(intent ->
+                Observable.fromCallable(() ->
+                        Result.RecipientRemoveResult.success(
+                                without(intent.recipients(), intent.recipient()))));
     }
 
     @SuppressWarnings("unchecked")
@@ -64,6 +68,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.RecipientsAddButtonClickIntent.class)
                         .compose(recipientsAddButtonClick),
                 shared.ofType(Intent.RecipientsSearchIntent.class).compose(recipientsSearch),
-                shared.ofType(Intent.RecipientAddIntent.class).compose(recipientAdd)));
+                shared.ofType(Intent.RecipientAddIntent.class).compose(recipientAdd),
+                shared.ofType(Intent.RecipientRemoveIntent.class).compose(recipientRemove)));
     }
 }

@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.not;
 
+@SuppressWarnings("Guava")
 public final class Immutables {
 
     public static <T> ImmutableSet<T> with(ImmutableSet<T> set, T value) {
@@ -16,11 +17,26 @@ public final class Immutables {
                 .build();
     }
 
-    @SuppressWarnings("Guava")
     public static <T> ImmutableSet<T> without(ImmutableSet<T> set, T value) {
         return FluentIterable.from(set)
                 .filter(not(equalTo(value)))
                 .toSet();
+    }
+
+    public static <T> ImmutableList<T> with(ImmutableList<T> list, T value, boolean append) {
+        ImmutableList.Builder<T> builder = ImmutableList.builder();
+        if (append) {
+            builder.addAll(list).add(value);
+        } else {
+            builder.add(value).addAll(list);
+        }
+        return builder.build();
+    }
+
+    public static <T> ImmutableList<T> without(ImmutableList<T> list, T value) {
+        return FluentIterable.from(list)
+                .filter(not(equalTo(value)))
+                .toList();
     }
 
     /**
