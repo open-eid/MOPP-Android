@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import android.support.annotation.Nullable;
+
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
@@ -28,11 +30,27 @@ interface Intent extends MviIntent, MviAction {
     }
 
     @AutoValue
+    abstract class RecipientsScreenUpButtonClickIntent implements Intent {
+
+        static RecipientsScreenUpButtonClickIntent create() {
+            return new AutoValue_Intent_RecipientsScreenUpButtonClickIntent();
+        }
+    }
+
+    @AutoValue
     abstract class RecipientsSearchIntent implements Intent {
 
-        abstract String query();
+        @Nullable abstract String query();
 
-        static RecipientsSearchIntent create(String query) {
+        static RecipientsSearchIntent search(String query) {
+            return create(query);
+        }
+
+        static RecipientsSearchIntent clear() {
+            return create(null);
+        }
+
+        private static RecipientsSearchIntent create(@Nullable String query) {
             return new AutoValue_Intent_RecipientsSearchIntent(query);
         }
     }

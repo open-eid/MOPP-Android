@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +22,18 @@ import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxSearchView.queryTextChangeEvents;
-import static ee.ria.DigiDoc.android.utils.InputMethodUtils.hideSoftKeyboard;
+import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.Constants.VOID;
 
 public final class CryptoRecipientsScreen extends Controller implements Screen,
-        MviView<Intent, ViewState> {
+        MviView<Intent, ViewState>, Navigator.BackButtonClickListener {
 
     private static final String KEY_CRYPTO_CREATE_SCREEN_ID = "cryptoCreateScreenId";
 
@@ -40,10 +45,14 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
     private final String cryptoCreateScreenId;
 
+    private final Subject<Object> backButtonClicksSubject = PublishSubject.create();
+
     private final ViewDisposables disposables = new ViewDisposables();
     private CryptoCreateViewModel viewModel;
     private Formatter formatter;
+    private Navigator navigator;
 
+    private Toolbar toolbarView;
     private SearchView searchView;
     private CryptoRecipientsAdapter adapter;
     private View activityOverlayView;
@@ -57,16 +66,20 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         cryptoCreateScreenId = args.getString(KEY_CRYPTO_CREATE_SCREEN_ID);
     }
 
-    private void setActivity(boolean activity) {
-        activityOverlayView.setVisibility(activity ? View.VISIBLE : View.GONE);
-        activityIndicatorView.setVisibility(activity ? View.VISIBLE : View.GONE);
+    private Observable<Intent.RecipientsScreenUpButtonClickIntent>
+            recipientsScreenUpButtonClickIntent() {
+        return navigationClicks(toolbarView)
+                .map(ignored -> Intent.RecipientsScreenUpButtonClickIntent.create());
     }
 
     private Observable<Intent.RecipientsSearchIntent> recipientsSearchIntent() {
-        return queryTextChangeEvents(searchView)
-                .filter(SearchViewQueryTextEvent::isSubmitted)
-                .doOnNext(ignored -> hideSoftKeyboard(searchView))
-                .map(event -> Intent.RecipientsSearchIntent.create(event.queryText().toString()));
+        return Observable.merge(
+                queryTextChangeEvents(searchView)
+                        .filter(SearchViewQueryTextEvent::isSubmitted)
+                        .doOnNext(ignored -> searchView.clearFocus())
+                        .map(event ->
+                                Intent.RecipientsSearchIntent.search(event.queryText().toString())),
+                backButtonClicksSubject.map(ignored -> Intent.RecipientsSearchIntent.clear()));
     }
 
     private Observable<Intent.RecipientAddIntent> recipientAddIntent() {
@@ -76,7 +89,13 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
     @Override
     public Observable<Intent> intents() {
-        return Observable.merge(recipientsSearchIntent(), recipientAddIntent());
+        return Observable.merge(recipientsScreenUpButtonClickIntent(), recipientsSearchIntent(),
+                recipientAddIntent());
+    }
+
+    private void setActivity(boolean activity) {
+        activityOverlayView.setVisibility(activity ? View.VISIBLE : View.GONE);
+        activityIndicatorView.setVisibility(activity ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -88,11 +107,18 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     }
 
     @Override
+    public boolean onBackButtonClick() {
+        backButtonClicksSubject.onNext(VOID);
+        return false;
+    }
+
+    @Override
     protected void onContextAvailable(@NonNull Context context) {
         super.onContextAvailable(context);
         viewModel = Application.component(context).navigator()
                 .viewModel(cryptoCreateScreenId, CryptoCreateViewModel.class);
         formatter = Application.component(context).formatter();
+        navigator = Application.component(context).navigator();
     }
 
     @Override
@@ -105,6 +131,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
         View view = inflater.inflate(R.layout.crypto_recipients_screen, container, false);
+        toolbarView = view.findViewById(R.id.toolbar);
         searchView = view.findViewById(R.id.cryptoRecipientsSearch);
         searchView.setSubmitButtonEnabled(true);
         RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
@@ -118,6 +145,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     protected void onAttach(@NonNull View view) {
         super.onAttach(view);
+        navigator.addBackButtonClickListener(this);
         disposables.attach();
         disposables.add(viewModel.viewStates().subscribe(this::render));
         viewModel.process(intents());
@@ -126,6 +154,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     protected void onDetach(@NonNull View view) {
         disposables.detach();
+        navigator.removeBackButtonClickListener(this);
         super.onDetach(view);
     }
 }

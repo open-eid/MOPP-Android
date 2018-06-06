@@ -21,6 +21,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     private final ObservableTransformer<Intent.RecipientsAddButtonClickIntent, Result.VoidResult>
             recipientsAddButtonClick;
 
+    private final ObservableTransformer<Intent.RecipientsScreenUpButtonClickIntent,
+                                        Result.VoidResult> recipientsScreenUpButtonClick;
+
     private final ObservableTransformer<Intent.RecipientsSearchIntent,
             Result.RecipientsSearchResult> recipientsSearch;
 
@@ -40,14 +43,24 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             return Observable.empty();
         });
 
-        recipientsSearch = upstream -> upstream.switchMap(intent ->
-                Observable
+        recipientsScreenUpButtonClick = upstream -> upstream.switchMap(intent -> {
+            navigator.execute(Transaction.pop());
+            return Observable.empty();
+        });
+
+        recipientsSearch = upstream -> upstream.switchMap(intent -> {
+            if (intent.query() == null) {
+                return Observable.just(Result.RecipientsSearchResult.clear());
+            } else {
+                return Observable
                         .fromCallable(() -> recipientRepository.find(intent.query()))
                         .map(Result.RecipientsSearchResult::success)
                         .onErrorReturn(Result.RecipientsSearchResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.RecipientsSearchResult.activity()));
+                        .startWith(Result.RecipientsSearchResult.activity());
+            }
+        });
 
         recipientAdd = upstream -> upstream.switchMap(intent ->
                 Observable.fromCallable(() ->
@@ -67,6 +80,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.InitialIntent.class).compose(initial),
                 shared.ofType(Intent.RecipientsAddButtonClickIntent.class)
                         .compose(recipientsAddButtonClick),
+                shared.ofType(Intent.RecipientsScreenUpButtonClickIntent.class)
+                        .compose(recipientsScreenUpButtonClick),
                 shared.ofType(Intent.RecipientsSearchIntent.class).compose(recipientsSearch),
                 shared.ofType(Intent.RecipientAddIntent.class).compose(recipientAdd),
                 shared.ofType(Intent.RecipientRemoveIntent.class).compose(recipientRemove)));

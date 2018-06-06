@@ -54,6 +54,10 @@ interface Result extends MviResult<ViewState> {
             return create(State.IDLE, ImmutableList.of(), error);
         }
 
+        static RecipientsSearchResult clear() {
+            return create(State.IDLE, ImmutableList.of(), null);
+        }
+
         private static RecipientsSearchResult create(
                 @State String state, ImmutableList<Certificate> result, @Nullable Throwable error) {
             return new AutoValue_Result_RecipientsSearchResult(state, result, error);
