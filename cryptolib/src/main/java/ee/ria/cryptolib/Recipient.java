@@ -1,23 +1,17 @@
 package ee.ria.cryptolib;
 
-import android.support.annotation.Nullable;
-
 import com.google.auto.value.AutoValue;
 
-import org.threeten.bp.LocalDate;
-
-import ee.ria.DigiDoc.EIDType;
+import ee.ria.DigiDoc.Certificate;
 
 @AutoValue
 public abstract class Recipient {
 
-    @Nullable public abstract EIDType type();
+    public abstract Certificate certificate();
 
     public abstract String name();
 
-    public abstract LocalDate expiryDate();
-
-    public static Recipient create(@Nullable EIDType type, String name, LocalDate expiryDate) {
-        return new AutoValue_Recipient(type, name, expiryDate);
+    public static Recipient create(Certificate certificate, String name) {
+        return new AutoValue_Recipient(certificate, name);
     }
 }

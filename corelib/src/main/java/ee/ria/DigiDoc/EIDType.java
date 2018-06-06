@@ -1,12 +1,13 @@
 package ee.ria.DigiDoc;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public enum EIDType {
 
-    ID_CARD, DIGI_ID, MOBILE_ID;
+    UNKNOWN, ID_CARD, DIGI_ID, MOBILE_ID;
 
-    @Nullable
+    @NonNull
     public static EIDType parseOrganization(@Nullable String organization) {
         if (organization != null && organization.startsWith("ESTEID")) {
             if (organization.contains("MOBIIL-ID")) {
@@ -17,6 +18,6 @@ public enum EIDType {
                 return ID_CARD;
             }
         }
-        return null;
+        return UNKNOWN;
     }
 }

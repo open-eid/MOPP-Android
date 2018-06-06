@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,11 @@ final class CryptoRecipientsAdapter extends
         this.existing = existing;
     }
 
+    void setRecipients(@Nullable ImmutableList<Recipient> recipients) {
+        this.recipients = recipients == null ? ImmutableList.of() : recipients;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public RecipientsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -39,8 +45,8 @@ final class CryptoRecipientsAdapter extends
 
         holder.nameView.setText(recipient.name());
         holder.infoView.setText(holder.itemView.getResources().getString(
-                R.string.crypto_recipient_info, formatter.eidType(recipient.type()),
-                recipient.expiryDate()));
+                R.string.crypto_recipient_info, formatter.eidType(recipient.certificate().type()),
+                recipient.certificate().notAfter()));
         if (existing.contains(recipient)) {
             holder.addButton.setEnabled(false);
             holder.addButton.setText(R.string.crypto_recipient_add_button_added);

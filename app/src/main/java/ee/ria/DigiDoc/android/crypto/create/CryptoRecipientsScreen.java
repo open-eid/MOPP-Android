@@ -44,6 +44,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     private Formatter formatter;
 
     private SearchView searchView;
+    private CryptoRecipientsAdapter adapter;
     private View activityOverlayView;
     private View activityIndicatorView;
 
@@ -64,6 +65,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     public void render(ViewState state) {
         setActivity(state.recipientsSearchState().equals(State.ACTIVE));
+        adapter.setRecipients(state.recipientsSearchResult());
     }
 
     private void setActivity(boolean activity) {
@@ -93,7 +95,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         searchView.setSubmitButtonEnabled(true);
         RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
-        listView.setAdapter(new CryptoRecipientsAdapter(formatter, ImmutableList.of()));
+        listView.setAdapter(adapter = new CryptoRecipientsAdapter(formatter, ImmutableList.of()));
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         return view;

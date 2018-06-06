@@ -6,6 +6,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static ee.ria.DigiDoc.EIDType.DIGI_ID;
 import static ee.ria.DigiDoc.EIDType.ID_CARD;
 import static ee.ria.DigiDoc.EIDType.MOBILE_ID;
+import static ee.ria.DigiDoc.EIDType.UNKNOWN;
 import static ee.ria.DigiDoc.EIDType.parseOrganization;
 
 public class EIDTypeTest {
@@ -27,11 +28,11 @@ public class EIDTypeTest {
 
     @Test
     public void parseOrganization_emptyString() {
-        assertThat(parseOrganization("")).isNull();
+        assertThat(parseOrganization("")).isEqualTo(UNKNOWN);
     }
 
     @Test
     public void parseOrganization_null() {
-        assertThat(parseOrganization(null)).isNull();
+        assertThat(parseOrganization(null)).isEqualTo(UNKNOWN);
     }
 }

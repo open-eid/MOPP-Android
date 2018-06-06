@@ -53,8 +53,8 @@ public final class Formatter {
                 timeFormat().format(date));
     }
 
-    public CharSequence eidType(@Nullable EIDType eidType) {
-        return application.getString(EID_TYPES.getOrDefault(eidType, R.string.eid_type_unknown));
+    public CharSequence eidType(EIDType eidType) {
+        return application.getString(EID_TYPES.get(eidType));
     }
 
     public CharSequence idCardExpiryDate(@Nullable LocalDate expiryDate) {
@@ -112,6 +112,7 @@ public final class Formatter {
 
     private static final ImmutableMap<EIDType, Integer> EID_TYPES =
             ImmutableMap.<EIDType, Integer>builder()
+                    .put(EIDType.UNKNOWN, R.string.eid_type_unknown)
                     .put(EIDType.ID_CARD, R.string.eid_type_id_card)
                     .put(EIDType.DIGI_ID, R.string.eid_type_digi_id)
                     .put(EIDType.MOBILE_ID, R.string.eid_type_mobile_id)

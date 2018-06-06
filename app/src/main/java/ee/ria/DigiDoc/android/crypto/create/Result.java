@@ -37,6 +37,8 @@ interface Result extends MviResult<ViewState> {
         public ViewState reduce(ViewState state) {
             return state.buildWith()
                     .recipientsSearchState(state())
+                    .recipientsSearchResult(recipients())
+                    .recipientsSearchError(error())
                     .build();
         }
 

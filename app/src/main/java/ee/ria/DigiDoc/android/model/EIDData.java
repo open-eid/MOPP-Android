@@ -8,7 +8,7 @@ import ee.ria.DigiDoc.EIDType;
 
 public interface EIDData {
 
-    @Nullable EIDType type();
+    EIDType type();
 
     String givenNames();
 

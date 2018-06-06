@@ -6,16 +6,20 @@ import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableList;
 
 import org.apache.directory.api.ldap.model.cursor.EntryCursor;
+import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.entry.Value;
 import org.apache.directory.api.ldap.model.message.SearchScope;
 import org.apache.directory.ldap.client.api.LdapConnection;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
-import org.threeten.bp.LocalDate;
+import org.spongycastle.asn1.x509.KeyPurposeId;
+import org.spongycastle.asn1.x509.KeyUsage;
 
 import java.util.Locale;
 
+import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.EIDType;
-import timber.log.Timber;
+import okio.ByteString;
 
 public final class RecipientRepository {
 
@@ -27,16 +31,31 @@ public final class RecipientRepository {
             LdapConnection connection = new LdapNetworkConnection("ldap.sk.ee");
             connection.bind();
 
-            String attr = CharMatcher.inRange('0', '9').matchesAllOf(query) ? "serialNumber" : "cn";
+            boolean serialNumberSearch = CharMatcher.inRange('0', '9').matchesAllOf(query);
 
-            EntryCursor cursor = connection.search("c=EE",
-                    String.format(Locale.US, "(%s=%s)", attr, query), SearchScope.SUBTREE);
+            EntryCursor cursor = connection.search("c=EE", String.format(Locale.US, "(%s=%s)",
+                    serialNumberSearch ? "serialNumber" : "cn", query), SearchScope.SUBTREE,
+                    "userCertificate;binary");
             while (cursor.next()) {
                 Entry entry = cursor.get();
-                Timber.e("ENTRY: %s", entry);
-
-                builder.add(Recipient.create(
-                        EIDType.ID_CARD, entry.get("cn").getString(), LocalDate.now()));
+                for (Attribute attribute : entry) {
+                    if (attribute.getId().equals("usercertificate;binary")) {
+                        for (Value<?> value : attribute) {
+                            Certificate certificate = Certificate
+                                    .create(ByteString.of(value.getBytes()));
+                            if ((certificate.keyUsage().hasUsages(KeyUsage.keyEncipherment) ||
+                                    certificate.keyUsage().hasUsages(KeyUsage.keyAgreement)) &&
+                                    !certificate.extendedKeyUsage().hasKeyPurposeId(KeyPurposeId
+                                            .id_kp_serverAuth) &&
+                                    (serialNumberSearch || !certificate.extendedKeyUsage()
+                                            .hasKeyPurposeId(KeyPurposeId.id_kp_clientAuth)) &&
+                                    !certificate.type().equals(EIDType.MOBILE_ID)) {
+                                builder.add(Recipient.create(certificate,
+                                        certificate.commonName()));
+                            }
+                        }
+                    }
+                }
             }
 
             cursor.close();

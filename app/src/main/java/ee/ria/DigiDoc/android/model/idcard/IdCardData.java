@@ -17,11 +17,11 @@ public abstract class IdCardData implements EIDData {
 
     @Nullable public abstract LocalDate expiryDate();
 
-    static IdCardData create(@Nullable EIDType type, String givenNames, String surname,
-                             String personalCode, String citizenship,
-                             @Nullable LocalDate dateOfBirth, CertificateData authCertificate,
-                             CertificateData signCertificate, int pukRetryCount,
-                             String documentNumber, @Nullable LocalDate expiryDate) {
+    static IdCardData create(EIDType type, String givenNames, String surname, String personalCode,
+                             String citizenship, @Nullable LocalDate dateOfBirth,
+                             CertificateData authCertificate, CertificateData signCertificate,
+                             int pukRetryCount, String documentNumber,
+                             @Nullable LocalDate expiryDate) {
         return new AutoValue_IdCardData(type, givenNames, surname, personalCode, citizenship,
                 dateOfBirth, authCertificate, signCertificate, pukRetryCount, documentNumber,
                 expiryDate);

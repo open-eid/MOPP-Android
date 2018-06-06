@@ -13,9 +13,6 @@ import android.widget.TextView;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
-import org.threeten.bp.LocalDate;
-
-import ee.ria.DigiDoc.EIDType;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.Formatter;
@@ -40,10 +37,6 @@ final class CryptoCreateAdapter extends
                     DataFileItem.create(DataFile.create("data-file.pdf")),
                     AddButtonItem.create(R.string.crypto_create_data_files_add_button),
                     SubheadItem.create(R.string.crypto_create_recipients_title),
-                    RecipientItem.create(Recipient.create(
-                            EIDType.DIGI_ID, "Mari Maasikas, 48405050123", LocalDate.now())),
-                    RecipientItem.create(Recipient.create(
-                            EIDType.ID_CARD, "Jüri Juurikas, 38405050123", LocalDate.now())),
                     AddButtonItem.create(R.string.crypto_create_recipients_add_button));
 
     public Observable<Object> recipientsAddButtonClicks() {
@@ -196,7 +189,8 @@ final class CryptoCreateAdapter extends
             nameView.setText(item.recipient().name());
             infoView.setText(itemView.getResources().getString(
                     R.string.crypto_recipient_info,
-                    formatter.eidType(item.recipient().type()), item.recipient().expiryDate()));
+                    formatter.eidType(item.recipient().certificate().type()),
+                    item.recipient().certificate().notAfter()));
         }
     }
 
