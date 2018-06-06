@@ -1,7 +1,6 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,24 +10,25 @@ import android.widget.TextView;
 
 import com.google.common.collect.ImmutableList;
 
+import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.Formatter;
-import ee.ria.cryptolib.Recipient;
 
 final class CryptoRecipientsAdapter extends
         RecyclerView.Adapter<CryptoRecipientsAdapter.RecipientsViewHolder> {
 
     private final Formatter formatter;
-    private final ImmutableList<Recipient> existing;
-    private ImmutableList<Recipient> recipients = ImmutableList.of();
 
-    CryptoRecipientsAdapter(Formatter formatter, ImmutableList<Recipient> existing) {
+    private ImmutableList<Certificate> existing = ImmutableList.of();
+    private ImmutableList<Certificate> result = ImmutableList.of();
+
+    CryptoRecipientsAdapter(Formatter formatter) {
         this.formatter = formatter;
-        this.existing = existing;
     }
 
-    void setRecipients(@Nullable ImmutableList<Recipient> recipients) {
-        this.recipients = recipients == null ? ImmutableList.of() : recipients;
+    void setData(ImmutableList<Certificate> existing, ImmutableList<Certificate> result) {
+        this.existing = existing;
+        this.result = result;
         notifyDataSetChanged();
     }
 
@@ -41,13 +41,13 @@ final class CryptoRecipientsAdapter extends
 
     @Override
     public void onBindViewHolder(@NonNull RecipientsViewHolder holder, int position) {
-        Recipient recipient = recipients.get(position);
+        Certificate certificate = result.get(position);
 
-        holder.nameView.setText(recipient.name());
+        holder.nameView.setText(certificate.commonName());
         holder.infoView.setText(holder.itemView.getResources().getString(
-                R.string.crypto_recipient_info, formatter.eidType(recipient.certificate().type()),
-                recipient.certificate().notAfter()));
-        if (existing.contains(recipient)) {
+                R.string.crypto_recipient_info, formatter.eidType(certificate.type()),
+                certificate.notAfter()));
+        if (existing.contains(certificate)) {
             holder.addButton.setEnabled(false);
             holder.addButton.setText(R.string.crypto_recipient_add_button_added);
         } else {
@@ -58,7 +58,7 @@ final class CryptoRecipientsAdapter extends
 
     @Override
     public int getItemCount() {
-        return recipients.size();
+        return result.size();
     }
 
     static final class RecipientsViewHolder extends RecyclerView.ViewHolder {

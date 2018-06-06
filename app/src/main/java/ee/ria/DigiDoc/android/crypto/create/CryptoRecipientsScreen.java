@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.Controller;
-import com.google.common.collect.ImmutableList;
 import com.jakewharton.rxbinding2.support.v7.widget.SearchViewQueryTextEvent;
 
 import ee.ria.DigiDoc.R;
@@ -65,7 +64,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     public void render(ViewState state) {
         setActivity(state.recipientsSearchState().equals(State.ACTIVE));
-        adapter.setRecipients(state.recipientsSearchResult());
+        adapter.setData(state.recipients(), state.recipientsSearchResult());
     }
 
     private void setActivity(boolean activity) {
@@ -95,7 +94,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         searchView.setSubmitButtonEnabled(true);
         RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
-        listView.setAdapter(adapter = new CryptoRecipientsAdapter(formatter, ImmutableList.of()));
+        listView.setAdapter(adapter = new CryptoRecipientsAdapter(formatter));
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         return view;

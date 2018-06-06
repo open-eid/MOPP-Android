@@ -24,8 +24,8 @@ import okio.ByteString;
 public final class RecipientRepository {
 
     @WorkerThread
-    public final ImmutableList<Recipient> find(String query) throws ConnectivityException {
-        ImmutableList.Builder<Recipient> builder = ImmutableList.builder();
+    public final ImmutableList<Certificate> find(String query) throws ConnectivityException {
+        ImmutableList.Builder<Certificate> builder = ImmutableList.builder();
 
         try {
             LdapConnection connection = new LdapNetworkConnection("ldap.sk.ee");
@@ -50,8 +50,7 @@ public final class RecipientRepository {
                                     (serialNumberSearch || !certificate.extendedKeyUsage()
                                             .hasKeyPurposeId(KeyPurposeId.id_kp_clientAuth)) &&
                                     !certificate.type().equals(EIDType.MOBILE_ID)) {
-                                builder.add(Recipient.create(certificate,
-                                        certificate.commonName()));
+                                builder.add(certificate);
                             }
                         }
                     }
