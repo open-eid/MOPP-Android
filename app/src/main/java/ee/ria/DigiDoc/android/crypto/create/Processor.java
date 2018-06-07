@@ -35,6 +35,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ObservableTransformer<Intent.InitialIntent, Result.VoidResult> initial;
 
+    private final ObservableTransformer<Intent.UpButtonClickIntent,
+                                        Result.VoidResult> upButtonClick;
+
     private final ObservableTransformer<Intent.DataFilesAddIntent,
                                         Result.DataFilesAddResult> dataFilesAdd;
 
@@ -62,6 +65,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                       ContentResolver contentResolver, FileSystem fileSystem,
                       Application application) {
         initial = upstream -> upstream.map(intent -> Result.VoidResult.create());
+
+        upButtonClick = upstream -> upstream.switchMap(intent -> {
+            navigator.execute(Transaction.pop());
+            return Observable.empty();
+        });
 
         dataFilesAdd = upstream -> upstream.switchMap(intent -> {
             ImmutableList<DataFile> dataFiles = intent.dataFiles();
@@ -159,6 +167,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     public ObservableSource<Result> apply(Observable<Intent> upstream) {
         return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Intent.InitialIntent.class).compose(initial),
+                shared.ofType(Intent.UpButtonClickIntent.class).compose(upButtonClick),
                 shared.ofType(Intent.DataFilesAddIntent.class).compose(dataFilesAdd),
                 shared.ofType(Intent.DataFileRemoveIntent.class).compose(dataFileRemove),
                 shared.ofType(Intent.DataFileViewIntent.class).compose(dataFileView),

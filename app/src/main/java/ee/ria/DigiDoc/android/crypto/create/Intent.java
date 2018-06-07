@@ -21,6 +21,14 @@ interface Intent extends MviIntent, MviAction {
     }
 
     @AutoValue
+    abstract class UpButtonClickIntent implements Intent {
+
+        static UpButtonClickIntent create() {
+            return new AutoValue_Intent_UpButtonClickIntent();
+        }
+    }
+
+    @AutoValue
     abstract class DataFilesAddIntent implements Intent {
 
         @Nullable abstract ImmutableList<DataFile> dataFiles();

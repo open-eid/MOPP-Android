@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.cryptolib.DataFile;
 import io.reactivex.Observable;
 
+import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+
 public final class CryptoCreateScreen extends Controller implements Screen,
         MviView<Intent, ViewState> {
 
@@ -31,6 +34,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private final ViewDisposables disposables = new ViewDisposables();
     private CryptoCreateViewModel viewModel;
 
+    private Toolbar toolbarView;
     private CryptoCreateAdapter adapter;
     private View activityOverlayView;
     private View activityIndicatorView;
@@ -40,6 +44,10 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
     @SuppressWarnings("WeakerAccess")
     public CryptoCreateScreen() {}
+
+    private Observable<Intent.UpButtonClickIntent> upButtonClickIntent() {
+        return navigationClicks(toolbarView).map(ignored -> Intent.UpButtonClickIntent.create());
+    }
 
     private Observable<Intent.DataFilesAddIntent> dataFilesAddIntent() {
         return adapter.dataFilesAddButtonClicks()
@@ -69,8 +77,9 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
-        return Observable.mergeArray(dataFilesAddIntent(), dataFileRemoveIntent(),
-                dataFileViewIntent(), recipientsAddButtonClickIntent(), recipientRemoveIntent());
+        return Observable.mergeArray(upButtonClickIntent(), dataFilesAddIntent(),
+                dataFileRemoveIntent(), dataFileViewIntent(), recipientsAddButtonClickIntent(),
+                recipientRemoveIntent());
     }
 
     @Override
@@ -105,6 +114,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
         View view = inflater.inflate(R.layout.crypto_create_screen, container, false);
+        toolbarView = view.findViewById(R.id.toolbar);
         RecyclerView listView = view.findViewById(R.id.cryptoCreateList);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
