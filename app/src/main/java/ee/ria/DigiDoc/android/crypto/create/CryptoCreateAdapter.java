@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.crypto.create;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,8 +50,12 @@ final class CryptoCreateAdapter extends
         }
         builder.add(AddButtonItem.create(R.string.crypto_create_recipients_add_button));
 
-        items = builder.build();
-        notifyDataSetChanged();
+        ImmutableList<Item> items = builder.build();
+
+        DiffUtil.DiffResult result = DiffUtil
+                .calculateDiff(new DiffUtilCallback(this.items, items));
+        this.items = items;
+        result.dispatchUpdatesTo(this);
     }
 
     Observable<Object> dataFilesAddButtonClicks() {
@@ -311,6 +316,37 @@ final class CryptoCreateAdapter extends
         static RecipientItem create(Certificate recipient) {
             return new AutoValue_CryptoCreateAdapter_RecipientItem(
                     R.layout.crypto_list_item_recipient, recipient);
+        }
+    }
+
+    static final class DiffUtilCallback extends DiffUtil.Callback {
+
+        private final ImmutableList<Item> oldList;
+        private final ImmutableList<Item> newList;
+
+        DiffUtilCallback(ImmutableList<Item> oldList, ImmutableList<Item> newList) {
+            this.oldList = oldList;
+            this.newList = newList;
+        }
+
+        @Override
+        public int getOldListSize() {
+            return oldList.size();
+        }
+
+        @Override
+        public int getNewListSize() {
+            return newList.size();
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            return areContentsTheSame(oldItemPosition, newItemPosition);
+        }
+
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
         }
     }
 }
