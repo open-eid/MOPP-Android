@@ -219,9 +219,22 @@ interface Result extends MviResult<ViewState> {
         }
 
         private static RecipientRemoveResult create(@State String state,
-                                                 @Nullable ImmutableList<Certificate> recipients,
-                                                 @Nullable Throwable error) {
+                                                    @Nullable ImmutableList<Certificate> recipients,
+                                                    @Nullable Throwable error) {
             return new AutoValue_Result_RecipientRemoveResult(state, recipients, error);
+        }
+    }
+
+    @AutoValue
+    abstract class EncryptResult implements Result {
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state;
+        }
+
+        static EncryptResult create() {
+            return new AutoValue_Result_EncryptResult();
         }
     }
 }

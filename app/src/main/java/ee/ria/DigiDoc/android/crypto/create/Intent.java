@@ -129,4 +129,19 @@ interface Intent extends MviIntent, MviAction {
             return new AutoValue_Intent_RecipientRemoveIntent(recipients, recipient);
         }
     }
+
+    @AutoValue
+    abstract class EncryptIntent implements Intent {
+
+        abstract String name();
+
+        abstract ImmutableList<DataFile> dataFiles();
+
+        abstract ImmutableList<Certificate> recipients();
+
+        static EncryptIntent create(String name, ImmutableList<DataFile> dataFiles,
+                                    ImmutableList<Certificate> recipients) {
+            return new AutoValue_Intent_EncryptIntent(name, dataFiles, recipients);
+        }
+    }
 }

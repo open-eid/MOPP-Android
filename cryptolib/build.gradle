@@ -37,6 +37,9 @@ dependencies {
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
     implementation "org.apache.directory.api:api-ldap-client-all:${apacheDirectoryVersion}"
+    api ("org.open-eid.cdoc4j:cdoc4j:${cdoc4jVersion}") {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
 
     api project(':corelib')
 }

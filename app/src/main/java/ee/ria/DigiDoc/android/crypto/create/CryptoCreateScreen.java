@@ -23,6 +23,7 @@ import ee.ria.cryptolib.DataFile;
 import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
 public final class CryptoCreateScreen extends Controller implements Screen,
         MviView<Intent, ViewState> {
@@ -38,6 +39,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private CryptoCreateAdapter adapter;
     private View activityOverlayView;
     private View activityIndicatorView;
+    private View encryptButton;
 
     private ImmutableList<DataFile> dataFiles = ImmutableList.of();
     private ImmutableList<Certificate> recipients = ImmutableList.of();
@@ -74,12 +76,17 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 .map(recipient -> Intent.RecipientRemoveIntent.create(recipients, recipient));
     }
 
+    private Observable<Intent.EncryptIntent> encryptIntent() {
+        return clicks(encryptButton)
+                .map(ignored -> Intent.EncryptIntent.create("test1.cdoc", dataFiles, recipients));
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(upButtonClickIntent(), dataFilesAddIntent(),
                 dataFileRemoveIntent(), dataFileViewIntent(), recipientsAddButtonClickIntent(),
-                recipientRemoveIntent());
+                recipientRemoveIntent(), encryptIntent());
     }
 
     @Override
@@ -95,6 +102,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private void setActivity(boolean activity) {
         activityOverlayView.setVisibility(activity ? View.VISIBLE : View.GONE);
         activityIndicatorView.setVisibility(activity ? View.VISIBLE : View.GONE);
+        encryptButton.setEnabled(!activity);
     }
 
     @Override
@@ -118,6 +126,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         RecyclerView listView = view.findViewById(R.id.cryptoCreateList);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
+        encryptButton = view.findViewById(R.id.cryptoCreateEncryptButton);
 
         listView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());

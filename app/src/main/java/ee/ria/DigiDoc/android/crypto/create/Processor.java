@@ -61,6 +61,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     private final ObservableTransformer<Intent.RecipientRemoveIntent,
                                         Result.RecipientRemoveResult> recipientRemove;
 
+    private final ObservableTransformer<Intent.EncryptIntent, Result.EncryptResult> encrypt;
+
     @Inject Processor(Navigator navigator, RecipientRepository recipientRepository,
                       ContentResolver contentResolver, FileSystem fileSystem,
                       Application application) {
@@ -160,6 +162,10 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 Observable.fromCallable(() ->
                         Result.RecipientRemoveResult.success(
                                 without(intent.recipients(), intent.recipient()))));
+
+        encrypt = upstream -> upstream.switchMap(intent -> {
+            return Observable.just(Result.EncryptResult.create());
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -177,6 +183,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .compose(recipientsScreenUpButtonClick),
                 shared.ofType(Intent.RecipientsSearchIntent.class).compose(recipientsSearch),
                 shared.ofType(Intent.RecipientAddIntent.class).compose(recipientAdd),
-                shared.ofType(Intent.RecipientRemoveIntent.class).compose(recipientRemove)));
+                shared.ofType(Intent.RecipientRemoveIntent.class).compose(recipientRemove),
+                shared.ofType(Intent.EncryptIntent.class).compose(encrypt)));
     }
 }
