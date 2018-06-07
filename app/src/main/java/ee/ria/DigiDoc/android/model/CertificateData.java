@@ -2,11 +2,11 @@ package ee.ria.DigiDoc.android.model;
 
 import com.google.auto.value.AutoValue;
 
-import org.spongycastle.asn1.ASN1ObjectIdentifier;
-import org.spongycastle.asn1.x500.RDN;
-import org.spongycastle.asn1.x500.X500Name;
-import org.spongycastle.asn1.x500.style.BCStyle;
-import org.spongycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.threeten.bp.Instant;
 
 import java.io.ByteArrayInputStream;

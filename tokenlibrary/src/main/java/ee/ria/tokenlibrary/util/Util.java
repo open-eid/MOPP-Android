@@ -19,7 +19,7 @@
 
 package ee.ria.tokenlibrary.util;
 
-import org.spongycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.Hex;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;

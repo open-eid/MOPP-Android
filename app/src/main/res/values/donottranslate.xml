@@ -52,7 +52,7 @@
     <string name="main_about_timber_title">Timber %1$s</string>
     <string name="main_about_square_okhttp_title">Square OkHttp %1$s</string>
     <string name="main_about_retrofit_title">Square Retrofit %1$s</string>
-    <string name="main_about_spongy_castle_title">Spongy Castle %1$s</string>
+    <string name="main_about_bouncy_castle_title">Bouncy Castle %1$s</string>
     <string name="main_about_material_values_title">Material Values %1$s</string>
     <string name="main_about_dagger_title">Google Dagger %1$s</string>
     <string name="main_about_conductor_title">BlueLine Labs Conductor %1$s</string>

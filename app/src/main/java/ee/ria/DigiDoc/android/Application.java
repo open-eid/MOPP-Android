@@ -30,6 +30,9 @@ import android.support.annotation.NonNull;
 import com.google.common.collect.ImmutableList;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import java.security.Security;
 import java.util.Map;
 
 import javax.inject.Provider;
@@ -68,6 +71,7 @@ public class Application extends android.app.Application {
     public void onCreate() {
         setupStrictMode();
         super.onCreate();
+        setupBouncyCastle();
         setupTimber();
         setupThreeTenAbp();
         setupMoppLib();
@@ -81,6 +85,13 @@ public class Application extends android.app.Application {
         if (BuildConfig.DEBUG) {
             StrictMode.enableDefaults();
         }
+    }
+
+    // BouncyCastle Security provider
+
+    private void setupBouncyCastle() {
+        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        Security.addProvider(new BouncyCastleProvider());
     }
 
     // Timber

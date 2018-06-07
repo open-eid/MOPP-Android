@@ -31,8 +31,7 @@ dependencies {
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
-    api "com.madgag.spongycastle:core:${spongycastleVersion}"
-    implementation "com.madgag.spongycastle:bcpkix-jdk15on:${spongycastleVersion}"
+    api "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
 
     api "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
 

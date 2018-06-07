@@ -53,7 +53,7 @@
     <item type="id" name="mainAboutTimberVersionTitle" />
     <item type="id" name="mainAboutOkHttpVersionTitle" />
     <item type="id" name="mainAboutRetrofitVersionTitle" />
-    <item type="id" name="mainAboutSpongyCastleVersionTitle" />
+    <item type="id" name="mainAboutBouncyCastleVersionTitle" />
     <item type="id" name="mainAboutMaterialValuesVersionTitle" />
     <item type="id" name="mainAboutDaggerVersionTitle" />
     <item type="id" name="mainAboutConductorVersionTitle" />

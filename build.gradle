@@ -29,7 +29,7 @@ ext {
     butterknifeVersion = '8.8.1'
     okhttpVersion = '3.10.0'
     retrofitVersion = '2.4.0'
-    spongycastleVersion = '1.58.0.0'
+    bouncycastleVersion = '1.59'
     materialValuesVersion = '1.1.1'
     daggerVersion = '2.15'
     conductorVersion = '2.1.4'

@@ -12,8 +12,8 @@ import org.apache.directory.api.ldap.model.entry.Value;
 import org.apache.directory.api.ldap.model.message.SearchScope;
 import org.apache.directory.ldap.client.api.LdapConnection;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
-import org.spongycastle.asn1.x509.KeyPurposeId;
-import org.spongycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.asn1.x509.KeyUsage;
 
 import java.util.Locale;
 

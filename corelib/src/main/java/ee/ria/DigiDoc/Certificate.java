@@ -2,14 +2,14 @@ package ee.ria.DigiDoc;
 
 import com.google.auto.value.AutoValue;
 
-import org.spongycastle.asn1.ASN1ObjectIdentifier;
-import org.spongycastle.asn1.x500.RDN;
-import org.spongycastle.asn1.x500.style.BCStyle;
-import org.spongycastle.asn1.x509.ExtendedKeyUsage;
-import org.spongycastle.asn1.x509.Extensions;
-import org.spongycastle.asn1.x509.KeyPurposeId;
-import org.spongycastle.asn1.x509.KeyUsage;
-import org.spongycastle.cert.X509CertificateHolder;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.cert.X509CertificateHolder;
 import org.threeten.bp.Instant;
 
 import java.io.IOException;
