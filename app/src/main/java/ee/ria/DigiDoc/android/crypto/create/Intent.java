@@ -51,6 +51,16 @@ interface Intent extends MviIntent, MviAction {
     }
 
     @AutoValue
+    abstract class DataFileViewIntent implements Intent {
+
+        abstract DataFile dataFile();
+
+        static DataFileViewIntent create(DataFile dataFile) {
+            return new AutoValue_Intent_DataFileViewIntent(dataFile);
+        }
+    }
+
+    @AutoValue
     abstract class RecipientsAddButtonClickIntent implements Intent {
 
         abstract String cryptoCreateScreenId();

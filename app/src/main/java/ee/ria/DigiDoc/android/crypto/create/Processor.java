@@ -1,9 +1,12 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.ContentResolver;
 
 import com.google.common.collect.ImmutableList;
+
+import java.io.File;
 
 import javax.inject.Inject;
 
@@ -24,7 +27,9 @@ import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_DATA_FILE_ADD;
 import static ee.ria.DigiDoc.android.utils.Immutables.with;
 import static ee.ria.DigiDoc.android.utils.Immutables.without;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
+import static ee.ria.mopplib.data.SignedContainer.mimeType;
 
 final class Processor implements ObservableTransformer<Intent, Result> {
 
@@ -35,6 +40,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ObservableTransformer<Intent.DataFileRemoveIntent,
                                         Result.DataFileRemoveResult> dataFileRemove;
+
+    private final ObservableTransformer<Intent.DataFileViewIntent, Result.VoidResult> dataFileView;
 
     private final ObservableTransformer<Intent.RecipientsAddButtonClickIntent, Result.VoidResult>
             recipientsAddButtonClick;
@@ -52,7 +59,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                         Result.RecipientRemoveResult> recipientRemove;
 
     @Inject Processor(Navigator navigator, RecipientRepository recipientRepository,
-                      ContentResolver contentResolver, FileSystem fileSystem) {
+                      ContentResolver contentResolver, FileSystem fileSystem,
+                      Application application) {
         initial = upstream -> upstream.map(intent -> Result.VoidResult.create());
 
         dataFilesAdd = upstream -> upstream.switchMap(intent -> {
@@ -103,6 +111,13 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .startWith(Result.DataFileRemoveResult.activity()));
 
+        dataFileView = upstream -> upstream.switchMap(intent -> {
+            File file = intent.dataFile().file();
+            navigator.execute(Transaction
+                    .activity(createViewIntent(application, file, mimeType(file)), null));
+            return Observable.just(Result.VoidResult.create());
+        });
+
         recipientsAddButtonClick = upstream -> upstream.switchMap(intent -> {
             navigator.execute(Transaction.push(
                     CryptoRecipientsScreen.create(intent.cryptoCreateScreenId())));
@@ -146,6 +161,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.InitialIntent.class).compose(initial),
                 shared.ofType(Intent.DataFilesAddIntent.class).compose(dataFilesAdd),
                 shared.ofType(Intent.DataFileRemoveIntent.class).compose(dataFileRemove),
+                shared.ofType(Intent.DataFileViewIntent.class).compose(dataFileView),
                 shared.ofType(Intent.RecipientsAddButtonClickIntent.class)
                         .compose(recipientsAddButtonClick),
                 shared.ofType(Intent.RecipientsScreenUpButtonClickIntent.class)

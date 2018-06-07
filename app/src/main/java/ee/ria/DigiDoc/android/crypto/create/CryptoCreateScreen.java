@@ -51,6 +51,11 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 .map(dataFile -> Intent.DataFileRemoveIntent.create(dataFiles, dataFile));
     }
 
+    private Observable<Intent.DataFileViewIntent> dataFileViewIntent() {
+        return adapter.dataFileClicks()
+                .map(Intent.DataFileViewIntent::create);
+    }
+
     private Observable<Intent.RecipientsAddButtonClickIntent> recipientsAddButtonClickIntent() {
         return adapter.recipientsAddButtonClicks()
                 .map(ignored -> Intent.RecipientsAddButtonClickIntent.create(getInstanceId()));
@@ -61,10 +66,11 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 .map(recipient -> Intent.RecipientRemoveIntent.create(recipients, recipient));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
-        return Observable.merge(dataFilesAddIntent(), dataFileRemoveIntent(),
-                recipientsAddButtonClickIntent(), recipientRemoveIntent());
+        return Observable.mergeArray(dataFilesAddIntent(), dataFileRemoveIntent(),
+                dataFileViewIntent(), recipientsAddButtonClickIntent(), recipientRemoveIntent());
     }
 
     @Override
