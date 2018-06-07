@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.cryptolib.DataFile;
 
 interface Result extends MviResult<ViewState> {
 
@@ -21,6 +22,49 @@ interface Result extends MviResult<ViewState> {
 
         static VoidResult create() {
             return new AutoValue_Result_VoidResult();
+        }
+    }
+
+    @AutoValue
+    abstract class DataFilesAddResult implements Result {
+
+        @State abstract String state();
+
+        @Nullable abstract ImmutableList<DataFile> dataFiles();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            ViewState.Builder builder = state.buildWith()
+                    .dataFilesAddState(state())
+                    .dataFilesAddError(error());
+            if (dataFiles() != null) {
+                builder.dataFiles(dataFiles());
+            }
+            return builder.build();
+        }
+
+        static DataFilesAddResult activity() {
+            return create(State.ACTIVE, null, null);
+        }
+
+        static DataFilesAddResult success(ImmutableList<DataFile> dataFiles) {
+            return create(State.IDLE, dataFiles, null);
+        }
+
+        static DataFilesAddResult failure(Throwable error) {
+            return create(State.IDLE, null, error);
+        }
+
+        static DataFilesAddResult clear() {
+            return create(State.IDLE, null, null);
+        }
+
+        private static DataFilesAddResult create(@State String state,
+                                                 @Nullable ImmutableList<DataFile> dataFiles,
+                                                 @Nullable Throwable error) {
+            return new AutoValue_Result_DataFilesAddResult(state, dataFiles, error);
         }
     }
 

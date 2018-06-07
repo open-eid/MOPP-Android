@@ -16,10 +16,13 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
+import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
+import ee.ria.cryptolib.DataFile;
 import io.reactivex.Observable;
 
-public final class CryptoCreateScreen extends Controller implements Screen, MviView<Intent, ViewState> {
+public final class CryptoCreateScreen extends Controller implements Screen,
+        MviView<Intent, ViewState> {
 
     public static CryptoCreateScreen create() {
         return new CryptoCreateScreen();
@@ -32,10 +35,16 @@ public final class CryptoCreateScreen extends Controller implements Screen, MviV
     private View activityOverlayView;
     private View activityIndicatorView;
 
+    private ImmutableList<DataFile> dataFiles = ImmutableList.of();
     private ImmutableList<Certificate> recipients = ImmutableList.of();
 
     @SuppressWarnings("WeakerAccess")
     public CryptoCreateScreen() {}
+
+    private Observable<Intent.DataFilesAddIntent> dataFilesAddIntent() {
+        return adapter.dataFilesAddButtonClicks()
+                .map(ignored -> Intent.DataFilesAddIntent.start(dataFiles));
+    }
 
     private Observable<Intent.RecipientsAddButtonClickIntent> recipientsAddButtonClickIntent() {
         return adapter.recipientsAddButtonClicks()
@@ -49,14 +58,17 @@ public final class CryptoCreateScreen extends Controller implements Screen, MviV
 
     @Override
     public Observable<Intent> intents() {
-        return Observable.merge(recipientsAddButtonClickIntent(), recipientRemoveIntent());
+        return Observable.merge(dataFilesAddIntent(), recipientsAddButtonClickIntent(),
+                recipientRemoveIntent());
     }
 
     @Override
     public void render(ViewState state) {
+        dataFiles = state.dataFiles();
         recipients = state.recipients();
 
-        adapter.setData(state.recipients());
+        setActivity(state.dataFilesAddState().equals(State.ACTIVE));
+        adapter.setData(dataFiles, recipients);
     }
 
     private void setActivity(boolean activity) {
@@ -88,22 +100,16 @@ public final class CryptoCreateScreen extends Controller implements Screen, MviV
         listView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());
 
-        setActivity(false);
+        disposables.attach();
+        disposables.add(viewModel.viewStates().subscribe(this::render));
+        viewModel.process(intents());
 
         return view;
     }
 
     @Override
-    protected void onAttach(@NonNull View view) {
-        super.onAttach(view);
-        disposables.attach();
-        disposables.add(viewModel.viewStates().subscribe(this::render));
-        viewModel.process(intents());
-    }
-
-    @Override
-    protected void onDetach(@NonNull View view) {
+    protected void onDestroyView(@NonNull View view) {
         disposables.detach();
-        super.onDetach(view);
+        super.onDestroyView(view);
     }
 }

@@ -21,6 +21,7 @@ package ee.ria.DigiDoc.android;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.hardware.usb.UsbManager;
 import android.os.StrictMode;
@@ -151,6 +152,11 @@ public class Application extends android.app.Application {
         @Provides
         static UsbManager usbManager(android.app.Application application) {
             return (UsbManager) application.getSystemService(Context.USB_SERVICE);
+        }
+
+        @Provides
+        static ContentResolver contentResolver(android.app.Application application) {
+            return application.getContentResolver();
         }
     }
 

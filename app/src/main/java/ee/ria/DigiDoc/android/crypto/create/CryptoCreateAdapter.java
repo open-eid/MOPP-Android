@@ -34,11 +34,13 @@ final class CryptoCreateAdapter extends
 
     private ImmutableList<Item> items = ImmutableList.of();
 
-    void setData(ImmutableList<Certificate> recipients) {
+    void setData(ImmutableList<DataFile> dataFiles, ImmutableList<Certificate> recipients) {
         ImmutableList.Builder<Item> builder = ImmutableList.<Item>builder()
-                .add(SubheadItem.create(R.string.crypto_create_data_files_title))
-                .add(DataFileItem.create(DataFile.create("data_file.xml")))
-                .add(AddButtonItem.create(R.string.crypto_create_data_files_add_button))
+                .add(SubheadItem.create(R.string.crypto_create_data_files_title));
+        for (DataFile dataFile : dataFiles) {
+            builder.add(DataFileItem.create(dataFile));
+        }
+        builder.add(AddButtonItem.create(R.string.crypto_create_data_files_add_button))
                 .add(SubheadItem.create(R.string.crypto_create_recipients_title));
         for (Certificate recipient : recipients) {
             builder.add(RecipientItem.create(recipient));
@@ -47,6 +49,12 @@ final class CryptoCreateAdapter extends
 
         items = builder.build();
         notifyDataSetChanged();
+    }
+
+    Observable<Object> dataFilesAddButtonClicks() {
+        return addButtonClicksSubject
+                .filter(text -> text == R.string.crypto_create_data_files_add_button)
+                .map(ignored -> VOID);
     }
 
     Observable<Object> recipientsAddButtonClicks() {

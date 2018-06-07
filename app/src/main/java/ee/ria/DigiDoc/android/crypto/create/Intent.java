@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
+import ee.ria.cryptolib.DataFile;
 
 interface Intent extends MviIntent, MviAction {
 
@@ -16,6 +17,24 @@ interface Intent extends MviIntent, MviAction {
 
         static InitialIntent create() {
             return new AutoValue_Intent_InitialIntent();
+        }
+    }
+
+    @AutoValue
+    abstract class DataFilesAddIntent implements Intent {
+
+        @Nullable abstract ImmutableList<DataFile> dataFiles();
+
+        static DataFilesAddIntent start(ImmutableList<DataFile> dataFiles) {
+            return create(dataFiles);
+        }
+
+        static DataFilesAddIntent clear() {
+            return create(null);
+        }
+
+        private static DataFilesAddIntent create(@Nullable ImmutableList<DataFile> dataFiles) {
+            return new AutoValue_Intent_DataFilesAddIntent(dataFiles);
         }
     }
 
