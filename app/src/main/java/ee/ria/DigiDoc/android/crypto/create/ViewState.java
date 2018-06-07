@@ -19,6 +19,9 @@ abstract class ViewState implements MviViewState {
     @State abstract String dataFilesAddState();
     @Nullable abstract Throwable dataFilesAddError();
 
+    @State abstract String dataFileRemoveState();
+    @Nullable abstract Throwable dataFileRemoveError();
+
     @State abstract String recipientsSearchState();
     abstract ImmutableList<Certificate> recipientsSearchResult();
     @Nullable abstract Throwable recipientsSearchError();
@@ -33,6 +36,7 @@ abstract class ViewState implements MviViewState {
                 .dataFiles(ImmutableList.of())
                 .recipients(ImmutableList.of())
                 .dataFilesAddState(State.IDLE)
+                .dataFileRemoveState(State.IDLE)
                 .recipientsSearchState(State.IDLE)
                 .recipientsSearchResult(ImmutableList.of())
                 .recipientAddState(State.IDLE)
@@ -45,6 +49,8 @@ abstract class ViewState implements MviViewState {
         Builder recipients(ImmutableList<Certificate> recipients);
         Builder dataFilesAddState(@State String dataFilesAddState);
         Builder dataFilesAddError(@Nullable Throwable dataFilesAddError);
+        Builder dataFileRemoveState(@State String dataFileRemoveState);
+        Builder dataFileRemoveError(@Nullable Throwable dataFileRemoveError);
         Builder recipientsSearchState(@State String recipientsSearchState);
         Builder recipientsSearchResult(ImmutableList<Certificate> recipientsSearchResult);
         Builder recipientsSearchError(@Nullable Throwable recipientsSearchError);

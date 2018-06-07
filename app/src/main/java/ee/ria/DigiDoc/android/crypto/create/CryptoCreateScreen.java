@@ -46,6 +46,11 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 .map(ignored -> Intent.DataFilesAddIntent.start(dataFiles));
     }
 
+    private Observable<Intent.DataFileRemoveIntent> dataFileRemoveIntent() {
+        return adapter.dataFileRemoveClicks()
+                .map(dataFile -> Intent.DataFileRemoveIntent.create(dataFiles, dataFile));
+    }
+
     private Observable<Intent.RecipientsAddButtonClickIntent> recipientsAddButtonClickIntent() {
         return adapter.recipientsAddButtonClicks()
                 .map(ignored -> Intent.RecipientsAddButtonClickIntent.create(getInstanceId()));
@@ -58,8 +63,8 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
     @Override
     public Observable<Intent> intents() {
-        return Observable.merge(dataFilesAddIntent(), recipientsAddButtonClickIntent(),
-                recipientRemoveIntent());
+        return Observable.merge(dataFilesAddIntent(), dataFileRemoveIntent(),
+                recipientsAddButtonClickIntent(), recipientRemoveIntent());
     }
 
     @Override
@@ -67,7 +72,8 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         dataFiles = state.dataFiles();
         recipients = state.recipients();
 
-        setActivity(state.dataFilesAddState().equals(State.ACTIVE));
+        setActivity(state.dataFilesAddState().equals(State.ACTIVE) ||
+                state.dataFileRemoveState().equals(State.ACTIVE));
         adapter.setData(dataFiles, recipients);
     }
 

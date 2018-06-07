@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import javax.inject.Inject;
 
+import ee.ria.DigiDoc.android.utils.Immutables;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -31,6 +32,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ObservableTransformer<Intent.DataFilesAddIntent,
                                         Result.DataFilesAddResult> dataFilesAdd;
+
+    private final ObservableTransformer<Intent.DataFileRemoveIntent,
+                                        Result.DataFileRemoveResult> dataFileRemove;
 
     private final ObservableTransformer<Intent.RecipientsAddButtonClickIntent, Result.VoidResult>
             recipientsAddButtonClick;
@@ -86,6 +90,19 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                     });
         });
 
+        dataFileRemove = upstream -> upstream.switchMap(intent ->
+                Observable
+                        .fromCallable(() -> {
+                            //noinspection ResultOfMethodCallIgnored
+                            intent.dataFile().file().delete();
+                            return Result.DataFileRemoveResult.success(
+                                    Immutables.without(intent.dataFiles(), intent.dataFile()));
+                        })
+                        .onErrorReturn(Result.DataFileRemoveResult::failure)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(Result.DataFileRemoveResult.activity()));
+
         recipientsAddButtonClick = upstream -> upstream.switchMap(intent -> {
             navigator.execute(Transaction.push(
                     CryptoRecipientsScreen.create(intent.cryptoCreateScreenId())));
@@ -128,6 +145,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Intent.InitialIntent.class).compose(initial),
                 shared.ofType(Intent.DataFilesAddIntent.class).compose(dataFilesAdd),
+                shared.ofType(Intent.DataFileRemoveIntent.class).compose(dataFileRemove),
                 shared.ofType(Intent.RecipientsAddButtonClickIntent.class)
                         .compose(recipientsAddButtonClick),
                 shared.ofType(Intent.RecipientsScreenUpButtonClickIntent.class)

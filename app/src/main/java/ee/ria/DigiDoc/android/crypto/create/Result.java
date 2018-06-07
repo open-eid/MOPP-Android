@@ -69,6 +69,45 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
+    abstract class DataFileRemoveResult implements Result {
+
+        @State abstract String state();
+
+        @Nullable abstract ImmutableList<DataFile> dataFiles();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            ViewState.Builder builder = state.buildWith()
+                    .dataFileRemoveState(state())
+                    .dataFileRemoveError(error());
+            if (dataFiles() != null) {
+                builder.dataFiles(dataFiles());
+            }
+            return builder.build();
+        }
+
+        static DataFileRemoveResult activity() {
+            return create(State.ACTIVE, null, null);
+        }
+
+        static DataFileRemoveResult success(ImmutableList<DataFile> dataFiles) {
+            return create(State.IDLE, dataFiles, null);
+        }
+
+        static DataFileRemoveResult failure(Throwable error) {
+            return create(State.IDLE, null, error);
+        }
+
+        private static DataFileRemoveResult create(@State String state,
+                                                   @Nullable ImmutableList<DataFile> dataFiles,
+                                                   @Nullable Throwable error) {
+            return new AutoValue_Result_DataFileRemoveResult(state, dataFiles, error);
+        }
+    }
+
+    @AutoValue
     abstract class RecipientsSearchResult implements Result {
 
         @State abstract String state();

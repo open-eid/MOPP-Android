@@ -29,6 +29,7 @@ final class CryptoCreateAdapter extends
         RecyclerView.Adapter<CryptoCreateAdapter.CreateViewHolder<CryptoCreateAdapter.Item>> {
 
     final Subject<Integer> addButtonClicksSubject = PublishSubject.create();
+    final Subject<DataFile> dataFileRemoveClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientRemoveClicksSubject = PublishSubject.create();
 
@@ -55,6 +56,10 @@ final class CryptoCreateAdapter extends
         return addButtonClicksSubject
                 .filter(text -> text == R.string.crypto_create_data_files_add_button)
                 .map(ignored -> VOID);
+    }
+
+    Observable<DataFile> dataFileRemoveClicks() {
+        return dataFileRemoveClicksSubject;
     }
 
     Observable<Object> recipientsAddButtonClicks() {
@@ -180,15 +185,21 @@ final class CryptoCreateAdapter extends
     static final class DataFileViewHolder extends CreateViewHolder<DataFileItem> {
 
         private final TextView nameView;
+        private final View removeButton;
 
         DataFileViewHolder(View itemView) {
             super(itemView);
             nameView = itemView.findViewById(R.id.cryptoCreateDataFileName);
+            removeButton = itemView.findViewById(R.id.cryptoCreateDataFileRemoveButton);
         }
 
         @Override
         void bind(CryptoCreateAdapter adapter, DataFileItem item) {
             nameView.setText(item.dataFile().name());
+            clicks(removeButton)
+                    .map(ignored ->
+                            ((DataFileItem) adapter.items.get(getAdapterPosition())).dataFile())
+                    .subscribe(adapter.dataFileRemoveClicksSubject);
         }
     }
 

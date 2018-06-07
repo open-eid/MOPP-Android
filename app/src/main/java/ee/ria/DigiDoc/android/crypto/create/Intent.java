@@ -39,6 +39,18 @@ interface Intent extends MviIntent, MviAction {
     }
 
     @AutoValue
+    abstract class DataFileRemoveIntent implements Intent {
+
+        abstract ImmutableList<DataFile> dataFiles();
+
+        abstract DataFile dataFile();
+
+        static DataFileRemoveIntent create(ImmutableList<DataFile> dataFiles, DataFile dataFile) {
+            return new AutoValue_Intent_DataFileRemoveIntent(dataFiles, dataFile);
+        }
+    }
+
+    @AutoValue
     abstract class RecipientsAddButtonClickIntent implements Intent {
 
         abstract String cryptoCreateScreenId();
