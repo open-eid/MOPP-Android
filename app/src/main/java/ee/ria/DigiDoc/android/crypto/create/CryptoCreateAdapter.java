@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.crypto.create;
 
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
+
+import java.io.File;
 
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
@@ -37,9 +40,13 @@ final class CryptoCreateAdapter extends
 
     private ImmutableList<Item> items = ImmutableList.of();
 
-    void setData(ImmutableList<DataFile> dataFiles, ImmutableList<Certificate> recipients) {
-        ImmutableList.Builder<Item> builder = ImmutableList.<Item>builder()
-                .add(SubheadItem.create(R.string.crypto_create_data_files_title));
+    void setData(@Nullable File containerFile, ImmutableList<DataFile> dataFiles,
+                 ImmutableList<Certificate> recipients) {
+        ImmutableList.Builder<Item> builder = ImmutableList.builder();
+        if (containerFile != null) {
+            builder.add(NameItem.create(containerFile.getName()));
+        }
+        builder.add(SubheadItem.create(R.string.crypto_create_data_files_title));
         for (DataFile dataFile : dataFiles) {
             builder.add(DataFileItem.create(dataFile));
         }

@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
+import java.io.File;
+
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -22,6 +24,54 @@ interface Result extends MviResult<ViewState> {
 
         static VoidResult create() {
             return new AutoValue_Result_VoidResult();
+        }
+    }
+
+    @AutoValue
+    abstract class InitialResult implements Result {
+
+        @State abstract String state();
+
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract ImmutableList<DataFile> dataFiles();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            ViewState.Builder builder = state.buildWith()
+                    .dataFilesAddState(state())
+                    .dataFilesAddError(error());
+            if (containerFile() != null) {
+                builder.containerFile(containerFile());
+            }
+            if (dataFiles() != null) {
+                builder.dataFiles(dataFiles());
+            }
+            return builder.build();
+        }
+
+        static InitialResult activity() {
+            return create(State.ACTIVE, null, null, null);
+        }
+
+        static InitialResult success(File containerFile, ImmutableList<DataFile> dataFiles) {
+            return create(State.IDLE, containerFile, dataFiles, null);
+        }
+
+        static InitialResult failure(Throwable error) {
+            return create(State.IDLE, null, null, error);
+        }
+
+        static InitialResult clear() {
+            return create(State.IDLE, null, null, null);
+        }
+
+        private static InitialResult create(@State String state, @Nullable File containerFile,
+                                            @Nullable ImmutableList<DataFile> dataFiles,
+                                            @Nullable Throwable error) {
+            return new AutoValue_Result_InitialResult(state, containerFile, dataFiles, error);
         }
     }
 

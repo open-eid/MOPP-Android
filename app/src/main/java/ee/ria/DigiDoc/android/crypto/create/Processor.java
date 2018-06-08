@@ -10,7 +10,6 @@ import java.io.File;
 
 import javax.inject.Inject;
 
-import ee.ria.DigiDoc.android.utils.Immutables;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -23,7 +22,9 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.google.common.io.Files.getNameWithoutExtension;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_DATA_FILE_ADD;
+import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_INITIAL;
 import static ee.ria.DigiDoc.android.utils.Immutables.with;
 import static ee.ria.DigiDoc.android.utils.Immutables.without;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
@@ -33,7 +34,7 @@ import static ee.ria.mopplib.data.SignedContainer.mimeType;
 
 final class Processor implements ObservableTransformer<Intent, Result> {
 
-    private final ObservableTransformer<Intent.InitialIntent, Result.VoidResult> initial;
+    private final ObservableTransformer<Intent.InitialIntent, Result.InitialResult> initial;
 
     private final ObservableTransformer<Intent.UpButtonClickIntent,
                                         Result.VoidResult> upButtonClick;
@@ -66,7 +67,45 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     @Inject Processor(Navigator navigator, RecipientRepository recipientRepository,
                       ContentResolver contentResolver, FileSystem fileSystem,
                       Application application) {
-        initial = upstream -> upstream.map(intent -> Result.VoidResult.create());
+        initial = upstream -> upstream.switchMap(intent -> {
+            navigator.execute(Transaction.activityForResult(RC_CRYPTO_CREATE_INITIAL,
+                    createGetContentIntent(), null));
+            return navigator.activityResults()
+                    .filter(activityResult ->
+                            activityResult.requestCode() == RC_CRYPTO_CREATE_INITIAL)
+                    .switchMap(activityResult -> {
+                        android.content.Intent data = activityResult.data();
+                        if (activityResult.resultCode() == Activity.RESULT_OK && data != null) {
+                            return Observable
+                                    .fromCallable(() -> {
+                                        ImmutableList<FileStream> fileStreams =
+                                                parseGetContentIntent(contentResolver, data);
+                                        ImmutableList.Builder<DataFile> builder =
+                                                ImmutableList.builder();
+                                        for (FileStream fileStream : fileStreams) {
+                                            builder.add(DataFile
+                                                    .create(fileSystem.cache(fileStream)));
+                                        }
+                                        ImmutableList<DataFile> dataFiles = builder.build();
+
+                                        File containerFile = fileSystem
+                                                .generateSignatureContainerFile(
+                                                        getNameWithoutExtension(
+                                                                dataFiles.get(0).file().getName()) +
+                                                                ".cdoc");
+
+                                        return Result.InitialResult.success(containerFile,
+                                                dataFiles);
+                                    })
+                                    .onErrorReturn(Result.InitialResult::failure)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .startWith(Result.InitialResult.activity());
+                        } else {
+                            return Observable.just(Result.InitialResult.clear());
+                        }
+                    });
+        });
 
         upButtonClick = upstream -> upstream.switchMap(intent -> {
             navigator.execute(Transaction.pop());
@@ -81,7 +120,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             navigator.execute(Transaction.activityForResult(RC_CRYPTO_CREATE_DATA_FILE_ADD,
                     createGetContentIntent(), null));
             return navigator.activityResults()
-                    .filter(activityResult -> activityResult.requestCode() == RC_CRYPTO_CREATE_DATA_FILE_ADD)
+                    .filter(activityResult ->
+                            activityResult.requestCode() == RC_CRYPTO_CREATE_DATA_FILE_ADD)
                     .switchMap(activityResult -> {
                         android.content.Intent data = activityResult.data();
                         if (activityResult.resultCode() == Activity.RESULT_OK && data != null) {
@@ -114,7 +154,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             //noinspection ResultOfMethodCallIgnored
                             intent.dataFile().file().delete();
                             return Result.DataFileRemoveResult.success(
-                                    Immutables.without(intent.dataFiles(), intent.dataFile()));
+                                    without(intent.dataFiles(), intent.dataFile()));
                         })
                         .onErrorReturn(Result.DataFileRemoveResult::failure)
                         .subscribeOn(Schedulers.io())

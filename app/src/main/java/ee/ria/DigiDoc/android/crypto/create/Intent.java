@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
+import java.io.File;
+
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
@@ -133,15 +135,15 @@ interface Intent extends MviIntent, MviAction {
     @AutoValue
     abstract class EncryptIntent implements Intent {
 
-        abstract String name();
+        abstract File containerFile();
 
         abstract ImmutableList<DataFile> dataFiles();
 
         abstract ImmutableList<Certificate> recipients();
 
-        static EncryptIntent create(String name, ImmutableList<DataFile> dataFiles,
+        static EncryptIntent create(File containerFile, ImmutableList<DataFile> dataFiles,
                                     ImmutableList<Certificate> recipients) {
-            return new AutoValue_Intent_EncryptIntent(name, dataFiles, recipients);
+            return new AutoValue_Intent_EncryptIntent(containerFile, dataFiles, recipients);
         }
     }
 }

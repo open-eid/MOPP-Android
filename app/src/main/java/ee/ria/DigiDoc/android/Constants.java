@@ -10,7 +10,8 @@ public final class Constants {
 
     public static final int RC_SIGNATURE_CREATE_DOCUMENTS_ADD = 0;
     public static final int RC_SIGNATURE_UPDATE_DOCUMENTS_ADD = 1;
-    public static final int RC_CRYPTO_CREATE_DATA_FILE_ADD = 2;
+    public static final int RC_CRYPTO_CREATE_INITIAL = 2;
+    public static final int RC_CRYPTO_CREATE_DATA_FILE_ADD = 3;
 
     /**
      * Sub-directory name in {@link android.content.Context#getFilesDir() files dir} for signature

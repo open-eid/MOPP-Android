@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
+import java.io.File;
+
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -13,6 +15,7 @@ import ee.ria.cryptolib.DataFile;
 @AutoValue
 abstract class ViewState implements MviViewState {
 
+    @Nullable abstract File containerFile();
     abstract ImmutableList<DataFile> dataFiles();
     abstract ImmutableList<Certificate> recipients();
 
@@ -45,6 +48,7 @@ abstract class ViewState implements MviViewState {
 
     @AutoValue.Builder
     interface Builder {
+        Builder containerFile(@Nullable File containerFile);
         Builder dataFiles(ImmutableList<DataFile> dataFiles);
         Builder recipients(ImmutableList<Certificate> recipients);
         Builder dataFilesAddState(@State String dataFilesAddState);

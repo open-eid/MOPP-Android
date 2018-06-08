@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import com.bluelinelabs.conductor.Controller;
 import com.google.common.collect.ImmutableList;
 
+import java.io.File;
+
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -41,11 +43,16 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private View activityIndicatorView;
     private View encryptButton;
 
+    private File containerFile;
     private ImmutableList<DataFile> dataFiles = ImmutableList.of();
     private ImmutableList<Certificate> recipients = ImmutableList.of();
 
     @SuppressWarnings("WeakerAccess")
     public CryptoCreateScreen() {}
+
+    private Observable<Intent.InitialIntent> initialIntent() {
+        return Observable.just(Intent.InitialIntent.create());
+    }
 
     private Observable<Intent.UpButtonClickIntent> upButtonClickIntent() {
         return navigationClicks(toolbarView).map(ignored -> Intent.UpButtonClickIntent.create());
@@ -78,25 +85,26 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
     private Observable<Intent.EncryptIntent> encryptIntent() {
         return clicks(encryptButton)
-                .map(ignored -> Intent.EncryptIntent.create("test1.cdoc", dataFiles, recipients));
+                .map(ignored -> Intent.EncryptIntent.create(containerFile, dataFiles, recipients));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
-        return Observable.mergeArray(upButtonClickIntent(), dataFilesAddIntent(),
+        return Observable.mergeArray(initialIntent(), upButtonClickIntent(), dataFilesAddIntent(),
                 dataFileRemoveIntent(), dataFileViewIntent(), recipientsAddButtonClickIntent(),
                 recipientRemoveIntent(), encryptIntent());
     }
 
     @Override
     public void render(ViewState state) {
+        containerFile = state.containerFile();
         dataFiles = state.dataFiles();
         recipients = state.recipients();
 
         setActivity(state.dataFilesAddState().equals(State.ACTIVE) ||
                 state.dataFileRemoveState().equals(State.ACTIVE));
-        adapter.setData(dataFiles, recipients);
+        adapter.setData(containerFile, dataFiles, recipients);
     }
 
     private void setActivity(boolean activity) {
