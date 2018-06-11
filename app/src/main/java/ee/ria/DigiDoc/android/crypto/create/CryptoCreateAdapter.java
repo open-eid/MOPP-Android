@@ -47,8 +47,9 @@ final class CryptoCreateAdapter extends
             builder.add(NameItem.create(containerFile.getName()));
         }
         builder.add(SubheadItem.create(R.string.crypto_create_data_files_title));
+        boolean dataFileRemoveButtonVisible = dataFiles.size() > 1;
         for (DataFile dataFile : dataFiles) {
-            builder.add(DataFileItem.create(dataFile));
+            builder.add(DataFileItem.create(dataFile, dataFileRemoveButtonVisible));
         }
         builder.add(AddButtonItem.create(R.string.crypto_create_data_files_add_button))
                 .add(SubheadItem.create(R.string.crypto_create_recipients_title));
@@ -217,6 +218,7 @@ final class CryptoCreateAdapter extends
                             ((DataFileItem) adapter.items.get(getAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileClicksSubject);
             nameView.setText(item.dataFile().name());
+            removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton)
                     .map(ignored ->
                             ((DataFileItem) adapter.items.get(getAdapterPosition())).dataFile())
@@ -309,9 +311,11 @@ final class CryptoCreateAdapter extends
 
         abstract DataFile dataFile();
 
-        static DataFileItem create(DataFile dataFile) {
+        abstract boolean removeButtonVisible();
+
+        static DataFileItem create(DataFile dataFile, boolean removeButtonVisible) {
             return new AutoValue_CryptoCreateAdapter_DataFileItem(
-                    R.layout.crypto_create_list_item_data_file, dataFile);
+                    R.layout.crypto_create_list_item_data_file, dataFile, removeButtonVisible);
         }
     }
 
