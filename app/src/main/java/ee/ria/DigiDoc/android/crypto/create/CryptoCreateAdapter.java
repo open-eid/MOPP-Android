@@ -266,7 +266,7 @@ final class CryptoCreateAdapter extends
             nameView.setText(item.recipient().commonName());
             infoView.setText(itemView.getResources().getString(
                     R.string.crypto_recipient_info, formatter.eidType(item.recipient().type()),
-                    item.recipient().notAfter()));
+                    formatter.instant(item.recipient().notAfter())));
             clicks(removeButton)
                     .map(ignored ->
                             ((RecipientItem) adapter.items.get(getAdapterPosition())).recipient())

@@ -57,7 +57,7 @@ final class CryptoRecipientsAdapter extends
         holder.nameView.setText(certificate.commonName());
         holder.infoView.setText(holder.itemView.getResources().getString(
                 R.string.crypto_recipient_info, formatter.eidType(certificate.type()),
-                certificate.notAfter()));
+                formatter.instant(certificate.notAfter())));
         if (existing.contains(certificate)) {
             holder.addButton.setEnabled(false);
             holder.addButton.setText(R.string.crypto_recipient_add_button_added);
