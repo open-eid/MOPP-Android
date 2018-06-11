@@ -56,6 +56,9 @@ final class CryptoCreateAdapter extends
         for (Certificate recipient : recipients) {
             builder.add(RecipientItem.create(recipient));
         }
+        if (recipients.size() == 0) {
+            builder.add(EmptyTextItem.create());
+        }
         builder.add(AddButtonItem.create(R.string.crypto_create_recipients_add_button));
 
         ImmutableList<Item> items = builder.build();
@@ -131,6 +134,8 @@ final class CryptoCreateAdapter extends
                     return new SubheadViewHolder(itemView);
                 case R.layout.crypto_create_list_item_add_button:
                     return new AddButtonViewHolder(itemView);
+                case R.layout.crypto_create_list_item_empty_text:
+                    return new EmptyTextViewHolder(itemView);
                 case R.layout.crypto_create_list_item_data_file:
                     return new DataFileViewHolder(itemView);
                 case R.layout.crypto_list_item_recipient:
@@ -198,6 +203,16 @@ final class CryptoCreateAdapter extends
                             ((AddButtonItem) adapter.items.get(getAdapterPosition())).text())
                     .subscribe(adapter.addButtonClicksSubject);
         }
+    }
+
+    static final class EmptyTextViewHolder extends CreateViewHolder<EmptyTextItem> {
+
+        EmptyTextViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        void bind(CryptoCreateAdapter adapter, EmptyTextItem item) {}
     }
 
     static final class DataFileViewHolder extends CreateViewHolder<DataFileItem> {
@@ -303,6 +318,15 @@ final class CryptoCreateAdapter extends
         static AddButtonItem create(@StringRes int text) {
             return new AutoValue_CryptoCreateAdapter_AddButtonItem(
                     R.layout.crypto_create_list_item_add_button, text);
+        }
+    }
+
+    @AutoValue
+    static abstract class EmptyTextItem extends Item {
+
+        static EmptyTextItem create() {
+            return new AutoValue_CryptoCreateAdapter_EmptyTextItem(
+                    R.layout.crypto_create_list_item_empty_text);
         }
     }
 

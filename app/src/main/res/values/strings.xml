@@ -167,6 +167,7 @@
     <string name="crypto_create_data_files_add_button" tools:ignore="MissingTranslation">+ ADD MORE FILES</string>
     <string name="crypto_create_data_file_remove_button" tools:ignore="MissingTranslation">Remove data file</string>
     <string name="crypto_create_recipients_title" tools:ignore="MissingTranslation">Recipients</string>
+    <string name="crypto_create_recipients_empty" tools:ignore="MissingTranslation">Recipients are missing</string>
     <string name="crypto_create_recipients_add_button" tools:ignore="MissingTranslation">+ ADD RECIPIENT</string>
 
     <string name="crypto_recipient_type" tools:ignore="MissingTranslation">Recipient</string>
