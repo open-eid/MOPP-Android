@@ -32,9 +32,14 @@ public final class RecipientRepository {
             connection.bind();
 
             boolean serialNumberSearch = CharMatcher.inRange('0', '9').matchesAllOf(query);
+            String filter;
+            if (serialNumberSearch) {
+                filter = String.format(Locale.US, "(serialNumber=%s)", query);
+            } else {
+                filter = String.format(Locale.US, "(cn=*%s*)", query);
+            }
 
-            EntryCursor cursor = connection.search("c=EE", String.format(Locale.US, "(%s=%s)",
-                    serialNumberSearch ? "serialNumber" : "cn", query), SearchScope.SUBTREE,
+            EntryCursor cursor = connection.search("c=EE", filter, SearchScope.SUBTREE,
                     "userCertificate;binary");
             while (cursor.next()) {
                 Entry entry = cursor.get();
