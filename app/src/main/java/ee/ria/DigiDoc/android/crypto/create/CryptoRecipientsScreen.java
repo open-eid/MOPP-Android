@@ -18,7 +18,6 @@ import com.jakewharton.rxbinding2.support.v7.widget.SearchViewQueryTextEvent;
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -30,6 +29,7 @@ import io.reactivex.subjects.Subject;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxSearchView.queryTextChangeEvents;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.Constants.VOID;
 
 public final class CryptoRecipientsScreen extends Controller implements Screen,
@@ -49,12 +49,12 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
     private final ViewDisposables disposables = new ViewDisposables();
     private CryptoCreateViewModel viewModel;
-    private Formatter formatter;
     private Navigator navigator;
 
     private Toolbar toolbarView;
     private SearchView searchView;
-    private CryptoRecipientsAdapter adapter;
+    private CryptoCreateAdapter adapter;
+    private View doneButton;
     private View activityOverlayView;
     private View activityIndicatorView;
 
@@ -68,8 +68,11 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
     private Observable<Intent.RecipientsScreenUpButtonClickIntent>
             recipientsScreenUpButtonClickIntent() {
-        return navigationClicks(toolbarView)
-                .map(ignored -> Intent.RecipientsScreenUpButtonClickIntent.create());
+        return Observable.merge(
+                navigationClicks(toolbarView)
+                        .map(ignored -> Intent.RecipientsScreenUpButtonClickIntent.create()),
+                clicks(doneButton)
+                        .map(ignored -> Intent.RecipientsScreenUpButtonClickIntent.create()));
     }
 
     private Observable<Intent.RecipientsSearchIntent> recipientsSearchIntent() {
@@ -83,14 +86,19 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     }
 
     private Observable<Intent.RecipientAddIntent> recipientAddIntent() {
-        return adapter.addButtonClicks()
+        return adapter.recipientAddClicks()
                 .map(recipient -> Intent.RecipientAddIntent.create(recipients, recipient));
+    }
+
+    private Observable<Intent.RecipientRemoveIntent> recipientRemoveIntent() {
+        return adapter.recipientRemoveClicks()
+                .map(recipient -> Intent.RecipientRemoveIntent.create(recipients, recipient));
     }
 
     @Override
     public Observable<Intent> intents() {
         return Observable.merge(recipientsScreenUpButtonClickIntent(), recipientsSearchIntent(),
-                recipientAddIntent());
+                recipientAddIntent(), recipientRemoveIntent());
     }
 
     private void setActivity(boolean activity) {
@@ -103,7 +111,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         recipients = state.recipients();
 
         setActivity(state.recipientsSearchState().equals(State.ACTIVE));
-        adapter.setData(state.recipients(), state.recipientsSearchResult());
+        adapter.dataForRecipients(state.recipientsSearchResult(), recipients);
     }
 
     @Override
@@ -117,7 +125,6 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         super.onContextAvailable(context);
         viewModel = Application.component(context).navigator()
                 .viewModel(cryptoCreateScreenId, CryptoCreateViewModel.class);
-        formatter = Application.component(context).formatter();
         navigator = Application.component(context).navigator();
     }
 
@@ -136,7 +143,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         searchView.setSubmitButtonEnabled(true);
         RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
-        listView.setAdapter(adapter = new CryptoRecipientsAdapter(formatter));
+        listView.setAdapter(adapter = new CryptoCreateAdapter());
+        doneButton = view.findViewById(R.id.cryptoRecipientsDoneButton);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         return view;

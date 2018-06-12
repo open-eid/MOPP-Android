@@ -37,11 +37,12 @@ final class CryptoCreateAdapter extends
     final Subject<DataFile> dataFileRemoveClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientRemoveClicksSubject = PublishSubject.create();
+    final Subject<Certificate> recipientAddClicksSubject = PublishSubject.create();
 
     private ImmutableList<Item> items = ImmutableList.of();
 
-    void setData(@Nullable File containerFile, ImmutableList<DataFile> dataFiles,
-                 ImmutableList<Certificate> recipients, boolean successMessageVisible) {
+    void dataForContainer(@Nullable File containerFile, ImmutableList<DataFile> dataFiles,
+                          ImmutableList<Certificate> recipients, boolean successMessageVisible) {
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (successMessageVisible) {
             builder.add(SuccessItem.create());
@@ -57,15 +58,32 @@ final class CryptoCreateAdapter extends
         builder.add(AddButtonItem.create(R.string.crypto_create_data_files_add_button))
                 .add(SubheadItem.create(R.string.crypto_create_recipients_title));
         for (Certificate recipient : recipients) {
-            builder.add(RecipientItem.create(recipient));
+            builder.add(RecipientItem.create(recipient, true, false, false));
         }
         if (recipients.size() == 0) {
             builder.add(EmptyTextItem.create());
         }
         builder.add(AddButtonItem.create(R.string.crypto_create_recipients_add_button));
+        items(builder.build());
+    }
 
-        ImmutableList<Item> items = builder.build();
+    void dataForRecipients(ImmutableList<Certificate> searchResults,
+                           ImmutableList<Certificate> recipients) {
+        ImmutableList.Builder<Item> builder = ImmutableList.builder();
+        for (Certificate searchResult : searchResults) {
+            builder.add(RecipientItem.create(searchResult, false, true,
+                    !recipients.contains(searchResult)));
+        }
+        if (recipients.size() > 0) {
+            builder.add(SubheadItem.create(R.string.crypto_recipients_selected_subhead));
+        }
+        for (Certificate recipient : recipients) {
+            builder.add(RecipientItem.create(recipient, true, false, false));
+        }
+        items(builder.build());
+    }
 
+    private void items(ImmutableList<Item> items) {
         DiffUtil.DiffResult result = DiffUtil
                 .calculateDiff(new DiffUtilCallback(this.items, items));
         this.items = items;
@@ -94,6 +112,10 @@ final class CryptoCreateAdapter extends
 
     Observable<Certificate> recipientRemoveClicks() {
         return recipientRemoveClicksSubject;
+    }
+
+    Observable<Certificate> recipientAddClicks() {
+        return recipientAddClicksSubject;
     }
 
     @Override
@@ -251,6 +273,7 @@ final class CryptoCreateAdapter extends
         private final TextView nameView;
         private final TextView infoView;
         private final View removeButton;
+        private final Button addButton;
 
         RecipientViewHolder(View itemView) {
             super(itemView);
@@ -258,6 +281,7 @@ final class CryptoCreateAdapter extends
             nameView = itemView.findViewById(R.id.cryptoRecipientName);
             infoView = itemView.findViewById(R.id.cryptoRecipientInfo);
             removeButton = itemView.findViewById(R.id.cryptoRecipientRemoveButton);
+            addButton = itemView.findViewById(R.id.cryptoRecipientAddButton);
         }
 
         @Override
@@ -270,10 +294,20 @@ final class CryptoCreateAdapter extends
             infoView.setText(itemView.getResources().getString(
                     R.string.crypto_recipient_info, formatter.eidType(item.recipient().type()),
                     formatter.instant(item.recipient().notAfter())));
+            removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton)
                     .map(ignored ->
                             ((RecipientItem) adapter.items.get(getAdapterPosition())).recipient())
                     .subscribe(adapter.recipientRemoveClicksSubject);
+            addButton.setVisibility(item.addButtonVisible() ? View.VISIBLE : View.GONE);
+            addButton.setEnabled(item.addButtonEnabled());
+            addButton.setText(item.addButtonEnabled()
+                    ? R.string.crypto_recipient_add_button
+                    : R.string.crypto_recipient_add_button_added);
+            clicks(addButton)
+                    .map(ignored ->
+                            ((RecipientItem) adapter.items.get(getAdapterPosition())).recipient())
+                    .subscribe(adapter.recipientAddClicksSubject);
         }
     }
 
@@ -351,9 +385,17 @@ final class CryptoCreateAdapter extends
 
         abstract Certificate recipient();
 
-        static RecipientItem create(Certificate recipient) {
+        abstract boolean removeButtonVisible();
+
+        abstract boolean addButtonVisible();
+
+        abstract boolean addButtonEnabled();
+
+        static RecipientItem create(Certificate recipient, boolean removeButtonVisible,
+                                    boolean addButtonVisible, boolean addButtonEnabled) {
             return new AutoValue_CryptoCreateAdapter_RecipientItem(
-                    R.layout.crypto_list_item_recipient, recipient);
+                    R.layout.crypto_list_item_recipient, recipient, removeButtonVisible,
+                    addButtonVisible, addButtonEnabled);
         }
     }
 
@@ -379,7 +421,19 @@ final class CryptoCreateAdapter extends
 
         @Override
         public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-            return areContentsTheSame(oldItemPosition, newItemPosition);
+            Item oldItem = oldList.get(oldItemPosition);
+            Item newItem = newList.get(newItemPosition);
+            if (oldItem instanceof DataFileItem && newItem instanceof DataFileItem) {
+                return ((DataFileItem) oldItem).dataFile()
+                        .equals(((DataFileItem) newItem).dataFile());
+            } else if (oldItem instanceof RecipientItem && newItem instanceof RecipientItem) {
+                RecipientItem oldRecipientItem = (RecipientItem) oldItem;
+                RecipientItem newRecipientItem = (RecipientItem) newItem;
+                return oldRecipientItem.recipient().equals(newRecipientItem.recipient()) &&
+                        oldRecipientItem.removeButtonVisible()
+                                == newRecipientItem.removeButtonVisible();
+            }
+            return oldItem.equals(newItem);
         }
 
         @Override

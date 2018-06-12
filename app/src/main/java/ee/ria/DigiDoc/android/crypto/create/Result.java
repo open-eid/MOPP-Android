@@ -139,7 +139,8 @@ interface Result extends MviResult<ViewState> {
         }
 
         static DataFileRemoveResult activity() {
-            return create(State.ACTIVE, null, null);
+            // set it as idle since it takes so little time and causes flickering in the UI
+            return create(State.IDLE, null, null);
         }
 
         static DataFileRemoveResult success(ImmutableList<DataFile> dataFiles) {

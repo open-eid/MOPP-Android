@@ -44,6 +44,13 @@
             android:layout_weight="1"
             android:scrollbars="vertical" />
 
+        <Button
+            android:id="@id/cryptoRecipientsDoneButton"
+            style="@style/Widget.Application.Button.Container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/crypto_recipients_done_button" />
+
     </LinearLayout>
 
     <FrameLayout
