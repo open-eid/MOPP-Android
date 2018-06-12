@@ -41,8 +41,11 @@ final class CryptoCreateAdapter extends
     private ImmutableList<Item> items = ImmutableList.of();
 
     void setData(@Nullable File containerFile, ImmutableList<DataFile> dataFiles,
-                 ImmutableList<Certificate> recipients) {
+                 ImmutableList<Certificate> recipients, boolean successMessageVisible) {
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
+        if (successMessageVisible) {
+            builder.add(SuccessItem.create());
+        }
         if (containerFile != null) {
             builder.add(NameItem.create(containerFile.getName()));
         }

@@ -32,6 +32,10 @@ abstract class ViewState implements MviViewState {
     @State abstract String recipientAddState();
     @Nullable abstract Throwable recipientAddError();
 
+    @State abstract String encryptState();
+    abstract boolean encryptSuccessMessageVisible();
+    @Nullable abstract Throwable encryptError();
+
     abstract Builder buildWith();
 
     static ViewState initial() {
@@ -43,6 +47,8 @@ abstract class ViewState implements MviViewState {
                 .recipientsSearchState(State.IDLE)
                 .recipientsSearchResult(ImmutableList.of())
                 .recipientAddState(State.IDLE)
+                .encryptState(State.IDLE)
+                .encryptSuccessMessageVisible(false)
                 .build();
     }
 
@@ -60,6 +66,9 @@ abstract class ViewState implements MviViewState {
         Builder recipientsSearchError(@Nullable Throwable recipientsSearchError);
         Builder recipientAddState(@State String recipientAddState);
         Builder recipientAddError(@Nullable Throwable recipientAddError);
+        Builder encryptState(@State String state);
+        Builder encryptSuccessMessageVisible(boolean encryptSuccessMessageVisible);
+        Builder encryptError(@Nullable Throwable encryptError);
         ViewState build();
     }
 }

@@ -103,8 +103,9 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         recipients = state.recipients();
 
         setActivity(state.dataFilesAddState().equals(State.ACTIVE) ||
-                state.dataFileRemoveState().equals(State.ACTIVE));
-        adapter.setData(containerFile, dataFiles, recipients);
+                state.dataFileRemoveState().equals(State.ACTIVE) ||
+                state.encryptState().equals(State.ACTIVE));
+        adapter.setData(containerFile, dataFiles, recipients, state.encryptSuccessMessageVisible());
     }
 
     private void setActivity(boolean activity) {

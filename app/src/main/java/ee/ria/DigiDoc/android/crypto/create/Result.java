@@ -278,13 +278,40 @@ interface Result extends MviResult<ViewState> {
     @AutoValue
     abstract class EncryptResult implements Result {
 
+        @State abstract String state();
+
+        abstract boolean successMessageVisible();
+
+        @Nullable abstract Throwable error();
+
         @Override
         public ViewState reduce(ViewState state) {
-            return state;
+            return state.buildWith()
+                    .encryptState(state())
+                    .encryptSuccessMessageVisible(successMessageVisible())
+                    .encryptError(error())
+                    .build();
         }
 
-        static EncryptResult create() {
-            return new AutoValue_Result_EncryptResult();
+        static EncryptResult activity() {
+            return create(State.ACTIVE, false, null);
+        }
+
+        static EncryptResult successMessage() {
+            return create(State.IDLE, true, null);
+        }
+
+        static EncryptResult clear() {
+            return create(State.IDLE, false, null);
+        }
+
+        static EncryptResult failure(Throwable error) {
+            return create(State.IDLE, false, error);
+        }
+
+        private static EncryptResult create(@State String state, boolean successMessageVisible,
+                                            @Nullable Throwable error) {
+            return new AutoValue_Result_EncryptResult(state, successMessageVisible, error);
         }
     }
 }

@@ -6,10 +6,16 @@ import android.content.ContentResolver;
 
 import com.google.common.collect.ImmutableList;
 
+import org.openeid.cdoc4j.CDOCBuilder;
+
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -19,10 +25,12 @@ import ee.ria.cryptolib.RecipientRepository;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.google.common.io.Files.getNameWithoutExtension;
+import static com.google.common.io.Files.toByteArray;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_DATA_FILE_ADD;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_INITIAL;
 import static ee.ria.DigiDoc.android.utils.Immutables.with;
@@ -132,8 +140,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                         ImmutableList.Builder<DataFile> builder =
                                                 ImmutableList.<DataFile>builder().addAll(dataFiles);
                                         for (FileStream fileStream : fileStreams) {
-                                            builder.add(DataFile
-                                                    .create(fileSystem.cache(fileStream)));
+                                            DataFile dataFile = DataFile
+                                                    .create(fileSystem.cache(fileStream));
+                                            if (!dataFiles.contains(dataFile)) {
+                                                builder.add(dataFile);
+                                            }
                                         }
                                         return builder.build();
                                     })
@@ -204,7 +215,34 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 without(intent.recipients(), intent.recipient()))));
 
         encrypt = upstream -> upstream.switchMap(intent -> {
-            return Observable.just(Result.EncryptResult.create());
+            File containerFile = intent.containerFile();
+            ImmutableList<DataFile> dataFiles = intent.dataFiles();
+            ImmutableList<Certificate> recipients = intent.recipients();
+            return Single
+                    .fromCallable(() -> {
+                        CDOCBuilder builder = CDOCBuilder.defaultVersion();
+                        for (DataFile dataFile : dataFiles) {
+                            builder.withDataFile(new org.openeid.cdoc4j.DataFile(dataFile.name(),
+                                    toByteArray(dataFile.file())));
+                        }
+                        for (Certificate recipient : recipients) {
+                            builder.withRecipient(new ByteArrayInputStream(
+                                    recipient.data().toByteArray()));
+                        }
+                        FileOutputStream outputStream = new FileOutputStream(containerFile);
+                        builder.buildToOutputStream(outputStream);
+                        outputStream.close();
+                        return Result.EncryptResult.successMessage();
+                    })
+                    .flatMapObservable(result ->
+                            Observable
+                                    .timer(3, TimeUnit.SECONDS)
+                                    .map(ignored -> Result.EncryptResult.clear())
+                                    .startWith(result))
+                    .onErrorReturn(Result.EncryptResult::failure)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .startWith(Result.EncryptResult.activity());
         });
     }
 
