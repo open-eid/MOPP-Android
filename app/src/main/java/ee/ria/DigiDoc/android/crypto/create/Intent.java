@@ -10,15 +10,16 @@ import java.io.File;
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
-import ee.ria.cryptolib.DataFile;
 
 interface Intent extends MviIntent, MviAction {
 
     @AutoValue
     abstract class InitialIntent implements Intent {
 
-        static InitialIntent create() {
-            return new AutoValue_Intent_InitialIntent();
+        @Nullable abstract File containerFile();
+
+        static InitialIntent create(@Nullable File containerFile) {
+            return new AutoValue_Intent_InitialIntent(containerFile);
         }
     }
 
@@ -33,9 +34,9 @@ interface Intent extends MviIntent, MviAction {
     @AutoValue
     abstract class DataFilesAddIntent implements Intent {
 
-        @Nullable abstract ImmutableList<DataFile> dataFiles();
+        @Nullable abstract ImmutableList<File> dataFiles();
 
-        static DataFilesAddIntent start(ImmutableList<DataFile> dataFiles) {
+        static DataFilesAddIntent start(ImmutableList<File> dataFiles) {
             return create(dataFiles);
         }
 
@@ -43,7 +44,7 @@ interface Intent extends MviIntent, MviAction {
             return create(null);
         }
 
-        private static DataFilesAddIntent create(@Nullable ImmutableList<DataFile> dataFiles) {
+        private static DataFilesAddIntent create(@Nullable ImmutableList<File> dataFiles) {
             return new AutoValue_Intent_DataFilesAddIntent(dataFiles);
         }
     }
@@ -51,11 +52,11 @@ interface Intent extends MviIntent, MviAction {
     @AutoValue
     abstract class DataFileRemoveIntent implements Intent {
 
-        abstract ImmutableList<DataFile> dataFiles();
+        abstract ImmutableList<File> dataFiles();
 
-        abstract DataFile dataFile();
+        abstract File dataFile();
 
-        static DataFileRemoveIntent create(ImmutableList<DataFile> dataFiles, DataFile dataFile) {
+        static DataFileRemoveIntent create(ImmutableList<File> dataFiles, File dataFile) {
             return new AutoValue_Intent_DataFileRemoveIntent(dataFiles, dataFile);
         }
     }
@@ -63,9 +64,9 @@ interface Intent extends MviIntent, MviAction {
     @AutoValue
     abstract class DataFileViewIntent implements Intent {
 
-        abstract DataFile dataFile();
+        abstract File dataFile();
 
-        static DataFileViewIntent create(DataFile dataFile) {
+        static DataFileViewIntent create(File dataFile) {
             return new AutoValue_Intent_DataFileViewIntent(dataFile);
         }
     }
@@ -137,11 +138,11 @@ interface Intent extends MviIntent, MviAction {
 
         abstract File containerFile();
 
-        abstract ImmutableList<DataFile> dataFiles();
+        abstract ImmutableList<File> dataFiles();
 
         abstract ImmutableList<Certificate> recipients();
 
-        static EncryptIntent create(File containerFile, ImmutableList<DataFile> dataFiles,
+        static EncryptIntent create(File containerFile, ImmutableList<File> dataFiles,
                                     ImmutableList<Certificate> recipients) {
             return new AutoValue_Intent_EncryptIntent(containerFile, dataFiles, recipients);
         }

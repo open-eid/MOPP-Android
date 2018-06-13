@@ -10,7 +10,7 @@ import java.io.File;
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.mvi.State;
-import ee.ria.cryptolib.DataFile;
+import ee.ria.cryptolib.CryptoContainer;
 
 interface Result extends MviResult<ViewState> {
 
@@ -34,7 +34,9 @@ interface Result extends MviResult<ViewState> {
 
         @Nullable abstract File containerFile();
 
-        @Nullable abstract ImmutableList<DataFile> dataFiles();
+        @Nullable abstract ImmutableList<File> dataFiles();
+
+        @Nullable abstract ImmutableList<Certificate> recipients();
 
         @Nullable abstract Throwable error();
 
@@ -49,29 +51,39 @@ interface Result extends MviResult<ViewState> {
             if (dataFiles() != null) {
                 builder.dataFiles(dataFiles());
             }
+            if (recipients() != null) {
+                builder.recipients(recipients());
+            }
             return builder.build();
         }
 
         static InitialResult activity() {
-            return create(State.ACTIVE, null, null, null);
+            return create(State.ACTIVE, null, null, null, null);
         }
 
-        static InitialResult success(File containerFile, ImmutableList<DataFile> dataFiles) {
-            return create(State.IDLE, containerFile, dataFiles, null);
+        static InitialResult success(File containerFile, ImmutableList<File> dataFiles) {
+            return create(State.IDLE, containerFile, dataFiles, null, null);
+        }
+
+        static InitialResult success(CryptoContainer container) {
+            return create(State.IDLE, container.file(), container.dataFiles(),
+                    container.recipients(), null);
         }
 
         static InitialResult failure(Throwable error) {
-            return create(State.IDLE, null, null, error);
+            return create(State.IDLE, null, null, null, error);
         }
 
         static InitialResult clear() {
-            return create(State.IDLE, null, null, null);
+            return create(State.IDLE, null, null, null, null);
         }
 
         private static InitialResult create(@State String state, @Nullable File containerFile,
-                                            @Nullable ImmutableList<DataFile> dataFiles,
+                                            @Nullable ImmutableList<File> dataFiles,
+                                            @Nullable ImmutableList<Certificate> recipients,
                                             @Nullable Throwable error) {
-            return new AutoValue_Result_InitialResult(state, containerFile, dataFiles, error);
+            return new AutoValue_Result_InitialResult(state, containerFile, dataFiles, recipients,
+                    error);
         }
     }
 
@@ -80,7 +92,7 @@ interface Result extends MviResult<ViewState> {
 
         @State abstract String state();
 
-        @Nullable abstract ImmutableList<DataFile> dataFiles();
+        @Nullable abstract ImmutableList<File> dataFiles();
 
         @Nullable abstract Throwable error();
 
@@ -99,7 +111,7 @@ interface Result extends MviResult<ViewState> {
             return create(State.ACTIVE, null, null);
         }
 
-        static DataFilesAddResult success(ImmutableList<DataFile> dataFiles) {
+        static DataFilesAddResult success(ImmutableList<File> dataFiles) {
             return create(State.IDLE, dataFiles, null);
         }
 
@@ -112,7 +124,7 @@ interface Result extends MviResult<ViewState> {
         }
 
         private static DataFilesAddResult create(@State String state,
-                                                 @Nullable ImmutableList<DataFile> dataFiles,
+                                                 @Nullable ImmutableList<File> dataFiles,
                                                  @Nullable Throwable error) {
             return new AutoValue_Result_DataFilesAddResult(state, dataFiles, error);
         }
@@ -123,7 +135,7 @@ interface Result extends MviResult<ViewState> {
 
         @State abstract String state();
 
-        @Nullable abstract ImmutableList<DataFile> dataFiles();
+        @Nullable abstract ImmutableList<File> dataFiles();
 
         @Nullable abstract Throwable error();
 
@@ -143,7 +155,7 @@ interface Result extends MviResult<ViewState> {
             return create(State.IDLE, null, null);
         }
 
-        static DataFileRemoveResult success(ImmutableList<DataFile> dataFiles) {
+        static DataFileRemoveResult success(ImmutableList<File> dataFiles) {
             return create(State.IDLE, dataFiles, null);
         }
 
@@ -152,7 +164,7 @@ interface Result extends MviResult<ViewState> {
         }
 
         private static DataFileRemoveResult create(@State String state,
-                                                   @Nullable ImmutableList<DataFile> dataFiles,
+                                                   @Nullable ImmutableList<File> dataFiles,
                                                    @Nullable Throwable error) {
             return new AutoValue_Result_DataFileRemoveResult(state, dataFiles, error);
         }

@@ -21,7 +21,6 @@ import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.Formatter;
-import ee.ria.cryptolib.DataFile;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -33,15 +32,15 @@ final class CryptoCreateAdapter extends
         RecyclerView.Adapter<CryptoCreateAdapter.CreateViewHolder<CryptoCreateAdapter.Item>> {
 
     final Subject<Integer> addButtonClicksSubject = PublishSubject.create();
-    final Subject<DataFile> dataFileClicksSubject = PublishSubject.create();
-    final Subject<DataFile> dataFileRemoveClicksSubject = PublishSubject.create();
+    final Subject<File> dataFileClicksSubject = PublishSubject.create();
+    final Subject<File> dataFileRemoveClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientRemoveClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientAddClicksSubject = PublishSubject.create();
 
     private ImmutableList<Item> items = ImmutableList.of();
 
-    void dataForContainer(@Nullable File containerFile, ImmutableList<DataFile> dataFiles,
+    void dataForContainer(@Nullable File containerFile, ImmutableList<File> dataFiles,
                           ImmutableList<Certificate> recipients, boolean successMessageVisible) {
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (successMessageVisible) {
@@ -52,7 +51,7 @@ final class CryptoCreateAdapter extends
         }
         builder.add(SubheadItem.create(R.string.crypto_create_data_files_title));
         boolean dataFileRemoveButtonVisible = dataFiles.size() > 1;
-        for (DataFile dataFile : dataFiles) {
+        for (File dataFile : dataFiles) {
             builder.add(DataFileItem.create(dataFile, dataFileRemoveButtonVisible));
         }
         builder.add(AddButtonItem.create(R.string.crypto_create_data_files_add_button))
@@ -96,11 +95,11 @@ final class CryptoCreateAdapter extends
                 .map(ignored -> VOID);
     }
 
-    Observable<DataFile> dataFileClicks() {
+    Observable<File> dataFileClicks() {
         return dataFileClicksSubject;
     }
 
-    Observable<DataFile> dataFileRemoveClicks() {
+    Observable<File> dataFileRemoveClicks() {
         return dataFileRemoveClicksSubject;
     }
 
@@ -257,7 +256,7 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((DataFileItem) adapter.items.get(getAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileClicksSubject);
-            nameView.setText(item.dataFile().name());
+            nameView.setText(item.dataFile().getName());
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton)
                     .map(ignored ->
@@ -370,11 +369,11 @@ final class CryptoCreateAdapter extends
     @AutoValue
     static abstract class DataFileItem extends Item {
 
-        abstract DataFile dataFile();
+        abstract File dataFile();
 
         abstract boolean removeButtonVisible();
 
-        static DataFileItem create(DataFile dataFile, boolean removeButtonVisible) {
+        static DataFileItem create(File dataFile, boolean removeButtonVisible) {
             return new AutoValue_CryptoCreateAdapter_DataFileItem(
                     R.layout.crypto_create_list_item_data_file, dataFile, removeButtonVisible);
         }

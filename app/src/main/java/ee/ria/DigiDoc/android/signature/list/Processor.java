@@ -1,9 +1,15 @@
 package ee.ria.DigiDoc.android.signature.list;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
+import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
+import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.cryptolib.CryptoContainer;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -17,8 +23,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Action.NavigateUpAction, Result.VoidResult> navigateUp;
 
-    private final ObservableTransformer<Action.NavigateToContainerUpdateAction, Result.VoidResult>
-            navigateToContainerUpdate;
+    private final ObservableTransformer<Intent.ContainerOpenIntent, Result.VoidResult>
+            containerOpen;
 
     private final ObservableTransformer<Action.ContainerRemoveAction, Result.ContainerRemoveResult>
             containerRemove;
@@ -39,9 +45,16 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 .doOnNext(action -> navigator.execute(action.transaction()))
                 .map(action -> Result.VoidResult.create());
 
-        navigateToContainerUpdate = upstream -> upstream
-                .doOnNext(action -> navigator.execute(action.transaction()))
-                .map(action -> Result.VoidResult.create());
+        containerOpen = upstream -> upstream.switchMap(action -> {
+            File containerFile = action.containerFile();
+            if (CryptoContainer.isContainerFileName(containerFile.getName())) {
+                navigator.execute(Transaction.push(CryptoCreateScreen.open(containerFile)));
+            } else {
+                navigator.execute(Transaction.push(SignatureUpdateScreen
+                        .create(true, false, containerFile, false, false)));
+            }
+            return Observable.empty();
+        });
 
         containerRemove = upstream -> upstream.flatMap(action -> {
             if (action.containerFile() == null) {
@@ -68,8 +81,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
         return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Action.ContainersLoadAction.class).compose(containersLoad),
                 shared.ofType(Action.NavigateUpAction.class).compose(navigateUp),
-                shared.ofType(Action.NavigateToContainerUpdateAction.class)
-                        .compose(navigateToContainerUpdate),
+                shared.ofType(Intent.ContainerOpenIntent.class).compose(containerOpen),
                 shared.ofType(Action.ContainerRemoveAction.class).compose(containerRemove)));
     }
 }

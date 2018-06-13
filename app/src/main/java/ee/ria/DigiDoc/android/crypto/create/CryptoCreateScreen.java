@@ -1,7 +1,9 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -21,17 +23,26 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
-import ee.ria.cryptolib.DataFile;
 import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
+import static ee.ria.DigiDoc.android.utils.BundleUtils.putFile;
 
 public final class CryptoCreateScreen extends Controller implements Screen,
         MviView<Intent, ViewState> {
 
+    private static final String KEY_CONTAINER_FILE = "containerFile";
+
     public static CryptoCreateScreen create() {
-        return new CryptoCreateScreen();
+        return new CryptoCreateScreen(Bundle.EMPTY);
+    }
+
+    public static CryptoCreateScreen open(File containerFile) {
+        Bundle args = new Bundle();
+        putFile(args, KEY_CONTAINER_FILE, containerFile);
+        return new CryptoCreateScreen(args);
     }
 
     private final ViewDisposables disposables = new ViewDisposables();
@@ -43,15 +54,20 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private View activityIndicatorView;
     private View encryptButton;
 
-    private File containerFile;
-    private ImmutableList<DataFile> dataFiles = ImmutableList.of();
+    @Nullable private File containerFile;
+    private ImmutableList<File> dataFiles = ImmutableList.of();
     private ImmutableList<Certificate> recipients = ImmutableList.of();
 
     @SuppressWarnings("WeakerAccess")
-    public CryptoCreateScreen() {}
+    public CryptoCreateScreen(Bundle args) {
+        super(args);
+        if (args.containsKey(KEY_CONTAINER_FILE)) {
+            containerFile = getFile(args, KEY_CONTAINER_FILE);
+        }
+    }
 
     private Observable<Intent.InitialIntent> initialIntent() {
-        return Observable.just(Intent.InitialIntent.create());
+        return Observable.just(Intent.InitialIntent.create(containerFile));
     }
 
     private Observable<Intent.UpButtonClickIntent> upButtonClickIntent() {
@@ -98,7 +114,9 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
     @Override
     public void render(ViewState state) {
-        containerFile = state.containerFile();
+        if (state.containerFile() != null) {
+            containerFile = state.containerFile();
+        }
         dataFiles = state.dataFiles();
         recipients = state.recipients();
 

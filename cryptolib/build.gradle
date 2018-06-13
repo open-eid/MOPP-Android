@@ -42,4 +42,7 @@ dependencies {
     }
 
     api project(':corelib')
+
+    testImplementation "junit:junit:${junitVersion}"
+    testImplementation "com.google.truth:truth:${truthVersion}"
 }

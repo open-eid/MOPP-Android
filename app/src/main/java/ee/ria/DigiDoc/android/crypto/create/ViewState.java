@@ -10,13 +10,12 @@ import java.io.File;
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 import ee.ria.DigiDoc.android.utils.mvi.State;
-import ee.ria.cryptolib.DataFile;
 
 @AutoValue
 abstract class ViewState implements MviViewState {
 
     @Nullable abstract File containerFile();
-    abstract ImmutableList<DataFile> dataFiles();
+    abstract ImmutableList<File> dataFiles();
     abstract ImmutableList<Certificate> recipients();
 
     @State abstract String dataFilesAddState();
@@ -55,7 +54,7 @@ abstract class ViewState implements MviViewState {
     @AutoValue.Builder
     interface Builder {
         Builder containerFile(@Nullable File containerFile);
-        Builder dataFiles(ImmutableList<DataFile> dataFiles);
+        Builder dataFiles(ImmutableList<File> dataFiles);
         Builder recipients(ImmutableList<Certificate> recipients);
         Builder dataFilesAddState(@State String dataFilesAddState);
         Builder dataFilesAddError(@Nullable Throwable dataFilesAddError);
