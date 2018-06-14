@@ -53,8 +53,12 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private View activityOverlayView;
     private View activityIndicatorView;
     private View encryptButton;
+    private View decryptButton;
+    private View sendButton;
+    private View buttonSpaceView;
 
-    @Nullable private File containerFile;
+    @Nullable
+    private File containerFile;
     private ImmutableList<File> dataFiles = ImmutableList.of();
     private ImmutableList<Certificate> recipients = ImmutableList.of();
 
@@ -123,14 +127,24 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         setActivity(state.dataFilesAddState().equals(State.ACTIVE) ||
                 state.dataFileRemoveState().equals(State.ACTIVE) ||
                 state.encryptState().equals(State.ACTIVE));
-        adapter.dataForContainer(containerFile, dataFiles, recipients,
+        adapter.dataForContainer(state.name(), dataFiles, state.dataFilesViewEnabled(),
+                state.dataFilesAddEnabled(), state.dataFilesRemoveEnabled(), recipients,
+                state.recipientsAddEnabled(), state.recipientsRemoveEnabled(),
                 state.encryptSuccessMessageVisible());
+        encryptButton.setVisibility(state.encryptButtonVisible() ? View.VISIBLE : View.GONE);
+        decryptButton.setVisibility(state.decryptButtonVisible() ? View.VISIBLE : View.GONE);
+        sendButton.setVisibility(state.sendButtonVisible() ? View.VISIBLE : View.GONE);
+        buttonSpaceView.setVisibility(state.sendButtonVisible() &&
+                        (state.encryptButtonVisible() || state.decryptButtonVisible())
+                ? View.VISIBLE : View.GONE);
     }
 
     private void setActivity(boolean activity) {
         activityOverlayView.setVisibility(activity ? View.VISIBLE : View.GONE);
         activityIndicatorView.setVisibility(activity ? View.VISIBLE : View.GONE);
         encryptButton.setEnabled(!activity);
+        decryptButton.setEnabled(!activity);
+        sendButton.setEnabled(!activity);
     }
 
     @Override
@@ -155,6 +169,9 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         encryptButton = view.findViewById(R.id.cryptoCreateEncryptButton);
+        decryptButton = view.findViewById(R.id.cryptoCreateDecryptButton);
+        sendButton = view.findViewById(R.id.cryptoCreateSendButton);
+        buttonSpaceView = view.findViewById(R.id.cryptoCreateButtonSpace);
 
         listView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());

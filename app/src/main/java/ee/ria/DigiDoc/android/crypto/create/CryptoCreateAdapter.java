@@ -38,31 +38,42 @@ final class CryptoCreateAdapter extends
     final Subject<Certificate> recipientRemoveClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientAddClicksSubject = PublishSubject.create();
 
+    private boolean dataFilesViewEnabled = false;
+
     private ImmutableList<Item> items = ImmutableList.of();
 
-    void dataForContainer(@Nullable File containerFile, ImmutableList<File> dataFiles,
-                          ImmutableList<Certificate> recipients, boolean successMessageVisible) {
+    void dataForContainer(@Nullable String name, ImmutableList<File> dataFiles,
+                          boolean dataFilesViewEnabled, boolean dataFilesAddEnabled,
+                          boolean dataFilesRemoveEnabled, ImmutableList<Certificate> recipients,
+                          boolean recipientsAddEnabled, boolean recipientsRemoveEnabled,
+                          boolean successMessageVisible) {
+        this.dataFilesViewEnabled = dataFilesViewEnabled;
+
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (successMessageVisible) {
             builder.add(SuccessItem.create());
         }
-        if (containerFile != null) {
-            builder.add(NameItem.create(containerFile.getName()));
+        if (name != null) {
+            builder.add(NameItem.create(name));
         }
         builder.add(SubheadItem.create(R.string.crypto_create_data_files_title));
-        boolean dataFileRemoveButtonVisible = dataFiles.size() > 1;
+        boolean dataFileRemoveButtonVisible = dataFilesRemoveEnabled && dataFiles.size() > 1;
         for (File dataFile : dataFiles) {
             builder.add(DataFileItem.create(dataFile, dataFileRemoveButtonVisible));
         }
-        builder.add(AddButtonItem.create(R.string.crypto_create_data_files_add_button))
-                .add(SubheadItem.create(R.string.crypto_create_recipients_title));
+        if (dataFilesAddEnabled) {
+            builder.add(AddButtonItem.create(R.string.crypto_create_data_files_add_button));
+        }
+        builder.add(SubheadItem.create(R.string.crypto_create_recipients_title));
         for (Certificate recipient : recipients) {
-            builder.add(RecipientItem.create(recipient, true, false, false));
+            builder.add(RecipientItem.create(recipient, recipientsRemoveEnabled, false, false));
         }
         if (recipients.size() == 0) {
             builder.add(EmptyTextItem.create());
         }
-        builder.add(AddButtonItem.create(R.string.crypto_create_recipients_add_button));
+        if (recipientsAddEnabled) {
+            builder.add(AddButtonItem.create(R.string.crypto_create_recipients_add_button));
+        }
         items(builder.build());
     }
 
@@ -96,7 +107,8 @@ final class CryptoCreateAdapter extends
     }
 
     Observable<File> dataFileClicks() {
-        return dataFileClicksSubject;
+        return dataFileClicksSubject
+                .filter(ignored -> dataFilesViewEnabled);
     }
 
     Observable<File> dataFileRemoveClicks() {

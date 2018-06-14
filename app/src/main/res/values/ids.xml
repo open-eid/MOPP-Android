@@ -152,6 +152,9 @@
     <item type="id" name="cryptoCreateCoordinator" />
     <item type="id" name="cryptoCreateList" />
     <item type="id" name="cryptoCreateEncryptButton" />
+    <item type="id" name="cryptoCreateDecryptButton" />
+    <item type="id" name="cryptoCreateSendButton" />
+    <item type="id" name="cryptoCreateButtonSpace" />
     <item type="id" name="cryptoCreateSuccessMessage" />
     <item type="id" name="cryptoCreateName" />
     <item type="id" name="cryptoCreateAddButton" />

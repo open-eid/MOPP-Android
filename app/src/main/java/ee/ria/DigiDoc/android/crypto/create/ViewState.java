@@ -15,8 +15,18 @@ import ee.ria.DigiDoc.android.utils.mvi.State;
 abstract class ViewState implements MviViewState {
 
     @Nullable abstract File containerFile();
+
+    @Nullable abstract String name();
     abstract ImmutableList<File> dataFiles();
+    abstract boolean dataFilesViewEnabled();
+    abstract boolean dataFilesAddEnabled();
+    abstract boolean dataFilesRemoveEnabled();
     abstract ImmutableList<Certificate> recipients();
+    abstract boolean recipientsAddEnabled();
+    abstract boolean recipientsRemoveEnabled();
+    abstract boolean encryptButtonVisible();
+    abstract boolean decryptButtonVisible();
+    abstract boolean sendButtonVisible();
 
     @State abstract String dataFilesAddState();
     @Nullable abstract Throwable dataFilesAddError();
@@ -40,7 +50,15 @@ abstract class ViewState implements MviViewState {
     static ViewState initial() {
         return new AutoValue_ViewState.Builder()
                 .dataFiles(ImmutableList.of())
+                .dataFilesViewEnabled(false)
+                .dataFilesAddEnabled(false)
+                .dataFilesRemoveEnabled(false)
                 .recipients(ImmutableList.of())
+                .recipientsAddEnabled(false)
+                .recipientsRemoveEnabled(false)
+                .encryptButtonVisible(false)
+                .decryptButtonVisible(false)
+                .sendButtonVisible(false)
                 .dataFilesAddState(State.IDLE)
                 .dataFileRemoveState(State.IDLE)
                 .recipientsSearchState(State.IDLE)
@@ -54,8 +72,17 @@ abstract class ViewState implements MviViewState {
     @AutoValue.Builder
     interface Builder {
         Builder containerFile(@Nullable File containerFile);
+        Builder name(@Nullable String name);
         Builder dataFiles(ImmutableList<File> dataFiles);
+        Builder dataFilesViewEnabled(boolean dataFilesViewEnabled);
+        Builder dataFilesAddEnabled(boolean dataFilesAddEnabled);
+        Builder dataFilesRemoveEnabled(boolean dataFilesRemoveEnabled);
         Builder recipients(ImmutableList<Certificate> recipients);
+        Builder recipientsAddEnabled(boolean recipientsAddEnabled);
+        Builder recipientsRemoveEnabled(boolean recipientsRemoveEnabled);
+        Builder encryptButtonVisible(boolean encryptButtonVisible);
+        Builder decryptButtonVisible(boolean decryptButtonVisible);
+        Builder sendButtonVisible(boolean sendButtonVisible);
         Builder dataFilesAddState(@State String dataFilesAddState);
         Builder dataFilesAddError(@Nullable Throwable dataFilesAddError);
         Builder dataFileRemoveState(@State String dataFileRemoveState);
@@ -65,7 +92,7 @@ abstract class ViewState implements MviViewState {
         Builder recipientsSearchError(@Nullable Throwable recipientsSearchError);
         Builder recipientAddState(@State String recipientAddState);
         Builder recipientAddError(@Nullable Throwable recipientAddError);
-        Builder encryptState(@State String state);
+        Builder encryptState(@State String encryptState);
         Builder encryptSuccessMessageVisible(boolean encryptSuccessMessageVisible);
         Builder encryptError(@Nullable Throwable encryptError);
         ViewState build();

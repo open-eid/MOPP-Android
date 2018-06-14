@@ -33,27 +33,49 @@ interface Result extends MviResult<ViewState> {
         @State abstract String state();
 
         @Nullable abstract File containerFile();
-
         @Nullable abstract ImmutableList<File> dataFiles();
 
-        @Nullable abstract ImmutableList<Certificate> recipients();
+        @Nullable abstract CryptoContainer container();
 
         @Nullable abstract Throwable error();
 
         @Override
         public ViewState reduce(ViewState state) {
+            File containerFile = containerFile();
+            ImmutableList<File> dataFiles = dataFiles();
+            CryptoContainer container = container();
+
             ViewState.Builder builder = state.buildWith()
                     .dataFilesAddState(state())
-                    .dataFilesAddError(error());
-            if (containerFile() != null) {
-                builder.containerFile(containerFile());
+                    .dataFilesAddError(error())
+                    .dataFilesViewEnabled(false)
+                    .dataFilesAddEnabled(false)
+                    .dataFilesRemoveEnabled(false)
+                    .recipientsAddEnabled(false)
+                    .recipientsRemoveEnabled(false)
+                    .encryptButtonVisible(false)
+                    .decryptButtonVisible(false)
+                    .sendButtonVisible(false);
+
+            if (containerFile != null && dataFiles != null) {
+                builder
+                        .name(containerFile.getName())
+                        .dataFiles(dataFiles)
+                        .dataFilesViewEnabled(true)
+                        .dataFilesAddEnabled(true)
+                        .dataFilesRemoveEnabled(true)
+                        .recipientsAddEnabled(true)
+                        .recipientsRemoveEnabled(true)
+                        .encryptButtonVisible(true);
+            } else if (container != null) {
+                builder
+                        .name(container.file().getName())
+                        .dataFiles(container.dataFiles())
+                        .recipients(container.recipients())
+                        .decryptButtonVisible(true)
+                        .sendButtonVisible(true);
             }
-            if (dataFiles() != null) {
-                builder.dataFiles(dataFiles());
-            }
-            if (recipients() != null) {
-                builder.recipients(recipients());
-            }
+
             return builder.build();
         }
 
@@ -66,8 +88,7 @@ interface Result extends MviResult<ViewState> {
         }
 
         static InitialResult success(CryptoContainer container) {
-            return create(State.IDLE, container.file(), container.dataFiles(),
-                    container.recipients(), null);
+            return create(State.IDLE, null, null, container, null);
         }
 
         static InitialResult failure(Throwable error) {
@@ -80,9 +101,9 @@ interface Result extends MviResult<ViewState> {
 
         private static InitialResult create(@State String state, @Nullable File containerFile,
                                             @Nullable ImmutableList<File> dataFiles,
-                                            @Nullable ImmutableList<Certificate> recipients,
+                                            @Nullable CryptoContainer container,
                                             @Nullable Throwable error) {
-            return new AutoValue_Result_InitialResult(state, containerFile, dataFiles, recipients,
+            return new AutoValue_Result_InitialResult(state, containerFile, dataFiles, container,
                     error);
         }
     }

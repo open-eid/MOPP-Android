@@ -161,6 +161,8 @@
     <!-- Crypto Create -->
     <string name="crypto_create_title" tools:ignore="MissingTranslation">Encryption</string>
     <string name="crypto_create_encrypt_button" tools:ignore="MissingTranslation">ENCRYPT</string>
+    <string name="crypto_create_decrypt_button" tools:ignore="MissingTranslation">DECRYPT</string>
+    <string name="crypto_create_send_button" tools:ignore="MissingTranslation">SHARE</string>
     <string name="crypto_create_encrypt_success_message" tools:ignore="MissingTranslation">CONTAINER ENCRYPTED</string>
     <string name="crypto_create_name" tools:ignore="MissingTranslation">CONTAINER:</string>
     <string name="crypto_create_data_files_title" tools:ignore="MissingTranslation">Data files</string>
