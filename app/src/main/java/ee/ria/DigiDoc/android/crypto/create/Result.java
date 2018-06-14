@@ -154,40 +154,15 @@ interface Result extends MviResult<ViewState> {
     @AutoValue
     abstract class DataFileRemoveResult implements Result {
 
-        @State abstract String state();
-
-        @Nullable abstract ImmutableList<File> dataFiles();
-
-        @Nullable abstract Throwable error();
+        abstract ImmutableList<File> dataFiles();
 
         @Override
         public ViewState reduce(ViewState state) {
-            ViewState.Builder builder = state.buildWith()
-                    .dataFileRemoveState(state())
-                    .dataFileRemoveError(error());
-            if (dataFiles() != null) {
-                builder.dataFiles(dataFiles());
-            }
-            return builder.build();
+            return state.buildWith().dataFiles(dataFiles()).build();
         }
 
-        static DataFileRemoveResult activity() {
-            // set it as idle since it takes so little time and causes flickering in the UI
-            return create(State.IDLE, null, null);
-        }
-
-        static DataFileRemoveResult success(ImmutableList<File> dataFiles) {
-            return create(State.IDLE, dataFiles, null);
-        }
-
-        static DataFileRemoveResult failure(Throwable error) {
-            return create(State.IDLE, null, error);
-        }
-
-        private static DataFileRemoveResult create(@State String state,
-                                                   @Nullable ImmutableList<File> dataFiles,
-                                                   @Nullable Throwable error) {
-            return new AutoValue_Result_DataFileRemoveResult(state, dataFiles, error);
+        static DataFileRemoveResult create(ImmutableList<File> dataFiles) {
+            return new AutoValue_Result_DataFileRemoveResult(dataFiles);
         }
     }
 
@@ -234,78 +209,30 @@ interface Result extends MviResult<ViewState> {
     @AutoValue
     abstract class RecipientAddResult implements Result {
 
-        @State abstract String state();
-
-        @Nullable abstract ImmutableList<Certificate> recipients();
-
-        @Nullable abstract Throwable error();
+        abstract ImmutableList<Certificate> recipients();
 
         @Override
         public ViewState reduce(ViewState state) {
-            ViewState.Builder builder = state.buildWith()
-                    .recipientAddState(state())
-                    .recipientAddError(error());
-            if (recipients() != null) {
-                builder.recipients(recipients());
-            }
-            return builder.build();
+            return state.buildWith().recipients(recipients()).build();
         }
 
-        static RecipientAddResult activity() {
-            return create(State.ACTIVE, null, null);
-        }
-
-        static RecipientAddResult success(ImmutableList<Certificate> recipients) {
-            return create(State.IDLE, recipients, null);
-        }
-
-        static RecipientAddResult failure(Throwable error) {
-            return create(State.IDLE, null, error);
-        }
-
-        private static RecipientAddResult create(@State String state,
-                                                 @Nullable ImmutableList<Certificate> recipients,
-                                                 @Nullable Throwable error) {
-            return new AutoValue_Result_RecipientAddResult(state, recipients, error);
+        static RecipientAddResult create(ImmutableList<Certificate> recipients) {
+            return new AutoValue_Result_RecipientAddResult(recipients);
         }
     }
 
     @AutoValue
     abstract class RecipientRemoveResult implements Result {
 
-        @State abstract String state();
-
-        @Nullable abstract ImmutableList<Certificate> recipients();
-
-        @Nullable abstract Throwable error();
+        abstract ImmutableList<Certificate> recipients();
 
         @Override
         public ViewState reduce(ViewState state) {
-            ViewState.Builder builder = state.buildWith()
-                    .recipientAddState(state())
-                    .recipientAddError(error());
-            if (recipients() != null) {
-                builder.recipients(recipients());
-            }
-            return builder.build();
+            return state.buildWith().recipients(recipients()).build();
         }
 
-        static RecipientRemoveResult activity() {
-            return create(State.ACTIVE, null, null);
-        }
-
-        static RecipientRemoveResult success(ImmutableList<Certificate> recipients) {
-            return create(State.IDLE, recipients, null);
-        }
-
-        static RecipientRemoveResult failure(Throwable error) {
-            return create(State.IDLE, null, error);
-        }
-
-        private static RecipientRemoveResult create(@State String state,
-                                                    @Nullable ImmutableList<Certificate> recipients,
-                                                    @Nullable Throwable error) {
-            return new AutoValue_Result_RecipientRemoveResult(state, recipients, error);
+        static RecipientRemoveResult create(ImmutableList<Certificate> recipients) {
+            return new AutoValue_Result_RecipientRemoveResult(recipients);
         }
     }
 
@@ -320,11 +247,22 @@ interface Result extends MviResult<ViewState> {
 
         @Override
         public ViewState reduce(ViewState state) {
-            return state.buildWith()
+            ViewState.Builder builder = state.buildWith()
                     .encryptState(state())
                     .encryptSuccessMessageVisible(successMessageVisible())
-                    .encryptError(error())
-                    .build();
+                    .encryptError(error());
+            if (successMessageVisible()) {
+                builder
+                        .dataFilesViewEnabled(false)
+                        .dataFilesAddEnabled(false)
+                        .dataFilesRemoveEnabled(false)
+                        .recipientsAddEnabled(false)
+                        .recipientsRemoveEnabled(false)
+                        .encryptButtonVisible(false)
+                        .decryptButtonVisible(true)
+                        .sendButtonVisible(true);
+            }
+            return builder.build();
         }
 
         static EncryptResult activity() {
@@ -335,12 +273,12 @@ interface Result extends MviResult<ViewState> {
             return create(State.IDLE, true, null);
         }
 
-        static EncryptResult clear() {
-            return create(State.IDLE, false, null);
-        }
-
         static EncryptResult failure(Throwable error) {
             return create(State.IDLE, false, error);
+        }
+
+        static EncryptResult clear() {
+            return create(State.IDLE, false, null);
         }
 
         private static EncryptResult create(@State String state, boolean successMessageVisible,

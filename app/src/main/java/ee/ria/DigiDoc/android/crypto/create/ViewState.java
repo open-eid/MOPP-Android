@@ -14,8 +14,6 @@ import ee.ria.DigiDoc.android.utils.mvi.State;
 @AutoValue
 abstract class ViewState implements MviViewState {
 
-    @Nullable abstract File containerFile();
-
     @Nullable abstract String name();
     abstract ImmutableList<File> dataFiles();
     abstract boolean dataFilesViewEnabled();
@@ -31,15 +29,9 @@ abstract class ViewState implements MviViewState {
     @State abstract String dataFilesAddState();
     @Nullable abstract Throwable dataFilesAddError();
 
-    @State abstract String dataFileRemoveState();
-    @Nullable abstract Throwable dataFileRemoveError();
-
     @State abstract String recipientsSearchState();
     abstract ImmutableList<Certificate> recipientsSearchResult();
     @Nullable abstract Throwable recipientsSearchError();
-
-    @State abstract String recipientAddState();
-    @Nullable abstract Throwable recipientAddError();
 
     @State abstract String encryptState();
     abstract boolean encryptSuccessMessageVisible();
@@ -60,10 +52,8 @@ abstract class ViewState implements MviViewState {
                 .decryptButtonVisible(false)
                 .sendButtonVisible(false)
                 .dataFilesAddState(State.IDLE)
-                .dataFileRemoveState(State.IDLE)
                 .recipientsSearchState(State.IDLE)
                 .recipientsSearchResult(ImmutableList.of())
-                .recipientAddState(State.IDLE)
                 .encryptState(State.IDLE)
                 .encryptSuccessMessageVisible(false)
                 .build();
@@ -71,7 +61,6 @@ abstract class ViewState implements MviViewState {
 
     @AutoValue.Builder
     interface Builder {
-        Builder containerFile(@Nullable File containerFile);
         Builder name(@Nullable String name);
         Builder dataFiles(ImmutableList<File> dataFiles);
         Builder dataFilesViewEnabled(boolean dataFilesViewEnabled);
@@ -85,13 +74,9 @@ abstract class ViewState implements MviViewState {
         Builder sendButtonVisible(boolean sendButtonVisible);
         Builder dataFilesAddState(@State String dataFilesAddState);
         Builder dataFilesAddError(@Nullable Throwable dataFilesAddError);
-        Builder dataFileRemoveState(@State String dataFileRemoveState);
-        Builder dataFileRemoveError(@Nullable Throwable dataFileRemoveError);
         Builder recipientsSearchState(@State String recipientsSearchState);
         Builder recipientsSearchResult(ImmutableList<Certificate> recipientsSearchResult);
         Builder recipientsSearchError(@Nullable Throwable recipientsSearchError);
-        Builder recipientAddState(@State String recipientAddState);
-        Builder recipientAddError(@Nullable Throwable recipientAddError);
         Builder encryptState(@State String encryptState);
         Builder encryptSuccessMessageVisible(boolean encryptSuccessMessageVisible);
         Builder encryptError(@Nullable Throwable encryptError);

@@ -136,15 +136,25 @@ interface Intent extends MviIntent, MviAction {
     @AutoValue
     abstract class EncryptIntent implements Intent {
 
-        abstract File containerFile();
+        @Nullable abstract String name();
 
-        abstract ImmutableList<File> dataFiles();
+        @Nullable abstract ImmutableList<File> dataFiles();
 
-        abstract ImmutableList<Certificate> recipients();
+        @Nullable abstract ImmutableList<Certificate> recipients();
 
-        static EncryptIntent create(File containerFile, ImmutableList<File> dataFiles,
-                                    ImmutableList<Certificate> recipients) {
-            return new AutoValue_Intent_EncryptIntent(containerFile, dataFiles, recipients);
+        static EncryptIntent start(String name, ImmutableList<File> dataFiles,
+                                   ImmutableList<Certificate> recipients) {
+            return create(name, dataFiles, recipients);
+        }
+
+        static EncryptIntent clear() {
+            return create(null, null, null);
+        }
+
+        private static EncryptIntent create(@Nullable String name,
+                                            @Nullable ImmutableList<File> dataFiles,
+                                            @Nullable ImmutableList<Certificate> recipients) {
+            return new AutoValue_Intent_EncryptIntent(name, dataFiles, recipients);
         }
     }
 }

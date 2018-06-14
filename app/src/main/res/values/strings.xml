@@ -160,17 +160,20 @@
 
     <!-- Crypto Create -->
     <string name="crypto_create_title" tools:ignore="MissingTranslation">Encryption</string>
-    <string name="crypto_create_encrypt_button" tools:ignore="MissingTranslation">ENCRYPT</string>
-    <string name="crypto_create_decrypt_button" tools:ignore="MissingTranslation">DECRYPT</string>
-    <string name="crypto_create_send_button" tools:ignore="MissingTranslation">SHARE</string>
     <string name="crypto_create_encrypt_success_message" tools:ignore="MissingTranslation">CONTAINER ENCRYPTED</string>
     <string name="crypto_create_name" tools:ignore="MissingTranslation">CONTAINER:</string>
     <string name="crypto_create_data_files_title" tools:ignore="MissingTranslation">Data files</string>
     <string name="crypto_create_data_files_add_button" tools:ignore="MissingTranslation">+ ADD MORE FILES</string>
+    <string name="crypto_create_data_files_add_error_exists" tools:ignore="MissingTranslation">File already exists in the container</string>
     <string name="crypto_create_data_file_remove_button" tools:ignore="MissingTranslation">Remove data file</string>
     <string name="crypto_create_recipients_title" tools:ignore="MissingTranslation">Recipients</string>
     <string name="crypto_create_recipients_empty" tools:ignore="MissingTranslation">Recipients are missing</string>
     <string name="crypto_create_recipients_add_button" tools:ignore="MissingTranslation">+ ADD RECIPIENT</string>
+    <string name="crypto_create_encrypt_button" tools:ignore="MissingTranslation">ENCRYPT</string>
+    <string name="crypto_create_encrypt_error_no_recipients" tools:ignore="MissingTranslation">No recipients specified</string>
+    <string name="crypto_create_decrypt_button" tools:ignore="MissingTranslation">DECRYPT</string>
+    <string name="crypto_create_send_button" tools:ignore="MissingTranslation">SHARE</string>
+    <string name="crypto_create_error" tools:ignore="MissingTranslation">Something went wrong. Please try again.</string>
 
     <string name="crypto_recipient_type" tools:ignore="MissingTranslation">Recipient</string>
     <string name="crypto_recipient_info" tools:ignore="MissingTranslation">%1$s (valid until %2$s)</string>

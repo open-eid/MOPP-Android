@@ -160,9 +160,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                                 ImmutableList.<File>builder().addAll(dataFiles);
                                         for (FileStream fileStream : fileStreams) {
                                             File dataFile = fileSystem.cache(fileStream);
-                                            if (!dataFiles.contains(dataFile)) {
-                                                builder.add(dataFile);
+                                            if (dataFiles.contains(dataFile)) {
+                                                throw new IllegalArgumentException(
+                                                        "File already exists in the container");
                                             }
+                                            builder.add(dataFile);
                                         }
                                         return builder.build();
                                     })
@@ -180,15 +182,17 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         dataFileRemove = upstream -> upstream.switchMap(intent ->
                 Observable
                         .fromCallable(() -> {
-                            //noinspection ResultOfMethodCallIgnored
-                            intent.dataFile().delete();
-                            return Result.DataFileRemoveResult.success(
+                            try {
+                                //noinspection ResultOfMethodCallIgnored
+                                intent.dataFile().delete();
+                            } catch (Exception e) {
+                                // ignore because it's a cache file and is deleted anyway
+                            }
+                            return Result.DataFileRemoveResult.create(
                                     without(intent.dataFiles(), intent.dataFile()));
                         })
-                        .onErrorReturn(Result.DataFileRemoveResult::failure)
                         .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.DataFileRemoveResult.activity()));
+                        .observeOn(AndroidSchedulers.mainThread()));
 
         dataFileView = upstream -> upstream.switchMap(intent -> {
             File file = intent.dataFile();
@@ -224,43 +228,48 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
         recipientAdd = upstream -> upstream.switchMap(intent ->
                 Observable.fromCallable(() ->
-                        Result.RecipientAddResult.success(
+                        Result.RecipientAddResult.create(
                                 with(intent.recipients(), intent.recipient(), false))));
 
         recipientRemove = upstream -> upstream.switchMap(intent ->
                 Observable.fromCallable(() ->
-                        Result.RecipientRemoveResult.success(
+                        Result.RecipientRemoveResult.create(
                                 without(intent.recipients(), intent.recipient()))));
 
         encrypt = upstream -> upstream.switchMap(intent -> {
-            File containerFile = intent.containerFile();
+            String name = intent.name();
             ImmutableList<File> dataFiles = intent.dataFiles();
             ImmutableList<Certificate> recipients = intent.recipients();
-            return Single
-                    .fromCallable(() -> {
-                        CDOCBuilder builder = CDOCBuilder.defaultVersion();
-                        for (File dataFile : dataFiles) {
-                            builder.withDataFile(new org.openeid.cdoc4j.DataFile(dataFile.getName(),
-                                    toByteArray(dataFile)));
-                        }
-                        for (Certificate recipient : recipients) {
-                            builder.withRecipient(new ByteArrayInputStream(
-                                    recipient.data().toByteArray()));
-                        }
-                        FileOutputStream outputStream = new FileOutputStream(containerFile);
-                        builder.buildToOutputStream(outputStream);
-                        outputStream.close();
-                        return Result.EncryptResult.successMessage();
-                    })
-                    .flatMapObservable(result ->
-                            Observable
-                                    .timer(3, TimeUnit.SECONDS)
-                                    .map(ignored -> Result.EncryptResult.clear())
-                                    .startWith(result))
-                    .onErrorReturn(Result.EncryptResult::failure)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .startWith(Result.EncryptResult.activity());
+            if (name != null && dataFiles != null && recipients != null) {
+                return Single
+                        .fromCallable(() -> {
+                            CDOCBuilder builder = CDOCBuilder.defaultVersion();
+                            for (File dataFile : dataFiles) {
+                                builder.withDataFile(new org.openeid.cdoc4j.DataFile(dataFile.getName(),
+                                        toByteArray(dataFile)));
+                            }
+                            for (Certificate recipient : recipients) {
+                                builder.withRecipient(new ByteArrayInputStream(
+                                        recipient.data().toByteArray()));
+                            }
+                            File file = fileSystem.generateSignatureContainerFile(name);
+                            try (FileOutputStream outputStream = new FileOutputStream(file)) {
+                                builder.buildToOutputStream(outputStream);
+                            }
+                            return Result.EncryptResult.successMessage();
+                        })
+                        .flatMapObservable(result ->
+                                Observable
+                                        .timer(3, TimeUnit.SECONDS)
+                                        .map(ignored -> Result.EncryptResult.clear())
+                                        .startWith(result))
+                        .onErrorReturn(Result.EncryptResult::failure)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(Result.EncryptResult.activity());
+            } else {
+                return Observable.just(Result.EncryptResult.clear());
+            }
         });
     }
 

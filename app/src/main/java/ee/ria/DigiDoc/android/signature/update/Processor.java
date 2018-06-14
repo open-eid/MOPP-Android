@@ -130,12 +130,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         activityResult.requestCode()
                                                 == action.transaction().requestCode())
                                 .switchMap(activityResult -> {
-                                    if (activityResult.resultCode() == RESULT_OK) {
+                                    android.content.Intent data = activityResult.data();
+                                    if (activityResult.resultCode() == RESULT_OK && data != null) {
                                         return signatureContainerDataSource
                                                 .addDocuments(action.containerFile(),
                                                         parseGetContentIntent(
                                                                 application.getContentResolver(),
-                                                                activityResult.data()))
+                                                                data))
                                                 .toObservable()
                                                 .map(Result.DocumentsAddResult::success)
                                                 .onErrorReturn(Result.DocumentsAddResult::failure)
