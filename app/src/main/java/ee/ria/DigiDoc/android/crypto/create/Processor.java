@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.Certificate;
+import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
+import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -41,6 +43,11 @@ import static ee.ria.cryptolib.CryptoContainer.createContainerFileName;
 import static ee.ria.cryptolib.CryptoContainer.isContainerFileName;
 import static ee.ria.mopplib.data.SignedContainer.mimeType;
 
+/**
+ * Error when opening crypto container: show error message and close on dialog cancel?
+ * Do not create file when encrypt is not successful
+ * Check for all cases when application is terminated
+ */
 final class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ObservableTransformer<Intent.InitialIntent, Result.InitialResult> initial;
@@ -73,9 +80,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ObservableTransformer<Intent.EncryptIntent, Result.EncryptResult> encrypt;
 
+    private final ObservableTransformer<Intent.DecryptIntent, Result.DecryptResult> decrypt;
+
     @Inject Processor(Navigator navigator, RecipientRepository recipientRepository,
                       ContentResolver contentResolver, FileSystem fileSystem,
-                      Application application) {
+                      Application application, IdCardService idCardService) {
         initial = upstream -> upstream.switchMap(intent -> {
             File containerFile = intent.containerFile();
 
@@ -271,6 +280,28 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return Observable.just(Result.EncryptResult.clear());
             }
         });
+
+        decrypt = upstream -> upstream.switchMap(intent -> {
+            boolean visible = intent.visible();
+            File containerFile = intent.containerFile();
+            String pin1 = intent.pin1();
+            if (visible && containerFile != null && pin1 != null) {
+                return idCardService.data()
+                        .filter(dataResponse -> dataResponse.token() != null)
+                        .switchMapSingle(dataResponse ->
+                                idCardService.decrypt(dataResponse.token(), containerFile, pin1))
+                        .map(ignored -> Result.DecryptResult.clear())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread());
+            } else if (visible) {
+                return idCardService.data()
+                        .map(Result.DecryptResult::idCardDataResponse)
+                        .startWith(Result.DecryptResult
+                                .idCardDataResponse(IdCardDataResponse.initial()));
+            } else {
+                return Observable.just(Result.DecryptResult.clear());
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -289,6 +320,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.RecipientsSearchIntent.class).compose(recipientsSearch),
                 shared.ofType(Intent.RecipientAddIntent.class).compose(recipientAdd),
                 shared.ofType(Intent.RecipientRemoveIntent.class).compose(recipientRemove),
-                shared.ofType(Intent.EncryptIntent.class).compose(encrypt)));
+                shared.ofType(Intent.EncryptIntent.class).compose(encrypt),
+                shared.ofType(Intent.DecryptIntent.class).compose(decrypt)));
     }
 }

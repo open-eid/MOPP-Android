@@ -1,10 +1,13 @@
 package ee.ria.DigiDoc.android.model.idcard;
 
+import android.os.SystemClock;
 import android.util.SparseArray;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeFormatterBuilder;
+
+import java.io.File;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -97,6 +100,14 @@ public final class IdCardService {
                     }
                     return data(token);
                 });
+    }
+
+    public Single<IdCardData> decrypt(Token token, File containerFile, String pin1) {
+        return Single.fromCallable(() -> {
+            SystemClock.sleep(1000);
+            Timber.e("decrypt");
+            return data(token);
+        });
     }
 
     private static final DateTimeFormatter CARD_DATE_FORMAT = new DateTimeFormatterBuilder()

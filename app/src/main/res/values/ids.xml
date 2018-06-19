@@ -173,6 +173,13 @@
     <item type="id" name="cryptoRecipientsList" />
     <item type="id" name="cryptoRecipientsDoneButton" />
 
+    <item type="id" name="cryptoCreateDecryptProgressContainer" />
+    <item type="id" name="cryptoCreateDecryptProgressMessage" />
+    <item type="id" name="cryptoCreateDecryptContainer" />
+    <item type="id" name="cryptoCreateDecryptData" />
+    <item type="id" name="cryptoCreateDecryptPin1" />
+    <item type="id" name="cryptoCreateDecryptPin1Error" />
+
     <!-- EID Home -->
     <item type="id" name="eidHomeCoordinator" />
     <item type="id" name="eidHomeCodeUpdate" />

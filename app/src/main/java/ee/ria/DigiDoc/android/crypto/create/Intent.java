@@ -157,4 +157,31 @@ interface Intent extends MviIntent, MviAction {
             return new AutoValue_Intent_EncryptIntent(name, dataFiles, recipients);
         }
     }
+
+    @AutoValue
+    abstract class DecryptIntent implements Intent {
+
+        abstract boolean visible();
+
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract String pin1();
+
+        static DecryptIntent open() {
+            return create(true, null, null);
+        }
+
+        static DecryptIntent start(File containerFile, String pin1) {
+            return create(true, containerFile, pin1);
+        }
+
+        static DecryptIntent clear() {
+            return create(false, null, null);
+        }
+
+        private static DecryptIntent create(boolean visible, @Nullable File containerFile,
+                                            @Nullable String pin1) {
+            return new AutoValue_Intent_DecryptIntent(visible, containerFile, pin1);
+        }
+    }
 }

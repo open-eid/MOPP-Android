@@ -172,6 +172,7 @@
     <string name="crypto_create_encrypt_button" tools:ignore="MissingTranslation">ENCRYPT</string>
     <string name="crypto_create_encrypt_error_no_recipients" tools:ignore="MissingTranslation">No recipients specified</string>
     <string name="crypto_create_decrypt_button" tools:ignore="MissingTranslation">DECRYPT</string>
+    <string name="crypto_create_decrypt_positive_button" tools:ignore="MissingTranslation">Decrypt</string>
     <string name="crypto_create_send_button" tools:ignore="MissingTranslation">SHARE</string>
     <string name="crypto_create_error" tools:ignore="MissingTranslation">Something went wrong. Please try again.</string>
 
@@ -185,6 +186,14 @@
     <string name="crypto_recipients_search" tools:ignore="MissingTranslation">Enter personal code, company or registry code</string>
     <string name="crypto_recipients_selected_subhead" tools:ignore="MissingTranslation">Selected recipients</string>
     <string name="crypto_recipients_done_button" tools:ignore="MissingTranslation">CONFIRM SELECTION</string>
+
+    <string name="crypto_create_decrypt_progress_message_initial" tools:ignore="MissingTranslation">Connect the card reader and insert your ID-card into the reader.</string>
+    <string name="crypto_create_decrypt_progress_message_reader_detected" tools:ignore="MissingTranslation">Reader found. Insert your ID-card into the reader.</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected" tools:ignore="MissingTranslation">ID-card found. Requesting information.</string>
+    <string name="crypto_create_decrypt_message" tools:ignore="MissingTranslation">Ready to decrypt with ID card</string>
+    <string name="crypto_create_decrypt_data" tools:ignore="MissingTranslation">%1$s %2$s (%3$s)</string>
+    <string name="crypto_create_decrypt_pin1" tools:ignore="MissingTranslation">Enter PIN1</string>
+    <string name="crypto_create_decrypt_pin1_invalid" tools:ignore="MissingTranslation">Wrong PIN1. You have %1$d attempts left.</string>
 
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Connect the card reader and insert your ID-card into the reader.</string>

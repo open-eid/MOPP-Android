@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 
 import ee.ria.DigiDoc.Certificate;
+import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.cryptolib.CryptoContainer;
@@ -284,6 +285,29 @@ interface Result extends MviResult<ViewState> {
         private static EncryptResult create(@State String state, boolean successMessageVisible,
                                             @Nullable Throwable error) {
             return new AutoValue_Result_EncryptResult(state, successMessageVisible, error);
+        }
+    }
+
+    @AutoValue
+    abstract class DecryptResult implements Result {
+
+        @Nullable abstract IdCardDataResponse idCardDataResponse();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith().decryptIdCardDataResponse(idCardDataResponse()).build();
+        }
+
+        static DecryptResult idCardDataResponse(IdCardDataResponse idCardDataResponse) {
+            return create(idCardDataResponse);
+        }
+
+        static DecryptResult clear() {
+            return create(null);
+        }
+
+        private static DecryptResult create(@Nullable IdCardDataResponse idCardDataResponse) {
+            return new AutoValue_Result_DecryptResult(idCardDataResponse);
         }
     }
 }

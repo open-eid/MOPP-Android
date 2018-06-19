@@ -23,6 +23,7 @@ import java.io.File;
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -64,6 +65,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private TextView decryptButton;
     private TextView sendButton;
     private View buttonSpaceView;
+    private DecryptDialog decryptDialog;
     private AlertDialog errorDialog;
 
     private String name;
@@ -118,6 +120,14 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 .map(ignored -> Intent.EncryptIntent.start(name, dataFiles, recipients));
     }
 
+    private Observable<Intent.DecryptIntent> decryptIntent() {
+        return Observable.merge(
+                clicks(decryptButton).map(ignored -> Intent.DecryptIntent.open()),
+                cancels(decryptDialog).map(ignored -> Intent.DecryptIntent.clear()),
+                decryptDialog.positiveButtonClicks()
+                        .map(pin1 -> Intent.DecryptIntent.start(containerFile, pin1)));
+    }
+
     private Observable<Intent> errorIntents() {
         return cancels(errorDialog)
                 .map(ignored -> {
@@ -135,7 +145,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), upButtonClickIntent(), dataFilesAddIntent(),
                 dataFileRemoveIntent(), dataFileViewIntent(), recipientsAddButtonClickIntent(),
-                recipientRemoveIntent(), encryptIntent(), errorIntents());
+                recipientRemoveIntent(), encryptIntent(), decryptIntent(), errorIntents());
     }
 
     @Override
@@ -164,6 +174,14 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         buttonSpaceView.setVisibility(state.sendButtonVisible() &&
                         (state.encryptButtonVisible() || state.decryptButtonVisible())
                 ? View.VISIBLE : View.GONE);
+
+        IdCardDataResponse decryptIdCardDataResponse = state.decryptIdCardDataResponse();
+        if (decryptIdCardDataResponse != null) {
+            decryptDialog.show();
+            decryptDialog.idCardDataResponse(decryptIdCardDataResponse);
+        } else {
+            decryptDialog.dismiss();
+        }
 
         if (encryptError != null) {
             if (encryptError instanceof RecipientMissingException) {
@@ -216,6 +234,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         decryptButton = view.findViewById(R.id.cryptoCreateDecryptButton);
         sendButton = view.findViewById(R.id.cryptoCreateSendButton);
         buttonSpaceView = view.findViewById(R.id.cryptoCreateButtonSpace);
+        decryptDialog = new DecryptDialog(inflater.getContext());
         errorDialog = new AlertDialog.Builder(inflater.getContext())
                 .setMessage(R.string.crypto_create_error)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.cancel())
@@ -237,6 +256,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
     @Override
     protected void onDestroyView(@NonNull View view) {
+        decryptDialog.dismiss();
         errorDialog.dismiss();
         disposables.detach();
         super.onDestroyView(view);
