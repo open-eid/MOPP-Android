@@ -80,6 +80,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ObservableTransformer<Intent.EncryptIntent, Result.EncryptResult> encrypt;
 
+    private final ObservableTransformer<Intent.DecryptionIntent,
+                                        Result.DecryptionResult> decryption;
+
     private final ObservableTransformer<Intent.DecryptIntent, Result.DecryptResult> decrypt;
 
     @Inject Processor(Navigator navigator, RecipientRepository recipientRepository,
@@ -281,25 +284,29 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             }
         });
 
-        decrypt = upstream -> upstream.switchMap(intent -> {
-            boolean visible = intent.visible();
-            File containerFile = intent.containerFile();
-            String pin1 = intent.pin1();
-            if (visible && containerFile != null && pin1 != null) {
+        decryption = upstream -> upstream.switchMap(intent -> {
+            if (intent.visible()) {
                 return idCardService.data()
-                        .filter(dataResponse -> dataResponse.token() != null)
-                        .switchMapSingle(dataResponse ->
-                                idCardService.decrypt(dataResponse.token(), containerFile, pin1))
-                        .map(ignored -> Result.DecryptResult.clear())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread());
-            } else if (visible) {
-                return idCardService.data()
-                        .map(Result.DecryptResult::idCardDataResponse)
-                        .startWith(Result.DecryptResult
-                                .idCardDataResponse(IdCardDataResponse.initial()));
+                        .map(Result.DecryptionResult::show)
+                        .startWith(Result.DecryptionResult.show(IdCardDataResponse.initial()));
             } else {
-                return Observable.just(Result.DecryptResult.clear());
+                return Observable.just(Result.DecryptionResult.hide());
+            }
+        });
+
+        decrypt = upstream -> upstream.switchMap(intent -> {
+            DecryptRequest request = intent.request();
+            if (request != null) {
+                return idCardService
+                        .decrypt(request.token(), request.containerFile(), request.pin1())
+                        .map(Result.DecryptResult::success)
+                        .onErrorReturn(Result.DecryptResult::failure)
+                        .toObservable()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(Result.DecryptResult.activity());
+            } else {
+                return Observable.just(Result.DecryptResult.clear(), Result.DecryptResult.idle());
             }
         });
     }
@@ -321,6 +328,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.RecipientAddIntent.class).compose(recipientAdd),
                 shared.ofType(Intent.RecipientRemoveIntent.class).compose(recipientRemove),
                 shared.ofType(Intent.EncryptIntent.class).compose(encrypt),
+                shared.ofType(Intent.DecryptionIntent.class).compose(decryption),
                 shared.ofType(Intent.DecryptIntent.class).compose(decrypt)));
     }
 }

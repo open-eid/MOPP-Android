@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 
 import ee.ria.DigiDoc.Certificate;
+import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -289,25 +290,65 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
-    abstract class DecryptResult implements Result {
+    abstract class DecryptionResult implements Result {
 
         @Nullable abstract IdCardDataResponse idCardDataResponse();
 
         @Override
         public ViewState reduce(ViewState state) {
-            return state.buildWith().decryptIdCardDataResponse(idCardDataResponse()).build();
+            return state.buildWith().decryptionIdCardDataResponse(idCardDataResponse()).build();
         }
 
-        static DecryptResult idCardDataResponse(IdCardDataResponse idCardDataResponse) {
+        static DecryptionResult show(IdCardDataResponse idCardDataResponse) {
             return create(idCardDataResponse);
         }
 
-        static DecryptResult clear() {
+        static DecryptionResult hide() {
             return create(null);
         }
 
-        private static DecryptResult create(@Nullable IdCardDataResponse idCardDataResponse) {
-            return new AutoValue_Result_DecryptResult(idCardDataResponse);
+        private static DecryptionResult create(@Nullable IdCardDataResponse idCardDataResponse) {
+            return new AutoValue_Result_DecryptionResult(idCardDataResponse);
+        }
+    }
+
+    @AutoValue
+    abstract class DecryptResult implements Result {
+
+        @State abstract String state();
+
+        @Nullable abstract IdCardData idCardData();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state;
+        }
+
+        static DecryptResult activity() {
+            return create(State.ACTIVE, null, null);
+        }
+
+        static DecryptResult clear() {
+            return create(State.CLEAR, null, null);
+        }
+
+        static DecryptResult idle() {
+            return create(State.IDLE, null, null);
+        }
+
+        static DecryptResult success(IdCardData idCardData) {
+            return create(State.IDLE, idCardData, null);
+        }
+
+        static DecryptResult failure(Throwable error) {
+            return create(State.IDLE, null, error);
+        }
+
+        private static DecryptResult create(@State String state, @Nullable IdCardData idCardData,
+                                            @Nullable Throwable error) {
+            return new AutoValue_Result_DecryptResult(state, idCardData, error);
         }
     }
 }

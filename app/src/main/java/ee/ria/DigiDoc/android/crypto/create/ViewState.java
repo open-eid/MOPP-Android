@@ -38,7 +38,7 @@ abstract class ViewState implements MviViewState {
     abstract boolean encryptSuccessMessageVisible();
     @Nullable abstract Throwable encryptError();
 
-    @Nullable abstract IdCardDataResponse decryptIdCardDataResponse();
+    @Nullable abstract IdCardDataResponse decryptionIdCardDataResponse();
 
     abstract Builder buildWith();
 
@@ -83,7 +83,8 @@ abstract class ViewState implements MviViewState {
         Builder encryptState(@State String encryptState);
         Builder encryptSuccessMessageVisible(boolean encryptSuccessMessageVisible);
         Builder encryptError(@Nullable Throwable encryptError);
-        Builder decryptIdCardDataResponse(IdCardDataResponse decryptIdCardDataResponse);
+        Builder decryptionIdCardDataResponse(
+                @Nullable IdCardDataResponse decryptionIdCardDataResponse);
         ViewState build();
     }
 }

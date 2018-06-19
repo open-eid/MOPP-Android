@@ -29,11 +29,14 @@ import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.putFile;
+import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
@@ -54,6 +57,8 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
     @Nullable private final File containerFile;
 
+    private final Subject<Boolean> idCardTokenAvailableSubject = PublishSubject.create();
+
     private final ViewDisposables disposables = new ViewDisposables();
     private CryptoCreateViewModel viewModel;
 
@@ -73,6 +78,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private ImmutableList<Certificate> recipients = ImmutableList.of();
     @Nullable private Throwable dataFilesAddError;
     @Nullable private Throwable encryptError;
+    private IdCardDataResponse decryptionIdCardDataResponse;
 
     @SuppressWarnings("WeakerAccess")
     public CryptoCreateScreen(Bundle args) {
@@ -120,12 +126,26 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 .map(ignored -> Intent.EncryptIntent.start(name, dataFiles, recipients));
     }
 
+    private Observable<Intent.DecryptionIntent> decryptionIntent() {
+        return Observable.merge(
+                clicks(decryptButton).map(ignored -> Intent.DecryptionIntent.show()),
+                cancels(decryptDialog).map(ignored -> Intent.DecryptionIntent.hide()));
+    }
+
     private Observable<Intent.DecryptIntent> decryptIntent() {
         return Observable.merge(
-                clicks(decryptButton).map(ignored -> Intent.DecryptIntent.open()),
-                cancels(decryptDialog).map(ignored -> Intent.DecryptIntent.clear()),
                 decryptDialog.positiveButtonClicks()
-                        .map(pin1 -> Intent.DecryptIntent.start(containerFile, pin1)));
+                        .filter(ignored ->
+                                decryptionIdCardDataResponse != null &&
+                                        decryptionIdCardDataResponse.token() != null)
+                        .map(pin1 ->
+                                Intent.DecryptIntent.start(DecryptRequest.create(
+                                        decryptionIdCardDataResponse.token(), containerFile,
+                                        pin1))),
+                idCardTokenAvailableSubject
+                        .filter(duplicates())
+                        .filter(available -> available)
+                        .map(ignored -> Intent.DecryptIntent.cancel()));
     }
 
     private Observable<Intent> errorIntents() {
@@ -145,7 +165,8 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), upButtonClickIntent(), dataFilesAddIntent(),
                 dataFileRemoveIntent(), dataFileViewIntent(), recipientsAddButtonClickIntent(),
-                recipientRemoveIntent(), encryptIntent(), decryptIntent(), errorIntents());
+                recipientRemoveIntent(), encryptIntent(), decryptionIntent(), decryptIntent(),
+                errorIntents());
     }
 
     @Override
@@ -172,16 +193,18 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         decryptButton.setVisibility(state.decryptButtonVisible() ? View.VISIBLE : View.GONE);
         sendButton.setVisibility(state.sendButtonVisible() ? View.VISIBLE : View.GONE);
         buttonSpaceView.setVisibility(state.sendButtonVisible() &&
-                        (state.encryptButtonVisible() || state.decryptButtonVisible())
+                (state.encryptButtonVisible() || state.decryptButtonVisible())
                 ? View.VISIBLE : View.GONE);
 
-        IdCardDataResponse decryptIdCardDataResponse = state.decryptIdCardDataResponse();
-        if (decryptIdCardDataResponse != null) {
+        decryptionIdCardDataResponse = state.decryptionIdCardDataResponse();
+        if (decryptionIdCardDataResponse != null) {
             decryptDialog.show();
-            decryptDialog.idCardDataResponse(decryptIdCardDataResponse);
+            decryptDialog.idCardDataResponse(decryptionIdCardDataResponse);
         } else {
             decryptDialog.dismiss();
         }
+        idCardTokenAvailableSubject.onNext(decryptionIdCardDataResponse != null &&
+                decryptionIdCardDataResponse.token() != null);
 
         if (encryptError != null) {
             if (encryptError instanceof RecipientMissingException) {
