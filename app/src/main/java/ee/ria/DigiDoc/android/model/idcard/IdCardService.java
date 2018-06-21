@@ -1,6 +1,5 @@
 package ee.ria.DigiDoc.android.model.idcard;
 
-import android.os.SystemClock;
 import android.util.SparseArray;
 
 import org.threeten.bp.LocalDate;
@@ -8,6 +7,8 @@ import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeFormatterBuilder;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -104,8 +105,9 @@ public final class IdCardService {
 
     public Single<IdCardData> decrypt(Token token, File containerFile, String pin1) {
         return Single.fromCallable(() -> {
-            SystemClock.sleep(1000);
-            Timber.e("decrypt");
+            try (InputStream inputStream = new FileInputStream(containerFile)) {
+                token.decrypt(pin1.getBytes(), inputStream);
+            }
             return data(token);
         });
     }

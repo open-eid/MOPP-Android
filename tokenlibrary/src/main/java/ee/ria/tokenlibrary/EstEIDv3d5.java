@@ -21,6 +21,7 @@ package ee.ria.tokenlibrary;
 
 import android.util.SparseArray;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 import ee.ria.scardcomlibrary.SmartCardReader;
@@ -102,6 +103,15 @@ public class EstEIDv3d5 extends EstEIDToken {
                 break;
         }
         return checkSW(recv);
+    }
+
+    @Override
+    public void decrypt(byte[] pin1, InputStream data) {
+        selectMasterFile();
+        selectCatalogue();
+        transmitExtended(new byte[]{0x00, 0x22, (byte) 0xF3, 0x06, 0x00});
+        transmitExtended(new byte[]{0x00, 0x22, 0x41, (byte) 0xA4, 0x05, (byte) 0x83, 0x03,
+                (byte) 0x80});
     }
 
     @Override

@@ -21,20 +21,31 @@ package ee.ria.tokenlibrary;
 
 import android.util.SparseArray;
 
+import java.io.InputStream;
+
 public interface Token {
 
-	byte[] sign(PinType type, String pin, byte[] data, boolean ellipticCurveCertificate);
-	SparseArray<String> readPersonalFile();
-	boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin);
-	byte[] readCert(CertType type);
+    byte[] sign(PinType type, String pin, byte[] data, boolean ellipticCurveCertificate);
+
+    SparseArray<String> readPersonalFile();
+
+    boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin);
+
+    byte[] readCert(CertType type);
+
     byte readRetryCounter(PinType pinType);
+
     int readUseCounter(CertType certType);
 
     boolean unblockAndChangePin(PinType pinType, byte[] puk, byte[] newPin);
 
+    void decrypt(byte[] pin1, InputStream data);
+
     enum CertType {
+
         CertAuth((byte) 0xAA),
         CertSign((byte) 0xDD);
+
         public byte value;
 
         CertType(byte value) {
@@ -43,9 +54,11 @@ public interface Token {
     }
 
     enum PinType {
+
         PIN1((byte) 0x01, (byte) 0x01),
         PIN2((byte) 0x02, (byte) 0x02),
         PUK((byte) 0x00, (byte) 0x03);
+
         public byte value;
         public byte retryValue;
 
