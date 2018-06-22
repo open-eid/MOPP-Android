@@ -208,15 +208,35 @@ public final class IdCardService {
                 cipher.init(Cipher.DECRYPT_MODE, recipient.getCertificate().getPublicKey());
 
                 return token.decrypt(pin1.getBytes(), cipher.doFinal());
+            } catch (PinVerificationException e) {
+                throw new PinVerificationError(e, idCardData());
             } catch (Exception e) {
                 Timber.e(e);
-                throw new DecryptionException("A", e);
+                throw new DecryptionException("Decrypt RSA recipient", e);
             }
         }
 
         @Override
         public byte[] decrypt(ECRecipient recipient) throws DecryptionException {
             return new byte[0];
+        }
+
+        private IdCardData idCardData() {
+            try {
+                return data(token);
+            } catch (Exception e) {
+                return data;
+            }
+        }
+    }
+
+    public static final class PinVerificationError extends DecryptionException {
+
+        public final IdCardData idCardData;
+
+        PinVerificationError(Exception cause, IdCardData idCardData) {
+            super(cause.getMessage(), cause);
+            this.idCardData = idCardData;
         }
     }
 }

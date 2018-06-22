@@ -24,6 +24,7 @@ import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
+import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -204,14 +205,14 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         if (decryptionIdCardDataResponse != null) {
             decryptDialog.show();
             decryptDialog.idCardDataResponse(decryptionIdCardDataResponse, state.decryptState(),
-                    state.decryptIdCardData(), state.decryptError());
+                    state.decryptIdCardData(), decryptError);
         } else {
             decryptDialog.dismiss();
         }
         idCardTokenAvailableSubject.onNext(decryptionIdCardDataResponse != null &&
                 decryptionIdCardDataResponse.token() != null);
 
-        if (decryptError != null) {
+        if (decryptError != null && !(decryptError instanceof IdCardService.PinVerificationError)) {
             errorDialog.setMessage(errorDialog.getContext().getString(
                     R.string.crypto_create_error));
             errorDialog.show();

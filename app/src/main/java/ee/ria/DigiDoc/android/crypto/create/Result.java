@@ -10,6 +10,7 @@ import java.io.File;
 import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
+import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.cryptolib.CryptoContainer;
@@ -327,7 +328,7 @@ interface Result extends MviResult<ViewState> {
                     .decryptState(state())
                     .decryptIdCardData(idCardData())
                     .decryptError(error());
-            if (error() != null) {
+            if (error() != null && !(error() instanceof IdCardService.PinVerificationError)) {
                 builder.decryptionIdCardDataResponse(null);
             }
             return builder.build();

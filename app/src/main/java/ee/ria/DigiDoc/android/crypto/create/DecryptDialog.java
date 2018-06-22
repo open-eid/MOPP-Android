@@ -15,6 +15,7 @@ import android.widget.TextView;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
+import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.scardcomlibrary.SmartCardReaderStatus;
 import io.reactivex.Observable;
@@ -62,10 +63,15 @@ final class DecryptDialog extends AlertDialog {
                             @Nullable Throwable decryptError) {
         IdCardData data = idCardDataResponse.data();
 
+        if (decryptState.equals(State.CLEAR)) {
+            pin1View.setText(null);
+        }
+
         if (decryptState.equals(State.ACTIVE)) {
             progressContainerView.setVisibility(View.VISIBLE);
             progressMessageView.setText(R.string.crypto_create_decrypt_active);
             containerView.setVisibility(View.GONE);
+            pin1ErrorView.setVisibility(View.GONE);
         } else if (data == null) {
             progressContainerView.setVisibility(View.VISIBLE);
             switch (idCardDataResponse.status()) {
@@ -83,7 +89,18 @@ final class DecryptDialog extends AlertDialog {
                     break;
             }
             containerView.setVisibility(View.GONE);
+            pin1ErrorView.setVisibility(View.GONE);
         } else {
+            if (decryptError != null
+                    && decryptError instanceof IdCardService.PinVerificationError) {
+                data = ((IdCardService.PinVerificationError) decryptError).idCardData;
+                pin1ErrorView.setText(getContext().getString(
+                        R.string.crypto_create_decrypt_pin1_invalid,
+                        data.authCertificate().pinRetryCount()));
+                pin1ErrorView.setVisibility(View.VISIBLE);
+            } else {
+                pin1ErrorView.setVisibility(View.GONE);
+            }
             progressContainerView.setVisibility(View.GONE);
             containerView.setVisibility(View.VISIBLE);
             dataView.setText(getContext().getString(R.string.crypto_create_decrypt_data,
