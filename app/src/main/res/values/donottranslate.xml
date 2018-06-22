@@ -5,6 +5,10 @@
 
     <string name="file_provider_authority">ee.ria.digidoc.fileprovider</string>
 
+    <string name="main_home_menu_locale_et">Eesti keel</string>
+    <string name="main_home_menu_locale_ru">Русский язык</string>
+    <string name="main_home_menu_locale_en">English</string>
+
     <string name="main_settings_phone_no_key">mobile_nr</string>
     <string name="main_settings_personal_code_key">personal_code</string>
     <string name="main_settings_role_key">mainSettingsRole</string>

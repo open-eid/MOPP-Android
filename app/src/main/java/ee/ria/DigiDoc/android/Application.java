@@ -55,6 +55,7 @@ import ee.ria.DigiDoc.android.signature.data.source.FileSystemSignatureContainer
 import ee.ria.DigiDoc.android.signature.list.SignatureListViewModel;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
 import ee.ria.cryptolib.RecipientRepository;
@@ -147,6 +148,8 @@ public class Application extends android.app.Application {
         Formatter formatter();
 
         Activity.RootScreenFactory rootScreenFactory();
+
+        LocaleService localeService();
 
         @Component.Builder
         interface Builder {

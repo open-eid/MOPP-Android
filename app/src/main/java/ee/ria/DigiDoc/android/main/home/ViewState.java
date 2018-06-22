@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.main.home;
 
 import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
@@ -15,6 +16,8 @@ abstract class ViewState implements MviViewState {
     abstract boolean menuOpen();
 
     abstract boolean navigationVisible();
+
+    @Nullable abstract Integer locale();
 
     abstract Builder buildWith();
 
@@ -31,6 +34,7 @@ abstract class ViewState implements MviViewState {
         Builder viewId(@IdRes int viewId);
         Builder menuOpen(boolean menuOpen);
         Builder navigationVisible(boolean navigationVisible);
+        Builder locale(@Nullable Integer locale);
         ViewState build();
     }
 }

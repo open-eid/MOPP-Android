@@ -31,6 +31,10 @@
     <item type="id" name="mainHomeMenuSettings" />
     <item type="id" name="mainHomeMenuAbout" />
     <item type="id" name="mainHomeMenuDiagnostics" />
+    <item type="id" name="mainHomeMenuLocale" />
+    <item type="id" name="mainHomeMenuLocaleEt" />
+    <item type="id" name="mainHomeMenuLocaleRu" />
+    <item type="id" name="mainHomeMenuLocaleEn" />
 
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
