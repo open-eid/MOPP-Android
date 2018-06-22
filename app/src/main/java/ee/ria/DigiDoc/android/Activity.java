@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,15 +21,22 @@ import ee.ria.DigiDoc.android.utils.navigator.Screen;
 public final class Activity extends AppCompatActivity {
 
     private Navigator navigator;
+    private RootScreenFactory rootScreenFactory;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.Theme_Application);
         super.onCreate(savedInstanceState);
-        Application.ApplicationComponent component = Application.component(this);
-        component.rootScreenFactory().intent(getIntent());
-        navigator = component.navigator();
+        rootScreenFactory.intent(getIntent());
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        Application.ApplicationComponent component = Application.component(newBase);
+        navigator = component.navigator();
+        rootScreenFactory = component.rootScreenFactory();
+        super.attachBaseContext(component.localeService().attachBaseContext(newBase));
     }
 
     @Override

@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 
-import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.mvi.BaseMviViewModel;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 
@@ -33,9 +32,7 @@ public final class HomeViewModel extends BaseMviViewModel<Intent, ViewState, Act
 
     @Override
     protected Action action(Intent intent) {
-        if (intent instanceof Intent.InitialIntent) {
-            return Action.NavigationAction.create(R.id.mainHomeNavigationSignature);
-        } else if (intent instanceof Intent.NavigationIntent) {
+        if (intent instanceof Intent.NavigationIntent) {
             return Action.NavigationAction.create(((Intent.NavigationIntent) intent).item());
         } else if (intent instanceof Intent.MenuIntent) {
             Intent.MenuIntent menuIntent = (Intent.MenuIntent) intent;

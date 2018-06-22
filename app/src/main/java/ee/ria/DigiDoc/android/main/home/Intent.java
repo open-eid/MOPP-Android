@@ -10,7 +10,7 @@ import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 interface Intent extends MviIntent {
 
     @AutoValue
-    abstract class InitialIntent implements Intent {
+    abstract class InitialIntent implements Intent, Action {
 
         static InitialIntent create() {
             return new AutoValue_Intent_InitialIntent();
@@ -55,6 +55,16 @@ interface Intent extends MviIntent {
 
         static NavigationVisibilityIntent create(boolean visible) {
             return new AutoValue_Intent_NavigationVisibilityIntent(visible);
+        }
+    }
+
+    @AutoValue
+    abstract class LocaleChangeIntent implements Intent, Action {
+
+        @IdRes abstract int item();
+
+        static LocaleChangeIntent create(@IdRes int item) {
+            return new AutoValue_Intent_LocaleChangeIntent(item);
         }
     }
 }

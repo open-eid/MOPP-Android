@@ -3,15 +3,20 @@ package ee.ria.DigiDoc.android.main.settings;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.support.v7.preference.PreferenceManager;
 
 import com.google.common.collect.ImmutableBiMap;
+
+import java.util.Locale;
 
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
 
 public final class SettingsDataStore {
+
+    private static final String KEY_LOCALE = "locale";
 
     private final SharedPreferences preferences;
     private final Resources resources;
@@ -59,5 +64,21 @@ public final class SettingsDataStore {
         editor.putString(resources.getString(R.string.main_settings_personal_code_key),
                 personalCode);
         editor.apply();
+    }
+
+    @Nullable public Locale getLocale() {
+        String locale = preferences.getString(KEY_LOCALE, null);
+        if (locale != null) {
+            return new Locale(locale);
+        }
+        return null;
+    }
+
+    public void setLocale(@Nullable Locale locale) {
+        if (locale == null) {
+            preferences.edit().remove(KEY_LOCALE).apply();
+        } else {
+            preferences.edit().putString(KEY_LOCALE, locale.getLanguage()).apply();
+        }
     }
 }
