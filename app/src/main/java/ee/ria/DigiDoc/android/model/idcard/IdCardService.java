@@ -2,13 +2,13 @@ package ee.ria.DigiDoc.android.model.idcard;
 
 import android.util.SparseArray;
 
+import com.google.common.io.Files;
+
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeFormatterBuilder;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -105,9 +105,8 @@ public final class IdCardService {
 
     public Single<IdCardData> decrypt(Token token, File containerFile, String pin1) {
         return Single.fromCallable(() -> {
-            try (InputStream inputStream = new FileInputStream(containerFile)) {
-                token.decrypt(pin1.getBytes(), inputStream);
-            }
+            // TODO data is wrong
+            token.decrypt(pin1.getBytes(), Files.toByteArray(containerFile));
             return data(token);
         });
     }

@@ -100,7 +100,7 @@ public class EstEIDv3d4 extends EstEIDToken {
     }
 
     @Override
-    public void decrypt(byte[] pin1, InputStream data) {
+    public void decrypt(byte[] pin1, byte[] data) {
     }
 
     @Override

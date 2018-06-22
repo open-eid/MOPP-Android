@@ -39,7 +39,7 @@ public interface Token {
 
     boolean unblockAndChangePin(PinType pinType, byte[] puk, byte[] newPin);
 
-    void decrypt(byte[] pin1, InputStream data);
+    void decrypt(byte[] pin1, byte[] data);
 
     enum CertType {
 
