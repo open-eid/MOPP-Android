@@ -56,4 +56,56 @@
         android:text="@string/main_home_menu_diagnostics"
         android:drawableStart="@drawable/ic_icon_diagnostics" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/material_baseline_grid_3x"
+        android:layout_marginBottom="@dimen/material_baseline_grid_3x"
+        android:background="@color/menuSeparator" />
+
+    <RadioGroup
+        android:id="@id/mainHomeMenuLocale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="?attr/dialogPreferredPadding"
+        android:layout_marginEnd="?attr/dialogPreferredPadding"
+        android:orientation="horizontal"
+        android:background="@drawable/main_home_menu_locales_background">
+
+        <RadioButton
+            android:id="@id/mainHomeMenuLocaleEt"
+            style="@style/Widget.Application.MenuLocale"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/main_home_menu_locale_et" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/menuSeparator" />
+
+        <RadioButton
+            android:id="@id/mainHomeMenuLocaleRu"
+            style="@style/Widget.Application.MenuLocale"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/main_home_menu_locale_ru" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/menuSeparator" />
+
+        <RadioButton
+            android:id="@id/mainHomeMenuLocaleEn"
+            style="@style/Widget.Application.MenuLocale"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/main_home_menu_locale_en" />
+
+    </RadioGroup>
+
 </LinearLayout>

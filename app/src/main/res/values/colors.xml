@@ -13,5 +13,10 @@
     <color name="title">#041E42</color>
     <color name="divider">#DEE4E9</color>
     <color name="menuBackground">#E6023664</color>
+    <color name="menuSeparator">#59ffffff</color>
+    <color name="menuLocaleBackground">#47586F</color>
+    <color name="menuLocaleBackgroundChecked">#041E42</color>
+    <color name="menuLocaleText">#A7AAAC</color>
+    <color name="menuLocaleTextChecked">#F4F5F6</color>
 
 </resources>
