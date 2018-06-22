@@ -2,14 +2,24 @@ package ee.ria.DigiDoc.android.model.idcard;
 
 import android.util.SparseArray;
 
-import com.google.common.io.Files;
-
+import org.openeid.cdoc4j.CDOCDecrypter;
+import org.openeid.cdoc4j.DataFile;
+import org.openeid.cdoc4j.ECRecipient;
+import org.openeid.cdoc4j.RSARecipient;
+import org.openeid.cdoc4j.exception.DecryptionException;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeFormatterBuilder;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.util.List;
 
+import javax.crypto.Cipher;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -105,8 +115,10 @@ public final class IdCardService {
 
     public Single<IdCardData> decrypt(Token token, File containerFile, String pin1) {
         return Single.fromCallable(() -> {
-            // TODO data is wrong
-            token.decrypt(pin1.getBytes(), Files.toByteArray(containerFile));
+            List<DataFile> dataFiles = new CDOCDecrypter()
+                    .withToken(new PKCS11Token(token, pin1))
+                    .decrypt(new FileInputStream(containerFile));
+            Timber.e("DATA FILES: %s", dataFiles);
             return data(token);
         });
     }
@@ -164,5 +176,47 @@ public final class IdCardService {
         return IdCardData.create(EIDType.parseOrganization(authCertificate.organization()),
                 givenNames.toString(), surname, personalCode, citizenship, dateOfBirth,
                 authCertificate, signCertificate, pukRetryCounter, documentNumber, expiryDate);
+    }
+
+    static final class PKCS11Token implements org.openeid.cdoc4j.token.Token {
+
+        private final Token token;
+        private final String pin1;
+        private final IdCardData data;
+
+        PKCS11Token(Token token, String pin1) throws Exception {
+            this.token = token;
+            this.pin1 = pin1;
+            data = data(token);
+        }
+
+        @Override
+        public Certificate getCertificate() {
+            try {
+                return CertificateFactory.getInstance("X.509")
+                        .generateCertificate(new ByteArrayInputStream(data.authCertificate().data().toByteArray()));
+            } catch (CertificateException e) {
+                Timber.e(e);
+                return null;
+            }
+        }
+
+        @Override
+        public byte[] decrypt(RSARecipient recipient) throws DecryptionException {
+            try {
+                Cipher cipher = Cipher.getInstance("RSA");
+                cipher.init(Cipher.DECRYPT_MODE, recipient.getCertificate().getPublicKey());
+
+                return token.decrypt(pin1.getBytes(), cipher.doFinal());
+            } catch (Exception e) {
+                Timber.e(e);
+                throw new DecryptionException("A", e);
+            }
+        }
+
+        @Override
+        public byte[] decrypt(ECRecipient recipient) throws DecryptionException {
+            return new byte[0];
+        }
     }
 }

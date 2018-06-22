@@ -194,6 +194,7 @@
     <string name="crypto_create_decrypt_data" tools:ignore="MissingTranslation">%1$s %2$s (%3$s)</string>
     <string name="crypto_create_decrypt_pin1" tools:ignore="MissingTranslation">Enter PIN1</string>
     <string name="crypto_create_decrypt_pin1_invalid" tools:ignore="MissingTranslation">Wrong PIN1. You have %1$d attempts left.</string>
+    <string name="crypto_create_decrypt_active" tools:ignore="MissingTranslation">Decrypting</string>
 
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Connect the card reader and insert your ID-card into the reader.</string>

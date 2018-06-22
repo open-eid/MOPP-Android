@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 
 import ee.ria.DigiDoc.Certificate;
+import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -40,6 +41,10 @@ abstract class ViewState implements MviViewState {
 
     @Nullable abstract IdCardDataResponse decryptionIdCardDataResponse();
 
+    @State abstract String decryptState();
+    @Nullable abstract IdCardData decryptIdCardData();
+    @Nullable abstract Throwable decryptError();
+
     abstract Builder buildWith();
 
     static ViewState initial() {
@@ -59,6 +64,7 @@ abstract class ViewState implements MviViewState {
                 .recipientsSearchResult(ImmutableList.of())
                 .encryptState(State.IDLE)
                 .encryptSuccessMessageVisible(false)
+                .decryptState(State.IDLE)
                 .build();
     }
 
@@ -85,6 +91,9 @@ abstract class ViewState implements MviViewState {
         Builder encryptError(@Nullable Throwable encryptError);
         Builder decryptionIdCardDataResponse(
                 @Nullable IdCardDataResponse decryptionIdCardDataResponse);
+        Builder decryptState(@State String decryptState);
+        Builder decryptIdCardData(@Nullable IdCardData decryptIdCardData);
+        Builder decryptError(@Nullable Throwable decryptError);
         ViewState build();
     }
 }

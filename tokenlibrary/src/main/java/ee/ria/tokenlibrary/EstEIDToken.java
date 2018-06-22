@@ -100,6 +100,21 @@ abstract class EstEIDToken implements Token {
         return 0xFFFFFF - (((c & 0xff) << 16) + ((d & 0xff) << 8) + (e & 0xff));
     }
 
+    @Override
+    public byte[] decrypt(byte[] pin1, byte[] data) {
+        verifyPin(PinType.PIN1, pin1);
+        selectMasterFile();
+        selectCatalogue();
+
+        transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x04, 0x02, 0x00, 0x33});
+        byte[] keyReference = transmitExtended(new byte[]{0x00, (byte) 0xB2, 0x01, 0x04, 0x00});
+
+        transmitExtended(new byte[]{0x00, 0x22, (byte) 0xF3, 0x06, 0x00}); // manage security environment
+        transmitExtended(Util.concat(new byte[]{0x00, 0x22, 0x41, (byte) 0xA4, 0x05, (byte) 0x83, 0x03, (byte) 0x80}, keyReference));
+
+        return transmitExtended(Util.concat(new byte[]{0x00, 0x2A, (byte) 0x80, (byte) 0x86, (byte) data.length}, data));
+    }
+
     private byte readActiveCertKey(CertType certType) {
         selectMasterFile();
         selectCatalogue();

@@ -3,7 +3,9 @@ package ee.ria.DigiDoc.android.crypto.create;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +15,13 @@ import android.widget.TextView;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
+import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.scardcomlibrary.SmartCardReaderStatus;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
-import static ee.ria.DigiDoc.android.Constants.VOID;
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
 
 final class DecryptDialog extends AlertDialog {
 
@@ -49,15 +52,21 @@ final class DecryptDialog extends AlertDialog {
 
         setButton(BUTTON_POSITIVE,
                 getContext().getString(R.string.crypto_create_decrypt_positive_button),
-                (dialog, which) -> positiveButtonClicksSubject.onNext(VOID));
+                (OnClickListener) null);
         setButton(BUTTON_NEGATIVE, getContext().getString(android.R.string.cancel),
                 (dialog, which) -> cancel());
     }
 
-    void idCardDataResponse(IdCardDataResponse idCardDataResponse) {
+    void idCardDataResponse(IdCardDataResponse idCardDataResponse, @State String decryptState,
+                            @Nullable IdCardData decryptIdCardData,
+                            @Nullable Throwable decryptError) {
         IdCardData data = idCardDataResponse.data();
 
-        if (data == null) {
+        if (decryptState.equals(State.ACTIVE)) {
+            progressContainerView.setVisibility(View.VISIBLE);
+            progressMessageView.setText(R.string.crypto_create_decrypt_active);
+            containerView.setVisibility(View.GONE);
+        } else if (data == null) {
             progressContainerView.setVisibility(View.VISIBLE);
             switch (idCardDataResponse.status()) {
                 case SmartCardReaderStatus.IDLE:
@@ -85,5 +94,12 @@ final class DecryptDialog extends AlertDialog {
     Observable<String> positiveButtonClicks() {
         return positiveButtonClicksSubject
                 .map(ignored -> pin1View.getText().toString());
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // override default click listener to prevent dialog dismiss
+        clicks(getButton(BUTTON_POSITIVE)).subscribe(positiveButtonClicksSubject);
     }
 }

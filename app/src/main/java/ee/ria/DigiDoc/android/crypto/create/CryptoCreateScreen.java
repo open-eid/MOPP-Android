@@ -76,9 +76,10 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private String name;
     private ImmutableList<File> dataFiles = ImmutableList.of();
     private ImmutableList<Certificate> recipients = ImmutableList.of();
+    private IdCardDataResponse decryptionIdCardDataResponse;
     @Nullable private Throwable dataFilesAddError;
     @Nullable private Throwable encryptError;
-    private IdCardDataResponse decryptionIdCardDataResponse;
+    @Nullable private Throwable decryptError;
 
     @SuppressWarnings("WeakerAccess")
     public CryptoCreateScreen(Bundle args) {
@@ -155,6 +156,8 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                         return Intent.DataFilesAddIntent.clear();
                     } else if (encryptError != null) {
                         return Intent.EncryptIntent.clear();
+                    } else if (decryptError != null) {
+                        return Intent.DecryptIntent.cancel();
                     }
                     throw new IllegalStateException("No errors");
                 });
@@ -180,6 +183,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         recipients = state.recipients();
         dataFilesAddError = state.dataFilesAddError();
         encryptError = state.encryptError();
+        decryptError = state.decryptError();
 
         setActivity(state.dataFilesAddState().equals(State.ACTIVE) ||
                 state.encryptState().equals(State.ACTIVE));
@@ -199,14 +203,19 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         decryptionIdCardDataResponse = state.decryptionIdCardDataResponse();
         if (decryptionIdCardDataResponse != null) {
             decryptDialog.show();
-            decryptDialog.idCardDataResponse(decryptionIdCardDataResponse);
+            decryptDialog.idCardDataResponse(decryptionIdCardDataResponse, state.decryptState(),
+                    state.decryptIdCardData(), state.decryptError());
         } else {
             decryptDialog.dismiss();
         }
         idCardTokenAvailableSubject.onNext(decryptionIdCardDataResponse != null &&
                 decryptionIdCardDataResponse.token() != null);
 
-        if (encryptError != null) {
+        if (decryptError != null) {
+            errorDialog.setMessage(errorDialog.getContext().getString(
+                    R.string.crypto_create_error));
+            errorDialog.show();
+        } else if (encryptError != null) {
             if (encryptError instanceof RecipientMissingException) {
                 errorDialog.setMessage(errorDialog.getContext().getString(
                         R.string.crypto_create_encrypt_error_no_recipients));
