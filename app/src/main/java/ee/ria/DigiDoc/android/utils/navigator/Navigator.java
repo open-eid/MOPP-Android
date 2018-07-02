@@ -75,4 +75,6 @@ public interface Navigator {
     void addBackButtonClickListener(BackButtonClickListener listener);
 
     void removeBackButtonClickListener(BackButtonClickListener listener);
+
+    Activity activity();
 }

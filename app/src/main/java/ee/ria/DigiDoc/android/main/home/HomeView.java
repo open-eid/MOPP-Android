@@ -105,6 +105,7 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         }
 
         navigationView.setVisibility(state.navigationVisible() ? VISIBLE : GONE);
+        menuView.locale(state.locale());
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
@@ -129,11 +130,16 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         return navigationVisibilityIntentSubject;
     }
 
+    private Observable<Intent.LocaleChangeIntent> localeChangeIntent() {
+        return menuView.localeChecks()
+                .map(Intent.LocaleChangeIntent::create);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), navigationIntent(), menuIntent(),
-                navigationVisibilityIntent());
+                navigationVisibilityIntent(), localeChangeIntent());
     }
 
     @Override

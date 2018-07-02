@@ -6,6 +6,10 @@ import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.util.SparseIntArray;
 
+import com.google.common.collect.ImmutableBiMap;
+
+import java.util.Locale;
+
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
@@ -14,6 +18,7 @@ import ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen;
 import ee.ria.DigiDoc.android.main.home.Intent.NavigationVisibilityIntent;
 import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
 import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
+import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import io.reactivex.Observable;
@@ -31,7 +36,16 @@ final class Processor implements ObservableTransformer<Action, Result> {
         NAVIGATION_ITEM_VIEWS.put(R.id.mainHomeNavigationEID, R.id.mainHomeEID);
     }
 
+    private static final ImmutableBiMap<Integer, String> LOCALES =
+            ImmutableBiMap.<Integer, String>builder()
+                    .put(R.id.mainHomeMenuLocaleEt, "et")
+                    .put(R.id.mainHomeMenuLocaleRu, "ru")
+                    .put(R.id.mainHomeMenuLocaleEn, "en")
+                    .build();
+
     private final Navigator navigator;
+
+    private final ObservableTransformer<Intent.InitialIntent, Result.InitialResult> initial;
 
     private final ObservableTransformer<Action.NavigationAction, Result.NavigationResult>
             navigation;
@@ -41,10 +55,24 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<NavigationVisibilityIntent,
                                         Result.NavigationVisibilityResult> navigationVisibility;
 
+    private final ObservableTransformer<Intent.LocaleChangeIntent,
+                                        Result.LocaleChangeResult> localeChange;
+
     @Nullable private String eidScreenId;
 
-    @Inject Processor(Application application, Navigator navigator) {
+    @Inject Processor(Application application, Navigator navigator, LocaleService localeService) {
         this.navigator = navigator;
+
+        initial = upstream -> upstream.switchMap(intent -> {
+            return Observable
+                    .fromCallable(() -> {
+                        return Result.InitialResult.create(
+                                R.id.mainHomeSignature,
+                                LOCALES.inverse().get(
+                                        localeService.applicationLocale().getLanguage()));
+                    });
+        });
+
         navigation = upstream -> upstream.switchMap(action -> {
             if (action.item() != R.id.mainHomeNavigationEID) {
                 clearEidViewModel();
@@ -68,15 +96,26 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         navigationVisibility = upstream -> upstream.map(action ->
                 Result.NavigationVisibilityResult.create(action.visible()));
+
+        localeChange = upstream -> upstream.switchMap(intent -> {
+            return Observable
+                    .fromCallable(() -> {
+                        localeService.applicationLocale(new Locale(LOCALES.get(intent.item())));
+                        return Result.LocaleChangeResult.create(LOCALES.inverse().get(
+                                localeService.applicationLocale().getLanguage()));
+                    });
+        });
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public ObservableSource<Result> apply(Observable<Action> upstream) {
         return upstream.publish(shared -> Observable.mergeArray(
+                shared.ofType(Intent.InitialIntent.class).compose(initial),
                 shared.ofType(Action.NavigationAction.class).compose(navigation),
                 shared.ofType(Action.MenuAction.class).compose(menu),
-                shared.ofType(NavigationVisibilityIntent.class).compose(navigationVisibility)));
+                shared.ofType(NavigationVisibilityIntent.class).compose(navigationVisibility),
+                shared.ofType(Intent.LocaleChangeIntent.class).compose(localeChange)));
     }
 
     void eidScreenId(@Nullable String eidScreenId) {

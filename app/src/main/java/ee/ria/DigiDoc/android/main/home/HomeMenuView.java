@@ -6,12 +6,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import ee.ria.DigiDoc.R;
 import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static com.jakewharton.rxbinding2.widget.RxRadioGroup.checkedChanges;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 
 public final class HomeMenuView extends NestedScrollView {
@@ -23,6 +25,7 @@ public final class HomeMenuView extends NestedScrollView {
     private final TextView settingsView;
     private final TextView aboutView;
     private final TextView diagnosticsView;
+    private final RadioGroup localeView;
 
     public HomeMenuView(@NonNull Context context) {
         this(context, null);
@@ -41,6 +44,7 @@ public final class HomeMenuView extends NestedScrollView {
         settingsView = findViewById(R.id.mainHomeMenuSettings);
         aboutView = findViewById(R.id.mainHomeMenuAbout);
         diagnosticsView = findViewById(R.id.mainHomeMenuDiagnostics);
+        localeView = findViewById(R.id.mainHomeMenuLocale);
 
         tintCompoundDrawables(helpView);
         tintCompoundDrawables(recentView);
@@ -61,5 +65,17 @@ public final class HomeMenuView extends NestedScrollView {
                 clicks(settingsView).map(ignored -> R.id.mainHomeMenuSettings),
                 clicks(aboutView).map(ignored -> R.id.mainHomeMenuAbout),
                 clicks(diagnosticsView).map(ignored -> R.id.mainHomeMenuDiagnostics));
+    }
+
+    public void locale(@Nullable Integer locale) {
+        if (locale == null) {
+            localeView.clearCheck();
+        } else {
+            localeView.check(locale);
+        }
+    }
+
+    public Observable<Integer> localeChecks() {
+        return checkedChanges(localeView).skipInitialValue();
     }
 }
