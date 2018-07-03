@@ -19,7 +19,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.List;
 
-import javax.crypto.Cipher;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -31,6 +30,7 @@ import ee.ria.scardcomlibrary.SmartCardReaderStatus;
 import ee.ria.tokenlibrary.Token;
 import ee.ria.tokenlibrary.TokenFactory;
 import ee.ria.tokenlibrary.exception.PinVerificationException;
+import ee.ria.tokenlibrary.util.Util;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -193,8 +193,8 @@ public final class IdCardService {
         @Override
         public Certificate getCertificate() {
             try {
-                return CertificateFactory.getInstance("X.509")
-                        .generateCertificate(new ByteArrayInputStream(data.authCertificate().data().toByteArray()));
+                return CertificateFactory.getInstance("X.509").generateCertificate(
+                        new ByteArrayInputStream(data.authCertificate().data().toByteArray()));
             } catch (CertificateException e) {
                 Timber.e(e);
                 return null;
@@ -204,10 +204,8 @@ public final class IdCardService {
         @Override
         public byte[] decrypt(RSARecipient recipient) throws DecryptionException {
             try {
-                Cipher cipher = Cipher.getInstance("RSA");
-                cipher.init(Cipher.DECRYPT_MODE, recipient.getCertificate().getPublicKey());
-
-                return token.decrypt(pin1.getBytes(), cipher.doFinal());
+                return token.decrypt(pin1.getBytes(),
+                        Util.concat(new byte[]{0x00}, recipient.getEncryptedKey()));
             } catch (PinVerificationException e) {
                 throw new PinVerificationError(e, idCardData());
             } catch (Exception e) {
