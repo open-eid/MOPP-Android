@@ -81,9 +81,9 @@ public final class SmartCardReaderManager {
         return statusObservable;
     }
 
-    public SmartCardReader connectedReader() throws SmartCardCommunicationException {
+    public SmartCardReader connectedReader() throws SmartCardReaderException {
         if (reader == null || !reader.connected()) {
-            throw new SmartCardCommunicationException("Reader or card is not connected");
+            throw new SmartCardReaderException("Reader or card is not connected");
         }
         return reader;
     }

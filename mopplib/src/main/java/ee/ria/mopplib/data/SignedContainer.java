@@ -5,7 +5,6 @@ import android.util.Base64;
 import android.webkit.MimeTypeMap;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -33,6 +32,7 @@ import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
 import ee.ria.libdigidocpp.Signature.Validator;
 import ee.ria.libdigidocpp.Signatures;
+import ee.ria.mopplib.utils.Function;
 import okio.ByteString;
 import timber.log.Timber;
 
@@ -237,10 +237,9 @@ public abstract class SignedContainer {
         return open(file());
     }
 
-    @SuppressWarnings("Guava")
     public final SignedContainer sign(ByteString certificate,
                                       Function<ByteString, ByteString> signFunction) throws
-            IOException {
+            Exception {
         Container container;
         try {
             container = Container.open(file().getAbsolutePath());

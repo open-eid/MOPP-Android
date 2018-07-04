@@ -23,21 +23,28 @@ import android.util.SparseArray;
 
 import java.io.UnsupportedEncodingException;
 
+import ee.ria.scardcomlibrary.ApduResponseException;
 import ee.ria.scardcomlibrary.SmartCardReader;
+import ee.ria.scardcomlibrary.SmartCardReaderException;
 import ee.ria.tokenlibrary.exception.SecureOperationOverUnsecureChannelException;
 import ee.ria.tokenlibrary.exception.SignOperationFailedException;
 import ee.ria.tokenlibrary.exception.TokenException;
-import ee.ria.tokenlibrary.util.AlgorithmUtils;
-import ee.ria.tokenlibrary.util.Util;
+
+import static com.google.common.primitives.Bytes.concat;
+import static ee.ria.tokenlibrary.util.AlgorithmUtils.addPadding;
 
 public class EstEIDv3d5 extends EstEIDToken {
 
+    private final SmartCardReader reader;
+
     EstEIDv3d5(SmartCardReader reader) {
         super(reader);
+        this.reader = reader;
     }
 
     @Override
-    public byte[] sign(PinType type, String pin, byte[] data, boolean ellipticCurveCertificate) {
+    public byte[] sign(PinType type, String pin, byte[] data, boolean ellipticCurveCertificate)
+            throws SmartCardReaderException {
         verifyPin(type, pin.getBytes());
         try {
             selectMasterFile();
@@ -45,10 +52,10 @@ public class EstEIDv3d5 extends EstEIDToken {
             manageSecurityEnvironment();
             switch (type) {
                 case PIN1:
-                    return transmitExtended(Util.concat(new byte[]{0x00, (byte) 0x88, 0x00, 0x00, (byte) data.length}, data));
+                    return reader.transmit(0x00, 0x88, 0x00, 0x00, data, null);
                 case PIN2:
-                    byte[] padded = AlgorithmUtils.addPadding(data, ellipticCurveCertificate);
-                    return transmitExtended(Util.concat(new byte[]{0x00, 0x2A, (byte) 0x9E, (byte) 0x9A, (byte) padded.length}, padded));
+                    return reader.transmit(0x00, 0x2A, 0x9E, 0x9A,
+                            addPadding(data, ellipticCurveCertificate), null);
                 default:
                     throw new Exception("Unsupported");
             }
@@ -58,7 +65,7 @@ public class EstEIDv3d5 extends EstEIDToken {
     }
 
     @Override
-    public SparseArray<String> readPersonalFile() {
+    public SparseArray<String> readPersonalFile() throws SmartCardReaderException {
         selectMasterFile();
         selectCatalogue();
         selectPersonalDataFile();
@@ -75,53 +82,55 @@ public class EstEIDv3d5 extends EstEIDToken {
     }
 
     @Override
-    public boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin) {
-        if (!isSecureChannel()) {
+    public boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin)
+            throws SmartCardReaderException {
+        if (!reader.isSecureChannel()) {
             throw new SecureOperationOverUnsecureChannelException("PIN replace is not allowed");
         }
-        byte[] recv = transmit(Util.concat(new byte[]{0x00, 0x24, 0x00, pinType.value, (byte) (currentPin.length + newPin.length)}, currentPin, newPin));
-        return checkSW(recv);
+        try {
+            reader.transmit(0x00, 0x24, 0x00, pinType.value, concat(currentPin, newPin), null);
+        } catch (ApduResponseException e) {
+            return false;
+        }
+        return true;
     }
 
     @Override
-    public boolean unblockAndChangePin(PinType pinType, byte[] puk, byte[] newPin) {
-        if (!isSecureChannel()) {
+    public boolean unblockAndChangePin(PinType pinType, byte[] puk, byte[] newPin)
+            throws SmartCardReaderException {
+        if (!reader.isSecureChannel()) {
             throw new SecureOperationOverUnsecureChannelException("PIN replace is not allowed");
         }
         verifyPin(PinType.PUK, puk);
 
         blockPin(pinType, newPin.length);
-
-        byte[] recv = new byte[0];
-        switch (pinType) {
-            case PIN1:
-                recv = transmit(Util.concat(new byte[]{0x00, 0x2C, 0x00, pinType.value, 0x0C}, puk, newPin));
-                break;
-            case PIN2:
-                recv = transmit(Util.concat(new byte[]{0x00, 0x2C, 0x00, pinType.value, 0x0D}, puk, newPin));
-                break;
+        try {
+            reader.transmit(0x00, 0x2C, 0x00, pinType.value, concat(puk, newPin), null);
+        } catch (ApduResponseException e) {
+            return false;
         }
-        return checkSW(recv);
+        return true;
     }
 
     @Override
-    void selectMasterFile() {
-        transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x00, 0x0C, 0x00});
+    void selectMasterFile() throws SmartCardReaderException {
+        reader.transmit(0x00, 0xA4, 0x00, 0x0C, null, 0x00);
     }
 
     @Override
-    void selectCatalogue() {
-        transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x01, 0x04, 0x02, (byte) 0xEE, (byte) 0xEE});
+    void selectCatalogue() throws SmartCardReaderException {
+        reader.transmit(0x00, 0xA4, 0x01, 0x04, new byte[] {(byte) 0xEE, (byte) 0xEE}, null);
     }
 
     @Override
-    void manageSecurityEnvironment() {
-        transmitExtended(new byte[]{0x00, 0x22, (byte) 0xF3, 0x01, 0x00});
-        transmitExtended(new byte[]{0x00, 0x22, 0x41, (byte) 0xB8, 0x05, (byte) 0x83, 0x03, (byte) 0x80});
+    void manageSecurityEnvironment() throws SmartCardReaderException {
+        reader.transmit(0x00, 0x22, 0xF3, 0x01, null, 0x00);
+        // TODO
+//        transmitExtended(new byte[]{0x00, 0x22, 0x41, (byte) 0xB8, 0x05, (byte) 0x83, 0x03, (byte) 0x80});
     }
 
     @Override
-    void selectPersonalDataFile() {
-        transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x0C, 0x02, (byte) 0x50, (byte) 0x44});
+    void selectPersonalDataFile() throws SmartCardReaderException {
+        reader.transmit(0x00, 0xA4, 0x02, 0x0C, new byte[] {0x50, 0x44}, null);
     }
 }

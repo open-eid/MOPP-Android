@@ -8,11 +8,11 @@ import com.acs.smartcard.ReaderException;
 
 import java.util.Arrays;
 
-import ee.ria.scardcomlibrary.SmartCardCommunicationException;
 import ee.ria.scardcomlibrary.SmartCardReader;
+import ee.ria.scardcomlibrary.SmartCardReaderException;
 import timber.log.Timber;
 
-public final class AcsSmartCardReader implements SmartCardReader {
+public final class AcsSmartCardReader extends SmartCardReader {
 
     private static final int SLOT = 0;
 
@@ -56,13 +56,13 @@ public final class AcsSmartCardReader implements SmartCardReader {
     }
 
     @Override
-    public byte[] transmit(byte[] apdu) {
+    protected byte[] transmit(byte[] apdu) throws SmartCardReaderException {
         byte[] recv = new byte[1024];
         int len;
         try {
             len = reader.transmit(SLOT, apdu, apdu.length, recv, recv.length);
         } catch (ReaderException e) {
-            throw new SmartCardCommunicationException(e);
+            throw new SmartCardReaderException(e);
         }
         return Arrays.copyOf(recv, len);
     }

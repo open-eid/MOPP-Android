@@ -44,4 +44,5 @@ ext {
     cdoc4jVersion = '1.1'
     junitVersion = '4.12'
     truthVersion = '0.40'
+    mockitoVersion = '2.19.0'
 }

@@ -29,7 +29,8 @@ public class TokenFactory {
     public static Token getTokenImpl(SmartCardReader reader) {
         String cardVersion = null;
         try {
-            byte[] versionBytes = reader.transmitExtended(new byte[]{0x00, (byte) 0xCA, 0x01, 0x00, 0x03});
+            byte[] versionBytes = reader.transmit(
+                    (byte) 0x00, (byte) 0xCA, (byte) 0x01, (byte) 0x00, null, 0x03);
             cardVersion = Util.toHex(versionBytes);
         } catch (Exception e) {
             Timber.e(e, "Error retrieving token implementation");

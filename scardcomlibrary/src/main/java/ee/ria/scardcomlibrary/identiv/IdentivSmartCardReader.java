@@ -9,15 +9,15 @@ import com.identive.libs.SCard;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import ee.ria.scardcomlibrary.SmartCardCommunicationException;
 import ee.ria.scardcomlibrary.SmartCardReader;
+import ee.ria.scardcomlibrary.SmartCardReaderException;
 
 import static com.identive.libs.WinDefs.SCARD_LEAVE_CARD;
 import static com.identive.libs.WinDefs.SCARD_PROTOCOL_TX;
 import static com.identive.libs.WinDefs.SCARD_SHARE_EXCLUSIVE;
 import static com.identive.libs.WinDefs.SCARD_SPECIFIC;
 
-public final class IdentivSmartCardReader implements SmartCardReader {
+public final class IdentivSmartCardReader extends SmartCardReader {
 
     private static final int VENDOR_ID = 1254;
 
@@ -77,7 +77,7 @@ public final class IdentivSmartCardReader implements SmartCardReader {
     }
 
     @Override
-    public byte[] transmit(byte[] apdu) {
+    protected byte[] transmit(byte[] apdu) throws SmartCardReaderException {
         SCard.SCardIOBuffer io = sCard.new SCardIOBuffer();
         io.setAbyInBuffer(apdu);
         io.setnInBufferSize(apdu.length);
@@ -85,7 +85,7 @@ public final class IdentivSmartCardReader implements SmartCardReader {
         io.setnOutBufferSize(0x8000);
         sCard.SCardTransmit(io);
         if (io.getnBytesReturned() == 0) {
-            throw new SmartCardCommunicationException("Failed to send apdu");
+            throw new SmartCardReaderException("Failed to send apdu");
         }
         String rstr = "";
         for (int k = 0; k < io.getnBytesReturned(); k++) {

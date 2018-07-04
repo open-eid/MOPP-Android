@@ -21,25 +21,26 @@ package ee.ria.tokenlibrary;
 
 import android.util.SparseArray;
 
-import java.io.InputStream;
+import ee.ria.scardcomlibrary.SmartCardReaderException;
 
 public interface Token {
 
-    byte[] sign(PinType type, String pin, byte[] data, boolean ellipticCurveCertificate);
+    byte[] sign(PinType type, String pin, byte[] data, boolean ellipticCurveCertificate)
+            throws SmartCardReaderException;
 
-    SparseArray<String> readPersonalFile();
+    SparseArray<String> readPersonalFile() throws SmartCardReaderException;
 
-    boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin);
+    boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin)
+            throws SmartCardReaderException;
 
-    byte[] readCert(CertType type);
+    byte[] readCert(CertType type) throws SmartCardReaderException;
 
-    byte readRetryCounter(PinType pinType);
+    byte readRetryCounter(PinType pinType) throws SmartCardReaderException;
 
-    int readUseCounter(CertType certType);
+    boolean unblockAndChangePin(PinType pinType, byte[] puk, byte[] newPin)
+            throws SmartCardReaderException;
 
-    boolean unblockAndChangePin(PinType pinType, byte[] puk, byte[] newPin);
-
-    byte[] decrypt(byte[] pin1, byte[] data);
+    byte[] decrypt(byte[] pin1, byte[] data) throws SmartCardReaderException;
 
     enum CertType {
 
@@ -67,5 +68,4 @@ public interface Token {
             this.retryValue = retryValue;
         }
     }
-
 }

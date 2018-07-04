@@ -22,38 +22,38 @@ package ee.ria.tokenlibrary;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import ee.ria.scardcomlibrary.SmartCardCommunicationException;
 import ee.ria.scardcomlibrary.SmartCardReader;
+import ee.ria.scardcomlibrary.SmartCardReaderException;
 import ee.ria.tokenlibrary.exception.PinVerificationException;
 import ee.ria.tokenlibrary.exception.TokenException;
-import ee.ria.tokenlibrary.util.Util;
 
 abstract class EstEIDToken implements Token {
 
-    private SmartCardReader reader;
+    private final SmartCardReader reader;
 
     EstEIDToken(SmartCardReader reader) {
         this.reader = reader;
     }
 
-    void verifyPin(PinType type, byte[] pin) {
-        byte[] recv = transmit(Util.concat(new byte[]{0x00, 0x20, 0x00, type.value, (byte) pin.length}, pin));
-        if (!checkSW(recv)) {
+    void verifyPin(PinType type, byte[] pin) throws PinVerificationException {
+        try {
+            reader.transmit(0x00, 0x20, 0x00, type.value, pin, null);
+        } catch (SmartCardReaderException e) {
             throw new PinVerificationException(type);
         }
     }
 
-    void blockPin(PinType pinType, int newPinLength) {
+    void blockPin(PinType pinType, int newPinLength) throws SmartCardReaderException {
         byte retries = readRetryCounter(pinType);
         for (int i = 0; i <= retries; i++) {
-            transmit(Util.concat(new byte[]{0x00, 0x20, 0x00, pinType.value}, new byte[newPinLength], new byte[]{(byte) i}));
+            reader.transmit(0x00, 0x20, 0x00, pinType.value, new byte[newPinLength], null);
         }
     }
 
-    private byte[] readCertRecords() {
+    private byte[] readCertRecords() throws SmartCardReaderException {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        for (byte i = 0; i <= 6; ++i) {
-            byte[] data = transmitExtended(new byte[]{0x00, (byte) 0xB0, i, 0x00, 0x00});
+        for (int i = 0; i <= 6; ++i) {
+            byte[] data = reader.transmit(0x00, 0xB0, i, 0x00, null, 0x00);
             try {
                 byteStream.write(data);
             } catch (IOException e) {
@@ -63,99 +63,46 @@ abstract class EstEIDToken implements Token {
         return byteStream.toByteArray();
     }
 
-    byte[] readRecord(byte recordNumber) throws SmartCardCommunicationException {
-        return transmitExtended(new byte[]{0x00, (byte) 0xB2, recordNumber, 0x04, 0x00});
+    byte[] readRecord(byte recordNumber) throws SmartCardReaderException {
+        return reader.transmit(0x00, 0xB2, recordNumber, 0x04, null, 0x00);
     }
 
     @Override
-    public byte[] readCert(CertType type) {
+    public byte[] readCert(CertType type) throws SmartCardReaderException {
         selectMasterFile();
         selectCatalogue();
-        transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x04, 0x02, type.value, (byte) 0xCE});
+        reader.transmit(0x00, 0xA4, 0x02, 0x04, new byte[] {type.value, (byte) 0xCE}, null);
         return readCertRecords();
     }
 
     @Override
-    public byte readRetryCounter(PinType pinType) {
+    public byte readRetryCounter(PinType pinType) throws SmartCardReaderException {
         selectMasterFile();
-        transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x0C, 0x02, 0x00, 0x16});
-        byte[] bytes = transmitExtended(new byte[]{0x00, (byte) 0xB2, pinType.retryValue, 0x04, 0x00});
+        reader.transmit(0x00, 0xA4, 0x02, 0x0C, new byte[] {0x00, 0x16}, null);
+        byte[] bytes = reader.transmit(0x00, 0xB2, pinType.retryValue, 0x04, null, 0x00);
         return bytes[5];
     }
 
     @Override
-    public int readUseCounter(CertType certType) {
-        byte activeCertKey = readActiveCertKey(certType);
-
-        selectMasterFile();
-        selectCatalogue();
-        transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x0C, 0x02, 0x00, 0x13});
-
-        byte[] bytes = transmitExtended(new byte[]{0x00, (byte) 0xB2, activeCertKey, 0x04, 0x00});
-
-        int c = bytes[12];
-        int d = bytes[13];
-        int e = bytes[14];
-
-        return 0xFFFFFF - (((c & 0xff) << 16) + ((d & 0xff) << 8) + (e & 0xff));
-    }
-
-    @Override
-    public byte[] decrypt(byte[] pin1, byte[] data) {
+    public byte[] decrypt(byte[] pin1, byte[] data) throws SmartCardReaderException {
         selectMasterFile();
         selectCatalogue();
 
-        transmitExtended(new byte[]{0x00, 0x22, (byte) 0xF3, 0x06, 0x00});
+        reader.transmit(0x00, 0x22, 0xF3, 0x06, null, null);
 
-        transmitExtended(new byte[]{0x00, 0x22, 0x41, (byte) 0xA4, 0x05, (byte) 0x83, 0x03,
-                (byte) 0x80, 0x11, 0x00});
+        reader.transmit(0x00, 0x22, 0x41, 0xA4,
+                new byte[] {(byte) 0x83, 0x03, (byte) 0x80, 0x11, 0x00}, null);
 
         verifyPin(PinType.PIN1, pin1);
 
-        return transmitExtended(Util.concat(new byte[]{0x00, 0x2A, (byte) 0x80, (byte) 0x86,
-                (byte) (data.length)}, data));
+        return reader.transmit(0x00, 0x2A, 0x80, 0x86, data, 0x00);
     }
 
-    private byte readActiveCertKey(CertType certType) {
-        selectMasterFile();
-        selectCatalogue();
-        transmitExtended(new byte[]{0x00, (byte) 0xA4, 0x02, 0x0C, 0x02, 0x00, 0x33});
-        byte[] bytes = transmitExtended(new byte[]{0x00, (byte) 0xB2, 0x01, 0x04, 0x00});
-        switch (certType) {
-            case CertAuth:
-                int authKey = bytes[0x09] == 0x11 && bytes[0x0A] == 0x00 ? 3 : 4;
-                return (byte) authKey;
-            case CertSign:
-                int certKey = bytes[0x13] == 0x01 && bytes[0x14] == 0x00 ? 1 : 2;
-                return (byte) certKey;
-            default:
-                return 0;
-        }
-    }
+    abstract void selectMasterFile() throws SmartCardReaderException;
 
-    byte[] transmit(byte[] apdu) {
-        return reader.transmit(apdu);
-    }
+    abstract void selectCatalogue() throws SmartCardReaderException;
 
-    byte[] transmitExtended(byte[] apdu) {
-        return reader.transmitExtended(apdu);
-    }
+    abstract void manageSecurityEnvironment() throws SmartCardReaderException;
 
-    boolean isSecureChannel() {
-        return reader.isSecureChannel();
-    }
-
-    boolean checkSW(byte[] resp) {
-        byte sw1 = resp[resp.length - 2];
-        byte sw2 = resp[resp.length - 1];
-        return sw1 == (byte) 0x90 && sw2 == (byte) 0x00;
-    }
-
-    abstract void selectMasterFile();
-
-    abstract void selectCatalogue();
-
-    abstract void manageSecurityEnvironment();
-
-    abstract void selectPersonalDataFile();
+    abstract void selectPersonalDataFile() throws SmartCardReaderException;
 }

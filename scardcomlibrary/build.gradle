@@ -36,4 +36,8 @@ dependencies {
             'libs/androidSCardV1.2.jar', // Identive
             'libs/JSR268Library.jar' // Omnikey
     )
+
+    testImplementation "junit:junit:${junitVersion}"
+    testImplementation "com.google.truth:truth:${truthVersion}"
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
 }

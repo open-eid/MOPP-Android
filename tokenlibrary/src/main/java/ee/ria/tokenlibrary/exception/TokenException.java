@@ -19,16 +19,12 @@
 
 package ee.ria.tokenlibrary.exception;
 
-public class TokenException extends RuntimeException {
-    public TokenException() {
-    }
+import ee.ria.scardcomlibrary.SmartCardReaderException;
+
+public class TokenException extends SmartCardReaderException {
 
     public TokenException(String message) {
         super(message);
-    }
-
-    public TokenException(String message, Throwable cause) {
-        super(message, cause);
     }
 
     public TokenException(Throwable cause) {

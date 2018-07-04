@@ -4,42 +4,80 @@ import android.hardware.usb.UsbDevice;
 
 import java.util.Arrays;
 
-public interface SmartCardReader extends AutoCloseable {
+import timber.log.Timber;
 
-    boolean supports(UsbDevice usbDevice);
+import static com.google.common.primitives.Bytes.concat;
+import static java.util.Arrays.copyOf;
+import static java.util.Arrays.copyOfRange;
 
-    void open(UsbDevice usbDevice);
+/**
+ * Check all common token requests (readRecord)
+ * Remove utils when they are not needed (guava covers them)
+ */
+public abstract class SmartCardReader implements AutoCloseable {
 
-    boolean connected();
+    public abstract boolean supports(UsbDevice usbDevice);
 
-    boolean isSecureChannel();
+    public abstract void open(UsbDevice usbDevice);
 
-    byte[] transmit(byte[] apdu);
+    public abstract boolean connected();
 
-    default byte[] transmitExtended(byte[] apdu) {
-        byte[] recv = transmit(apdu);
-        byte sw1 = recv[recv.length - 2];
-        byte sw2 = recv[recv.length - 1];
-        recv = Arrays.copyOf(recv, recv.length - 2);
-        if (sw1 == 0x61) {
-            recv = concat(recv, transmit(new byte[]{0x00, (byte) 0xC0, 0x00, 0x00, sw2}));
-        } else if (!(sw1 == (byte) 0x90 && sw2 == (byte) 0x00)) {
-            throw new SmartCardCommunicationException("SW != 9000");
+    public abstract boolean isSecureChannel();
+
+    protected abstract byte[] transmit(byte[] apdu) throws SmartCardReaderException;
+
+    public final byte[] transmit(int cla, int ins, int p1, int p2, byte[] data, Integer le)
+            throws SmartCardReaderException {
+        Timber.d("transmit: %s %s %s %s %s %s", cla, ins, p1, p2, Arrays.asList(data), le);
+
+        byte[] response;
+        if (data == null || data.length == 0) {
+            response = transmit(appendLe(
+                    new byte[] {(byte) cla, (byte) ins, (byte) p1, (byte) p2},
+                    le));
+        } else if (data.length < 256) {
+            response = transmit(appendLe(
+                    concat(
+                            new byte[] {(byte) cla, (byte) ins, (byte) p1, (byte) p2,
+                                    (byte) data.length},
+                            data),
+                    le));
+        } else {
+            int remaining = data.length;
+            while (remaining >= 256) {
+                transmit(appendLe(
+                        concat(
+                                new byte[] {0x10, (byte) ins, (byte) p1, (byte) p2, (byte) 0xFF},
+                                copyOfRange(data, data.length - remaining,
+                                        data.length - remaining + 255)),
+                        le));
+                remaining -= 255;
+            }
+            response = transmit(appendLe(
+                    concat(
+                            new byte[] {(byte) cla, (byte) ins, (byte) p1, (byte) p2,
+                                    (byte) remaining},
+                            copyOfRange(data, data.length - remaining, data.length)),
+                    le));
         }
-        return recv;
+
+        byte sw1 = response[response.length - 2];
+        byte sw2 = response[response.length - 1];
+        if (sw1 == (byte) 0x90 && sw2 == 0x00) {
+            return copyOf(response, response.length - 2);
+        } else if (sw1 == 0x61) {
+            return concat(
+                    copyOf(response, response.length - 2),
+                    transmit(0x00, 0xC0, 0x00, 0x00, null, (int) sw2));
+        }
+        throw new ApduResponseException(sw1, sw2);
     }
 
-    static byte[] concat(byte[]... arrays) {
-        int size = 0;
-        for (byte[] array : arrays) {
-            size += array.length;
+    private static byte[] appendLe(byte[] apdu, Integer le) {
+        if (le == null) {
+            return apdu;
+        } else {
+            return concat(apdu, new byte[] {le.byteValue()});
         }
-        byte[] result = new byte[size];
-        int pos = 0;
-        for (byte[] array : arrays) {
-            System.arraycopy(array, 0, result, pos, array.length);
-            pos += array.length;
-        }
-        return result;
     }
 }

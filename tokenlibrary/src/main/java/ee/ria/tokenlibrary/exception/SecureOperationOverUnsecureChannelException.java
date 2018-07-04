@@ -20,6 +20,7 @@
 package ee.ria.tokenlibrary.exception;
 
 public class SecureOperationOverUnsecureChannelException extends TokenException {
+
     public SecureOperationOverUnsecureChannelException(String message) {
         super(message);
     }
