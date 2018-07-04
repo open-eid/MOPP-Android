@@ -27,9 +27,18 @@ public interface Token {
      * Read personal information of the cardholder.
      *
      * @return Personal data of the cardholder.
-     * @throws SmartCardReaderException When something went wrong.
+     * @throws SmartCardReaderException When reading failed.
      */
     PersonalData personalData() throws SmartCardReaderException;
+
+    /**
+     * Read certificate data of the cardholder.
+     *
+     * @param type Type of the certificate.
+     * @return Certificate data.
+     * @throws SmartCardReaderException When reading failed.
+     */
+    byte[] certificate(CertificateType type) throws SmartCardReaderException;
 
     byte[] sign(PinType type, String pin, byte[] data, boolean ellipticCurveCertificate)
             throws SmartCardReaderException;
@@ -37,26 +46,12 @@ public interface Token {
     boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin)
             throws SmartCardReaderException;
 
-    byte[] readCert(CertType type) throws SmartCardReaderException;
-
     byte readRetryCounter(PinType pinType) throws SmartCardReaderException;
 
     boolean unblockAndChangePin(PinType pinType, byte[] puk, byte[] newPin)
             throws SmartCardReaderException;
 
     byte[] decrypt(byte[] pin1, byte[] data) throws SmartCardReaderException;
-
-    enum CertType {
-
-        CertAuth((byte) 0xAA),
-        CertSign((byte) 0xDD);
-
-        public byte value;
-
-        CertType(byte value) {
-            this.value = value;
-        }
-    }
 
     enum PinType {
 

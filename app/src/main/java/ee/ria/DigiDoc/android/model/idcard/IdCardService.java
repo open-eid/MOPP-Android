@@ -22,6 +22,7 @@ import ee.ria.DigiDoc.android.model.CertificateData;
 import ee.ria.mopplib.data.SignedContainer;
 import ee.ria.scardcomlibrary.SmartCardReaderManager;
 import ee.ria.scardcomlibrary.SmartCardReaderStatus;
+import ee.ria.tokenlibrary.CertificateType;
 import ee.ria.tokenlibrary.PersonalData;
 import ee.ria.tokenlibrary.Token;
 import ee.ria.tokenlibrary.TokenFactory;
@@ -121,16 +122,18 @@ public final class IdCardService {
 
     public static IdCardData data(Token token) throws Exception {
         PersonalData personalData = token.personalData();
-        ByteString authCertificateData = ByteString.of(token.readCert(Token.CertType.CertAuth));
-        ByteString signCertificateData = ByteString.of(token.readCert(Token.CertType.CertSign));
+        ByteString authenticationCertificateData = ByteString
+                .of(token.certificate(CertificateType.AUTHENTICATION));
+        ByteString signingCertificateData = ByteString
+                .of(token.certificate(CertificateType.SIGNING));
         byte pin1RetryCounter = token.readRetryCounter(Token.PinType.PIN1);
         byte pin2RetryCounter = token.readRetryCounter(Token.PinType.PIN2);
         byte pukRetryCounter = token.readRetryCounter(Token.PinType.PUK);
 
         CertificateData authCertificate = CertificateData
-                .create(pin1RetryCounter, authCertificateData);
+                .create(pin1RetryCounter, authenticationCertificateData);
         CertificateData signCertificate = CertificateData
-                .create(pin2RetryCounter, signCertificateData);
+                .create(pin2RetryCounter, signingCertificateData);
 
         return IdCardData.create(EIDType.parseOrganization(authCertificate.organization()),
                 personalData, authCertificate, signCertificate, pukRetryCounter);

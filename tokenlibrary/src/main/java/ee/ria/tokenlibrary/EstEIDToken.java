@@ -21,6 +21,8 @@ package ee.ria.tokenlibrary;
 
 import android.util.SparseArray;
 
+import org.bouncycastle.util.encoders.Hex;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -28,7 +30,6 @@ import java.io.UnsupportedEncodingException;
 import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.scardcomlibrary.SmartCardReaderException;
 import ee.ria.tokenlibrary.exception.PinVerificationException;
-import ee.ria.tokenlibrary.exception.TokenException;
 
 abstract class EstEIDToken implements Token {
 
@@ -58,6 +59,31 @@ abstract class EstEIDToken implements Token {
                 data.get(7), data.get(8), data.get(9));
     }
 
+    @Override
+    public byte[] certificate(CertificateType type) throws SmartCardReaderException {
+        selectMasterFile();
+        selectCatalogue();
+        reader.transmit(0x00, 0xA4, 0x02, 0x04, new byte[] {type.value, (byte) 0xCE}, null);
+
+        try {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            byte[] result = reader.transmit(0x00, 0xB0, 0x00, 0x00, null, 0x00);
+            stream.write(result);
+            int remaining = 4
+                    + Integer.parseInt(Hex.toHexString(new byte[] {result[2], result[3]}), 16)
+                    - 256;
+            int i = 1;
+            while (remaining >= 256) {
+                stream.write(reader.transmit(0x00, 0xB0, i++, 0x00, null, 0x00));
+                remaining -= 256;
+            }
+            stream.write(reader.transmit(0x00, 0xB0, i, 0x00, null, remaining));
+            return stream.toByteArray();
+        } catch (IOException e) {
+            throw new SmartCardReaderException(e);
+        }
+    }
+
     void verifyPin(PinType type, byte[] pin) throws PinVerificationException {
         try {
             reader.transmit(0x00, 0x20, 0x00, type.value, pin, null);
@@ -71,27 +97,6 @@ abstract class EstEIDToken implements Token {
         for (int i = 0; i <= retries; i++) {
             reader.transmit(0x00, 0x20, 0x00, pinType.value, new byte[newPinLength], null);
         }
-    }
-
-    private byte[] readCertRecords() throws SmartCardReaderException {
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        for (int i = 0; i <= 6; ++i) {
-            byte[] data = reader.transmit(0x00, 0xB0, i, 0x00, null, 0x00);
-            try {
-                byteStream.write(data);
-            } catch (IOException e) {
-                throw new TokenException(e);
-            }
-        }
-        return byteStream.toByteArray();
-    }
-
-    @Override
-    public byte[] readCert(CertType type) throws SmartCardReaderException {
-        selectMasterFile();
-        selectCatalogue();
-        reader.transmit(0x00, 0xA4, 0x02, 0x04, new byte[] {type.value, (byte) 0xCE}, null);
-        return readCertRecords();
     }
 
     @Override

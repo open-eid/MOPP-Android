@@ -18,6 +18,7 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.EIDData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import ee.ria.tokenlibrary.CertificateType;
 import ee.ria.tokenlibrary.Token;
 import io.reactivex.Observable;
 
@@ -110,9 +111,9 @@ public final class EIDDataView extends LinearLayout {
         tintCompoundDrawables(certificatesTitleView);
         certificatesContainerView.setExpanded(certificateContainerExpanded);
 
-        authCertificateDataView.data(Token.CertType.CertAuth, data.authCertificate(),
+        authCertificateDataView.data(CertificateType.AUTHENTICATION, data.authCertificate(),
                 data.pukRetryCount());
-        signCertificateDataView.data(Token.CertType.CertSign, data.signCertificate(),
+        signCertificateDataView.data(CertificateType.SIGNING, data.signCertificate(),
                 data.pukRetryCount());
         if (data.authCertificate().expired() && data.signCertificate().expired()) {
             pukButtonView.setVisibility(GONE);

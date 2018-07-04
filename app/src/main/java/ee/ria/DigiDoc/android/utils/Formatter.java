@@ -33,7 +33,7 @@ import javax.inject.Inject;
 import ee.ria.DigiDoc.EIDType;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.CertificateData;
-import ee.ria.tokenlibrary.Token;
+import ee.ria.tokenlibrary.CertificateType;
 
 public final class Formatter {
 
@@ -78,7 +78,7 @@ public final class Formatter {
                 .append(validityIndicator);
     }
 
-    public CharSequence certificateDataValidity(Token.CertType type,
+    public CharSequence certificateDataValidity(CertificateType type,
                                                 CertificateData certificateData) {
         ZonedDateTime notAfter = certificateData.notAfter().atZone(ZoneId.systemDefault());
         boolean expired = certificateData.expired();
@@ -86,7 +86,7 @@ public final class Formatter {
                 expired ? R.color.error : R.color.success, null);
         String string;
         if (expired) {
-            String pin = application.getString(type.equals(Token.CertType.CertAuth)
+            String pin = application.getString(type.equals(CertificateType.AUTHENTICATION)
                     ? R.string.eid_home_certificate_pin_auth
                     : R.string.eid_home_certificate_pin_sign);
             string = application.getString(R.string.eid_home_certificate_data_expired, pin);

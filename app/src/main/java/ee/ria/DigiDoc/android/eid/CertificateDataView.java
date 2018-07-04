@@ -11,7 +11,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.CertificateData;
 import ee.ria.DigiDoc.android.utils.Formatter;
-import ee.ria.tokenlibrary.Token;
+import ee.ria.tokenlibrary.CertificateType;
 import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
@@ -55,26 +55,26 @@ public final class CertificateDataView extends LinearLayout {
         formatter.underline(linkView);
     }
 
-    public void data(Token.CertType type, CertificateData data, int pukRetryCount) {
+    public void data(CertificateType type, CertificateData data, int pukRetryCount) {
         boolean pinBlocked = data.pinRetryCount() == 0;
         boolean pukBlocked = pukRetryCount == 0;
         buttonUnblocks = pinBlocked && !pukBlocked;
 
-        titleView.setText(type == Token.CertType.CertAuth
+        titleView.setText(type == CertificateType.AUTHENTICATION
                 ? R.string.eid_home_certificate_data_title_auth
                 : R.string.eid_home_certificate_data_title_sign);
         validityView.setText(formatter.certificateDataValidity(type, data));
-        int buttonChange = type == Token.CertType.CertAuth
+        int buttonChange = type == CertificateType.AUTHENTICATION
                 ? R.string.eid_home_certificate_data_button_change_auth
                 : R.string.eid_home_certificate_data_button_change_sign;
-        int buttonUnblock = type == Token.CertType.CertAuth
+        int buttonUnblock = type == CertificateType.AUTHENTICATION
                 ? R.string.eid_home_certificate_data_button_unblock_auth
                 : R.string.eid_home_certificate_data_button_unblock_sign;
         buttonView.setText(buttonUnblocks ? buttonUnblock : buttonChange);
-        linkView.setText(type == Token.CertType.CertAuth
+        linkView.setText(type == CertificateType.AUTHENTICATION
                 ? R.string.eid_home_certificate_data_link_auth
                 : R.string.eid_home_certificate_data_link_sign);
-        errorView.setText(type == Token.CertType.CertAuth
+        errorView.setText(type == CertificateType.AUTHENTICATION
                 ? R.string.eid_home_certificate_data_error_auth
                 : R.string.eid_home_certificate_data_error_sign);
 
