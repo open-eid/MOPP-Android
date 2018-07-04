@@ -95,10 +95,10 @@ public final class EIDDataView extends LinearLayout {
 
     public void render(@NonNull EIDData data, boolean certificateContainerExpanded) {
         typeView.setText(formatter.eidType(data.type()));
-        givenNamesView.setText(data.givenNames());
-        surnameView.setText(data.surname());
-        personalCodeView.setText(data.personalCode());
-        citizenshipView.setText(data.citizenship());
+        givenNamesView.setText(data.personalData().givenNames());
+        surnameView.setText(data.personalData().surname());
+        personalCodeView.setText(data.personalData().personalCode());
+        citizenshipView.setText(data.personalData().citizenship());
 
         certificatesTitleView.setTextColor(certificateContainerExpanded
                 ? expandedTitleColor
@@ -129,8 +129,9 @@ public final class EIDDataView extends LinearLayout {
         }
         if (data instanceof IdCardData) {
             IdCardData idCardData = (IdCardData) data;
-            documentNumberView.setText(idCardData.documentNumber());
-            expiryDateView.setText(formatter.idCardExpiryDate(idCardData.expiryDate()));
+            documentNumberView.setText(idCardData.personalData().documentNumber());
+            expiryDateView.setText(formatter.idCardExpiryDate(
+                    idCardData.personalData().expiryDate()));
             documentNumberLabelView.setVisibility(VISIBLE);
             documentNumberView.setVisibility(VISIBLE);
             expiryDateLabelView.setVisibility(VISIBLE);

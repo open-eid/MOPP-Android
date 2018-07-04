@@ -19,16 +19,11 @@
 
 package ee.ria.tokenlibrary;
 
-import android.util.SparseArray;
-
-import java.io.UnsupportedEncodingException;
-
 import ee.ria.scardcomlibrary.ApduResponseException;
 import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.scardcomlibrary.SmartCardReaderException;
 import ee.ria.tokenlibrary.exception.SecureOperationOverUnsecureChannelException;
 import ee.ria.tokenlibrary.exception.SignOperationFailedException;
-import ee.ria.tokenlibrary.exception.TokenException;
 
 import static com.google.common.primitives.Bytes.concat;
 import static ee.ria.tokenlibrary.util.AlgorithmUtils.addPadding;
@@ -66,23 +61,6 @@ public class EstEIDv3d4 extends EstEIDToken {
         } catch (Exception e) {
             throw new SignOperationFailedException(type, e);
         }
-    }
-
-    @Override
-    public SparseArray<String> readPersonalFile() throws SmartCardReaderException {
-        selectMasterFile();
-        selectCatalogue();
-        selectPersonalDataFile();
-        SparseArray<String> result = new SparseArray<>();
-        for (byte i = 1; i <= 16; ++i) {
-            byte[] data = readRecord(i);
-            try {
-                result.put(i, new String(data, "Windows-1252"));
-            } catch (UnsupportedEncodingException e) {
-                throw new TokenException(e);
-            }
-        }
-        return result;
     }
 
     @Override
@@ -130,10 +108,5 @@ public class EstEIDv3d4 extends EstEIDToken {
     @Override
     void manageSecurityEnvironment() throws SmartCardReaderException {
         reader.transmit(0x00, 0x22, 0xF3, 0x01, null, null);
-    }
-
-    @Override
-    void selectPersonalDataFile() throws SmartCardReaderException {
-        reader.transmit(0x00, 0xA4, 0x02, 0x04, new byte[] {0x50, 0x44}, null);
     }
 }

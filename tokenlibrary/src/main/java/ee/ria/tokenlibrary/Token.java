@@ -19,16 +19,20 @@
 
 package ee.ria.tokenlibrary;
 
-import android.util.SparseArray;
-
 import ee.ria.scardcomlibrary.SmartCardReaderException;
 
 public interface Token {
 
+    /**
+     * Read personal information of the cardholder.
+     *
+     * @return Personal data of the cardholder.
+     * @throws SmartCardReaderException When something went wrong.
+     */
+    PersonalData personalData() throws SmartCardReaderException;
+
     byte[] sign(PinType type, String pin, byte[] data, boolean ellipticCurveCertificate)
             throws SmartCardReaderException;
-
-    SparseArray<String> readPersonalFile() throws SmartCardReaderException;
 
     boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin)
             throws SmartCardReaderException;

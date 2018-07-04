@@ -19,8 +19,11 @@
 
 package ee.ria.tokenlibrary;
 
+import android.util.SparseArray;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.scardcomlibrary.SmartCardReaderException;
@@ -33,6 +36,26 @@ abstract class EstEIDToken implements Token {
 
     EstEIDToken(SmartCardReader reader) {
         this.reader = reader;
+    }
+
+    @Override
+    public PersonalData personalData() throws SmartCardReaderException {
+        selectMasterFile();
+        selectCatalogue();
+        reader.transmit(0x00, 0xA4, 0x02, 0x04, new byte[] {0x50, 0x44}, null);
+
+        SparseArray<String> data = new SparseArray<>();
+        for (int i = 1; i <= 9; i++) {
+            byte[] record = reader.transmit(0x00, 0xB2, i, 0x04, null, 0x00);
+            try {
+                data.put(i, new String(record, "Windows-1252").trim());
+            } catch (UnsupportedEncodingException e) {
+                throw new SmartCardReaderException(e);
+            }
+        }
+
+        return PersonalData.create(data.get(1), data.get(2), data.get(3), data.get(5), data.get(6),
+                data.get(7), data.get(8), data.get(9));
     }
 
     void verifyPin(PinType type, byte[] pin) throws PinVerificationException {
@@ -61,10 +84,6 @@ abstract class EstEIDToken implements Token {
             }
         }
         return byteStream.toByteArray();
-    }
-
-    byte[] readRecord(byte recordNumber) throws SmartCardReaderException {
-        return reader.transmit(0x00, 0xB2, recordNumber, 0x04, null, 0x00);
     }
 
     @Override
@@ -103,6 +122,4 @@ abstract class EstEIDToken implements Token {
     abstract void selectCatalogue() throws SmartCardReaderException;
 
     abstract void manageSecurityEnvironment() throws SmartCardReaderException;
-
-    abstract void selectPersonalDataFile() throws SmartCardReaderException;
 }

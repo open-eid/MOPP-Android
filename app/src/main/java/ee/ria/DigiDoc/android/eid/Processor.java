@@ -152,7 +152,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private static CodeUpdateResponse validate(CodeUpdateAction action, CodeUpdateRequest request,
                                                EIDData data) {
-        LocalDate dateOfBirth = data.dateOfBirth();
+        LocalDate dateOfBirth = data.personalData().dateOfBirth();
         ImmutableSet.Builder<String> dateOfBirthValuesBuilder = ImmutableSet.builder();
         if (dateOfBirth != null) {
             dateOfBirthValuesBuilder
@@ -175,7 +175,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
         } else if (action.updateType().equals(CodeUpdateType.EDIT)
                 && request.newValue().equals(request.currentValue())) {
             builder.newError(CodeSameAsCurrentError.create());
-        } else if (data.personalCode().contains(request.newValue())) {
+        } else if (data.personalData().personalCode().contains(request.newValue())) {
             builder.newError(CodePartOfPersonalCodeError.create());
         } else if (dateOfBirthValues.contains(request.newValue())) {
             builder.newError(CodePartOfDateOfBirthError.create());

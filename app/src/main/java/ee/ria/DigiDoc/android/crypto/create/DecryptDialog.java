@@ -104,7 +104,8 @@ final class DecryptDialog extends AlertDialog {
             progressContainerView.setVisibility(View.GONE);
             containerView.setVisibility(View.VISIBLE);
             dataView.setText(getContext().getString(R.string.crypto_create_decrypt_data,
-                    data.givenNames(), data.surname(), data.personalCode()));
+                    data.personalData().givenNames(), data.personalData().surname(),
+                    data.personalData().personalCode()));
         }
     }
 

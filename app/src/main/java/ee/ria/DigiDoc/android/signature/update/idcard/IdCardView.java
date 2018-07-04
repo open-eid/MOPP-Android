@@ -111,8 +111,8 @@ public final class IdCardView extends LinearLayout implements
             progressContainerView.setVisibility(GONE);
             signContainerView.setVisibility(VISIBLE);
             signDataView.setText(getResources().getString(
-                    R.string.signature_update_id_card_sign_data, data.givenNames(), data.surname(),
-                    data.personalCode()));
+                    R.string.signature_update_id_card_sign_data, data.personalData().givenNames(),
+                    data.personalData().surname(), data.personalData().personalCode()));
             signPin2ErrorView.setVisibility(VISIBLE);
             if (pinRetryCount == 1) {
                 signPin2ErrorView.setText(
@@ -125,8 +125,8 @@ public final class IdCardView extends LinearLayout implements
             progressContainerView.setVisibility(GONE);
             signContainerView.setVisibility(VISIBLE);
             signDataView.setText(getResources().getString(
-                    R.string.signature_update_id_card_sign_data, data.givenNames(), data.surname(),
-                    data.personalCode()));
+                    R.string.signature_update_id_card_sign_data, data.personalData().givenNames(),
+                    data.personalData().surname(), data.personalData().personalCode()));
             signPin2ErrorView.setVisibility(GONE);
         } else if (dataResponse != null
                 && dataResponse.status().equals(SmartCardReaderStatus.CARD_DETECTED)) {

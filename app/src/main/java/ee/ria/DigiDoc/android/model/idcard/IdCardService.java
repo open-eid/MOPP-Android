@@ -1,15 +1,10 @@
 package ee.ria.DigiDoc.android.model.idcard;
 
-import android.util.SparseArray;
-
 import org.openeid.cdoc4j.CDOCDecrypter;
 import org.openeid.cdoc4j.DataFile;
 import org.openeid.cdoc4j.ECRecipient;
 import org.openeid.cdoc4j.RSARecipient;
 import org.openeid.cdoc4j.exception.DecryptionException;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.format.DateTimeFormatterBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -27,6 +22,7 @@ import ee.ria.DigiDoc.android.model.CertificateData;
 import ee.ria.mopplib.data.SignedContainer;
 import ee.ria.scardcomlibrary.SmartCardReaderManager;
 import ee.ria.scardcomlibrary.SmartCardReaderStatus;
+import ee.ria.tokenlibrary.PersonalData;
 import ee.ria.tokenlibrary.Token;
 import ee.ria.tokenlibrary.TokenFactory;
 import ee.ria.tokenlibrary.exception.PinVerificationException;
@@ -123,50 +119,13 @@ public final class IdCardService {
         });
     }
 
-    private static final DateTimeFormatter CARD_DATE_FORMAT = new DateTimeFormatterBuilder()
-            .appendPattern("dd.MM.yyyy")
-            .toFormatter();
-
     public static IdCardData data(Token token) throws Exception {
-        SparseArray<String> personalFile = token.readPersonalFile();
+        PersonalData personalData = token.personalData();
         ByteString authCertificateData = ByteString.of(token.readCert(Token.CertType.CertAuth));
         ByteString signCertificateData = ByteString.of(token.readCert(Token.CertType.CertSign));
         byte pin1RetryCounter = token.readRetryCounter(Token.PinType.PIN1);
         byte pin2RetryCounter = token.readRetryCounter(Token.PinType.PIN2);
         byte pukRetryCounter = token.readRetryCounter(Token.PinType.PUK);
-
-        String surname = personalFile.get(1).trim();
-        String givenName1 = personalFile.get(2).trim();
-        String givenName2 = personalFile.get(3).trim();
-        String citizenship = personalFile.get(5).trim();
-        String dateOfBirthString = personalFile.get(6).trim();
-        String personalCode = personalFile.get(7).trim();
-        String documentNumber = personalFile.get(8).trim();
-        String expiryDateString = personalFile.get(9).trim();
-
-        StringBuilder givenNames = new StringBuilder(givenName1);
-        if (givenName2.length() > 0) {
-            if (givenNames.length() > 0) {
-                givenNames.append(" ");
-            }
-            givenNames.append(givenName2);
-        }
-
-        LocalDate dateOfBirth;
-        try {
-            dateOfBirth = LocalDate.parse(dateOfBirthString, CARD_DATE_FORMAT);
-        } catch (Exception e) {
-            dateOfBirth = null;
-            Timber.e(e, "Could not parse date of birth %s", dateOfBirthString);
-        }
-
-        LocalDate expiryDate;
-        try {
-            expiryDate = LocalDate.parse(expiryDateString, CARD_DATE_FORMAT);
-        } catch (Exception e) {
-            expiryDate = null;
-            Timber.e(e, "Could not parse expiry date %s", expiryDateString);
-        }
 
         CertificateData authCertificate = CertificateData
                 .create(pin1RetryCounter, authCertificateData);
@@ -174,8 +133,7 @@ public final class IdCardService {
                 .create(pin2RetryCounter, signCertificateData);
 
         return IdCardData.create(EIDType.parseOrganization(authCertificate.organization()),
-                givenNames.toString(), surname, personalCode, citizenship, dateOfBirth,
-                authCertificate, signCertificate, pukRetryCounter, documentNumber, expiryDate);
+                personalData, authCertificate, signCertificate, pukRetryCounter);
     }
 
     static final class PKCS11Token implements org.openeid.cdoc4j.token.Token {
