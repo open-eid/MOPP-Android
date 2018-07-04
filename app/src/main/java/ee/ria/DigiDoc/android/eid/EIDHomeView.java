@@ -20,7 +20,7 @@ import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.scardcomlibrary.SmartCardReaderStatus;
 import ee.ria.tokenlibrary.Token;
-import ee.ria.tokenlibrary.exception.PinVerificationException;
+import ee.ria.tokenlibrary.exception.CodeVerificationException;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -150,7 +150,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
             errorDialog.show();
         } else if (codeUpdateAction != null && codeUpdateError != null) {
             errorDialog.dismiss();
-            if (codeUpdateError instanceof PinVerificationException) {
+            if (codeUpdateError instanceof CodeVerificationException) {
                 codeUpdateErrorDialog.setMessage(getResources()
                         .getString(codeUpdateAction.currentBlockedErrorRes()));
             } else {

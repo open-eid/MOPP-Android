@@ -18,7 +18,7 @@ import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdOnSubscribe;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdRequest;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
-import ee.ria.tokenlibrary.exception.PinVerificationException;
+import ee.ria.tokenlibrary.exception.CodeVerificationException;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -99,7 +99,7 @@ final class SignatureAddSource {
                                                     idCardRequest.pin2())))
                     .map(IdCardResponse::success)
                     .onErrorResumeNext(error -> {
-                        if (error instanceof PinVerificationException) {
+                        if (error instanceof CodeVerificationException) {
                             return idCardService.data()
                                     .filter(dataResponse -> dataResponse.data() != null)
                                     .switchMap(dataResponse -> {

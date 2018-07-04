@@ -23,8 +23,9 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.tokenlibrary.CodeType;
 import ee.ria.tokenlibrary.Token;
-import ee.ria.tokenlibrary.exception.PinVerificationException;
+import ee.ria.tokenlibrary.exception.CodeVerificationException;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -73,7 +74,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
             if (updateAction == null) {
                 return Observable.just(Result.CodeUpdateResult.clear());
             } else if (request == null || data == null || token == null) {
-                if (updateAction.pinType().equals(Token.PinType.PUK)
+                if (updateAction.pinType().equals(CodeType.PUK)
                         && updateAction.updateType().equals(CodeUpdateType.UNBLOCK)) {
                     navigator.execute(Transaction
                             .activity(createBrowserIntent(application,
@@ -124,7 +125,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
                             CodeUpdateResponse.Builder builder = CodeUpdateResponse.valid()
                                     .buildWith();
-                            if (throwable instanceof PinVerificationException && retryCount > 0) {
+                            if (throwable instanceof CodeVerificationException && retryCount > 0) {
                                 builder.currentError(CodeInvalidError.create(retryCount));
                             } else {
                                 builder.error(throwable);
@@ -216,11 +217,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
     }
 
     private int retryCount(CodeUpdateAction action, IdCardData data) {
-        Token.PinType pinType = action.pinType();
+        CodeType pinType = action.pinType();
         String updateType = action.updateType();
-        if (updateType.equals(CodeUpdateType.UNBLOCK) || pinType.equals(Token.PinType.PUK)) {
+        if (updateType.equals(CodeUpdateType.UNBLOCK) || pinType.equals(CodeType.PUK)) {
             return data.pukRetryCount();
-        } else if (pinType.equals(Token.PinType.PIN1)) {
+        } else if (pinType.equals(CodeType.PIN1)) {
             return data.authCertificate().pinRetryCount();
         } else {
             return data.signCertificate().pinRetryCount();

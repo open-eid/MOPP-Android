@@ -19,10 +19,13 @@
 
 package ee.ria.tokenlibrary.exception;
 
-import ee.ria.tokenlibrary.Token;
+import ee.ria.tokenlibrary.CodeType;
 
 public class SignOperationFailedException extends TokenException {
-    public SignOperationFailedException(Token.PinType type, Exception cause) {
-        super(type == Token.PinType.PIN2 ? "Sign failed " + cause.getMessage() : "Auth. failed " + cause.getMessage());
+
+    public SignOperationFailedException(CodeType type, Exception cause) {
+        super(type == CodeType.PIN2
+                ? "Signing failed " + cause.getMessage()
+                : "Authentication failed " + cause.getMessage());
     }
 }

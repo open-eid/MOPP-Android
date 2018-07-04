@@ -23,10 +23,11 @@ import ee.ria.mopplib.data.SignedContainer;
 import ee.ria.scardcomlibrary.SmartCardReaderManager;
 import ee.ria.scardcomlibrary.SmartCardReaderStatus;
 import ee.ria.tokenlibrary.CertificateType;
+import ee.ria.tokenlibrary.CodeType;
 import ee.ria.tokenlibrary.PersonalData;
 import ee.ria.tokenlibrary.Token;
 import ee.ria.tokenlibrary.TokenFactory;
-import ee.ria.tokenlibrary.exception.PinVerificationException;
+import ee.ria.tokenlibrary.exception.CodeVerificationException;
 import ee.ria.tokenlibrary.util.Util;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -76,7 +77,7 @@ public final class IdCardService {
                 .fromCallable(() -> {
                     IdCardData data = data(token);
                     return container.sign(data.signCertificate().data(),
-                            signData -> ByteString.of(token.sign(Token.PinType.PIN2, pin2,
+                            signData -> ByteString.of(token.sign(CodeType.PIN2, pin2,
                                     signData.toByteArray(),
                                     data.signCertificate().ellipticCurve())));
                 })
@@ -84,27 +85,26 @@ public final class IdCardService {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Single<IdCardData> editPin(Token token, Token.PinType pinType, String currentPin,
+    public Single<IdCardData> editPin(Token token, CodeType pinType, String currentPin,
                                       String newPin) {
         return Single
                 .fromCallable(() -> {
                     boolean result = token
                             .changePin(pinType, currentPin.getBytes(), newPin.getBytes());
                     if (!result) {
-                        throw new PinVerificationException(pinType);
+                        throw new CodeVerificationException(pinType);
                     }
                     return data(token);
                 });
     }
 
-    public Single<IdCardData> unblockPin(Token token, Token.PinType pinType, String puk,
-                                         String newPin) {
+    public Single<IdCardData> unblockPin(Token token, CodeType pinType, String puk, String newPin) {
         return Single
                 .fromCallable(() -> {
                     boolean result = token.unblockAndChangePin(pinType, puk.getBytes(),
                             newPin.getBytes());
                     if (!result) {
-                        throw new PinVerificationException(pinType);
+                        throw new CodeVerificationException(pinType);
                     }
                     return data(token);
                 });
@@ -126,9 +126,9 @@ public final class IdCardService {
                 .of(token.certificate(CertificateType.AUTHENTICATION));
         ByteString signingCertificateData = ByteString
                 .of(token.certificate(CertificateType.SIGNING));
-        byte pin1RetryCounter = token.readRetryCounter(Token.PinType.PIN1);
-        byte pin2RetryCounter = token.readRetryCounter(Token.PinType.PIN2);
-        byte pukRetryCounter = token.readRetryCounter(Token.PinType.PUK);
+        int pin1RetryCounter = token.codeRetryCounter(CodeType.PIN1);
+        int pin2RetryCounter = token.codeRetryCounter(CodeType.PIN2);
+        int pukRetryCounter = token.codeRetryCounter(CodeType.PUK);
 
         CertificateData authCertificate = CertificateData
                 .create(pin1RetryCounter, authenticationCertificateData);
@@ -167,7 +167,7 @@ public final class IdCardService {
             try {
                 return token.decrypt(pin1.getBytes(),
                         Util.concat(new byte[]{0x00}, recipient.getEncryptedKey()));
-            } catch (PinVerificationException e) {
+            } catch (CodeVerificationException e) {
                 throw new PinVerificationError(e, idCardData());
             } catch (Exception e) {
                 Timber.e(e);

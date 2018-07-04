@@ -32,6 +32,14 @@ public interface Token {
     PersonalData personalData() throws SmartCardReaderException;
 
     /**
+     * Read retry counter for PIN1/PIN2/PUK code.
+     *
+     * @param type Code type.
+     * @return Code retry counter.
+     */
+    int codeRetryCounter(CodeType type) throws SmartCardReaderException;
+
+    /**
      * Read certificate data of the cardholder.
      *
      * @param type Type of the certificate.
@@ -40,31 +48,14 @@ public interface Token {
      */
     byte[] certificate(CertificateType type) throws SmartCardReaderException;
 
-    byte[] sign(PinType type, String pin, byte[] data, boolean ellipticCurveCertificate)
+    byte[] sign(CodeType type, String pin, byte[] data, boolean ellipticCurveCertificate)
             throws SmartCardReaderException;
 
-    boolean changePin(PinType pinType, byte[] currentPin, byte[] newPin)
+    boolean changePin(CodeType pinType, byte[] currentPin, byte[] newPin)
             throws SmartCardReaderException;
 
-    byte readRetryCounter(PinType pinType) throws SmartCardReaderException;
-
-    boolean unblockAndChangePin(PinType pinType, byte[] puk, byte[] newPin)
+    boolean unblockAndChangePin(CodeType pinType, byte[] puk, byte[] newPin)
             throws SmartCardReaderException;
 
     byte[] decrypt(byte[] pin1, byte[] data) throws SmartCardReaderException;
-
-    enum PinType {
-
-        PIN1((byte) 0x01, (byte) 0x01),
-        PIN2((byte) 0x02, (byte) 0x02),
-        PUK((byte) 0x00, (byte) 0x03);
-
-        public byte value;
-        public byte retryValue;
-
-        PinType(byte value, byte retryValue) {
-            this.value = value;
-            this.retryValue = retryValue;
-        }
-    }
 }

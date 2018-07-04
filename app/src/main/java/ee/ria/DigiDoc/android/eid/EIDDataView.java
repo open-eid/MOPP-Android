@@ -19,7 +19,7 @@ import ee.ria.DigiDoc.android.model.EIDData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.tokenlibrary.CertificateType;
-import ee.ria.tokenlibrary.Token;
+import ee.ria.tokenlibrary.CodeType;
 import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
@@ -154,15 +154,14 @@ public final class EIDDataView extends LinearLayout {
     public Observable<CodeUpdateAction> actions() {
         return Observable.mergeArray(
                 authCertificateDataView.updateTypes()
-                        .map(updateType -> CodeUpdateAction.create(Token.PinType.PIN1, updateType)),
+                        .map(updateType -> CodeUpdateAction.create(CodeType.PIN1, updateType)),
                 signCertificateDataView.updateTypes()
-                        .map(updateType -> CodeUpdateAction.create(Token.PinType.PIN2, updateType)),
+                        .map(updateType -> CodeUpdateAction.create(CodeType.PIN2, updateType)),
                 clicks(pukButtonView)
-                        .map(ignored ->
-                                CodeUpdateAction.create(Token.PinType.PUK, CodeUpdateType.EDIT)),
+                        .map(ignored -> CodeUpdateAction.create(CodeType.PUK, CodeUpdateType.EDIT)),
                 clicks(pukLinkView)
                         .map(ignored ->
-                                CodeUpdateAction.create(Token.PinType.PUK, CodeUpdateType.UNBLOCK))
+                                CodeUpdateAction.create(CodeType.PUK, CodeUpdateType.UNBLOCK))
         );
     }
 }

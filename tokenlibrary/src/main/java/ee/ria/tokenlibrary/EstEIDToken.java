@@ -29,7 +29,7 @@ import java.io.UnsupportedEncodingException;
 
 import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.scardcomlibrary.SmartCardReaderException;
-import ee.ria.tokenlibrary.exception.PinVerificationException;
+import ee.ria.tokenlibrary.exception.CodeVerificationException;
 
 abstract class EstEIDToken implements Token {
 
@@ -60,6 +60,13 @@ abstract class EstEIDToken implements Token {
     }
 
     @Override
+    public int codeRetryCounter(CodeType type) throws SmartCardReaderException {
+        selectMasterFile();
+        reader.transmit(0x00, 0xA4, 0x02, 0x0C, new byte[] {0x00, 0x16}, null);
+        return reader.transmit(0x00, 0xB2, type.retryValue, 0x04, null, 0x00)[5];
+    }
+
+    @Override
     public byte[] certificate(CertificateType type) throws SmartCardReaderException {
         selectMasterFile();
         selectCatalogue();
@@ -84,27 +91,19 @@ abstract class EstEIDToken implements Token {
         }
     }
 
-    void verifyPin(PinType type, byte[] pin) throws PinVerificationException {
+    void verifyPin(CodeType type, byte[] pin) throws CodeVerificationException {
         try {
             reader.transmit(0x00, 0x20, 0x00, type.value, pin, null);
         } catch (SmartCardReaderException e) {
-            throw new PinVerificationException(type);
+            throw new CodeVerificationException(type);
         }
     }
 
-    void blockPin(PinType pinType, int newPinLength) throws SmartCardReaderException {
-        byte retries = readRetryCounter(pinType);
+    void blockPin(CodeType pinType, int newPinLength) throws SmartCardReaderException {
+        int retries = codeRetryCounter(pinType);
         for (int i = 0; i <= retries; i++) {
             reader.transmit(0x00, 0x20, 0x00, pinType.value, new byte[newPinLength], null);
         }
-    }
-
-    @Override
-    public byte readRetryCounter(PinType pinType) throws SmartCardReaderException {
-        selectMasterFile();
-        reader.transmit(0x00, 0xA4, 0x02, 0x0C, new byte[] {0x00, 0x16}, null);
-        byte[] bytes = reader.transmit(0x00, 0xB2, pinType.retryValue, 0x04, null, 0x00);
-        return bytes[5];
     }
 
     @Override
@@ -117,7 +116,7 @@ abstract class EstEIDToken implements Token {
         reader.transmit(0x00, 0x22, 0x41, 0xA4,
                 new byte[] {(byte) 0x83, 0x03, (byte) 0x80, 0x11, 0x00}, null);
 
-        verifyPin(PinType.PIN1, pin1);
+        verifyPin(CodeType.PIN1, pin1);
 
         return reader.transmit(0x00, 0x2A, 0x80, 0x86, data, 0x00);
     }

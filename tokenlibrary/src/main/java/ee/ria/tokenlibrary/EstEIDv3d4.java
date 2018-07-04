@@ -38,7 +38,7 @@ public class EstEIDv3d4 extends EstEIDToken {
     }
 
     @Override
-    public byte[] sign(PinType type, String pin, byte[] data, boolean ellipticCurveCertificate)
+    public byte[] sign(CodeType type, String pin, byte[] data, boolean ellipticCurveCertificate)
             throws SmartCardReaderException {
         verifyPin(type, pin.getBytes());
         try {
@@ -64,7 +64,7 @@ public class EstEIDv3d4 extends EstEIDToken {
     }
 
     @Override
-    public boolean changePin(PinType pinType, byte[] previousPin, byte[] newPin)
+    public boolean changePin(CodeType pinType, byte[] previousPin, byte[] newPin)
             throws SmartCardReaderException {
         if (!reader.isSecureChannel()) {
             throw new SecureOperationOverUnsecureChannelException("PIN replace is not allowed");
@@ -78,12 +78,12 @@ public class EstEIDv3d4 extends EstEIDToken {
     }
 
     @Override
-    public boolean unblockAndChangePin(PinType pinType, byte[] puk, byte[] newPin)
+    public boolean unblockAndChangePin(CodeType pinType, byte[] puk, byte[] newPin)
             throws SmartCardReaderException {
         if (!reader.isSecureChannel()) {
             throw new SecureOperationOverUnsecureChannelException("PIN replace is not allowed");
         }
-        verifyPin(PinType.PUK, puk);
+        verifyPin(CodeType.PUK, puk);
 
         blockPin(pinType, newPin.length);
 

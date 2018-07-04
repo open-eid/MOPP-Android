@@ -19,11 +19,11 @@
 
 package ee.ria.tokenlibrary.exception;
 
-import ee.ria.tokenlibrary.Token;
+import ee.ria.tokenlibrary.CodeType;
 
-public class PinVerificationException extends TokenException {
+public class CodeVerificationException extends TokenException {
 
-    public PinVerificationException(Token.PinType pinType) {
-        super(pinType + " login failed");
+    public CodeVerificationException(CodeType type) {
+        super(type + " verification failed");
     }
 }
