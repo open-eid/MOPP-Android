@@ -89,11 +89,7 @@ public final class IdCardService {
                                       String newPin) {
         return Single
                 .fromCallable(() -> {
-                    boolean result = token
-                            .changePin(pinType, currentPin.getBytes(), newPin.getBytes());
-                    if (!result) {
-                        throw new CodeVerificationException(pinType);
-                    }
+                    token.changeCode(pinType, currentPin.getBytes(), newPin.getBytes());
                     return data(token);
                 });
     }

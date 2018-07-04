@@ -4,8 +4,8 @@ import java.util.Objects;
 
 public class ApduResponseException extends SmartCardReaderException {
 
-    private final byte sw1;
-    private final byte sw2;
+    public final byte sw1;
+    public final byte sw2;
 
     ApduResponseException(byte sw1, byte sw2) {
         super("APDU error response sw1=" + sw1 + ", sw2=" + sw2);

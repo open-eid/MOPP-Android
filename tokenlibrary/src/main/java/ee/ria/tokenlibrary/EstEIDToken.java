@@ -27,9 +27,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import ee.ria.scardcomlibrary.ApduResponseException;
 import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.scardcomlibrary.SmartCardReaderException;
 import ee.ria.tokenlibrary.exception.CodeVerificationException;
+
+import static com.google.common.primitives.Bytes.concat;
 
 abstract class EstEIDToken implements Token {
 
@@ -60,6 +63,19 @@ abstract class EstEIDToken implements Token {
     }
 
     @Override
+    public void changeCode(CodeType type, byte[] currentCode, byte[] newCode)
+            throws SmartCardReaderException {
+        try {
+            reader.transmit(0x00, 0x24, 0x00, type.value, concat(currentCode, newCode), null);
+        } catch (ApduResponseException e) {
+            if (e.sw1 == 0x63 || (e.sw1 == 0x69 && e.sw2 == (byte) 0x83)) {
+                throw new CodeVerificationException(type);
+            }
+            throw e;
+        }
+    }
+
+    @Override
     public int codeRetryCounter(CodeType type) throws SmartCardReaderException {
         selectMasterFile();
         reader.transmit(0x00, 0xA4, 0x02, 0x0C, new byte[] {0x00, 0x16}, null);
@@ -71,7 +87,6 @@ abstract class EstEIDToken implements Token {
         selectMasterFile();
         selectCatalogue();
         reader.transmit(0x00, 0xA4, 0x02, 0x04, new byte[] {type.value, (byte) 0xCE}, null);
-
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             byte[] result = reader.transmit(0x00, 0xB0, 0x00, 0x00, null, 0x00);

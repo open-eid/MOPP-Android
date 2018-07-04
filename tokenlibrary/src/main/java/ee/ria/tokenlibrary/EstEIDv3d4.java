@@ -22,7 +22,6 @@ package ee.ria.tokenlibrary;
 import ee.ria.scardcomlibrary.ApduResponseException;
 import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.scardcomlibrary.SmartCardReaderException;
-import ee.ria.tokenlibrary.exception.SecureOperationOverUnsecureChannelException;
 import ee.ria.tokenlibrary.exception.SignOperationFailedException;
 
 import static com.google.common.primitives.Bytes.concat;
@@ -64,25 +63,8 @@ public class EstEIDv3d4 extends EstEIDToken {
     }
 
     @Override
-    public boolean changePin(CodeType pinType, byte[] previousPin, byte[] newPin)
-            throws SmartCardReaderException {
-        if (!reader.isSecureChannel()) {
-            throw new SecureOperationOverUnsecureChannelException("PIN replace is not allowed");
-        }
-        try {
-            reader.transmit(0x00, 0x24, 0x00, pinType.value, concat(previousPin, newPin), null);
-        } catch (ApduResponseException e) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public boolean unblockAndChangePin(CodeType pinType, byte[] puk, byte[] newPin)
             throws SmartCardReaderException {
-        if (!reader.isSecureChannel()) {
-            throw new SecureOperationOverUnsecureChannelException("PIN replace is not allowed");
-        }
         verifyPin(CodeType.PUK, puk);
 
         blockPin(pinType, newPin.length);

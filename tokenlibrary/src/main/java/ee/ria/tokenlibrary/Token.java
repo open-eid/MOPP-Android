@@ -32,6 +32,18 @@ public interface Token {
     PersonalData personalData() throws SmartCardReaderException;
 
     /**
+     * Change PIN1/PIN2/PUK code.
+     *
+     * @param type Code type.
+     * @param currentCode Current code.
+     * @param newCode New code.
+     * @throws SmartCardReaderException When changing failed.
+     * @throws ee.ria.tokenlibrary.exception.CodeVerificationException When current code is wrong.
+     */
+    void changeCode(CodeType type, byte[] currentCode, byte[] newCode)
+            throws SmartCardReaderException;
+
+    /**
      * Read retry counter for PIN1/PIN2/PUK code.
      *
      * @param type Code type.
@@ -49,9 +61,6 @@ public interface Token {
     byte[] certificate(CertificateType type) throws SmartCardReaderException;
 
     byte[] sign(CodeType type, String pin, byte[] data, boolean ellipticCurveCertificate)
-            throws SmartCardReaderException;
-
-    boolean changePin(CodeType pinType, byte[] currentPin, byte[] newPin)
             throws SmartCardReaderException;
 
     boolean unblockAndChangePin(CodeType pinType, byte[] puk, byte[] newPin)
