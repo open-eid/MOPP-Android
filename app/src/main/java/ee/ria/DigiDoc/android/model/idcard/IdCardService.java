@@ -97,11 +97,7 @@ public final class IdCardService {
     public Single<IdCardData> unblockPin(Token token, CodeType pinType, String puk, String newPin) {
         return Single
                 .fromCallable(() -> {
-                    boolean result = token.unblockAndChangePin(pinType, puk.getBytes(),
-                            newPin.getBytes());
-                    if (!result) {
-                        throw new CodeVerificationException(pinType);
-                    }
+                    token.unblockAndChangeCode(puk.getBytes(), pinType, newPin.getBytes());
                     return data(token);
                 });
     }

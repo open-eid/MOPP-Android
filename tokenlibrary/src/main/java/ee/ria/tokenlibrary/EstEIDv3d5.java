@@ -19,12 +19,10 @@
 
 package ee.ria.tokenlibrary;
 
-import ee.ria.scardcomlibrary.ApduResponseException;
 import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.scardcomlibrary.SmartCardReaderException;
 import ee.ria.tokenlibrary.exception.SignOperationFailedException;
 
-import static com.google.common.primitives.Bytes.concat;
 import static ee.ria.tokenlibrary.util.AlgorithmUtils.addPadding;
 
 public class EstEIDv3d5 extends EstEIDToken {
@@ -56,20 +54,6 @@ public class EstEIDv3d5 extends EstEIDToken {
         } catch (Exception e) {
             throw new SignOperationFailedException(type, e);
         }
-    }
-
-    @Override
-    public boolean unblockAndChangePin(CodeType pinType, byte[] puk, byte[] newPin)
-            throws SmartCardReaderException {
-        verifyPin(CodeType.PUK, puk);
-
-        blockPin(pinType, newPin.length);
-        try {
-            reader.transmit(0x00, 0x2C, 0x00, pinType.value, concat(puk, newPin), null);
-        } catch (ApduResponseException e) {
-            return false;
-        }
-        return true;
     }
 
     @Override

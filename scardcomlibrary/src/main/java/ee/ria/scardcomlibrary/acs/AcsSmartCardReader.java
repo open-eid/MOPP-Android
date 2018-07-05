@@ -51,11 +51,6 @@ public final class AcsSmartCardReader extends SmartCardReader {
     }
 
     @Override
-    public boolean isSecureChannel() {
-        return true;
-    }
-
-    @Override
     protected byte[] transmit(byte[] apdu) throws SmartCardReaderException {
         byte[] recv = new byte[1024];
         int len;

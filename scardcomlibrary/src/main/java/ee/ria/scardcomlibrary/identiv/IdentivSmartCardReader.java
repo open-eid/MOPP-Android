@@ -72,11 +72,6 @@ public final class IdentivSmartCardReader extends SmartCardReader {
     }
 
     @Override
-    public boolean isSecureChannel() {
-        return true;
-    }
-
-    @Override
     protected byte[] transmit(byte[] apdu) throws SmartCardReaderException {
         SCard.SCardIOBuffer io = sCard.new SCardIOBuffer();
         io.setAbyInBuffer(apdu);

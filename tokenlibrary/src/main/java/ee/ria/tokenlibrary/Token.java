@@ -44,6 +44,20 @@ public interface Token {
             throws SmartCardReaderException;
 
     /**
+     * Unblock PIN1/PIN2 via PUK code and change it to a new value.
+     *
+     * When PIN1/PIN2 is not blocked yet it will be blocked before unblocking.
+     *
+     * @param pukCode PUK code.
+     * @param type Code type.
+     * @param newCode New code.
+     * @throws SmartCardReaderException When changing failed.
+     * @throws ee.ria.tokenlibrary.exception.CodeVerificationException When PUK code is wrong.
+     */
+    void unblockAndChangeCode(byte[] pukCode, CodeType type, byte[] newCode)
+            throws SmartCardReaderException;
+
+    /**
      * Read retry counter for PIN1/PIN2/PUK code.
      *
      * @param type Code type.
@@ -61,9 +75,6 @@ public interface Token {
     byte[] certificate(CertificateType type) throws SmartCardReaderException;
 
     byte[] sign(CodeType type, String pin, byte[] data, boolean ellipticCurveCertificate)
-            throws SmartCardReaderException;
-
-    boolean unblockAndChangePin(CodeType pinType, byte[] puk, byte[] newPin)
             throws SmartCardReaderException;
 
     byte[] decrypt(byte[] pin1, byte[] data) throws SmartCardReaderException;

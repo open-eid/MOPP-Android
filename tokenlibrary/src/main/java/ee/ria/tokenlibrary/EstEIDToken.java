@@ -65,14 +65,22 @@ abstract class EstEIDToken implements Token {
     @Override
     public void changeCode(CodeType type, byte[] currentCode, byte[] newCode)
             throws SmartCardReaderException {
-        try {
-            reader.transmit(0x00, 0x24, 0x00, type.value, concat(currentCode, newCode), null);
-        } catch (ApduResponseException e) {
-            if (e.sw1 == 0x63 || (e.sw1 == 0x69 && e.sw2 == (byte) 0x83)) {
-                throw new CodeVerificationException(type);
-            }
-            throw e;
+        verifyCode(type, currentCode);
+        reader.transmit(0x00, 0x24, 0x00, type.value, concat(currentCode, newCode), null);
+    }
+
+    @Override
+    public void unblockAndChangeCode(byte[] pukCode, CodeType type, byte[] newCode)
+            throws SmartCardReaderException {
+        verifyCode(CodeType.PUK, pukCode);
+        // block code if not yet blocked
+        byte i = 0;
+        while (codeRetryCounter(type) != 0) {
+            try {
+                verifyCode(type, concat(new byte[newCode.length - 1], new byte[] {i++}));
+            } catch (CodeVerificationException ignored) {}
         }
+        reader.transmit(0x00, 0x2C, 0x00, type.value, concat(pukCode, newCode), null);
     }
 
     @Override
@@ -139,6 +147,17 @@ abstract class EstEIDToken implements Token {
     abstract void selectMasterFile() throws SmartCardReaderException;
 
     abstract void selectCatalogue() throws SmartCardReaderException;
+
+    void verifyCode(CodeType type, byte[] code) throws SmartCardReaderException {
+        try {
+            reader.transmit(0x00, 0x20, 0x00, type.value, code, null);
+        } catch (ApduResponseException e) {
+            if (e.sw1 == 0x63 || (e.sw1 == 0x69 && e.sw2 == (byte) 0x83)) {
+                throw new CodeVerificationException(type);
+            }
+            throw e;
+        }
+    }
 
     abstract void manageSecurityEnvironment() throws SmartCardReaderException;
 }
