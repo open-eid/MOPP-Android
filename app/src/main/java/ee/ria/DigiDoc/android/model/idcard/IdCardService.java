@@ -27,7 +27,6 @@ import ee.ria.tokenlibrary.CodeType;
 import ee.ria.tokenlibrary.CodeVerificationException;
 import ee.ria.tokenlibrary.PersonalData;
 import ee.ria.tokenlibrary.Token;
-import ee.ria.tokenlibrary.util.Util;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -35,6 +34,7 @@ import io.reactivex.schedulers.Schedulers;
 import okio.ByteString;
 import timber.log.Timber;
 
+import static com.google.common.primitives.Bytes.concat;
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 
 @Singleton
@@ -154,7 +154,7 @@ public final class IdCardService {
         public byte[] decrypt(RSARecipient recipient) throws DecryptionException {
             try {
                 return token.decrypt(pin1.getBytes(),
-                        Util.concat(new byte[]{0x00}, recipient.getEncryptedKey()));
+                        concat(new byte[]{0x00}, recipient.getEncryptedKey()));
             } catch (CodeVerificationException e) {
                 throw new PinVerificationError(e, idCardData());
             } catch (Exception e) {
@@ -165,7 +165,17 @@ public final class IdCardService {
 
         @Override
         public byte[] decrypt(ECRecipient recipient) throws DecryptionException {
-            return new byte[0];
+            try {
+                return token.decrypt(pin1.getBytes(),
+                        concat(
+                                new byte[]{(byte) 0xA6, 0x66, 0x7F, 0x49, 0x63, (byte) 0x86, 0x61},
+                                recipient.getEncryptedKey()));
+            } catch (CodeVerificationException e) {
+                throw new PinVerificationError(e, idCardData());
+            } catch (Exception e) {
+                Timber.e(e);
+                throw new DecryptionException("Decrypt EC recipient", e);
+            }
         }
 
         private IdCardData idCardData() {

@@ -42,7 +42,7 @@ class EstEIDv3d4 extends EstEIDToken {
     }
 
     @Override
-    void manageSecurityEnvironment() throws SmartCardReaderException {
-        reader.transmit(0x00, 0x22, 0xF3, 0x01, null, null);
+    void selectSecurityEnvironment(byte operation) throws SmartCardReaderException {
+        reader.transmit(0x00, 0x22, 0xF3, operation, null, null);
     }
 }

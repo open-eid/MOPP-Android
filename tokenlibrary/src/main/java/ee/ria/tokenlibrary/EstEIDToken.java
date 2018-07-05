@@ -119,7 +119,8 @@ abstract class EstEIDToken implements Token {
             throws SmartCardReaderException {
         selectMasterFile();
         selectCatalogue();
-        manageSecurityEnvironment();
+        selectSecurityEnvironment((byte) 0x01);
+        // TODO select keys
         verifyCode(CodeType.PIN2, pin2);
         return reader.transmit(0x00, 0x2A, 0x9E, 0x9A, addPadding(hash, ecc), null);
     }
@@ -128,14 +129,9 @@ abstract class EstEIDToken implements Token {
     public byte[] decrypt(byte[] pin1, byte[] data) throws SmartCardReaderException {
         selectMasterFile();
         selectCatalogue();
-
-        reader.transmit(0x00, 0x22, 0xF3, 0x06, null, null);
-
-        reader.transmit(0x00, 0x22, 0x41, 0xA4,
-                new byte[] {(byte) 0x83, 0x03, (byte) 0x80, 0x11, 0x00}, null);
-
+        selectSecurityEnvironment((byte) 0x06);
+        // TODO select keys
         verifyCode(CodeType.PIN1, pin1);
-
         return reader.transmit(0x00, 0x2A, 0x80, 0x86, data, 0x00);
     }
 
@@ -143,7 +139,7 @@ abstract class EstEIDToken implements Token {
 
     abstract void selectCatalogue() throws SmartCardReaderException;
 
-    abstract void manageSecurityEnvironment() throws SmartCardReaderException;
+    abstract void selectSecurityEnvironment(byte operation) throws SmartCardReaderException;
 
     private void verifyCode(CodeType type, byte[] code) throws SmartCardReaderException {
         try {

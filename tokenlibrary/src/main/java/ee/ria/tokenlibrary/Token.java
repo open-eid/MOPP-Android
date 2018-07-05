@@ -21,7 +21,6 @@ package ee.ria.tokenlibrary;
 
 import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.scardcomlibrary.SmartCardReaderException;
-import timber.log.Timber;
 
 public interface Token {
 
@@ -89,6 +88,16 @@ public interface Token {
     byte[] calculateSignature(byte[] pin2, byte[] hash, boolean ecc)
             throws SmartCardReaderException;
 
+    /**
+     * Decrypt data.
+     *
+     * @param pin1 PIN1 code.
+     * @param data Data to decrypt.
+     *
+     * @return Decrypt result.
+     * @throws SmartCardReaderException When decrypting failed.
+     * @throws CodeVerificationException When PIN1 code is wrong.
+     */
     byte[] decrypt(byte[] pin1, byte[] data) throws SmartCardReaderException;
 
     static Token create(SmartCardReader reader) throws SmartCardReaderException {
@@ -96,10 +105,8 @@ public interface Token {
         byte major = version[0];
         byte minor = version[1];
         if (major == 0x03 && minor == 0x05) {
-            Timber.e("35");
             return new EstEIDv3d5(reader);
         } else if (major == 0x03 && (minor == 0x04 || minor == 0x00)) {
-            Timber.e("34");
             return new EstEIDv3d4(reader);
         }
         throw new SmartCardReaderException("Unsupported EstEID card application version: " +
