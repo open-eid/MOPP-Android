@@ -17,10 +17,15 @@ android {
     lintOptions {
         lintConfig file('../lint.xml')
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    implementation "com.android.support:support-annotations:${androidSupportLibraryVersion}"
+    api "com.android.support:support-annotations:${androidSupportLibraryVersion}"
     implementation "com.android.support:appcompat-v7:${androidSupportLibraryVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"

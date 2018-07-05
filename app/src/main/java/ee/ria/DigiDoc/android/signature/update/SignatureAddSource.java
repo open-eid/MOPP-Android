@@ -18,7 +18,7 @@ import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdOnSubscribe;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdRequest;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
-import ee.ria.tokenlibrary.exception.CodeVerificationException;
+import ee.ria.tokenlibrary.CodeVerificationException;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;

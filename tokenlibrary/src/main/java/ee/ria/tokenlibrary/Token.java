@@ -19,7 +19,9 @@
 
 package ee.ria.tokenlibrary;
 
+import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.scardcomlibrary.SmartCardReaderException;
+import timber.log.Timber;
 
 public interface Token {
 
@@ -38,7 +40,7 @@ public interface Token {
      * @param currentCode Current code.
      * @param newCode New code.
      * @throws SmartCardReaderException When changing failed.
-     * @throws ee.ria.tokenlibrary.exception.CodeVerificationException When current code is wrong.
+     * @throws CodeVerificationException When current code is wrong.
      */
     void changeCode(CodeType type, byte[] currentCode, byte[] newCode)
             throws SmartCardReaderException;
@@ -52,7 +54,7 @@ public interface Token {
      * @param type Code type.
      * @param newCode New code.
      * @throws SmartCardReaderException When changing failed.
-     * @throws ee.ria.tokenlibrary.exception.CodeVerificationException When PUK code is wrong.
+     * @throws CodeVerificationException When PUK code is wrong.
      */
     void unblockAndChangeCode(byte[] pukCode, CodeType type, byte[] newCode)
             throws SmartCardReaderException;
@@ -74,8 +76,33 @@ public interface Token {
      */
     byte[] certificate(CertificateType type) throws SmartCardReaderException;
 
-    byte[] sign(CodeType type, String pin, byte[] data, boolean ellipticCurveCertificate)
+    /**
+     * Calculate electronic signature with pre-calculated hash.
+     *
+     * @param pin2 PIN2 code.
+     * @param hash Pre-calculated hash.
+     * @param ecc Whether it's a elliptic curve certificate.
+     * @return Signed data.
+     * @throws SmartCardReaderException When calculating signature failed.
+     * @throws CodeVerificationException When PIN2 code is wrong.
+     */
+    byte[] calculateSignature(byte[] pin2, byte[] hash, boolean ecc)
             throws SmartCardReaderException;
 
     byte[] decrypt(byte[] pin1, byte[] data) throws SmartCardReaderException;
+
+    static Token create(SmartCardReader reader) throws SmartCardReaderException {
+        byte[] version = reader.transmit(0x00, 0xCA, 0x01, 0x00, null, 0x03);
+        byte major = version[0];
+        byte minor = version[1];
+        if (major == 0x03 && minor == 0x05) {
+            Timber.e("35");
+            return new EstEIDv3d5(reader);
+        } else if (major == 0x03 && (minor == 0x04 || minor == 0x00)) {
+            Timber.e("34");
+            return new EstEIDv3d4(reader);
+        }
+        throw new SmartCardReaderException("Unsupported EstEID card application version: " +
+                major + "." + minor);
+    }
 }

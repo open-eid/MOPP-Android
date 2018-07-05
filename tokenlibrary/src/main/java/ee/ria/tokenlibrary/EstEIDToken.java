@@ -30,9 +30,9 @@ import java.io.UnsupportedEncodingException;
 import ee.ria.scardcomlibrary.ApduResponseException;
 import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.scardcomlibrary.SmartCardReaderException;
-import ee.ria.tokenlibrary.exception.CodeVerificationException;
 
 import static com.google.common.primitives.Bytes.concat;
+import static ee.ria.tokenlibrary.util.AlgorithmUtils.addPadding;
 
 abstract class EstEIDToken implements Token {
 
@@ -114,19 +114,14 @@ abstract class EstEIDToken implements Token {
         }
     }
 
-    void verifyPin(CodeType type, byte[] pin) throws CodeVerificationException {
-        try {
-            reader.transmit(0x00, 0x20, 0x00, type.value, pin, null);
-        } catch (SmartCardReaderException e) {
-            throw new CodeVerificationException(type);
-        }
-    }
-
-    void blockPin(CodeType pinType, int newPinLength) throws SmartCardReaderException {
-        int retries = codeRetryCounter(pinType);
-        for (int i = 0; i <= retries; i++) {
-            reader.transmit(0x00, 0x20, 0x00, pinType.value, new byte[newPinLength], null);
-        }
+    @Override
+    public byte[] calculateSignature(byte[] pin2, byte[] hash, boolean ecc)
+            throws SmartCardReaderException {
+        selectMasterFile();
+        selectCatalogue();
+        manageSecurityEnvironment();
+        verifyCode(CodeType.PIN2, pin2);
+        return reader.transmit(0x00, 0x2A, 0x9E, 0x9A, addPadding(hash, ecc), null);
     }
 
     @Override
@@ -139,7 +134,7 @@ abstract class EstEIDToken implements Token {
         reader.transmit(0x00, 0x22, 0x41, 0xA4,
                 new byte[] {(byte) 0x83, 0x03, (byte) 0x80, 0x11, 0x00}, null);
 
-        verifyPin(CodeType.PIN1, pin1);
+        verifyCode(CodeType.PIN1, pin1);
 
         return reader.transmit(0x00, 0x2A, 0x80, 0x86, data, 0x00);
     }
@@ -148,7 +143,9 @@ abstract class EstEIDToken implements Token {
 
     abstract void selectCatalogue() throws SmartCardReaderException;
 
-    void verifyCode(CodeType type, byte[] code) throws SmartCardReaderException {
+    abstract void manageSecurityEnvironment() throws SmartCardReaderException;
+
+    private void verifyCode(CodeType type, byte[] code) throws SmartCardReaderException {
         try {
             reader.transmit(0x00, 0x20, 0x00, type.value, code, null);
         } catch (ApduResponseException e) {
@@ -158,6 +155,4 @@ abstract class EstEIDToken implements Token {
             throw e;
         }
     }
-
-    abstract void manageSecurityEnvironment() throws SmartCardReaderException;
 }

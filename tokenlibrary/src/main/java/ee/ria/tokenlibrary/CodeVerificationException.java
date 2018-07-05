@@ -17,17 +17,13 @@
  *
  */
 
-package ee.ria.tokenlibrary.exception;
+package ee.ria.tokenlibrary;
 
 import ee.ria.scardcomlibrary.SmartCardReaderException;
 
-public class TokenException extends SmartCardReaderException {
+public class CodeVerificationException extends SmartCardReaderException {
 
-    public TokenException(String message) {
-        super(message);
-    }
-
-    public TokenException(Throwable cause) {
-        super(cause);
+    CodeVerificationException(CodeType type) {
+        super(type + " verification failed");
     }
 }

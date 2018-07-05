@@ -24,10 +24,9 @@ import ee.ria.scardcomlibrary.SmartCardReaderManager;
 import ee.ria.scardcomlibrary.SmartCardReaderStatus;
 import ee.ria.tokenlibrary.CertificateType;
 import ee.ria.tokenlibrary.CodeType;
+import ee.ria.tokenlibrary.CodeVerificationException;
 import ee.ria.tokenlibrary.PersonalData;
 import ee.ria.tokenlibrary.Token;
-import ee.ria.tokenlibrary.TokenFactory;
-import ee.ria.tokenlibrary.exception.CodeVerificationException;
 import ee.ria.tokenlibrary.util.Util;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -58,11 +57,8 @@ public final class IdCardService {
                     }
                     return Observable
                             .fromCallable(() -> {
-                                Token token = TokenFactory
-                                        .getTokenImpl(smartCardReaderManager.connectedReader());
-                                if (token == null) {
-                                    throw new IllegalStateException("Token is null");
-                                }
+                                Token token =
+                                        Token.create(smartCardReaderManager.connectedReader());
                                 return IdCardDataResponse.success(data(token), token);
                             })
                             .subscribeOn(Schedulers.io())
@@ -77,7 +73,7 @@ public final class IdCardService {
                 .fromCallable(() -> {
                     IdCardData data = data(token);
                     return container.sign(data.signCertificate().data(),
-                            signData -> ByteString.of(token.sign(CodeType.PIN2, pin2,
+                            signData -> ByteString.of(token.calculateSignature(pin2.getBytes(),
                                     signData.toByteArray(),
                                     data.signCertificate().ellipticCurve())));
                 })

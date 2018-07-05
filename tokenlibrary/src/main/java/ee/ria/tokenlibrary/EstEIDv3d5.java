@@ -21,39 +21,14 @@ package ee.ria.tokenlibrary;
 
 import ee.ria.scardcomlibrary.SmartCardReader;
 import ee.ria.scardcomlibrary.SmartCardReaderException;
-import ee.ria.tokenlibrary.exception.SignOperationFailedException;
 
-import static ee.ria.tokenlibrary.util.AlgorithmUtils.addPadding;
-
-public class EstEIDv3d5 extends EstEIDToken {
+class EstEIDv3d5 extends EstEIDToken {
 
     private final SmartCardReader reader;
 
     EstEIDv3d5(SmartCardReader reader) {
         super(reader);
         this.reader = reader;
-    }
-
-    @Override
-    public byte[] sign(CodeType type, String pin, byte[] data, boolean ellipticCurveCertificate)
-            throws SmartCardReaderException {
-        verifyPin(type, pin.getBytes());
-        try {
-            selectMasterFile();
-            selectCatalogue();
-            manageSecurityEnvironment();
-            switch (type) {
-                case PIN1:
-                    return reader.transmit(0x00, 0x88, 0x00, 0x00, data, null);
-                case PIN2:
-                    return reader.transmit(0x00, 0x2A, 0x9E, 0x9A,
-                            addPadding(data, ellipticCurveCertificate), null);
-                default:
-                    throw new Exception("Unsupported");
-            }
-        } catch (Exception e) {
-            throw new SignOperationFailedException(type, e);
-        }
     }
 
     @Override
@@ -69,7 +44,5 @@ public class EstEIDv3d5 extends EstEIDToken {
     @Override
     void manageSecurityEnvironment() throws SmartCardReaderException {
         reader.transmit(0x00, 0x22, 0xF3, 0x01, null, 0x00);
-        // TODO
-//        transmitExtended(new byte[]{0x00, 0x22, 0x41, (byte) 0xB8, 0x05, (byte) 0x83, 0x03, (byte) 0x80});
     }
 }
