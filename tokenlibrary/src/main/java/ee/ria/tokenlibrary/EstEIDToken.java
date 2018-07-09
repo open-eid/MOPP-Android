@@ -126,13 +126,16 @@ abstract class EstEIDToken implements Token {
     }
 
     @Override
-    public byte[] decrypt(byte[] pin1, byte[] data) throws SmartCardReaderException {
+    public byte[] decrypt(byte[] pin1, byte[] data, boolean ecc) throws SmartCardReaderException {
+        byte[] prefix = ecc
+                ? new byte[] {(byte) 0xA6, 0x66, 0x7F, 0x49, 0x63, (byte) 0x86, 0x61}
+                : new byte[] {0x00};
         selectMasterFile();
         selectCatalogue();
         selectSecurityEnvironment((byte) 0x06);
         // TODO select keys
         verifyCode(CodeType.PIN1, pin1);
-        return reader.transmit(0x00, 0x2A, 0x80, 0x86, data, 0x00);
+        return reader.transmit(0x00, 0x2A, 0x80, 0x86, concat(prefix, data), 0x00);
     }
 
     abstract void selectMasterFile() throws SmartCardReaderException;

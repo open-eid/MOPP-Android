@@ -93,12 +93,13 @@ public interface Token {
      *
      * @param pin1 PIN1 code.
      * @param data Data to decrypt.
+     * @param ecc Whether it's a elliptic curve certificate.
      *
      * @return Decrypt result.
      * @throws SmartCardReaderException When decrypting failed.
      * @throws CodeVerificationException When PIN1 code is wrong.
      */
-    byte[] decrypt(byte[] pin1, byte[] data) throws SmartCardReaderException;
+    byte[] decrypt(byte[] pin1, byte[] data, boolean ecc) throws SmartCardReaderException;
 
     static Token create(SmartCardReader reader) throws SmartCardReaderException {
         byte[] version = reader.transmit(0x00, 0xCA, 0x01, 0x00, null, 0x03);

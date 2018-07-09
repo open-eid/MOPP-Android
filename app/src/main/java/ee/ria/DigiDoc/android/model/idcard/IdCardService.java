@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.model.idcard;
 
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.openeid.cdoc4j.CDOCDecrypter;
 import org.openeid.cdoc4j.DataFile;
 import org.openeid.cdoc4j.ECRecipient;
@@ -34,7 +35,6 @@ import io.reactivex.schedulers.Schedulers;
 import okio.ByteString;
 import timber.log.Timber;
 
-import static com.google.common.primitives.Bytes.concat;
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 
 @Singleton
@@ -153,8 +153,7 @@ public final class IdCardService {
         @Override
         public byte[] decrypt(RSARecipient recipient) throws DecryptionException {
             try {
-                return token.decrypt(pin1.getBytes(),
-                        concat(new byte[]{0x00}, recipient.getEncryptedKey()));
+                return token.decrypt(pin1.getBytes(), recipient.getEncryptedKey(), false);
             } catch (CodeVerificationException e) {
                 throw new PinVerificationError(e, idCardData());
             } catch (Exception e) {
@@ -165,11 +164,10 @@ public final class IdCardService {
 
         @Override
         public byte[] decrypt(ECRecipient recipient) throws DecryptionException {
+            SubjectPublicKeyInfo info = SubjectPublicKeyInfo
+                    .getInstance(recipient.getEphemeralPublicKey().getEncoded());
             try {
-                return token.decrypt(pin1.getBytes(),
-                        concat(
-                                new byte[]{(byte) 0xA6, 0x66, 0x7F, 0x49, 0x63, (byte) 0x86, 0x61},
-                                recipient.getEncryptedKey()));
+                return token.decrypt(pin1.getBytes(), info.getPublicKeyData().getBytes(), true);
             } catch (CodeVerificationException e) {
                 throw new PinVerificationError(e, idCardData());
             } catch (Exception e) {
