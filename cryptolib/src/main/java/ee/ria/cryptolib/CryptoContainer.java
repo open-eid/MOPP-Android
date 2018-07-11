@@ -5,23 +5,13 @@ import android.support.annotation.WorkerThread;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
+import org.openeid.cdoc4j.CDOCParser;
 import org.openeid.cdoc4j.Recipient;
-import org.openeid.cdoc4j.xml.XMLDocumentBuilder;
-import org.openeid.cdoc4j.xml.XmlEncParser;
-import org.openeid.cdoc4j.xml.XmlEncParserFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Locale;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
 
 import ee.ria.DigiDoc.Certificate;
 import okio.ByteString;
@@ -42,23 +32,18 @@ public abstract class CryptoContainer {
 
     @WorkerThread
     public static CryptoContainer open(File file) throws InvalidCryptoContainerException {
-        try (InputStream inputStream = new FileInputStream(file)) {
+        try (
+                InputStream dataFilesStream = new FileInputStream(file);
+                InputStream recipientsStream = new FileInputStream(file)
+        ) {
             ImmutableList.Builder<File> dataFilesBuilder = ImmutableList.builder();
             ImmutableList.Builder<Certificate> recipientsBuilder = ImmutableList.builder();
 
-            Document document = XMLDocumentBuilder.buildDocument(inputStream);
-            XPath xPath = XPathFactory.newInstance().newXPath();
-            XPathExpression expression = xPath
-                    .compile("/EncryptedData/EncryptionProperties/EncryptionProperty" +
-                            "[@Name='orig_file']");
-            NodeList nodes = (NodeList) expression.evaluate(document, XPathConstants.NODESET);
-            for (int i = 0; i < nodes.getLength(); i++) {
-                Node node = nodes.item(i);
-                dataFilesBuilder.add(new File(node.getTextContent().split("\\|")[0]));
+            for (String dataFileName : CDOCParser.getDataFileNames(dataFilesStream)) {
+                dataFilesBuilder.add(new File(dataFileName));
             }
 
-            XmlEncParser parser = XmlEncParserFactory.getXmlEncParser(document);
-            for (Recipient recipient : parser.getRecipients()) {
+            for (Recipient recipient : CDOCParser.getRecipients(recipientsStream)) {
                 recipientsBuilder.add(Certificate
                         .create(ByteString.of(recipient.getCertificate().getEncoded())));
             }

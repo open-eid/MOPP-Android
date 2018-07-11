@@ -37,9 +37,13 @@ dependencies {
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
     implementation "org.apache.directory.api:api-ldap-client-all:${apacheDirectoryVersion}"
-    api ("org.open-eid.cdoc4j:cdoc4j:${cdoc4jVersion}") {
-        exclude group: 'org.slf4j', module: 'slf4j-api'
+
+    implementation "commons-io:commons-io:2.6"
+    implementation "com.fasterxml.woodstox:woodstox-core:5.1.0"
+    implementation ("net.java.dev.stax-utils:stax-utils:20070216") {
+        exclude group: 'com.bea.xml'
     }
+    api files('libs/cdoc4j-1.1.jar')
 
     api project(':corelib')
 
