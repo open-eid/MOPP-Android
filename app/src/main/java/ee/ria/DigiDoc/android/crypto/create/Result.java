@@ -17,19 +17,6 @@ import ee.ria.cryptolib.CryptoContainer;
 interface Result extends MviResult<ViewState> {
 
     @AutoValue
-    abstract class VoidResult implements Result {
-
-        @Override
-        public ViewState reduce(ViewState state) {
-            return state;
-        }
-
-        static VoidResult create() {
-            return new AutoValue_Result_VoidResult();
-        }
-    }
-
-    @AutoValue
     abstract class InitialResult implements Result {
 
         @State abstract String state();

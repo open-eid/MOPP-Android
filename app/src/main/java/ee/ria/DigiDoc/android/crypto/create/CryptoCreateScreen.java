@@ -150,6 +150,10 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                         .map(ignored -> Intent.DecryptIntent.cancel()));
     }
 
+    private Observable<Intent.SendIntent> sendIntent() {
+        return clicks(sendButton).map(ignored -> Intent.SendIntent.create(containerFile));
+    }
+
     private Observable<Intent> errorIntents() {
         return cancels(errorDialog)
                 .map(ignored -> {
@@ -170,7 +174,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         return Observable.mergeArray(initialIntent(), upButtonClickIntent(), dataFilesAddIntent(),
                 dataFileRemoveIntent(), dataFileViewIntent(), recipientsAddButtonClickIntent(),
                 recipientRemoveIntent(), encryptIntent(), decryptionIntent(), decryptIntent(),
-                errorIntents());
+                sendIntent(), errorIntents());
     }
 
     @Override

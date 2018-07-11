@@ -37,6 +37,7 @@ import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_INITIAL;
 import static ee.ria.DigiDoc.android.utils.Immutables.with;
 import static ee.ria.DigiDoc.android.utils.Immutables.without;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 import static ee.ria.cryptolib.CryptoContainer.createContainerFileName;
@@ -52,8 +53,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ObservableTransformer<Intent.InitialIntent, Result.InitialResult> initial;
 
-    private final ObservableTransformer<Intent.UpButtonClickIntent,
-                                        Result.VoidResult> upButtonClick;
+    private final ObservableTransformer<Intent.UpButtonClickIntent, Result> upButtonClick;
 
     private final ObservableTransformer<Intent.DataFilesAddIntent,
                                         Result.DataFilesAddResult> dataFilesAdd;
@@ -61,13 +61,13 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     private final ObservableTransformer<Intent.DataFileRemoveIntent,
                                         Result.DataFileRemoveResult> dataFileRemove;
 
-    private final ObservableTransformer<Intent.DataFileViewIntent, Result.VoidResult> dataFileView;
+    private final ObservableTransformer<Intent.DataFileViewIntent, Result> dataFileView;
 
-    private final ObservableTransformer<Intent.RecipientsAddButtonClickIntent, Result.VoidResult>
-            recipientsAddButtonClick;
+    private final ObservableTransformer<Intent.RecipientsAddButtonClickIntent,
+                                        Result> recipientsAddButtonClick;
 
     private final ObservableTransformer<Intent.RecipientsScreenUpButtonClickIntent,
-                                        Result.VoidResult> recipientsScreenUpButtonClick;
+                                        Result> recipientsScreenUpButtonClick;
 
     private final ObservableTransformer<Intent.RecipientsSearchIntent,
             Result.RecipientsSearchResult> recipientsSearch;
@@ -84,6 +84,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                         Result.DecryptionResult> decryption;
 
     private final ObservableTransformer<Intent.DecryptIntent, Result.DecryptResult> decrypt;
+
+    private final ObservableTransformer<Intent.SendIntent, Result> send;
 
     @Inject Processor(Navigator navigator, RecipientRepository recipientRepository,
                       ContentResolver contentResolver, FileSystem fileSystem,
@@ -210,7 +212,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             File file = intent.dataFile();
             navigator.execute(Transaction
                     .activity(createViewIntent(application, file, mimeType(file)), null));
-            return Observable.just(Result.VoidResult.create());
+            return Observable.empty();
         });
 
         recipientsAddButtonClick = upstream -> upstream.switchMap(intent -> {
@@ -312,6 +314,12 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return Observable.just(Result.DecryptResult.clear(), Result.DecryptResult.idle());
             }
         });
+
+        send = upstream -> upstream.switchMap(intent -> {
+            navigator.execute(Transaction
+                    .activity(createSendIntent(application, intent.containerFile()), null));
+            return Observable.empty();
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -332,6 +340,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.RecipientRemoveIntent.class).compose(recipientRemove),
                 shared.ofType(Intent.EncryptIntent.class).compose(encrypt),
                 shared.ofType(Intent.DecryptionIntent.class).compose(decryption),
-                shared.ofType(Intent.DecryptIntent.class).compose(decrypt)));
+                shared.ofType(Intent.DecryptIntent.class).compose(decrypt),
+                shared.ofType(Intent.SendIntent.class).compose(send)));
     }
 }
