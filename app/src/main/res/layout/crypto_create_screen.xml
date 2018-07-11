@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 app:navigationIcon="@drawable/ic_clear"
                 app:navigationContentDescription="@string/back"
-                app:title="@string/crypto_create_title" />
+                app:title="@string/crypto_create_title_encrypt" />
 
         </android.support.design.widget.AppBarLayout>
 

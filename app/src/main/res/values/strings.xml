@@ -159,8 +159,10 @@
     <string name="crypto_home_create_button">CHOOSE FILE</string>
 
     <!-- Crypto Create -->
-    <string name="crypto_create_title" tools:ignore="MissingTranslation">Encryption</string>
+    <string name="crypto_create_title_encrypt" tools:ignore="MissingTranslation">Encryption</string>
+    <string name="crypto_create_title_decrypt" tools:ignore="MissingTranslation">Decryption</string>
     <string name="crypto_create_encrypt_success_message" tools:ignore="MissingTranslation">CONTAINER ENCRYPTED</string>
+    <string name="crypto_create_decrypt_success_message" tools:ignore="MissingTranslation">CONTAINER DECRYPTED</string>
     <string name="crypto_create_name" tools:ignore="MissingTranslation">CONTAINER:</string>
     <string name="crypto_create_data_files_title" tools:ignore="MissingTranslation">Data files</string>
     <string name="crypto_create_data_files_add_button" tools:ignore="MissingTranslation">+ ADD MORE FILES</string>

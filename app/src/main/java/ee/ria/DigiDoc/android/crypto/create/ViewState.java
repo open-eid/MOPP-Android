@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 
 import ee.ria.DigiDoc.Certificate;
-import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -16,6 +15,7 @@ import ee.ria.DigiDoc.android.utils.mvi.State;
 @AutoValue
 abstract class ViewState implements MviViewState {
 
+    @Nullable abstract File containerFile();
     @Nullable abstract String name();
     abstract ImmutableList<File> dataFiles();
     abstract boolean dataFilesViewEnabled();
@@ -42,7 +42,7 @@ abstract class ViewState implements MviViewState {
     @Nullable abstract IdCardDataResponse decryptionIdCardDataResponse();
 
     @State abstract String decryptState();
-    @Nullable abstract IdCardData decryptIdCardData();
+    abstract boolean decryptSuccessMessageVisible();
     @Nullable abstract Throwable decryptError();
 
     abstract Builder buildWith();
@@ -65,11 +65,13 @@ abstract class ViewState implements MviViewState {
                 .encryptState(State.IDLE)
                 .encryptSuccessMessageVisible(false)
                 .decryptState(State.IDLE)
+                .decryptSuccessMessageVisible(false)
                 .build();
     }
 
     @AutoValue.Builder
     interface Builder {
+        Builder containerFile(@Nullable File containerFile);
         Builder name(@Nullable String name);
         Builder dataFiles(ImmutableList<File> dataFiles);
         Builder dataFilesViewEnabled(boolean dataFilesViewEnabled);
@@ -92,7 +94,7 @@ abstract class ViewState implements MviViewState {
         Builder decryptionIdCardDataResponse(
                 @Nullable IdCardDataResponse decryptionIdCardDataResponse);
         Builder decryptState(@State String decryptState);
-        Builder decryptIdCardData(@Nullable IdCardData decryptIdCardData);
+        Builder decryptSuccessMessageVisible(boolean decryptSuccessMessageVisible);
         Builder decryptError(@Nullable Throwable decryptError);
         ViewState build();
     }

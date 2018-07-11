@@ -56,7 +56,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         return new CryptoCreateScreen(args);
     }
 
-    @Nullable private final File containerFile;
+    @Nullable private File containerFile;
 
     private final Subject<Boolean> idCardTokenAvailableSubject = PublishSubject.create();
 
@@ -179,6 +179,9 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         tintCompoundDrawables(decryptButton);
         tintCompoundDrawables(sendButton);
 
+        if (state.containerFile() != null) {
+            containerFile = state.containerFile();
+        }
         name = state.name();
         dataFiles = state.dataFiles();
         recipients = state.recipients();
@@ -189,10 +192,14 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         setActivity(state.dataFilesAddState().equals(State.ACTIVE) ||
                 state.encryptState().equals(State.ACTIVE));
 
+        toolbarView.setTitle(state.encryptButtonVisible()
+                ? R.string.crypto_create_title_encrypt
+                : R.string.crypto_create_title_decrypt);
+
         adapter.dataForContainer(name, dataFiles, state.dataFilesViewEnabled(),
                 state.dataFilesAddEnabled(), state.dataFilesRemoveEnabled(), recipients,
                 state.recipientsAddEnabled(), state.recipientsRemoveEnabled(),
-                state.encryptSuccessMessageVisible());
+                state.encryptSuccessMessageVisible(), state.decryptSuccessMessageVisible());
 
         encryptButton.setVisibility(state.encryptButtonVisible() ? View.VISIBLE : View.GONE);
         decryptButton.setVisibility(state.decryptButtonVisible() ? View.VISIBLE : View.GONE);
@@ -205,7 +212,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         if (decryptionIdCardDataResponse != null) {
             decryptDialog.show();
             decryptDialog.idCardDataResponse(decryptionIdCardDataResponse, state.decryptState(),
-                    state.decryptIdCardData(), decryptError);
+                    decryptError);
         } else {
             decryptDialog.dismiss();
         }

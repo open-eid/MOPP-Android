@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 
 import ee.ria.DigiDoc.Certificate;
-import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
@@ -246,6 +245,8 @@ interface Result extends MviResult<ViewState> {
 
         abstract boolean successMessageVisible();
 
+        @Nullable abstract File containerFile();
+
         @Nullable abstract Throwable error();
 
         @Override
@@ -254,8 +255,9 @@ interface Result extends MviResult<ViewState> {
                     .encryptState(state())
                     .encryptSuccessMessageVisible(successMessageVisible())
                     .encryptError(error());
-            if (successMessageVisible()) {
+            if (containerFile() != null) {
                 builder
+                        .containerFile(containerFile())
                         .dataFilesViewEnabled(false)
                         .dataFilesAddEnabled(false)
                         .dataFilesRemoveEnabled(false)
@@ -269,24 +271,30 @@ interface Result extends MviResult<ViewState> {
         }
 
         static EncryptResult activity() {
-            return create(State.ACTIVE, false, null);
+            return create(State.ACTIVE, false, null, null);
         }
 
-        static EncryptResult successMessage() {
-            return create(State.IDLE, true, null);
+        static EncryptResult successMessage(File containerFile) {
+            return create(State.IDLE, true, containerFile, null);
+        }
+
+        static EncryptResult success(File containerFile) {
+            return create(State.IDLE, false, containerFile, null);
         }
 
         static EncryptResult failure(Throwable error) {
-            return create(State.IDLE, false, error);
+            return create(State.IDLE, false, null, error);
         }
 
         static EncryptResult clear() {
-            return create(State.IDLE, false, null);
+            return create(State.IDLE, false, null, null);
         }
 
         private static EncryptResult create(@State String state, boolean successMessageVisible,
+                                            @Nullable File containerFile,
                                             @Nullable Throwable error) {
-            return new AutoValue_Result_EncryptResult(state, successMessageVisible, error);
+            return new AutoValue_Result_EncryptResult(state, successMessageVisible, containerFile,
+                    error);
         }
     }
 
@@ -318,7 +326,9 @@ interface Result extends MviResult<ViewState> {
 
         @State abstract String state();
 
-        @Nullable abstract IdCardData idCardData();
+        abstract boolean successMessageVisible();
+
+        @Nullable abstract ImmutableList<File> dataFiles();
 
         @Nullable abstract Throwable error();
 
@@ -326,37 +336,53 @@ interface Result extends MviResult<ViewState> {
         public ViewState reduce(ViewState state) {
             ViewState.Builder builder = state.buildWith()
                     .decryptState(state())
-                    .decryptIdCardData(idCardData())
+                    .decryptSuccessMessageVisible(successMessageVisible())
                     .decryptError(error());
             if (error() != null && !(error() instanceof IdCardService.PinVerificationError)) {
                 builder.decryptionIdCardDataResponse(null);
+            }
+            if (dataFiles() != null) {
+                builder
+                        .dataFiles(dataFiles())
+                        .dataFilesViewEnabled(true)
+                        .encryptButtonVisible(false)
+                        .decryptButtonVisible(false)
+                        .decryptionIdCardDataResponse(null)
+                        .decryptState(State.IDLE)
+                        .decryptError(null);
             }
             return builder.build();
         }
 
         static DecryptResult activity() {
-            return create(State.ACTIVE, null, null);
+            return create(State.ACTIVE, false, null, null);
         }
 
         static DecryptResult clear() {
-            return create(State.CLEAR, null, null);
+            return create(State.CLEAR, false, null, null);
         }
 
         static DecryptResult idle() {
-            return create(State.IDLE, null, null);
+            return create(State.IDLE, false, null, null);
         }
 
-        static DecryptResult success(IdCardData idCardData) {
-            return create(State.IDLE, idCardData, null);
+        static DecryptResult successMessage(ImmutableList<File> dataFiles) {
+            return create(State.IDLE, true, dataFiles, null);
+        }
+
+        static DecryptResult success(ImmutableList<File> dataFiles) {
+            return create(State.IDLE, false, dataFiles, null);
         }
 
         static DecryptResult failure(Throwable error) {
-            return create(State.IDLE, null, error);
+            return create(State.IDLE, false, null, error);
         }
 
-        private static DecryptResult create(@State String state, @Nullable IdCardData idCardData,
+        private static DecryptResult create(@State String state, boolean successMessageVisible,
+                                            @Nullable ImmutableList<File> dataFiles,
                                             @Nullable Throwable error) {
-            return new AutoValue_Result_DecryptResult(state, idCardData, error);
+            return new AutoValue_Result_DecryptResult(state, successMessageVisible, dataFiles,
+                    error);
         }
     }
 }

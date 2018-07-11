@@ -46,12 +46,15 @@ final class CryptoCreateAdapter extends
                           boolean dataFilesViewEnabled, boolean dataFilesAddEnabled,
                           boolean dataFilesRemoveEnabled, ImmutableList<Certificate> recipients,
                           boolean recipientsAddEnabled, boolean recipientsRemoveEnabled,
-                          boolean successMessageVisible) {
+                          boolean encryptSuccessMessageVisible,
+                          boolean decryptSuccessMessageVisible) {
         this.dataFilesViewEnabled = dataFilesViewEnabled;
 
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
-        if (successMessageVisible) {
-            builder.add(SuccessItem.create());
+        if (encryptSuccessMessageVisible) {
+            builder.add(SuccessItem.create(R.string.crypto_create_encrypt_success_message));
+        } else if (decryptSuccessMessageVisible) {
+            builder.add(SuccessItem.create(R.string.crypto_create_decrypt_success_message));
         }
         if (name != null) {
             builder.add(NameItem.create(name));
@@ -184,12 +187,17 @@ final class CryptoCreateAdapter extends
 
     static final class SuccessViewHolder extends CreateViewHolder<SuccessItem> {
 
+        private final TextView messageView;
+
         SuccessViewHolder(View itemView) {
             super(itemView);
+            messageView = itemView.findViewById(R.id.cryptoCreateSuccessMessage);
         }
 
         @Override
-        void bind(CryptoCreateAdapter adapter, SuccessItem item) {}
+        void bind(CryptoCreateAdapter adapter, SuccessItem item) {
+            messageView.setText(item.message());
+        }
     }
 
     static final class NameViewHolder extends CreateViewHolder<NameItem> {
@@ -330,9 +338,11 @@ final class CryptoCreateAdapter extends
     @AutoValue
     static abstract class SuccessItem extends Item {
 
-        static SuccessItem create() {
+        @StringRes abstract int message();
+
+        static SuccessItem create(@StringRes int message) {
             return new AutoValue_CryptoCreateAdapter_SuccessItem(
-                    R.layout.crypto_create_list_item_success);
+                    R.layout.crypto_create_list_item_success, message);
         }
     }
 

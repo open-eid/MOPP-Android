@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.model.idcard;
 
+import com.google.common.collect.ImmutableList;
+
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.openeid.cdoc4j.CDOCDecrypter;
 import org.openeid.cdoc4j.ECRecipient;
@@ -11,7 +13,6 @@ import java.io.File;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -99,15 +100,12 @@ public final class IdCardService {
                 });
     }
 
-    public Single<IdCardData> decrypt(Token token, File containerFile, String pin1) {
-        return Single.fromCallable(() -> {
-            List<File> dataFiles = new CDOCDecrypter()
-                    .withToken(new PKCS11Token(token, pin1))
-                    .withCDOC(containerFile)
-                    .decrypt(fileSystem.getCacheDir());
-            Timber.e("DATA FILES: %s", dataFiles);
-            return data(token);
-        });
+    public Single<ImmutableList<File>> decrypt(Token token, File containerFile, String pin1) {
+        return Single.fromCallable(() ->
+                ImmutableList.copyOf(new CDOCDecrypter()
+                        .withToken(new PKCS11Token(token, pin1))
+                        .withCDOC(containerFile)
+                        .decrypt(fileSystem.getCacheDir())));
     }
 
     public static IdCardData data(Token token) throws Exception {

@@ -59,7 +59,6 @@ final class DecryptDialog extends AlertDialog {
     }
 
     void idCardDataResponse(IdCardDataResponse idCardDataResponse, @State String decryptState,
-                            @Nullable IdCardData decryptIdCardData,
                             @Nullable Throwable decryptError) {
         IdCardData data = idCardDataResponse.data();
 

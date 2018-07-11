@@ -268,13 +268,13 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             try (FileOutputStream outputStream = new FileOutputStream(file)) {
                                 builder.buildToOutputStream(outputStream);
                             }
-                            return Result.EncryptResult.successMessage();
+                            return file;
                         })
-                        .flatMapObservable(result ->
+                        .flatMapObservable(file ->
                                 Observable
                                         .timer(3, TimeUnit.SECONDS)
-                                        .map(ignored -> Result.EncryptResult.clear())
-                                        .startWith(result))
+                                        .map(ignored -> Result.EncryptResult.success(file))
+                                        .startWith(Result.EncryptResult.successMessage(file)))
                         .onErrorReturn(Result.EncryptResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -299,9 +299,12 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             if (request != null) {
                 return idCardService
                         .decrypt(request.token(), request.containerFile(), request.pin1())
-                        .map(Result.DecryptResult::success)
+                        .flatMapObservable(dataFiles ->
+                                Observable
+                                        .timer(3, TimeUnit.SECONDS)
+                                        .map(ignored -> Result.DecryptResult.success(dataFiles))
+                                        .startWith(Result.DecryptResult.successMessage(dataFiles)))
                         .onErrorReturn(Result.DecryptResult::failure)
-                        .toObservable()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .startWith(Result.DecryptResult.activity());
