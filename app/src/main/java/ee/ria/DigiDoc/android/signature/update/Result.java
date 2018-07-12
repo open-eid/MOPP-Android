@@ -7,6 +7,7 @@ import com.google.auto.value.AutoValue;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
+import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
 import ee.ria.mopplib.data.SignedContainer;
@@ -139,37 +140,27 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
-    abstract class DocumentOpenResult implements Result {
+    abstract class DocumentViewResult implements Result {
 
-        abstract boolean isOpening();
-
-        @Nullable abstract File documentFile();
-
-        @Nullable abstract Throwable error();
+        @State abstract String state();
 
         @Override
         public ViewState reduce(ViewState state) {
             return state.buildWith()
-                    .documentOpenInProgress(isOpening())
-                    .documentOpenFile(documentFile())
-                    .documentOpenError(error())
+                    .documentViewState(state())
                     .build();
         }
 
-        static DocumentOpenResult opening() {
-            return new AutoValue_Result_DocumentOpenResult(true, null, null);
+        static DocumentViewResult activity() {
+            return create(State.ACTIVE);
         }
 
-        static DocumentOpenResult success(File documentFile) {
-            return new AutoValue_Result_DocumentOpenResult(false, documentFile, null);
+        static DocumentViewResult idle() {
+            return create(State.IDLE);
         }
 
-        static DocumentOpenResult failure(Throwable error) {
-            return new AutoValue_Result_DocumentOpenResult(false, null, error);
-        }
-
-        static DocumentOpenResult clear() {
-            return new AutoValue_Result_DocumentOpenResult(false, null, null);
+        private static DocumentViewResult create(@State String state) {
+            return new AutoValue_Result_DocumentViewResult(state);
         }
     }
 

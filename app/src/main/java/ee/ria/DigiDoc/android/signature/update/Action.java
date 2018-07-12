@@ -48,19 +48,6 @@ interface Action extends MviAction {
     }
 
     @AutoValue
-    abstract class DocumentOpenAction implements Action {
-
-        @Nullable abstract File containerFile();
-
-        @Nullable abstract DataFile document();
-
-        static DocumentOpenAction create(@Nullable File containerFile,
-                                         @Nullable DataFile document) {
-            return new AutoValue_Action_DocumentOpenAction(containerFile, document);
-        }
-    }
-
-    @AutoValue
     abstract class DocumentRemoveAction implements Action {
 
         abstract boolean showConfirmation();

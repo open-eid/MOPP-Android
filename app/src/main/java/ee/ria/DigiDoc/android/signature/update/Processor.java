@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
+import ee.ria.DigiDoc.android.utils.IntentUtils;
 import ee.ria.DigiDoc.android.utils.files.FileAlreadyExistsException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -37,8 +38,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<Action.DocumentsAddAction,
                                         Result.DocumentsAddResult> documentsAdd;
 
-    private final ObservableTransformer<Action.DocumentOpenAction,
-                                        Result.DocumentOpenResult> documentOpen;
+    private final ObservableTransformer<Intent.DocumentViewIntent,
+                                        Result.DocumentViewResult> documentView;
 
     private final ObservableTransformer<Action.DocumentRemoveAction,
                                         Result.DocumentRemoveResult> documentRemove;
@@ -150,27 +151,27 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     }
                 });
 
-        documentOpen = upstream -> upstream.flatMap(action -> {
-            if (action.containerFile() == null) {
-                return Observable.just(Result.DocumentOpenResult.clear());
-            } else {
-                return signatureContainerDataSource
-                        .getDocumentFile(action.containerFile(), action.document())
-                        .toObservable()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .map(documentFile -> {
-                            if (SignedContainer.isContainer(documentFile)) {
-                                navigator.execute(Transaction.push(SignatureUpdateScreen
-                                        .create(true, true, documentFile, false, false)));
-                                return Result.DocumentOpenResult.clear();
-                            } else {
-                                return Result.DocumentOpenResult.success(documentFile);
-                            }
-                        })
-                        .onErrorReturn(Result.DocumentOpenResult::failure)
-                        .startWith(Result.DocumentOpenResult.opening());
-            }
+        documentView = upstream -> upstream.switchMap(action -> {
+            return signatureContainerDataSource
+                    .getDocumentFile(action.containerFile(), action.document())
+                    .toObservable()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .map(documentFile -> {
+                        Transaction transaction;
+                        if (SignedContainer.isContainer(documentFile)) {
+                            transaction = Transaction.push(SignatureUpdateScreen
+                                    .create(true, true, documentFile, false, false));
+                        } else {
+                            transaction = Transaction.activity(IntentUtils
+                                    .createViewIntent(application, documentFile,
+                                            SignedContainer.mimeType(documentFile)), null);
+                        }
+                        navigator.execute(transaction);
+                        return Result.DocumentViewResult.idle();
+                    })
+                    .onErrorReturn(ignored -> Result.DocumentViewResult.idle())
+                    .startWith(Result.DocumentViewResult.activity());
         });
 
         documentRemove = upstream -> upstream.flatMap(action -> {
@@ -278,7 +279,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.ContainerLoadAction.class).compose(containerLoad),
                 shared.ofType(Intent.NameUpdateIntent.class).compose(nameUpdate),
                 shared.ofType(Action.DocumentsAddAction.class).compose(documentsAdd),
-                shared.ofType(Action.DocumentOpenAction.class).compose(documentOpen),
+                shared.ofType(Intent.DocumentViewIntent.class).compose(documentView),
                 shared.ofType(Action.DocumentRemoveAction.class).compose(documentRemove),
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd),

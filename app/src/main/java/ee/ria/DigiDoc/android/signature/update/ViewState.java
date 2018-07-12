@@ -4,9 +4,8 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
-import java.io.File;
-
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
+import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
 import ee.ria.mopplib.data.SignedContainer;
@@ -26,9 +25,7 @@ abstract class ViewState implements MviViewState {
     abstract boolean documentsAddInProgress();
     @Nullable abstract Throwable documentsAddError();
 
-    @Nullable abstract File documentOpenFile();
-    abstract boolean documentOpenInProgress();
-    @Nullable abstract Throwable documentOpenError();
+    @State abstract String documentViewState();
 
     @Nullable abstract DataFile documentRemoveConfirmation();
     abstract boolean documentRemoveInProgress();
@@ -52,7 +49,7 @@ abstract class ViewState implements MviViewState {
                 .nameUpdateShowing(false)
                 .nameUpdateInProgress(false)
                 .documentsAddInProgress(false)
-                .documentOpenInProgress(false)
+                .documentViewState(State.IDLE)
                 .documentRemoveInProgress(false)
                 .signatureRemoveInProgress(false)
                 .signatureAddActivity(false)
@@ -71,9 +68,7 @@ abstract class ViewState implements MviViewState {
         Builder nameUpdateError(@Nullable Throwable nameUpdateError);
         Builder documentsAddInProgress(boolean documentsAddInProgress);
         Builder documentsAddError(@Nullable Throwable documentsAddError);
-        Builder documentOpenFile(@Nullable File documentOpenFile);
-        Builder documentOpenInProgress(boolean documentOpenInProgress);
-        Builder documentOpenError(@Nullable Throwable documentOpenError);
+        Builder documentViewState(@State String documentViewState);
         Builder documentRemoveConfirmation(@Nullable DataFile documentRemoveConfirmation);
         Builder documentRemoveInProgress(boolean documentRemoveInProgress);
         Builder documentRemoveError(@Nullable Throwable documentRemoveError);

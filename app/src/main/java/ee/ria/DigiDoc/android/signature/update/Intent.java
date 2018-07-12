@@ -71,18 +71,14 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
-    abstract class DocumentOpenIntent implements Intent {
+    abstract class DocumentViewIntent implements Intent, Action {
 
-        @Nullable abstract File containerFile();
+        abstract File containerFile();
 
-        @Nullable abstract DataFile document();
+        abstract DataFile document();
 
-        static DocumentOpenIntent open(File containerFile, DataFile document) {
-            return new AutoValue_Intent_DocumentOpenIntent(containerFile, document);
-        }
-
-        static DocumentOpenIntent clear() {
-            return new AutoValue_Intent_DocumentOpenIntent(null, null);
+        static DocumentViewIntent create(File containerFile, DataFile document) {
+            return new AutoValue_Intent_DocumentViewIntent(containerFile, document);
         }
     }
 
