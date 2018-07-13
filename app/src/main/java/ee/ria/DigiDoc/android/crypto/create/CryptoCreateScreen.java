@@ -45,6 +45,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         MviView<Intent, ViewState> {
 
     private static final String KEY_CONTAINER_FILE = "containerFile";
+    private static final String KEY_INTENT = "intent";
 
     public static CryptoCreateScreen create() {
         return new CryptoCreateScreen(Bundle.EMPTY);
@@ -56,7 +57,14 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         return new CryptoCreateScreen(args);
     }
 
+    public static CryptoCreateScreen open(android.content.Intent intent) {
+        Bundle args = new Bundle();
+        args.putParcelable(KEY_INTENT, intent);
+        return new CryptoCreateScreen(args);
+    }
+
     @Nullable private File containerFile;
+    @Nullable private final android.content.Intent intent;
 
     private final Subject<Boolean> idCardTokenAvailableSubject = PublishSubject.create();
 
@@ -88,10 +96,11 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         containerFile = args.containsKey(KEY_CONTAINER_FILE)
                 ? getFile(args, KEY_CONTAINER_FILE)
                 : null;
+        intent = args.getParcelable(KEY_INTENT);
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
-        return Observable.just(Intent.InitialIntent.create(containerFile));
+        return Observable.just(Intent.InitialIntent.create(containerFile, intent));
     }
 
     private Observable<Intent.UpButtonClickIntent> upButtonClickIntent() {

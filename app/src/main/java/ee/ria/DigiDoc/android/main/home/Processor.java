@@ -1,33 +1,43 @@
 package ee.ria.DigiDoc.android.main.home;
 
 import android.app.Application;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.SparseIntArray;
 
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
 
 import java.util.Locale;
 
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.main.about.AboutScreen;
 import ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen;
 import ee.ria.DigiDoc.android.main.home.Intent.NavigationVisibilityIntent;
 import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
+import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
 import ee.ria.DigiDoc.android.utils.LocaleService;
+import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.cryptolib.CryptoContainer;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 
+import static android.content.Intent.ACTION_VIEW;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createBrowserIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
-final class Processor implements ObservableTransformer<Action, Result> {
+final class Processor implements ObservableTransformer<Intent, Result> {
 
     private static final SparseIntArray NAVIGATION_ITEM_VIEWS = new SparseIntArray();
     static {
@@ -47,10 +57,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Intent.InitialIntent, Result.InitialResult> initial;
 
-    private final ObservableTransformer<Action.NavigationAction, Result.NavigationResult>
-            navigation;
+    private final ObservableTransformer<Intent.NavigationIntent,
+                                        Result.NavigationResult> navigation;
 
-    private final ObservableTransformer<Action.MenuAction, Result.MenuResult> menu;
+    private final ObservableTransformer<Intent.MenuIntent, Result.MenuResult> menu;
 
     private final ObservableTransformer<NavigationVisibilityIntent,
                                         Result.NavigationVisibilityResult> navigationVisibility;
@@ -60,10 +70,26 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     @Nullable private String eidScreenId;
 
-    @Inject Processor(Application application, Navigator navigator, LocaleService localeService) {
+    @Inject Processor(Application application, Navigator navigator, LocaleService localeService,
+                      ContentResolver contentResolver) {
         this.navigator = navigator;
 
         initial = upstream -> upstream.switchMap(intent -> {
+            if (intent.intent() != null
+                    && TextUtils.equals(intent.intent().getAction(), ACTION_VIEW)
+                    && intent.intent().getData() != null) {
+                ImmutableList<FileStream> fileStreams =
+                        parseGetContentIntent(contentResolver, intent.intent());
+                Screen screen;
+                if (fileStreams.size() == 1
+                        && CryptoContainer.isContainerFileName(fileStreams.get(0).displayName())) {
+                    screen = CryptoCreateScreen.open(intent.intent());
+                } else {
+                    screen = SignatureCreateScreen.create(intent.intent());
+                }
+                navigator.execute(Transaction.replace(screen));
+                return Observable.never();
+            }
             return Observable
                     .fromCallable(() -> {
                         return Result.InitialResult.create(
@@ -109,11 +135,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public ObservableSource<Result> apply(Observable<Action> upstream) {
+    public ObservableSource<Result> apply(Observable<Intent> upstream) {
         return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Intent.InitialIntent.class).compose(initial),
-                shared.ofType(Action.NavigationAction.class).compose(navigation),
-                shared.ofType(Action.MenuAction.class).compose(menu),
+                shared.ofType(Intent.NavigationIntent.class).compose(navigation),
+                shared.ofType(Intent.MenuIntent.class).compose(menu),
                 shared.ofType(NavigationVisibilityIntent.class).compose(navigationVisibility),
                 shared.ofType(Intent.LocaleChangeIntent.class).compose(localeChange)));
     }

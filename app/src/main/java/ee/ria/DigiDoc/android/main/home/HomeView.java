@@ -35,6 +35,7 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         Observable<Boolean> navigationViewVisibility();
     }
 
+    private final android.content.Intent intent;
     private final String eidScreenId;
 
     private final FrameLayout navigationContainerView;
@@ -51,8 +52,9 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
 
     @Nullable private SparseArray<Parcelable> hierarchyState;
 
-    public HomeView(Context context, String screenId) {
+    public HomeView(Context context, android.content.Intent intent, String screenId) {
         super(context);
+        this.intent = intent;
         eidScreenId = screenId + "eid";
         setOrientation(VERTICAL);
         inflate(context, R.layout.main_home, this);
@@ -109,7 +111,7 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
-        return Observable.just(Intent.InitialIntent.create());
+        return Observable.just(Intent.InitialIntent.create(intent));
     }
 
     private Observable<Intent.NavigationIntent> navigationIntent() {

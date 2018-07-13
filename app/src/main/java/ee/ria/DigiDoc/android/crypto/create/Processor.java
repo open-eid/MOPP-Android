@@ -51,6 +51,9 @@ import static ee.ria.mopplib.data.SignedContainer.mimeType;
  */
 final class Processor implements ObservableTransformer<Intent, Result> {
 
+    private final ContentResolver contentResolver;
+    private final FileSystem fileSystem;
+
     private final ObservableTransformer<Intent.InitialIntent, Result.InitialResult> initial;
 
     private final ObservableTransformer<Intent.UpButtonClickIntent, Result> upButtonClick;
@@ -90,10 +93,23 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     @Inject Processor(Navigator navigator, RecipientRepository recipientRepository,
                       ContentResolver contentResolver, FileSystem fileSystem,
                       Application application, IdCardService idCardService) {
+        this.contentResolver = contentResolver;
+        this.fileSystem = fileSystem;
+
         initial = upstream -> upstream.switchMap(intent -> {
             File containerFile = intent.containerFile();
-
-            if (containerFile == null) {
+            android.content.Intent androidIntent = intent.intent();
+            if (containerFile != null) {
+                return Observable
+                        .fromCallable(() -> CryptoContainer.open(containerFile))
+                        .map(Result.InitialResult::success)
+                        .onErrorReturn(Result.InitialResult::failure)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(Result.InitialResult.activity());
+            } else if (androidIntent != null) {
+                return parseIntent(androidIntent);
+            } else {
                 navigator.execute(Transaction.activityForResult(RC_CRYPTO_CREATE_INITIAL,
                         createGetContentIntent(), null));
                 return navigator.activityResults()
@@ -102,49 +118,12 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .switchMap(activityResult -> {
                             android.content.Intent data = activityResult.data();
                             if (activityResult.resultCode() == RESULT_OK && data != null) {
-                                return Observable
-                                        .fromCallable(() -> {
-                                            ImmutableList<FileStream> fileStreams =
-                                                    parseGetContentIntent(contentResolver, data);
-                                            if (fileStreams.size() == 1 &&
-                                                    isContainerFileName(
-                                                            fileStreams.get(0).displayName())) {
-                                                File file = fileSystem
-                                                        .addSignatureContainer(fileStreams.get(0));
-                                                return Result.InitialResult
-                                                        .success(CryptoContainer.open(file));
-                                            } else {
-                                                ImmutableList.Builder<File> builder =
-                                                        ImmutableList.builder();
-                                                for (FileStream fileStream : fileStreams) {
-                                                    builder.add(fileSystem.cache(fileStream));
-                                                }
-                                                ImmutableList<File> dataFiles = builder.build();
-                                                File file = fileSystem
-                                                        .generateSignatureContainerFile(
-                                                                createContainerFileName(dataFiles
-                                                                        .get(0).getName()));
-                                                return Result.InitialResult
-                                                        .success(file, dataFiles);
-                                            }
-                                        })
-                                        .onErrorReturn(Result.InitialResult::failure)
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .startWith(Result.InitialResult.activity());
+                                return parseIntent(data);
                             } else {
                                 navigator.onBackPressed();
                                 return Observable.just(Result.InitialResult.clear());
                             }
                         });
-            } else {
-                return Observable
-                        .fromCallable(() -> CryptoContainer.open(containerFile))
-                        .map(Result.InitialResult::success)
-                        .onErrorReturn(Result.InitialResult::failure)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.InitialResult.activity());
             }
         });
 
@@ -342,5 +321,31 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.DecryptionIntent.class).compose(decryption),
                 shared.ofType(Intent.DecryptIntent.class).compose(decrypt),
                 shared.ofType(Intent.SendIntent.class).compose(send)));
+    }
+
+    private Observable<Result.InitialResult> parseIntent(android.content.Intent intent) {
+        return Observable
+                .fromCallable(() -> {
+                    ImmutableList<FileStream> fileStreams =
+                            parseGetContentIntent(contentResolver, intent);
+                    if (fileStreams.size() == 1
+                            && isContainerFileName(fileStreams.get(0).displayName())) {
+                        File file = fileSystem.addSignatureContainer(fileStreams.get(0));
+                        return Result.InitialResult.success(CryptoContainer.open(file));
+                    } else {
+                        ImmutableList.Builder<File> builder = ImmutableList.builder();
+                        for (FileStream fileStream : fileStreams) {
+                            builder.add(fileSystem.cache(fileStream));
+                        }
+                        ImmutableList<File> dataFiles = builder.build();
+                        File file = fileSystem.generateSignatureContainerFile(
+                                createContainerFileName(dataFiles.get(0).getName()));
+                        return Result.InitialResult.success(file, dataFiles);
+                    }
+                })
+                .onErrorReturn(Result.InitialResult::failure)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .startWith(Result.InitialResult.activity());
     }
 }

@@ -18,8 +18,11 @@ interface Intent extends MviIntent, MviAction {
 
         @Nullable abstract File containerFile();
 
-        static InitialIntent create(@Nullable File containerFile) {
-            return new AutoValue_Intent_InitialIntent(containerFile);
+        @Nullable abstract android.content.Intent intent();
+
+        static InitialIntent create(@Nullable File containerFile,
+                                    @Nullable android.content.Intent intent) {
+            return new AutoValue_Intent_InitialIntent(containerFile, intent);
         }
     }
 
