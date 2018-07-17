@@ -115,7 +115,7 @@ public final class FileSystem {
         return new File(getCacheDir(), name);
     }
 
-    private File signatureContainersDir() {
+    public File signatureContainersDir() {
         File dir = new File(application.getFilesDir(), DIR_SIGNATURE_CONTAINERS);
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();

@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -24,6 +25,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
+import static com.google.common.io.Files.getFileExtension;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
@@ -152,14 +154,19 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 });
 
         documentView = upstream -> upstream.switchMap(action -> {
+            File containerFile = action.containerFile();
             return signatureContainerDataSource
-                    .getDocumentFile(action.containerFile(), action.document())
+                    .getDocumentFile(containerFile, action.document())
                     .toObservable()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .map(documentFile -> {
                         Transaction transaction;
-                        if (SignedContainer.isContainer(documentFile)) {
+                        boolean isSignedPdfDataFile =
+                                getFileExtension(containerFile.getName()).toLowerCase(Locale.US)
+                                                .equals("pdf")
+                                        && containerFile.getName().equals(documentFile.getName());
+                        if (!isSignedPdfDataFile && SignedContainer.isContainer(documentFile)) {
                             transaction = Transaction.push(SignatureUpdateScreen
                                     .create(true, true, documentFile, false, false));
                         } else {
