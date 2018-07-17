@@ -4,6 +4,9 @@ import android.support.annotation.StringDef;
 
 import com.google.common.collect.ImmutableMap;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import static ee.ria.mopplib.data.SignatureStatus.INVALID;
 import static ee.ria.mopplib.data.SignatureStatus.NON_QSCD;
 import static ee.ria.mopplib.data.SignatureStatus.UNKNOWN;
@@ -11,6 +14,7 @@ import static ee.ria.mopplib.data.SignatureStatus.VALID;
 import static ee.ria.mopplib.data.SignatureStatus.WARNING;
 
 @StringDef({VALID, WARNING, NON_QSCD, INVALID, UNKNOWN})
+@Retention(RetentionPolicy.SOURCE)
 public @interface SignatureStatus {
 
     /**

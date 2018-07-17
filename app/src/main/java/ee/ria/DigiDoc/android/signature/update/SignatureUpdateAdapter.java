@@ -18,6 +18,9 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.Formatter;
@@ -382,6 +385,7 @@ final class SignatureUpdateAdapter extends
     }
 
     @StringDef({DOCUMENT, SIGNATURE})
+    @Retention(RetentionPolicy.SOURCE)
     @interface SubheadItemType {
         String DOCUMENT = "DOCUMENT";
         String SIGNATURE = "SIGNATURE";

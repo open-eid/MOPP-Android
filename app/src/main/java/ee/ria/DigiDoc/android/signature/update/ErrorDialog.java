@@ -8,6 +8,9 @@ import android.support.annotation.StringDef;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
 import ee.ria.tokenlibrary.CodeVerificationException;
@@ -21,6 +24,7 @@ import static ee.ria.DigiDoc.android.signature.update.ErrorDialog.Type.SIGNATURE
 final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismissListener {
 
     @StringDef({DOCUMENTS_ADD, DOCUMENT_REMOVE, SIGNATURE_ADD, SIGNATURE_REMOVE})
+    @Retention(RetentionPolicy.SOURCE)
     @interface Type {
         String DOCUMENTS_ADD = "DOCUMENTS_ADD";
         String DOCUMENT_REMOVE = "DOCUMENT_REMOVE";

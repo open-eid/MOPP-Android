@@ -2,11 +2,15 @@ package ee.ria.scardcomlibrary;
 
 import android.support.annotation.StringDef;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import static ee.ria.scardcomlibrary.SmartCardReaderStatus.CARD_DETECTED;
 import static ee.ria.scardcomlibrary.SmartCardReaderStatus.IDLE;
 import static ee.ria.scardcomlibrary.SmartCardReaderStatus.READER_DETECTED;
 
 @StringDef({IDLE, READER_DETECTED, CARD_DETECTED})
+@Retention(RetentionPolicy.SOURCE)
 public @interface SmartCardReaderStatus {
 
     /**

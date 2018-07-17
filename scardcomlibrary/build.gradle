@@ -33,8 +33,7 @@ dependencies {
 
     implementation files(
             'libs/acssmc-1.1.4.jar', // ACS
-            'libs/androidSCardV1.2.jar', // Identive
-            'libs/JSR268Library.jar' // Omnikey
+            'libs/androidSCardV1.2.jar' // Identive
     )
 
     testImplementation "junit:junit:${junitVersion}"
