@@ -1,4 +1,4 @@
-package ee.ria.smartcardreader.identiv;
+package ee.ria.DigiDoc.smartcardreader.identiv;
 
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
@@ -9,8 +9,8 @@ import com.identive.libs.SCard;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import ee.ria.smartcardreader.SmartCardReader;
-import ee.ria.smartcardreader.SmartCardReaderException;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
 
 import static com.identive.libs.WinDefs.SCARD_LEAVE_CARD;
 import static com.identive.libs.WinDefs.SCARD_PROTOCOL_TX;

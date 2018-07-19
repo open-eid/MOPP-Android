@@ -1,4 +1,4 @@
-package ee.ria.smartcardreader;
+package ee.ria.DigiDoc.smartcardreader;
 
 import android.content.Context;
 import android.hardware.usb.UsbDevice;

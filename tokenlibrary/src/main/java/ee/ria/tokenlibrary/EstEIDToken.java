@@ -27,9 +27,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import ee.ria.smartcardreader.ApduResponseException;
-import ee.ria.smartcardreader.SmartCardReader;
-import ee.ria.smartcardreader.SmartCardReaderException;
+import ee.ria.DigiDoc.smartcardreader.ApduResponseException;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
 
 import static com.google.common.primitives.Bytes.concat;
 import static ee.ria.tokenlibrary.util.AlgorithmUtils.addPadding;

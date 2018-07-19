@@ -1,4 +1,4 @@
-package ee.ria.smartcardreader.acs;
+package ee.ria.DigiDoc.smartcardreader.acs;
 
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
@@ -8,8 +8,8 @@ import com.acs.smartcard.ReaderException;
 
 import java.util.Arrays;
 
-import ee.ria.smartcardreader.SmartCardReader;
-import ee.ria.smartcardreader.SmartCardReaderException;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
 import timber.log.Timber;
 
 public final class AcsSmartCardReader extends SmartCardReader {

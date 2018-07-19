@@ -1,4 +1,4 @@
-package ee.ria.smartcardreader;
+package ee.ria.DigiDoc.smartcardreader;
 
 public class SmartCardReaderException extends Exception {
 

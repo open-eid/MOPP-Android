@@ -19,8 +19,8 @@
 
 package ee.ria.tokenlibrary;
 
-import ee.ria.smartcardreader.SmartCardReader;
-import ee.ria.smartcardreader.SmartCardReaderException;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
 
 public interface Token {
 

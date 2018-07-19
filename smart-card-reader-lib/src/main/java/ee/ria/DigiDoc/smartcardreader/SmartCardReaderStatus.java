@@ -1,13 +1,13 @@
-package ee.ria.smartcardreader;
+package ee.ria.DigiDoc.smartcardreader;
 
 import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import static ee.ria.smartcardreader.SmartCardReaderStatus.CARD_DETECTED;
-import static ee.ria.smartcardreader.SmartCardReaderStatus.IDLE;
-import static ee.ria.smartcardreader.SmartCardReaderStatus.READER_DETECTED;
+import static ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus.CARD_DETECTED;
+import static ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus.IDLE;
+import static ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus.READER_DETECTED;
 
 @StringDef({IDLE, READER_DETECTED, CARD_DETECTED})
 @Retention(RetentionPolicy.SOURCE)

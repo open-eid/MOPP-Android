@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ee.ria.smartcardreader">
+    package="ee.ria.DigiDoc.smartcardreader">
 
     <uses-feature
         android:name="android.hardware.usb.host"

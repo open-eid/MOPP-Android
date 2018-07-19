@@ -18,7 +18,7 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
-import ee.ria.smartcardreader.SmartCardReaderStatus;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
 import ee.ria.tokenlibrary.CodeVerificationException;
 import ee.ria.tokenlibrary.Token;
 import io.reactivex.Observable;
