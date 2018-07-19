@@ -1,4 +1,4 @@
-package ee.ria.mopplib.data;
+package ee.ria.DigiDoc.sign.data;
 
 import android.support.annotation.Nullable;
 import android.util.Base64;
@@ -28,11 +28,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import ee.ria.DigiDoc.sign.utils.Function;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
 import ee.ria.libdigidocpp.Signature.Validator;
 import ee.ria.libdigidocpp.Signatures;
-import ee.ria.mopplib.utils.Function;
 import okio.ByteString;
 import timber.log.Timber;
 

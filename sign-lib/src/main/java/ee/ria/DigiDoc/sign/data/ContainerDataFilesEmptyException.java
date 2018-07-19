@@ -1,4 +1,4 @@
-package ee.ria.mopplib.data;
+package ee.ria.DigiDoc.sign.data;
 
 import com.google.common.collect.ImmutableList;
 

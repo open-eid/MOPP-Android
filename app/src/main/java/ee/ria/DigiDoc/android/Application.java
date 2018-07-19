@@ -59,10 +59,10 @@ import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
+import ee.ria.DigiDoc.sign.MoppLib;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
 import ee.ria.DigiDoc.smartcardreader.acs.AcsSmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.identiv.IdentivSmartCardReader;
-import ee.ria.mopplib.MoppLib;
 import io.reactivex.plugins.RxJavaPlugins;
 import timber.log.Timber;
 

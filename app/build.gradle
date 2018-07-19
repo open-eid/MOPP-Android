@@ -116,7 +116,7 @@ dependencies {
     implementation "net.cachapa.expandablelayout:expandablelayout:${expandablelayoutVersion}"
 
     implementation project(':core-lib')
-    implementation project(':mopplib')
+    implementation project(':sign-lib')
     implementation project(':crypto-lib')
     implementation project(':smart-card-reader-lib')
     implementation project(':id-card-lib')

@@ -1,4 +1,4 @@
-package ee.ria.mopplib.data;
+package ee.ria.DigiDoc.sign.data;
 
 /**
  * Signatures can't be added or removed in the case of Legacy containers.

@@ -1,4 +1,4 @@
-package ee.ria.mopplib.utils;
+package ee.ria.DigiDoc.sign.utils;
 
 import android.support.annotation.NonNull;
 

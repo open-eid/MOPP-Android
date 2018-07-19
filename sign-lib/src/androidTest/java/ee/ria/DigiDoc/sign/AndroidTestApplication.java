@@ -1,4 +1,4 @@
-package ee.ria.mopplib;
+package ee.ria.DigiDoc.sign;
 
 import android.app.Application;
 import android.support.test.InstrumentationRegistry;

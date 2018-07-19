@@ -8,9 +8,9 @@ import java.io.File;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.mvi.State;
-import ee.ria.mopplib.data.DataFile;
-import ee.ria.mopplib.data.Signature;
-import ee.ria.mopplib.data.SignedContainer;
+import ee.ria.DigiDoc.sign.data.DataFile;
+import ee.ria.DigiDoc.sign.data.Signature;
+import ee.ria.DigiDoc.sign.data.SignedContainer;
 
 interface Result extends MviResult<ViewState> {
 

@@ -9,7 +9,7 @@ import android.support.v7.app.AlertDialog;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.files.FileAlreadyExistsException;
-import ee.ria.mopplib.data.SignedContainer;
+import ee.ria.DigiDoc.sign.data.SignedContainer;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;

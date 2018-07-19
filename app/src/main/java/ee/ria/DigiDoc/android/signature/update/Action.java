@@ -9,8 +9,8 @@ import java.io.File;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.navigator.TransactionAction;
-import ee.ria.mopplib.data.DataFile;
-import ee.ria.mopplib.data.Signature;
+import ee.ria.DigiDoc.sign.data.DataFile;
+import ee.ria.DigiDoc.sign.data.Signature;
 
 import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;

@@ -1,4 +1,4 @@
-package ee.ria.mopplib.data;
+package ee.ria.DigiDoc.sign.data;
 
 import android.content.res.AssetManager;
 import android.support.test.InstrumentationRegistry;
@@ -19,7 +19,7 @@ import java.io.OutputStream;
 
 import static com.google.common.io.Files.getFileExtension;
 import static com.google.common.io.Files.getNameWithoutExtension;
-import static ee.ria.mopplib.SignedContainerSubject.assertThat;
+import static ee.ria.DigiDoc.sign.SignedContainerSubject.assertThat;
 
 public final class SignedContainerTest {
 

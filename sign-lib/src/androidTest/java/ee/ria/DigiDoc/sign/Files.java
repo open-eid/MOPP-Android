@@ -1,4 +1,4 @@
-package ee.ria.mopplib;
+package ee.ria.DigiDoc.sign;
 
 import android.support.annotation.RawRes;
 import android.support.test.InstrumentationRegistry;

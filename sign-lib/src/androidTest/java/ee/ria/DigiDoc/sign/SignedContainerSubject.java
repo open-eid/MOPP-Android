@@ -1,4 +1,4 @@
-package ee.ria.mopplib;
+package ee.ria.DigiDoc.sign;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
@@ -19,9 +19,9 @@ import java.io.InputStreamReader;
 
 import javax.annotation.Nullable;
 
-import ee.ria.mopplib.data.DataFile;
-import ee.ria.mopplib.data.Signature;
-import ee.ria.mopplib.data.SignedContainer;
+import ee.ria.DigiDoc.sign.data.DataFile;
+import ee.ria.DigiDoc.sign.data.Signature;
+import ee.ria.DigiDoc.sign.data.SignedContainer;
 
 import static com.google.common.truth.Truth.assertAbout;
 

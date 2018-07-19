@@ -13,9 +13,9 @@ import ee.ria.DigiDoc.android.signature.data.ContainerAdd;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
-import ee.ria.mopplib.data.DataFile;
-import ee.ria.mopplib.data.Signature;
-import ee.ria.mopplib.data.SignedContainer;
+import ee.ria.DigiDoc.sign.data.DataFile;
+import ee.ria.DigiDoc.sign.data.Signature;
+import ee.ria.DigiDoc.sign.data.SignedContainer;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 

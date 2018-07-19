@@ -7,7 +7,7 @@ import com.google.auto.value.AutoValue;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardSignResponse;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddResponse;
-import ee.ria.mopplib.data.SignedContainer;
+import ee.ria.DigiDoc.sign.data.SignedContainer;
 
 @AutoValue
 public abstract class IdCardResponse implements SignatureAddResponse {
