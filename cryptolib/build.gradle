@@ -45,7 +45,7 @@ dependencies {
     }
     api files('libs/cdoc4j-1.1.jar')
 
-    api project(':corelib')
+    api project(':core-lib')
 
     testImplementation "junit:junit:${junitVersion}"
     testImplementation "com.google.truth:truth:${truthVersion}"

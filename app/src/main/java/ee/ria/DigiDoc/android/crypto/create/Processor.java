@@ -14,13 +14,13 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.DigiDoc.core.Certificate;
 import ee.ria.cryptolib.CryptoContainer;
 import ee.ria.cryptolib.RecipientRepository;
 import io.reactivex.Observable;

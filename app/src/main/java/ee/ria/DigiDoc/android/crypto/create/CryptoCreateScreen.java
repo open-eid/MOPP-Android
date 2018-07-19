@@ -20,7 +20,6 @@ import org.openeid.cdoc4j.exception.RecipientMissingException;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
@@ -29,6 +28,7 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
+import ee.ria.DigiDoc.core.Certificate;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;

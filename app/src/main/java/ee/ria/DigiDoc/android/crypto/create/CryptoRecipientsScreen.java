@@ -15,7 +15,6 @@ import com.bluelinelabs.conductor.Controller;
 import com.google.common.collect.ImmutableList;
 import com.jakewharton.rxbinding2.support.v7.widget.SearchViewQueryTextEvent;
 
-import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -23,6 +22,7 @@ import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
+import ee.ria.DigiDoc.core.Certificate;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;

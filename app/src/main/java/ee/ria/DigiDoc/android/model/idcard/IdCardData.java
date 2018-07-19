@@ -2,9 +2,9 @@ package ee.ria.DigiDoc.android.model.idcard;
 
 import com.google.auto.value.AutoValue;
 
-import ee.ria.DigiDoc.EIDType;
 import ee.ria.DigiDoc.android.model.CertificateData;
 import ee.ria.DigiDoc.android.model.EIDData;
+import ee.ria.DigiDoc.core.EIDType;
 import ee.ria.DigiDoc.idcard.PersonalData;
 
 @AutoValue

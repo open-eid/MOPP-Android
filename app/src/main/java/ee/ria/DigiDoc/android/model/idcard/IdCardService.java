@@ -17,9 +17,9 @@ import java.security.cert.CertificateFactory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import ee.ria.DigiDoc.EIDType;
 import ee.ria.DigiDoc.android.model.CertificateData;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
+import ee.ria.DigiDoc.core.EIDType;
 import ee.ria.DigiDoc.idcard.CertificateType;
 import ee.ria.DigiDoc.idcard.CodeType;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;

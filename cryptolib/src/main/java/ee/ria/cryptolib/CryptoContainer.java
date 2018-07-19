@@ -13,7 +13,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Locale;
 
-import ee.ria.DigiDoc.Certificate;
+import ee.ria.DigiDoc.core.Certificate;
 import okio.ByteString;
 
 import static com.google.common.io.Files.getFileExtension;

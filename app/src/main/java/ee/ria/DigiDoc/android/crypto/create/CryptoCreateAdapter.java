@@ -17,10 +17,10 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import ee.ria.DigiDoc.core.Certificate;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;

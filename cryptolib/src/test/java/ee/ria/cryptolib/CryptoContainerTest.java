@@ -6,7 +6,7 @@ import org.junit.rules.ExpectedException;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.Certificate;
+import ee.ria.DigiDoc.core.Certificate;
 
 import static com.google.common.io.Files.asCharSource;
 import static com.google.common.truth.Truth.assertThat;

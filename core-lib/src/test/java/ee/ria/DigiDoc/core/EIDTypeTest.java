@@ -1,13 +1,13 @@
-package ee.ria.DigiDoc;
+package ee.ria.DigiDoc.core;
 
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static ee.ria.DigiDoc.EIDType.DIGI_ID;
-import static ee.ria.DigiDoc.EIDType.ID_CARD;
-import static ee.ria.DigiDoc.EIDType.MOBILE_ID;
-import static ee.ria.DigiDoc.EIDType.UNKNOWN;
-import static ee.ria.DigiDoc.EIDType.parseOrganization;
+import static ee.ria.DigiDoc.core.EIDType.DIGI_ID;
+import static ee.ria.DigiDoc.core.EIDType.ID_CARD;
+import static ee.ria.DigiDoc.core.EIDType.MOBILE_ID;
+import static ee.ria.DigiDoc.core.EIDType.UNKNOWN;
+import static ee.ria.DigiDoc.core.EIDType.parseOrganization;
 
 public class EIDTypeTest {
 

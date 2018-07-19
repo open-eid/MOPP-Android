@@ -7,10 +7,10 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.DigiDoc.core.Certificate;
 
 @AutoValue
 abstract class ViewState implements MviViewState {

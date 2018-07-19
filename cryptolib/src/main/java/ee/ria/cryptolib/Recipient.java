@@ -2,7 +2,7 @@ package ee.ria.cryptolib;
 
 import com.google.auto.value.AutoValue;
 
-import ee.ria.DigiDoc.Certificate;
+import ee.ria.DigiDoc.core.Certificate;
 
 @AutoValue
 public abstract class Recipient {

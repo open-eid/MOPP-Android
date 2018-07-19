@@ -7,11 +7,11 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.Certificate;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.DigiDoc.core.Certificate;
 import ee.ria.cryptolib.CryptoContainer;
 
 interface Result extends MviResult<ViewState> {
