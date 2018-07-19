@@ -1,4 +1,4 @@
-package ee.ria.cryptolib;
+package ee.ria.DigiDoc.crypto;
 
 import android.support.annotation.WorkerThread;
 

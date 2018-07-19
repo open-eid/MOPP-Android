@@ -21,8 +21,8 @@ import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.core.Certificate;
-import ee.ria.cryptolib.CryptoContainer;
-import ee.ria.cryptolib.RecipientRepository;
+import ee.ria.DigiDoc.crypto.CryptoContainer;
+import ee.ria.DigiDoc.crypto.RecipientRepository;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -40,8 +40,8 @@ import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
-import static ee.ria.cryptolib.CryptoContainer.createContainerFileName;
-import static ee.ria.cryptolib.CryptoContainer.isContainerFileName;
+import static ee.ria.DigiDoc.crypto.CryptoContainer.createContainerFileName;
+import static ee.ria.DigiDoc.crypto.CryptoContainer.isContainerFileName;
 import static ee.ria.mopplib.data.SignedContainer.mimeType;
 
 /**

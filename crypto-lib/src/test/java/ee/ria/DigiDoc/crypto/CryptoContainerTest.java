@@ -1,4 +1,4 @@
-package ee.ria.cryptolib;
+package ee.ria.DigiDoc.crypto;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -10,9 +10,9 @@ import ee.ria.DigiDoc.core.Certificate;
 
 import static com.google.common.io.Files.asCharSource;
 import static com.google.common.truth.Truth.assertThat;
-import static ee.ria.cryptolib.CryptoContainer.createContainerFileName;
-import static ee.ria.cryptolib.CryptoContainer.isContainerFileName;
-import static ee.ria.cryptolib.CryptoContainer.open;
+import static ee.ria.DigiDoc.crypto.CryptoContainer.createContainerFileName;
+import static ee.ria.DigiDoc.crypto.CryptoContainer.isContainerFileName;
+import static ee.ria.DigiDoc.crypto.CryptoContainer.open;
 import static java.nio.charset.Charset.defaultCharset;
 import static okio.ByteString.decodeBase64;
 

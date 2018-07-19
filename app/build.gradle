@@ -117,7 +117,7 @@ dependencies {
 
     implementation project(':core-lib')
     implementation project(':mopplib')
-    implementation project(':cryptolib')
+    implementation project(':crypto-lib')
     implementation project(':smart-card-reader-lib')
     implementation project(':id-card-lib')
     implementation project(':mobile-id-lib')

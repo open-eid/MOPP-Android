@@ -1,4 +1,4 @@
-package ee.ria.cryptolib;
+package ee.ria.DigiDoc.crypto;
 
 import com.google.auto.value.AutoValue;
 
