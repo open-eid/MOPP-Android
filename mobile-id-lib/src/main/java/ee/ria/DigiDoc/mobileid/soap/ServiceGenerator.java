@@ -17,7 +17,7 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.soap;
+package ee.ria.DigiDoc.mobileid.soap;
 
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
-import ee.ria.mopp.androidmobileid.BuildConfig;
+import ee.ria.DigiDoc.mobileid.BuildConfig;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;

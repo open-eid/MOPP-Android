@@ -120,7 +120,7 @@ dependencies {
     implementation project(':cryptolib')
     implementation project(':smart-card-reader-lib')
     implementation project(':id-card-lib')
-    implementation project(':androidmobileid')
+    implementation project(':mobile-id-lib')
 
     testAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
     testImplementation "junit:junit:${junitVersion}"

@@ -17,7 +17,7 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.dto.request;
+package ee.ria.DigiDoc.mobileid.dto.request;
 
 import com.google.gson.Gson;
 
@@ -27,7 +27,7 @@ import org.simpleframework.xml.Root;
 
 import java.util.List;
 
-import ee.ria.mopp.androidmobileid.soap.RequestObject;
+import ee.ria.DigiDoc.mobileid.soap.RequestObject;
 
 @Root(name = "dig:MobileCreateSignature")
 public class MobileCreateSignatureRequest implements RequestObject {

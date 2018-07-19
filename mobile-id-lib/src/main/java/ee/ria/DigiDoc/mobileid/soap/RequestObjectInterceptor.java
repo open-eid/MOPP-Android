@@ -17,14 +17,13 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.soap;
+package ee.ria.DigiDoc.mobileid.soap;
 
 import org.simpleframework.xml.strategy.Type;
 import org.simpleframework.xml.strategy.Visitor;
 import org.simpleframework.xml.stream.InputNode;
 import org.simpleframework.xml.stream.NodeMap;
 import org.simpleframework.xml.stream.OutputNode;
-
 
 public class RequestObjectInterceptor implements Visitor {
 

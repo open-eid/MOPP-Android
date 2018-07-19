@@ -17,10 +17,10 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.soap;
+package ee.ria.DigiDoc.mobileid.soap;
 
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
-import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
+import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse;
+import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;

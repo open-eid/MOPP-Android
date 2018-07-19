@@ -17,7 +17,7 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.dto.request;
+package ee.ria.DigiDoc.mobileid.dto.request;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;

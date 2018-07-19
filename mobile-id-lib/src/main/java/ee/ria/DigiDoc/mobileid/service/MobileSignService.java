@@ -1,5 +1,4 @@
-package ee.ria.mopp.androidmobileid.service;
-
+package ee.ria.DigiDoc.mobileid.service;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -19,26 +18,26 @@ import java.security.cert.CertificateException;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
-import ee.ria.mopp.androidmobileid.dto.request.GetMobileCreateSignatureStatusRequest;
-import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
-import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
-import ee.ria.mopp.androidmobileid.dto.response.ServiceFault;
-import ee.ria.mopp.androidmobileid.soap.DigidocServiceClient;
-import ee.ria.mopp.androidmobileid.soap.ErrorUtils;
-import ee.ria.mopp.androidmobileid.soap.RequestBody;
-import ee.ria.mopp.androidmobileid.soap.RequestEnvelope;
-import ee.ria.mopp.androidmobileid.soap.RequestObject;
-import ee.ria.mopp.androidmobileid.soap.ServiceGenerator;
-import ee.ria.mopp.androidmobileid.soap.SoapFault;
+import ee.ria.DigiDoc.mobileid.dto.request.GetMobileCreateSignatureStatusRequest;
+import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
+import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse;
+import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureResponse;
+import ee.ria.DigiDoc.mobileid.dto.response.ServiceFault;
+import ee.ria.DigiDoc.mobileid.soap.DigidocServiceClient;
+import ee.ria.DigiDoc.mobileid.soap.ErrorUtils;
+import ee.ria.DigiDoc.mobileid.soap.RequestBody;
+import ee.ria.DigiDoc.mobileid.soap.RequestEnvelope;
+import ee.ria.DigiDoc.mobileid.soap.RequestObject;
+import ee.ria.DigiDoc.mobileid.soap.ServiceGenerator;
+import ee.ria.DigiDoc.mobileid.soap.SoapFault;
 import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
 
-import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.fromJson;
-import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
-import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
-import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
+import static ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest.fromJson;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
 
 public class MobileSignService extends IntentService {
 

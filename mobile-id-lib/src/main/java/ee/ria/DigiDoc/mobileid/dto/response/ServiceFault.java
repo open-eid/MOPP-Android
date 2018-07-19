@@ -17,16 +17,17 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.dto.response;
+package ee.ria.DigiDoc.mobileid.dto.response;
 
 import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import ee.ria.mopp.androidmobileid.soap.SoapFault;
+import ee.ria.DigiDoc.mobileid.soap.SoapFault;
 
 public class ServiceFault {
+
     private String originalFaultCode;
     private String originalFaultMessage;
     private String reason;

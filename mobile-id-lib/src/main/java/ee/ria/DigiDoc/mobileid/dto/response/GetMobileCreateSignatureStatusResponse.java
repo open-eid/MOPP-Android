@@ -17,7 +17,7 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.dto.response;
+package ee.ria.DigiDoc.mobileid.dto.response;
 
 import com.google.gson.Gson;
 

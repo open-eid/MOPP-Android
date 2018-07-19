@@ -17,7 +17,7 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.soap;
+package ee.ria.DigiDoc.mobileid.soap;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Namespace;

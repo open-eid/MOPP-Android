@@ -17,9 +17,7 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.soap;
-
-
+package ee.ria.DigiDoc.mobileid.soap;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;

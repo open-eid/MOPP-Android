@@ -17,44 +17,48 @@
  *
  */
 
-package ee.ria.mopp.androidmobileid.dto.request;
+package ee.ria.DigiDoc.mobileid.soap;
 
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Path;
 import org.simpleframework.xml.Root;
 
-import ee.ria.mopp.androidmobileid.soap.RequestObject;
+@Root(strict = false, name = "SOAP-ENV:Fault")
+public class SoapFault {
 
-@Root(name = "dig:GetMobileCreateSignatureStatus")
-public class GetMobileCreateSignatureStatusRequest implements RequestObject {
+    private static final String BASE_PATH = "Body/Fault/";
 
-    @Element(name = "Sesscode")
-    private int sessCode;
-    @Element(name = "WaitSignature")
-    private boolean waitSignature;
+    @Element
+    @Path(BASE_PATH)
+    private String faultcode;
+    @Element
+    @Path(BASE_PATH)
+    private String faultstring;
+    @Element
+    @Path(BASE_PATH + "detail/")
+    private String message;
 
-    public GetMobileCreateSignatureStatusRequest(int sessCode) {
-        this.sessCode = sessCode;
-        this.waitSignature = false;
+    public String getFaultcode() {
+        return faultcode;
     }
 
-    public int getSessCode() {
-        return sessCode;
+    public void setFaultcode(String faultcode) {
+        this.faultcode = faultcode;
     }
 
-    public void setSessCode(int sessCode) {
-        this.sessCode = sessCode;
+    public String getFaultstring() {
+        return faultstring;
     }
 
-    public boolean isWaitSignature() {
-        return waitSignature;
+    public void setFaultstring(String faultstring) {
+        this.faultstring = faultstring;
     }
 
-    public void setWaitSignature(boolean waitSignature) {
-        this.waitSignature = waitSignature;
+    public String getMessage() {
+        return message;
     }
 
-    @Override
-    public String getOperationName() {
-        return "dig:GetMobileCreateSignatureStatus";
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

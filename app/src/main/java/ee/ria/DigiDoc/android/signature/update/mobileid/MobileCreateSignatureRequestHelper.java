@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import ee.ria.mopp.androidmobileid.dto.request.DataFileDto;
-import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
+import ee.ria.DigiDoc.mobileid.dto.request.DataFileDto;
+import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
 import ee.ria.mopplib.data.DataFile;
 import ee.ria.mopplib.data.Signature;
 import ee.ria.mopplib.data.SignedContainer;
