@@ -30,18 +30,18 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:support-annotations:${androidSupportLibraryVersion}"
+    api "com.android.support:support-annotations:${androidSupportLibraryVersion}"
 
-    implementation "com.google.guava:guava:${guavaVersion}"
-    implementation "com.squareup.okio:okio:${okioVersion}"
-    implementation "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
+    api "com.google.guava:guava:${guavaVersion}"
+    api "com.squareup.okio:okio:${okioVersion}"
+    api "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
 
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
-    implementation "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
+    implementation project(':core-lib')
 
     androidTestUtil "com.android.support.test:orchestrator:${androidSupportTestVersion}"
     androidTestAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"

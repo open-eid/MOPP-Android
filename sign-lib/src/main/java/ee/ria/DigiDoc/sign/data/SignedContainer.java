@@ -1,6 +1,5 @@
 package ee.ria.DigiDoc.sign.data;
 
-import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
 
@@ -9,25 +8,16 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.x500.RDN;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.threeten.bp.Instant;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import ee.ria.DigiDoc.core.Certificate;
 import ee.ria.DigiDoc.sign.utils.Function;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
@@ -399,43 +389,15 @@ public abstract class SignedContainer {
     }
 
     private static String signatureName(ee.ria.libdigidocpp.Signature signature) {
-        String certificateCn = certificateCN(signature.signingCertificateDer());
-        return certificateCn == null ? signature.signedBy() : certificateCn;
-    }
-
-    @Nullable
-    private static String certificateCN(byte[] signingCertificateDer) {
-        if (signingCertificateDer == null || signingCertificateDer.length == 0) {
-            return null;
-        }
-
-        X509Certificate certificate = null;
+        String commonName;
         try {
-            certificate = (X509Certificate) CertificateFactory.getInstance("X.509")
-                    .generateCertificate(new ByteArrayInputStream(signingCertificateDer));
-        } catch (CertificateException e) {
-            Timber.e(e, "Error generating certificate");
+            commonName = Certificate.create(ByteString.of(signature.signingCertificateDer()))
+                    .commonName();
+        } catch (IOException e) {
+            Timber.e(e, "Can't parse certificate to get CN");
+            commonName = null;
         }
-        if (certificate == null) {
-            return null;
-        }
-
-        X500Name x500name = null;
-        try {
-            x500name = new JcaX509CertificateHolder(certificate).getSubject();
-        } catch (CertificateEncodingException e) {
-            Timber.e(e, "Error getting value by ASN1 Object identifier");
-        }
-        if (x500name == null) {
-            return null;
-        }
-
-        RDN[] rdNs = x500name.getRDNs(ASN1ObjectIdentifier.getInstance(BCStyle.CN));
-        if (rdNs.length == 0) {
-            return null;
-        }
-
-        return rdNs[0].getFirst().getValue().toString();
+        return commonName == null ? signature.signedBy() : commonName;
     }
 
     @SignatureStatus private static String signatureStatus(
