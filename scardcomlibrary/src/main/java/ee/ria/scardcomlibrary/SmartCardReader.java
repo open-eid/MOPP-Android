@@ -11,8 +11,6 @@ import static java.util.Arrays.copyOf;
 import static java.util.Arrays.copyOfRange;
 
 /**
- * Check all common token requests (readRecord)
- * Remove utils when they are not needed (guava covers them)
  * Log all transmit commands in hex (request and response)
  */
 public abstract class SmartCardReader implements AutoCloseable {
