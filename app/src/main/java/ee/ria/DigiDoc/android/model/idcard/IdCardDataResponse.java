@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
-import ee.ria.scardcomlibrary.SmartCardReaderStatus;
+import ee.ria.smartcardreader.SmartCardReaderStatus;
 import ee.ria.tokenlibrary.Token;
 
 @AutoValue

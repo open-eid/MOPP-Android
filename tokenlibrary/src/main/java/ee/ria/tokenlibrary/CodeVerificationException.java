@@ -19,7 +19,7 @@
 
 package ee.ria.tokenlibrary;
 
-import ee.ria.scardcomlibrary.SmartCardReaderException;
+import ee.ria.smartcardreader.SmartCardReaderException;
 
 public class CodeVerificationException extends SmartCardReaderException {
 

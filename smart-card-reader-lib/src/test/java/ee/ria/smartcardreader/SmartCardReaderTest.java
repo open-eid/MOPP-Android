@@ -1,4 +1,4 @@
-package ee.ria.scardcomlibrary;
+package ee.ria.smartcardreader;
 
 import org.junit.Before;
 import org.junit.Rule;

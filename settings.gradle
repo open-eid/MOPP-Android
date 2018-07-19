@@ -1,2 +1,2 @@
-include ':app', ':corelib', ':mopplib', ':cryptolib', ':tokenlibrary', ':scardcomlibrary',
+include ':app', ':corelib', ':mopplib', ':cryptolib', ':tokenlibrary', ':smart-card-reader-lib',
         ':androidmobileid'

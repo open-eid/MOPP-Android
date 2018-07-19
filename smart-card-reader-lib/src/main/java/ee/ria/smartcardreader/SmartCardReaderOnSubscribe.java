@@ -1,4 +1,4 @@
-package ee.ria.scardcomlibrary;
+package ee.ria.smartcardreader;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;

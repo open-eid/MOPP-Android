@@ -118,7 +118,7 @@ dependencies {
     implementation project(':corelib')
     implementation project(':mopplib')
     implementation project(':cryptolib')
-    implementation project(':scardcomlibrary')
+    implementation project(':smart-card-reader-lib')
     implementation project(':tokenlibrary')
     implementation project(':androidmobileid')
 

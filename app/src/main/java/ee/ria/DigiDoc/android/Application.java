@@ -60,9 +60,9 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
 import ee.ria.cryptolib.RecipientRepository;
 import ee.ria.mopplib.MoppLib;
-import ee.ria.scardcomlibrary.SmartCardReaderManager;
-import ee.ria.scardcomlibrary.acs.AcsSmartCardReader;
-import ee.ria.scardcomlibrary.identiv.IdentivSmartCardReader;
+import ee.ria.smartcardreader.SmartCardReaderManager;
+import ee.ria.smartcardreader.acs.AcsSmartCardReader;
+import ee.ria.smartcardreader.identiv.IdentivSmartCardReader;
 import io.reactivex.plugins.RxJavaPlugins;
 import timber.log.Timber;
 
