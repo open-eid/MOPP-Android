@@ -18,8 +18,8 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.EIDData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.Formatter;
-import ee.ria.tokenlibrary.CertificateType;
-import ee.ria.tokenlibrary.CodeType;
+import ee.ria.DigiDoc.idcard.CertificateType;
+import ee.ria.DigiDoc.idcard.CodeType;
 import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.view.RxView.clicks;

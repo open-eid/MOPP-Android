@@ -5,7 +5,7 @@ import com.google.auto.value.AutoValue;
 import ee.ria.DigiDoc.EIDType;
 import ee.ria.DigiDoc.android.model.CertificateData;
 import ee.ria.DigiDoc.android.model.EIDData;
-import ee.ria.tokenlibrary.PersonalData;
+import ee.ria.DigiDoc.idcard.PersonalData;
 
 @AutoValue
 public abstract class IdCardData implements EIDData {

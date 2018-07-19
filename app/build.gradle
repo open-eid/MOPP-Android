@@ -119,7 +119,7 @@ dependencies {
     implementation project(':mopplib')
     implementation project(':cryptolib')
     implementation project(':smart-card-reader-lib')
-    implementation project(':tokenlibrary')
+    implementation project(':id-card-lib')
     implementation project(':androidmobileid')
 
     testAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"

@@ -4,7 +4,7 @@ import com.google.auto.value.AutoValue;
 
 import java.io.File;
 
-import ee.ria.tokenlibrary.Token;
+import ee.ria.DigiDoc.idcard.Token;
 
 @AutoValue
 abstract class DecryptRequest {

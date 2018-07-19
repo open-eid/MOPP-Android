@@ -1,7 +1,7 @@
 package ee.ria.DigiDoc.android.model;
 
 import ee.ria.DigiDoc.EIDType;
-import ee.ria.tokenlibrary.PersonalData;
+import ee.ria.DigiDoc.idcard.PersonalData;
 
 public interface EIDData {
 

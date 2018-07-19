@@ -17,7 +17,7 @@
  *
  */
 
-package ee.ria.tokenlibrary;
+package ee.ria.DigiDoc.idcard;
 
 import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;

@@ -33,7 +33,7 @@ import javax.inject.Inject;
 import ee.ria.DigiDoc.EIDType;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.CertificateData;
-import ee.ria.tokenlibrary.CertificateType;
+import ee.ria.DigiDoc.idcard.CertificateType;
 
 public final class Formatter {
 

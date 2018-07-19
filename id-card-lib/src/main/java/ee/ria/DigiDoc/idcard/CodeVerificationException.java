@@ -17,11 +17,9 @@
  *
  */
 
-package ee.ria.tokenlibrary;
+package ee.ria.DigiDoc.idcard;
 
-import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
-
-public class CodeVerificationException extends SmartCardReaderException {
+public class CodeVerificationException extends IdCardException {
 
     CodeVerificationException(CodeType type) {
         super(type + " verification failed");

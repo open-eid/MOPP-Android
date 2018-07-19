@@ -9,4 +9,8 @@ public class SmartCardReaderException extends Exception {
     public SmartCardReaderException(Throwable cause) {
         super(cause);
     }
+
+    public SmartCardReaderException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

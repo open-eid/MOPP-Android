@@ -1,4 +1,4 @@
-package ee.ria.tokenlibrary;
+package ee.ria.DigiDoc.idcard;
 
 import android.support.annotation.Nullable;
 

@@ -1,4 +1,4 @@
-package ee.ria.tokenlibrary;
+package ee.ria.DigiDoc.idcard;
 
 public enum CodeType {
 

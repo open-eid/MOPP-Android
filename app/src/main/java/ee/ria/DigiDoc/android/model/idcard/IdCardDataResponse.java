@@ -4,8 +4,8 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
+import ee.ria.DigiDoc.idcard.Token;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
-import ee.ria.tokenlibrary.Token;
 
 @AutoValue
 public abstract class IdCardDataResponse {

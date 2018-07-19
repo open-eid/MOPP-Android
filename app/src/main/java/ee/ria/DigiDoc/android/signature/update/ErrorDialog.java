@@ -13,7 +13,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
-import ee.ria.tokenlibrary.CodeVerificationException;
+import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import io.reactivex.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.signature.update.ErrorDialog.Type.DOCUMENTS_ADD;

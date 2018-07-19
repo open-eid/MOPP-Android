@@ -17,7 +17,7 @@
  *
  */
 
-package ee.ria.tokenlibrary;
+package ee.ria.DigiDoc.idcard;
 
 import android.util.SparseArray;
 
@@ -32,7 +32,7 @@ import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
 
 import static com.google.common.primitives.Bytes.concat;
-import static ee.ria.tokenlibrary.util.AlgorithmUtils.addPadding;
+import static ee.ria.DigiDoc.idcard.AlgorithmUtils.addPadding;
 
 abstract class EstEIDToken implements Token {
 

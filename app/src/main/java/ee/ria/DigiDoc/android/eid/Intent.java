@@ -6,7 +6,7 @@ import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.model.EIDData;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
-import ee.ria.tokenlibrary.Token;
+import ee.ria.DigiDoc.idcard.Token;
 
 interface Intent extends MviIntent {
 

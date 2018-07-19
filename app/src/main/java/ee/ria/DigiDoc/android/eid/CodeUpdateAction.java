@@ -9,7 +9,7 @@ import com.ryanharter.auto.value.parcel.ParcelAdapter;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.parcel.ImmutableIntegerListTypeAdapter;
-import ee.ria.tokenlibrary.CodeType;
+import ee.ria.DigiDoc.idcard.CodeType;
 
 @AutoValue
 abstract class CodeUpdateAction implements Parcelable {
