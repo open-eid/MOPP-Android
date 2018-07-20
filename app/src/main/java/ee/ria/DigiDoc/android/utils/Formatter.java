@@ -31,7 +31,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.model.CertificateData;
+import ee.ria.DigiDoc.core.Certificate;
 import ee.ria.DigiDoc.core.EIDType;
 import ee.ria.DigiDoc.idcard.CertificateType;
 
@@ -78,10 +78,9 @@ public final class Formatter {
                 .append(validityIndicator);
     }
 
-    public CharSequence certificateDataValidity(CertificateType type,
-                                                CertificateData certificateData) {
-        ZonedDateTime notAfter = certificateData.notAfter().atZone(ZoneId.systemDefault());
-        boolean expired = certificateData.expired();
+    public CharSequence certificateDataValidity(CertificateType type, Certificate certificate) {
+        ZonedDateTime notAfter = certificate.notAfter().atZone(ZoneId.systemDefault());
+        boolean expired = certificate.expired();
         int color = ResourcesCompat.getColor(application.getResources(),
                 expired ? R.color.error : R.color.success, null);
         String string;

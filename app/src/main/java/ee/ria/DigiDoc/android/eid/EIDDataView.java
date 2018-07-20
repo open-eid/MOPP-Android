@@ -15,7 +15,6 @@ import net.cachapa.expandablelayout.ExpandableLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.model.EIDData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.idcard.CertificateType;
@@ -94,7 +93,7 @@ public final class EIDDataView extends LinearLayout {
         a.recycle();
     }
 
-    public void render(@NonNull EIDData data, boolean certificateContainerExpanded) {
+    public void render(@NonNull IdCardData data, boolean certificateContainerExpanded) {
         typeView.setText(formatter.eidType(data.type()));
         givenNamesView.setText(data.personalData().givenNames());
         surnameView.setText(data.personalData().surname());
@@ -112,9 +111,9 @@ public final class EIDDataView extends LinearLayout {
         certificatesContainerView.setExpanded(certificateContainerExpanded);
 
         authCertificateDataView.data(CertificateType.AUTHENTICATION, data.authCertificate(),
-                data.pukRetryCount());
+                data.pin1RetryCount(), data.pukRetryCount());
         signCertificateDataView.data(CertificateType.SIGNING, data.signCertificate(),
-                data.pukRetryCount());
+                data.pin2RetryCount(), data.pukRetryCount());
         if (data.authCertificate().expired() && data.signCertificate().expired()) {
             pukButtonView.setVisibility(GONE);
             pukErrorView.setVisibility(GONE);
@@ -128,21 +127,12 @@ public final class EIDDataView extends LinearLayout {
             pukErrorView.setVisibility(GONE);
             pukLinkView.setVisibility(GONE);
         }
-        if (data instanceof IdCardData) {
-            IdCardData idCardData = (IdCardData) data;
-            documentNumberView.setText(idCardData.personalData().documentNumber());
-            expiryDateView.setText(formatter.idCardExpiryDate(
-                    idCardData.personalData().expiryDate()));
-            documentNumberLabelView.setVisibility(VISIBLE);
-            documentNumberView.setVisibility(VISIBLE);
-            expiryDateLabelView.setVisibility(VISIBLE);
-            expiryDateView.setVisibility(VISIBLE);
-        } else {
-            documentNumberLabelView.setVisibility(GONE);
-            documentNumberView.setVisibility(GONE);
-            expiryDateLabelView.setVisibility(GONE);
-            expiryDateView.setVisibility(GONE);
-        }
+        documentNumberView.setText(data.personalData().documentNumber());
+        expiryDateView.setText(formatter.idCardExpiryDate(data.personalData().expiryDate()));
+        documentNumberLabelView.setVisibility(VISIBLE);
+        documentNumberView.setVisibility(VISIBLE);
+        expiryDateLabelView.setVisibility(VISIBLE);
+        expiryDateView.setVisibility(VISIBLE);
     }
 
     public Observable<Boolean> certificateContainerStates() {

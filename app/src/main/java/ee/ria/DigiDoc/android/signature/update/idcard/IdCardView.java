@@ -107,7 +107,7 @@ public final class IdCardView extends LinearLayout implements
                     R.string.signature_update_id_card_progress_message_signing);
             signContainerView.setVisibility(GONE);
         } else if (signResponse != null && signResponse.error() != null && data != null) {
-            int pinRetryCount = data.signCertificate().pinRetryCount();
+            int pinRetryCount = data.pin2RetryCount();
             progressContainerView.setVisibility(GONE);
             signContainerView.setVisibility(VISIBLE);
             signDataView.setText(getResources().getString(

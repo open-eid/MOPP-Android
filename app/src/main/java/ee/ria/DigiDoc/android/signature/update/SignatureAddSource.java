@@ -104,12 +104,12 @@ final class SignatureAddSource {
                                     .filter(dataResponse -> dataResponse.data() != null)
                                     .switchMap(dataResponse -> {
                                         IdCardData data = dataResponse.data();
-                                        if (data.signCertificate().pinRetryCount() > 0) {
+                                        if (data != null && data.pin2RetryCount() > 0) {
                                             return Observable.just(
-                                                    IdCardResponse.sign(IdCardSignResponse
-                                                            .clear(error, data, idCardRequest.token())),
-                                                    IdCardResponse.sign(IdCardSignResponse
-                                                            .failure(error, data, idCardRequest.token())));
+                                                    IdCardResponse.sign(IdCardSignResponse.clear(
+                                                            error, data, idCardRequest.token())),
+                                                    IdCardResponse.sign(IdCardSignResponse.failure(
+                                                            error, data, idCardRequest.token())));
                                         }
                                         return Observable.error(error);
                                     });

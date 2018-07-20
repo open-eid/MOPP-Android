@@ -9,6 +9,7 @@ import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.threeten.bp.Instant;
 
@@ -21,15 +22,23 @@ public abstract class Certificate {
 
     public abstract EIDType type();
 
+    public abstract String organization();
+
     public abstract String commonName();
 
     public abstract Instant notAfter();
+
+    public abstract boolean ellipticCurve();
 
     public abstract KeyUsage keyUsage();
 
     public abstract ExtendedKeyUsage extendedKeyUsage();
 
     public abstract ByteString data();
+
+    public boolean expired() {
+        return notAfter().isBefore(Instant.now());
+    }
 
     public static Certificate create(ByteString data) throws IOException {
         X509CertificateHolder certificate = new X509CertificateHolder(data.toByteArray());
@@ -41,6 +50,9 @@ public abstract class Certificate {
         rdNs = certificate.getSubject().getRDNs(ASN1ObjectIdentifier.getInstance(BCStyle.CN));
         String commonName = rdNs[0].getFirst().getValue().toString().trim();
 
+        boolean ellipticCurve = certificate.getSubjectPublicKeyInfo().getAlgorithm().getAlgorithm()
+                .equals(X9ObjectIdentifiers.id_ecPublicKey);
+
         Extensions extensions = certificate.getExtensions();
         KeyUsage keyUsage = KeyUsage.fromExtensions(extensions);
         ExtendedKeyUsage extendedKeyUsage = ExtendedKeyUsage.fromExtensions(extensions);
@@ -48,7 +60,7 @@ public abstract class Certificate {
             extendedKeyUsage = new ExtendedKeyUsage(new KeyPurposeId[]{});
         }
 
-        return new AutoValue_Certificate(EIDType.parseOrganization(organization), commonName,
-                notAfter, keyUsage, extendedKeyUsage, data);
+        return new AutoValue_Certificate(EIDType.parseOrganization(organization), organization,
+                commonName, notAfter, ellipticCurve, keyUsage, extendedKeyUsage, data);
     }
 }

@@ -10,15 +10,14 @@ import org.openeid.cdoc4j.exception.DecryptionException;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import ee.ria.DigiDoc.android.model.CertificateData;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
+import ee.ria.DigiDoc.core.Certificate;
 import ee.ria.DigiDoc.core.EIDType;
 import ee.ria.DigiDoc.idcard.CertificateType;
 import ee.ria.DigiDoc.idcard.CodeType;
@@ -118,13 +117,12 @@ public final class IdCardService {
         int pin2RetryCounter = token.codeRetryCounter(CodeType.PIN2);
         int pukRetryCounter = token.codeRetryCounter(CodeType.PUK);
 
-        CertificateData authCertificate = CertificateData
-                .create(pin1RetryCounter, authenticationCertificateData);
-        CertificateData signCertificate = CertificateData
-                .create(pin2RetryCounter, signingCertificateData);
+        Certificate authCertificate = Certificate.create(authenticationCertificateData);
+        Certificate signCertificate = Certificate.create(signingCertificateData);
 
         return IdCardData.create(EIDType.parseOrganization(authCertificate.organization()),
-                personalData, authCertificate, signCertificate, pukRetryCounter);
+                personalData, authCertificate, signCertificate, pin1RetryCounter, pin2RetryCounter,
+                pukRetryCounter);
     }
 
     static final class PKCS11Token implements org.openeid.cdoc4j.token.Token {
@@ -140,7 +138,7 @@ public final class IdCardService {
         }
 
         @Override
-        public Certificate getCertificate() {
+        public java.security.cert.Certificate getCertificate() {
             try {
                 return CertificateFactory.getInstance("X.509").generateCertificate(
                         new ByteArrayInputStream(data.authCertificate().data().toByteArray()));

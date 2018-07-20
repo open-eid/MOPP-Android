@@ -2,18 +2,31 @@ package ee.ria.DigiDoc.android.model.idcard;
 
 import com.google.auto.value.AutoValue;
 
-import ee.ria.DigiDoc.android.model.CertificateData;
-import ee.ria.DigiDoc.android.model.EIDData;
+import ee.ria.DigiDoc.core.Certificate;
 import ee.ria.DigiDoc.core.EIDType;
 import ee.ria.DigiDoc.idcard.PersonalData;
 
 @AutoValue
-public abstract class IdCardData implements EIDData {
+public abstract class IdCardData {
+
+    public abstract EIDType type();
+
+    public abstract PersonalData personalData();
+
+    public abstract Certificate authCertificate();
+
+    public abstract Certificate signCertificate();
+
+    public abstract int pin1RetryCount();
+
+    public abstract int pin2RetryCount();
+
+    public abstract int pukRetryCount();
 
     static IdCardData create(EIDType type, PersonalData personalData,
-                             CertificateData authCertificate, CertificateData signCertificate,
-                             int pukRetryCount) {
+                             Certificate authCertificate, Certificate signCertificate,
+                             int pin1RetryCount, int pin2RetryCount, int pukRetryCount) {
         return new AutoValue_IdCardData(type, personalData, authCertificate, signCertificate,
-                pukRetryCount);
+                pin1RetryCount, pin2RetryCount, pukRetryCount);
     }
 }

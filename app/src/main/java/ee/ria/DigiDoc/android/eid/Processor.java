@@ -18,7 +18,6 @@ import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfDateOfBirthError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfPersonalCodeError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeSameAsCurrentError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeTooEasyError;
-import ee.ria.DigiDoc.android.model.EIDData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -69,7 +68,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
         codeUpdate = upstream -> upstream.flatMap(action -> {
             CodeUpdateAction updateAction = action.action();
             CodeUpdateRequest request = action.request();
-            EIDData data = action.data();
+            IdCardData data = action.data();
             Token token = action.token();
             if (updateAction == null) {
                 return Observable.just(Result.CodeUpdateResult.clear());
@@ -152,7 +151,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
     }
 
     private static CodeUpdateResponse validate(CodeUpdateAction action, CodeUpdateRequest request,
-                                               EIDData data) {
+                                               IdCardData data) {
         LocalDate dateOfBirth = data.personalData().dateOfBirth();
         ImmutableSet.Builder<String> dateOfBirthValuesBuilder = ImmutableSet.builder();
         if (dateOfBirth != null) {
@@ -222,9 +221,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
         if (updateType.equals(CodeUpdateType.UNBLOCK) || pinType.equals(CodeType.PUK)) {
             return data.pukRetryCount();
         } else if (pinType.equals(CodeType.PIN1)) {
-            return data.authCertificate().pinRetryCount();
+            return data.pin1RetryCount();
         } else {
-            return data.signCertificate().pinRetryCount();
+            return data.pin2RetryCount();
         }
     }
 }

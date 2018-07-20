@@ -94,8 +94,7 @@ final class DecryptDialog extends AlertDialog {
                     && decryptError instanceof IdCardService.PinVerificationError) {
                 data = ((IdCardService.PinVerificationError) decryptError).idCardData;
                 pin1ErrorView.setText(getContext().getString(
-                        R.string.crypto_create_decrypt_pin1_invalid,
-                        data.authCertificate().pinRetryCount()));
+                        R.string.crypto_create_decrypt_pin1_invalid, data.pin1RetryCount()));
                 pin1ErrorView.setVisibility(View.VISIBLE);
             } else {
                 pin1ErrorView.setVisibility(View.GONE);

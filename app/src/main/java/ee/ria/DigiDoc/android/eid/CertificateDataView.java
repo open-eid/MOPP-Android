@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.model.CertificateData;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import ee.ria.DigiDoc.core.Certificate;
 import ee.ria.DigiDoc.idcard.CertificateType;
 import io.reactivex.Observable;
 
@@ -55,8 +55,8 @@ public final class CertificateDataView extends LinearLayout {
         formatter.underline(linkView);
     }
 
-    public void data(CertificateType type, CertificateData data, int pukRetryCount) {
-        boolean pinBlocked = data.pinRetryCount() == 0;
+    public void data(CertificateType type, Certificate data, int pinRetryCount, int pukRetryCount) {
+        boolean pinBlocked = pinRetryCount == 0;
         boolean pukBlocked = pukRetryCount == 0;
         buttonUnblocks = pinBlocked && !pukBlocked;
 
