@@ -20,6 +20,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
@@ -221,20 +222,32 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 ? View.VISIBLE : View.GONE);
 
         decryptionIdCardDataResponse = state.decryptionIdCardDataResponse();
+        boolean decryptionPin1Locked = false;
         if (decryptionIdCardDataResponse != null) {
+            IdCardData data = decryptionIdCardDataResponse.data();
+            if (data != null && data.pin1RetryCount() == 0) {
+                decryptionPin1Locked = true;
+            }
             decryptDialog.show();
             decryptDialog.idCardDataResponse(decryptionIdCardDataResponse, state.decryptState(),
                     decryptError);
         } else {
+            decryptionPin1Locked = true;
             decryptDialog.dismiss();
         }
         idCardTokenAvailableSubject.onNext(decryptionIdCardDataResponse != null &&
                 decryptionIdCardDataResponse.token() != null);
 
-        if (decryptError != null && !(decryptError instanceof Pin1InvalidException)) {
-            errorDialog.setMessage(errorDialog.getContext().getString(
-                    R.string.crypto_create_error));
-            errorDialog.show();
+        if (decryptError != null) {
+            if (decryptError instanceof Pin1InvalidException && decryptionPin1Locked) {
+                errorDialog.setMessage(errorDialog.getContext().getString(
+                        R.string.crypto_create_decrypt_pin1_locked));
+                errorDialog.show();
+            } else if (!(decryptError instanceof Pin1InvalidException)) {
+                errorDialog.setMessage(errorDialog.getContext().getString(
+                        R.string.crypto_create_error));
+                errorDialog.show();
+            }
         } else if (encryptError != null) {
             if (encryptError instanceof RecipientsEmptyException) {
                 errorDialog.setMessage(errorDialog.getContext().getString(

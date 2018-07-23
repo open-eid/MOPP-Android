@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
+import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -323,13 +324,14 @@ interface Result extends MviResult<ViewState> {
 
         @Override
         public ViewState reduce(ViewState state) {
+            IdCardDataResponse idCardDataResponse = idCardDataResponse();
+            IdCardData idCardData = idCardDataResponse != null ? idCardDataResponse.data() : null;
+            int pin1RetryCount = idCardData != null ? idCardData.pin1RetryCount() : -1;
+            Throwable error = error();
             ViewState.Builder builder = state.buildWith()
                     .decryptState(state())
                     .decryptSuccessMessageVisible(successMessageVisible())
-                    .decryptError(error());
-            if (error() != null && !(error() instanceof Pin1InvalidException)) {
-                builder.decryptionIdCardDataResponse(null);
-            }
+                    .decryptError(error);
             if (dataFiles() != null) {
                 builder
                         .dataFiles(dataFiles())
@@ -340,8 +342,10 @@ interface Result extends MviResult<ViewState> {
                         .decryptState(State.IDLE)
                         .decryptError(null);
             }
-            if (idCardDataResponse() != null) {
-                builder.decryptionIdCardDataResponse(idCardDataResponse());
+            if (error != null && error instanceof Pin1InvalidException && pin1RetryCount > 0) {
+                builder.decryptionIdCardDataResponse(idCardDataResponse);
+            } else if (error != null) {
+                builder.decryptionIdCardDataResponse(null);
             }
             return builder.build();
         }

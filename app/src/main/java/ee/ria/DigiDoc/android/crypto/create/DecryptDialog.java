@@ -90,9 +90,16 @@ final class DecryptDialog extends AlertDialog {
             containerView.setVisibility(View.GONE);
             pin1ErrorView.setVisibility(View.GONE);
         } else {
-            if (decryptError != null && decryptError instanceof Pin1InvalidException) {
-                pin1ErrorView.setText(getContext().getString(
-                        R.string.crypto_create_decrypt_pin1_invalid, data.pin1RetryCount()));
+            int pin1RetryCount = data.pin1RetryCount();
+            if (decryptError != null && decryptError instanceof Pin1InvalidException
+                    && pin1RetryCount > 0) {
+                if (pin1RetryCount == 1) {
+                    pin1ErrorView.setText(getContext().getString(
+                            R.string.crypto_create_decrypt_pin1_invalid_final));
+                } else {
+                    pin1ErrorView.setText(getContext().getString(
+                            R.string.crypto_create_decrypt_pin1_invalid, pin1RetryCount));
+                }
                 pin1ErrorView.setVisibility(View.VISIBLE);
             } else {
                 pin1ErrorView.setVisibility(View.GONE);
