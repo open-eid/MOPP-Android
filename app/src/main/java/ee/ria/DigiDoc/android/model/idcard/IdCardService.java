@@ -2,16 +2,7 @@ package ee.ria.DigiDoc.android.model.idcard;
 
 import com.google.common.collect.ImmutableList;
 
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.openeid.cdoc4j.CDOCDecrypter;
-import org.openeid.cdoc4j.ECRecipient;
-import org.openeid.cdoc4j.RSARecipient;
-import org.openeid.cdoc4j.exception.DecryptionException;
-
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,12 +10,17 @@ import javax.inject.Singleton;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.core.Certificate;
 import ee.ria.DigiDoc.core.EIDType;
+import ee.ria.DigiDoc.crypto.CryptoContainer;
+import ee.ria.DigiDoc.crypto.CryptoException;
+import ee.ria.DigiDoc.crypto.DecryptToken;
+import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.idcard.CertificateType;
 import ee.ria.DigiDoc.idcard.CodeType;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.idcard.PersonalData;
 import ee.ria.DigiDoc.idcard.Token;
 import ee.ria.DigiDoc.sign.data.SignedContainer;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
 import io.reactivex.Observable;
@@ -32,7 +28,6 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okio.ByteString;
-import timber.log.Timber;
 
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 
@@ -101,10 +96,10 @@ public final class IdCardService {
 
     public Single<ImmutableList<File>> decrypt(Token token, File containerFile, String pin1) {
         return Single.fromCallable(() ->
-                ImmutableList.copyOf(new CDOCDecrypter()
-                        .withToken(new PKCS11Token(token, pin1))
-                        .withCDOC(containerFile)
-                        .decrypt(fileSystem.getCacheDir())));
+                CryptoContainer.open(containerFile)
+                        .decrypt(new IdCardToken(token), data(token).authCertificate(), pin1,
+                                fileSystem.getCacheDir())
+                        .dataFiles());
     }
 
     public static IdCardData data(Token token) throws Exception {
@@ -125,71 +120,23 @@ public final class IdCardService {
                 pukRetryCounter);
     }
 
-    static final class PKCS11Token implements org.openeid.cdoc4j.token.Token {
+    static final class IdCardToken implements DecryptToken {
 
         private final Token token;
-        private final String pin1;
-        private final IdCardData data;
 
-        PKCS11Token(Token token, String pin1) throws Exception {
+        IdCardToken(Token token) {
             this.token = token;
-            this.pin1 = pin1;
-            data = data(token);
         }
 
         @Override
-        public java.security.cert.Certificate getCertificate() {
+        public byte[] decrypt(byte[] pin1, byte[] data, boolean ecc) throws CryptoException {
             try {
-                return CertificateFactory.getInstance("X.509").generateCertificate(
-                        new ByteArrayInputStream(data.authCertificate().data().toByteArray()));
-            } catch (CertificateException e) {
-                Timber.e(e);
-                return null;
-            }
-        }
-
-        @Override
-        public byte[] decrypt(RSARecipient recipient) throws DecryptionException {
-            try {
-                return token.decrypt(pin1.getBytes(), recipient.getEncryptedKey(), false);
+                return token.decrypt(pin1, data, ecc);
             } catch (CodeVerificationException e) {
-                throw new PinVerificationError(e, idCardData());
-            } catch (Exception e) {
-                Timber.e(e);
-                throw new DecryptionException("Decrypt RSA recipient", e);
+                throw new Pin1InvalidException();
+            } catch (SmartCardReaderException e) {
+                throw new CryptoException("Decryption failed", e);
             }
-        }
-
-        @Override
-        public byte[] decrypt(ECRecipient recipient) throws DecryptionException {
-            SubjectPublicKeyInfo info = SubjectPublicKeyInfo
-                    .getInstance(recipient.getEphemeralPublicKey().getEncoded());
-            try {
-                return token.decrypt(pin1.getBytes(), info.getPublicKeyData().getBytes(), true);
-            } catch (CodeVerificationException e) {
-                throw new PinVerificationError(e, idCardData());
-            } catch (Exception e) {
-                Timber.e(e);
-                throw new DecryptionException("Decrypt EC recipient", e);
-            }
-        }
-
-        private IdCardData idCardData() {
-            try {
-                return data(token);
-            } catch (Exception e) {
-                return data;
-            }
-        }
-    }
-
-    public static final class PinVerificationError extends DecryptionException {
-
-        public final IdCardData idCardData;
-
-        PinVerificationError(Exception cause, IdCardData idCardData) {
-            super(cause.getMessage(), cause);
-            this.idCardData = idCardData;
         }
     }
 }

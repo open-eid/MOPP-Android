@@ -15,8 +15,8 @@ import android.widget.TextView;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
-import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -90,9 +90,7 @@ final class DecryptDialog extends AlertDialog {
             containerView.setVisibility(View.GONE);
             pin1ErrorView.setVisibility(View.GONE);
         } else {
-            if (decryptError != null
-                    && decryptError instanceof IdCardService.PinVerificationError) {
-                data = ((IdCardService.PinVerificationError) decryptError).idCardData;
+            if (decryptError != null && decryptError instanceof Pin1InvalidException) {
                 pin1ErrorView.setText(getContext().getString(
                         R.string.crypto_create_decrypt_pin1_invalid, data.pin1RetryCount()));
                 pin1ErrorView.setVisibility(View.VISIBLE);

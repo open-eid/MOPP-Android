@@ -5,11 +5,7 @@ import android.content.ContentResolver;
 
 import com.google.common.collect.ImmutableList;
 
-import org.openeid.cdoc4j.CDOCBuilder;
-
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -22,7 +18,9 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.core.Certificate;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
+import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
+import ee.ria.DigiDoc.idcard.Token;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -31,7 +29,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
-import static com.google.common.io.Files.toByteArray;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_DATA_FILE_ADD;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_INITIAL;
 import static ee.ria.DigiDoc.android.utils.Immutables.with;
@@ -236,20 +233,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             if (name != null && dataFiles != null && recipients != null) {
                 return Single
                         .fromCallable(() -> {
-                            CDOCBuilder builder = CDOCBuilder.defaultVersion();
-                            for (File dataFile : dataFiles) {
-                                builder.withDataFile(new org.openeid.cdoc4j.DataFile(dataFile.getName(),
-                                        toByteArray(dataFile)));
-                            }
-                            for (Certificate recipient : recipients) {
-                                builder.withRecipient(new ByteArrayInputStream(
-                                        recipient.data().toByteArray()));
-                            }
-                            File file = fileSystem.generateSignatureContainerFile(name);
-                            try (FileOutputStream outputStream = new FileOutputStream(file)) {
-                                builder.buildToOutputStream(outputStream);
-                            }
-                            return file;
+                            File containerFile = fileSystem.generateSignatureContainerFile(name);
+                            return CryptoContainer.encrypt(dataFiles, recipients, containerFile)
+                                    .file();
                         })
                         .flatMapObservable(file ->
                                 Observable
@@ -278,14 +264,24 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         decrypt = upstream -> upstream.switchMap(intent -> {
             DecryptRequest request = intent.request();
             if (request != null) {
+                Token token = request.token();
                 return idCardService
-                        .decrypt(request.token(), request.containerFile(), request.pin1())
+                        .decrypt(token, request.containerFile(), request.pin1())
                         .flatMapObservable(dataFiles ->
                                 Observable
                                         .timer(3, TimeUnit.SECONDS)
                                         .map(ignored -> Result.DecryptResult.success(dataFiles))
                                         .startWith(Result.DecryptResult.successMessage(dataFiles)))
-                        .onErrorReturn(Result.DecryptResult::failure)
+                        .onErrorReturn(throwable -> {
+                            IdCardDataResponse idCardDataResponse = null;
+                            if (throwable instanceof Pin1InvalidException) {
+                                try {
+                                    idCardDataResponse = IdCardDataResponse
+                                            .success(IdCardService.data(token), token);
+                                } catch (Exception ignored) {}
+                            }
+                            return Result.DecryptResult.failure(throwable, idCardDataResponse);
+                        })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .startWith(Result.DecryptResult.activity());

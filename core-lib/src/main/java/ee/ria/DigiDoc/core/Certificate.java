@@ -13,7 +13,11 @@ import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.threeten.bp.Instant;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 import okio.ByteString;
 
@@ -38,6 +42,11 @@ public abstract class Certificate {
 
     public boolean expired() {
         return notAfter().isBefore(Instant.now());
+    }
+
+    public X509Certificate x509Certificate() throws CertificateException {
+        return (X509Certificate) CertificateFactory.getInstance("X.509")
+                .generateCertificate(new ByteArrayInputStream(data().toByteArray()));
     }
 
     public static Certificate create(ByteString data) throws IOException {

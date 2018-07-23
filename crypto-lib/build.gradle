@@ -25,10 +25,10 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:support-annotations:${androidSupportLibraryVersion}"
+    api "com.android.support:support-annotations:${androidSupportLibraryVersion}"
 
-    implementation "com.google.guava:guava:${guavaVersion}"
-    implementation "com.squareup.okio:okio:${okioVersion}"
+    api "com.google.guava:guava:${guavaVersion}"
+    api "com.squareup.okio:okio:${okioVersion}"
     api "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
@@ -43,10 +43,11 @@ dependencies {
     implementation ("net.java.dev.stax-utils:stax-utils:20070216") {
         exclude group: 'com.bea.xml'
     }
-    api files('libs/cdoc4j-1.1.jar')
+    implementation files('libs/cdoc4j-1.1.jar')
 
     api project(':core-lib')
 
     testImplementation "junit:junit:${junitVersion}"
     testImplementation "com.google.truth:truth:${truthVersion}"
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
 }

@@ -16,19 +16,18 @@ import android.widget.TextView;
 import com.bluelinelabs.conductor.Controller;
 import com.google.common.collect.ImmutableList;
 
-import org.openeid.cdoc4j.exception.RecipientMissingException;
-
 import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
-import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.crypto.Pin1InvalidException;
+import ee.ria.DigiDoc.crypto.RecipientsEmptyException;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -232,12 +231,12 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         idCardTokenAvailableSubject.onNext(decryptionIdCardDataResponse != null &&
                 decryptionIdCardDataResponse.token() != null);
 
-        if (decryptError != null && !(decryptError instanceof IdCardService.PinVerificationError)) {
+        if (decryptError != null && !(decryptError instanceof Pin1InvalidException)) {
             errorDialog.setMessage(errorDialog.getContext().getString(
                     R.string.crypto_create_error));
             errorDialog.show();
         } else if (encryptError != null) {
-            if (encryptError instanceof RecipientMissingException) {
+            if (encryptError instanceof RecipientsEmptyException) {
                 errorDialog.setMessage(errorDialog.getContext().getString(
                         R.string.crypto_create_encrypt_error_no_recipients));
             } else {

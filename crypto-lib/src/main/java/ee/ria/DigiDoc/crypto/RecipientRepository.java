@@ -24,7 +24,7 @@ import okio.ByteString;
 public final class RecipientRepository {
 
     @WorkerThread
-    public final ImmutableList<Certificate> find(String query) throws ConnectivityException {
+    public final ImmutableList<Certificate> find(String query) throws CryptoException {
         ImmutableList.Builder<Certificate> builder = ImmutableList.builder();
 
         try {
@@ -66,7 +66,7 @@ public final class RecipientRepository {
             connection.unBind();
             connection.close();
         } catch (Exception e) {
-            throw new ConnectivityException(e);
+            throw new CryptoException("Finding recipients failed", e);
         }
 
         return builder.build();
