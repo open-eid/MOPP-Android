@@ -21,8 +21,20 @@ import ee.ria.DigiDoc.core.Certificate;
 import ee.ria.DigiDoc.core.EIDType;
 import okio.ByteString;
 
+/**
+ * Repository for encryption recipients from SK LDAP server.
+ */
 public final class RecipientRepository {
 
+    /**
+     * Finds certificates from SK LDAP server.
+     *
+     * If query is numeric then searches by personal code, otherwise by CN fields with wildcards.
+     *
+     * @param query Query to search for.
+     * @return List of matched certificates.
+     * @throws CryptoException When something went wrong
+     */
     @WorkerThread
     public final ImmutableList<Certificate> find(String query) throws CryptoException {
         ImmutableList.Builder<Certificate> builder = ImmutableList.builder();

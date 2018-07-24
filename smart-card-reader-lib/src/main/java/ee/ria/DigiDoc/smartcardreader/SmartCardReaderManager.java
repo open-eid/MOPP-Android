@@ -11,6 +11,9 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 
+/**
+ * Manage smart card readers on Android platform.
+ */
 public final class SmartCardReaderManager {
 
     /**
@@ -21,7 +24,7 @@ public final class SmartCardReaderManager {
     private final UsbManager usbManager;
     private final ImmutableList<SmartCardReader> readers;
 
-    private final Observable<String> statusObservable;
+    private final Observable<SmartCardReaderStatus> statusObservable;
 
     private SmartCardReader reader;
 
@@ -77,7 +80,7 @@ public final class SmartCardReaderManager {
         return null;
     }
 
-    public Observable<String> status() {
+    public Observable<SmartCardReaderStatus> status() {
         return statusObservable;
     }
 

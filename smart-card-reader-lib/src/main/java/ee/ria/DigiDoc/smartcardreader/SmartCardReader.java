@@ -11,7 +11,9 @@ import static java.util.Arrays.copyOf;
 import static java.util.Arrays.copyOfRange;
 
 /**
- * Log all transmit commands in hex (request and response)
+ * Base class for smart card readers.
+ *
+ * TODO Log all transmit commands in hex (request and response)
  */
 public abstract class SmartCardReader implements AutoCloseable {
 
@@ -21,8 +23,24 @@ public abstract class SmartCardReader implements AutoCloseable {
 
     public abstract boolean connected();
 
+    /**
+     * Makes the actual transaction, has to be implemented by specific readers.
+     *
+     * @param apdu APDU to send
+     * @return Return bytes.
+     * @throws SmartCardReaderException When something fails.
+     */
     protected abstract byte[] transmit(byte[] apdu) throws SmartCardReaderException;
 
+    /**
+     * Transmit APDU to the smart card reader.
+     *
+     * Automatically handles message chaining for large data transmissions and
+     * reading additional data for large responses.
+     *
+     * @return Return bytes.
+     * @throws SmartCardReaderException When something fails.
+     */
     public final byte[] transmit(int cla, int ins, int p1, int p2, byte[] data, Integer le)
             throws SmartCardReaderException {
         Timber.d("transmit: %s %s %s %s %s %s", cla, ins, p1, p2, Arrays.asList(data), le);

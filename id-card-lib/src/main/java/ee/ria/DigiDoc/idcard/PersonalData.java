@@ -10,6 +10,9 @@ import org.threeten.bp.format.DateTimeFormatterBuilder;
 
 import timber.log.Timber;
 
+/**
+ * Personal data file contents.
+ */
 @AutoValue
 public abstract class PersonalData {
 

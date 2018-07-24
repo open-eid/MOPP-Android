@@ -32,8 +32,8 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 public final class EIDHomeView extends FrameLayout implements MviView<Intent, ViewState>,
         HomeView.HomeViewChild, Navigator.BackButtonClickListener {
 
-    private static final ImmutableMap<String, Integer> STATUS_MESSAGES =
-            ImmutableMap.<String, Integer>builder()
+    private static final ImmutableMap<SmartCardReaderStatus, Integer> STATUS_MESSAGES =
+            ImmutableMap.<SmartCardReaderStatus, Integer>builder()
                     .put(SmartCardReaderStatus.IDLE,
                             R.string.eid_home_id_card_status_initial_message)
                     .put(SmartCardReaderStatus.READER_DETECTED,

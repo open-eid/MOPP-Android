@@ -17,7 +17,6 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
-import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -74,15 +73,15 @@ final class DecryptDialog extends AlertDialog {
         } else if (data == null) {
             progressContainerView.setVisibility(View.VISIBLE);
             switch (idCardDataResponse.status()) {
-                case SmartCardReaderStatus.IDLE:
+                case IDLE:
                     progressMessageView.setText(
                             R.string.crypto_create_decrypt_progress_message_initial);
                     break;
-                case SmartCardReaderStatus.READER_DETECTED:
+                case READER_DETECTED:
                     progressMessageView.setText(
                             R.string.crypto_create_decrypt_progress_message_reader_detected);
                     break;
-                case SmartCardReaderStatus.CARD_DETECTED:
+                case CARD_DETECTED:
                     progressMessageView.setText(
                             R.string.crypto_create_decrypt_progress_message_card_detected);
                     break;

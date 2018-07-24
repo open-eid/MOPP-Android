@@ -22,6 +22,9 @@ package ee.ria.DigiDoc.idcard;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
 
+/**
+ * EstEID token interface.
+ */
 public interface Token {
 
     /**
@@ -101,6 +104,13 @@ public interface Token {
      */
     byte[] decrypt(byte[] pin1, byte[] data, boolean ecc) throws SmartCardReaderException;
 
+    /**
+     * Create an instance of Token based on the current card in the reader.
+     *
+     * @param reader Smart card reader instance, must be connected.
+     * @return Token instance.
+     * @throws SmartCardReaderException When card is not supported or reader is not connected.
+     */
     static Token create(SmartCardReader reader) throws SmartCardReaderException {
         byte[] version = reader.transmit(0x00, 0xCA, 0x01, 0x00, null, 0x03);
         byte major = version[0];

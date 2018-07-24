@@ -21,6 +21,9 @@ import java.security.cert.X509Certificate;
 
 import okio.ByteString;
 
+/**
+ * Wrapper class for all the necessary things from a certificate the application needs.
+ */
 @AutoValue
 public abstract class Certificate {
 

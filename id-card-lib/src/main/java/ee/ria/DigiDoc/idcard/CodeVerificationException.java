@@ -19,6 +19,9 @@
 
 package ee.ria.DigiDoc.idcard;
 
+/**
+ * PIN1/PIN2/PUK code verification failed.
+ */
 public class CodeVerificationException extends IdCardException {
 
     CodeVerificationException(CodeType type) {
