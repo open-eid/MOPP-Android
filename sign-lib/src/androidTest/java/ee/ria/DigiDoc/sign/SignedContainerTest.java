@@ -12,8 +12,8 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -55,8 +55,8 @@ public final class SignedContainerTest {
         }
     }
 
-    @Test public void open_fileDoesNotExist_throwsFileNotFoundException() throws Exception {
-        exception.expect(FileNotFoundException.class);
+    @Test public void open_fileDoesNotExist_throwsIOException() throws Exception {
+        exception.expect(IOException.class);
         SignedContainer.open(folder.newFile());
     }
 

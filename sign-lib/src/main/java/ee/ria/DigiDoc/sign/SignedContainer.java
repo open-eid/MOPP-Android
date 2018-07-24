@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.sign;
 
+import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
 
@@ -11,7 +12,6 @@ import com.google.common.collect.ImmutableSet;
 import org.threeten.bp.Instant;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -121,15 +121,7 @@ public abstract class SignedContainer {
     }
 
     public final SignedContainer addDataFiles(ImmutableList<File> dataFiles) throws IOException {
-        Container container;
-        try {
-            container = Container.open(file().getAbsolutePath());
-        } catch (Exception e) {
-            throw new IOException(e.getMessage());
-        }
-        if (container == null) {
-            throw new IOException("Container.open returned null");
-        }
+        Container container = container(file());
         for (File dataFile : dataFiles) {
             container.addDataFile(dataFile.getAbsolutePath(), mimeType(dataFile));
         }
@@ -139,15 +131,7 @@ public abstract class SignedContainer {
 
     public final SignedContainer removeDataFile(DataFile dataFile) throws
             ContainerDataFilesEmptyException, IOException {
-        Container container;
-        try {
-            container = Container.open(file().getAbsolutePath());
-        } catch (Exception e) {
-            throw new IOException(e.getMessage());
-        }
-        if (container == null) {
-            throw new IOException("Container.open returned null");
-        }
+        Container container = container(file());
         if (container.dataFiles().size() == 1) {
             throw new ContainerDataFilesEmptyException();
         }
@@ -163,15 +147,7 @@ public abstract class SignedContainer {
     }
 
     public final File getDataFile(DataFile dataFile, File directory) throws IOException {
-        Container container;
-        try {
-            container = Container.open(file().getAbsolutePath());
-        } catch (Exception e) {
-            throw new IOException(e.getMessage());
-        }
-        if (container == null) {
-            throw new IOException("Container.open returned null");
-        }
+        Container container = container(file());
         File file = new File(directory, dataFile.name());
         DataFiles dataFiles = container.dataFiles();
         for (int i = 0; i < dataFiles.size(); i++) {
@@ -187,15 +163,7 @@ public abstract class SignedContainer {
 
     public final String calculateDataFileDigest(DataFile dataFile, String method) throws
             IOException {
-        Container container;
-        try {
-            container = Container.open(file().getAbsolutePath());
-        } catch (Exception e) {
-            throw new IOException(e.getMessage());
-        }
-        if (container == null) {
-            throw new IOException("Container.open returned null");
-        }
+        Container container = container(file());
         DataFiles dataFiles = container.dataFiles();
         for (int i = 0; i < dataFiles.size(); i++) {
             ee.ria.libdigidocpp.DataFile containerDataFile = dataFiles.get(i);
@@ -209,15 +177,7 @@ public abstract class SignedContainer {
 
     public final SignedContainer addAdEsSignature(byte[] adEsSignature) throws
             SignaturesLockedException, IOException {
-        Container container;
-        try {
-            container = Container.open(file().getAbsolutePath());
-        } catch (Exception e) {
-            throw new IOException(e.getMessage());
-        }
-        if (container == null) {
-            throw new IOException("Container.open returned null");
-        }
+        Container container = container(file());
         try {
             container.addAdESSignature(adEsSignature);
         } catch (Exception e) {
@@ -230,15 +190,7 @@ public abstract class SignedContainer {
     public final SignedContainer sign(ByteString certificate,
                                       Function<ByteString, ByteString> signFunction) throws
             Exception {
-        Container container;
-        try {
-            container = Container.open(file().getAbsolutePath());
-        } catch (Exception e) {
-            throw new IOException(e.getMessage());
-        }
-        if (container == null) {
-            throw new IOException("Container.open returned null");
-        }
+        Container container = container(file());
         ee.ria.libdigidocpp.Signature signature = container
                 .prepareWebSignature(certificate.toByteArray(), signatureProfile());
         ByteString signatureData = signFunction.apply(ByteString.of(signature.dataToSign()));
@@ -249,15 +201,7 @@ public abstract class SignedContainer {
     }
 
     public final SignedContainer removeSignature(Signature signature) throws IOException {
-        Container container;
-        try {
-            container = Container.open(file().getAbsolutePath());
-        } catch (Exception e) {
-            throw new IOException(e.getMessage());
-        }
-        if (container == null) {
-            throw new IOException("Container.open returned null");
-        }
+        Container container = container(file());
         Signatures signatures = container.signatures();
         for (int i = 0; i < signatures.size(); i++) {
             if (signature.id().equals(signatures.get(i).id())) {
@@ -304,18 +248,10 @@ public abstract class SignedContainer {
      *
      * @param file Path to existing container.
      * @return Signed container with data files and signatures.
-     * @throws FileNotFoundException When file could not be found/opened.
+     * @throws IOException When file could not be found/opened.
      */
-    public static SignedContainer open(File file) throws FileNotFoundException {
-        Container container;
-        try {
-            container = Container.open(file.getAbsolutePath());
-        } catch (Exception e) {
-            throw new FileNotFoundException(e.getMessage());
-        }
-        if (container == null) {
-            throw new FileNotFoundException("Container.open returned null");
-        }
+    public static SignedContainer open(File file) throws IOException {
+        Container container = container(file);
 
         ImmutableList.Builder<DataFile> dataFileBuilder = ImmutableList.builder();
         DataFiles dataFiles = container.dataFiles();
@@ -347,12 +283,7 @@ public abstract class SignedContainer {
         }
         if (PDF_EXTENSION.equals(extension)) {
             try {
-                Container container = Container.open(file.getAbsolutePath());
-                if (container == null) {
-                    Timber.d("Could not open PDF as signature container %s", file);
-                    return false;
-                }
-                if (container.signatures().size() > 0) {
+                if (container(file).signatures().size() > 0) {
                     return true;
                 }
             } catch (Exception e) {
@@ -417,6 +348,20 @@ public abstract class SignedContainer {
         } else {
             return SignatureStatus.UNKNOWN;
         }
+    }
+
+    @NonNull
+    private static Container container(File file) throws IOException {
+        Container container;
+        try {
+            container = Container.open(file.getAbsolutePath());
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
+        if (container == null) {
+            throw new IOException("Container.open returned null");
+        }
+        return container;
     }
 
     /**
