@@ -15,7 +15,7 @@ import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.ServiceFault;
 import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.MoppLib;
-import ee.ria.DigiDoc.sign.data.SignedContainer;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.libdigidocpp.Conf;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;

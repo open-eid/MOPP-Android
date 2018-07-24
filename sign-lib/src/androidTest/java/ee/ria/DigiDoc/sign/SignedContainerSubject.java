@@ -19,16 +19,11 @@ import java.io.InputStreamReader;
 
 import javax.annotation.Nullable;
 
-import ee.ria.DigiDoc.sign.data.DataFile;
-import ee.ria.DigiDoc.sign.data.Signature;
-import ee.ria.DigiDoc.sign.data.SignedContainer;
-
 import static com.google.common.truth.Truth.assertAbout;
 
 public final class SignedContainerSubject extends Subject<SignedContainerSubject, SignedContainer> {
 
-    public static SignedContainerSubject assertThat(File file)
-            throws IOException {
+    static SignedContainerSubject assertThat(File file) throws IOException {
         return assertAbout(signedContainers())
                 .that(SignedContainer.open(file));
     }
@@ -112,7 +107,7 @@ public final class SignedContainerSubject extends Subject<SignedContainerSubject
                     signatureMetadata.getString("id"),
                     signatureMetadata.getString("name"),
                     Instant.parse(signatureMetadata.getString("createdAt")),
-                    signatureMetadata.getString("status"),
+                    SignatureStatus.valueOf(signatureMetadata.getString("status")),
                     signatureMetadata.getString("profile")));
         }
         return builder.build();

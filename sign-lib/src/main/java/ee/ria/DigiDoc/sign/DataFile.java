@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.sign.data;
+package ee.ria.DigiDoc.sign;
 
 import com.google.auto.value.AutoValue;
 

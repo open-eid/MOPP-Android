@@ -6,9 +6,9 @@ import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 import ee.ria.DigiDoc.android.utils.mvi.State;
-import ee.ria.DigiDoc.sign.data.DataFile;
-import ee.ria.DigiDoc.sign.data.Signature;
-import ee.ria.DigiDoc.sign.data.SignedContainer;
+import ee.ria.DigiDoc.sign.DataFile;
+import ee.ria.DigiDoc.sign.Signature;
+import ee.ria.DigiDoc.sign.SignedContainer;
 
 @AutoValue
 abstract class ViewState implements MviViewState {

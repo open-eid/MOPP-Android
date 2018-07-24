@@ -19,7 +19,7 @@ import ee.ria.DigiDoc.idcard.CodeType;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.idcard.PersonalData;
 import ee.ria.DigiDoc.idcard.Token;
-import ee.ria.DigiDoc.sign.data.SignedContainer;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;

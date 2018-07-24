@@ -39,7 +39,7 @@ import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 import static ee.ria.DigiDoc.crypto.CryptoContainer.createContainerFileName;
 import static ee.ria.DigiDoc.crypto.CryptoContainer.isContainerFileName;
-import static ee.ria.DigiDoc.sign.data.SignedContainer.mimeType;
+import static ee.ria.DigiDoc.sign.SignedContainer.mimeType;
 
 /**
  * Error when opening crypto container: show error message and close on dialog cancel?

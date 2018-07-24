@@ -24,10 +24,10 @@ import java.lang.annotation.RetentionPolicy;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.Formatter;
-import ee.ria.DigiDoc.sign.data.DataFile;
-import ee.ria.DigiDoc.sign.data.Signature;
-import ee.ria.DigiDoc.sign.data.SignatureStatus;
-import ee.ria.DigiDoc.sign.data.SignedContainer;
+import ee.ria.DigiDoc.sign.DataFile;
+import ee.ria.DigiDoc.sign.Signature;
+import ee.ria.DigiDoc.sign.SignatureStatus;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -323,10 +323,10 @@ final class SignatureUpdateAdapter extends
                     .subscribe(adapter.signatureClicksSubject);
             nameView.setText(item.signature().name());
             switch (item.signature().status()) {
-                case SignatureStatus.INVALID:
+                case INVALID:
                     statusView.setText(R.string.signature_update_signature_status_invalid);
                     break;
-                case SignatureStatus.UNKNOWN:
+                case UNKNOWN:
                     statusView.setText(R.string.signature_update_signature_status_unknown);
                     break;
                 default:
@@ -335,11 +335,11 @@ final class SignatureUpdateAdapter extends
             }
             statusView.setTextColor(item.signature().valid() ? colorValid : colorInvalid);
             switch (item.signature().status()) {
-                case SignatureStatus.WARNING:
+                case WARNING:
                     statusCautionView.setVisibility(View.VISIBLE);
                     statusCautionView.setText(R.string.signature_update_signature_status_warning);
                     break;
-                case SignatureStatus.NON_QSCD:
+                case NON_QSCD:
                     statusCautionView.setVisibility(View.VISIBLE);
                     statusCautionView.setText(R.string.signature_update_signature_status_non_qscd);
                     break;
@@ -408,9 +408,9 @@ final class SignatureUpdateAdapter extends
     @AutoValue
     static abstract class StatusItem extends Item {
 
-        abstract ImmutableMap<String, Integer> counts();
+        abstract ImmutableMap<SignatureStatus, Integer> counts();
 
-        static StatusItem create(ImmutableMap<String, Integer> counts) {
+        static StatusItem create(ImmutableMap<SignatureStatus, Integer> counts) {
             return new AutoValue_SignatureUpdateAdapter_StatusItem(
                     R.layout.signature_update_list_item_status, counts);
         }

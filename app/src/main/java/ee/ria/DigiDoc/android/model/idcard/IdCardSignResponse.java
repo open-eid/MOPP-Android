@@ -6,7 +6,7 @@ import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.idcard.Token;
-import ee.ria.DigiDoc.sign.data.SignedContainer;
+import ee.ria.DigiDoc.sign.SignedContainer;
 
 @AutoValue
 public abstract class IdCardSignResponse {

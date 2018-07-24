@@ -5,9 +5,9 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.utils.files.FileStream;
-import ee.ria.DigiDoc.sign.data.DataFile;
-import ee.ria.DigiDoc.sign.data.Signature;
-import ee.ria.DigiDoc.sign.data.SignedContainer;
+import ee.ria.DigiDoc.sign.DataFile;
+import ee.ria.DigiDoc.sign.Signature;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 

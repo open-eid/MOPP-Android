@@ -9,9 +9,9 @@ import java.util.Locale;
 
 import ee.ria.DigiDoc.mobileid.dto.request.DataFileDto;
 import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
-import ee.ria.DigiDoc.sign.data.DataFile;
-import ee.ria.DigiDoc.sign.data.Signature;
-import ee.ria.DigiDoc.sign.data.SignedContainer;
+import ee.ria.DigiDoc.sign.DataFile;
+import ee.ria.DigiDoc.sign.Signature;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import timber.log.Timber;
 
 final class MobileCreateSignatureRequestHelper {

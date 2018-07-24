@@ -7,8 +7,8 @@ import com.google.auto.value.AutoValue;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
-import ee.ria.DigiDoc.sign.data.DataFile;
-import ee.ria.DigiDoc.sign.data.Signature;
+import ee.ria.DigiDoc.sign.DataFile;
+import ee.ria.DigiDoc.sign.Signature;
 
 interface Intent extends MviIntent {
 

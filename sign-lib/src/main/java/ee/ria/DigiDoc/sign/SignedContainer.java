@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.sign.data;
+package ee.ria.DigiDoc.sign;
 
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
@@ -80,8 +80,8 @@ public abstract class SignedContainer {
         return true;
     }
 
-    public final ImmutableMap<String, Integer> invalidSignatureCounts() {
-        Map<String, Integer> counts = new HashMap<>();
+    public final ImmutableMap<SignatureStatus, Integer> invalidSignatureCounts() {
+        Map<SignatureStatus, Integer> counts = new HashMap<>();
         counts.put(SignatureStatus.UNKNOWN, 0);
         counts.put(SignatureStatus.INVALID, 0);
         for (Signature signature : signatures()) {
@@ -383,7 +383,7 @@ public abstract class SignedContainer {
         String id = signature.id();
         String name = signatureName(signature);
         Instant createdAt = Instant.parse(signature.trustedSigningTime());
-        @SignatureStatus String status = signatureStatus(signature);
+        SignatureStatus status = signatureStatus(signature);
         String profile = signature.profile();
         return Signature.create(id, name, createdAt, status, profile);
     }
@@ -400,7 +400,7 @@ public abstract class SignedContainer {
         return commonName == null ? signature.signedBy() : commonName;
     }
 
-    @SignatureStatus private static String signatureStatus(
+    private static SignatureStatus signatureStatus(
             ee.ria.libdigidocpp.Signature signature) {
         Validator validator = new Validator(signature);
         int status = validator.status().swigValue();

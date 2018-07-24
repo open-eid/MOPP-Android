@@ -2,7 +2,7 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.support.annotation.Nullable;
 
-import ee.ria.DigiDoc.sign.data.SignedContainer;
+import ee.ria.DigiDoc.sign.SignedContainer;
 
 public interface SignatureAddResponse {
 

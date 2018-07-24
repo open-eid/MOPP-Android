@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.sign.data;
+package ee.ria.DigiDoc.sign;
 
 import com.google.auto.value.AutoValue;
 
@@ -25,7 +25,7 @@ public abstract class Signature {
     /**
      * Status of the signature.
      */
-    @SignatureStatus public abstract String status();
+    public abstract SignatureStatus status();
 
     /**
      * Whether this signature is valid or invalid.
@@ -61,7 +61,7 @@ public abstract class Signature {
      * @param profile Signature profile.
      */
     public static Signature create(String id, String name, Instant createdAt,
-                            @SignatureStatus String status, String profile) {
+                                   SignatureStatus status, String profile) {
         return new AutoValue_Signature(id, name, createdAt, status, profile);
     }
 }
