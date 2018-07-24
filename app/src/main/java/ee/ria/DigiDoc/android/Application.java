@@ -59,7 +59,7 @@ import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
-import ee.ria.DigiDoc.sign.MoppLib;
+import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
 import ee.ria.DigiDoc.smartcardreader.acs.AcsSmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.identiv.IdentivSmartCardReader;
@@ -75,7 +75,7 @@ public class Application extends android.app.Application {
         setupBouncyCastle();
         setupTimber();
         setupThreeTenAbp();
-        setupMoppLib();
+        setupSignLib();
         setupRxJava();
         setupDagger();
     }
@@ -112,8 +112,8 @@ public class Application extends android.app.Application {
 
     // Container configuration
 
-    private void setupMoppLib() {
-        MoppLib.init(this);
+    private void setupSignLib() {
+        SignLib.init(this);
     }
 
     private void setupRxJava() {

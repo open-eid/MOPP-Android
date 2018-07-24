@@ -14,7 +14,7 @@ import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusRespon
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.ServiceFault;
 import ee.ria.DigiDoc.mobileid.service.MobileSignService;
-import ee.ria.DigiDoc.sign.MoppLib;
+import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.libdigidocpp.Conf;
 import io.reactivex.ObservableEmitter;
@@ -99,7 +99,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         intent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));
         intent.putExtra(ACCESS_TOKEN_PASS, conf == null ? "" : conf.PKCS12Pass());
         intent.putExtra(ACCESS_TOKEN_PATH,
-                MoppLib.accessCertificateDir(application).getAbsolutePath());
+                SignLib.accessCertificateDir(application).getAbsolutePath());
         application.startService(intent);
     }
 }

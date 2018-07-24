@@ -23,6 +23,10 @@ import static ee.ria.DigiDoc.sign.SignedContainerSubject.assertThat;
 
 public final class SignedContainerTest {
 
+    static {
+        SignLib.init(InstrumentationRegistry.getTargetContext());
+    }
+
     private static final String DIR = "signed-containers";
     private static final String METADATA_EXTENSION = "json";
 

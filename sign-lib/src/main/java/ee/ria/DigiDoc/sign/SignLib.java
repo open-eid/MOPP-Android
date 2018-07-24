@@ -14,7 +14,7 @@ import java.util.zip.ZipInputStream;
 import ee.ria.libdigidocpp.digidoc;
 import timber.log.Timber;
 
-public final class MoppLib {
+public final class SignLib {
 
     /**
      * Sub-directory name in {@link Context#getCacheDir() cache dir} for schema.
@@ -23,6 +23,11 @@ public final class MoppLib {
 
     private static final String ACCESS_CERTIFICATE_NAME = "878252.p12";
 
+    /**
+     * Initialize sign-lib.
+     *
+     * Unzips the schema, access certificate and initializes libdigidocpp.
+     */
     public static void init(Context context) {
         initNativeLibs();
         try {
@@ -81,5 +86,5 @@ public final class MoppLib {
         return schemaDir;
     }
 
-    private MoppLib() {}
+    private SignLib() {}
 }
