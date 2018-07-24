@@ -29,8 +29,8 @@ High level API for communicating with supported smart card readers in Android.
 
 Currently supported smart card readers:
 
-* https://www.acs.com.hk/en/products/228/acr38u-nd-pocketmate-smart-card-reader-micro-usb/
-* https://www.identiv.com/products/smart-card-readers/contact/scr3500/
+* [ACR38U-ND PocketMate Smart Card Reader](https://www.acs.com.hk/en/products/228/acr38u-nd-pocketmate-smart-card-reader-micro-usb)
+* [Identiv uTrust SmartFold SCR3500 Family](https://www.identiv.com/products/smart-card-readers/contact/scr3500)
 
 ### mobile-id-lib
 
