@@ -186,6 +186,7 @@
 
     <string name="crypto_recipients_title" tools:ignore="MissingTranslation">Add recipients</string>
     <string name="crypto_recipients_search" tools:ignore="MissingTranslation">Enter personal code, company or registry code</string>
+    <string name="crypto_recipients_search_result_empty" tools:ignore="MissingTranslation">Person or company does not own a valid certificate.\nIt is necessary to have a valid certificate for encryption.\nContact for assistance by email abi@id.ee or call 1777 (only from Estonia), (+372) 677 3377 when calling from abroad.</string>
     <string name="crypto_recipients_selected_subhead" tools:ignore="MissingTranslation">Selected recipients</string>
     <string name="crypto_recipients_done_button" tools:ignore="MissingTranslation">CONFIRM SELECTION</string>
 

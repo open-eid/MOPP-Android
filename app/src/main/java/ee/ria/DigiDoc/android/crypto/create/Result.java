@@ -157,6 +157,19 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
+    abstract class RecipientsAddButtonClickResult implements Result {
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith().recipientsSearchResult(null).build();
+        }
+
+        static RecipientsAddButtonClickResult create() {
+            return new AutoValue_Result_RecipientsAddButtonClickResult();
+        }
+    }
+
+    @AutoValue
     abstract class RecipientsSearchResult implements Result {
 
         @State abstract String state();

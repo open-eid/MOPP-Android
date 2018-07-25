@@ -20,6 +20,7 @@ import java.io.File;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.core.Certificate;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -72,7 +73,7 @@ final class CryptoCreateAdapter extends
             builder.add(RecipientItem.create(recipient, recipientsRemoveEnabled, false, false));
         }
         if (recipients.size() == 0) {
-            builder.add(EmptyTextItem.create());
+            builder.add(EmptyTextItem.create(R.string.crypto_create_recipients_empty));
         }
         if (recipientsAddEnabled) {
             builder.add(AddButtonItem.create(R.string.crypto_create_recipients_add_button));
@@ -80,12 +81,17 @@ final class CryptoCreateAdapter extends
         items(builder.build());
     }
 
-    void dataForRecipients(ImmutableList<Certificate> searchResults,
+    void dataForRecipients(@State String searchState,
+                           @Nullable ImmutableList<Certificate> searchResults,
                            ImmutableList<Certificate> recipients) {
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
-        for (Certificate searchResult : searchResults) {
-            builder.add(RecipientItem.create(searchResult, false, true,
-                    !recipients.contains(searchResult)));
+        if (searchResults != null && searchResults.size() > 0) {
+            for (Certificate searchResult : searchResults) {
+                builder.add(RecipientItem.create(searchResult, false, true,
+                        !recipients.contains(searchResult)));
+            }
+        } else if (searchResults != null && !searchState.equals(State.ACTIVE)) {
+            builder.add(EmptyTextItem.create(R.string.crypto_recipients_search_result_empty));
         }
         if (recipients.size() > 0) {
             builder.add(SubheadItem.create(R.string.crypto_recipients_selected_subhead));
@@ -251,12 +257,17 @@ final class CryptoCreateAdapter extends
 
     static final class EmptyTextViewHolder extends CreateViewHolder<EmptyTextItem> {
 
+        private final TextView textView;
+
         EmptyTextViewHolder(View itemView) {
             super(itemView);
+            textView = itemView.findViewById(R.id.cryptoEmptyText);
         }
 
         @Override
-        void bind(CryptoCreateAdapter adapter, EmptyTextItem item) {}
+        void bind(CryptoCreateAdapter adapter, EmptyTextItem item) {
+            textView.setText(item.text());
+        }
     }
 
     static final class DataFileViewHolder extends CreateViewHolder<DataFileItem> {
@@ -382,9 +393,11 @@ final class CryptoCreateAdapter extends
     @AutoValue
     static abstract class EmptyTextItem extends Item {
 
-        static EmptyTextItem create() {
+        @StringRes abstract int text();
+
+        static EmptyTextItem create(@StringRes int text) {
             return new AutoValue_CryptoCreateAdapter_EmptyTextItem(
-                    R.layout.crypto_create_list_item_empty_text);
+                    R.layout.crypto_create_list_item_empty_text, text);
         }
     }
 

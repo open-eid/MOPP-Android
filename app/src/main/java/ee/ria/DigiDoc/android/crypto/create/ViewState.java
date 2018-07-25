@@ -32,7 +32,7 @@ abstract class ViewState implements MviViewState {
     @Nullable abstract Throwable dataFilesAddError();
 
     @State abstract String recipientsSearchState();
-    abstract ImmutableList<Certificate> recipientsSearchResult();
+    @Nullable abstract ImmutableList<Certificate> recipientsSearchResult();
     @Nullable abstract Throwable recipientsSearchError();
 
     @State abstract String encryptState();
@@ -61,7 +61,6 @@ abstract class ViewState implements MviViewState {
                 .sendButtonVisible(false)
                 .dataFilesAddState(State.IDLE)
                 .recipientsSearchState(State.IDLE)
-                .recipientsSearchResult(ImmutableList.of())
                 .encryptState(State.IDLE)
                 .encryptSuccessMessageVisible(false)
                 .decryptState(State.IDLE)
@@ -86,7 +85,7 @@ abstract class ViewState implements MviViewState {
         Builder dataFilesAddState(@State String dataFilesAddState);
         Builder dataFilesAddError(@Nullable Throwable dataFilesAddError);
         Builder recipientsSearchState(@State String recipientsSearchState);
-        Builder recipientsSearchResult(ImmutableList<Certificate> recipientsSearchResult);
+        Builder recipientsSearchResult(@Nullable ImmutableList<Certificate> recipientsSearchResult);
         Builder recipientsSearchError(@Nullable Throwable recipientsSearchError);
         Builder encryptState(@State String encryptState);
         Builder encryptSuccessMessageVisible(boolean encryptSuccessMessageVisible);

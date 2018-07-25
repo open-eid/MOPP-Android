@@ -64,7 +64,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     private final ObservableTransformer<Intent.DataFileViewIntent, Result> dataFileView;
 
     private final ObservableTransformer<Intent.RecipientsAddButtonClickIntent,
-                                        Result> recipientsAddButtonClick;
+                                        Result.RecipientsAddButtonClickResult>
+            recipientsAddButtonClick;
 
     private final ObservableTransformer<Intent.RecipientsScreenUpButtonClickIntent,
                                         Result> recipientsScreenUpButtonClick;
@@ -194,7 +195,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         recipientsAddButtonClick = upstream -> upstream.switchMap(intent -> {
             navigator.execute(Transaction.push(
                     CryptoRecipientsScreen.create(intent.cryptoCreateScreenId())));
-            return Observable.empty();
+            return Observable.just(Result.RecipientsAddButtonClickResult.create());
         });
 
         recipientsScreenUpButtonClick = upstream -> upstream.switchMap(intent -> {

@@ -111,7 +111,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         recipients = state.recipients();
 
         setActivity(state.recipientsSearchState().equals(State.ACTIVE));
-        adapter.dataForRecipients(state.recipientsSearchResult(), recipients);
+        adapter.dataForRecipients(state.recipientsSearchState(), state.recipientsSearchResult(),
+                recipients);
     }
 
     @Override
