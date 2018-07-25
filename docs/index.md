@@ -13,6 +13,14 @@ High-level support for signing and parsing containers.
 
 [View JavaDoc]({{ site.baseurl }}{% link /sign-lib/javadoc/release/index.html %})
 
+**Key classes:**
+
+* [SignLib]({{ site.baseurl }}{% link /sign-lib/javadoc/release/ee/ria/DigiDoc/sign/SignLib.html %})
+* [SignedContainer]({{ site.baseurl }}{% link /sign-lib/javadoc/release/ee/ria/DigiDoc/sign/SignedContainer.html %})
+* [DataFile]({{ site.baseurl }}{% link /sign-lib/javadoc/release/ee/ria/DigiDoc/sign/DataFile.html %})
+* [Signature]({{ site.baseurl }}{% link /sign-lib/javadoc/release/ee/ria/DigiDoc/sign/Signature.html %})
+* [SignatureStatus]({{ site.baseurl }}{% link /sign-lib/javadoc/release/ee/ria/DigiDoc/sign/SignatureStatus.html %})
+
 ### crypto-lib
 
 High-level support for encryption/decryption.
