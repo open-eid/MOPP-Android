@@ -12,6 +12,7 @@ Several modules are being developed along with the mobile application that can b
 High-level support for signing and parsing containers.
 
 * {{ site.baseurl }}
+* {% link /sign-lib/javadoc/release/index.html %}
 
 ### crypto-lib
 
