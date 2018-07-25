@@ -3,6 +3,31 @@
 Android application that allows signing containers with Mobile-ID and ID-card 
 and encrypting/decrypting containers with ID-card.
 
+## Application
+
+Application is developed using single-activity approach using 
+[Conductor](https://github.com/bluelinelabs/Conductor) as navigator.
+
+Architecture is based on MVI (Model-View-Intent) paradigm and relies heavily on 
+[RxJava](https://github.com/ReactiveX/RxJava)
+
+Code is organized in packages by feature:
+
+* **crypto**
+  * **create** - Encrypt/decrypt
+  * **home** - Crypto tab in home view
+* **eid** - My eID tab in home view
+* **main**
+  * **about** - Info screen in main menu
+  * **diagnostics** - Diagnostics screen in main menu
+  * **home** - Home screen
+  * **settings** - Settings screen in main menu
+* **signature**
+  * **create** - Handles opening signature container files
+  * **home** - Signature tab in home view
+  * **list** - Recent documents tab in main menu
+  * **update** - View/sign container documents
+
 ## Modules
 
 Several modules are being developed along with the mobile application that can be used separately.
@@ -25,7 +50,7 @@ High-level support for signing and parsing containers.
 
 High-level support for encryption/decryption.
 
-Ability to query for recipients from ldap.sk.ee.
+Ability to query for recipients from [ldap.sk.ee](https://www.sk.ee/en/repository/ldap).
 
 Decryption needs ID-card.
 
