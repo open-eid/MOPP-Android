@@ -11,8 +11,7 @@ Several modules are being developed along with the mobile application that can b
 
 High-level support for signing and parsing containers.
 
-* [SignedContainer]({% link /docs/sign-lib/javadoc/release/index.html %})
-* [SignedContainer]({% link /docs/sign-lib/javadoc/release/index.html %})
+* {{ site.baseurl }}
 
 ### crypto-lib
 
