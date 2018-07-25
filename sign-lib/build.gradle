@@ -26,10 +26,10 @@ android {
 
 androidJavadoc {
     variantFilter = { variant ->
-        return variant.name == "release"
+        return variant.name == 'release'
     }
     outputDir = { Project project ->
-        "${project.rootProject.projectDir}/docs/sign-lib/javadoc/"
+        "${project.rootProject.projectDir}/docs/${project.name}/javadoc/"
     }
 }
 

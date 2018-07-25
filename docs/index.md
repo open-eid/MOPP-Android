@@ -29,6 +29,14 @@ Ability to query for recipients from ldap.sk.ee.
 
 Decryption needs ID-card.
 
+[View JavaDoc]({{ site.baseurl }}{% link /sign-lib/javadoc/release/index.html %})
+
+**Key classes:**
+
+* [CryptoContainer]({{ site.baseurl }}{% link /crypto-lib/javadoc/release/ee/ria/DigiDoc/crypto/CryptoContainer.html %})
+* [RecipientRepository]({{ site.baseurl }}{% link /crypto-lib/javadoc/release/ee/ria/DigiDoc/crypto/RecipientRepository.html %})
+* [DecryptToken]({{ site.baseurl }}{% link /crypto-lib/javadoc/release/ee/ria/DigiDoc/crypto/DecryptToken.html %})
+
 ### id-card-lib
 
 Java API for communicating with ID-cards (APDU commands for EstEID v. 3.5 and EstEID v. 3.4).

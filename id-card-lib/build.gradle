@@ -19,6 +19,15 @@ android {
     }
 }
 
+androidJavadoc {
+    variantFilter = { variant ->
+        return variant.name == 'release'
+    }
+    outputDir = { Project project ->
+        "${project.rootProject.projectDir}/docs/${project.name}/javadoc/"
+    }
+}
+
 dependencies {
     api "com.android.support:support-annotations:${androidSupportLibraryVersion}"
     implementation "com.android.support:appcompat-v7:${androidSupportLibraryVersion}"
