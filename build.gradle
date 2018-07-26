@@ -43,7 +43,7 @@ ext {
     threetenabpVersion = '1.1.0'
     expandablelayoutVersion = '2.9.2'
     apacheDirectoryVersion = '1.0.2'
-    cdoc4jVersion = '1.1'
+    cdoc4jVersion = '1.2'
     junitVersion = '4.12'
     truthVersion = '0.42'
     mockitoVersion = '2.19.1'

@@ -5,7 +5,6 @@
         <ignore path="**/auto-value-*.jar" /> <!-- javax.tools -->
         <ignore path="**/junit-*.jar" /> <!-- java.lang.management -->
         <ignore path="**/api-ldap-client-all-*.jar" /> <!-- several -->
-        <ignore path="**/cdoc4j-*.jar" /> <!-- java.xml.stream TODO remove cdoc4j when released -->
-        <ignore path="**/woodstox-core-*.jar" /> <!-- java.xml.stream TODO cdoc4j remove when released -->
+        <ignore path="**/woodstox-core-*.jar" /> <!-- java.xml.stream -->
     </issue>
 </lint>

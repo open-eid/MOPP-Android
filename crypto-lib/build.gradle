@@ -42,12 +42,9 @@ dependencies {
 
     implementation "org.apache.directory.api:api-ldap-client-all:${apacheDirectoryVersion}"
 
-    implementation "commons-io:commons-io:2.6"
-    implementation "com.fasterxml.woodstox:woodstox-core:5.1.0"
-    implementation ("net.java.dev.stax-utils:stax-utils:20070216") {
-        exclude group: 'com.bea.xml'
+    implementation ("org.open-eid.cdoc4j:cdoc4j:${cdoc4jVersion}") {
+        exclude group: 'org.slf4j'
     }
-    implementation files('libs/cdoc4j-1.1.jar')
 
     api project(':core-lib')
 
