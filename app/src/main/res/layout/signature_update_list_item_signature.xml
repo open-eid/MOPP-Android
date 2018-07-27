@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:lines="1"
+            android:singleLine="true"
             android:ellipsize="end"
             tools:text="Mari Maasikas, 48405050123" />
 
@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?attr/textAppearanceListItemSecondary"
-                android:lines="1"
+                android:singleLine="true"
                 android:ellipsize="end"
                 android:text="@string/signature_update_signature_status_valid"
                 android:textColor="@color/success" />
@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/material_baseline_grid_1x"
-                android:lines="1"
+                android:singleLine="true"
                 android:ellipsize="end"
                 android:text="@string/signature_update_signature_status_warning"
                 android:textColor="@color/warning" />
@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceListItemSecondary"
-            android:lines="1"
+            android:singleLine="true"
             android:ellipsize="end"
             tools:text="Signed 01 June 2015 13:45" />
 
