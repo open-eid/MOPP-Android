@@ -9,7 +9,6 @@ import javax.inject.Singleton;
 
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.core.Certificate;
-import ee.ria.DigiDoc.core.EIDType;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.crypto.CryptoException;
 import ee.ria.DigiDoc.crypto.DecryptToken;
@@ -115,9 +114,8 @@ public final class IdCardService {
         Certificate authCertificate = Certificate.create(authenticationCertificateData);
         Certificate signCertificate = Certificate.create(signingCertificateData);
 
-        return IdCardData.create(EIDType.parseOrganization(authCertificate.organization()),
-                personalData, authCertificate, signCertificate, pin1RetryCounter, pin2RetryCounter,
-                pukRetryCounter);
+        return IdCardData.create(authCertificate.type(), personalData, authCertificate,
+                signCertificate, pin1RetryCounter, pin2RetryCounter, pukRetryCounter);
     }
 
     static final class IdCardToken implements DecryptToken {

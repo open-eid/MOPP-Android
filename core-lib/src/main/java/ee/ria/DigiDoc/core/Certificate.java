@@ -5,6 +5,7 @@ import com.google.auto.value.AutoValue;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x509.CertificatePolicies;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
@@ -54,7 +55,10 @@ public abstract class Certificate {
 
     public static Certificate create(ByteString data) throws IOException {
         X509CertificateHolder certificate = new X509CertificateHolder(data.toByteArray());
-        Instant notAfter = Instant.ofEpochMilli(certificate.getNotAfter().getTime());
+        Extensions extensions = certificate.getExtensions();
+
+        CertificatePolicies certificatePolicies = CertificatePolicies.fromExtensions(extensions);
+        EIDType type = EIDType.parse(certificatePolicies);
 
         RDN[] rdNs = certificate.getSubject().getRDNs(ASN1ObjectIdentifier.getInstance(BCStyle.O));
         String organization = rdNs[0].getFirst().getValue().toString().trim();
@@ -62,17 +66,19 @@ public abstract class Certificate {
         rdNs = certificate.getSubject().getRDNs(ASN1ObjectIdentifier.getInstance(BCStyle.CN));
         String commonName = rdNs[0].getFirst().getValue().toString().trim();
 
+        Instant notAfter = Instant.ofEpochMilli(certificate.getNotAfter().getTime());
+
         boolean ellipticCurve = certificate.getSubjectPublicKeyInfo().getAlgorithm().getAlgorithm()
                 .equals(X9ObjectIdentifiers.id_ecPublicKey);
 
-        Extensions extensions = certificate.getExtensions();
         KeyUsage keyUsage = KeyUsage.fromExtensions(extensions);
+
         ExtendedKeyUsage extendedKeyUsage = ExtendedKeyUsage.fromExtensions(extensions);
         if (extendedKeyUsage == null) {
             extendedKeyUsage = new ExtendedKeyUsage(new KeyPurposeId[]{});
         }
 
-        return new AutoValue_Certificate(EIDType.parseOrganization(organization), organization,
-                commonName, notAfter, ellipticCurve, keyUsage, extendedKeyUsage, data);
+        return new AutoValue_Certificate(type, organization, commonName, notAfter, ellipticCurve,
+                keyUsage, extendedKeyUsage, data);
     }
 }

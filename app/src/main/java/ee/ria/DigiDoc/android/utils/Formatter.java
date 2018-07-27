@@ -115,6 +115,7 @@ public final class Formatter {
                     .put(EIDType.ID_CARD, R.string.eid_type_id_card)
                     .put(EIDType.DIGI_ID, R.string.eid_type_digi_id)
                     .put(EIDType.MOBILE_ID, R.string.eid_type_mobile_id)
+                    .put(EIDType.E_SEAL, R.string.eid_type_e_seal)
                     .build();
 
     static final class ForegroundColorTagHandler implements Html.TagHandler {
