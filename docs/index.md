@@ -32,6 +32,9 @@ Code is organized in packages by feature:
 
 Several modules are being developed along with the mobile application that can be used separately.
 
+![Relationships between application and modules]
+({{ site.baseurl }}{% link /images/mopp-android-modules.png %})
+
 ### sign-lib
 
 High-level support for signing and parsing containers.
