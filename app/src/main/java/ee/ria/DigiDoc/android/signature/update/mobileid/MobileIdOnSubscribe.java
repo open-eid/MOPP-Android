@@ -9,26 +9,26 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
+import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
+import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse;
+import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureResponse;
+import ee.ria.DigiDoc.mobileid.dto.response.ServiceFault;
+import ee.ria.DigiDoc.mobileid.service.MobileSignService;
+import ee.ria.DigiDoc.sign.SignLib;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.libdigidocpp.Conf;
-import ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest;
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
-import ee.ria.mopp.androidmobileid.dto.response.MobileCreateSignatureResponse;
-import ee.ria.mopp.androidmobileid.dto.response.ServiceFault;
-import ee.ria.mopp.androidmobileid.service.MobileSignService;
-import ee.ria.mopplib.MoppLib;
-import ee.ria.mopplib.data.SignedContainer;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 
-import static ee.ria.mopp.androidmobileid.dto.request.MobileCreateSignatureRequest.toJson;
-import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
-import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
-import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.CREATE_SIGNATURE_CHALLENGE;
-import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
-import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.CREATE_SIGNATURE_STATUS;
-import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.MID_BROADCAST_ACTION;
-import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.MID_BROADCAST_TYPE_KEY;
-import static ee.ria.mopp.androidmobileid.service.MobileSignConstants.SERVICE_FAULT;
+import static ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest.toJson;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_CHALLENGE;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_STATUS;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MID_BROADCAST_ACTION;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MID_BROADCAST_TYPE_KEY;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SERVICE_FAULT;
 
 public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileIdResponse> {
 
@@ -99,7 +99,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         intent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));
         intent.putExtra(ACCESS_TOKEN_PASS, conf == null ? "" : conf.PKCS12Pass());
         intent.putExtra(ACCESS_TOKEN_PATH,
-                MoppLib.accessCertificateDir(application).getAbsolutePath());
+                SignLib.accessCertificateDir(application).getAbsolutePath());
         application.startService(intent);
     }
 }

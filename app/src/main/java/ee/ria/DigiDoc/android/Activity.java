@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 
 import java.util.concurrent.Callable;
 
@@ -14,7 +13,6 @@ import javax.inject.Singleton;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.home.HomeScreen;
-import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 
@@ -65,11 +63,7 @@ public final class Activity extends AppCompatActivity {
 
         @Override
         public Screen call() {
-            if (intent != null && TextUtils.equals(intent.getAction(), Intent.ACTION_VIEW)
-                    && intent.getData() != null) {
-                return SignatureCreateScreen.create(intent);
-            }
-            return HomeScreen.create();
+            return HomeScreen.create(intent);
         }
     }
 }

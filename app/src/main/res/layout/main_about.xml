@@ -530,14 +530,14 @@
                 android:textAppearance="@style/TextAppearance.Application.Value" />
 
             <TextView
-                android:id="@id/mainAboutSpongyCastleVersionTitle"
+                android:id="@id/mainAboutBouncyCastleVersionTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
                 android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
                 android:gravity="center"
                 android:paddingBottom="@dimen/material_card_actions_row_padding"
-                android:text="@string/main_about_spongy_castle_title"
+                android:text="@string/main_about_bouncy_castle_title"
                 android:textAppearance="@style/TextAppearance.Application.Value" />
 
             <TextView

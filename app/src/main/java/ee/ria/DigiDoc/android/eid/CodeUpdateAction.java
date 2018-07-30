@@ -9,7 +9,7 @@ import com.ryanharter.auto.value.parcel.ParcelAdapter;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.parcel.ImmutableIntegerListTypeAdapter;
-import ee.ria.tokenlibrary.Token;
+import ee.ria.DigiDoc.idcard.CodeType;
 
 @AutoValue
 abstract class CodeUpdateAction implements Parcelable {
@@ -18,7 +18,7 @@ abstract class CodeUpdateAction implements Parcelable {
     private static final int PIN2_MIN_LENGTH = 5;
     private static final int PUK_MIN_LENGTH = 8;
 
-    abstract Token.PinType pinType();
+    abstract CodeType pinType();
     @CodeUpdateType abstract String updateType();
 
     @StringRes abstract int titleRes();
@@ -48,7 +48,7 @@ abstract class CodeUpdateAction implements Parcelable {
 
     @StringRes abstract int repeatMismatchErrorRes();
 
-    static CodeUpdateAction create(Token.PinType pinType, @CodeUpdateType String updateType) {
+    static CodeUpdateAction create(CodeType pinType, @CodeUpdateType String updateType) {
         int titleRes;
         ImmutableList<Integer> textRowsRes;
         int currentRes;
@@ -72,7 +72,7 @@ abstract class CodeUpdateAction implements Parcelable {
         int newSameAsCurrentErrorRes;
         int repeatMismatchErrorRes;
 
-        if (pinType == Token.PinType.PIN1) {
+        if (pinType == CodeType.PIN1) {
             if (updateType.equals(CodeUpdateType.EDIT)) {
                 titleRes = R.string.eid_home_code_update_title_pin1_edit;
                 textRowsRes = ImmutableList.of(
@@ -121,7 +121,7 @@ abstract class CodeUpdateAction implements Parcelable {
             newTooEasyErrorRes = R.string.eid_home_code_update_new_error_too_easy_pin1;
             newSameAsCurrentErrorRes = R.string.eid_home_code_update_new_error_same_as_current_pin1;
             repeatMismatchErrorRes = R.string.eid_home_code_update_repeat_error_mismatch_pin1;
-        } else if (pinType == Token.PinType.PIN2) {
+        } else if (pinType == CodeType.PIN2) {
             if (updateType.equals(CodeUpdateType.EDIT)) {
                 titleRes = R.string.eid_home_code_update_title_pin2_edit;
                 textRowsRes = ImmutableList.of(

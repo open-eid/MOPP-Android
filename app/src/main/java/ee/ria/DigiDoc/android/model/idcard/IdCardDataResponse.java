@@ -4,13 +4,13 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
-import ee.ria.scardcomlibrary.SmartCardReaderStatus;
-import ee.ria.tokenlibrary.Token;
+import ee.ria.DigiDoc.idcard.Token;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
 
 @AutoValue
 public abstract class IdCardDataResponse {
 
-    @SmartCardReaderStatus public abstract String status();
+    public abstract SmartCardReaderStatus status();
 
     @Nullable public abstract IdCardData data();
 
@@ -38,7 +38,7 @@ public abstract class IdCardDataResponse {
         return create(SmartCardReaderStatus.CARD_DETECTED, null, error, null);
     }
 
-    private static IdCardDataResponse create(@SmartCardReaderStatus String status,
+    private static IdCardDataResponse create(SmartCardReaderStatus status,
                                              @Nullable IdCardData data, @Nullable Throwable error,
                                              @Nullable Token token) {
         return new AutoValue_IdCardDataResponse(status, data, error, token);

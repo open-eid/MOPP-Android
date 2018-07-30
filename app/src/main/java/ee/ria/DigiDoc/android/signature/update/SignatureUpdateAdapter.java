@@ -2,10 +2,6 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.annotation.StringRes;
@@ -22,13 +18,16 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.Formatter;
-import ee.ria.mopplib.data.DataFile;
-import ee.ria.mopplib.data.Signature;
-import ee.ria.mopplib.data.SignatureStatus;
-import ee.ria.mopplib.data.SignedContainer;
+import ee.ria.DigiDoc.sign.DataFile;
+import ee.ria.DigiDoc.sign.Signature;
+import ee.ria.DigiDoc.sign.SignatureStatus;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -118,10 +117,6 @@ final class SignatureUpdateAdapter extends
 
     Observable<DataFile> documentRemoveClicks() {
         return documentRemoveClicksSubject;
-    }
-
-    Observable<Signature> signatureClicks() {
-        return signatureClicksSubject;
     }
 
     Observable<Signature> signatureRemoveClicks() {
@@ -328,10 +323,10 @@ final class SignatureUpdateAdapter extends
                     .subscribe(adapter.signatureClicksSubject);
             nameView.setText(item.signature().name());
             switch (item.signature().status()) {
-                case SignatureStatus.INVALID:
+                case INVALID:
                     statusView.setText(R.string.signature_update_signature_status_invalid);
                     break;
-                case SignatureStatus.UNKNOWN:
+                case UNKNOWN:
                     statusView.setText(R.string.signature_update_signature_status_unknown);
                     break;
                 default:
@@ -340,11 +335,11 @@ final class SignatureUpdateAdapter extends
             }
             statusView.setTextColor(item.signature().valid() ? colorValid : colorInvalid);
             switch (item.signature().status()) {
-                case SignatureStatus.WARNING:
+                case WARNING:
                     statusCautionView.setVisibility(View.VISIBLE);
                     statusCautionView.setText(R.string.signature_update_signature_status_warning);
                     break;
-                case SignatureStatus.NON_QSCD:
+                case NON_QSCD:
                     statusCautionView.setVisibility(View.VISIBLE);
                     statusCautionView.setText(R.string.signature_update_signature_status_non_qscd);
                     break;
@@ -390,6 +385,7 @@ final class SignatureUpdateAdapter extends
     }
 
     @StringDef({DOCUMENT, SIGNATURE})
+    @Retention(RetentionPolicy.SOURCE)
     @interface SubheadItemType {
         String DOCUMENT = "DOCUMENT";
         String SIGNATURE = "SIGNATURE";
@@ -412,9 +408,9 @@ final class SignatureUpdateAdapter extends
     @AutoValue
     static abstract class StatusItem extends Item {
 
-        abstract ImmutableMap<String, Integer> counts();
+        abstract ImmutableMap<SignatureStatus, Integer> counts();
 
-        static StatusItem create(ImmutableMap<String, Integer> counts) {
+        static StatusItem create(ImmutableMap<SignatureStatus, Integer> counts) {
             return new AutoValue_SignatureUpdateAdapter_StatusItem(
                     R.layout.signature_update_list_item_status, counts);
         }
@@ -558,22 +554,5 @@ final class SignatureUpdateAdapter extends
         public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
             return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
         }
-    }
-
-    static Bitmap drawableToBitmap(Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable)drawable).getBitmap();
-        }
-        int width = drawable.getIntrinsicWidth();
-        width = width > 0 ? width : 1;
-        int height = drawable.getIntrinsicHeight();
-        height = height > 0 ? height : 1;
-
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-
-        return bitmap;
     }
 }

@@ -1,28 +1,32 @@
 package ee.ria.DigiDoc.android.model.idcard;
 
-import android.util.SparseArray;
+import com.google.common.collect.ImmutableList;
 
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.format.DateTimeFormatterBuilder;
+import java.io.File;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import ee.ria.DigiDoc.android.model.CertificateData;
-import ee.ria.DigiDoc.android.model.EIDType;
-import ee.ria.mopplib.data.SignedContainer;
-import ee.ria.scardcomlibrary.SmartCardReaderManager;
-import ee.ria.scardcomlibrary.SmartCardReaderStatus;
-import ee.ria.tokenlibrary.Token;
-import ee.ria.tokenlibrary.TokenFactory;
-import ee.ria.tokenlibrary.exception.PinVerificationException;
+import ee.ria.DigiDoc.android.utils.files.FileSystem;
+import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.crypto.CryptoContainer;
+import ee.ria.DigiDoc.crypto.CryptoException;
+import ee.ria.DigiDoc.crypto.DecryptToken;
+import ee.ria.DigiDoc.crypto.Pin1InvalidException;
+import ee.ria.DigiDoc.idcard.CertificateType;
+import ee.ria.DigiDoc.idcard.CodeType;
+import ee.ria.DigiDoc.idcard.CodeVerificationException;
+import ee.ria.DigiDoc.idcard.PersonalData;
+import ee.ria.DigiDoc.idcard.Token;
+import ee.ria.DigiDoc.sign.SignedContainer;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okio.ByteString;
-import timber.log.Timber;
 
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 
@@ -30,9 +34,11 @@ import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 public final class IdCardService {
 
     private final SmartCardReaderManager smartCardReaderManager;
+    private final FileSystem fileSystem;
 
-    @Inject IdCardService(SmartCardReaderManager smartCardReaderManager) {
+    @Inject IdCardService(SmartCardReaderManager smartCardReaderManager, FileSystem fileSystem) {
         this.smartCardReaderManager  = smartCardReaderManager;
+        this.fileSystem = fileSystem;
     }
 
     public final Observable<IdCardDataResponse> data() {
@@ -46,11 +52,8 @@ public final class IdCardService {
                     }
                     return Observable
                             .fromCallable(() -> {
-                                Token token = TokenFactory
-                                        .getTokenImpl(smartCardReaderManager.connectedReader());
-                                if (token == null) {
-                                    throw new IllegalStateException("Token is null");
-                                }
+                                Token token =
+                                        Token.create(smartCardReaderManager.connectedReader());
                                 return IdCardDataResponse.success(data(token), token);
                             })
                             .subscribeOn(Schedulers.io())
@@ -65,7 +68,7 @@ public final class IdCardService {
                 .fromCallable(() -> {
                     IdCardData data = data(token);
                     return container.sign(data.signCertificate().data(),
-                            signData -> ByteString.of(token.sign(Token.PinType.PIN2, pin2,
+                            signData -> ByteString.of(token.calculateSignature(pin2.getBytes(),
                                     signData.toByteArray(),
                                     data.signCertificate().ellipticCurve())));
                 })
@@ -73,95 +76,65 @@ public final class IdCardService {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Single<IdCardData> editPin(Token token, Token.PinType pinType, String currentPin,
+    public Single<IdCardData> editPin(Token token, CodeType pinType, String currentPin,
                                       String newPin) {
         return Single
                 .fromCallable(() -> {
-                    boolean result = token
-                            .changePin(pinType, currentPin.getBytes(), newPin.getBytes());
-                    if (!result) {
-                        throw new PinVerificationException(pinType);
-                    }
+                    token.changeCode(pinType, currentPin.getBytes(), newPin.getBytes());
                     return data(token);
                 });
     }
 
-    public Single<IdCardData> unblockPin(Token token, Token.PinType pinType, String puk,
-                                         String newPin) {
+    public Single<IdCardData> unblockPin(Token token, CodeType pinType, String puk, String newPin) {
         return Single
                 .fromCallable(() -> {
-                    boolean result = token.unblockAndChangePin(pinType, puk.getBytes(),
-                            newPin.getBytes());
-                    if (!result) {
-                        throw new PinVerificationException(pinType);
-                    }
+                    token.unblockAndChangeCode(puk.getBytes(), pinType, newPin.getBytes());
                     return data(token);
                 });
     }
 
-    private static final DateTimeFormatter CARD_DATE_FORMAT = new DateTimeFormatterBuilder()
-            .appendPattern("dd.MM.yyyy")
-            .toFormatter();
+    public Single<ImmutableList<File>> decrypt(Token token, File containerFile, String pin1) {
+        return Single.fromCallable(() ->
+                CryptoContainer.open(containerFile)
+                        .decrypt(new IdCardToken(token), data(token).authCertificate(), pin1,
+                                fileSystem.getCacheDir())
+                        .dataFiles());
+    }
 
     public static IdCardData data(Token token) throws Exception {
-        SparseArray<String> personalFile = token.readPersonalFile();
-        ByteString authCertificateData = ByteString.of(token.readCert(Token.CertType.CertAuth));
-        ByteString signCertificateData = ByteString.of(token.readCert(Token.CertType.CertSign));
-        byte pin1RetryCounter = token.readRetryCounter(Token.PinType.PIN1);
-        byte pin2RetryCounter = token.readRetryCounter(Token.PinType.PIN2);
-        byte pukRetryCounter = token.readRetryCounter(Token.PinType.PUK);
+        PersonalData personalData = token.personalData();
+        ByteString authenticationCertificateData = ByteString
+                .of(token.certificate(CertificateType.AUTHENTICATION));
+        ByteString signingCertificateData = ByteString
+                .of(token.certificate(CertificateType.SIGNING));
+        int pin1RetryCounter = token.codeRetryCounter(CodeType.PIN1);
+        int pin2RetryCounter = token.codeRetryCounter(CodeType.PIN2);
+        int pukRetryCounter = token.codeRetryCounter(CodeType.PUK);
 
-        String surname = personalFile.get(1).trim();
-        String givenName1 = personalFile.get(2).trim();
-        String givenName2 = personalFile.get(3).trim();
-        String citizenship = personalFile.get(5).trim();
-        String dateOfBirthString = personalFile.get(6).trim();
-        String personalCode = personalFile.get(7).trim();
-        String documentNumber = personalFile.get(8).trim();
-        String expiryDateString = personalFile.get(9).trim();
+        Certificate authCertificate = Certificate.create(authenticationCertificateData);
+        Certificate signCertificate = Certificate.create(signingCertificateData);
 
-        StringBuilder givenNames = new StringBuilder(givenName1);
-        if (givenName2.length() > 0) {
-            if (givenNames.length() > 0) {
-                givenNames.append(" ");
-            }
-            givenNames.append(givenName2);
+        return IdCardData.create(authCertificate.type(), personalData, authCertificate,
+                signCertificate, pin1RetryCounter, pin2RetryCounter, pukRetryCounter);
+    }
+
+    static final class IdCardToken implements DecryptToken {
+
+        private final Token token;
+
+        IdCardToken(Token token) {
+            this.token = token;
         }
 
-        LocalDate dateOfBirth;
-        try {
-            dateOfBirth = LocalDate.parse(dateOfBirthString, CARD_DATE_FORMAT);
-        } catch (Exception e) {
-            dateOfBirth = null;
-            Timber.e(e, "Could not parse date of birth %s", dateOfBirthString);
-        }
-
-        LocalDate expiryDate;
-        try {
-            expiryDate = LocalDate.parse(expiryDateString, CARD_DATE_FORMAT);
-        } catch (Exception e) {
-            expiryDate = null;
-            Timber.e(e, "Could not parse expiry date %s", expiryDateString);
-        }
-
-        CertificateData authCertificate = CertificateData
-                .create(pin1RetryCounter, authCertificateData);
-        CertificateData signCertificate = CertificateData
-                .create(pin2RetryCounter, signCertificateData);
-
-        String type = null;
-        if (authCertificate.organization().startsWith("ESTEID")) {
-            if (authCertificate.organization().contains("MOBIIL-ID")) {
-                type = EIDType.MOBILE_ID;
-            } else if (authCertificate.organization().contains("DIGI-ID")) {
-                type = EIDType.DIGI_ID;
-            } else {
-                type = EIDType.ID_CARD;
+        @Override
+        public byte[] decrypt(byte[] pin1, byte[] data, boolean ecc) throws CryptoException {
+            try {
+                return token.decrypt(pin1, data, ecc);
+            } catch (CodeVerificationException e) {
+                throw new Pin1InvalidException();
+            } catch (SmartCardReaderException e) {
+                throw new CryptoException("Decryption failed", e);
             }
         }
-
-        return IdCardData.create(type, givenNames.toString(), surname, personalCode, citizenship,
-                dateOfBirth, authCertificate, signCertificate, pukRetryCounter, documentNumber,
-                expiryDate);
     }
 }

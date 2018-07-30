@@ -1,0 +1,38 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.vanniktech.android.javadoc'
+
+android {
+    compileSdkVersion project.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+    }
+
+    lintOptions {
+        lintConfig file('../lint.xml')
+    }
+}
+
+androidJavadoc {
+    variantFilter = { variant ->
+        return variant.name == 'release'
+    }
+    outputDir = { Project project ->
+        "${project.rootProject.projectDir}/docs/${project.name}/javadoc/"
+    }
+}
+
+dependencies {
+    implementation "com.android.support:support-annotations:${androidSupportLibraryVersion}"
+    implementation "com.android.support:appcompat-v7:${androidSupportLibraryVersion}"
+
+    implementation "com.jakewharton.timber:timber:${timberVersion}"
+
+    implementation "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
+    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+    implementation ("com.squareup.retrofit2:converter-simplexml:${retrofitVersion}") {
+        exclude group: 'xpp3', module: 'xpp3'
+    }
+}

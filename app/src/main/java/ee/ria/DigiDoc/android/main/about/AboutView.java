@@ -38,7 +38,7 @@ public final class AboutView extends CoordinatorLayout {
     private final TextView timberVersionTitleView;
     private final TextView okHttpVersionTitleView;
     private final TextView retrofitVersionTitleView;
-    private final TextView spongyCastleVersionTitleView;
+    private final TextView bouncyCastleVersionTitleView;
     private final TextView materialValuesVersionTitleView;
     private final TextView daggerVersionTitleView;
     private final TextView conductorVersionTitleView;
@@ -76,7 +76,7 @@ public final class AboutView extends CoordinatorLayout {
         timberVersionTitleView = findViewById(R.id.mainAboutTimberVersionTitle);
         okHttpVersionTitleView = findViewById(R.id.mainAboutOkHttpVersionTitle);
         retrofitVersionTitleView = findViewById(R.id.mainAboutRetrofitVersionTitle);
-        spongyCastleVersionTitleView = findViewById(R.id.mainAboutSpongyCastleVersionTitle);
+        bouncyCastleVersionTitleView = findViewById(R.id.mainAboutBouncyCastleVersionTitle);
         materialValuesVersionTitleView =
                 findViewById(R.id.mainAboutMaterialValuesVersionTitle);
         daggerVersionTitleView = findViewById(R.id.mainAboutDaggerVersionTitle);
@@ -142,8 +142,8 @@ public final class AboutView extends CoordinatorLayout {
                 R.string.main_about_square_okhttp_title, BuildConfig.OK_HTTP_VERSION));
         retrofitVersionTitleView.setText(getResources().getString(
                 R.string.main_about_retrofit_title, BuildConfig.RETROFIT_VERSION));
-        spongyCastleVersionTitleView.setText(getResources().getString(
-                R.string.main_about_spongy_castle_title, BuildConfig.SPONGY_CASTLE_VERSION));
+        bouncyCastleVersionTitleView.setText(getResources().getString(
+                R.string.main_about_bouncy_castle_title, BuildConfig.BOUNCY_CASTLE_VERSION));
         materialValuesVersionTitleView.setText(getResources().getString(
                 R.string.main_about_material_values_title, BuildConfig.MATERIAL_VALUES_VERSION));
         daggerVersionTitleView.setText(getResources().getString(

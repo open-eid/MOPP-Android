@@ -15,8 +15,8 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardSignResponse;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.mvi.State;
-import ee.ria.scardcomlibrary.SmartCardReaderStatus;
-import ee.ria.tokenlibrary.Token;
+import ee.ria.DigiDoc.idcard.Token;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -107,12 +107,12 @@ public final class IdCardView extends LinearLayout implements
                     R.string.signature_update_id_card_progress_message_signing);
             signContainerView.setVisibility(GONE);
         } else if (signResponse != null && signResponse.error() != null && data != null) {
-            int pinRetryCount = data.signCertificate().pinRetryCount();
+            int pinRetryCount = data.pin2RetryCount();
             progressContainerView.setVisibility(GONE);
             signContainerView.setVisibility(VISIBLE);
             signDataView.setText(getResources().getString(
-                    R.string.signature_update_id_card_sign_data, data.givenNames(), data.surname(),
-                    data.personalCode()));
+                    R.string.signature_update_id_card_sign_data, data.personalData().givenNames(),
+                    data.personalData().surname(), data.personalData().personalCode()));
             signPin2ErrorView.setVisibility(VISIBLE);
             if (pinRetryCount == 1) {
                 signPin2ErrorView.setText(
@@ -125,8 +125,8 @@ public final class IdCardView extends LinearLayout implements
             progressContainerView.setVisibility(GONE);
             signContainerView.setVisibility(VISIBLE);
             signDataView.setText(getResources().getString(
-                    R.string.signature_update_id_card_sign_data, data.givenNames(), data.surname(),
-                    data.personalCode()));
+                    R.string.signature_update_id_card_sign_data, data.personalData().givenNames(),
+                    data.personalData().surname(), data.personalData().personalCode()));
             signPin2ErrorView.setVisibility(GONE);
         } else if (dataResponse != null
                 && dataResponse.status().equals(SmartCardReaderStatus.CARD_DETECTED)) {

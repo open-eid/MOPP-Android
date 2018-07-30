@@ -1,0 +1,56 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.vanniktech.android.javadoc'
+
+android {
+    compileSdkVersion project.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+
+    lintOptions {
+        lintConfig file('../lint.xml')
+    }
+
+    testOptions {
+        execution 'ANDROID_TEST_ORCHESTRATOR'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+androidJavadoc {
+    variantFilter = { variant ->
+        return variant.name == 'release'
+    }
+    outputDir = { Project project ->
+        "${project.rootProject.projectDir}/docs/${project.name}/javadoc/"
+    }
+}
+
+dependencies {
+    api "com.android.support:support-annotations:${androidSupportLibraryVersion}"
+
+    api "com.google.guava:guava:${guavaVersion}"
+    api "com.squareup.okio:okio:${okioVersion}"
+    api "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
+
+    implementation "com.jakewharton.timber:timber:${timberVersion}"
+
+    implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
+    annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+
+    implementation project(':core-lib')
+
+    androidTestUtil "com.android.support.test:orchestrator:${androidSupportTestVersion}"
+    androidTestAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+    androidTestImplementation "com.android.support.test:runner:${androidSupportTestVersion}"
+    androidTestImplementation "com.android.support.test:rules:${androidSupportTestVersion}"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:${espressoVersion}"
+    androidTestImplementation "com.google.truth:truth:${truthVersion}"
+}

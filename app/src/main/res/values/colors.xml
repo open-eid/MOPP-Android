@@ -5,7 +5,7 @@
     <color name="primaryDark">#F4F5F6</color>
     <color name="accent">#006EB5</color>
     <color name="error">#981E32</color>
-    <color name="warning">#FFEABE</color>
+    <color name="warning">#DDCC00</color>
     <color name="success">#8CC368</color>
     <color name="bottomNavigation">#023664</color>
     <color name="windowBackground">@color/material_color_white</color>

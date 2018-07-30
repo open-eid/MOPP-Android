@@ -5,7 +5,7 @@ import android.content.Context;
 import com.google.common.collect.ImmutableMap;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse.ProcessStatus;
+import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse.ProcessStatus;
 
 public final class MobileIdStatusMessages {
 

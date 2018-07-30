@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import ee.ria.DigiDoc.android.utils.mvi.BaseMviViewModel;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 
-public final class HomeViewModel extends BaseMviViewModel<Intent, ViewState, Action, Result> {
+public final class HomeViewModel extends BaseMviViewModel<Intent, ViewState, Intent, Result> {
 
     private final Processor processor;
     private final Navigator navigator;
@@ -31,16 +31,8 @@ public final class HomeViewModel extends BaseMviViewModel<Intent, ViewState, Act
     }
 
     @Override
-    protected Action action(Intent intent) {
-        if (intent instanceof Intent.NavigationIntent) {
-            return Action.NavigationAction.create(((Intent.NavigationIntent) intent).item());
-        } else if (intent instanceof Intent.MenuIntent) {
-            Intent.MenuIntent menuIntent = (Intent.MenuIntent) intent;
-            return Action.MenuAction.create(menuIntent.isOpen(), menuIntent.menuItem());
-        } else if (intent instanceof Action) {
-            return (Action) intent;
-        }
-        throw new IllegalArgumentException("Unknown intent " + intent);
+    protected Intent action(Intent intent) {
+        return intent;
     }
 
     @Override

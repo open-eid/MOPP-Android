@@ -27,8 +27,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:maxLines="2"
-            android:ellipsize="end"
+            android:singleLine="true"
+            android:ellipsize="middle"
             tools:text="This is signed container name.bdoc" />
 
     </LinearLayout>

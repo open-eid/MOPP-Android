@@ -31,9 +31,9 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.model.CertificateData;
-import ee.ria.DigiDoc.android.model.EIDType;
-import ee.ria.tokenlibrary.Token;
+import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.core.EIDType;
+import ee.ria.DigiDoc.idcard.CertificateType;
 
 public final class Formatter {
 
@@ -53,8 +53,8 @@ public final class Formatter {
                 timeFormat().format(date));
     }
 
-    public CharSequence eidType(@Nullable @EIDType String eidType) {
-        return application.getString(EID_TYPES.getOrDefault(eidType, R.string.eid_type_unknown));
+    public CharSequence eidType(EIDType eidType) {
+        return application.getString(EID_TYPES.get(eidType));
     }
 
     public CharSequence idCardExpiryDate(@Nullable LocalDate expiryDate) {
@@ -78,15 +78,14 @@ public final class Formatter {
                 .append(validityIndicator);
     }
 
-    public CharSequence certificateDataValidity(Token.CertType type,
-                                                CertificateData certificateData) {
-        ZonedDateTime notAfter = certificateData.notAfter().atZone(ZoneId.systemDefault());
-        boolean expired = certificateData.expired();
+    public CharSequence certificateDataValidity(CertificateType type, Certificate certificate) {
+        ZonedDateTime notAfter = certificate.notAfter().atZone(ZoneId.systemDefault());
+        boolean expired = certificate.expired();
         int color = ResourcesCompat.getColor(application.getResources(),
                 expired ? R.color.error : R.color.success, null);
         String string;
         if (expired) {
-            String pin = application.getString(type.equals(Token.CertType.CertAuth)
+            String pin = application.getString(type.equals(CertificateType.AUTHENTICATION)
                     ? R.string.eid_home_certificate_pin_auth
                     : R.string.eid_home_certificate_pin_sign);
             string = application.getString(R.string.eid_home_certificate_data_expired, pin);
@@ -110,11 +109,13 @@ public final class Formatter {
         return android.text.format.DateFormat.getTimeFormat(application);
     }
 
-    private static final ImmutableMap<String, Integer> EID_TYPES =
-            ImmutableMap.<String, Integer>builder()
+    private static final ImmutableMap<EIDType, Integer> EID_TYPES =
+            ImmutableMap.<EIDType, Integer>builder()
+                    .put(EIDType.UNKNOWN, R.string.eid_type_unknown)
                     .put(EIDType.ID_CARD, R.string.eid_type_id_card)
                     .put(EIDType.DIGI_ID, R.string.eid_type_digi_id)
                     .put(EIDType.MOBILE_ID, R.string.eid_type_mobile_id)
+                    .put(EIDType.E_SEAL, R.string.eid_type_e_seal)
                     .build();
 
     static final class ForegroundColorTagHandler implements Html.TagHandler {

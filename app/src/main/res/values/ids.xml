@@ -57,7 +57,7 @@
     <item type="id" name="mainAboutTimberVersionTitle" />
     <item type="id" name="mainAboutOkHttpVersionTitle" />
     <item type="id" name="mainAboutRetrofitVersionTitle" />
-    <item type="id" name="mainAboutSpongyCastleVersionTitle" />
+    <item type="id" name="mainAboutBouncyCastleVersionTitle" />
     <item type="id" name="mainAboutMaterialValuesVersionTitle" />
     <item type="id" name="mainAboutDaggerVersionTitle" />
     <item type="id" name="mainAboutConductorVersionTitle" />
@@ -150,6 +150,40 @@
 
     <!-- Crypto Home -->
     <item type="id" name="cryptoHomeCreateButton" />
+
+    <!-- Crypto Create -->
+    <item type="id" name="cryptoCreateScreen" />
+    <item type="id" name="cryptoCreateCoordinator" />
+    <item type="id" name="cryptoCreateList" />
+    <item type="id" name="cryptoCreateEncryptButton" />
+    <item type="id" name="cryptoCreateDecryptButton" />
+    <item type="id" name="cryptoCreateSendButton" />
+    <item type="id" name="cryptoCreateButtonSpace" />
+    <item type="id" name="cryptoCreateSuccessMessage" />
+    <item type="id" name="cryptoCreateName" />
+    <item type="id" name="cryptoCreateAddButton" />
+    <item type="id" name="cryptoCreateDataFileName" />
+    <item type="id" name="cryptoCreateDataFileRemoveButton" />
+
+    <item type="id" name="cryptoSubheadTitle" />
+    <item type="id" name="cryptoEmptyText" />
+    <item type="id" name="cryptoRecipientType" />
+    <item type="id" name="cryptoRecipientName" />
+    <item type="id" name="cryptoRecipientInfo" />
+    <item type="id" name="cryptoRecipientRemoveButton" />
+    <item type="id" name="cryptoRecipientAddButton" />
+
+    <item type="id" name="cryptoRecipientsScreen" />
+    <item type="id" name="cryptoRecipientsSearch" />
+    <item type="id" name="cryptoRecipientsList" />
+    <item type="id" name="cryptoRecipientsDoneButton" />
+
+    <item type="id" name="cryptoCreateDecryptProgressContainer" />
+    <item type="id" name="cryptoCreateDecryptProgressMessage" />
+    <item type="id" name="cryptoCreateDecryptContainer" />
+    <item type="id" name="cryptoCreateDecryptData" />
+    <item type="id" name="cryptoCreateDecryptPin1" />
+    <item type="id" name="cryptoCreateDecryptPin1Error" />
 
     <!-- EID Home -->
     <item type="id" name="eidHomeCoordinator" />

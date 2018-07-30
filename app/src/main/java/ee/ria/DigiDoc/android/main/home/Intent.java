@@ -5,15 +5,18 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
+import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 
-interface Intent extends MviIntent {
+interface Intent extends MviIntent, MviAction {
 
     @AutoValue
-    abstract class InitialIntent implements Intent, Action {
+    abstract class InitialIntent implements Intent {
 
-        static InitialIntent create() {
-            return new AutoValue_Intent_InitialIntent();
+        abstract android.content.Intent intent();
+
+        static InitialIntent create(android.content.Intent intent) {
+            return new AutoValue_Intent_InitialIntent(intent);
         }
     }
 
@@ -49,7 +52,7 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
-    abstract class NavigationVisibilityIntent implements Intent, Action {
+    abstract class NavigationVisibilityIntent implements Intent {
 
         abstract boolean visible();
 
@@ -59,7 +62,7 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
-    abstract class LocaleChangeIntent implements Intent, Action {
+    abstract class LocaleChangeIntent implements Intent {
 
         @IdRes abstract int item();
 

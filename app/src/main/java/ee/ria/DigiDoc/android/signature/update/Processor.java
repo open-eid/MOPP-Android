@@ -6,16 +6,18 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
+import ee.ria.DigiDoc.android.utils.IntentUtils;
 import ee.ria.DigiDoc.android.utils.files.FileAlreadyExistsException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
-import ee.ria.mopplib.data.SignedContainer;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -23,6 +25,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
+import static com.google.common.io.Files.getFileExtension;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
@@ -37,8 +40,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<Action.DocumentsAddAction,
                                         Result.DocumentsAddResult> documentsAdd;
 
-    private final ObservableTransformer<Action.DocumentOpenAction,
-                                        Result.DocumentOpenResult> documentOpen;
+    private final ObservableTransformer<Intent.DocumentViewIntent,
+                                        Result.DocumentViewResult> documentView;
 
     private final ObservableTransformer<Action.DocumentRemoveAction,
                                         Result.DocumentRemoveResult> documentRemove;
@@ -130,12 +133,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         activityResult.requestCode()
                                                 == action.transaction().requestCode())
                                 .switchMap(activityResult -> {
-                                    if (activityResult.resultCode() == RESULT_OK) {
+                                    android.content.Intent data = activityResult.data();
+                                    if (activityResult.resultCode() == RESULT_OK && data != null) {
                                         return signatureContainerDataSource
                                                 .addDocuments(action.containerFile(),
                                                         parseGetContentIntent(
                                                                 application.getContentResolver(),
-                                                                activityResult.data()))
+                                                                data))
                                                 .toObservable()
                                                 .map(Result.DocumentsAddResult::success)
                                                 .onErrorReturn(Result.DocumentsAddResult::failure)
@@ -149,27 +153,32 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     }
                 });
 
-        documentOpen = upstream -> upstream.flatMap(action -> {
-            if (action.containerFile() == null) {
-                return Observable.just(Result.DocumentOpenResult.clear());
-            } else {
-                return signatureContainerDataSource
-                        .getDocumentFile(action.containerFile(), action.document())
-                        .toObservable()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .map(documentFile -> {
-                            if (SignedContainer.isContainer(documentFile)) {
-                                navigator.execute(Transaction.push(SignatureUpdateScreen
-                                        .create(true, true, documentFile, false, false)));
-                                return Result.DocumentOpenResult.clear();
-                            } else {
-                                return Result.DocumentOpenResult.success(documentFile);
-                            }
-                        })
-                        .onErrorReturn(Result.DocumentOpenResult::failure)
-                        .startWith(Result.DocumentOpenResult.opening());
-            }
+        documentView = upstream -> upstream.switchMap(action -> {
+            File containerFile = action.containerFile();
+            return signatureContainerDataSource
+                    .getDocumentFile(containerFile, action.document())
+                    .toObservable()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .map(documentFile -> {
+                        Transaction transaction;
+                        boolean isSignedPdfDataFile =
+                                getFileExtension(containerFile.getName()).toLowerCase(Locale.US)
+                                                .equals("pdf")
+                                        && containerFile.getName().equals(documentFile.getName());
+                        if (!isSignedPdfDataFile && SignedContainer.isContainer(documentFile)) {
+                            transaction = Transaction.push(SignatureUpdateScreen
+                                    .create(true, true, documentFile, false, false));
+                        } else {
+                            transaction = Transaction.activity(IntentUtils
+                                    .createViewIntent(application, documentFile,
+                                            SignedContainer.mimeType(documentFile)), null);
+                        }
+                        navigator.execute(transaction);
+                        return Result.DocumentViewResult.idle();
+                    })
+                    .onErrorReturn(ignored -> Result.DocumentViewResult.idle())
+                    .startWith(Result.DocumentViewResult.activity());
         });
 
         documentRemove = upstream -> upstream.flatMap(action -> {
@@ -277,7 +286,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.ContainerLoadAction.class).compose(containerLoad),
                 shared.ofType(Intent.NameUpdateIntent.class).compose(nameUpdate),
                 shared.ofType(Action.DocumentsAddAction.class).compose(documentsAdd),
-                shared.ofType(Action.DocumentOpenAction.class).compose(documentOpen),
+                shared.ofType(Intent.DocumentViewIntent.class).compose(documentView),
                 shared.ofType(Action.DocumentRemoveAction.class).compose(documentRemove),
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd),

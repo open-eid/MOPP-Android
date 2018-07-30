@@ -17,8 +17,8 @@ import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdOnSubscribe;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdRequest;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
-import ee.ria.tokenlibrary.exception.PinVerificationException;
+import ee.ria.DigiDoc.idcard.CodeVerificationException;
+import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -99,17 +99,17 @@ final class SignatureAddSource {
                                                     idCardRequest.pin2())))
                     .map(IdCardResponse::success)
                     .onErrorResumeNext(error -> {
-                        if (error instanceof PinVerificationException) {
+                        if (error instanceof CodeVerificationException) {
                             return idCardService.data()
                                     .filter(dataResponse -> dataResponse.data() != null)
                                     .switchMap(dataResponse -> {
                                         IdCardData data = dataResponse.data();
-                                        if (data.signCertificate().pinRetryCount() > 0) {
+                                        if (data != null && data.pin2RetryCount() > 0) {
                                             return Observable.just(
-                                                    IdCardResponse.sign(IdCardSignResponse
-                                                            .clear(error, data, idCardRequest.token())),
-                                                    IdCardResponse.sign(IdCardSignResponse
-                                                            .failure(error, data, idCardRequest.token())));
+                                                    IdCardResponse.sign(IdCardSignResponse.clear(
+                                                            error, data, idCardRequest.token())),
+                                                    IdCardResponse.sign(IdCardSignResponse.failure(
+                                                            error, data, idCardRequest.token())));
                                         }
                                         return Observable.error(error);
                                     });

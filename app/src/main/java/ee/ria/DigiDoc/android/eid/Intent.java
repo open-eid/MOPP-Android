@@ -4,9 +4,9 @@ import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
-import ee.ria.DigiDoc.android.model.EIDData;
+import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
-import ee.ria.tokenlibrary.Token;
+import ee.ria.DigiDoc.idcard.Token;
 
 interface Intent extends MviIntent {
 
@@ -43,7 +43,7 @@ interface Intent extends MviIntent {
 
         @Nullable abstract CodeUpdateRequest request();
 
-        @Nullable abstract EIDData data();
+        @Nullable abstract IdCardData data();
 
         @Nullable abstract Token token();
 
@@ -52,7 +52,7 @@ interface Intent extends MviIntent {
         }
 
         static CodeUpdateIntent request(CodeUpdateAction action, CodeUpdateRequest request,
-                                        EIDData data, Token token) {
+                                        IdCardData data, Token token) {
             return create(action, request, data, token);
         }
 
@@ -62,7 +62,7 @@ interface Intent extends MviIntent {
 
         static CodeUpdateIntent create(@Nullable CodeUpdateAction action,
                                        @Nullable CodeUpdateRequest request,
-                                       @Nullable EIDData data, @Nullable Token token) {
+                                       @Nullable IdCardData data, @Nullable Token token) {
             return new AutoValue_Intent_CodeUpdateIntent(action, request, data, token);
         }
     }
