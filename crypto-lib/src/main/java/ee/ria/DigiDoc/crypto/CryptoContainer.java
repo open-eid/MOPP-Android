@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 import okio.ByteString;
 
 import static com.google.common.io.Files.getFileExtension;

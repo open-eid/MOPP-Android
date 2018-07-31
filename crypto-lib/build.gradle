@@ -46,7 +46,7 @@ dependencies {
         exclude group: 'org.slf4j'
     }
 
-    api project(':core-lib')
+    api project(':common-lib')
 
     testImplementation "junit:junit:${junitVersion}"
     testImplementation "com.google.truth:truth:${truthVersion}"

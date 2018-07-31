@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.core;
+package ee.ria.DigiDoc.common;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.CertificatePolicies;
@@ -6,12 +6,12 @@ import org.bouncycastle.asn1.x509.PolicyInformation;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static ee.ria.DigiDoc.core.EIDType.DIGI_ID;
-import static ee.ria.DigiDoc.core.EIDType.E_SEAL;
-import static ee.ria.DigiDoc.core.EIDType.ID_CARD;
-import static ee.ria.DigiDoc.core.EIDType.MOBILE_ID;
-import static ee.ria.DigiDoc.core.EIDType.UNKNOWN;
-import static ee.ria.DigiDoc.core.EIDType.parse;
+import static ee.ria.DigiDoc.common.EIDType.DIGI_ID;
+import static ee.ria.DigiDoc.common.EIDType.E_SEAL;
+import static ee.ria.DigiDoc.common.EIDType.ID_CARD;
+import static ee.ria.DigiDoc.common.EIDType.MOBILE_ID;
+import static ee.ria.DigiDoc.common.EIDType.UNKNOWN;
+import static ee.ria.DigiDoc.common.EIDType.parse;
 
 public class EIDTypeTest {
 

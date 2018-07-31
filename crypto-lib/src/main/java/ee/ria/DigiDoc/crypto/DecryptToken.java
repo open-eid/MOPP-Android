@@ -2,7 +2,7 @@ package ee.ria.DigiDoc.crypto;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 
 /**
  * Handles the actual decryption.

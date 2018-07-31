@@ -17,7 +17,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.sign.utils.Function;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;

@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.core;
+package ee.ria.DigiDoc.common;
 
 import com.google.auto.value.AutoValue;
 

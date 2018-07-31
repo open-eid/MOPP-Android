@@ -17,8 +17,8 @@ import org.bouncycastle.asn1.x509.KeyUsage;
 
 import java.util.Locale;
 
-import ee.ria.DigiDoc.core.Certificate;
-import ee.ria.DigiDoc.core.EIDType;
+import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.common.EIDType;
 import okio.ByteString;
 
 /**

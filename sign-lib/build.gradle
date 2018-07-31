@@ -45,7 +45,7 @@ dependencies {
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
-    implementation project(':core-lib')
+    implementation project(':common-lib')
 
     androidTestUtil "com.android.support.test:orchestrator:${androidSupportTestVersion}"
     androidTestAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"

@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.crypto.CryptoException;
 import ee.ria.DigiDoc.crypto.DecryptToken;

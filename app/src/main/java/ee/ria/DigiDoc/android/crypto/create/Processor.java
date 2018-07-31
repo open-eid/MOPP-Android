@@ -16,7 +16,7 @@ import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientRepository;

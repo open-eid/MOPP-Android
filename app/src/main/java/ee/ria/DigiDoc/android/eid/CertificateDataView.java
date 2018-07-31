@@ -10,7 +10,7 @@ import android.widget.TextView;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.Formatter;
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.idcard.CertificateType;
 import io.reactivex.Observable;
 

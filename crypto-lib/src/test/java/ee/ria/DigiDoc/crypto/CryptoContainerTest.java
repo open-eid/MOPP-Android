@@ -11,7 +11,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 
 import static com.google.common.io.Files.asCharSource;
 import static com.google.common.truth.Truth.assertThat;

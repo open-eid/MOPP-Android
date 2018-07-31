@@ -11,7 +11,7 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.mvi.State;
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 

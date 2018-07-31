@@ -9,7 +9,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 
 interface Intent extends MviIntent, MviAction {
 

@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.core;
+package ee.ria.DigiDoc.common;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
