@@ -10,6 +10,7 @@ import org.openeid.cdoc4j.CDOCDecrypter;
 import org.openeid.cdoc4j.CDOCParser;
 import org.openeid.cdoc4j.Recipient;
 import org.openeid.cdoc4j.exception.DataFileMissingException;
+import org.openeid.cdoc4j.exception.RecipientCertificateException;
 import org.openeid.cdoc4j.exception.RecipientMissingException;
 
 import java.io.File;
@@ -70,6 +71,7 @@ public abstract class CryptoContainer {
      * @param dataFilesDirectory Directory where the data files are saved.
      * @return Decrypted container.
      * @throws Pin1InvalidException When PIN1 is incorrect.
+     * @throws CertificateNotRecipientException When provided certificate is not in recipients list.
      * @throws CryptoException When decryption fails.
      */
     public CryptoContainer decrypt(DecryptToken decryptToken, Certificate authCertificate,
@@ -86,6 +88,8 @@ public abstract class CryptoContainer {
             return create(file(), ImmutableList.copyOf(files), recipients(), true);
         } catch (Pin1InvalidException.DecryptPin1InvalidException e) {
             throw new Pin1InvalidException();
+        } catch (RecipientCertificateException e) {
+            throw new CertificateNotRecipientException();
         } catch (Exception e) {
             throw new CryptoException("Decryption failed", e);
         }
