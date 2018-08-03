@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.vanniktech.android.javadoc'
 
 android {
     compileSdkVersion project.compileSdkVersion
@@ -21,15 +20,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
-
-androidJavadoc {
-    variantFilter = { variant ->
-        return variant.name == 'release'
-    }
-    outputDir = { Project project ->
-        "${project.rootProject.projectDir}/docs/${project.name}/javadoc/"
     }
 }
 

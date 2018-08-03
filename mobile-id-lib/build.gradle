@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.vanniktech.android.javadoc'
 
 android {
     compileSdkVersion project.compileSdkVersion
@@ -11,15 +10,6 @@ android {
 
     lintOptions {
         lintConfig file('../lint.xml')
-    }
-}
-
-androidJavadoc {
-    variantFilter = { variant ->
-        return variant.name == 'release'
-    }
-    outputDir = { Project project ->
-        "${project.rootProject.projectDir}/docs/${project.name}/javadoc/"
     }
 }
 
