@@ -97,7 +97,7 @@ public final class IdCardService {
         return Single.fromCallable(() ->
                 CryptoContainer.open(containerFile)
                         .decrypt(new IdCardToken(token), data(token).authCertificate(), pin1,
-                                fileSystem.getCacheDir())
+                                fileSystem.getContainerDataFilesDir(containerFile))
                         .dataFiles());
     }
 

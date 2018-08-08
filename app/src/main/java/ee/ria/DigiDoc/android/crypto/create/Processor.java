@@ -191,7 +191,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             return Observable
                     .fromCallable(() -> {
                         File file = intent.dataFile();
-                        if (SignedContainer.isContainer(file)) {
+                        if (CryptoContainer.isContainerFileName(file.getName())) {
+                            return Transaction.push(CryptoCreateScreen.open(file));
+                        } else if (SignedContainer.isContainer(file)) {
                             return Transaction.push(
                                     SignatureUpdateScreen.create(true, true, file, false, false));
                         } else {
