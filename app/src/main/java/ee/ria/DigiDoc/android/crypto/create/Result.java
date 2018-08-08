@@ -59,6 +59,7 @@ interface Result extends MviResult<ViewState> {
                         .encryptButtonVisible(true);
             } else if (container != null) {
                 builder
+                        .containerFile(container.file())
                         .name(container.file().getName())
                         .dataFiles(container.dataFiles())
                         .recipients(container.recipients())
