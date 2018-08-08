@@ -30,8 +30,6 @@ public abstract class Certificate {
 
     public abstract EIDType type();
 
-    public abstract String organization();
-
     public abstract String commonName();
 
     public abstract Instant notAfter();
@@ -60,10 +58,7 @@ public abstract class Certificate {
         CertificatePolicies certificatePolicies = CertificatePolicies.fromExtensions(extensions);
         EIDType type = EIDType.parse(certificatePolicies);
 
-        RDN[] rdNs = certificate.getSubject().getRDNs(ASN1ObjectIdentifier.getInstance(BCStyle.O));
-        String organization = rdNs[0].getFirst().getValue().toString().trim();
-
-        rdNs = certificate.getSubject().getRDNs(ASN1ObjectIdentifier.getInstance(BCStyle.CN));
+        RDN[] rdNs = certificate.getSubject().getRDNs(ASN1ObjectIdentifier.getInstance(BCStyle.CN));
         String commonName = rdNs[0].getFirst().getValue().toString().trim();
 
         Instant notAfter = Instant.ofEpochMilli(certificate.getNotAfter().getTime());
@@ -78,7 +73,7 @@ public abstract class Certificate {
             extendedKeyUsage = new ExtendedKeyUsage(new KeyPurposeId[]{});
         }
 
-        return new AutoValue_Certificate(type, organization, commonName, notAfter, ellipticCurve,
-                keyUsage, extendedKeyUsage, data);
+        return new AutoValue_Certificate(type, commonName, notAfter, ellipticCurve, keyUsage,
+                extendedKeyUsage, data);
     }
 }
