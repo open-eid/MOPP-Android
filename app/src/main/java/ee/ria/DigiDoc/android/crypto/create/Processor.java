@@ -12,15 +12,17 @@ import javax.inject.Inject;
 
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
+import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.idcard.Token;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -186,10 +188,25 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .observeOn(AndroidSchedulers.mainThread()));
 
         dataFileView = upstream -> upstream.switchMap(intent -> {
-            File file = intent.dataFile();
-            navigator.execute(Transaction
-                    .activity(createViewIntent(application, file, mimeType(file)), null));
-            return Observable.empty();
+            return Observable
+                    .fromCallable(() -> {
+                        File file = intent.dataFile();
+                        if (CryptoContainer.isContainerFileName(file.getName())) {
+                            return Transaction.push(CryptoCreateScreen.open(file));
+                        } else if (SignedContainer.isContainer(file)) {
+                            return Transaction.push(
+                                    SignatureUpdateScreen.create(true, true, file, false, false));
+                        } else {
+                            return Transaction.activity(
+                                    createViewIntent(application, file, mimeType(file)), null);
+                        }
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .flatMap(transaction -> {
+                        navigator.execute(transaction);
+                        return Observable.empty();
+                    });
         });
 
         recipientsAddButtonClick = upstream -> upstream.switchMap(intent -> {

@@ -109,7 +109,7 @@ dependencies {
 
     implementation "net.cachapa.expandablelayout:expandablelayout:${expandablelayoutVersion}"
 
-    implementation project(':core-lib')
+    implementation project(':common-lib')
     implementation project(':sign-lib')
     implementation project(':crypto-lib')
     implementation project(':smart-card-reader-lib')

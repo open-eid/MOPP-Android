@@ -31,8 +31,8 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.core.Certificate;
-import ee.ria.DigiDoc.core.EIDType;
+import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.common.EIDType;
 import ee.ria.DigiDoc.idcard.CertificateType;
 
 public final class Formatter {
