@@ -307,7 +307,12 @@ interface Result extends MviResult<ViewState> {
 
         @Override
         public ViewState reduce(ViewState state) {
-            return state.buildWith().decryptionIdCardDataResponse(idCardDataResponse()).build();
+            ViewState.Builder builder = state.buildWith()
+                    .decryptionIdCardDataResponse(idCardDataResponse());
+            if (idCardDataResponse() == null) {
+                builder.decryptError(null);
+            }
+            return builder.build();
         }
 
         static DecryptionResult show(IdCardDataResponse idCardDataResponse) {
