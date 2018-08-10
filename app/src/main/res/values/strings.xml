@@ -72,10 +72,10 @@
     <string name="signature_update_signatures_title">Container signatures</string>
     <string name="signature_update_signatures_empty">Container is not signed</string>
     <plurals name="signature_update_signatures_unknown">
-        <item quantity="one">%1$d UNKNOWN SIGNATURE</item> <!-- TODO TRANSLATE -->
-        <item quantity="other">%1$d UNKNOWN SIGNATURES</item> <!-- TODO TRANSLATE -->
-        <!-- placeholder to keep line numbers same in different locales --> <!-- TODO TRANSLATE -->
-        <!-- placeholder to keep line numbers same in different locales --> <!-- TODO TRANSLATE -->
+        <item quantity="one">%1$d UNKNOWN SIGNATURE</item>
+        <item quantity="other">%1$d UNKNOWN SIGNATURES</item>
+        <!-- placeholder to keep line numbers same in different locales -->
+        <!-- placeholder to keep line numbers same in different locales -->
     </plurals>
     <plurals name="signature_update_signatures_invalid">
         <item quantity="one">%1$d INVALID SIGNATURE</item>

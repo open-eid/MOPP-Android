@@ -58,10 +58,10 @@
     <string name="signature_update_title_created">Подписание</string>
     <string name="signature_update_title_existing">Проверка контейнера</string>
     <string name="signature_update_name">КОНТЕЙНЕР:</string>
-    <!-- TODO <string name="signature_update_name_update_button">Edit container name</string>-->
-    <!-- TODO <string name="signature_update_name_update_name">Container name</string>-->
-    <!-- TODO <string name="signature_update_name_update_error_exists">Container with this name already exists</string>-->
-    <!-- TODO <string name="signature_update_name_update_error_invalid">Container name invalid</string>-->
+    <string name="signature_update_name_update_button">Изменить название контейнера</string>
+    <string name="signature_update_name_update_name">Название контейнера</string>
+    <string name="signature_update_name_update_error_exists">Контейнер с таким названием уже существует</string>
+    <string name="signature_update_name_update_error_invalid">Неверное название контейнера</string>
     <string name="signature_update_documents_title">Файлы контейнера</string>
     <string name="signature_update_documents_button">ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
     <string name="signature_update_documents_add_button">+ ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
@@ -71,12 +71,12 @@
     <string name="signature_update_document_remove_error">Файл не может быть удалён из контейнера</string>
     <string name="signature_update_signatures_title">Подписи контейнера</string>
     <string name="signature_update_signatures_empty">Контейнер не подписан</string>
-    <!--<plurals name="signature_update_signatures_unknown">-->
-    <!-- TODO <item quantity="one">%1$d UNKNOWN SIGNATURE</item>-->
-    <!-- TODO <item quantity="other">%1$d UNKNOWN SIGNATURES</item>-->
-    <!-- TODO <item quantity="few">%1$d UNKNOWN SIGNATURES</item>-->
-    <!-- TODO <item quantity="many">%1$d UNKNOWN SIGNATURES</item>-->
-    <!--</plurals>-->
+    <plurals name="signature_update_signatures_unknown">
+        <item quantity="one">%1$d НЕИЗВЕСТНАЯ ПОДПИСЬ</item>
+        <item quantity="other">%1$d НЕИЗВЕСТНЫХ ПОДПИСЕЙ</item>
+        <item quantity="few">%1$d НЕИЗВЕСТНЫХ ПОДПИСЕЙ</item>
+        <item quantity="many">%1$d НЕИЗВЕСТНЫХ ПОДПИСЕЙ</item>
+    </plurals>
     <plurals name="signature_update_signatures_invalid">
         <item quantity="one">%1$d НЕВЕРНАЯ ПОДПИСЬ</item>
         <item quantity="other">%1$d НЕВЕРНАЯ ПОДПИСЬ</item>
@@ -198,7 +198,7 @@
     <string name="eid_type_id_card">ID-КАРТА</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
     <string name="eid_type_mobile_id">MOBIIL-ID</string>
-    <!-- TODO <string name="eid_type_e_seal">e-Seal</string>-->
+    <string name="eid_type_e_seal">e-Печать</string>
     <string name="eid_type_unknown">НЕИЗВЕСТНО</string>
 
     <string name="eid_home_code_update_title_pin1_edit">Изменить PIN1</string>

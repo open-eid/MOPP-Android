@@ -58,10 +58,10 @@
     <string name="signature_update_title_created">Allkirjastamine</string>
     <string name="signature_update_title_existing">Ümbriku valideerimine</string>
     <string name="signature_update_name">ÜMBRIK:</string>
-    <!-- TODO <string name="signature_update_name_update_button">Edit container name</string>-->
-    <!-- TODO <string name="signature_update_name_update_name">Container name</string>-->
-    <!-- TODO <string name="signature_update_name_update_error_exists">Container with this name already exists</string>-->
-    <!-- TODO <string name="signature_update_name_update_error_invalid">Container name invalid</string>-->
+    <string name="signature_update_name_update_button">Muuda ümbriku nime</string>
+    <string name="signature_update_name_update_name">Ümbriku nimi</string>
+    <string name="signature_update_name_update_error_exists">Sellise nimega ümbrik on juba olemas</string>
+    <string name="signature_update_name_update_error_invalid">Ümbriku nimi on vigane</string>
     <string name="signature_update_documents_title">Ümbriku sisu</string>
     <string name="signature_update_documents_button">LISA VEEL FAILE</string>
     <string name="signature_update_documents_add_button">+ LISA VEEL FAILE</string>
@@ -71,12 +71,12 @@
     <string name="signature_update_document_remove_error">Faili ümbrikust eemaldamine ebaõnnestus</string>
     <string name="signature_update_signatures_title">Ümbriku allkirjad</string>
     <string name="signature_update_signatures_empty">Allkirjad puuduvad</string>
-    <!--<plurals name="signature_update_signatures_unknown">-->
-        <!-- TODO <item quantity="one">%1$d UNKNOWN SIGNATURE</item>-->
-        <!-- TODO <item quantity="other">%1$d UNKNOWN SIGNATURES</item>-->
+    <plurals name="signature_update_signatures_unknown">
+        <item quantity="one">%1$d ALLKIRI ON TEADMATA</item>
+        <item quantity="other">%1$d ALLKIRJA ON TEADMATA</item>
         <!-- placeholder to keep line numbers same in different locales -->
         <!-- placeholder to keep line numbers same in different locales -->
-    <!--</plurals>-->
+    </plurals>
     <plurals name="signature_update_signatures_invalid">
         <item quantity="one">%1$d ALLKIRI EI KEHTI</item>
         <item quantity="other">%1$d ALLKIRJA EI KEHTI</item>
