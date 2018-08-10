@@ -159,47 +159,47 @@
     <string name="crypto_home_create_button">CHOOSE FILE</string>
 
     <!-- Crypto Create -->
-    <string name="crypto_create_title_encrypt" tools:ignore="MissingTranslation">Encryption</string>
-    <string name="crypto_create_title_decrypt" tools:ignore="MissingTranslation">Decryption</string>
-    <string name="crypto_create_encrypt_success_message" tools:ignore="MissingTranslation">CONTAINER ENCRYPTED</string>
-    <string name="crypto_create_decrypt_success_message" tools:ignore="MissingTranslation">CONTAINER DECRYPTED</string>
-    <string name="crypto_create_name" tools:ignore="MissingTranslation">CONTAINER:</string>
-    <string name="crypto_create_data_files_title" tools:ignore="MissingTranslation">Data files</string>
-    <string name="crypto_create_data_files_add_button" tools:ignore="MissingTranslation">+ ADD MORE FILES</string>
-    <string name="crypto_create_data_files_add_error_exists" tools:ignore="MissingTranslation">File already exists in the container</string>
-    <string name="crypto_create_data_file_remove_button" tools:ignore="MissingTranslation">Remove data file</string>
-    <string name="crypto_create_recipients_title" tools:ignore="MissingTranslation">Recipients</string>
-    <string name="crypto_create_recipients_empty" tools:ignore="MissingTranslation">Recipients are missing</string>
-    <string name="crypto_create_recipients_add_button" tools:ignore="MissingTranslation">+ ADD RECIPIENT</string>
-    <string name="crypto_create_encrypt_button" tools:ignore="MissingTranslation">ENCRYPT</string>
-    <string name="crypto_create_encrypt_error_no_recipients" tools:ignore="MissingTranslation">No recipients specified</string>
-    <string name="crypto_create_decrypt_button" tools:ignore="MissingTranslation">DECRYPT</string>
-    <string name="crypto_create_decrypt_positive_button" tools:ignore="MissingTranslation">Decrypt</string>
-    <string name="crypto_create_send_button" tools:ignore="MissingTranslation">SHARE</string>
-    <string name="crypto_create_error" tools:ignore="MissingTranslation">Something went wrong. Please try again.</string>
+    <string name="crypto_create_title_encrypt">Encryption</string>
+    <string name="crypto_create_title_decrypt">Decryption</string>
+    <string name="crypto_create_encrypt_success_message">ENCRYPTION SUCCEEDED</string>
+    <string name="crypto_create_decrypt_success_message">DECRYPTION SUCCESSFUL</string>
+    <string name="crypto_create_name">CONTAINER:</string>
+    <string name="crypto_create_data_files_title">Files chosen for encryption</string>
+    <string name="crypto_create_data_files_add_button">+ ADD MORE FILES</string>
+    <string name="crypto_create_data_files_add_error_exists">File already exists in the container</string>
+    <string name="crypto_create_data_file_remove_button">Remove file</string>
+    <string name="crypto_create_recipients_title">Recipients</string>
+    <string name="crypto_create_recipients_empty">Recipients are missing</string>
+    <string name="crypto_create_recipients_add_button">+ ADD RECIPIENT</string>
+    <string name="crypto_create_encrypt_button">ENCRYPT</string>
+    <string name="crypto_create_encrypt_error_no_recipients">No addressees specified</string>
+    <string name="crypto_create_decrypt_button">DECRYPT</string>
+    <string name="crypto_create_decrypt_positive_button">Decrypt</string>
+    <string name="crypto_create_send_button">SHARE</string>
+    <string name="crypto_create_error">Something went wrong with encryption</string>
 
-    <string name="crypto_recipient_type" tools:ignore="MissingTranslation">Recipient</string>
-    <string name="crypto_recipient_info" tools:ignore="MissingTranslation">%1$s (valid until %2$s)</string>
-    <string name="crypto_recipient_remove_button" tools:ignore="MissingTranslation">Remove recipient</string>
-    <string name="crypto_recipient_add_button" tools:ignore="MissingTranslation">Add</string>
-    <string name="crypto_recipient_add_button_added" tools:ignore="MissingTranslation">Added</string>
+    <string name="crypto_recipient_type">Recipient</string>
+    <string name="crypto_recipient_info">%1$s (valid to %2$s)</string>
+    <string name="crypto_recipient_remove_button">Remove recipient</string>
+    <string name="crypto_recipient_add_button">ADD</string>
+    <string name="crypto_recipient_add_button_added">ADDED</string>
 
-    <string name="crypto_recipients_title" tools:ignore="MissingTranslation">Add recipients</string>
-    <string name="crypto_recipients_search" tools:ignore="MissingTranslation">Enter personal code, company or registry code</string>
-    <string name="crypto_recipients_search_result_empty" tools:ignore="MissingTranslation">Person or company does not own a valid certificate.\nIt is necessary to have a valid certificate for encryption.\nContact for assistance by email abi@id.ee or call 1777 (only from Estonia), (+372) 677 3377 when calling from abroad.</string>
-    <string name="crypto_recipients_selected_subhead" tools:ignore="MissingTranslation">Selected recipients</string>
-    <string name="crypto_recipients_done_button" tools:ignore="MissingTranslation">CONFIRM SELECTION</string>
+    <string name="crypto_recipients_title">Add recipients</string>
+    <string name="crypto_recipients_search">Enter personal code, company or registry code</string>
+    <string name="crypto_recipients_search_result_empty">Person or company does not own a valid certificate.\nIt is necessary to have a valid certificate for encryption.\nIn case of questions please contact our support via id.ee.</string>
+    <string name="crypto_recipients_selected_subhead">Selected recipients</string>
+    <string name="crypto_recipients_done_button">CONFIRM SELECTION</string>
 
-    <string name="crypto_create_decrypt_progress_message_initial" tools:ignore="MissingTranslation">Connect the card reader and insert your ID-card into the reader.</string>
-    <string name="crypto_create_decrypt_progress_message_reader_detected" tools:ignore="MissingTranslation">Reader found. Insert your ID-card into the reader.</string>
-    <string name="crypto_create_decrypt_progress_message_card_detected" tools:ignore="MissingTranslation">ID-card found. Requesting information.</string>
-    <string name="crypto_create_decrypt_message" tools:ignore="MissingTranslation">Ready to decrypt with ID card</string>
-    <string name="crypto_create_decrypt_data" tools:ignore="MissingTranslation">%1$s %2$s (%3$s)</string>
-    <string name="crypto_create_decrypt_pin1" tools:ignore="MissingTranslation">Enter PIN1</string>
-    <string name="crypto_create_decrypt_pin1_invalid" tools:ignore="MissingTranslation">Wrong PIN1. You have %1$d attempts left.</string>
-    <string name="crypto_create_decrypt_pin1_invalid_final" tools:ignore="MissingTranslation">Wrong PIN1. You have 1 attempt left until your PIN1 is blocked.</string>
-    <string name="crypto_create_decrypt_pin1_locked" tools:ignore="MissingTranslation">PIN1 blocked. Go to My eID to unblock it.</string>
-    <string name="crypto_create_decrypt_active" tools:ignore="MissingTranslation">Decrypting</string>
+    <string name="crypto_create_decrypt_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>
+    <string name="crypto_create_decrypt_progress_message_reader_detected">Reader found. Insert your ID-card into the reader.</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">ID-card found. Requesting information.</string>
+    <string name="crypto_create_decrypt_message">Ready to decrypt with ID-card.</string>
+    <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
+    <string name="crypto_create_decrypt_pin1">Please enter PIN1</string>
+    <string name="crypto_create_decrypt_pin1_invalid">Wrong PIN1. You have %1$d attempts left.</string>
+    <string name="crypto_create_decrypt_pin1_invalid_final">Wrong PIN1. You have 1 attempt left until your PIN1 is blocked.</string>
+    <string name="crypto_create_decrypt_pin1_locked">PIN1 blocked. Go to My eID to unblock it.</string>
+    <string name="crypto_create_decrypt_active">Decryption in progress. Please wait.</string>
 
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Connect the card reader and insert your ID-card into the reader.</string>

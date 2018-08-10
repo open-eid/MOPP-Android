@@ -158,6 +158,49 @@
     <string name="crypto_home_create_text">Vali fail krüpteerimiseks või dekrüpteerimiseks</string>
     <string name="crypto_home_create_button">VALI FAIL</string>
 
+    <!-- Crypto Create -->
+    <string name="crypto_create_title_encrypt">Krüpteerimine</string>
+    <string name="crypto_create_title_decrypt">Dekrüpteerimine</string>
+    <string name="crypto_create_encrypt_success_message">KRÜPTEERIMINE ÕNNESTUS</string>
+    <string name="crypto_create_decrypt_success_message">DEKRÜPTEERIMINE ÕNNESTUS</string>
+    <string name="crypto_create_name">ÜMBRIK:</string>
+    <string name="crypto_create_data_files_title">Krüpteerimiseks valitud failid</string>
+    <string name="crypto_create_data_files_add_button">+ LISA VEEL FAILE</string>
+    <string name="crypto_create_data_files_add_error_exists">Fail on juba ümbrikus olemas</string>
+    <string name="crypto_create_data_file_remove_button">Eemalda fail</string>
+    <string name="crypto_create_recipients_title">Adressaadid</string>
+    <string name="crypto_create_recipients_empty">Adressaadid puuduvad</string>
+    <string name="crypto_create_recipients_add_button">+ LISA ADRESSAAT</string>
+    <string name="crypto_create_encrypt_button">KRÜPTEERI</string>
+    <string name="crypto_create_encrypt_error_no_recipients">Ühtegi adressaati ei ole lisatud</string>
+    <string name="crypto_create_decrypt_button">DEKRÜPTEERI</string>
+    <string name="crypto_create_decrypt_positive_button">Dekrüpteeri</string>
+    <string name="crypto_create_send_button">JAGA</string>
+    <string name="crypto_create_error">Midagi läks krüpteerimisel valesti</string>
+
+    <string name="crypto_recipient_type">Adressaat</string>
+    <string name="crypto_recipient_info">%1$s (kehtiv kuni %2$s)</string>
+    <string name="crypto_recipient_remove_button">Eemalda adressaat</string>
+    <string name="crypto_recipient_add_button">LISA</string>
+    <string name="crypto_recipient_add_button_added">LISATUD</string>
+
+    <string name="crypto_recipients_title">Adressaatide lisamine</string>
+    <string name="crypto_recipients_search">Sisesta isikukood, asutus või registrikood</string>
+    <string name="crypto_recipients_search_result_empty">Isikul või asutusel puudub kehtiv sertifikaat. \nKrüpteerimiseks on vaja kehtivat sertikaati.\nKüsimuste korral pöörduge id.ee.</string>
+    <string name="crypto_recipients_selected_subhead">Adressaadid</string>
+    <string name="crypto_recipients_done_button">KINNITA VALIK</string>
+
+    <string name="crypto_create_decrypt_progress_message_initial">Ühenda kaardilugeja telefoniga ja sisesta ID-kaart lugejasse</string>
+    <string name="crypto_create_decrypt_progress_message_reader_detected">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">ID-kaart leitud. Pärin andmeid.</string>
+    <string name="crypto_create_decrypt_message">Valmis dekrüpteerimiseks ID-kaardiga.</string>
+    <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
+    <string name="crypto_create_decrypt_pin1">Palun sisesta PIN1.</string>
+    <string name="crypto_create_decrypt_pin1_invalid">Vale PIN1. Saad PIN1 koodi sisestada veel %1$d korda.</string>
+    <string name="crypto_create_decrypt_pin1_invalid_final">Vale PIN1. Järgmise vale sisestusega lukustub PIN.</string>
+    <string name="crypto_create_decrypt_pin1_locked">PIN1 on lukus. Mine Minu eID, et avada.</string>
+    <string name="crypto_create_decrypt_active">Toimub dekrüpteerimine.\nPalun oota.</string>
+
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Ühenda kaardilugeja telefoniga ja sisesta ID-kaart lugejasse.</string>
     <string name="eid_home_id_card_status_reader_detected_message">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>

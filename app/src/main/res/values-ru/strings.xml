@@ -158,6 +158,49 @@
     <string name="crypto_home_create_text">Выберите файл для шифрования или расшифровки</string>
     <string name="crypto_home_create_button">ВЫБРАТЬ ФАЙЛ</string>
 
+    <!-- Crypto Create -->
+    <string name="crypto_create_title_encrypt">Шифрование</string>
+    <string name="crypto_create_title_decrypt">Дешифрование</string>
+    <string name="crypto_create_encrypt_success_message">ШИФРОВАНИЕ УДАЛОСЬ</string>
+    <string name="crypto_create_decrypt_success_message">ДЕШИФРОВАНИЕ УДАЛОСЬ</string>
+    <string name="crypto_create_name">КОНТЕЙНЕР:</string>
+    <string name="crypto_create_data_files_title">Выбранные файлы для шифрования</string>
+    <string name="crypto_create_data_files_add_button">+ ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
+    <string name="crypto_create_data_files_add_error_exists">Файл уже существует в контейнере</string>
+    <string name="crypto_create_data_file_remove_button">Удалить файл</string>
+    <string name="crypto_create_recipients_title">Получатели</string>
+    <string name="crypto_create_recipients_empty">Получатели отсутствуют</string>
+    <string name="crypto_create_recipients_add_button">+ ДОБАВИТЬ ПОЛУЧАТЕЛЯ</string>
+    <string name="crypto_create_encrypt_button">ЗАШИФРОВАТЬ</string>
+    <string name="crypto_create_encrypt_error_no_recipients">Не добавлено ни одного получателя</string>
+    <string name="crypto_create_decrypt_button">ДЕШИФРОВАТЬ</string>
+    <string name="crypto_create_decrypt_positive_button">Дешифровать</string>
+    <string name="crypto_create_send_button">ПОДЕЛИТЬСЯ</string>
+    <string name="crypto_create_error">Что-то пошло не так с шифрованием</string>
+
+    <string name="crypto_recipient_type">Получатель</string>
+    <string name="crypto_recipient_info">%1$s (действителен до %2$s)</string>
+    <string name="crypto_recipient_remove_button">Удалить получателя</string>
+    <string name="crypto_recipient_add_button">ДОБАВИТЬ</string>
+    <string name="crypto_recipient_add_button_added">ДОБАВЛЕН</string>
+
+    <string name="crypto_recipients_title">Добавить получателей</string>
+    <string name="crypto_recipients_search">Введите личный код, код компании или регистра</string>
+    <string name="crypto_recipients_search_result_empty">У человека или компании нет действующего сертификата.\nДля шифрования необходимо иметь действующий сертификат.\nЕсли у вас возникнут вопросы, пожалуйста, обратитесь на id.ee.</string>
+    <string name="crypto_recipients_selected_subhead">Выбрать получателей</string>
+    <string name="crypto_recipients_done_button">ПОДВЕРДИТЬ ВЫБОР</string>
+
+    <string name="crypto_create_decrypt_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>
+    <string name="crypto_create_decrypt_progress_message_reader_detected">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация.</string>
+    <string name="crypto_create_decrypt_message">Готово к дешифрованию с помощью ID-карты.</string>
+    <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
+    <string name="crypto_create_decrypt_pin1">Пожалуйста, введите PIN1.</string>
+    <string name="crypto_create_decrypt_pin1_invalid">Неверный PIN1. У Вас осталось %1$d попыток.</string>
+    <string name="crypto_create_decrypt_pin1_invalid_final">Неверный PIN1. У Вас осталась 1 попытка до блокировки Вашего PIN1.</string>
+    <string name="crypto_create_decrypt_pin1_locked">PIN1 заблокирован. Зайдите в Мой eID, чтобы разблокировать его.</string>
+    <string name="crypto_create_decrypt_active">Происходит дешифрование. Пожалуйста, подождите.</string>
+
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Подключите считыватель карты и вставьте в него Вашу ID-карту.</string>
     <string name="eid_home_id_card_status_reader_detected_message">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
