@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/material_content_edge_margin_horizontal"
                 android:layout_marginRight="@dimen/material_content_edge_margin_horizontal"
-                android:autoLink="email"
+                android:autoLink="web"
                 android:gravity="center"
                 android:text="@string/main_about_contact_information_title" />
 
