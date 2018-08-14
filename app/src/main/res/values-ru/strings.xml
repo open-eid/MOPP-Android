@@ -32,7 +32,7 @@
     <string name="main_about_title">Информация</string>
     <string name="main_about_ria_digidoc_version_title">RIA DigiDoc версия %1$s</string>
     <string name="main_about_software_developed_by_title">Эстонское программное обеспечение ID выпущено Государственным департаментом инфосистем</string>
-    <string name="main_about_contact_information_title">В случае вопросов обращайтесь по адресу abi@id.ee или звоните по телефону 1777 из Эстонии или (+372) 677 3377 из других стран.</string>
+    <string name="main_about_contact_information_title">Если у вас возникнут вопросы, пожалуйста, обратитесь на id.ee.</string>
     <string name="main_about_licenses_title">Дополнительные лицензии и компоненты</string>
 
     <!-- Main Diagnostics -->
@@ -58,10 +58,10 @@
     <string name="signature_update_title_created">Подписание</string>
     <string name="signature_update_title_existing">Проверка контейнера</string>
     <string name="signature_update_name">КОНТЕЙНЕР:</string>
-    <!-- TODO <string name="signature_update_name_update_button">Edit container name</string>-->
-    <!-- TODO <string name="signature_update_name_update_name">Container name</string>-->
-    <!-- TODO <string name="signature_update_name_update_error_exists">Container with this name already exists</string>-->
-    <!-- TODO <string name="signature_update_name_update_error_invalid">Container name invalid</string>-->
+    <string name="signature_update_name_update_button">Изменить название контейнера</string>
+    <string name="signature_update_name_update_name">Название контейнера</string>
+    <string name="signature_update_name_update_error_exists">Контейнер с таким названием уже существует</string>
+    <string name="signature_update_name_update_error_invalid">Неверное название контейнера</string>
     <string name="signature_update_documents_title">Файлы контейнера</string>
     <string name="signature_update_documents_button">ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
     <string name="signature_update_documents_add_button">+ ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
@@ -71,12 +71,12 @@
     <string name="signature_update_document_remove_error">Файл не может быть удалён из контейнера</string>
     <string name="signature_update_signatures_title">Подписи контейнера</string>
     <string name="signature_update_signatures_empty">Контейнер не подписан</string>
-    <!--<plurals name="signature_update_signatures_unknown">-->
-    <!-- TODO <item quantity="one">%1$d UNKNOWN SIGNATURE</item>-->
-    <!-- TODO <item quantity="other">%1$d UNKNOWN SIGNATURES</item>-->
-    <!-- TODO <item quantity="few">%1$d UNKNOWN SIGNATURES</item>-->
-    <!-- TODO <item quantity="many">%1$d UNKNOWN SIGNATURES</item>-->
-    <!--</plurals>-->
+    <plurals name="signature_update_signatures_unknown">
+        <item quantity="one">%1$d НЕИЗВЕСТНАЯ ПОДПИСЬ</item>
+        <item quantity="other">%1$d НЕИЗВЕСТНЫХ ПОДПИСЕЙ</item>
+        <item quantity="few">%1$d НЕИЗВЕСТНЫХ ПОДПИСЕЙ</item>
+        <item quantity="many">%1$d НЕИЗВЕСТНЫХ ПОДПИСЕЙ</item>
+    </plurals>
     <plurals name="signature_update_signatures_invalid">
         <item quantity="one">%1$d НЕВЕРНАЯ ПОДПИСЬ</item>
         <item quantity="other">%1$d НЕВЕРНАЯ ПОДПИСЬ</item>
@@ -158,6 +158,49 @@
     <string name="crypto_home_create_text">Выберите файл для шифрования или расшифровки</string>
     <string name="crypto_home_create_button">ВЫБРАТЬ ФАЙЛ</string>
 
+    <!-- Crypto Create -->
+    <string name="crypto_create_title_encrypt">Шифрование</string>
+    <string name="crypto_create_title_decrypt">Дешифрование</string>
+    <string name="crypto_create_encrypt_success_message">ШИФРОВАНИЕ УДАЛОСЬ</string>
+    <string name="crypto_create_decrypt_success_message">ДЕШИФРОВАНИЕ УДАЛОСЬ</string>
+    <string name="crypto_create_name">КОНТЕЙНЕР:</string>
+    <string name="crypto_create_data_files_title">Выбранные файлы для шифрования</string>
+    <string name="crypto_create_data_files_add_button">+ ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
+    <string name="crypto_create_data_files_add_error_exists">Файл уже существует в контейнере</string>
+    <string name="crypto_create_data_file_remove_button">Удалить файл</string>
+    <string name="crypto_create_recipients_title">Получатели</string>
+    <string name="crypto_create_recipients_empty">Получатели отсутствуют</string>
+    <string name="crypto_create_recipients_add_button">+ ДОБАВИТЬ ПОЛУЧАТЕЛЯ</string>
+    <string name="crypto_create_encrypt_button">ЗАШИФРОВАТЬ</string>
+    <string name="crypto_create_encrypt_error_no_recipients">Не добавлено ни одного получателя</string>
+    <string name="crypto_create_decrypt_button">ДЕШИФРОВАТЬ</string>
+    <string name="crypto_create_decrypt_positive_button">Дешифровать</string>
+    <string name="crypto_create_send_button">ПОДЕЛИТЬСЯ</string>
+    <string name="crypto_create_error">Что-то пошло не так с шифрованием</string>
+
+    <string name="crypto_recipient_type">Получатель</string>
+    <string name="crypto_recipient_info">%1$s (действителен до %2$s)</string>
+    <string name="crypto_recipient_remove_button">Удалить получателя</string>
+    <string name="crypto_recipient_add_button">ДОБАВИТЬ</string>
+    <string name="crypto_recipient_add_button_added">ДОБАВЛЕН</string>
+
+    <string name="crypto_recipients_title">Добавить получателей</string>
+    <string name="crypto_recipients_search">Введите личный код, код компании или регистра</string>
+    <string name="crypto_recipients_search_result_empty">У человека или компании нет действующего сертификата.\nДля шифрования необходимо иметь действующий сертификат.\nЕсли у вас возникнут вопросы, пожалуйста, обратитесь на id.ee.</string>
+    <string name="crypto_recipients_selected_subhead">Выбрать получателей</string>
+    <string name="crypto_recipients_done_button">ПОДВЕРДИТЬ ВЫБОР</string>
+
+    <string name="crypto_create_decrypt_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>
+    <string name="crypto_create_decrypt_progress_message_reader_detected">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация.</string>
+    <string name="crypto_create_decrypt_message">Готово к дешифрованию с помощью ID-карты.</string>
+    <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
+    <string name="crypto_create_decrypt_pin1">Пожалуйста, введите PIN1.</string>
+    <string name="crypto_create_decrypt_pin1_invalid">Неверный PIN1. У Вас осталось %1$d попыток.</string>
+    <string name="crypto_create_decrypt_pin1_invalid_final">Неверный PIN1. У Вас осталась 1 попытка до блокировки Вашего PIN1.</string>
+    <string name="crypto_create_decrypt_pin1_locked">PIN1 заблокирован. Зайдите в Мой eID, чтобы разблокировать его.</string>
+    <string name="crypto_create_decrypt_active">Происходит дешифрование. Пожалуйста, подождите.</string>
+
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Подключите считыватель карты и вставьте в него Вашу ID-карту.</string>
     <string name="eid_home_id_card_status_reader_detected_message">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
@@ -198,7 +241,7 @@
     <string name="eid_type_id_card">ID-КАРТА</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
     <string name="eid_type_mobile_id">MOBIIL-ID</string>
-    <!-- TODO <string name="eid_type_e_seal">e-Seal</string>-->
+    <string name="eid_type_e_seal">e-Печать</string>
     <string name="eid_type_unknown">НЕИЗВЕСТНО</string>
 
     <string name="eid_home_code_update_title_pin1_edit">Изменить PIN1</string>

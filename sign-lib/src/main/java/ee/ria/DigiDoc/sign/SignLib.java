@@ -47,6 +47,10 @@ public final class SignLib {
         return new File(getSchemaDir(context), ACCESS_CERTIFICATE_NAME);
     }
 
+    public static String libdigidocppVersion() {
+        return digidoc.version();
+    }
+
     private static void initNativeLibs() {
         System.loadLibrary("c++_shared");
         System.loadLibrary("digidoc_java");

@@ -32,7 +32,7 @@
     <string name="main_about_title">Info</string>
     <string name="main_about_ria_digidoc_version_title">RIA DigiDoc versioon %1$s</string>
     <string name="main_about_software_developed_by_title">Eesti ID-tarkvara on välja antud Riigi Infosüsteemi Ameti poolt</string>
-    <string name="main_about_contact_information_title">Küsimuste korral pöörduge ID-abiliini poole e-kirja teel abi@id.ee või helistage Eesti-siseselt lühinumbrile 1777, välismaalt (+372) 677 3377.</string>
+    <string name="main_about_contact_information_title">Küsimuste korral pöörduge id.ee.</string>
     <string name="main_about_licenses_title">Täiendavad litsentsid ja komponendid</string>
 
     <!-- Main Diagnostics -->
@@ -58,10 +58,10 @@
     <string name="signature_update_title_created">Allkirjastamine</string>
     <string name="signature_update_title_existing">Ümbriku valideerimine</string>
     <string name="signature_update_name">ÜMBRIK:</string>
-    <!-- TODO <string name="signature_update_name_update_button">Edit container name</string>-->
-    <!-- TODO <string name="signature_update_name_update_name">Container name</string>-->
-    <!-- TODO <string name="signature_update_name_update_error_exists">Container with this name already exists</string>-->
-    <!-- TODO <string name="signature_update_name_update_error_invalid">Container name invalid</string>-->
+    <string name="signature_update_name_update_button">Muuda ümbriku nime</string>
+    <string name="signature_update_name_update_name">Ümbriku nimi</string>
+    <string name="signature_update_name_update_error_exists">Sellise nimega ümbrik on juba olemas</string>
+    <string name="signature_update_name_update_error_invalid">Ümbriku nimi on vigane</string>
     <string name="signature_update_documents_title">Ümbriku sisu</string>
     <string name="signature_update_documents_button">LISA VEEL FAILE</string>
     <string name="signature_update_documents_add_button">+ LISA VEEL FAILE</string>
@@ -71,12 +71,12 @@
     <string name="signature_update_document_remove_error">Faili ümbrikust eemaldamine ebaõnnestus</string>
     <string name="signature_update_signatures_title">Ümbriku allkirjad</string>
     <string name="signature_update_signatures_empty">Allkirjad puuduvad</string>
-    <!--<plurals name="signature_update_signatures_unknown">-->
-        <!-- TODO <item quantity="one">%1$d UNKNOWN SIGNATURE</item>-->
-        <!-- TODO <item quantity="other">%1$d UNKNOWN SIGNATURES</item>-->
+    <plurals name="signature_update_signatures_unknown">
+        <item quantity="one">%1$d ALLKIRI ON TEADMATA</item>
+        <item quantity="other">%1$d ALLKIRJA ON TEADMATA</item>
         <!-- placeholder to keep line numbers same in different locales -->
         <!-- placeholder to keep line numbers same in different locales -->
-    <!--</plurals>-->
+    </plurals>
     <plurals name="signature_update_signatures_invalid">
         <item quantity="one">%1$d ALLKIRI EI KEHTI</item>
         <item quantity="other">%1$d ALLKIRJA EI KEHTI</item>
@@ -157,6 +157,49 @@
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Vali fail krüpteerimiseks või dekrüpteerimiseks</string>
     <string name="crypto_home_create_button">VALI FAIL</string>
+
+    <!-- Crypto Create -->
+    <string name="crypto_create_title_encrypt">Krüpteerimine</string>
+    <string name="crypto_create_title_decrypt">Dekrüpteerimine</string>
+    <string name="crypto_create_encrypt_success_message">KRÜPTEERIMINE ÕNNESTUS</string>
+    <string name="crypto_create_decrypt_success_message">DEKRÜPTEERIMINE ÕNNESTUS</string>
+    <string name="crypto_create_name">ÜMBRIK:</string>
+    <string name="crypto_create_data_files_title">Krüpteerimiseks valitud failid</string>
+    <string name="crypto_create_data_files_add_button">+ LISA VEEL FAILE</string>
+    <string name="crypto_create_data_files_add_error_exists">Fail on juba ümbrikus olemas</string>
+    <string name="crypto_create_data_file_remove_button">Eemalda fail</string>
+    <string name="crypto_create_recipients_title">Adressaadid</string>
+    <string name="crypto_create_recipients_empty">Adressaadid puuduvad</string>
+    <string name="crypto_create_recipients_add_button">+ LISA ADRESSAAT</string>
+    <string name="crypto_create_encrypt_button">KRÜPTEERI</string>
+    <string name="crypto_create_encrypt_error_no_recipients">Ühtegi adressaati ei ole lisatud</string>
+    <string name="crypto_create_decrypt_button">DEKRÜPTEERI</string>
+    <string name="crypto_create_decrypt_positive_button">Dekrüpteeri</string>
+    <string name="crypto_create_send_button">JAGA</string>
+    <string name="crypto_create_error">Midagi läks krüpteerimisel valesti</string>
+
+    <string name="crypto_recipient_type">Adressaat</string>
+    <string name="crypto_recipient_info">%1$s (kehtiv kuni %2$s)</string>
+    <string name="crypto_recipient_remove_button">Eemalda adressaat</string>
+    <string name="crypto_recipient_add_button">LISA</string>
+    <string name="crypto_recipient_add_button_added">LISATUD</string>
+
+    <string name="crypto_recipients_title">Adressaatide lisamine</string>
+    <string name="crypto_recipients_search">Sisesta isikukood, asutus või registrikood</string>
+    <string name="crypto_recipients_search_result_empty">Isikul või asutusel puudub kehtiv sertifikaat. \nKrüpteerimiseks on vaja kehtivat sertikaati.\nKüsimuste korral pöörduge id.ee.</string>
+    <string name="crypto_recipients_selected_subhead">Adressaadid</string>
+    <string name="crypto_recipients_done_button">KINNITA VALIK</string>
+
+    <string name="crypto_create_decrypt_progress_message_initial">Ühenda kaardilugeja telefoniga ja sisesta ID-kaart lugejasse</string>
+    <string name="crypto_create_decrypt_progress_message_reader_detected">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">ID-kaart leitud. Pärin andmeid.</string>
+    <string name="crypto_create_decrypt_message">Valmis dekrüpteerimiseks ID-kaardiga.</string>
+    <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
+    <string name="crypto_create_decrypt_pin1">Palun sisesta PIN1.</string>
+    <string name="crypto_create_decrypt_pin1_invalid">Vale PIN1. Saad PIN1 koodi sisestada veel %1$d korda.</string>
+    <string name="crypto_create_decrypt_pin1_invalid_final">Vale PIN1. Järgmise vale sisestusega lukustub PIN.</string>
+    <string name="crypto_create_decrypt_pin1_locked">PIN1 on lukus. Mine Minu eID, et avada.</string>
+    <string name="crypto_create_decrypt_active">Toimub dekrüpteerimine.\nPalun oota.</string>
 
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Ühenda kaardilugeja telefoniga ja sisesta ID-kaart lugejasse.</string>
