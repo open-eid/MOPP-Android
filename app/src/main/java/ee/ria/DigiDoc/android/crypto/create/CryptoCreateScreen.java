@@ -188,10 +188,6 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
     @Override
     public void render(ViewState state) {
-        tintCompoundDrawables(encryptButton);
-        tintCompoundDrawables(decryptButton);
-        tintCompoundDrawables(sendButton);
-
         if (state.containerFile() != null) {
             containerFile = state.containerFile();
         }
@@ -308,9 +304,9 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         listView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());
 
-        tintCompoundDrawables(encryptButton);
-        tintCompoundDrawables(decryptButton);
-        tintCompoundDrawables(sendButton);
+        tintCompoundDrawables(encryptButton, true);
+        tintCompoundDrawables(decryptButton, true);
+        tintCompoundDrawables(sendButton, true);
 
         disposables.attach();
         disposables.add(viewModel.viewStates().subscribe(this::render));
