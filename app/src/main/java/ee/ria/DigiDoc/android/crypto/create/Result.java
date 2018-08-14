@@ -357,6 +357,7 @@ interface Result extends MviResult<ViewState> {
                         .dataFilesViewEnabled(true)
                         .encryptButtonVisible(false)
                         .decryptButtonVisible(false)
+                        .sendButtonVisible(false)
                         .decryptionIdCardDataResponse(null)
                         .decryptState(State.IDLE)
                         .decryptError(null);
