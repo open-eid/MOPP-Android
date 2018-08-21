@@ -151,6 +151,15 @@
     <!-- Crypto Home -->
     <item type="id" name="cryptoHomeCreateButton" />
 
+    <!-- Auth Create -->
+    <item type="id" name="authCreateScreen" />
+    <item type="id" name="authCreateAuthenticateProgressContainer" />
+    <item type="id" name="authCreateAuthenticateProgressMessage" />
+    <item type="id" name="authCreateAuthenticateContainer" />
+    <item type="id" name="authCreateAuthenticateData" />
+    <item type="id" name="authCreateAuthenticatePin1" />
+    <item type="id" name="authCreateAuthenticatePin1Error" />
+
     <!-- Crypto Create -->
     <item type="id" name="cryptoCreateScreen" />
     <item type="id" name="cryptoCreateCoordinator" />

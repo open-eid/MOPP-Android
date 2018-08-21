@@ -1,8 +1,10 @@
 package ee.ria.DigiDoc.android.model.idcard;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Bytes;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -76,6 +78,8 @@ public final class IdCardService {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+
+
     public Single<IdCardData> editPin(Token token, CodeType pinType, String currentPin,
                                       String newPin) {
         return Single
@@ -99,6 +103,23 @@ public final class IdCardService {
                         .decrypt(new IdCardToken(token), data(token).authCertificate(), pin1,
                                 fileSystem.getCacheDir())
                         .dataFiles());
+    }
+
+    public Single<ByteBuffer> signForAutentication(Token token, String hash, String pin1) {
+        return Single.fromCallable(() -> {
+                    IdCardData data = data(token);
+                    byte[] authSignature;
+                    try{
+                        authSignature = token.calculateSignatureForAuthentication(pin1.getBytes(),
+                                hash.getBytes(),
+                                data.authCertificate().ellipticCurve());
+                    } catch (CodeVerificationException e) {
+                        throw new Pin1InvalidException();
+                    } catch (SmartCardReaderException e) {
+                        throw new CryptoException("Authentication failed", e);
+                    }
+                    return ByteBuffer.wrap(authSignature).asReadOnlyBuffer();
+                });
     }
 
     public static IdCardData data(Token token) throws Exception {

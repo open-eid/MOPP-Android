@@ -38,7 +38,7 @@ class EstEIDv3d5 extends EstEIDToken {
 
     @Override
     void selectCatalogue() throws SmartCardReaderException {
-        reader.transmit(0x00, 0xA4, 0x01, 0x04, new byte[] {(byte) 0xEE, (byte) 0xEE}, null);
+        reader.transmit(0x00, 0xA4, 0x01, 0x0C, new byte[] {(byte) 0xEE, (byte) 0xEE}, null);
     }
 
     @Override

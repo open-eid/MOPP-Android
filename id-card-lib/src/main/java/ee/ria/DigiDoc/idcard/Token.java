@@ -92,6 +92,19 @@ public interface Token {
             throws SmartCardReaderException;
 
     /**
+     * Calculate electronic signature for authentication with pre-calculated hash.
+     *
+     * @param pin1 PIN1 code.
+     * @param hash Pre-calculated hash.
+     * @param ecc Whether it's a elliptic curve certificate.
+     * @return Signed hash for authentication.
+     * @throws SmartCardReaderException When calculating signature failed.
+     * @throws CodeVerificationException When PIN1 code is wrong.
+     */
+    byte[] calculateSignatureForAuthentication(byte[] pin1, byte[] hash, boolean ecc)
+            throws SmartCardReaderException;
+
+    /**
      * Decrypt data.
      *
      * @param pin1 PIN1 code.

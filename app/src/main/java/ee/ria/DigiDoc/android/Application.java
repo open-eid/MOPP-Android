@@ -28,6 +28,7 @@ import android.os.StrictMode;
 import android.support.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
+import com.google.firebase.FirebaseApp;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -46,6 +47,7 @@ import dagger.Provides;
 import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
 import ee.ria.DigiDoc.BuildConfig;
+import ee.ria.DigiDoc.android.auth.AuthCreateViewModel;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateViewModel;
 import ee.ria.DigiDoc.android.eid.EIDHomeViewModel;
 import ee.ria.DigiDoc.android.main.home.HomeViewModel;
@@ -78,6 +80,7 @@ public class Application extends android.app.Application {
         setupSignLib();
         setupRxJava();
         setupDagger();
+        FirebaseApp.initializeApp(this);
     }
 
     // StrictMode
@@ -154,7 +157,8 @@ public class Application extends android.app.Application {
         @Component.Builder
         interface Builder {
 
-            @BindsInstance Builder application(android.app.Application application);
+            @BindsInstance
+            Builder application(android.app.Application application);
 
             ApplicationComponent build();
         }
@@ -177,51 +181,73 @@ public class Application extends android.app.Application {
     @Module
     static abstract class ApplicationModule {
 
-        @Provides @Singleton
+        @Provides
+        @Singleton
         static Navigator navigator(Activity.RootScreenFactory rootScreenFactory,
                                    ViewModelProvider.Factory viewModelFactory) {
             return new ConductorNavigator(rootScreenFactory, viewModelFactory);
         }
 
-        @Provides @Singleton
+        @Provides
+        @Singleton
         static ViewModelProvider.Factory viewModelFactory(
                 Map<Class<?>, Provider<ViewModel>> viewModelProviders) {
             return new ViewModelFactory(viewModelProviders);
         }
 
         @SuppressWarnings("unused")
-        @Binds abstract SignatureContainerDataSource signatureContainerDataSource(
+        @Binds
+        abstract SignatureContainerDataSource signatureContainerDataSource(
                 FileSystemSignatureContainerDataSource fileSystemSignatureContainerDataSource);
 
         @SuppressWarnings("unused")
-        @Binds @IntoMap @ClassKey(HomeViewModel.class)
+        @Binds
+        @IntoMap
+        @ClassKey(HomeViewModel.class)
         abstract ViewModel mainHomeViewModel(HomeViewModel homeViewModel);
 
         @SuppressWarnings("unused")
-        @Binds @IntoMap @ClassKey(SignatureListViewModel.class)
+        @Binds
+        @IntoMap
+        @ClassKey(SignatureListViewModel.class)
         abstract ViewModel signatureListViewModel(SignatureListViewModel viewModel);
 
         @SuppressWarnings("unused")
-        @Binds @IntoMap @ClassKey(SignatureCreateViewModel.class)
+        @Binds
+        @IntoMap
+        @ClassKey(SignatureCreateViewModel.class)
         abstract ViewModel signatureCreateViewModel(SignatureCreateViewModel viewModel);
 
         @SuppressWarnings("unused")
-        @Binds @IntoMap @ClassKey(SignatureUpdateViewModel.class)
+        @Binds
+        @IntoMap
+        @ClassKey(SignatureUpdateViewModel.class)
         abstract ViewModel signatureUpdateModel(SignatureUpdateViewModel viewModel);
 
         @SuppressWarnings("unused")
-        @Binds @IntoMap @ClassKey(CryptoCreateViewModel.class)
+        @Binds
+        @IntoMap
+        @ClassKey(CryptoCreateViewModel.class)
         abstract ViewModel cryptoCreateViewModel(CryptoCreateViewModel viewModel);
 
         @SuppressWarnings("unused")
-        @Binds @IntoMap @ClassKey(EIDHomeViewModel.class)
+        @Binds
+        @IntoMap
+        @ClassKey(AuthCreateViewModel.class)
+        abstract ViewModel authCreateViewModel(AuthCreateViewModel viewModel);
+
+        @SuppressWarnings("unused")
+        @Binds
+        @IntoMap
+        @ClassKey(EIDHomeViewModel.class)
         abstract ViewModel eidHomeViewModel(EIDHomeViewModel viewModel);
     }
 
     @Module
     static abstract class SmartCardModule {
 
-        @Provides @Singleton
+        @Provides
+        @Singleton
         static SmartCardReaderManager smartCardReaderManager(
                 android.app.Application application, UsbManager usbManager,
                 AcsSmartCardReader acsSmartCardReader,
@@ -230,12 +256,14 @@ public class Application extends android.app.Application {
                     ImmutableList.of(acsSmartCardReader, identivSmartCardReader));
         }
 
-        @Provides @Singleton
+        @Provides
+        @Singleton
         static AcsSmartCardReader acsSmartCardReader(UsbManager usbManager) {
             return new AcsSmartCardReader(usbManager);
         }
 
-        @Provides @Singleton
+        @Provides
+        @Singleton
         static IdentivSmartCardReader identivSmartCardReader(android.app.Application application,
                                                              UsbManager usbManager) {
             return new IdentivSmartCardReader(application, usbManager);
@@ -245,7 +273,8 @@ public class Application extends android.app.Application {
     @Module
     static abstract class CryptoLibModule {
 
-        @Provides @Singleton
+        @Provides
+        @Singleton
         static RecipientRepository recipientRepository() {
             return new RecipientRepository();
         }

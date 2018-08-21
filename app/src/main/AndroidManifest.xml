@@ -12,39 +12,51 @@
         android:label="@string/application_name"
         android:theme="@style/Theme.Application.Launch">
 
-        <activity
-            android:name=".android.Activity"
-            android:exported="true" />
+          <activity android:name=".android.AuthenticationActivity">
+              <intent-filter>
+                  <action android:name="ee.ria.launchfrombrowser" />
+                  <category android:name="android.intent.category.DEFAULT" />
+                  <category android:name="android.intent.category.BROWSABLE" />
+              </intent-filter>
+          </activity>
+          <activity
+              android:name=".android.Activity"
+              android:exported="true" />
 
-        <activity-alias
-            android:name="LauncherActivity"
-            android:targetActivity=".android.Activity">
+          <activity-alias
+              android:name="LauncherActivity"
+              android:targetActivity=".android.Activity">
 
+              <intent-filter>
+                  <action android:name="android.intent.action.MAIN" />
+                  <category android:name="android.intent.category.LAUNCHER" />
+              </intent-filter>
+
+              <intent-filter tools:ignore="AppLinkUrlError">
+                  <action android:name="android.intent.action.VIEW" />
+                  <category android:name="android.intent.category.DEFAULT" />
+                  <data android:mimeType="*/*" />
+              </intent-filter>
+
+          </activity-alias>
+        <service
+            android:name=".android.MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
+        </service>
+          <provider
+              android:name="android.support.v4.content.FileProvider"
+              android:authorities="@string/file_provider_authority"
+              android:exported="false"
+              android:grantUriPermissions="true">
 
-            <intent-filter tools:ignore="AppLinkUrlError">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="*/*" />
-            </intent-filter>
+              <meta-data
+                  android:name="android.support.FILE_PROVIDER_PATHS"
+                  android:resource="@xml/file_provider_paths" />
 
-        </activity-alias>
+          </provider>
 
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="@string/file_provider_authority"
-            android:exported="false"
-            android:grantUriPermissions="true">
+      </application>
 
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_provider_paths" />
-
-        </provider>
-
-    </application>
-
-</manifest>
+  </manifest>

@@ -43,7 +43,7 @@ public abstract class SmartCardReader implements AutoCloseable {
      */
     public final byte[] transmit(int cla, int ins, int p1, int p2, byte[] data, Integer le)
             throws SmartCardReaderException {
-        Timber.d("transmit: %s %s %s %s %s %s", cla, ins, p1, p2, Arrays.asList(data), le);
+        Timber.d("transmit: %02X %02X %02X %02X %s %02X", cla, ins, p1, p2, Arrays.asList(data), le);
 
         byte[] response;
         if (data == null || data.length == 0) {
@@ -85,6 +85,9 @@ public abstract class SmartCardReader implements AutoCloseable {
                     copyOf(response, response.length - 2),
                     transmit(0x00, 0xC0, 0x00, 0x00, null, (int) sw2));
         }
+
+        Timber.d("SW1:: %02X", sw1);
+        Timber.d("SW2:: %02X", sw2);
         throw new ApduResponseException(sw1, sw2);
     }
 

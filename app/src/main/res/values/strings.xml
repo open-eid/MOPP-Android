@@ -41,6 +41,22 @@
     <string name="main_diagnostics_operating_system_title">OS:\u0020</string>
     <string name="main_diagnostics_libraries_title">Libraries:</string>
 
+    <!-- Auth Create -->
+    <string name="auth_create_title" tools:ignore="MissingTranslation">Authentication</string>
+    <string name="auth_create_authenticate_progress_message_initial" tools:ignore="MissingTranslation">Connect the card reader and insert your ID-card into the reader.</string>
+    <string name="auth_create_authenticate_progress_message_reader_detected" tools:ignore="MissingTranslation">Reader found. Insert your ID-card into the reader.</string>
+    <string name="auth_create_authenticate_progress_message_card_detected" tools:ignore="MissingTranslation">ID-card found. Requesting information.</string>
+    <string name="auth_create_authenticate_message" tools:ignore="MissingTranslation">Ready to authenticate with ID card</string>
+    <string name="auth_create_authenticate_data" tools:ignore="MissingTranslation">%1$s %2$s (%3$s)</string>
+    <string name="auth_create_authenticate_pin1" tools:ignore="MissingTranslation">Enter PIN1</string>
+    <string name="auth_create_authenticate_pin1_invalid" tools:ignore="MissingTranslation">Wrong PIN1. You have %1$d attempts left.</string>
+    <string name="auth_create_authenticate_pin1_invalid_final" tools:ignore="MissingTranslation">Wrong PIN1. You have 1 attempt left until your PIN1 is blocked.</string>
+    <string name="auth_create_authenticate_pin1_locked" tools:ignore="MissingTranslation">PIN1 blocked. Go to My eID to unblock it.</string>
+    <string name="auth_create_authenticate_active" tools:ignore="MissingTranslation">Authenticating</string>
+    <string name="auth_create_authenticate_positive_button" tools:ignore="MissingTranslation">Authenticate</string>
+    <string name="auth_create_error" tools:ignore="MissingTranslation">Something went wrong. Please try again.</string>
+
+
     <!-- Signature Home -->
     <string name="signature_home_create_text">Choose a file to sign or validate</string>
     <string name="signature_home_create_button">CHOOSE FILE</string>
