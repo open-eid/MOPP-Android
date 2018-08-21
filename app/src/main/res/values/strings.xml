@@ -200,6 +200,7 @@
     <string name="crypto_create_decrypt_pin1_invalid_final">Wrong PIN1. You have 1 attempt left until your PIN1 is blocked.</string>
     <string name="crypto_create_decrypt_pin1_locked">PIN1 blocked. Go to My eID to unblock it.</string>
     <string name="crypto_create_decrypt_active">Decryption in progress. Please wait.</string>
+    <string name="crypto_create_decrypt_error">Something went wrong with decryption. Please try again.</string>
 
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Connect the card reader and insert your ID-card into the reader.</string>

@@ -241,7 +241,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 errorDialog.show();
             } else if (!(decryptError instanceof Pin1InvalidException)) {
                 errorDialog.setMessage(errorDialog.getContext().getString(
-                        R.string.crypto_create_error));
+                        R.string.crypto_create_decrypt_error));
                 errorDialog.show();
             }
         } else if (encryptError != null) {

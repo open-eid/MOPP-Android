@@ -200,6 +200,7 @@
     <string name="crypto_create_decrypt_pin1_invalid_final">Vale PIN1. Järgmise vale sisestusega lukustub PIN.</string>
     <string name="crypto_create_decrypt_pin1_locked">PIN1 on lukus. Mine Minu eID, et avada.</string>
     <string name="crypto_create_decrypt_active">Toimub dekrüpteerimine.\nPalun oota.</string>
+    <string name="crypto_create_decrypt_error">Midagi läks dekrüpteerimisel valesti. Palun proovi uuesti.</string>
 
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Ühenda kaardilugeja telefoniga ja sisesta ID-kaart lugejasse.</string>
