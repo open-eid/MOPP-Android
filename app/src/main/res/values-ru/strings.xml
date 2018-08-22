@@ -200,6 +200,7 @@
     <string name="crypto_create_decrypt_pin1_invalid_final">Неверный PIN1. У Вас осталась 1 попытка до блокировки Вашего PIN1.</string>
     <string name="crypto_create_decrypt_pin1_locked">PIN1 заблокирован. Зайдите в Мой eID, чтобы разблокировать его.</string>
     <string name="crypto_create_decrypt_active">Происходит дешифрование. Пожалуйста, подождите.</string>
+    <string name="crypto_create_decrypt_error">Что-то пошло не так с дешифрованием. Пожалуйста, попробуйте снова.</string>
 
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Подключите считыватель карты и вставьте в него Вашу ID-карту.</string>

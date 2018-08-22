@@ -43,11 +43,6 @@ import static ee.ria.DigiDoc.crypto.CryptoContainer.createContainerFileName;
 import static ee.ria.DigiDoc.crypto.CryptoContainer.isContainerFileName;
 import static ee.ria.DigiDoc.sign.SignedContainer.mimeType;
 
-/**
- * Error when opening crypto container: show error message and close on dialog cancel?
- * Do not create file when encrypt is not successful
- * Check for all cases when application is terminated
- */
 final class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ContentResolver contentResolver;
@@ -252,8 +247,14 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return Single
                         .fromCallable(() -> {
                             File containerFile = fileSystem.generateSignatureContainerFile(name);
-                            return CryptoContainer.encrypt(dataFiles, recipients, containerFile)
-                                    .file();
+                            try {
+                                return CryptoContainer.encrypt(dataFiles, recipients, containerFile)
+                                        .file();
+                            } catch (Exception e) {
+                                //noinspection ResultOfMethodCallIgnored
+                                containerFile.delete();
+                                throw e;
+                            }
                         })
                         .flatMapObservable(file ->
                                 Observable

@@ -11,12 +11,14 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
 import ee.ria.DigiDoc.android.utils.files.FileAlreadyExistsException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -169,6 +171,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         if (!isSignedPdfDataFile && SignedContainer.isContainer(documentFile)) {
                             transaction = Transaction.push(SignatureUpdateScreen
                                     .create(true, true, documentFile, false, false));
+                        } else if (CryptoContainer.isContainerFileName(documentFile.getName())) {
+                            transaction = Transaction.push(CryptoCreateScreen.open(documentFile));
                         } else {
                             transaction = Transaction.activity(IntentUtils
                                     .createViewIntent(application, documentFile,

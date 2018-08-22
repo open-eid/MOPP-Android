@@ -1,7 +1,5 @@
 package ee.ria.DigiDoc.android.signature.update;
 
-import android.app.Application;
-
 import java.io.File;
 
 import javax.inject.Inject;
@@ -17,6 +15,7 @@ import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdOnSubscribe;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdRequest;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import io.reactivex.Observable;
@@ -25,15 +24,15 @@ import io.reactivex.schedulers.Schedulers;
 
 final class SignatureAddSource {
 
-    private final Application application;
+    private final Navigator navigator;
     private final SignatureContainerDataSource signatureContainerDataSource;
     private final SettingsDataStore settingsDataStore;
     private final IdCardService idCardService;
 
-    @Inject SignatureAddSource(Application application,
+    @Inject SignatureAddSource(Navigator navigator,
                                SignatureContainerDataSource signatureContainerDataSource,
                                SettingsDataStore settingsDataStore, IdCardService idCardService) {
-        this.application = application;
+        this.navigator = navigator;
         this.signatureContainerDataSource = signatureContainerDataSource;
         this.settingsDataStore = settingsDataStore;
         this.idCardService = idCardService;
@@ -69,7 +68,7 @@ final class SignatureAddSource {
             return signatureContainerDataSource
                     .get(containerFile)
                     .flatMapObservable(container ->
-                            Observable.create(new MobileIdOnSubscribe(application, container,
+                            Observable.create(new MobileIdOnSubscribe(navigator, container,
                                     mobileIdRequest.personalCode(), mobileIdRequest.phoneNo())))
                     .switchMap(response -> {
                         String signature = response.signature();
