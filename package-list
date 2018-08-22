@@ -1,0 +1,13 @@
+ee.ria.DigiDoc.common
+ee.ria.DigiDoc.crypto
+ee.ria.DigiDoc.idcard
+ee.ria.DigiDoc.mobileid.dto.request
+ee.ria.DigiDoc.mobileid.dto.response
+ee.ria.DigiDoc.mobileid.service
+ee.ria.DigiDoc.mobileid.soap
+ee.ria.DigiDoc.sign
+ee.ria.DigiDoc.sign.utils
+ee.ria.DigiDoc.smartcardreader
+ee.ria.DigiDoc.smartcardreader.acs
+ee.ria.DigiDoc.smartcardreader.identiv
+ee.ria.libdigidocpp
