@@ -73,6 +73,10 @@
     <string name="main_about_junit_title">JUnit %1$s</string>
     <string name="main_about_truth_title">Google Truth %1$s</string>
     <string name="main_about_mockito_title">Mockito %1$s</string>
+    <string name="main_about_acs_title">ACS Smart Card Android Library %1$s</string>
+    <string name="main_about_acs_license_url">http://www.acs.com.hk</string>
+    <string name="main_about_identiv_title">Android CCID Library %1$s</string>
+    <string name="main_about_identiv_license_url">https://www.identiv.com/</string>
     <string name="main_about_apache_2_license_title">Apache Software License, Version 2.0</string>
     <string name="main_about_apache_2_license_url">https://www.apache.org/licenses/LICENSE-2.0</string>
     <string name="main_about_mit_license_title">MIT License</string>
