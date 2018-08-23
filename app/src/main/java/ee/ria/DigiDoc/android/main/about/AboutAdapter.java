@@ -177,12 +177,12 @@ final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             .add(Component.create(
                     R.string.main_about_acs_title,
                     "1.1.4",
-                    R.string.main_about_acs_license_title,
+                    R.string.main_about_terms_and_conditions,
                     R.string.main_about_acs_license_url))
             .add(Component.create(
                     R.string.main_about_identiv_title,
                     "1.2",
-                    R.string.main_about_identiv_license_title,
+                    R.string.main_about_terms_and_conditions,
                     R.string.main_about_identiv_license_url))
             .build();
 

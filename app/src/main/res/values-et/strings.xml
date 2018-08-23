@@ -34,6 +34,7 @@
     <string name="main_about_software_developed_by_title">Eesti ID-tarkvara on välja antud Riigi Infosüsteemi Ameti poolt</string>
     <string name="main_about_contact_information_title">Küsimuste korral pöörduge id.ee.</string>
     <string name="main_about_licenses_title">Täiendavad litsentsid ja komponendid</string>
+    <string name="main_about_terms_and_conditions">Kasutustingimused:</string>
 
     <!-- Main Diagnostics -->
     <string name="main_diagnostics_title">Diagnostika</string>
