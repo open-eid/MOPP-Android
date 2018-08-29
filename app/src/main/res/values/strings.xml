@@ -55,6 +55,8 @@
     <string name="auth_create_authenticate_active" tools:ignore="MissingTranslation">Authenticating</string>
     <string name="auth_create_authenticate_positive_button" tools:ignore="MissingTranslation">Authenticate</string>
     <string name="auth_create_error" tools:ignore="MissingTranslation">Something went wrong. Please try again.</string>
+    <string name="auth_home_create_button" tools:ignore="MissingTranslation">AUTHENTICATE</string>
+    <string name="auth_home_create_text" tools:ignore="MissingTranslation">Click button below to continue</string>
 
 
     <!-- Signature Home -->

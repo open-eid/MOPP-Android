@@ -8,13 +8,8 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.Button;
 import com.bluelinelabs.conductor.Controller;
-import com.google.common.collect.ImmutableList;
-
-
-import java.nio.ByteBuffer;
-
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
@@ -27,13 +22,14 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
+import java.nio.ByteBuffer;
+
 import static android.accounts.AccountManager.KEY_AUTHTOKEN;
 import static android.accounts.AccountManager.KEY_INTENT;
-import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 
 public class AuthenticationCreateScreen extends Controller implements Screen,
-    MviView<Intent, ViewState> {
+        MviView<Intent, ViewState> {
     @Nullable
     private final android.content.Intent intent;
     private ByteBuffer signature;
@@ -42,12 +38,13 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
     private final Subject<Boolean> idCardTokenAvailableSubject = PublishSubject.create();
     private final ViewDisposables disposables = new ViewDisposables();
     private AuthCreateViewModel viewModel;
+    private Button authButton;
     private AlertDialog errorDialog;
     private IdCardDataResponse authenticationIdCardDataResponse;
-    @Nullable private Throwable authenticationError;
+    @Nullable
+    private Throwable authenticationError;
 
-
-    public static AuthenticationCreateScreen create(String hash) {
+    public static AuthenticationCreateScreen create(String hash, String hashType, String sessionId) {
         Bundle args = new Bundle();
         args.putString(KEY_AUTHTOKEN, hash);
         return new AuthenticationCreateScreen(args);
@@ -138,13 +135,16 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
         View view = inflater.inflate(R.layout.auth_create_screen, container, false);
-
+        authButton = view.findViewById(R.id.cryptoHomeCreateButton);
+//        navigator = Application.component(context).navigator();
         authenticationDialog = new AuthenticationDialog(inflater.getContext());
         errorDialog = new AlertDialog.Builder(inflater.getContext())
                 .setMessage(R.string.auth_create_error)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.cancel())
                 .create();
         disposables.attach();
+//        disposables.add(clicks(authButton).subscribe(ignored ->
+//                navigator.execute(Transaction.push(CryptoCreateScreen.create()))));
         disposables.add(viewModel.viewStates().subscribe(this::render));
         viewModel.process(intents());
         return view;

@@ -1,59 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@id/authCreateScreen"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@id/authCreateScreen"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:background="@color/primary">
 
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@id/cryptoCreateCoordinator"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@id/appBar"
+    <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@id/toolbar"
-                android:theme="@style/ThemeOverlay.Application.ActionBar"
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:navigationIcon="@drawable/ic_clear"
-                app:navigationContentDescription="@string/back"
-                app:title="@string/auth_create_title" />
+                android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+                android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
 
-        </android.support.design.widget.AppBarLayout>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textAppearance="@style/TextAppearance.Application.Value"
+                    android:text="@string/auth_home_create_text"
+                    android:layout_marginTop="150dp"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@id/cryptoCreateList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:scrollbars="vertical" />
+            <Button
+                    android:id="@id/authHomeCreateButton"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:text="@string/auth_home_create_button"
+                    android:layout_marginBottom="150dp"/>
 
-        <FrameLayout
-            android:id="@id/activityOverlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/activityOverlayBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:translationZ="@dimen/material_elevation_dialog" />
+            <Button
+                    android:id="@id/authHomeCloseButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/close"/>
 
-        <ProgressBar
-            android:id="@id/activityIndicator"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_anchor="@id/appBar"
-            app:layout_anchorGravity="bottom"
-            android:indeterminate="true" />
+        </LinearLayout>
 
-    </android.support.design.widget.CoordinatorLayout>
-
+    </ScrollView>
 
 </LinearLayout>

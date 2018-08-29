@@ -14,6 +14,10 @@
 
           <activity android:name=".android.AuthenticationActivity">
               <intent-filter>
+                  <action android:name="android.AuthenticationActivity" />
+                  <category android:name="android.intent.category.DEFAULT" />
+              </intent-filter>
+              <intent-filter>
                   <action android:name="ee.ria.launchfrombrowser" />
                   <category android:name="android.intent.category.DEFAULT" />
                   <category android:name="android.intent.category.BROWSABLE" />
@@ -39,12 +43,12 @@
               </intent-filter>
 
           </activity-alias>
-        <service
+          <service
             android:name=".android.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
-        </service>
+          </service>
           <provider
               android:name="android.support.v4.content.FileProvider"
               android:authorities="@string/file_provider_authority"

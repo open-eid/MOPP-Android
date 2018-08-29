@@ -159,6 +159,8 @@
     <item type="id" name="authCreateAuthenticateData" />
     <item type="id" name="authCreateAuthenticatePin1" />
     <item type="id" name="authCreateAuthenticatePin1Error" />
+    <item type="id" name="authHomeCreateButton" />
+    <item type="id" name="authHomeCloseButton" />
 
     <!-- Crypto Create -->
     <item type="id" name="cryptoCreateScreen" />

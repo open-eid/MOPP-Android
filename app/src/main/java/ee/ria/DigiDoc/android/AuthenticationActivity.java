@@ -12,6 +12,10 @@ import ee.ria.DigiDoc.android.auth.AuthenticationCreateScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 
+import static ee.ria.DigiDoc.android.Constants.MESSAGING_HASH_KEY;
+import static ee.ria.DigiDoc.android.Constants.MESSAGING_HASH_TYPE_KEY;
+import static ee.ria.DigiDoc.android.Constants.MESSAGING_SESSION_ID_KEY;
+
 
 public class AuthenticationActivity extends AppCompatActivity {
     private Navigator navigator;
@@ -23,7 +27,9 @@ public class AuthenticationActivity extends AppCompatActivity {
 //            MessageDigest digestMethod = MessageDigest.getInstance("SHA512");
 //            byte[] response = digestMethod.digest(getRandomBytes());
 //           String test = new String(Base64.encode(response));
-        navigator.execute(Transaction.root(AuthenticationCreateScreen.create("7x/Oo6GisMauOdwmyGTgG3+pErQ+OOrLeVEN3yWXEGq/lUbJNq/1ffvexAYul5VcenOlU6wzUoUuFDzbugC5tA==")));
+        Bundle extras = getIntent().getExtras();
+
+        navigator.execute(Transaction.root(AuthenticationCreateScreen.create(extras.getString(MESSAGING_HASH_KEY), extras.getString(MESSAGING_HASH_TYPE_KEY), extras.getString(MESSAGING_SESSION_ID_KEY))));
 //        }catch(Exception e){
 //                throw new RuntimeException("qwqwe");
 //            }
