@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.vanniktech.android.javadoc'
 
 android {
     compileSdkVersion project.compileSdkVersion
@@ -17,14 +16,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-}
 
-androidJavadoc {
-    variantFilter = { variant ->
-        return variant.name == 'release'
-    }
-    outputDir = { Project project ->
-        "${project.rootProject.projectDir}/docs/${project.name}/javadoc/"
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 }
 
@@ -40,13 +34,14 @@ dependencies {
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
-    implementation "org.apache.directory.api:api-ldap-client-all:${apacheDirectoryVersion}"
+    implementation "com.unboundid:unboundid-ldapsdk:${ldapSdkVersion}"
 
+    implementation "org.slf4j:slf4j-android:${slf4jVersion}"
     implementation ("org.open-eid.cdoc4j:cdoc4j:${cdoc4jVersion}") {
         exclude group: 'org.slf4j'
     }
 
-    api project(':core-lib')
+    api project(':common-lib')
 
     testImplementation "junit:junit:${junitVersion}"
     testImplementation "com.google.truth:truth:${truthVersion}"

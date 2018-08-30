@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.crypto.CryptoException;
 import ee.ria.DigiDoc.crypto.DecryptToken;
@@ -101,7 +101,7 @@ public final class IdCardService {
         return Single.fromCallable(() ->
                 CryptoContainer.open(containerFile)
                         .decrypt(new IdCardToken(token), data(token).authCertificate(), pin1,
-                                fileSystem.getCacheDir())
+                                fileSystem.getContainerDataFilesDir(containerFile))
                         .dataFiles());
     }
 

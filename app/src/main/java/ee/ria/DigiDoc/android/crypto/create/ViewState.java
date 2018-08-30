@@ -10,7 +10,7 @@ import java.io.File;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.mvi.MviViewState;
 import ee.ria.DigiDoc.android.utils.mvi.State;
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 
 @AutoValue
 abstract class ViewState implements MviViewState {

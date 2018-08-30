@@ -2,8 +2,8 @@ package ee.ria.DigiDoc.android.model.idcard;
 
 import com.google.auto.value.AutoValue;
 
-import ee.ria.DigiDoc.core.Certificate;
-import ee.ria.DigiDoc.core.EIDType;
+import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.common.EIDType;
 import ee.ria.DigiDoc.idcard.PersonalData;
 
 @AutoValue

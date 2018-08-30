@@ -31,13 +31,17 @@ android {
         buildConfigField 'String', 'CONDUCTOR_VERSION', "\"$conductorVersion\""
         buildConfigField 'String', 'RX_JAVA_VERSION', "\"$rxJavaVersion\""
         buildConfigField 'String', 'RX_ANDROID_VERSION', "\"$rxAndroidVersion\""
-        buildConfigField 'String', 'RX_BINDER_VERSION', "\"$rxBindingVersion\""
+        buildConfigField 'String', 'RX_BINDING_VERSION', "\"$rxBindingVersion\""
         buildConfigField 'String', 'AUTO_VALUE_VERSION', "\"$autoValueVersion\""
         buildConfigField 'String', 'AUTO_VALUE_PARCEL_VERSION', "\"$autoValueParcelVersion\""
         buildConfigField 'String', 'THREE_TEN_ABP_VERSION', "\"$threetenabpVersion\""
         buildConfigField 'String', 'EXPANDABLE_LAYOUT_VERSION', "\"$expandablelayoutVersion\""
+        buildConfigField 'String', 'LDAP_SDK_VERSION', "\"$ldapSdkVersion\""
+        buildConfigField 'String', 'CDOC4J_VERSION', "\"$cdoc4jVersion\""
+        buildConfigField 'String', 'SLF4J_VERSION', "\"$slf4jVersion\""
         buildConfigField 'String', 'JUNIT_VERSION', "\"$junitVersion\""
         buildConfigField 'String', 'TRUTH_VERSION', "\"$truthVersion\""
+        buildConfigField 'String', 'MOCKITO_VERSION', "\"$mockitoVersion\""
     }
 
     signingConfigs {
@@ -112,7 +116,7 @@ dependencies {
 
     implementation "net.cachapa.expandablelayout:expandablelayout:${expandablelayoutVersion}"
 
-    implementation project(':core-lib')
+    implementation project(':common-lib')
     implementation project(':sign-lib')
     implementation project(':crypto-lib')
     implementation project(':smart-card-reader-lib')

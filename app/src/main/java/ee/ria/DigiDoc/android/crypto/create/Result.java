@@ -11,7 +11,7 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.mvi.State;
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 
@@ -59,6 +59,7 @@ interface Result extends MviResult<ViewState> {
                         .encryptButtonVisible(true);
             } else if (container != null) {
                 builder
+                        .containerFile(container.file())
                         .name(container.file().getName())
                         .dataFiles(container.dataFiles())
                         .recipients(container.recipients())
@@ -306,7 +307,12 @@ interface Result extends MviResult<ViewState> {
 
         @Override
         public ViewState reduce(ViewState state) {
-            return state.buildWith().decryptionIdCardDataResponse(idCardDataResponse()).build();
+            ViewState.Builder builder = state.buildWith()
+                    .decryptionIdCardDataResponse(idCardDataResponse());
+            if (idCardDataResponse() == null) {
+                builder.decryptError(null);
+            }
+            return builder.build();
         }
 
         static DecryptionResult show(IdCardDataResponse idCardDataResponse) {
@@ -351,6 +357,7 @@ interface Result extends MviResult<ViewState> {
                         .dataFilesViewEnabled(true)
                         .encryptButtonVisible(false)
                         .decryptButtonVisible(false)
+                        .sendButtonVisible(false)
                         .decryptionIdCardDataResponse(null)
                         .decryptState(State.IDLE)
                         .decryptError(null);

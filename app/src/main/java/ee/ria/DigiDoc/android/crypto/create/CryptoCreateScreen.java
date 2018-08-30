@@ -26,7 +26,7 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
-import ee.ria.DigiDoc.core.Certificate;
+import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientsEmptyException;
 import io.reactivex.Observable;
@@ -188,10 +188,6 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
     @Override
     public void render(ViewState state) {
-        tintCompoundDrawables(encryptButton);
-        tintCompoundDrawables(decryptButton);
-        tintCompoundDrawables(sendButton);
-
         if (state.containerFile() != null) {
             containerFile = state.containerFile();
         }
@@ -245,7 +241,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 errorDialog.show();
             } else if (!(decryptError instanceof Pin1InvalidException)) {
                 errorDialog.setMessage(errorDialog.getContext().getString(
-                        R.string.crypto_create_error));
+                        R.string.crypto_create_decrypt_error));
                 errorDialog.show();
             }
         } else if (encryptError != null) {
@@ -308,9 +304,9 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         listView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());
 
-        tintCompoundDrawables(encryptButton);
-        tintCompoundDrawables(decryptButton);
-        tintCompoundDrawables(sendButton);
+        tintCompoundDrawables(encryptButton, true);
+        tintCompoundDrawables(decryptButton, true);
+        tintCompoundDrawables(sendButton, true);
 
         disposables.attach();
         disposables.add(viewModel.viewStates().subscribe(this::render));

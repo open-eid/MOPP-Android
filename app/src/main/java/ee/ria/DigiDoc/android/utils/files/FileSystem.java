@@ -27,14 +27,12 @@ public final class FileSystem {
         return o1.lastModified() > o2.lastModified() ? -1 : 1;
     };
 
+    private static final String DATA_FILE_DIR = "%s-data-files";
+
     private final Application application;
 
     @Inject FileSystem(Application application) {
         this.application = application;
-    }
-
-    public File getCacheDir() {
-        return application.getCacheDir();
     }
 
     /**
@@ -105,6 +103,20 @@ public final class FileSystem {
         return file;
     }
 
+    public File getContainerDataFilesDir(File containerFile) {
+        File directory;
+        if (containerFile.getParentFile().equals(signatureContainersDir())) {
+            directory = createDataFileDirectory(cacheDir(), containerFile);
+        } else {
+            directory = createDataFileDirectory(containerFile.getParentFile(), containerFile);
+        }
+        return directory;
+    }
+
+    private File cacheDir() {
+        return application.getCacheDir();
+    }
+
     /**
      * Get path to a file in cache directory.
      *
@@ -112,10 +124,10 @@ public final class FileSystem {
      * @return File with absolute path to file in cache directory.
      */
     private File getCacheFile(String name) {
-        return new File(getCacheDir(), name);
+        return new File(cacheDir(), name);
     }
 
-    public File signatureContainersDir() {
+    private File signatureContainersDir() {
         File dir = new File(application.getFilesDir(), DIR_SIGNATURE_CONTAINERS);
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
@@ -132,5 +144,26 @@ public final class FileSystem {
             file = new File(directory, String.format(Locale.US, "%s (%d).%s", name, i++, ext));
         }
         return file;
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private static File createDataFileDirectory(File directory, File container) {
+        File dir;
+        int i = 0;
+        while (true) {
+            StringBuilder name = new StringBuilder(
+                    String.format(Locale.US, DATA_FILE_DIR, container.getName()));
+            if (i > 0) {
+                name.append(i);
+            }
+            dir = new File(directory, name.toString());
+            if (dir.isDirectory() || !dir.exists()) {
+                break;
+            }
+            i++;
+        }
+        dir.mkdirs();
+        dir.mkdir();
+        return dir;
     }
 }

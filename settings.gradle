@@ -4,4 +4,4 @@ include ':app',
         ':mobile-id-lib',
         ':id-card-lib',
         ':smart-card-reader-lib',
-        ':core-lib'
+        ':common-lib'

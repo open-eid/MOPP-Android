@@ -1,6 +1,5 @@
 package ee.ria.DigiDoc.android.signature.update.mobileid;
 
-import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +8,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
 import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureResponse;
@@ -16,7 +16,6 @@ import ee.ria.DigiDoc.mobileid.dto.response.ServiceFault;
 import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.sign.SignedContainer;
-import ee.ria.libdigidocpp.Conf;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 
@@ -32,17 +31,17 @@ import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SERVICE_FAULT;
 
 public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileIdResponse> {
 
-    private final Application application;
+    private final Navigator navigator;
     private final SignedContainer container;
     private final LocalBroadcastManager broadcastManager;
     private final String personalCode;
     private final String phoneNo;
 
-    public MobileIdOnSubscribe(Application application, SignedContainer container,
-                               String personalCode, String phoneNo) {
-        this.application = application;
+    public MobileIdOnSubscribe(Navigator navigator, SignedContainer container, String personalCode,
+                               String phoneNo) {
+        this.navigator = navigator;
         this.container = container;
-        this.broadcastManager = LocalBroadcastManager.getInstance(application);
+        this.broadcastManager = LocalBroadcastManager.getInstance(navigator.activity());
         this.personalCode = personalCode;
         this.phoneNo = phoneNo;
     }
@@ -57,7 +56,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                         ServiceFault fault = ServiceFault
                                 .fromJson(intent.getStringExtra(SERVICE_FAULT));
                         emitter.onError(MobileIdMessageException
-                                .create(application, fault.getReason()));
+                                .create(navigator.activity(), fault.getReason()));
                         break;
                     case CREATE_SIGNATURE_CHALLENGE:
                         MobileCreateSignatureResponse challenge = MobileCreateSignatureResponse
@@ -78,7 +77,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                                 break;
                             default:
                                 emitter.onError(MobileIdMessageException
-                                        .create(application, status.getStatus()));
+                                        .create(navigator.activity(), status.getStatus()));
                                 break;
                         }
                         break;
@@ -89,17 +88,15 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         broadcastManager.registerReceiver(receiver, new IntentFilter(MID_BROADCAST_ACTION));
         emitter.setCancellable(() -> broadcastManager.unregisterReceiver(receiver));
 
-        Conf conf = Conf.instance();
-        String displayMessage = application
+        String displayMessage = navigator.activity()
                 .getString(R.string.signature_update_mobile_id_display_message, container.name());
         MobileCreateSignatureRequest request = MobileCreateSignatureRequestHelper
                 .create(container, personalCode, phoneNo, displayMessage);
 
-        android.content.Intent intent = new Intent(application, MobileSignService.class);
+        android.content.Intent intent = new Intent(navigator.activity(), MobileSignService.class);
         intent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));
-        intent.putExtra(ACCESS_TOKEN_PASS, conf == null ? "" : conf.PKCS12Pass());
-        intent.putExtra(ACCESS_TOKEN_PATH,
-                SignLib.accessCertificateDir(application).getAbsolutePath());
-        application.startService(intent);
+        intent.putExtra(ACCESS_TOKEN_PASS, SignLib.accessTokenPass());
+        intent.putExtra(ACCESS_TOKEN_PATH, SignLib.accessTokenPath());
+        navigator.activity().startService(intent);
     }
 }

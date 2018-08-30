@@ -93,7 +93,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
         return Single.fromCallable(() ->
                 SignedContainer
                         .open(containerFile)
-                        .getDataFile(document, dataFileDirectory(containerFile)));
+                        .getDataFile(document, fileSystem.getContainerDataFilesDir(containerFile)));
     }
 
     @Override
@@ -119,38 +119,5 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
             fileBuilder.add(fileSystem.cache(fileStream));
         }
         return fileBuilder.build();
-    }
-
-    private File dataFileDirectory(File containerFile) {
-        File directory;
-        if (containerFile.getParentFile().equals(fileSystem.signatureContainersDir())) {
-            directory = createDataFileDirectory(fileSystem.getCacheDir(), containerFile);
-        } else {
-            directory = createDataFileDirectory(containerFile.getParentFile(), containerFile);
-        }
-        return directory;
-    }
-
-    private static final String DATA_FILE_DIR = "%s-data-files";
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private static File createDataFileDirectory(File directory, File container) {
-        File dir;
-        int i = 0;
-        while (true) {
-            StringBuilder name = new StringBuilder(
-                    String.format(Locale.US, DATA_FILE_DIR, container.getName()));
-            if (i > 0) {
-                name.append(i);
-            }
-            dir = new File(directory, name.toString());
-            if (dir.isDirectory() || !dir.exists()) {
-                break;
-            }
-            i++;
-        }
-        dir.mkdirs();
-        dir.mkdir();
-        return dir;
     }
 }
