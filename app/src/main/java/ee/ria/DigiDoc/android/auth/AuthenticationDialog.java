@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
@@ -32,10 +31,12 @@ public final class AuthenticationDialog extends AlertDialog {
     private final TextView progressMessageView;
     private final View containerView;
     private final TextView dataView;
+    private final TextView verificationText;
     private final EditText pin1View;
+
     private final TextView pin1ErrorView;
 
-    AuthenticationDialog(@NonNull Context context) {
+    AuthenticationDialog(@NonNull Context context, String verificationCode) {
         super(context);
         TypedArray a = context.obtainStyledAttributes(new int[]{R.attr.dialogPreferredPadding});
         int padding = a.getDimensionPixelSize(0, 0);
@@ -47,28 +48,33 @@ public final class AuthenticationDialog extends AlertDialog {
         progressMessageView = view.findViewById(R.id.authCreateAuthenticateProgressMessage);
         containerView = view.findViewById(R.id.authCreateAuthenticateContainer);
         dataView = view.findViewById(R.id.authCreateAuthenticateData);
+        verificationText = view.findViewById(R.id.authCreateAuthenticateVerificationCode);
         pin1View = view.findViewById(R.id.authCreateAuthenticatePin1);
         pin1ErrorView = view.findViewById(R.id.authCreateAuthenticatePin1Error);
         setView(view, padding, padding, padding, padding);
-
+        verificationText.setText(verificationCode);
         setButton(BUTTON_POSITIVE,
                 getContext().getString(R.string.auth_create_authenticate_positive_button),
                 (OnClickListener) null);
+        setButton(BUTTON_NEGATIVE, getContext().getString(android.R.string.cancel),
+                (dialog, which) -> cancel());
     }
 
     void idCardDataResponse(IdCardDataResponse idCardDataResponse, @State String authenticationState,
                             @Nullable Throwable authenticationError) {
-        IdCardData data = idCardDataResponse.data();
+
 
         if (authenticationState.equals(State.CLEAR)) {
             pin1View.setText(null);
         }
 
+        IdCardData data = idCardDataResponse.data();
         if (authenticationState.equals(State.ACTIVE)) {
             progressContainerView.setVisibility(View.VISIBLE);
             progressMessageView.setText(R.string.auth_create_authenticate_active);
             containerView.setVisibility(View.GONE);
             pin1ErrorView.setVisibility(View.GONE);
+
         } else if (data == null) {
             progressContainerView.setVisibility(View.VISIBLE);
             switch (idCardDataResponse.status()) {
@@ -121,4 +127,5 @@ public final class AuthenticationDialog extends AlertDialog {
         // override default click listener to prevent dialog dismiss
         clicks(getButton(BUTTON_POSITIVE)).subscribe(positiveButtonClicksSubject);
     }
+
 }

@@ -8,7 +8,7 @@ import com.google.auto.value.AutoValue;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 
-interface Intent extends MviIntent, MviAction {
+public interface Intent extends MviIntent, MviAction {
 
     @AutoValue
     abstract class InitialIntent implements Intent {
@@ -37,7 +37,7 @@ interface Intent extends MviIntent, MviAction {
 
         @Nullable @IdRes abstract Integer menuItem();
 
-        static MenuIntent state(boolean isOpen) {
+        public static MenuIntent state(boolean isOpen) {
             return create(isOpen, null);
         }
 

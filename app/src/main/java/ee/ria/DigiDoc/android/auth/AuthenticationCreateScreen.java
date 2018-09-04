@@ -9,11 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import com.bluelinelabs.conductor.Controller;
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
+import ee.ria.DigiDoc.android.utils.VerificationCodeCalculator;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
@@ -26,7 +29,10 @@ import java.nio.ByteBuffer;
 
 import static android.accounts.AccountManager.KEY_AUTHTOKEN;
 import static android.accounts.AccountManager.KEY_INTENT;
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
+import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
+import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 public class AuthenticationCreateScreen extends Controller implements Screen,
         MviView<Intent, ViewState> {
@@ -39,6 +45,8 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
     private final ViewDisposables disposables = new ViewDisposables();
     private AuthCreateViewModel viewModel;
     private Button authButton;
+    private Button closeButton;
+    private TextView successMessage;
     private AlertDialog errorDialog;
     private IdCardDataResponse authenticationIdCardDataResponse;
     @Nullable
@@ -58,6 +66,12 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
 
     private Observable<Intent.InitialIntent> authInitIntent() {
         return Observable.just(Intent.InitialIntent.show());
+    }
+
+    private Observable<Intent.AuthenticationIntent> authenticationIntent() {
+        return Observable.merge(
+                clicks(authButton).map(ignored -> Intent.AuthenticationIntent.show()),
+                cancels(authenticationDialog).map(ignored -> Intent.AuthenticationIntent.hide()));
     }
 
     private Observable<Intent.AuthIntent> authIntent() {
@@ -81,41 +95,46 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
         if (state.hash() != null) {
             hash = state.hash();
         }
+
         authenticationError = state.authenticationError();
         authenticationIdCardDataResponse = state.authenticationIdCardDataResponse();
+
+        if (state.authenticationSuccessMessageVisible()) {
+            successMessage.setVisibility(View.VISIBLE);
+        }
         signature = state.signature();
-        boolean decryptionPin1Locked = false;
+        boolean pin1Locked = false;
         if (authenticationIdCardDataResponse != null) {
+
             IdCardData data = authenticationIdCardDataResponse.data();
             if (data != null && data.pin1RetryCount() == 0) {
-                decryptionPin1Locked = true;
+                pin1Locked = true;
             }
             authenticationDialog.show();
             authenticationDialog.idCardDataResponse(authenticationIdCardDataResponse, state.authenticationState(),
                     authenticationError);
         } else {
-            decryptionPin1Locked = true;
+            pin1Locked = true;
             authenticationDialog.dismiss();
         }
 
         if (authenticationError != null) {
-            if (authenticationError instanceof Pin1InvalidException && decryptionPin1Locked) {
+            if (authenticationError instanceof Pin1InvalidException && pin1Locked) {
                 errorDialog.setMessage(errorDialog.getContext().getString(
-                        R.string.crypto_create_decrypt_pin1_locked));
+                        R.string.auth_create_authenticate_pin1_locked));
                 errorDialog.show();
             } else if (!(authenticationError instanceof Pin1InvalidException)) {
                 errorDialog.setMessage(errorDialog.getContext().getString(
-                        R.string.crypto_create_error));
+                        R.string.auth_create_error));
                 errorDialog.show();
             }
         } else {
             errorDialog.dismiss();
         }
-
     }
 
     public Observable<Intent> intents() {
-        return Observable.mergeArray(authInitIntent(), authIntent());
+        return Observable.mergeArray(authInitIntent(), authIntent(), authenticationIntent());
     }
 
     @Override
@@ -123,6 +142,7 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
         super.onContextAvailable(context);
         viewModel = Application.component(context).navigator()
                 .viewModel(getInstanceId(), AuthCreateViewModel.class);
+
     }
 
     @Override
@@ -135,16 +155,23 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
         View view = inflater.inflate(R.layout.auth_create_screen, container, false);
-        authButton = view.findViewById(R.id.cryptoHomeCreateButton);
-//        navigator = Application.component(context).navigator();
-        authenticationDialog = new AuthenticationDialog(inflater.getContext());
+        authButton = view.findViewById(R.id.authHomeCreateButton);
+        closeButton = view.findViewById(R.id.authHomeCloseButton);
+        successMessage = view.findViewById(R.id.authCreateSuccessMessage);
+        successMessage.setVisibility(View.GONE);
+
+        authenticationDialog = new AuthenticationDialog(inflater.getContext(), VerificationCodeCalculator.calculate(hash.getBytes()));
         errorDialog = new AlertDialog.Builder(inflater.getContext())
                 .setMessage(R.string.auth_create_error)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.cancel())
                 .create();
+
+        android.content.Intent mainActivity = new android.content.Intent(view.getContext(), Activity.class);
         disposables.attach();
-//        disposables.add(clicks(authButton).subscribe(ignored ->
-//                navigator.execute(Transaction.push(CryptoCreateScreen.create()))));
+        disposables.add(clicks(closeButton).subscribe(ignored ->
+                startActivityForResult(mainActivity, 0)));
+        tintCompoundDrawables(authButton, true);
+
         disposables.add(viewModel.viewStates().subscribe(this::render));
         viewModel.process(intents());
         return view;
@@ -153,6 +180,7 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
     @Override
     protected void onDestroyView(@NonNull View view) {
         authenticationDialog.dismiss();
+        errorDialog.dismiss();
         disposables.detach();
         super.onDestroyView(view);
     }

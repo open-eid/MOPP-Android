@@ -7,8 +7,31 @@
               android:orientation="vertical"
               android:background="@color/primary">
 
+    <android.support.design.widget.AppBarLayout
+            android:id="@id/appBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <ee.ria.DigiDoc.android.auth.AuthToolbar
+                android:id="@id/toolbar"
+                android:theme="@style/ThemeOverlay.Application.ActionBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@id/authCreateSuccessMessage"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:padding="@dimen/material_subheader_padding_start"
+              android:background="@color/success"
+              android:textColor="@color/material_color_white"
+              android:text="@string/auth_create_auth_success_message" />
 
     <ScrollView
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true"

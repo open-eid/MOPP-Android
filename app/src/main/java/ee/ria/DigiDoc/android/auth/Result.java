@@ -42,6 +42,30 @@ public interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
+    abstract class AuthenticationResult implements Result {
+
+        @Nullable
+        abstract IdCardDataResponse idCardDataResponse();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith().authenticationIdCardDataResponse(idCardDataResponse()).build();
+        }
+
+        static AuthenticationResult show(IdCardDataResponse idCardDataResponse) {
+            return create(idCardDataResponse);
+        }
+
+        static AuthenticationResult hide() {
+            return create(null);
+        }
+
+        private static AuthenticationResult create(@Nullable IdCardDataResponse idCardDataResponse) {
+            return new AutoValue_Result_AuthenticationResult(idCardDataResponse);
+        }
+    }
+
+    @AutoValue
     abstract class AuthResult implements Result {
 
         @State

@@ -9,6 +9,9 @@
 # Files for the ART/Dalvik VM
 *.dex
 
+# Google service files
+*google-services.json 
+
 # Java class files
 *.class
 

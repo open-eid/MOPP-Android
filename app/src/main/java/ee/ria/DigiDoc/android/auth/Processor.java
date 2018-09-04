@@ -3,12 +3,6 @@ package ee.ria.DigiDoc.android.auth;
 
 import android.app.Application;
 import android.content.ContentResolver;
-
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Inject;
-
-
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
@@ -22,9 +16,13 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+import javax.inject.Inject;
+import java.util.concurrent.TimeUnit;
+
 public class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ObservableTransformer<Intent.InitialIntent, Result.AuthInitResult> initial;
+    private final ObservableTransformer<Intent.AuthenticationIntent, Result.AuthenticationResult> authInitial;
     private final ObservableTransformer<Intent.AuthIntent, Result.AuthResult> auth;
 
     @Inject
@@ -42,41 +40,54 @@ public class Processor implements ObservableTransformer<Intent, Result> {
             }
         });
 
+        authInitial = upstream -> upstream.switchMap(intent -> {
+            if (intent.visible()) {
+                return idCardService.data()
+                        .map(Result.AuthenticationResult::show)
+                        .startWith(Result.AuthenticationResult.show(IdCardDataResponse.initial()));
+            } else {
+                return Observable.just(Result.AuthenticationResult.hide());
+            }
+        });
 
         auth = upstream -> upstream.switchMap(intent -> {
             AuthRequest request = intent.request();
             if (request != null) {
                 Token token = request.token();
-                 return idCardService.signForAutentication(token, request.hash(), request.pin1())
-                         .flatMapObservable(signature ->   Observable
-                                 .timer(3, TimeUnit.SECONDS)
-                                 .map(ignored -> Result.AuthResult.success(signature))
-                                 .startWith(Result.AuthResult.successMessage(signature)))
-                                 .onErrorReturn(throwable -> {
-                                     IdCardDataResponse idCardDataResponse = null;
-                                     if (throwable instanceof Pin1InvalidException) {
-                                         try {
-                                             idCardDataResponse = IdCardDataResponse
-                                                     .success(IdCardService.data(token), token);
-                                         } catch (Exception ignored) {}
+                return idCardService.signForAutentication(token, request.hash(), request.pin1())
+                        .flatMapObservable(signature -> Observable
+                                .timer(3, TimeUnit.SECONDS)
+                                .map(ignored -> Result.AuthResult.success(signature))
+                                .startWith(Result.AuthResult.successMessage(signature)))
+                        .onErrorReturn(throwable -> {
+                            IdCardDataResponse idCardDataResponse = null;
+                            if (throwable instanceof Pin1InvalidException) {
+                                try {
+                                    idCardDataResponse = IdCardDataResponse
+                                            .success(IdCardService.data(token), token);
+                                } catch (Exception ignored) {
 
-                                     }
-                                     return Result.AuthResult.failure(throwable, idCardDataResponse);
-                                 })
-                                 .subscribeOn(Schedulers.io())
-                                 .observeOn(AndroidSchedulers.mainThread())
-                                 .startWith(Result.AuthResult.activity());
+                                }
+
+                            }
+                            return Result.AuthResult.failure(throwable, idCardDataResponse);
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .startWith(Result.AuthResult.activity());
 
             } else {
                 return Observable.just(Result.AuthResult.clear(), Result.AuthResult.idle());
             }
         });
     }
+
     @SuppressWarnings("unchecked")
     @Override
     public ObservableSource<Result> apply(Observable<Intent> upstream) {
         return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Intent.InitialIntent.class).compose(initial),
+                shared.ofType(Intent.AuthenticationIntent.class).compose(authInitial),
                 shared.ofType(Intent.AuthIntent.class).compose(auth)));
     }
 }
