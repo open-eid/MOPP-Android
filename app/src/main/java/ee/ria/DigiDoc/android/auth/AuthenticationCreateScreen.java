@@ -36,9 +36,12 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 public class AuthenticationCreateScreen extends Controller implements Screen,
         MviView<Intent, ViewState> {
+
+    private static final String KEY_SESSION_ID = "sessionId";
     @Nullable
     private final android.content.Intent intent;
     private ByteBuffer signature;
+    private String sessionId;
     private String hash;
     private AuthenticationDialog authenticationDialog;
     private final Subject<Boolean> idCardTokenAvailableSubject = PublishSubject.create();
@@ -55,12 +58,14 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
     public static AuthenticationCreateScreen create(String hash, String hashType, String sessionId) {
         Bundle args = new Bundle();
         args.putString(KEY_AUTHTOKEN, hash);
+        args.putString(KEY_SESSION_ID, sessionId);
         return new AuthenticationCreateScreen(args);
     }
 
     public AuthenticationCreateScreen(Bundle args) {
         super(args);
         hash = args.getString(KEY_AUTHTOKEN);
+        sessionId = args.getString(KEY_SESSION_ID);
         intent = args.getParcelable(KEY_INTENT);
     }
 
@@ -74,20 +79,20 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
                 cancels(authenticationDialog).map(ignored -> Intent.AuthenticationIntent.hide()));
     }
 
-    private Observable<Intent.AuthIntent> authIntent() {
+    private Observable<Intent.AuthActionIntent> authIntent() {
         return Observable.merge(
                 authenticationDialog.positiveButtonClicks()
                         .filter(ignored ->
                                 authenticationIdCardDataResponse != null &&
                                         authenticationIdCardDataResponse.token() != null)
                         .map(pin1 ->
-                                Intent.AuthIntent.start(AuthRequest.create(
+                                Intent.AuthActionIntent.start(AuthRequest.create(
                                         authenticationIdCardDataResponse.token(), hash,
-                                        pin1))),
+                                        pin1, sessionId, authenticationIdCardDataResponse.data().authCertificate()))),
                 idCardTokenAvailableSubject
                         .filter(duplicates())
                         .filter(available -> available)
-                        .map(ignored -> Intent.AuthIntent.cancel()));
+                        .map(ignored -> Intent.AuthActionIntent.cancel()));
     }
 
     @Override
@@ -97,11 +102,11 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
         }
 
         authenticationError = state.authenticationError();
-        authenticationIdCardDataResponse = state.authenticationIdCardDataResponse();
 
         if (state.authenticationSuccessMessageVisible()) {
             successMessage.setVisibility(View.VISIBLE);
         }
+        authenticationIdCardDataResponse = state.authenticationIdCardDataResponse();
         signature = state.signature();
         boolean pin1Locked = false;
         if (authenticationIdCardDataResponse != null) {

@@ -1,14 +1,10 @@
 package ee.ria.DigiDoc.android.auth;
 
 
-import android.app.Application;
-import android.content.ContentResolver;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
-import ee.ria.DigiDoc.android.utils.files.FileSystem;
-import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.auth.AuthService;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
-import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.idcard.Token;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -17,18 +13,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import javax.inject.Inject;
+import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 
 public class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ObservableTransformer<Intent.InitialIntent, Result.AuthInitResult> initial;
     private final ObservableTransformer<Intent.AuthenticationIntent, Result.AuthenticationResult> authInitial;
-    private final ObservableTransformer<Intent.AuthIntent, Result.AuthResult> auth;
+    private final ObservableTransformer<Intent.AuthActionIntent, Result.AuthActionResult> auth;
 
     @Inject
-    Processor(Navigator navigator, RecipientRepository recipientRepository,
-              ContentResolver contentResolver, FileSystem fileSystem,
-              Application application, IdCardService idCardService) {
+    Processor(AuthService authService, IdCardService idCardService) {
 
         initial = upstream -> upstream.switchMap(intent -> {
             if (intent.visible()) {
@@ -57,8 +52,11 @@ public class Processor implements ObservableTransformer<Intent, Result> {
                 return idCardService.signForAutentication(token, request.hash(), request.pin1())
                         .flatMapObservable(signature -> Observable
                                 .timer(3, TimeUnit.SECONDS)
-                                .map(ignored -> Result.AuthResult.success(signature))
-                                .startWith(Result.AuthResult.successMessage(signature)))
+                                .map(ignored -> {
+                                    authService.sendAuthResponse(signature, request.sessionId(), request.certificate().data().base64(), request.hash());
+                                    return Result.AuthActionResult.success(signature);
+                                })
+                                .startWith(Result.AuthActionResult.successMessage(signature)))
                         .onErrorReturn(throwable -> {
                             IdCardDataResponse idCardDataResponse = null;
                             if (throwable instanceof Pin1InvalidException) {
@@ -70,14 +68,13 @@ public class Processor implements ObservableTransformer<Intent, Result> {
                                 }
 
                             }
-                            return Result.AuthResult.failure(throwable, idCardDataResponse);
+                            return Result.AuthActionResult.failure(throwable, idCardDataResponse);
                         })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.AuthResult.activity());
-
+                        .startWith(Result.AuthActionResult.activity());
             } else {
-                return Observable.just(Result.AuthResult.clear(), Result.AuthResult.idle());
+                return Observable.just(Result.AuthActionResult.clear(), Result.AuthActionResult.idle());
             }
         });
     }
@@ -88,6 +85,6 @@ public class Processor implements ObservableTransformer<Intent, Result> {
         return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Intent.InitialIntent.class).compose(initial),
                 shared.ofType(Intent.AuthenticationIntent.class).compose(authInitial),
-                shared.ofType(Intent.AuthIntent.class).compose(auth)));
+                shared.ofType(Intent.AuthActionIntent.class).compose(auth)));
     }
 }

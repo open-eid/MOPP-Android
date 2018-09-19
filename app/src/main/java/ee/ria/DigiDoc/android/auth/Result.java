@@ -4,7 +4,6 @@ package ee.ria.DigiDoc.android.auth;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.collect.ImmutableList;
 
 import java.nio.ByteBuffer;
 
@@ -65,8 +64,9 @@ public interface Result extends MviResult<ViewState> {
         }
     }
 
+
     @AutoValue
-    abstract class AuthResult implements Result {
+    abstract class AuthActionResult implements Result {
 
         @State
         abstract String state();
@@ -82,16 +82,16 @@ public interface Result extends MviResult<ViewState> {
         @Nullable
         abstract IdCardDataResponse idCardDataResponse();
 
-        static AuthResult activity() {
+        static AuthActionResult activity() {
             return create(State.ACTIVE, false, null, null, null);
         }
 
-        static AuthResult successMessage(ByteBuffer signature) {
+        static AuthActionResult successMessage(ByteBuffer signature) {
             return create(State.IDLE, true, signature, null, null);
         }
 
-        static AuthResult failure(Throwable error,
-                                     @Nullable IdCardDataResponse idCardDataResponse) {
+        static AuthActionResult failure(Throwable error,
+                                        @Nullable IdCardDataResponse idCardDataResponse) {
             return create(State.IDLE, false, null, error, idCardDataResponse);
         }
 
@@ -121,22 +121,24 @@ public interface Result extends MviResult<ViewState> {
             return builder.build();
         }
 
-        static AuthResult clear() {
+        static AuthActionResult clear() {
             return create(State.CLEAR, false, null, null, null);
         }
 
-        static AuthResult success(ByteBuffer signature) {
+        static AuthActionResult success(ByteBuffer signature) {
             return create(State.IDLE, false, signature, null, null);
         }
-
-        static AuthResult idle() {
+        static AuthActionResult show(IdCardDataResponse idCardDataResponse) {
+            return create(State.IDLE, true, null, null, idCardDataResponse);
+        }
+        static AuthActionResult idle() {
             return create(State.IDLE, false, null, null, null);
         }
-        private static AuthResult create(@State String state, boolean successMessageVisible,
-                                                                                        @Nullable ByteBuffer signature,
-                                                                                        @Nullable Throwable error,
-                                                                                        @Nullable IdCardDataResponse idCardDataResponse) {
-            return new AutoValue_Result_AuthResult(state, successMessageVisible, signature,
+        private static AuthActionResult create(@State String state, boolean successMessageVisible,
+                                               @Nullable ByteBuffer signature,
+                                               @Nullable Throwable error,
+                                               @Nullable IdCardDataResponse idCardDataResponse) {
+            return new AutoValue_Result_AuthActionResult(state, successMessageVisible, signature,
                     error, idCardDataResponse);
         }
     }

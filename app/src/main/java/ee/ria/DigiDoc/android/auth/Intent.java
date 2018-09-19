@@ -44,21 +44,21 @@ public interface Intent extends MviIntent, MviAction {
     }
 
     @AutoValue
-    abstract class AuthIntent implements Intent {
+    abstract class AuthActionIntent implements Intent {
 
         @Nullable
         abstract AuthRequest request();
 
-        public static AuthIntent start(AuthRequest request) {
+        public static AuthActionIntent start(AuthRequest request) {
             return create(request);
         }
 
-        static AuthIntent cancel() {
+        static AuthActionIntent cancel() {
             return create(null);
         }
 
-        private static AuthIntent create(@Nullable AuthRequest request) {
-            return new AutoValue_Intent_AuthIntent(request);
+        private static AuthActionIntent create(@Nullable AuthRequest request) {
+            return new AutoValue_Intent_AuthActionIntent(request);
         }
     }
 }

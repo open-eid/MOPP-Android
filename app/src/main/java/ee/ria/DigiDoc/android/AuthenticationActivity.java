@@ -23,17 +23,8 @@ public class AuthenticationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
-//        try {
-//            MessageDigest digestMethod = MessageDigest.getInstance("SHA512");
-//            byte[] response = digestMethod.digest(getRandomBytes());
-//           String test = new String(Base64.encode(response));
         Bundle extras = getIntent().getExtras();
-
         navigator.execute(Transaction.root(AuthenticationCreateScreen.create(extras.getString(MESSAGING_HASH_KEY), extras.getString(MESSAGING_HASH_TYPE_KEY), extras.getString(MESSAGING_SESSION_ID_KEY))));
-//        }catch(Exception e){
-//                throw new RuntimeException("qwqwe");
-//            }
-
         super.onCreate(savedInstanceState);
     }
 
@@ -50,12 +41,5 @@ public class AuthenticationActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         navigator.onActivityResult(requestCode, resultCode, data);
     }
-
-    private static byte[] getRandomBytes() {
-        byte randBytes[] = new byte[64];
-        new SecureRandom().nextBytes(randBytes);
-        return randBytes;
-    }
-
 
 }

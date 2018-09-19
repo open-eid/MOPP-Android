@@ -26,24 +26,10 @@ import android.content.Context;
 import android.hardware.usb.UsbManager;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
-
 import com.google.common.collect.ImmutableList;
 import com.google.firebase.FirebaseApp;
 import com.jakewharton.threetenabp.AndroidThreeTen;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import java.security.Security;
-import java.util.Map;
-
-import javax.inject.Provider;
-import javax.inject.Singleton;
-
-import dagger.Binds;
-import dagger.BindsInstance;
-import dagger.Component;
-import dagger.Module;
-import dagger.Provides;
+import dagger.*;
 import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
 import ee.ria.DigiDoc.BuildConfig;
@@ -60,13 +46,20 @@ import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
+import ee.ria.DigiDoc.auth.AuthService;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
 import ee.ria.DigiDoc.smartcardreader.acs.AcsSmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.identiv.IdentivSmartCardReader;
 import io.reactivex.plugins.RxJavaPlugins;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import timber.log.Timber;
+
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import java.security.Security;
+import java.util.Map;
 
 public class Application extends android.app.Application {
 
@@ -142,7 +135,8 @@ public class Application extends android.app.Application {
             AndroidModule.class,
             ApplicationModule.class,
             SmartCardModule.class,
-            CryptoLibModule.class
+            CryptoLibModule.class,
+            AuthLibModule.class
     })
     public interface ApplicationComponent {
 
@@ -277,6 +271,16 @@ public class Application extends android.app.Application {
         @Singleton
         static RecipientRepository recipientRepository() {
             return new RecipientRepository();
+        }
+    }
+
+    @Module
+    static abstract class AuthLibModule {
+
+        @Provides
+        @Singleton
+        static AuthService authService() {
+            return new AuthService();
         }
     }
 
