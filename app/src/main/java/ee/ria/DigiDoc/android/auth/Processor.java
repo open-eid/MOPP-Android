@@ -53,7 +53,7 @@ public class Processor implements ObservableTransformer<Intent, Result> {
                         .flatMapObservable(signature -> Observable
                                 .timer(3, TimeUnit.SECONDS)
                                 .map(ignored -> {
-                                    authService.sendAuthResponse(signature, request.sessionId(), request.certificate().data().base64(), request.hash());
+                                    authService.sendAuthResponse(signature, request.sessionId(), request.certificate().data().base64(), request.hash(), request.keystore(), request.properties());
                                     return Result.AuthActionResult.success(signature);
                                 })
                                 .startWith(Result.AuthActionResult.successMessage(signature)))

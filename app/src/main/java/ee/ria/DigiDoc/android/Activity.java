@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import java.util.concurrent.Callable;
 
 import static ee.ria.DigiDoc.android.Constants.MESSAGING_HASH_KEY;
-import static ee.ria.DigiDoc.android.Constants.MESSAGING_HASH_TYPE_KEY;
 import static ee.ria.DigiDoc.android.Constants.MESSAGING_SESSION_ID_KEY;
 
 public final class Activity extends AppCompatActivity {
@@ -94,6 +93,6 @@ public final class Activity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
 
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
-        navigator.execute(Transaction.root(AuthenticationCreateScreen.create(extras.getString(MESSAGING_HASH_KEY), extras.getString(MESSAGING_HASH_TYPE_KEY), extras.getString(MESSAGING_SESSION_ID_KEY))));
+        navigator.execute(Transaction.root(AuthenticationCreateScreen.create(extras.getString(MESSAGING_HASH_KEY), extras.getString(MESSAGING_SESSION_ID_KEY))));
     }
 }

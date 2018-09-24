@@ -25,6 +25,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import static android.accounts.AccountManager.KEY_AUTHTOKEN;
@@ -49,13 +50,14 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
     private AuthCreateViewModel viewModel;
     private Button authButton;
     private Button closeButton;
+    private Context context;
     private TextView successMessage;
     private AlertDialog errorDialog;
     private IdCardDataResponse authenticationIdCardDataResponse;
     @Nullable
     private Throwable authenticationError;
 
-    public static AuthenticationCreateScreen create(String hash, String hashType, String sessionId) {
+    public static AuthenticationCreateScreen create(String hash, String sessionId) {
         Bundle args = new Bundle();
         args.putString(KEY_AUTHTOKEN, hash);
         args.putString(KEY_SESSION_ID, sessionId);
@@ -88,7 +90,9 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
                         .map(pin1 ->
                                 Intent.AuthActionIntent.start(AuthRequest.create(
                                         authenticationIdCardDataResponse.token(), hash,
-                                        pin1, sessionId, authenticationIdCardDataResponse.data().authCertificate()))),
+                                        pin1, sessionId, authenticationIdCardDataResponse.data().authCertificate(),
+                                        context.getResources().openRawResource(ee.ria.DigiDoc.auth.R.raw.clientkeystore),
+                                        context.getResources().openRawResource(R.raw.config)))),
                 idCardTokenAvailableSubject
                         .filter(duplicates())
                         .filter(available -> available)
@@ -145,6 +149,7 @@ public class AuthenticationCreateScreen extends Controller implements Screen,
     @Override
     protected void onContextAvailable(@NonNull Context context) {
         super.onContextAvailable(context);
+        this.context = context;
         viewModel = Application.component(context).navigator()
                 .viewModel(getInstanceId(), AuthCreateViewModel.class);
 

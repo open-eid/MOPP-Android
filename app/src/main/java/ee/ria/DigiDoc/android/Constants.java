@@ -5,7 +5,6 @@ public final class Constants {
     public static final Object VOID = new Object();
 
     public static final String MESSAGING_HASH_KEY = "hash";
-    public static final String MESSAGING_HASH_TYPE_KEY = "hashType";
     public static final String MESSAGING_SESSION_ID_KEY = "sessionId";
 
     /*
