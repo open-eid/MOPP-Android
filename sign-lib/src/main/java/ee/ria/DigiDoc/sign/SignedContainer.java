@@ -152,7 +152,7 @@ public abstract class SignedContainer {
         DataFiles dataFiles = container.dataFiles();
         for (int i = 0; i < dataFiles.size(); i++) {
             ee.ria.libdigidocpp.DataFile containerDataFile = dataFiles.get(i);
-            if (dataFile.name().equals(containerDataFile.fileName())) {
+            if (dataFile.id().equals(containerDataFile.id())) {
                 containerDataFile.saveAs(file.getAbsolutePath());
                 return file;
             }
@@ -306,8 +306,8 @@ public abstract class SignedContainer {
     }
 
     private static DataFile dataFile(ee.ria.libdigidocpp.DataFile dataFile) {
-        return DataFile.create(dataFile.id(), dataFile.fileName(), dataFile.fileSize(),
-                dataFile.mediaType());
+        return DataFile.create(dataFile.id(), new File(dataFile.fileName()).getName(),
+                dataFile.fileSize(), dataFile.mediaType());
     }
 
     private static Signature signature(ee.ria.libdigidocpp.Signature signature) {
