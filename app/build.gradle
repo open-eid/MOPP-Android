@@ -75,6 +75,7 @@ android {
 dependencies {
     implementation "com.google.firebase:firebase-messaging:17.3.0"
     implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
     implementation "com.android.support:support-annotations:${androidSupportLibraryVersion}"
     implementation "com.android.support:support-v4:${androidSupportLibraryVersion}"
     implementation "com.android.support:appcompat-v7:${androidSupportLibraryVersion}"

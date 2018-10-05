@@ -47,6 +47,7 @@ captures/
 
 # Keystore files
 *.jks
+*.p12
 
 ### Android Patch ###
 gen-external-apklibs

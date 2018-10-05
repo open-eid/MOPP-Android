@@ -306,7 +306,7 @@ public abstract class SignedContainer {
     }
 
     private static DataFile dataFile(ee.ria.libdigidocpp.DataFile dataFile) {
-        return DataFile.create(dataFile.id(), dataFile.fileName(), dataFile.fileSize(),
+        return DataFile.create(dataFile.id(), new File(dataFile.fileName()).getName(), dataFile.fileSize(),
                 dataFile.mediaType());
     }
 

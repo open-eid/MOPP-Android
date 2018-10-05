@@ -2,11 +2,23 @@ package ee.ria.DigiDoc.android;
 
 import android.content.Intent;
 import android.util.Log;
-
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import ee.ria.DigiDoc.R;
 
+import ee.ria.DigiDoc.android.model.idcard.IdCardService;
+import ee.ria.DigiDoc.auth.AuthService;
+import okhttp3.*;
+import timber.log.Timber;
+
+import javax.inject.Inject;
+import javax.net.ssl.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Properties;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -20,7 +32,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
             Intent intent = new Intent(this, AuthenticationActivity.class);
             Map<String, String> message = remoteMessage.getData();
-            for(Map.Entry<String, String> entry : message.entrySet()) {
+            for (Map.Entry<String, String> entry : message.entrySet()) {
                 intent.putExtra(entry.getKey(), entry.getValue());
             }
             startActivity(intent);
@@ -29,9 +41,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(String token) {
-        Log.d(TAG, "Refreshed token: " + token);
-        // token = c8c0FgG7xOw:APA91bGDafsoV2QNUA9a_w7YhlhvQ9iYoiNt4oagvWNBPkeMNZ7ydv02PyvQTnQHviziEXX22wHPEDb_a_3olB5Qr8yeOe_IYcESXlrX5mYUaY181Yet6Ta_JTdT7H6lvZq91iuBFGJHxtmqWUKvK7hHZQGGP9IFGQ
+        AuthService authService = Application.AuthLibModule.authService();
 
+        Log.d(TAG, "Refreshed token: " + token);
+        InputStream rawKeyStore = getApplicationContext().getResources().openRawResource(ee.ria.DigiDoc.auth.R.raw.clientkeystore);
+        InputStream rawProperties = getApplicationContext().getResources().openRawResource(R.raw.config);
+         //TODO: change National identity number
+        authService.sendRegisterRequest(token, "11111111111", rawKeyStore, rawProperties);
     }
+
 
 }

@@ -111,7 +111,7 @@ public final class IdCardService {
                     byte[] authSignature;
                     try{
                         authSignature = token.calculateSignatureForAuthentication(pin1.getBytes(),
-                                hash.getBytes(),
+                                android.util.Base64.decode(hash.getBytes(), 0),
                                 data.authCertificate().ellipticCurve());
                     } catch (CodeVerificationException e) {
                         throw new Pin1InvalidException();
