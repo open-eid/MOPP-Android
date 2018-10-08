@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.WindowManager;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.auth.AuthenticationCreateScreen;
 import ee.ria.DigiDoc.android.main.home.HomeScreen;
@@ -29,9 +30,12 @@ public final class Activity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.Theme_Application);
         super.onCreate(savedInstanceState);
+
         if (getIntent().getExtras() != null && getIntent().getExtras().getString(MESSAGING_HASH_KEY) != null) {
             openAuthScreen(savedInstanceState);
         }
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
         rootScreenFactory.intent(getIntent());
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
     }

@@ -100,7 +100,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return Observable
                         .fromCallable(() -> {
                             File newFile = new File(containerFile.getParentFile(), name);
-                            if (newFile.createNewFile()) {
+                            if (!newFile.getParentFile().equals(containerFile.getParentFile())) {
+                                throw new IOException("Can't jump directories");
+                            } else if (newFile.createNewFile()) {
                                 //noinspection ResultOfMethodCallIgnored
                                 newFile.delete();
                                 if (!containerFile.renameTo(newFile)) {
