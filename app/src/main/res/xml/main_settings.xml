@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="@string/main_settings_phone_no_key"
+        android:title="@string/main_settings_phone_no_title"
+        android:inputType="phone" />
+
+    <EditTextPreference
+        android:key="@string/main_settings_personal_code_key"
+        android:title="@string/main_settings_personal_code_title"
+
+        android:inputType="number" />
+
+    <!--<EditTextPreference-->
+        <!--android:key="@string/main_settings_role_key"-->
+        <!--android:title="@string/main_settings_role_title"-->
+        <!--android:inputType="text|textCapWords" />-->
+
+    <!--<EditTextPreference-->
+        <!--android:key="@string/main_settings_city_key"-->
+        <!--android:title="@string/main_settings_city_title"-->
+        <!--android:inputType="text|textCapWords" />-->
+
+    <!--<EditTextPreference-->
+        <!--android:key="@string/main_settings_county_key"-->
+        <!--android:title="@string/main_settings_county_title"-->
+        <!--android:inputType="text|textCapWords" />-->
+
+    <!--<EditTextPreference-->
+        <!--android:key="@string/main_settings_country_key"-->
+        <!--android:title="@string/main_settings_country_title"-->
+        <!--android:inputType="text|textCapWords" />-->
+
+    <!--<EditTextPreference-->
+        <!--android:key="@string/main_settings_postal_code_key"-->
+        <!--android:title="@string/main_settings_postal_code_title"-->
+        <!--android:inputType="number" />-->
+
+    <ListPreference
+        android:key="@string/main_settings_signature_profile_key"
+        android:title="@string/main_settings_signature_profile_title"
+        android:entryValues="@array/main_settings_signature_profile_entry_values"
+        android:entries="@array/main_settings_signature_profile_entries"
+        android:defaultValue="@string/main_settings_signature_profile_time_mark_key" />
+
+</PreferenceScreen>

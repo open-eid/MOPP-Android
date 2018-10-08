@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="application_name">RIA DigiDoc (develop)</string>
+
+    <string name="file_provider_authority">ee.ria.digidoc.develop.fileprovider</string>
+
+</resources>

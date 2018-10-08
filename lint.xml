@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="InvalidPackage">
+        <ignore path="**/bcpkix-*.jar" /> <!-- javax.naming -->
+        <ignore path="**/auto-value-*.jar" /> <!-- javax.tools -->
+        <ignore path="**/junit-*.jar" /> <!-- java.lang.management -->
+        <ignore path="**/unboundid-ldapsdk-*.jar" /> <!-- javax.naming -->
+        <ignore path="**/woodstox-core-*.jar" /> <!-- java.xml.stream -->
+    </issue>
+</lint>

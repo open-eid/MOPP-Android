@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@id/mainHomeNavigationSignature"
+        android:title="@string/main_home_navigation_signature"
+        android:icon="@drawable/ic_icon_signature" />
+
+    <item
+        android:id="@id/mainHomeNavigationCrypto"
+        android:title="@string/main_home_navigation_crypto"
+        android:icon="@drawable/ic_icon_crypto" />
+
+    <item
+        android:id="@id/mainHomeNavigationEID"
+        android:title="@string/main_home_navigation_eid"
+        android:icon="@drawable/ic_icon_eid" />
+
+</menu>

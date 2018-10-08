@@ -1,0 +1,24 @@
+package ee.ria.DigiDoc.android.main.diagnostics;
+
+import android.content.Context;
+import android.view.View;
+
+import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorScreen;
+
+public final class DiagnosticsScreen extends ConductorScreen {
+
+    public static DiagnosticsScreen create() {
+        return new DiagnosticsScreen();
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public DiagnosticsScreen() {
+        super(R.id.mainDiagnosticsScreen);
+    }
+
+    @Override
+    protected View view(Context context) {
+        return new DiagnosticsView(context);
+    }
+}

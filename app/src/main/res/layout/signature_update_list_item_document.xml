@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:minHeight="@dimen/material_list_single_line_without_avatar_normal_height"
+    android:gravity="center_vertical"
+    android:background="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@id/signatureUpdateListDocumentName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/material_list_text_first_position_margin_start"
+        android:layout_marginEnd="@dimen/material_list_text_last_position_margin_end"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:maxLines="2"
+        android:ellipsize="end"
+        tools:text="Document name" />
+
+    <ImageButton
+        android:id="@id/signatureUpdateListDocumentRemoveButton"
+        style="@style/Widget.Application.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/material_list_icon_last_position_margin_horizontal"
+        android:src="@drawable/ic_icon_remove"
+        android:tint="@color/error"
+        android:contentDescription="@string/signature_update_document_remove_button" />
+
+</LinearLayout>

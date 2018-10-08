@@ -1,0 +1,56 @@
+apply plugin: 'java'
+
+allprojects {
+    buildscript {
+        repositories {
+            google()
+            jcenter()
+        }
+        dependencies {
+            classpath 'com.android.tools.build:gradle:3.2.0'
+            classpath 'com.vanniktech:gradle-android-javadoc-plugin:0.3.0'
+            classpath 'com.google.gms:google-services:4.0.0'
+        }
+    }
+    repositories {
+        google()
+        jcenter()
+    }
+
+
+}
+
+
+ext {
+    compileSdkVersion = 27
+    minSdkVersion = 21
+    targetSdkVersion = 27
+
+    androidSupportLibraryVersion = '27.1.1'
+    androidArchVersion = '1.1.1'
+    androidSupportTestVersion = '1.0.2'
+    espressoVersion = '3.0.2'
+    preferenceV7FixVersion = '27.1.1.0'
+    guavaVersion = '25.1-android'
+    okioVersion = '1.14.1'
+    timberVersion = '4.7.1'
+    okhttpVersion = '3.11.0'
+    retrofitVersion = '2.4.0'
+    bouncycastleVersion = '1.60'
+    materialValuesVersion = '1.1.1'
+    daggerVersion = '2.16'
+    conductorVersion = '2.1.4'
+    rxJavaVersion = '2.1.16'
+    rxAndroidVersion = '2.0.2'
+    rxBindingVersion = '2.1.1'
+    autoValueVersion = '1.6.2'
+    autoValueParcelVersion = '0.2.6'
+    threetenabpVersion = '1.1.0'
+    expandablelayoutVersion = '2.9.2'
+    ldapSdkVersion = '4.0.7'
+    cdoc4jVersion = '1.2'
+    slf4jVersion = '1.7.25'
+    junitVersion = '4.12'
+    truthVersion = '0.42'
+    mockitoVersion = '2.19.1'
+}

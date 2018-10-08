@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@id/authCreateScreen"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:background="@color/primary">
+
+    <android.support.design.widget.AppBarLayout
+            android:id="@id/appBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <ee.ria.DigiDoc.android.auth.AuthToolbar
+                android:id="@id/toolbar"
+                android:theme="@style/ThemeOverlay.Application.ActionBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@id/authCreateSuccessMessage"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:padding="@dimen/material_subheader_padding_start"
+              android:background="@color/success"
+              android:textColor="@color/material_color_white"
+              android:text="@string/auth_create_auth_success_message" />
+
+    <ScrollView
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+                android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textAppearance="@style/TextAppearance.Application.Value"
+                    android:text="@string/auth_home_create_text"
+                    android:layout_marginTop="150dp"/>
+
+            <Button
+                    android:id="@id/authHomeCreateButton"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:text="@string/auth_home_create_button"
+                    android:layout_marginBottom="150dp"/>
+
+            <Button
+                    android:id="@id/authHomeCloseButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/close"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

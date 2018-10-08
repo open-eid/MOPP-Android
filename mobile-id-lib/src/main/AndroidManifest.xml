@@ -1,0 +1,12 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ee.ria.DigiDoc.mobileid">
+
+    <application>
+
+        <service
+            android:name=".service.MobileSignService"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

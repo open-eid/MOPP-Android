@@ -1,0 +1,136 @@
+apply plugin: 'com.android.application'
+//apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion project.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+
+        applicationId 'ee.ria.DigiDoc'
+        versionCode Integer.parseInt(appVersionCode)
+        versionName appVersionName
+
+        multiDexEnabled true
+
+        ndk {
+            abiFilters = []
+            abiFilters.addAll(appAbiFilters.split(';').collect { it as String })
+        }
+
+        buildConfigField 'String', 'PREFERENCE_V7_FIX_VERSION', "\"$preferenceV7FixVersion\""
+        buildConfigField 'String', 'GUAVA_VERSION', "\"$guavaVersion\""
+        buildConfigField 'String', 'OKIO_VERSION', "\"$okioVersion\""
+        buildConfigField 'String', 'TIMBER_VERSION', "\"$timberVersion\""
+        buildConfigField 'String', 'OK_HTTP_VERSION', "\"$okhttpVersion\""
+        buildConfigField 'String', 'RETROFIT_VERSION', "\"$retrofitVersion\""
+        buildConfigField 'String', 'BOUNCY_CASTLE_VERSION', "\"$bouncycastleVersion\""
+        buildConfigField 'String', 'MATERIAL_VALUES_VERSION', "\"$materialValuesVersion\""
+        buildConfigField 'String', 'DAGGER_VERSION', "\"$daggerVersion\""
+        buildConfigField 'String', 'CONDUCTOR_VERSION', "\"$conductorVersion\""
+        buildConfigField 'String', 'RX_JAVA_VERSION', "\"$rxJavaVersion\""
+        buildConfigField 'String', 'RX_ANDROID_VERSION', "\"$rxAndroidVersion\""
+        buildConfigField 'String', 'RX_BINDING_VERSION', "\"$rxBindingVersion\""
+        buildConfigField 'String', 'AUTO_VALUE_VERSION', "\"$autoValueVersion\""
+        buildConfigField 'String', 'AUTO_VALUE_PARCEL_VERSION', "\"$autoValueParcelVersion\""
+        buildConfigField 'String', 'THREE_TEN_ABP_VERSION', "\"$threetenabpVersion\""
+        buildConfigField 'String', 'EXPANDABLE_LAYOUT_VERSION', "\"$expandablelayoutVersion\""
+        buildConfigField 'String', 'LDAP_SDK_VERSION', "\"$ldapSdkVersion\""
+        buildConfigField 'String', 'CDOC4J_VERSION', "\"$cdoc4jVersion\""
+        buildConfigField 'String', 'SLF4J_VERSION', "\"$slf4jVersion\""
+        buildConfigField 'String', 'JUNIT_VERSION', "\"$junitVersion\""
+        buildConfigField 'String', 'TRUTH_VERSION', "\"$truthVersion\""
+        buildConfigField 'String', 'MOCKITO_VERSION', "\"$mockitoVersion\""
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('../debug.keystore')
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+        }
+        develop {
+            debuggable true
+            applicationIdSuffix '.develop'
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['debug']
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        lintConfig file('../lint.xml')
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation "com.google.firebase:firebase-messaging:17.3.0"
+    implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
+    implementation "com.android.support:support-annotations:${androidSupportLibraryVersion}"
+    implementation "com.android.support:support-v4:${androidSupportLibraryVersion}"
+    implementation "com.android.support:appcompat-v7:${androidSupportLibraryVersion}"
+    implementation "com.android.support:design:${androidSupportLibraryVersion}"
+    implementation "com.android.support:recyclerview-v7:${androidSupportLibraryVersion}"
+    implementation "com.android.support:cardview-v7:${androidSupportLibraryVersion}"
+    implementation "com.android.support:preference-v14:${androidSupportLibraryVersion}"
+
+    implementation "android.arch.lifecycle:viewmodel:${androidArchVersion}"
+
+    implementation "com.takisoft.fix:preference-v7:${preferenceV7FixVersion}"
+
+    implementation "com.google.guava:guava:${guavaVersion}"
+    implementation "com.squareup.okio:okio:${okioVersion}"
+
+    implementation "com.jakewharton.timber:timber:${timberVersion}"
+
+    implementation "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
+
+    implementation "blue.aodev:material-values:${materialValuesVersion}"
+
+    implementation "com.google.dagger:dagger:${daggerVersion}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+
+    implementation "com.bluelinelabs:conductor:${conductorVersion}"
+
+    implementation "io.reactivex.rxjava2:rxjava:${rxJavaVersion}"
+    implementation "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}"
+    implementation "com.jakewharton.rxbinding2:rxbinding:${rxBindingVersion}"
+    implementation "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:${rxBindingVersion}"
+    implementation "com.jakewharton.rxbinding2:rxbinding-design:${rxBindingVersion}"
+
+    implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
+    annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+    annotationProcessor "com.ryanharter.auto.value:auto-value-parcel:${autoValueParcelVersion}"
+    implementation "com.ryanharter.auto.value:auto-value-parcel-adapter:${autoValueParcelVersion}"
+
+    implementation "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
+
+    implementation "net.cachapa.expandablelayout:expandablelayout:${expandablelayoutVersion}"
+
+    implementation project(':common-lib')
+    implementation project(':auth-lib')
+    implementation project(':sign-lib')
+    implementation project(':crypto-lib')
+    implementation project(':smart-card-reader-lib')
+    implementation project(':id-card-lib')
+    implementation project(':mobile-id-lib')
+
+    testAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+    testImplementation "junit:junit:${junitVersion}"
+}
+apply plugin: 'com.google.gms.google-services'

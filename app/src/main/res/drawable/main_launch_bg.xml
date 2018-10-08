@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/windowBackground" />
+
+    <item android:top="24dp">
+        <bitmap
+            android:src="@drawable/main_launch_leaves_start"
+            android:gravity="start|top" />
+    </item>
+
+    <item android:top="24dp">
+        <bitmap
+            android:src="@drawable/main_launch_leaves_end"
+            android:gravity="top|end" />
+    </item>
+
+    <item android:bottom="96dp">
+        <bitmap
+            android:src="@drawable/main_launch_logo"
+            android:gravity="center" />
+    </item>
+
+    <item android:bottom="24dp">
+        <bitmap
+            android:src="@drawable/main_launch_fonds"
+            android:gravity="center_horizontal|bottom" />
+    </item>
+
+</layer-list>
