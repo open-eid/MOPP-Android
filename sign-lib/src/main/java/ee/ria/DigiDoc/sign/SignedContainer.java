@@ -137,7 +137,7 @@ public abstract class SignedContainer {
         }
         DataFiles dataFiles = container.dataFiles();
         for (int i = 0; i < dataFile.size(); i++) {
-            if (dataFile.name().equals(dataFiles.get(i).fileName())) {
+            if (dataFile.id().equals(dataFiles.get(i).id())) {
                 container.removeDataFile(i);
                 break;
             }
@@ -152,12 +152,12 @@ public abstract class SignedContainer {
         DataFiles dataFiles = container.dataFiles();
         for (int i = 0; i < dataFiles.size(); i++) {
             ee.ria.libdigidocpp.DataFile containerDataFile = dataFiles.get(i);
-            if (dataFile.name().equals(containerDataFile.fileName())) {
+            if (dataFile.id().equals(containerDataFile.id())) {
                 containerDataFile.saveAs(file.getAbsolutePath());
                 return file;
             }
         }
-        throw new IllegalArgumentException("Could not find file " + dataFile.name() +
+        throw new IllegalArgumentException("Could not find file " + dataFile.id() +
                 " in container " + file());
     }
 
@@ -167,11 +167,11 @@ public abstract class SignedContainer {
         DataFiles dataFiles = container.dataFiles();
         for (int i = 0; i < dataFiles.size(); i++) {
             ee.ria.libdigidocpp.DataFile containerDataFile = dataFiles.get(i);
-            if (dataFile.name().equals(containerDataFile.fileName())) {
+            if (dataFile.id().equals(containerDataFile.id())) {
                 return Base64.encodeToString(containerDataFile.calcDigest(method), Base64.DEFAULT);
             }
         }
-        throw new IllegalArgumentException("Could not find file " + dataFile.name() +
+        throw new IllegalArgumentException("Could not find file " + dataFile.id() +
                 " in container " + file());
     }
 
@@ -306,8 +306,8 @@ public abstract class SignedContainer {
     }
 
     private static DataFile dataFile(ee.ria.libdigidocpp.DataFile dataFile) {
-        return DataFile.create(dataFile.id(), dataFile.fileName(), dataFile.fileSize(),
-                dataFile.mediaType());
+        return DataFile.create(dataFile.id(), new File(dataFile.fileName()).getName(),
+                dataFile.fileSize(), dataFile.mediaType());
     }
 
     private static Signature signature(ee.ria.libdigidocpp.Signature signature) {

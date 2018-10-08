@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.WindowManager;
 
 import java.util.concurrent.Callable;
 
@@ -25,6 +26,8 @@ public final class Activity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.Theme_Application);
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
         rootScreenFactory.intent(getIntent());
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
     }
