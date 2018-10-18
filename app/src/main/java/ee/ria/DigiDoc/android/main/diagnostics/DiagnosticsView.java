@@ -12,7 +12,7 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
-import ee.ria.libdigidocpp.digidoc;
+import ee.ria.DigiDoc.sign.SignLib;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 
@@ -37,7 +37,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
         applicationVersion.setText(getAppVersion());
         androidVersion.setText(getAndroidVersion());
-        libDocVersion.setText(getLibDigiDocVersion());
+        libDocVersion.setText(getResources().getString(R.string.main_about_libdigidocpp_title,
+                getLibDigiDocVersion()));
     }
 
     @Override
@@ -54,15 +55,15 @@ public final class DiagnosticsView extends CoordinatorLayout {
         super.onDetachedFromWindow();
     }
 
-    private static String getAppVersion(){
+    private static String getAppVersion() {
         return BuildConfig.VERSION_NAME;
     }
 
-    private static String getAndroidVersion(){
+    private static String getAndroidVersion() {
         return "Android " + Build.VERSION.RELEASE;
     }
 
-    private static String getLibDigiDocVersion(){
-        return digidoc.appInfo() + " " + digidoc.version();
+    private static String getLibDigiDocVersion() {
+        return SignLib.libdigidocppVersion();
     }
 }
