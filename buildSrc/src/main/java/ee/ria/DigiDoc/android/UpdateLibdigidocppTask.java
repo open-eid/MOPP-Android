@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -53,22 +54,6 @@ public class UpdateLibdigidocppTask extends DefaultTask {
         ABI_DIRS.put("x86", "i686-linux-android");
     }
 
-    private static final Map<String, String> MAPPINGS = new HashMap<>();
-    static {
-        // FOR EVERY ABI
-        MAPPINGS.put("%$1s/%$2s/lib/libc++_shared.so", "src/main/jniLibs/%$1s/libc++_shared.so");
-
-
-        MAPPINGS.put("%$1s/lib/libdigidoc_java.so", "src/main/jniLibs/%$1s/libdigidoc_java.so");
-        MAPPINGS.put("%$1s/lib/libdigidoc_java-debug.so", "src/debug/jniLibs/%$1s/libdigidoc_java.so"); // also develop?
-
-
-
-        MAPPINGS.put("%$1s/include/ee/ria/libdigidocpp/*", "src/main/java/ee/ria/libdigidocpp/*");
-
-        MAPPINGS.put("%$1s/etc/digidocpp/schema/*", "src/main/res/raw/schema.zip");
-    }
-
     private String dir = ".";
 
     @Option(option = "dir", description = "Directory where the libdigidocpp ZIP files are")
@@ -88,6 +73,8 @@ public class UpdateLibdigidocppTask extends DefaultTask {
         delete(outputDir);
 
         AtomicBoolean generateJar = new AtomicBoolean(true);
+        AtomicBoolean generateSchema = new AtomicBoolean(true);
+        AtomicBoolean generateTestSchema = new AtomicBoolean(true);
 
         for (String abi : ABIS) {
             update(
@@ -95,19 +82,21 @@ public class UpdateLibdigidocppTask extends DefaultTask {
                     new File(outputDir, "unzipped"),
                     abi,
                     false,
-                    generateJar
+                    generateJar,
+                    generateSchema
             );
             update(
                     new File(inputDir, PREFIX + ABI_FILES.get(abi) + TEST_TSL + SUFFIX),
                     new File(outputDir, "unzipped" + TEST_TSL),
                     abi,
                     true,
-                    generateJar
+                    generateJar,
+                    generateTestSchema
             );
         }
     }
 
-    private void update(File zipFile, File outputDir, String abi, boolean isTestTsl, AtomicBoolean generateJar) throws IOException {
+    private void update(File zipFile, File outputDir, String abi, boolean isTestTsl, AtomicBoolean generateJar, AtomicBoolean generateSchema) throws IOException {
         if (!zipFile.exists()) {
             log("Could not find file %s", zipFile);
             return;
@@ -127,26 +116,40 @@ public class UpdateLibdigidocppTask extends DefaultTask {
                     new File(getProject().getProjectDir(), "libs/" + JAR).toPath(),
                     StandardCopyOption.REPLACE_EXISTING
             );
-            if (!isTestTsl) {
-                File schemaZipFile = new File(cacheDir, SCHEMA);
-                ZipOutputStream schemaOutputStream = new ZipOutputStream(new FileOutputStream(schemaZipFile));
-                for (File schemaFile : files(new File(cacheDir, "etc"))) {
-                    ZipEntry entry = new ZipEntry(schemaFile.getName());
-                    entry.setTime(schemaFile.lastModified());
-                    schemaOutputStream.putNextEntry(entry);
-                    Files.copy(schemaFile.toPath(), schemaOutputStream);
-                    schemaOutputStream.closeEntry();
-                }
-                schemaOutputStream.close();
-                Files.copy(
-                        schemaZipFile.toPath(),
-                        new File(getProject().getProjectDir(), "src/main/res/raw/" + SCHEMA).toPath(),
-                        StandardCopyOption.REPLACE_EXISTING
-                );
+        }
+        if (generateSchema.getAndSet(false)) {
+            log("Generating %s from %s", SCHEMA, zipFile);
+            File schemaCacheDir = new File(cacheDir, "etc");
+            if (isTestTsl) {
+                unzip(getClass().getClassLoader().getResourceAsStream("testtsl.zip"), schemaCacheDir);
             }
+            File schemaZipFile = new File(cacheDir, SCHEMA);
+            ZipOutputStream schemaOutputStream = new ZipOutputStream(new FileOutputStream(schemaZipFile));
+            for (File schemaFile : files(schemaCacheDir)) {
+                ZipEntry entry = new ZipEntry(schemaFile.getName());
+                entry.setTime(schemaFile.lastModified());
+                schemaOutputStream.putNextEntry(entry);
+                Files.copy(schemaFile.toPath(), schemaOutputStream);
+                schemaOutputStream.closeEntry();
+            }
+            schemaOutputStream.close();
+            File schemaDir = isTestTsl
+                    ? new File(getProject().getProjectDir(), "src/envtest/res/raw")
+                    : new File(getProject().getProjectDir(), "src/main/res/raw");
+            Files.copy(
+                    schemaZipFile.toPath(),
+                    new File(schemaDir, SCHEMA).toPath(),
+                    StandardCopyOption.REPLACE_EXISTING
+            );
         }
 
-        if (!isTestTsl) {
+        if (isTestTsl) {
+            Files.copy(
+                    new File(cacheDir, "lib/libdigidoc_java-debug.so").toPath(),
+                    new File(getProject().getProjectDir(), "src/envtest/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+        } else {
             Files.copy(
                     new File(cacheDir, ABI_DIRS.get(abi) + "/lib/libc++_shared.so").toPath(),
                     new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
@@ -181,7 +184,11 @@ public class UpdateLibdigidocppTask extends DefaultTask {
     }
 
     private static void unzip(File zip, File destination) throws IOException {
-        try (ZipInputStream inputStream = new ZipInputStream(new FileInputStream(zip))) {
+        unzip(new FileInputStream(zip), destination);
+    }
+
+    private static void unzip(InputStream stream, File destination) throws IOException {
+        try (ZipInputStream inputStream = new ZipInputStream(stream)) {
             ZipEntry entry;
             while ((entry = inputStream.getNextEntry()) != null) {
                 File entryFile = new File(destination, entry.getName());
@@ -230,13 +237,3 @@ public class UpdateLibdigidocppTask extends DefaultTask {
         return files;
     }
 }
-
-// TEST TSL
-//        modified:   libdigidocpp.androidarm64/etc/digidocpp/digidocpp.conf
-//        modified:   libdigidocpp.androidarm64/lib/libdigidoc_java-debug.so
-//        modified:   libdigidocpp.androidarm64/lib/libdigidoc_java.so
-
-// ABI
-//        new file:   libdigidocpp.androidarm64/arm-linux-androideabi/lib/libc++_shared.so
-//        modified:   libdigidocpp.androidarm64/lib/libdigidoc_java-debug.so
-//        modified:   libdigidocpp.androidarm64/lib/libdigidoc_java.so

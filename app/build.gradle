@@ -59,6 +59,12 @@ android {
             signingConfig signingConfigs.debug
             matchingFallbacks = ['debug']
         }
+        envtest {
+            debuggable true
+            applicationIdSuffix '.envtest'
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['envtest', 'debug']
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
