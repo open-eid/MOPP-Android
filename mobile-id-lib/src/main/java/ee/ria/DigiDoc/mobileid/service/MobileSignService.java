@@ -60,12 +60,15 @@ public class MobileSignService extends IntentService {
         Timber.d("Handling mobile sign intent");
         timeout = 0;
         MobileCreateSignatureRequest request = getRequestFromIntent(intent);
+        SSLContext ddsSSLConfig;
         try {
-            SSLContext ddsSSLConfig = createSSLConfig(intent);
-            ddsClient = ServiceGenerator.createService(DigidocServiceClient.class, ddsSSLConfig);
+            ddsSSLConfig = createSSLConfig(intent);
         } catch (Exception e) {
-            ddsClient = ServiceGenerator.createService(DigidocServiceClient.class, null);
+            Timber.e(e, "Can't create SSL config");
+            ddsSSLConfig = null;
         }
+        ddsClient = ServiceGenerator.createService(getResources(), DigidocServiceClient.class,
+                ddsSSLConfig);
 
         Call<MobileCreateSignatureResponse> call = ddsClient.mobileCreateSignature(wrapInEnvelope(request));
 

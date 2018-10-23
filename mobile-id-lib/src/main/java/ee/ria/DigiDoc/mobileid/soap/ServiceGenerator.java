@@ -19,6 +19,8 @@
 
 package ee.ria.DigiDoc.mobileid.soap;
 
+import android.content.res.Resources;
+
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.strategy.VisitorStrategy;
@@ -28,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 
 import ee.ria.DigiDoc.mobileid.BuildConfig;
+import ee.ria.DigiDoc.mobileid.R;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -36,20 +39,17 @@ import timber.log.Timber;
 
 public class ServiceGenerator {
 
-    private static final String BASE_URL = "https://digidocservice.sk.ee/";
-
     private static OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
     private static HttpLoggingInterceptor loggingInterceptor;
-    private static Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(SimpleXmlConverterFactory.create(visitorStrategySerializer()));
 
     private static Retrofit retrofit;
 
-    public static <S> S createService(Class<S> serviceClass, SSLContext sslContext) {
+    public static <S> S createService(Resources resources, Class<S> serviceClass, SSLContext sslContext) {
         if (retrofit == null) {
             Timber.d("Creating new retrofit instance");
-            retrofit = retrofitBuilder
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(resources.getString(R.string.mobile_id_service_url))
+                    .addConverterFactory(SimpleXmlConverterFactory.create(visitorStrategySerializer()))
                     .client(buildHttpClient(sslContext))
                     .build();
         }

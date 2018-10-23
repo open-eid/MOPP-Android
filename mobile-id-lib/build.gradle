@@ -11,6 +11,12 @@ android {
     lintOptions {
         lintConfig file('../lint.xml')
     }
+
+    buildTypes {
+        envtest {
+            initWith debug
+        }
+    }
 }
 
 dependencies {
