@@ -27,14 +27,20 @@ public enum SignatureStatus {
     /**
      * Signature status is unknown.
      */
-    UNKNOWN;
+    UNKNOWN,
+
+    /**
+     * Test signature, only applicable when in test environment.
+     */
+    TEST;
 
     public static final ImmutableMap<SignatureStatus, Integer> ORDER =
             ImmutableMap.<SignatureStatus, Integer>builder()
-                    .put(UNKNOWN, 0)
-                    .put(INVALID, 1)
-                    .put(NON_QSCD, 2)
-                    .put(WARNING, 3)
-                    .put(VALID, 4)
+                    .put(TEST, 0)
+                    .put(UNKNOWN, 1)
+                    .put(INVALID, 2)
+                    .put(NON_QSCD, 3)
+                    .put(WARNING, 4)
+                    .put(VALID, 5)
                     .build();
 }
