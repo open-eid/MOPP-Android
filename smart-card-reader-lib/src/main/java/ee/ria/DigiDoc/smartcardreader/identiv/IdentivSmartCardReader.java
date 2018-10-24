@@ -72,6 +72,13 @@ public final class IdentivSmartCardReader extends SmartCardReader {
     }
 
     @Override
+    public byte[] atr() {
+        SCard.SCardState state = sCard.new SCardState();
+        sCard.SCardStatus(state);
+        return Arrays.copyOf(state.getAbyATR(), state.getnATRlen());
+    }
+
+    @Override
     protected byte[] transmit(byte[] apdu) throws SmartCardReaderException {
         SCard.SCardIOBuffer io = sCard.new SCardIOBuffer();
         io.setAbyInBuffer(apdu);

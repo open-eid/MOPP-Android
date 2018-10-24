@@ -19,6 +19,10 @@
 
 package ee.ria.DigiDoc.idcard;
 
+import org.bouncycastle.util.encoders.Hex;
+
+import java.util.Arrays;
+
 import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
 
@@ -112,15 +116,17 @@ public interface Token {
      * @throws SmartCardReaderException When card is not supported or reader is not connected.
      */
     static Token create(SmartCardReader reader) throws SmartCardReaderException {
-        byte[] version = reader.transmit(0x00, 0xCA, 0x01, 0x00, null, 0x03);
-        byte major = version[0];
-        byte minor = version[1];
-        if (major == 0x03 && minor == 0x05) {
+        byte[] atr = reader.atr();
+        if (Arrays.equals(Hex.decode("3bdb960080b1fe451f830012233f536549440f9000f1"), atr)) {
+            return new ID1(reader);
+        } else if (Arrays.equals(Hex.decode("3bfa1800008031fe45fe654944202f20504b4903"), atr)) {
             return new EstEIDv3d5(reader);
-        } else if (major == 0x03 && (minor == 0x04 || minor == 0x00)) {
+        } else if (
+                Arrays.equals(Hex.decode("3bfe1800008031fe454573744549442076657220312e30a8"), atr)
+                // TODO check for 3.0 card
+        ) {
             return new EstEIDv3d4(reader);
         }
-        throw new SmartCardReaderException("Unsupported EstEID card application version: " +
-                major + "." + minor);
+        throw new SmartCardReaderException("Unsupported card ATR: " + new String(Hex.encode(atr)));
     }
 }

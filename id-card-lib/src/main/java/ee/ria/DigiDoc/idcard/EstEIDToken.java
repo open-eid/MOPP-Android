@@ -22,6 +22,9 @@ package ee.ria.DigiDoc.idcard;
 import android.util.SparseArray;
 
 import org.bouncycastle.util.encoders.Hex;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.DateTimeFormatterBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,11 +33,16 @@ import java.io.UnsupportedEncodingException;
 import ee.ria.DigiDoc.smartcardreader.ApduResponseException;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
+import timber.log.Timber;
 
 import static com.google.common.primitives.Bytes.concat;
 import static ee.ria.DigiDoc.idcard.AlgorithmUtils.addPadding;
 
 abstract class EstEIDToken implements Token {
+
+    private static final DateTimeFormatter DATE_FORMAT = new DateTimeFormatterBuilder()
+            .appendPattern("dd.MM.yyyy")
+            .toFormatter();
 
     private final SmartCardReader reader;
 
@@ -58,8 +66,39 @@ abstract class EstEIDToken implements Token {
             }
         }
 
-        return PersonalData.create(data.get(1), data.get(2), data.get(3), data.get(5), data.get(6),
-                data.get(7), data.get(8), data.get(9));
+        String surname = data.get(1);
+        String givenName1 = data.get(2);
+        String givenName2 = data.get(3);
+        String citizenship = data.get(5);
+        String dateOfBirthString = data.get(6);
+        String personalCode = data.get(7);
+        String documentNumber = data.get(8);
+        String expiryDateString = data.get(9);
+
+        StringBuilder givenNames = new StringBuilder(givenName1);
+        if (givenName2.length() > 0) {
+            if (givenNames.length() > 0) {
+                givenNames.append(" ");
+            }
+            givenNames.append(givenName2);
+        }
+        LocalDate dateOfBirth;
+        try {
+            dateOfBirth = LocalDate.parse(dateOfBirthString, DATE_FORMAT);
+        } catch (Exception e) {
+            dateOfBirth = null;
+            Timber.e(e, "Could not parse date of birth %s", dateOfBirthString);
+        }
+        LocalDate expiryDate;
+        try {
+            expiryDate = LocalDate.parse(expiryDateString, DATE_FORMAT);
+        } catch (Exception e) {
+            expiryDate = null;
+            Timber.e(e, "Could not parse expiry date %s", expiryDateString);
+        }
+
+        return PersonalData.create(surname, givenNames.toString(), citizenship, dateOfBirth,
+                personalCode, documentNumber, expiryDate);
     }
 
     @Override

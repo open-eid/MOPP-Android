@@ -51,6 +51,11 @@ public final class AcsSmartCardReader extends SmartCardReader {
     }
 
     @Override
+    public byte[] atr() {
+        return reader.getAtr(SLOT);
+    }
+
+    @Override
     protected byte[] transmit(byte[] apdu) throws SmartCardReaderException {
         byte[] recv = new byte[1024];
         int len;
