@@ -1,4 +1,7 @@
+import ee.ria.DigiDoc.android.LibdigidocppPlugin
+
 apply plugin: 'com.android.library'
+apply plugin: LibdigidocppPlugin
 
 android {
     compileSdkVersion project.compileSdkVersion
@@ -21,6 +24,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    buildTypes {
+        envtest {
+            initWith debug
+            matchingFallbacks = ['debug']
+        }
+    }
 }
 
 dependencies {
@@ -35,6 +45,7 @@ dependencies {
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
+    implementation files('libs/libdigidocpp.jar')
     implementation project(':common-lib')
 
     androidTestUtil "com.android.support.test:orchestrator:${androidSupportTestVersion}"

@@ -28,15 +28,14 @@ import retrofit2.http.POST;
 
 public interface DigidocServiceClient {
 
-    String DDS_SERVICE_URL = "https://digidocservice.sk.ee/";
     String CONTENT_TYPE_HEADER = "Content-Type: text/xml;charset=UTF-8";
     String ENCODING_HEADER = "Accept-Encoding: gzip,deflate";
 
     @Headers({CONTENT_TYPE_HEADER, ENCODING_HEADER})
-    @POST(DDS_SERVICE_URL)
+    @POST("/")
     Call<MobileCreateSignatureResponse> mobileCreateSignature(@Body RequestEnvelope body);
 
     @Headers({CONTENT_TYPE_HEADER, ENCODING_HEADER})
-    @POST(DDS_SERVICE_URL)
+    @POST("/")
     Call<GetMobileCreateSignatureStatusResponse> getMobileCreateSignatureStatus(@Body RequestEnvelope body);
 }

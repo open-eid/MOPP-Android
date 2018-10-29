@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="application_name">RIA DigiDoc (envtest)</string>
+
+    <string name="file_provider_authority">ee.ria.digidoc.envtest.fileprovider</string>
+
+</resources>

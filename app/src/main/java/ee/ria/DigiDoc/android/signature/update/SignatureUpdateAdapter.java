@@ -343,6 +343,10 @@ final class SignatureUpdateAdapter extends
                     statusCautionView.setVisibility(View.VISIBLE);
                     statusCautionView.setText(R.string.signature_update_signature_status_non_qscd);
                     break;
+                case TEST:
+                    statusCautionView.setVisibility(View.VISIBLE);
+                    statusCautionView.setText(R.string.signature_update_signature_status_test);
+                    break;
                 default:
                     statusCautionView.setVisibility(View.GONE);
                     break;
