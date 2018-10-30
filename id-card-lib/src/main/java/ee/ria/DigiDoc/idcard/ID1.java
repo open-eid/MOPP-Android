@@ -128,7 +128,7 @@ class ID1 implements Token {
 
     @Override
     public void changeCode(CodeType type, byte[] currentCode, byte[] newCode) throws SmartCardReaderException {
-        verifyPin(type, currentCode);
+        verifyCode(type, currentCode);
         if (type.equals(CodeType.PIN2)) {
             reader.transmit(0x00, 0xA4, 0x04, 0x0C, new byte[] {0x51, 0x53, 0x43, 0x44, 0x20, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E}, null);
         } else {
@@ -139,6 +139,17 @@ class ID1 implements Token {
 
     @Override
     public void unblockAndChangeCode(byte[] pukCode, CodeType type, byte[] newCode) throws SmartCardReaderException {
+        verifyCode(CodeType.PUK, pukCode);
+        // block code if not yet blocked
+        while (codeRetryCounter(type) != 0) {
+            try {
+                verifyCode(type, new byte[] {(byte) 0xFF});
+            } catch (CodeVerificationException ignored) {}
+        }
+        if (type.equals(CodeType.PIN2)) {
+            reader.transmit(0x00, 0xA4, 0x04, 0x0C, new byte[] {0x51, 0x53, 0x43, 0x44, 0x20, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E}, null);
+        }
+        reader.transmit(0x00, 0x2C, 0x02, VERIFY_PIN_MAP.get(type), code(newCode), null);
     }
 
     @Override
@@ -151,7 +162,7 @@ class ID1 implements Token {
         return new byte[0];
     }
 
-    private void verifyPin(CodeType type, byte[] code) throws SmartCardReaderException {
+    private void verifyCode(CodeType type, byte[] code) throws SmartCardReaderException {
         if (type.equals(CodeType.PIN2)) {
             reader.transmit(0x00, 0xA4, 0x04, 0x0C, new byte[] {0x51, 0x53, 0x43, 0x44, 0x20, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E}, null);
         } else {
