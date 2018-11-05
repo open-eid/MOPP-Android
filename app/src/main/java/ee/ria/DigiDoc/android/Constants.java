@@ -19,5 +19,7 @@ public final class Constants {
      */
     public static final String DIR_SIGNATURE_CONTAINERS = "signed_containers";
 
+    public static final String SIGNATURE_CONTAINER_EXT = "asice";
+
     private Constants() {}
 }

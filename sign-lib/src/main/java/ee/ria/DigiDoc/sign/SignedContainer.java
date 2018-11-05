@@ -44,14 +44,6 @@ public abstract class SignedContainer {
     private static final String DEFAULT_MIME_TYPE = "text/plain";
 
     private static final String SIGNATURE_PROFILE_TS = "time-stamp";
-    private static final String SIGNATURE_PROFILE_TM = "time-mark";
-
-    private static final ImmutableMap<String, String> SIGNATURE_PROFILES =
-            ImmutableMap.<String, String>builder()
-                    .put("asice", SIGNATURE_PROFILE_TS)
-                    .put("sce", SIGNATURE_PROFILE_TS)
-                    .put("bdoc", SIGNATURE_PROFILE_TM)
-                    .build();
 
     public abstract File file();
 
@@ -93,31 +85,7 @@ public abstract class SignedContainer {
     }
 
     public final String signatureProfile() {
-        String extension = getFileExtension(file().getName());
-        ImmutableList<Signature> signatures = signatures();
-
-        if (signatures.size() == 1) {
-            if (extension.equals("bdoc")) {
-                return signatures.get(0).profile();
-            } else {
-                return SIGNATURE_PROFILE_TS;
-            }
-        } else if (signatures.size() > 1) {
-            boolean same = true;
-            String previous = null;
-            for (Signature signature : signatures) {
-                if (previous != null && !previous.equals(signature.profile())) {
-                    same = false;
-                    break;
-                }
-                previous = signature.profile();
-            }
-            if (same) {
-                return previous;
-            }
-        }
-
-        return SIGNATURE_PROFILES.get(extension);
+        return SIGNATURE_PROFILE_TS;
     }
 
     public final SignedContainer addDataFiles(ImmutableList<File> dataFiles) throws IOException {
