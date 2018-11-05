@@ -21,6 +21,8 @@ import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
 import timber.log.Timber;
 
+import static ee.ria.DigiDoc.idcard.AlgorithmUtils.addPadding;
+
 class ID1 implements Token {
 
     private static final DateTimeFormatter DATE_FORMAT = new DateTimeFormatterBuilder()
@@ -154,7 +156,10 @@ class ID1 implements Token {
 
     @Override
     public byte[] calculateSignature(byte[] pin2, byte[] hash, boolean ecc) throws SmartCardReaderException {
-        return new byte[0];
+        verifyCode(CodeType.PIN2, pin2);
+        reader.transmit(0x00, 0xA4, 0x04, 0x0C, new byte[] {0x51, 0x53, 0x43, 0x44, 0x20, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E}, null);
+        reader.transmit(0x00, 0x22, 0x41, 0xB6, new byte[] {(byte) 0x80, 0x04, (byte) 0xFF, 0x15, 0x08, 0x00, (byte) 0x84, 0x01, (byte) 0x9F}, null);
+        return reader.transmit(0x00, 0x2A, 0x9E, 0x9A, addPadding(hash, ecc), 0x00);
     }
 
     @Override
