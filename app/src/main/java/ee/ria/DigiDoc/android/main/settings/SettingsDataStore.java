@@ -6,8 +6,6 @@ import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.PreferenceManager;
 
-import com.google.common.collect.ImmutableBiMap;
-
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -20,28 +18,10 @@ public final class SettingsDataStore {
 
     private final SharedPreferences preferences;
     private final Resources resources;
-    private final ImmutableBiMap<String, String> fileTypeMap;
 
     @Inject SettingsDataStore(Application application) {
         preferences = PreferenceManager.getDefaultSharedPreferences(application);
         this.resources = application.getResources();
-        fileTypeMap = ImmutableBiMap
-                .<String, String>builder()
-                .put(resources.getString(R.string.main_settings_signature_profile_time_mark_key),
-                        resources.getString(R.string.main_settings_file_type_bdoc_key))
-                .put(resources.getString(R.string.main_settings_signature_profile_time_stamp_key),
-                        resources.getString(R.string.main_settings_file_type_asice_key))
-                .build();
-    }
-
-    public String getSignatureProfile() {
-        return preferences.getString(
-                resources.getString(R.string.main_settings_signature_profile_key),
-                resources.getString(R.string.main_settings_signature_profile_time_mark_key));
-    }
-
-    public String getFileType() {
-        return fileTypeMap.get(getSignatureProfile());
     }
 
     public String getPhoneNo() {
