@@ -21,13 +21,31 @@ import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
 import timber.log.Timber;
 
-import static ee.ria.DigiDoc.idcard.AlgorithmUtils.addPadding;
-
 class ID1 implements Token {
 
     private static final DateTimeFormatter DATE_FORMAT = new DateTimeFormatterBuilder()
             .appendPattern("dd MM yyyy")
             .toFormatter();
+
+    private static final Map<CertificateType, Pair<Byte, Byte>> CERT_MAP = new HashMap<>();
+    static {
+        CERT_MAP.put(CertificateType.AUTHENTICATION, new Pair<>((byte) 0xF1, (byte) 0x01));
+        CERT_MAP.put(CertificateType.SIGNING, new Pair<>((byte) 0xF2, (byte) 0x1F));
+    }
+
+    private static final Map<CodeType, Byte> PIN_MAP = new HashMap<>();
+    static {
+        PIN_MAP.put(CodeType.PIN1, (byte) 0x01);
+        PIN_MAP.put(CodeType.PIN2, (byte) 0x05);
+        PIN_MAP.put(CodeType.PUK, (byte) 0x02);
+    }
+
+    private static final Map<CodeType, Byte> VERIFY_PIN_MAP = new HashMap<>();
+    static {
+        VERIFY_PIN_MAP.put(CodeType.PIN1, (byte) 0x01);
+        VERIFY_PIN_MAP.put(CodeType.PIN2, (byte) 0x85);
+        VERIFY_PIN_MAP.put(CodeType.PUK, (byte) 0x02);
+    }
 
     private final SmartCardReader reader;
 
@@ -75,12 +93,6 @@ class ID1 implements Token {
                 personalCode, documentNumber, expiryDate);
     }
 
-    private static final Map<CertificateType, Pair<Byte, Byte>> CERT_MAP = new HashMap<>();
-    static {
-        CERT_MAP.put(CertificateType.AUTHENTICATION, new Pair<>((byte) 0xF1, (byte) 0x01));
-        CERT_MAP.put(CertificateType.SIGNING, new Pair<>((byte) 0xF2, (byte) 0x1F));
-    }
-
     @Override
     public byte[] certificate(CertificateType type) throws SmartCardReaderException {
         reader.transmit(0x00, 0xA4, 0x04, 0x00, new byte[] {(byte) 0xA0, 0x00, 0x00, 0x00, 0x77, 0x01, 0x08, 0x00, 0x07, 0x00, 0x00, (byte) 0xFE, 0x00, 0x00, 0x01, 0x00}, null);
@@ -102,20 +114,6 @@ class ID1 implements Token {
             }
         }
         return stream.toByteArray();
-    }
-
-    private static final Map<CodeType, Byte> PIN_MAP = new HashMap<>();
-    static {
-        PIN_MAP.put(CodeType.PIN1, (byte) 0x01);
-        PIN_MAP.put(CodeType.PIN2, (byte) 0x05);
-        PIN_MAP.put(CodeType.PUK, (byte) 0x02);
-    }
-
-    private static final Map<CodeType, Byte> VERIFY_PIN_MAP = new HashMap<>();
-    static {
-        VERIFY_PIN_MAP.put(CodeType.PIN1, (byte) 0x01);
-        VERIFY_PIN_MAP.put(CodeType.PIN2, (byte) 0x85);
-        VERIFY_PIN_MAP.put(CodeType.PUK, (byte) 0x02);
     }
 
     @Override
@@ -159,12 +157,12 @@ class ID1 implements Token {
         verifyCode(CodeType.PIN2, pin2);
         reader.transmit(0x00, 0xA4, 0x04, 0x0C, new byte[] {0x51, 0x53, 0x43, 0x44, 0x20, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E}, null);
         reader.transmit(0x00, 0x22, 0x41, 0xB6, new byte[] {(byte) 0x80, 0x04, (byte) 0xFF, 0x15, 0x08, 0x00, (byte) 0x84, 0x01, (byte) 0x9F}, null);
-        return reader.transmit(0x00, 0x2A, 0x9E, 0x9A, addPadding(hash, ecc), 0x00);
+        return reader.transmit(0x00, 0x2A, 0x9E, 0x9A, padWithZeroes(hash), 0x00);
     }
 
     @Override
     public byte[] decrypt(byte[] pin1, byte[] data, boolean ecc) throws SmartCardReaderException {
-        return new byte[0];
+        throw new IdCardException("Decryption with ID1 token is not implemented yet");
     }
 
     private void verifyCode(CodeType type, byte[] code) throws SmartCardReaderException {
@@ -187,5 +185,27 @@ class ID1 implements Token {
         byte[] padded = Arrays.copyOf(code, 12);
         Arrays.fill(padded, code.length, padded.length, (byte) 0xFF);
         return padded;
+    }
+
+    /**
+     * ID1 only has ECC keys so we don't need to pad it as we do RSA hashes,
+     * but we need to pad 32 byte hash with zeroes in front to resize it
+     * to 48bytes in length because of API restrictions on the chip
+     *
+     * @param hash that will be signed
+     * @return zero padded hash with 48 byte length or same hash if it's longer than 48 bytes
+     * @throws IdCardException when padding the hash fails
+     */
+    private static byte[] padWithZeroes(byte[] hash) throws IdCardException {
+        if (hash.length >= 48) {
+            return hash;
+        }
+        try (ByteArrayOutputStream toSign = new ByteArrayOutputStream()) {
+            toSign.write(new byte[48 - hash.length]);
+            toSign.write(hash);
+            return toSign.toByteArray();
+        } catch (IOException e) {
+            throw new IdCardException("Failed to Add padding to hash", e);
+        }
     }
 }
