@@ -21,6 +21,8 @@
     <string name="main_settings_title">Settings</string>
     <string name="main_settings_phone_no_title">Country code and phone number</string>
     <string name="main_settings_personal_code_title">Personal code</string>
+    <string name="main_settings_tsa_url_title">Time Stamp service URL</string>
+    <string name="main_settings_tsa_url_use_default">Use default</string>
     <string name="main_settings_role_title">Role</string>
     <string name="main_settings_city_title">City</string>
     <string name="main_settings_county_title">State</string>

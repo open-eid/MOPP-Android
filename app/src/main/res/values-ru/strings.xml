@@ -21,6 +21,8 @@
     <string name="main_settings_title">Настройки</string>
     <string name="main_settings_phone_no_title">Код страны и телефонный номер</string>
     <string name="main_settings_personal_code_title">Личный код</string>
+    <string name="main_settings_tsa_url_title">Time Stamp service URL</string>
+    <string name="main_settings_tsa_url_use_default">Use default</string>
     <string name="main_settings_role_title">Роль</string>
     <string name="main_settings_city_title">Город</string>
     <string name="main_settings_county_title">Уезд</string>

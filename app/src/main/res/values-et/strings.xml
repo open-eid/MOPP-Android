@@ -21,6 +21,8 @@
     <string name="main_settings_title">Seaded</string>
     <string name="main_settings_phone_no_title">Riigi kood ja telefoninumber</string>
     <string name="main_settings_personal_code_title">Isikukood</string>
+    <string name="main_settings_tsa_url_title">Ajatempli teenuse URL</string>
+    <string name="main_settings_tsa_url_use_default">Kasuta vaikeväärtust</string>
     <string name="main_settings_role_title">Roll</string>
     <string name="main_settings_city_title">Linn</string>
     <string name="main_settings_county_title">Maakond</string>
