@@ -6,10 +6,6 @@ import android.util.SparseArray;
 import com.google.common.base.Charsets;
 import com.google.common.primitives.Bytes;
 
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.format.DateTimeFormatterBuilder;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,15 +15,10 @@ import java.util.Map;
 import ee.ria.DigiDoc.smartcardreader.ApduResponseException;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
-import timber.log.Timber;
 
 import static com.google.common.primitives.Bytes.concat;
 
 class ID1 implements Token {
-
-    private static final DateTimeFormatter DATE_FORMAT = new DateTimeFormatterBuilder()
-            .appendPattern("dd MM yyyy")
-            .toFormatter();
 
     private static final Map<CertificateType, Pair<Byte, Byte>> CERT_MAP = new HashMap<>();
     static {
@@ -65,34 +56,7 @@ class ID1 implements Token {
             byte[] record = reader.transmit(0x00, 0xB0, 0x00, 0x00, null, 0x00);
             data.put(i, new String(record, Charsets.UTF_8).trim());
         }
-
-        String surname = data.get(1);
-        String givenNames = data.get(2);
-        String citizenship = data.get(4);
-        String dateAndPlaceOfBirthString = data.get(5);
-        String personalCode = data.get(6);
-        String documentNumber = data.get(7);
-        String expiryDateString = data.get(8);
-
-        String dateOfBirthString =
-                dateAndPlaceOfBirthString.substring(0, dateAndPlaceOfBirthString.length() - 4);
-        LocalDate dateOfBirth;
-        try {
-            dateOfBirth = LocalDate.parse(dateOfBirthString, DATE_FORMAT);
-        } catch (Exception e) {
-            dateOfBirth = null;
-            Timber.e(e, "Could not parse date of birth %s", dateOfBirthString);
-        }
-        LocalDate expiryDate;
-        try {
-            expiryDate = LocalDate.parse(expiryDateString, DATE_FORMAT);
-        } catch (Exception e) {
-            expiryDate = null;
-            Timber.e(e, "Could not parse expiry date %s", expiryDateString);
-        }
-
-        return PersonalData.create(surname, givenNames, citizenship, dateOfBirth,
-                personalCode, documentNumber, expiryDate);
+        return ID1PersonalDataParser.parse(data);
     }
 
     @Override
@@ -207,10 +171,10 @@ class ID1 implements Token {
 
     /**
      * ID1 only has ECC keys so we don't need to pad it as we do RSA hashes,
-     * but we need to pad 32 byte hash with zeroes in front to resize it
-     * to 48bytes in length because of API restrictions on the chip
+     * but we need to pad hashes that are smaller than the key size with zeroes in front to resize
+     * them to 48bytes in length because of API restrictions on the chip
      *
-     * @param hash that will be signed
+     * @param hash that needs to be signed
      * @return zero padded hash with 48 byte length or same hash if it's longer than 48 bytes
      * @throws IdCardException when padding the hash fails
      */
