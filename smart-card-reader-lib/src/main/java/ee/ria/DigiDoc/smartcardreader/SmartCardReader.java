@@ -23,6 +23,8 @@ public abstract class SmartCardReader implements AutoCloseable {
 
     public abstract boolean connected();
 
+    public abstract byte[] atr();
+
     /**
      * Makes the actual transaction, has to be implemented by specific readers.
      *
