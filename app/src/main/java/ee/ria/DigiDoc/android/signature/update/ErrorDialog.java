@@ -70,7 +70,8 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
             } else if (signatureAddError instanceof MobileIdMessageException) {
                 setMessage(signatureAddError.getMessage());
             } else {
-                setMessage(getContext().getString(R.string.signature_update_signature_add_error));
+                setTitle(R.string.signature_update_signature_add_error);
+                setMessage(signatureAddError.getMessage());
             }
         } else if (signatureRemoveError != null) {
             type = SIGNATURE_REMOVE;
@@ -84,6 +85,7 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
 
     @Override
     public void onDismiss(DialogInterface dialog) {
+        setTitle(null);
         if (TextUtils.equals(type, DOCUMENTS_ADD)) {
             documentsAddIntentSubject.onNext(Intent.DocumentsAddIntent.clear());
         } else if (TextUtils.equals(type, DOCUMENT_REMOVE)) {

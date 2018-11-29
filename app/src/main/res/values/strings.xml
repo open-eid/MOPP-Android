@@ -105,7 +105,7 @@
     <string name="signature_update_signature_add_method_id_card">ID-card</string>
     <string name="signature_update_signature_add_positive_button">SIGN</string>
     <string name="signature_update_signature_add_success">SIGNATURE ADDED</string>
-    <string name="signature_update_signature_add_error">Something went wrong. Please try again.</string>
+    <string name="signature_update_signature_add_error">Something went wrong</string>
 
     <string name="signature_update_mobile_id_message">Enter your mobile number and personal code to sign with Mobile-ID</string>
     <string name="signature_update_mobile_id_phone_no">Country code and phone number</string>

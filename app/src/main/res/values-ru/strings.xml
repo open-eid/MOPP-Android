@@ -105,7 +105,7 @@
     <string name="signature_update_signature_add_method_id_card">ID-карта</string>
     <string name="signature_update_signature_add_positive_button">ПОДПИСАТЬ</string>
     <string name="signature_update_signature_add_success">ПОДПИСЬ ДОБАВЛЕНА</string>
-    <string name="signature_update_signature_add_error">Что-то пошло не так. Пожалуйста, попробуйте снова.</string>
+    <string name="signature_update_signature_add_error">Что-то пошло не так</string>
 
     <string name="signature_update_mobile_id_message">Введите свой телефонный номер и личный код для подписания с помощью Mobiil-ID</string>
     <string name="signature_update_mobile_id_phone_no">Код страны и телефонный номер</string>
