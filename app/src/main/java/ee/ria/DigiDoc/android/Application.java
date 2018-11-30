@@ -46,6 +46,7 @@ import dagger.Provides;
 import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
 import ee.ria.DigiDoc.BuildConfig;
+import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateViewModel;
 import ee.ria.DigiDoc.android.eid.EIDHomeViewModel;
 import ee.ria.DigiDoc.android.main.home.HomeViewModel;
@@ -113,7 +114,8 @@ public class Application extends android.app.Application {
     // Container configuration
 
     private void setupSignLib() {
-        SignLib.init(this);
+        SignLib.init(this, getString(R.string.main_settings_tsa_url_key),
+                getString(R.string.main_settings_tsa_url_default));
     }
 
     private void setupRxJava() {

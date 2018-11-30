@@ -119,7 +119,9 @@ public interface Token {
         byte[] atr = reader.atr();
         if (Arrays.equals(Hex.decode("3bdb960080b1fe451f830012233f536549440f9000f1"), atr)) {
             return new ID1(reader);
-        } else if (Arrays.equals(Hex.decode("3bfa1800008031fe45fe654944202f20504b4903"), atr)) {
+        } else if (Arrays.equals(Hex.decode("3bfa1800008031fe45fe654944202f20504b4903"), atr) ||
+                Arrays.equals(Hex.decode("3bfe1800008031fe45803180664090a4162a00830f9000ef"), atr)
+        ) {
             return new EstEIDv3d5(reader);
         } else if (
                 Arrays.equals(Hex.decode("3bfe1800008031fe454573744549442076657220312e30a8"), atr)

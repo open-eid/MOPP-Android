@@ -21,6 +21,8 @@
     <string name="main_settings_title">Настройки</string>
     <string name="main_settings_phone_no_title">Код страны и телефонный номер</string>
     <string name="main_settings_personal_code_title">Личный код</string>
+    <string name="main_settings_tsa_url_title">Time Stamp service URL</string>
+    <string name="main_settings_tsa_url_use_default">Use default</string>
     <string name="main_settings_role_title">Роль</string>
     <string name="main_settings_city_title">Город</string>
     <string name="main_settings_county_title">Уезд</string>
@@ -103,7 +105,7 @@
     <string name="signature_update_signature_add_method_id_card">ID-карта</string>
     <string name="signature_update_signature_add_positive_button">ПОДПИСАТЬ</string>
     <string name="signature_update_signature_add_success">ПОДПИСЬ ДОБАВЛЕНА</string>
-    <string name="signature_update_signature_add_error">Что-то пошло не так. Пожалуйста, попробуйте снова.</string>
+    <string name="signature_update_signature_add_error">Что-то пошло не так</string>
 
     <string name="signature_update_mobile_id_message">Введите свой телефонный номер и личный код для подписания с помощью Mobiil-ID</string>
     <string name="signature_update_mobile_id_phone_no">Код страны и телефонный номер</string>

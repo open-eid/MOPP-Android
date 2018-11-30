@@ -59,4 +59,13 @@ public final class SettingsFragment extends PreferenceFragmentCompatDividers {
         }
         return null;
     }
+
+    @Override
+    public void onDisplayPreferenceDialog(Preference preference) {
+        if (preference instanceof TsaUrlPreference) {
+            displayPreferenceDialog(new TsaUrlPreferenceDialogFragment(), preference.getKey());
+        } else {
+            super.onDisplayPreferenceDialog(preference);
+        }
+    }
 }
