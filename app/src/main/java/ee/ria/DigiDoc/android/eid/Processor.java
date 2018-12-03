@@ -18,13 +18,13 @@ import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfDateOfBirthError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfPersonalCodeError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeSameAsCurrentError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeTooEasyError;
-import ee.ria.DigiDoc.android.model.EIDData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
-import ee.ria.tokenlibrary.Token;
-import ee.ria.tokenlibrary.exception.PinVerificationException;
+import ee.ria.DigiDoc.idcard.CodeType;
+import ee.ria.DigiDoc.idcard.CodeVerificationException;
+import ee.ria.DigiDoc.idcard.Token;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
@@ -68,12 +68,12 @@ final class Processor implements ObservableTransformer<Action, Result> {
         codeUpdate = upstream -> upstream.flatMap(action -> {
             CodeUpdateAction updateAction = action.action();
             CodeUpdateRequest request = action.request();
-            EIDData data = action.data();
+            IdCardData data = action.data();
             Token token = action.token();
             if (updateAction == null) {
                 return Observable.just(Result.CodeUpdateResult.clear());
             } else if (request == null || data == null || token == null) {
-                if (updateAction.pinType().equals(Token.PinType.PUK)
+                if (updateAction.pinType().equals(CodeType.PUK)
                         && updateAction.updateType().equals(CodeUpdateType.UNBLOCK)) {
                     navigator.execute(Transaction
                             .activity(createBrowserIntent(application,
@@ -124,7 +124,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
                             CodeUpdateResponse.Builder builder = CodeUpdateResponse.valid()
                                     .buildWith();
-                            if (throwable instanceof PinVerificationException && retryCount > 0) {
+                            if (throwable instanceof CodeVerificationException && retryCount > 0) {
                                 builder.currentError(CodeInvalidError.create(retryCount));
                             } else {
                                 builder.error(throwable);
@@ -151,8 +151,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
     }
 
     private static CodeUpdateResponse validate(CodeUpdateAction action, CodeUpdateRequest request,
-                                               EIDData data) {
-        LocalDate dateOfBirth = data.dateOfBirth();
+                                               IdCardData data) {
+        LocalDate dateOfBirth = data.personalData().dateOfBirth();
         ImmutableSet.Builder<String> dateOfBirthValuesBuilder = ImmutableSet.builder();
         if (dateOfBirth != null) {
             dateOfBirthValuesBuilder
@@ -175,7 +175,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
         } else if (action.updateType().equals(CodeUpdateType.EDIT)
                 && request.newValue().equals(request.currentValue())) {
             builder.newError(CodeSameAsCurrentError.create());
-        } else if (data.personalCode().contains(request.newValue())) {
+        } else if (data.personalData().personalCode().contains(request.newValue())) {
             builder.newError(CodePartOfPersonalCodeError.create());
         } else if (dateOfBirthValues.contains(request.newValue())) {
             builder.newError(CodePartOfDateOfBirthError.create());
@@ -216,14 +216,14 @@ final class Processor implements ObservableTransformer<Action, Result> {
     }
 
     private int retryCount(CodeUpdateAction action, IdCardData data) {
-        Token.PinType pinType = action.pinType();
+        CodeType pinType = action.pinType();
         String updateType = action.updateType();
-        if (updateType.equals(CodeUpdateType.UNBLOCK) || pinType.equals(Token.PinType.PUK)) {
+        if (updateType.equals(CodeUpdateType.UNBLOCK) || pinType.equals(CodeType.PUK)) {
             return data.pukRetryCount();
-        } else if (pinType.equals(Token.PinType.PIN1)) {
-            return data.authCertificate().pinRetryCount();
+        } else if (pinType.equals(CodeType.PIN1)) {
+            return data.pin1RetryCount();
         } else {
-            return data.signCertificate().pinRetryCount();
+            return data.pin2RetryCount();
         }
     }
 }

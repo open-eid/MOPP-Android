@@ -1,7 +1,5 @@
 package ee.ria.DigiDoc.android.signature.update;
 
-import android.app.Application;
-
 import java.io.File;
 
 import javax.inject.Inject;
@@ -17,23 +15,24 @@ import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdOnSubscribe;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdRequest;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
-import ee.ria.tokenlibrary.exception.PinVerificationException;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.idcard.CodeVerificationException;
+import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 final class SignatureAddSource {
 
-    private final Application application;
+    private final Navigator navigator;
     private final SignatureContainerDataSource signatureContainerDataSource;
     private final SettingsDataStore settingsDataStore;
     private final IdCardService idCardService;
 
-    @Inject SignatureAddSource(Application application,
+    @Inject SignatureAddSource(Navigator navigator,
                                SignatureContainerDataSource signatureContainerDataSource,
                                SettingsDataStore settingsDataStore, IdCardService idCardService) {
-        this.application = application;
+        this.navigator = navigator;
         this.signatureContainerDataSource = signatureContainerDataSource;
         this.settingsDataStore = settingsDataStore;
         this.idCardService = idCardService;
@@ -69,7 +68,7 @@ final class SignatureAddSource {
             return signatureContainerDataSource
                     .get(containerFile)
                     .flatMapObservable(container ->
-                            Observable.create(new MobileIdOnSubscribe(application, container,
+                            Observable.create(new MobileIdOnSubscribe(navigator, container,
                                     mobileIdRequest.personalCode(), mobileIdRequest.phoneNo())))
                     .switchMap(response -> {
                         String signature = response.signature();
@@ -91,21 +90,28 @@ final class SignatureAddSource {
             IdCardRequest idCardRequest = (IdCardRequest) request;
             return signatureContainerDataSource
                     .get(containerFile)
-                    .flatMap(container ->
-                            idCardService
-                                    .sign(idCardRequest.token(), container, idCardRequest.pin2()))
-                    .toObservable()
+                    .flatMapObservable(container ->
+                            idCardService.data()
+                                    .filter(dataResponse -> dataResponse.token() != null)
+                                    .switchMapSingle(dataResponse ->
+                                            idCardService.sign(dataResponse.token(), container,
+                                                    idCardRequest.pin2())))
                     .map(IdCardResponse::success)
                     .onErrorResumeNext(error -> {
-                        if (error instanceof PinVerificationException) {
-                            IdCardData data = IdCardService.data(idCardRequest.token());
-                            if (data.signCertificate().pinRetryCount() > 0) {
-                                return Observable.just(
-                                        IdCardResponse.sign(IdCardSignResponse
-                                                .clear(error, data, idCardRequest.token())),
-                                        IdCardResponse.sign(IdCardSignResponse
-                                                .failure(error, data, idCardRequest.token())));
-                            }
+                        if (error instanceof CodeVerificationException) {
+                            return idCardService.data()
+                                    .filter(dataResponse -> dataResponse.data() != null)
+                                    .switchMap(dataResponse -> {
+                                        IdCardData data = dataResponse.data();
+                                        if (data != null && data.pin2RetryCount() > 0) {
+                                            return Observable.just(
+                                                    IdCardResponse.sign(IdCardSignResponse.clear(
+                                                            error, data, idCardRequest.token())),
+                                                    IdCardResponse.sign(IdCardSignResponse.failure(
+                                                            error, data, idCardRequest.token())));
+                                        }
+                                        return Observable.error(error);
+                                    });
                         }
                         return Observable.error(error);
                     })

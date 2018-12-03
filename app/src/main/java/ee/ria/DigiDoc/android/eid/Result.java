@@ -6,10 +6,10 @@ import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
-import ee.ria.DigiDoc.android.model.idcard.IdCardStatus;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 import ee.ria.DigiDoc.android.utils.mvi.State;
-import ee.ria.tokenlibrary.Token;
+import ee.ria.DigiDoc.idcard.Token;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
 
 interface Result extends MviResult<ViewState> {
 
@@ -33,7 +33,7 @@ interface Result extends MviResult<ViewState> {
                         .codeUpdateAction(null);
             } else if (idCardDataResponse != null) {
                 builder.idCardDataResponse(idCardDataResponse);
-                if (!idCardDataResponse.status().equals(IdCardStatus.CARD_DETECTED)) {
+                if (!idCardDataResponse.status().equals(SmartCardReaderStatus.CARD_DETECTED)) {
                     builder.codeUpdateAction(null);
                 }
             } else if (error() != null) {

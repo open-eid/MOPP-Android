@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:minHeight="@dimen/material_list_two_line_normal_height"
+    android:paddingTop="@dimen/material_list_normal_padding_vertical"
+    android:paddingBottom="@dimen/material_list_normal_padding_vertical"
+    android:background="?attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@id/cryptoRecipientType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/material_list_icon_first_position_margin_start"
+        android:layout_marginEnd="@dimen/material_list_icon_first_position_margin_start"
+        android:src="@drawable/ic_icon_crypto"
+        android:tint="?android:attr/textColorPrimary"
+        android:contentDescription="@string/crypto_recipient_type" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginEnd="@dimen/material_list_text_last_position_margin_end"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@id/cryptoRecipientName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:singleLine="true"
+            android:ellipsize="end"
+            tools:text="Mari Maasikas, 48405050123" />
+
+        <TextView
+            android:id="@id/cryptoRecipientInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceListItemSecondary"
+            android:singleLine="true"
+            android:ellipsize="end"
+            tools:text="DIGI-ID (valid until 01 June 2015 13:45)" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@id/cryptoRecipientRemoveButton"
+        style="@style/Widget.Application.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/material_list_icon_last_position_margin_horizontal"
+        android:src="@drawable/ic_icon_remove"
+        android:tint="@color/error"
+        android:contentDescription="@string/crypto_recipient_remove_button" />
+
+    <Button
+        android:id="@id/cryptoRecipientAddButton"
+        style="?attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/crypto_recipient_add_button"
+        android:visibility="gone" />
+
+</LinearLayout>

@@ -20,25 +20,27 @@ android {
 
         buildConfigField 'String', 'PREFERENCE_V7_FIX_VERSION', "\"$preferenceV7FixVersion\""
         buildConfigField 'String', 'GUAVA_VERSION', "\"$guavaVersion\""
-        buildConfigField 'String', 'COMMONS_IO_VERSION', "\"$commonsIoVersion\""
         buildConfigField 'String', 'OKIO_VERSION', "\"$okioVersion\""
         buildConfigField 'String', 'TIMBER_VERSION', "\"$timberVersion\""
-        buildConfigField 'String', 'BUTTERKNIFE_VERSION', "\"$butterknifeVersion\""
         buildConfigField 'String', 'OK_HTTP_VERSION', "\"$okhttpVersion\""
         buildConfigField 'String', 'RETROFIT_VERSION', "\"$retrofitVersion\""
-        buildConfigField 'String', 'SPONGY_CASTLE_VERSION', "\"$spongycastleVersion\""
+        buildConfigField 'String', 'BOUNCY_CASTLE_VERSION', "\"$bouncycastleVersion\""
         buildConfigField 'String', 'MATERIAL_VALUES_VERSION', "\"$materialValuesVersion\""
         buildConfigField 'String', 'DAGGER_VERSION', "\"$daggerVersion\""
         buildConfigField 'String', 'CONDUCTOR_VERSION', "\"$conductorVersion\""
         buildConfigField 'String', 'RX_JAVA_VERSION', "\"$rxJavaVersion\""
         buildConfigField 'String', 'RX_ANDROID_VERSION', "\"$rxAndroidVersion\""
-        buildConfigField 'String', 'RX_BINDER_VERSION', "\"$rxBindingVersion\""
+        buildConfigField 'String', 'RX_BINDING_VERSION', "\"$rxBindingVersion\""
         buildConfigField 'String', 'AUTO_VALUE_VERSION', "\"$autoValueVersion\""
         buildConfigField 'String', 'AUTO_VALUE_PARCEL_VERSION', "\"$autoValueParcelVersion\""
         buildConfigField 'String', 'THREE_TEN_ABP_VERSION', "\"$threetenabpVersion\""
         buildConfigField 'String', 'EXPANDABLE_LAYOUT_VERSION', "\"$expandablelayoutVersion\""
+        buildConfigField 'String', 'LDAP_SDK_VERSION', "\"$ldapSdkVersion\""
+        buildConfigField 'String', 'CDOC4J_VERSION', "\"$cdoc4jVersion\""
+        buildConfigField 'String', 'SLF4J_VERSION', "\"$slf4jVersion\""
         buildConfigField 'String', 'JUNIT_VERSION', "\"$junitVersion\""
         buildConfigField 'String', 'TRUTH_VERSION', "\"$truthVersion\""
+        buildConfigField 'String', 'MOCKITO_VERSION', "\"$mockitoVersion\""
     }
 
     signingConfigs {
@@ -56,6 +58,17 @@ android {
             applicationIdSuffix '.develop'
             signingConfig signingConfigs.debug
             matchingFallbacks = ['debug']
+        }
+        envtest {
+            debuggable true
+            applicationIdSuffix '.envtest'
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['envtest', 'debug']
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
         }
     }
 
@@ -76,22 +89,17 @@ dependencies {
     implementation "com.android.support:design:${androidSupportLibraryVersion}"
     implementation "com.android.support:recyclerview-v7:${androidSupportLibraryVersion}"
     implementation "com.android.support:cardview-v7:${androidSupportLibraryVersion}"
-    implementation "com.android.support:preference-v14:${androidSupportLibraryVersion}"
 
     implementation "android.arch.lifecycle:viewmodel:${androidArchVersion}"
 
     implementation "com.takisoft.fix:preference-v7:${preferenceV7FixVersion}"
 
     implementation "com.google.guava:guava:${guavaVersion}"
-    implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "com.squareup.okio:okio:${okioVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
-    implementation "com.jakewharton:butterknife:${butterknifeVersion}"
-    annotationProcessor "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
 
-    implementation "com.madgag.spongycastle:core:${spongycastleVersion}"
-    implementation "com.madgag.spongycastle:bcpkix-jdk15on:${spongycastleVersion}"
+    implementation "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
 
     implementation "blue.aodev:material-values:${materialValuesVersion}"
 
@@ -115,11 +123,12 @@ dependencies {
 
     implementation "net.cachapa.expandablelayout:expandablelayout:${expandablelayoutVersion}"
 
-    implementation project(':mopplib')
-    implementation project(':scardcomlibrary')
-    implementation project(':tokenlibrary')
-    implementation project(':tokenservice')
-    implementation project(':androidmobileid')
+    implementation project(':common-lib')
+    implementation project(':sign-lib')
+    implementation project(':crypto-lib')
+    implementation project(':smart-card-reader-lib')
+    implementation project(':id-card-lib')
+    implementation project(':mobile-id-lib')
 
     testAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
     testImplementation "junit:junit:${junitVersion}"

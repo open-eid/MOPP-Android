@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.crypto.CryptoHomeView;
+import ee.ria.DigiDoc.android.crypto.home.CryptoHomeView;
 import ee.ria.DigiDoc.android.eid.EIDHomeView;
 import ee.ria.DigiDoc.android.signature.home.SignatureHomeView;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -35,6 +35,7 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         Observable<Boolean> navigationViewVisibility();
     }
 
+    private final android.content.Intent intent;
     private final String eidScreenId;
 
     private final FrameLayout navigationContainerView;
@@ -51,8 +52,9 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
 
     @Nullable private SparseArray<Parcelable> hierarchyState;
 
-    public HomeView(Context context, String screenId) {
+    public HomeView(Context context, android.content.Intent intent, String screenId) {
         super(context);
+        this.intent = intent;
         eidScreenId = screenId + "eid";
         setOrientation(VERTICAL);
         inflate(context, R.layout.main_home, this);
@@ -105,10 +107,11 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         }
 
         navigationView.setVisibility(state.navigationVisible() ? VISIBLE : GONE);
+        menuView.locale(state.locale());
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
-        return Observable.just(Intent.InitialIntent.create());
+        return Observable.just(Intent.InitialIntent.create(intent));
     }
 
     private Observable<Intent.NavigationIntent> navigationIntent() {
@@ -129,11 +132,16 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         return navigationVisibilityIntentSubject;
     }
 
+    private Observable<Intent.LocaleChangeIntent> localeChangeIntent() {
+        return menuView.localeChecks()
+                .map(Intent.LocaleChangeIntent::create);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), navigationIntent(), menuIntent(),
-                navigationVisibilityIntent());
+                navigationVisibilityIntent(), localeChangeIntent());
     }
 
     @Override

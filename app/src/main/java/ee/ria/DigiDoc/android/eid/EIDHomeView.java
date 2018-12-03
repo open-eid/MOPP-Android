@@ -15,12 +15,12 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.main.home.HomeToolbar;
 import ee.ria.DigiDoc.android.main.home.HomeView;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
-import ee.ria.DigiDoc.android.model.idcard.IdCardStatus;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
-import ee.ria.tokenlibrary.Token;
-import ee.ria.tokenlibrary.exception.PinVerificationException;
+import ee.ria.DigiDoc.idcard.CodeVerificationException;
+import ee.ria.DigiDoc.idcard.Token;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -32,12 +32,13 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 public final class EIDHomeView extends FrameLayout implements MviView<Intent, ViewState>,
         HomeView.HomeViewChild, Navigator.BackButtonClickListener {
 
-    private static final ImmutableMap<String, Integer> STATUS_MESSAGES =
-            ImmutableMap.<String, Integer>builder()
-                    .put(IdCardStatus.INITIAL, R.string.eid_home_id_card_status_initial_message)
-                    .put(IdCardStatus.READER_DETECTED,
+    private static final ImmutableMap<SmartCardReaderStatus, Integer> STATUS_MESSAGES =
+            ImmutableMap.<SmartCardReaderStatus, Integer>builder()
+                    .put(SmartCardReaderStatus.IDLE,
+                            R.string.eid_home_id_card_status_initial_message)
+                    .put(SmartCardReaderStatus.READER_DETECTED,
                             R.string.eid_home_id_card_status_reader_detected_message)
-                    .put(IdCardStatus.CARD_DETECTED,
+                    .put(SmartCardReaderStatus.CARD_DETECTED,
                             R.string.eid_home_id_card_status_card_detected_message)
                     .build();
 
@@ -149,7 +150,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
             errorDialog.show();
         } else if (codeUpdateAction != null && codeUpdateError != null) {
             errorDialog.dismiss();
-            if (codeUpdateError instanceof PinVerificationException) {
+            if (codeUpdateError instanceof CodeVerificationException) {
                 codeUpdateErrorDialog.setMessage(getResources()
                         .getString(codeUpdateAction.currentBlockedErrorRes()));
             } else {

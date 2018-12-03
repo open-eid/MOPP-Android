@@ -6,7 +6,6 @@ import com.google.auto.value.AutoValue;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.navigator.TransactionAction;
@@ -29,16 +28,6 @@ interface Action extends MviAction {
 
         static NavigateUpAction create() {
             return new AutoValue_Action_NavigateUpAction(Transaction.pop());
-        }
-    }
-
-    @AutoValue
-    abstract class NavigateToContainerUpdateAction implements Action,
-            TransactionAction<Transaction.PushTransaction> {
-
-        static NavigateToContainerUpdateAction create(File containerFile) {
-            return new AutoValue_Action_NavigateToContainerUpdateAction(Transaction
-                    .push(SignatureUpdateScreen.create(true, false, containerFile, false, false)));
         }
     }
 

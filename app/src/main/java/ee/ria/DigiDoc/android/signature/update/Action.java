@@ -9,8 +9,8 @@ import java.io.File;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.navigator.TransactionAction;
-import ee.ria.mopplib.data.DataFile;
-import ee.ria.mopplib.data.Signature;
+import ee.ria.DigiDoc.sign.DataFile;
+import ee.ria.DigiDoc.sign.Signature;
 
 import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
@@ -44,19 +44,6 @@ interface Action extends MviAction {
                     Transaction.activityForResult(RC_SIGNATURE_UPDATE_DOCUMENTS_ADD,
                             createGetContentIntent(), null),
                     containerFile);
-        }
-    }
-
-    @AutoValue
-    abstract class DocumentOpenAction implements Action {
-
-        @Nullable abstract File containerFile();
-
-        @Nullable abstract DataFile document();
-
-        static DocumentOpenAction create(@Nullable File containerFile,
-                                         @Nullable DataFile document) {
-            return new AutoValue_Action_DocumentOpenAction(containerFile, document);
         }
     }
 

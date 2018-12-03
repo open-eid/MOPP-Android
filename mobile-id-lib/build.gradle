@@ -1,0 +1,34 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion project.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+    }
+
+    lintOptions {
+        lintConfig file('../lint.xml')
+    }
+
+    buildTypes {
+        envtest {
+            initWith debug
+        }
+    }
+}
+
+dependencies {
+    implementation "com.android.support:support-annotations:${androidSupportLibraryVersion}"
+    implementation "com.android.support:appcompat-v7:${androidSupportLibraryVersion}"
+
+    implementation "com.jakewharton.timber:timber:${timberVersion}"
+
+    implementation "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
+    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+    implementation ("com.squareup.retrofit2:converter-simplexml:${retrofitVersion}") {
+        exclude group: 'xpp3', module: 'xpp3'
+    }
+}

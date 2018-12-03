@@ -7,8 +7,8 @@ import com.google.auto.value.AutoValue;
 import java.io.File;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
-import ee.ria.mopplib.data.DataFile;
-import ee.ria.mopplib.data.Signature;
+import ee.ria.DigiDoc.sign.DataFile;
+import ee.ria.DigiDoc.sign.Signature;
 
 interface Intent extends MviIntent {
 
@@ -32,6 +32,31 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
+    abstract class NameUpdateIntent implements Intent, Action {
+
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract String name();
+
+        static NameUpdateIntent show(File file) {
+            return create(file, null);
+        }
+
+        static NameUpdateIntent update(File file, String name) {
+            return create(file, name);
+        }
+
+        static NameUpdateIntent clear() {
+            return create(null, null);
+        }
+
+        private static NameUpdateIntent create(@Nullable File containerFile,
+                                               @Nullable String name) {
+            return new AutoValue_Intent_NameUpdateIntent(containerFile, name);
+        }
+    }
+
+    @AutoValue
     abstract class DocumentsAddIntent implements Intent {
 
         @Nullable abstract File containerFile();
@@ -46,18 +71,14 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
-    abstract class DocumentOpenIntent implements Intent {
+    abstract class DocumentViewIntent implements Intent, Action {
 
-        @Nullable abstract File containerFile();
+        abstract File containerFile();
 
-        @Nullable abstract DataFile document();
+        abstract DataFile document();
 
-        static DocumentOpenIntent open(File containerFile, DataFile document) {
-            return new AutoValue_Intent_DocumentOpenIntent(containerFile, document);
-        }
-
-        static DocumentOpenIntent clear() {
-            return new AutoValue_Intent_DocumentOpenIntent(null, null);
+        static DocumentViewIntent create(File containerFile, DataFile document) {
+            return new AutoValue_Intent_DocumentViewIntent(containerFile, document);
         }
     }
 

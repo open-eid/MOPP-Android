@@ -22,9 +22,6 @@ public final class SignatureListViewModel extends
             return Action.ContainersLoadAction.create(true);
         } else if (intent instanceof Intent.UpButtonIntent) {
             return Action.NavigateUpAction.create();
-        } else if (intent instanceof Intent.ContainerOpenIntent) {
-            return Action.NavigateToContainerUpdateAction
-                    .create(((Intent.ContainerOpenIntent) intent).containerFile());
         } else if (intent instanceof Intent.ContainerRemoveIntent) {
             Intent.ContainerRemoveIntent containerRemoveIntent =
                     (Intent.ContainerRemoveIntent) intent;
@@ -32,6 +29,8 @@ public final class SignatureListViewModel extends
                     containerRemoveIntent.confirmation());
         } else if (intent instanceof Intent.RefreshIntent) {
             return Action.ContainersLoadAction.create(false);
+        } else if (intent instanceof Action) {
+            return (Action) intent;
         } else {
             throw new IllegalArgumentException("Unknown intent " + intent);
         }

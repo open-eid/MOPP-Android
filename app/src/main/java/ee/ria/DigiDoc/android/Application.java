@@ -21,12 +21,18 @@ package ee.ria.DigiDoc.android;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.hardware.usb.UsbManager;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import java.security.Security;
 import java.util.Map;
 
 import javax.inject.Provider;
@@ -40,6 +46,8 @@ import dagger.Provides;
 import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
 import ee.ria.DigiDoc.BuildConfig;
+import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.crypto.create.CryptoCreateViewModel;
 import ee.ria.DigiDoc.android.eid.EIDHomeViewModel;
 import ee.ria.DigiDoc.android.main.home.HomeViewModel;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
@@ -48,9 +56,15 @@ import ee.ria.DigiDoc.android.signature.data.source.FileSystemSignatureContainer
 import ee.ria.DigiDoc.android.signature.list.SignatureListViewModel;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
-import ee.ria.mopplib.MoppLib;
+import ee.ria.DigiDoc.crypto.RecipientRepository;
+import ee.ria.DigiDoc.sign.SignLib;
+import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
+import ee.ria.DigiDoc.smartcardreader.acs.AcsSmartCardReader;
+import ee.ria.DigiDoc.smartcardreader.identiv.IdentivSmartCardReader;
+import io.reactivex.plugins.RxJavaPlugins;
 import timber.log.Timber;
 
 public class Application extends android.app.Application {
@@ -59,9 +73,11 @@ public class Application extends android.app.Application {
     public void onCreate() {
         setupStrictMode();
         super.onCreate();
+        setupBouncyCastle();
         setupTimber();
         setupThreeTenAbp();
-        setupMoppLib();
+        setupSignLib();
+        setupRxJava();
         setupDagger();
     }
 
@@ -71,6 +87,13 @@ public class Application extends android.app.Application {
         if (BuildConfig.DEBUG) {
             StrictMode.enableDefaults();
         }
+    }
+
+    // BouncyCastle Security provider
+
+    private void setupBouncyCastle() {
+        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        Security.addProvider(new BouncyCastleProvider());
     }
 
     // Timber
@@ -90,8 +113,13 @@ public class Application extends android.app.Application {
 
     // Container configuration
 
-    private void setupMoppLib() {
-        MoppLib.init(this);
+    private void setupSignLib() {
+        SignLib.init(this, getString(R.string.main_settings_tsa_url_key),
+                getString(R.string.main_settings_tsa_url_default));
+    }
+
+    private void setupRxJava() {
+        RxJavaPlugins.setErrorHandler(throwable -> Timber.e(throwable, "RxJava error handler"));
     }
 
     // Dagger
@@ -109,7 +137,12 @@ public class Application extends android.app.Application {
     }
 
     @Singleton
-    @Component(modules = ApplicationModule.class)
+    @Component(modules = {
+            AndroidModule.class,
+            ApplicationModule.class,
+            SmartCardModule.class,
+            CryptoLibModule.class
+    })
     public interface ApplicationComponent {
 
         Navigator navigator();
@@ -118,12 +151,28 @@ public class Application extends android.app.Application {
 
         Activity.RootScreenFactory rootScreenFactory();
 
+        LocaleService localeService();
+
         @Component.Builder
         interface Builder {
 
             @BindsInstance Builder application(android.app.Application application);
 
             ApplicationComponent build();
+        }
+    }
+
+    @Module
+    static abstract class AndroidModule {
+
+        @Provides
+        static UsbManager usbManager(android.app.Application application) {
+            return (UsbManager) application.getSystemService(Context.USB_SERVICE);
+        }
+
+        @Provides
+        static ContentResolver contentResolver(android.app.Application application) {
+            return application.getContentResolver();
         }
     }
 
@@ -163,8 +212,45 @@ public class Application extends android.app.Application {
         abstract ViewModel signatureUpdateModel(SignatureUpdateViewModel viewModel);
 
         @SuppressWarnings("unused")
+        @Binds @IntoMap @ClassKey(CryptoCreateViewModel.class)
+        abstract ViewModel cryptoCreateViewModel(CryptoCreateViewModel viewModel);
+
+        @SuppressWarnings("unused")
         @Binds @IntoMap @ClassKey(EIDHomeViewModel.class)
         abstract ViewModel eidHomeViewModel(EIDHomeViewModel viewModel);
+    }
+
+    @Module
+    static abstract class SmartCardModule {
+
+        @Provides @Singleton
+        static SmartCardReaderManager smartCardReaderManager(
+                android.app.Application application, UsbManager usbManager,
+                AcsSmartCardReader acsSmartCardReader,
+                IdentivSmartCardReader identivSmartCardReader) {
+            return new SmartCardReaderManager(application, usbManager,
+                    ImmutableList.of(acsSmartCardReader, identivSmartCardReader));
+        }
+
+        @Provides @Singleton
+        static AcsSmartCardReader acsSmartCardReader(UsbManager usbManager) {
+            return new AcsSmartCardReader(usbManager);
+        }
+
+        @Provides @Singleton
+        static IdentivSmartCardReader identivSmartCardReader(android.app.Application application,
+                                                             UsbManager usbManager) {
+            return new IdentivSmartCardReader(application, usbManager);
+        }
+    }
+
+    @Module
+    static abstract class CryptoLibModule {
+
+        @Provides @Singleton
+        static RecipientRepository recipientRepository() {
+            return new RecipientRepository();
+        }
     }
 
     static final class ViewModelFactory implements ViewModelProvider.Factory {

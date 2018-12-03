@@ -27,7 +27,7 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
-    abstract class ContainerOpenIntent implements Intent {
+    abstract class ContainerOpenIntent implements Intent, Action {
 
         abstract File containerFile();
 

@@ -8,9 +8,12 @@ import android.support.annotation.StringDef;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
-import ee.ria.tokenlibrary.exception.PinVerificationException;
+import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import io.reactivex.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.signature.update.ErrorDialog.Type.DOCUMENTS_ADD;
@@ -21,6 +24,7 @@ import static ee.ria.DigiDoc.android.signature.update.ErrorDialog.Type.SIGNATURE
 final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismissListener {
 
     @StringDef({DOCUMENTS_ADD, DOCUMENT_REMOVE, SIGNATURE_ADD, SIGNATURE_REMOVE})
+    @Retention(RetentionPolicy.SOURCE)
     @interface Type {
         String DOCUMENTS_ADD = "DOCUMENTS_ADD";
         String DOCUMENT_REMOVE = "DOCUMENT_REMOVE";
@@ -60,13 +64,14 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
             setMessage(getContext().getString(R.string.signature_update_document_remove_error));
         } else if (signatureAddError != null) {
             type = SIGNATURE_ADD;
-            if (signatureAddError instanceof PinVerificationException) {
+            if (signatureAddError instanceof CodeVerificationException) {
                 setMessage(getContext().getString(
                         R.string.signature_update_id_card_sign_pin2_locked));
             } else if (signatureAddError instanceof MobileIdMessageException) {
                 setMessage(signatureAddError.getMessage());
             } else {
-                setMessage(getContext().getString(R.string.signature_update_signature_add_error));
+                setTitle(R.string.signature_update_signature_add_error);
+                setMessage(signatureAddError.getMessage());
             }
         } else if (signatureRemoveError != null) {
             type = SIGNATURE_REMOVE;
@@ -80,6 +85,7 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
 
     @Override
     public void onDismiss(DialogInterface dialog) {
+        setTitle(null);
         if (TextUtils.equals(type, DOCUMENTS_ADD)) {
             documentsAddIntentSubject.onNext(Intent.DocumentsAddIntent.clear());
         } else if (TextUtils.equals(type, DOCUMENT_REMOVE)) {

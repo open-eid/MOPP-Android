@@ -21,6 +21,8 @@
     <string name="main_settings_title">Settings</string>
     <string name="main_settings_phone_no_title">Country code and phone number</string>
     <string name="main_settings_personal_code_title">Personal code</string>
+    <string name="main_settings_tsa_url_title">Time Stamp service URL</string>
+    <string name="main_settings_tsa_url_use_default">Use default</string>
     <string name="main_settings_role_title">Role</string>
     <string name="main_settings_city_title">City</string>
     <string name="main_settings_county_title">State</string>
@@ -32,8 +34,9 @@
     <string name="main_about_title">Info</string>
     <string name="main_about_ria_digidoc_version_title">RIA DigiDoc version %1$s</string>
     <string name="main_about_software_developed_by_title">Estonian ID-software is released by Information System Authority</string>
-    <string name="main_about_contact_information_title">Contact for assistance by email abi@id.ee or call 1777 (only from Estonia), (+372) 677 3377 when calling from abroad.</string>
+    <string name="main_about_contact_information_title">In case of questions please contact our support via id.ee.</string>
     <string name="main_about_licenses_title">Additional licenses and components</string>
+    <string name="main_about_terms_and_conditions">User terms and conditions:</string>
 
     <!-- Main Diagnostics -->
     <string name="main_diagnostics_title">Diagnostics</string>
@@ -58,6 +61,10 @@
     <string name="signature_update_title_created">Signing</string>
     <string name="signature_update_title_existing">Container verification</string>
     <string name="signature_update_name">CONTAINER:</string>
+    <string name="signature_update_name_update_button">Edit container name</string>
+    <string name="signature_update_name_update_name">Container name</string>
+    <string name="signature_update_name_update_error_exists">Container with this name already exists</string>
+    <string name="signature_update_name_update_error_invalid">Container name invalid</string>
     <string name="signature_update_documents_title">Container files</string>
     <string name="signature_update_documents_button">ADD MORE FILES</string>
     <string name="signature_update_documents_add_button">+ ADD MORE FILES</string>
@@ -67,6 +74,12 @@
     <string name="signature_update_document_remove_error">Can\'t remove file from container</string>
     <string name="signature_update_signatures_title">Container signatures</string>
     <string name="signature_update_signatures_empty">Container is not signed</string>
+    <plurals name="signature_update_signatures_unknown">
+        <item quantity="one">%1$d UNKNOWN SIGNATURE</item>
+        <item quantity="other">%1$d UNKNOWN SIGNATURES</item>
+        <!-- placeholder to keep line numbers same in different locales -->
+        <!-- placeholder to keep line numbers same in different locales -->
+    </plurals>
     <plurals name="signature_update_signatures_invalid">
         <item quantity="one">%1$d INVALID SIGNATURE</item>
         <item quantity="other">%1$d INVALID SIGNATURES</item>
@@ -74,6 +87,12 @@
         <!-- placeholder to keep line numbers same in different locales -->
     </plurals>
     <string name="signature_update_signature_type_signature">Signature</string>
+    <string name="signature_update_signature_status_valid">Signature is valid</string>
+    <string name="signature_update_signature_status_warning">(Warnings)</string>
+    <string name="signature_update_signature_status_non_qscd">(Restrictions)</string>
+    <string name="signature_update_signature_status_test">(Test signature)</string>
+    <string name="signature_update_signature_status_invalid">Signature is invalid</string>
+    <string name="signature_update_signature_status_unknown">Signature is unknown</string>
     <string name="signature_update_signature_created_at">Signed %1$s</string>
     <string name="signature_update_signature_remove_button">Remove signature</string>
     <string name="signature_update_signature_remove_confirmation_message">Remove signature from container?</string>
@@ -86,7 +105,7 @@
     <string name="signature_update_signature_add_method_id_card">ID-card</string>
     <string name="signature_update_signature_add_positive_button">SIGN</string>
     <string name="signature_update_signature_add_success">SIGNATURE ADDED</string>
-    <string name="signature_update_signature_add_error">Something went wrong. Please try again.</string>
+    <string name="signature_update_signature_add_error">Something went wrong</string>
 
     <string name="signature_update_mobile_id_message">Enter your mobile number and personal code to sign with Mobile-ID</string>
     <string name="signature_update_mobile_id_phone_no">Country code and phone number</string>
@@ -143,6 +162,50 @@
     <string name="crypto_home_create_text">Choose a file to encrypt or decrypt</string>
     <string name="crypto_home_create_button">CHOOSE FILE</string>
 
+    <!-- Crypto Create -->
+    <string name="crypto_create_title_encrypt">Encryption</string>
+    <string name="crypto_create_title_decrypt">Decryption</string>
+    <string name="crypto_create_encrypt_success_message">ENCRYPTION SUCCEEDED</string>
+    <string name="crypto_create_decrypt_success_message">DECRYPTION SUCCESSFUL</string>
+    <string name="crypto_create_name">CONTAINER:</string>
+    <string name="crypto_create_data_files_title">Files chosen for encryption</string>
+    <string name="crypto_create_data_files_add_button">+ ADD MORE FILES</string>
+    <string name="crypto_create_data_files_add_error_exists">File already exists in the container</string>
+    <string name="crypto_create_data_file_remove_button">Remove file</string>
+    <string name="crypto_create_recipients_title">Recipients</string>
+    <string name="crypto_create_recipients_empty">Recipients are missing</string>
+    <string name="crypto_create_recipients_add_button">+ ADD RECIPIENT</string>
+    <string name="crypto_create_encrypt_button">ENCRYPT</string>
+    <string name="crypto_create_encrypt_error_no_recipients">No addressees specified</string>
+    <string name="crypto_create_decrypt_button">DECRYPT</string>
+    <string name="crypto_create_decrypt_positive_button">Decrypt</string>
+    <string name="crypto_create_send_button">SHARE</string>
+    <string name="crypto_create_error">Something went wrong with encryption</string>
+
+    <string name="crypto_recipient_type">Recipient</string>
+    <string name="crypto_recipient_info">%1$s (valid to %2$s)</string>
+    <string name="crypto_recipient_remove_button">Remove recipient</string>
+    <string name="crypto_recipient_add_button">ADD</string>
+    <string name="crypto_recipient_add_button_added">ADDED</string>
+
+    <string name="crypto_recipients_title">Add recipients</string>
+    <string name="crypto_recipients_search">Enter personal code, company or registry code</string>
+    <string name="crypto_recipients_search_result_empty">Person or company does not own a valid certificate.\nIt is necessary to have a valid certificate for encryption.\nIn case of questions please contact our support via id.ee.</string>
+    <string name="crypto_recipients_selected_subhead">Selected recipients</string>
+    <string name="crypto_recipients_done_button">CONFIRM SELECTION</string>
+
+    <string name="crypto_create_decrypt_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>
+    <string name="crypto_create_decrypt_progress_message_reader_detected">Reader found. Insert your ID-card into the reader.</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">ID-card found. Requesting information.</string>
+    <string name="crypto_create_decrypt_message">Ready to decrypt with ID-card.</string>
+    <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
+    <string name="crypto_create_decrypt_pin1">Please enter PIN1</string>
+    <string name="crypto_create_decrypt_pin1_invalid">Wrong PIN1. You have %1$d attempts left.</string>
+    <string name="crypto_create_decrypt_pin1_invalid_final">Wrong PIN1. You have 1 attempt left until your PIN1 is blocked.</string>
+    <string name="crypto_create_decrypt_pin1_locked">PIN1 blocked. Go to My eID to unblock it.</string>
+    <string name="crypto_create_decrypt_active">Decryption in progress. Please wait.</string>
+    <string name="crypto_create_decrypt_error">Something went wrong with decryption. Please try again.</string>
+
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Connect the card reader and insert your ID-card into the reader.</string>
     <string name="eid_home_id_card_status_reader_detected_message">Reader found. Insert your ID-card into the reader.</string>
@@ -183,6 +246,7 @@
     <string name="eid_type_id_card">ID-CARD</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
     <string name="eid_type_mobile_id">MOBILE-ID</string>
+    <string name="eid_type_e_seal">e-Seal</string>
     <string name="eid_type_unknown">UNKNOWN</string>
 
     <string name="eid_home_code_update_title_pin1_edit">Change PIN1</string>

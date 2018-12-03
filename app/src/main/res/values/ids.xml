@@ -31,43 +31,21 @@
     <item type="id" name="mainHomeMenuSettings" />
     <item type="id" name="mainHomeMenuAbout" />
     <item type="id" name="mainHomeMenuDiagnostics" />
+    <item type="id" name="mainHomeMenuLocale" />
+    <item type="id" name="mainHomeMenuLocaleEt" />
+    <item type="id" name="mainHomeMenuLocaleRu" />
+    <item type="id" name="mainHomeMenuLocaleEn" />
 
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsFragment" />
 
     <!-- Main About -->
-    <item type="id" name="mainAboutScreen" />
+    <item type="id" name="mainAboutList" />
     <item type="id" name="mainAboutRiaDigiDocVersionTitle" />
-    <item type="id" name="mainAboutLibdigidocppVersionTitle" />
-    <item type="id" name="mainAboutXercesCVersionTitle" />
-    <item type="id" name="mainAboutApacheXmlSecurityVersionTitle" />
-    <item type="id" name="mainAboutXsdVersionTitle" />
-    <item type="id" name="mainAboutOpensslVersionTitle" />
-    <item type="id" name="mainAboutLibxmlVersionTitle" />
-    <item type="id" name="mainAboutPodofoVersionTitle" />
-    <item type="id" name="mainAboutZLibVersionTitle" />
-    <item type="id" name="mainAboutPreferenceV7FixVersionTitle" />
-    <item type="id" name="mainAboutGuavaVersionTitle" />
-    <item type="id" name="mainAboutCommonsIoVersionTitle" />
-    <item type="id" name="mainAboutOkioVersionTitle" />
-    <item type="id" name="mainAboutTimberVersionTitle" />
-    <item type="id" name="mainAboutButterknifeVersionTitle" />
-    <item type="id" name="mainAboutOkHttpVersionTitle" />
-    <item type="id" name="mainAboutRetrofitVersionTitle" />
-    <item type="id" name="mainAboutSpongyCastleVersionTitle" />
-    <item type="id" name="mainAboutMaterialValuesVersionTitle" />
-    <item type="id" name="mainAboutDaggerVersionTitle" />
-    <item type="id" name="mainAboutConductorVersionTitle" />
-    <item type="id" name="mainAboutRxJavaVersionTitle" />
-    <item type="id" name="mainAboutRxAndroidVersionTitle" />
-    <item type="id" name="mainAboutRxBindingVersionTitle" />
-    <item type="id" name="mainAboutAutoValueVersionTitle" />
-    <item type="id" name="mainAboutAutoValueParcelVersionTitle" />
-    <item type="id" name="mainAboutThreeTenAbpVersionTitle" />
-    <item type="id" name="mainAboutExpandableLayoutVersionTitle" />
-    <item type="id" name="mainAboutJunitVersionTitle" />
-    <item type="id" name="mainAboutTruthVersionTitle" />
+    <item type="id" name="mainAboutComponentName" />
+    <item type="id" name="mainAboutComponentLicenseName" />
+    <item type="id" name="mainAboutComponentLicenseUrl" />
 
     <!-- Main Diagnostics -->
     <item type="id" name="mainDiagnosticsScreen" />
@@ -92,8 +70,10 @@
     <item type="id" name="signatureUpdateScreen" />
     <item type="id" name="signatureUpdateList" />
     <item type="id" name="signatureUpdateListSuccessMessage" />
-    <item type="id" name="signatureUpdateListWarningMessage" />
+    <item type="id" name="signatureUpdateListStatusUnknown" />
+    <item type="id" name="signatureUpdateListStatusInvalid" />
     <item type="id" name="signatureUpdateListName" />
+    <item type="id" name="signatureUpdateListNameUpdateButton" />
     <item type="id" name="signatureUpdateListSubheadTitle" />
     <item type="id" name="signatureUpdateListSubheadButton" />
     <item type="id" name="signatureUpdateListDocumentIcon" />
@@ -102,6 +82,8 @@
     <item type="id" name="signatureUpdateListDocumentRemoveButton" />
     <item type="id" name="signatureUpdateListSignatureType" />
     <item type="id" name="signatureUpdateListSignatureName" />
+    <item type="id" name="signatureUpdateListSignatureStatus" />
+    <item type="id" name="signatureUpdateListSignatureStatusCaution" />
     <item type="id" name="signatureUpdateListSignatureCreatedAt" />
     <item type="id" name="signatureUpdateListSignatureRemoveButton" />
     <item type="id" name="signatureUpdateListDocumentsAddButton" />
@@ -115,6 +97,9 @@
     <item type="id" name="signatureUpdateSignatureAddMethod" />
     <item type="id" name="signatureUpdateSignatureAddMethodMobileId" />
     <item type="id" name="signatureUpdateSignatureAddMethodIdCard" />
+
+    <item type="id" name="signatureUpdateNameUpdateNameLabel" />
+    <item type="id" name="signatureUpdateNameUpdateName" />
 
     <item type="id" name="signatureUpdateMobileId" />
     <item type="id" name="signatureUpdateMobileIdPhoneNoLabel" />
@@ -141,6 +126,40 @@
 
     <!-- Crypto Home -->
     <item type="id" name="cryptoHomeCreateButton" />
+
+    <!-- Crypto Create -->
+    <item type="id" name="cryptoCreateScreen" />
+    <item type="id" name="cryptoCreateCoordinator" />
+    <item type="id" name="cryptoCreateList" />
+    <item type="id" name="cryptoCreateEncryptButton" />
+    <item type="id" name="cryptoCreateDecryptButton" />
+    <item type="id" name="cryptoCreateSendButton" />
+    <item type="id" name="cryptoCreateButtonSpace" />
+    <item type="id" name="cryptoCreateSuccessMessage" />
+    <item type="id" name="cryptoCreateName" />
+    <item type="id" name="cryptoCreateAddButton" />
+    <item type="id" name="cryptoCreateDataFileName" />
+    <item type="id" name="cryptoCreateDataFileRemoveButton" />
+
+    <item type="id" name="cryptoSubheadTitle" />
+    <item type="id" name="cryptoEmptyText" />
+    <item type="id" name="cryptoRecipientType" />
+    <item type="id" name="cryptoRecipientName" />
+    <item type="id" name="cryptoRecipientInfo" />
+    <item type="id" name="cryptoRecipientRemoveButton" />
+    <item type="id" name="cryptoRecipientAddButton" />
+
+    <item type="id" name="cryptoRecipientsScreen" />
+    <item type="id" name="cryptoRecipientsSearch" />
+    <item type="id" name="cryptoRecipientsList" />
+    <item type="id" name="cryptoRecipientsDoneButton" />
+
+    <item type="id" name="cryptoCreateDecryptProgressContainer" />
+    <item type="id" name="cryptoCreateDecryptProgressMessage" />
+    <item type="id" name="cryptoCreateDecryptContainer" />
+    <item type="id" name="cryptoCreateDecryptData" />
+    <item type="id" name="cryptoCreateDecryptPin1" />
+    <item type="id" name="cryptoCreateDecryptPin1Error" />
 
     <!-- EID Home -->
     <item type="id" name="eidHomeCoordinator" />

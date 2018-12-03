@@ -158,7 +158,8 @@ public final class ConductorNavigator implements Navigator {
         backButtonClickListeners.remove(listener);
     }
 
-    private Activity activity() {
+    @Override
+    public Activity activity() {
         Activity activity = router.getActivity();
         if (activity == null) {
             throw new IllegalStateException("Activity is null");

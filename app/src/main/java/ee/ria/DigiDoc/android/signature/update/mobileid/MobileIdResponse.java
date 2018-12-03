@@ -5,8 +5,8 @@ import android.support.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.signature.update.SignatureAddResponse;
-import ee.ria.mopp.androidmobileid.dto.response.GetMobileCreateSignatureStatusResponse;
-import ee.ria.mopplib.data.SignedContainer;
+import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse;
+import ee.ria.DigiDoc.sign.SignedContainer;
 
 @AutoValue
 public abstract class MobileIdResponse implements SignatureAddResponse {

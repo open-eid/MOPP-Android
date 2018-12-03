@@ -8,28 +8,25 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.signature.data.ContainerAdd;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
-import ee.ria.mopplib.data.DataFile;
-import ee.ria.mopplib.data.Signature;
-import ee.ria.mopplib.data.SignedContainer;
+import ee.ria.DigiDoc.sign.DataFile;
+import ee.ria.DigiDoc.sign.Signature;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 
 import static com.google.common.io.Files.getNameWithoutExtension;
+import static ee.ria.DigiDoc.android.Constants.SIGNATURE_CONTAINER_EXT;
 
 public final class FileSystemSignatureContainerDataSource implements SignatureContainerDataSource {
 
     private final FileSystem fileSystem;
-    private final SettingsDataStore settingsDataStore;
 
-    @Inject FileSystemSignatureContainerDataSource(FileSystem fileSystem,
-                                                   SettingsDataStore settingsDataStore) {
+    @Inject FileSystemSignatureContainerDataSource(FileSystem fileSystem) {
         this.fileSystem = fileSystem;
-        this.settingsDataStore = settingsDataStore;
     }
 
     @Override
@@ -51,7 +48,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
             } else {
                 String containerName = String.format(Locale.US, "%s.%s",
                         getNameWithoutExtension(fileStreams.get(0).displayName()),
-                        settingsDataStore.getFileType());
+                        SIGNATURE_CONTAINER_EXT);
                 isExistingContainer = false;
                 containerFile = fileSystem.generateSignatureContainerFile(containerName);
                 SignedContainer.create(containerFile, cacheFileStreams(fileStreams));
@@ -93,7 +90,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
         return Single.fromCallable(() ->
                 SignedContainer
                         .open(containerFile)
-                        .getDataFile(document, fileSystem.getCacheDir()));
+                        .getDataFile(document, fileSystem.getContainerDataFilesDir(containerFile)));
     }
 
     @Override

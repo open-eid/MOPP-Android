@@ -1,29 +1,32 @@
 package ee.ria.DigiDoc.android.model.idcard;
 
-import android.support.annotation.Nullable;
-
 import com.google.auto.value.AutoValue;
 
-import org.threeten.bp.LocalDate;
-
-import ee.ria.DigiDoc.android.model.CertificateData;
-import ee.ria.DigiDoc.android.model.EIDData;
-import ee.ria.DigiDoc.android.model.EIDType;
+import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.common.EIDType;
+import ee.ria.DigiDoc.idcard.PersonalData;
 
 @AutoValue
-public abstract class IdCardData implements EIDData {
+public abstract class IdCardData {
 
-    public abstract String documentNumber();
+    public abstract EIDType type();
 
-    @Nullable public abstract LocalDate expiryDate();
+    public abstract PersonalData personalData();
 
-    static IdCardData create(@Nullable @EIDType String type, String givenNames, String surname,
-                             String personalCode, String citizenship,
-                             @Nullable LocalDate dateOfBirth, CertificateData authCertificate,
-                             CertificateData signCertificate, int pukRetryCount,
-                             String documentNumber, @Nullable LocalDate expiryDate) {
-        return new AutoValue_IdCardData(type, givenNames, surname, personalCode, citizenship,
-                dateOfBirth, authCertificate, signCertificate, pukRetryCount, documentNumber,
-                expiryDate);
+    public abstract Certificate authCertificate();
+
+    public abstract Certificate signCertificate();
+
+    public abstract int pin1RetryCount();
+
+    public abstract int pin2RetryCount();
+
+    public abstract int pukRetryCount();
+
+    static IdCardData create(EIDType type, PersonalData personalData,
+                             Certificate authCertificate, Certificate signCertificate,
+                             int pin1RetryCount, int pin2RetryCount, int pukRetryCount) {
+        return new AutoValue_IdCardData(type, personalData, authCertificate, signCertificate,
+                pin1RetryCount, pin2RetryCount, pukRetryCount);
     }
 }

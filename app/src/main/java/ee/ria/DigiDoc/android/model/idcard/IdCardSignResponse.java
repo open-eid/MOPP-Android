@@ -5,8 +5,8 @@ import android.support.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.utils.mvi.State;
-import ee.ria.mopplib.data.SignedContainer;
-import ee.ria.tokenlibrary.Token;
+import ee.ria.DigiDoc.idcard.Token;
+import ee.ria.DigiDoc.sign.SignedContainer;
 
 @AutoValue
 public abstract class IdCardSignResponse {

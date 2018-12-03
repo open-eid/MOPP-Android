@@ -5,30 +5,19 @@
 
     <string name="file_provider_authority">ee.ria.digidoc.fileprovider</string>
 
+    <string name="main_home_menu_locale_et">Eesti keel</string>
+    <string name="main_home_menu_locale_ru">Русский язык</string>
+    <string name="main_home_menu_locale_en">English</string>
+
     <string name="main_settings_phone_no_key">mobile_nr</string>
     <string name="main_settings_personal_code_key">personal_code</string>
+    <string name="main_settings_tsa_url_key">tsa_url</string>
+    <string name="main_settings_tsa_url_default">http://dd-at.ria.ee/tsa</string>
     <string name="main_settings_role_key">mainSettingsRole</string>
     <string name="main_settings_city_key">mainSettingsCity</string>
     <string name="main_settings_county_key">mainSettingsCounty</string>
     <string name="main_settings_country_key">mainSettingsCountry</string>
     <string name="main_settings_postal_code_key">mainSettingsPostalCode</string>
-    <string name="main_settings_signature_profile_key">container_file_type</string>
-    <string name="main_settings_signature_profile_time_mark_key">time-mark</string>
-    <string name="main_settings_signature_profile_time_stamp_key">time-stamp</string>
-    <string-array name="main_settings_signature_profile_entry_values">
-        <item>@string/main_settings_signature_profile_time_mark_key</item>
-        <item>@string/main_settings_signature_profile_time_stamp_key</item>
-    </string-array>
-    <string-array name="main_settings_signature_profile_entries">
-        <item>BDOC</item>
-        <item>ASiC-E</item>
-    </string-array>
-    <string name="main_settings_file_type_bdoc_key">bdoc</string>
-    <string name="main_settings_file_type_asice_key">asice</string>
-    <string-array name="main_settings_file_type_entry_values">
-        <item>@string/main_settings_file_type_bdoc_key</item>
-        <item>@string/main_settings_file_type_asice_key</item>
-    </string-array>
 
     <string name="signature_add_mobile_id_challenge_placeholder">____</string>
 
@@ -48,13 +37,11 @@
     <string name="main_about_z_lib_license_url">https://zlib.net/zlib_license.html</string>
     <string name="main_about_support_preference_v7_fix_title">Android Support Preference v7 Fix %1$s</string>
     <string name="main_about_guava_title">Google Guava %1$s</string>
-    <string name="main_about_apache_commons_io_title">Apache Commons IO %1$s</string>
     <string name="main_about_square_okio_title">Square Okio %1$s</string>
     <string name="main_about_timber_title">Timber %1$s</string>
-    <string name="main_about_butterknife_title">Butterknife %1$s</string>
     <string name="main_about_square_okhttp_title">Square OkHttp %1$s</string>
     <string name="main_about_retrofit_title">Square Retrofit %1$s</string>
-    <string name="main_about_spongy_castle_title">Spongy Castle %1$s</string>
+    <string name="main_about_bouncy_castle_title">Bouncy Castle %1$s</string>
     <string name="main_about_material_values_title">Material Values %1$s</string>
     <string name="main_about_dagger_title">Google Dagger %1$s</string>
     <string name="main_about_conductor_title">BlueLine Labs Conductor %1$s</string>
@@ -65,10 +52,18 @@
     <string name="main_about_autovalue_parcel_title">AutoValue Parcel %1$s</string>
     <string name="main_about_threetenabp_title">ThreeTenAbp %1$s</string>
     <string name="main_about_expandable_layout_title">ExpandableLayout %1$s</string>
+    <string name="main_about_ldap_sdk_title">UnboundID LDAP SDK for Java %1$s</string>
+    <string name="main_about_cdoc4j_title">cdoc4j %1$s</string>
+    <string name="main_about_slf4j_title">SLF4J Android %1$s</string>
     <string name="main_about_junit_title">JUnit %1$s</string>
     <string name="main_about_truth_title">Google Truth %1$s</string>
+    <string name="main_about_mockito_title">Mockito %1$s</string>
+    <string name="main_about_acs_title">ACS Smart Card Android Library %1$s</string>
+    <string name="main_about_acs_license_url">http://www.acs.com.hk</string>
+    <string name="main_about_identiv_title">Android CCID Library %1$s</string>
+    <string name="main_about_identiv_license_url">https://www.identiv.com/</string>
     <string name="main_about_apache_2_license_title">Apache Software License, Version 2.0</string>
-    <string name="main_about_apache2_license_url">https://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="main_about_apache_2_license_url">https://www.apache.org/licenses/LICENSE-2.0</string>
     <string name="main_about_mit_license_title">MIT License</string>
     <string name="main_about_mit_license_url">https://opensource.org/licenses/MIT</string>
     <string name="main_about_eclipse_license_title">Eclipse license version 1.0</string>

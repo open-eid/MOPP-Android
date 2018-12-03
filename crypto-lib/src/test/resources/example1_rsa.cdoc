@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<denc:EncryptedData xmlns:denc="http://www.w3.org/2001/04/xmlenc#" MimeType="application/octet-stream">
+    <denc:EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes256-gcm"/>
+    <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <denc:EncryptedKey Recipient="ŽAIKOVSKI,IGOR,37101010021,ID-CARD">
+            <denc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/>
+            <ds:KeyInfo>
+                <ds:X509Data>
+                    <ds:X509Certificate>MIIFPTCCBCWgAwIBAgIQS9IiYiVsJFZVJ8lKD9BnpDANBgkqhkiG9w0BAQsFADBs
+MQswCQYDVQQGEwJFRTEiMCAGA1UECgwZQVMgU2VydGlmaXRzZWVyaW1pc2tlc2t1
+czEfMB0GA1UEAwwWVEVTVCBvZiBFU1RFSUQtU0sgMjAxMTEYMBYGCSqGSIb3DQEJ
+ARYJcGtpQHNrLmVlMB4XDTE1MDQxMDEyNTk1NFoXDTIwMDQwODIwNTk1OVowgZcx
+CzAJBgNVBAYTAkVFMQ8wDQYDVQQKDAZFU1RFSUQxFzAVBgNVBAsMDmF1dGhlbnRp
+Y2F0aW9uMSQwIgYDVQQDDBvFvUFJS09WU0tJLElHT1IsMzcxMDEwMTAwMjExEzAR
+BgNVBAQMCsW9QUlLT1ZTS0kxDTALBgNVBCoMBElHT1IxFDASBgNVBAUTCzM3MTAx
+MDEwMDIxMIIBITANBgkqhkiG9w0BAQEFAAOCAQ4AMIIBCQKCAQCWWpuTCYt8umPK
+14WqQwZf0Ju/G5JFd+F7DBB/kZDAgIFH54R926/MjZScwlXo6BDjHA7lnKYmQ+0g
+zhlhzL4rTe4Blk72BvnLfk7RRs7Ma6h5CczNWUoThBIvGBY+17jn+LYHrSxQf+lQ
+ZvSKTQNZewVWZ3nf55BmLGl/7b2hsvIhHxedSY3qKIASmFew1Rk5x0iWwZlISDT5
+G1yMchjOvK7qmZcCd0Xm3GaFU8GKWMTiE2MjnEp07jNc0/5iaD4TdSsvEYlZjtQ2
+SI/eZY3PmFaojbbQAfbmq3Ckn75zJZE5VSuroSV4pKJzClrsUseSHlSmRRMlOsh9
+W96icuKNAgMBAAGjggGuMIIBqjAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIEsDCB
+mQYDVR0gBIGRMIGOMIGLBgorBgEEAc4fAwEBMH0wWAYIKwYBBQUHAgIwTB5KAEEA
+aQBuAHUAbAB0ACAAdABlAHMAdABpAG0AaQBzAGUAawBzAC4AIABPAG4AbAB5ACAA
+ZgBvAHIAIAB0AGUAcwB0AGkAbgBnAC4wIQYIKwYBBQUHAgEWFWh0dHA6Ly93d3cu
+c2suZWUvY3BzLzAkBgNVHREEHTAbgRlpZ29yLnphaWtvdnNraS4zQGVlc3RpLmVl
+MB0GA1UdDgQWBBRH80Oow+r72ziU5n0pbJEi4AgE+zAgBgNVHSUBAf8EFjAUBggr
+BgEFBQcDAgYIKwYBBQUHAwQwIgYIKwYBBQUHAQMEFjAUMAgGBgQAjkYBATAIBgYE
+AI5GAQQwHwYDVR0jBBgwFoAUQbb+xbGxtFMTjPr6YtA0bW0iNAowRQYDVR0fBD4w
+PDA6oDigNoY0aHR0cDovL3d3dy5zay5lZS9yZXBvc2l0b3J5L2NybHMvdGVzdF9l
+c3RlaWQyMDExLmNybDANBgkqhkiG9w0BAQsFAAOCAQEAOqcXPYQSdTnY+22ydNsX
+NKfeOnoqFOgREGE+h8lXz68KqLkJa7PxPJi5jDAnIfmiINvg5Ne5F3kPnW3aSmQA
+jC0g+2EX22iCLMWH8hNScH++vX3NdCcQnPI8vKAVDgNNKysGovPPUgcK+AbjuCDK
+dlfmP98grN42t2V9uEHfC0REL+4Km5egUfPWGg64wmxkviZscohCdRtk8RI9NyC6
+UpK2P1+0QNyPQ+YP0UnD937n1fQ1H2gF2c20jjYSfOPGLeVhQMOlNoYewCMZ8Szz
+zmV+YtagKdLh3seyoRRJIc1Cie/k8hMEpeF8TYqppUwKBWogKzidIylhXXJsAP3V
+Ew==
+</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+            <denc:CipherData>
+                <denc:CipherValue>fDRhdtWhFvOwjvswA3NOH0PfqpGXsE5dkxwvy3y7cDT4BeRLRBjQrjJSJGj6BKTi
+4uW/nAnT/oN9NHh6QDEl06wt6YkCchBlxavqBp7X2qHTKXZAj/kxihcFG7csmDqZ
+32wh+trsdBvw4FHzptyEZrMdLxd+64jcHLA/RUsbhm2h/zJO7fdPFtTg4nklp1mm
+PV8500h8ruMOX3dPYcu1h9gnJ6dLeC4rqVPvXWLHvPg2/8yuSwbrfz724jVzkQmv
++8YjPMC2qaRHuwyiN6B5haReqb9NO1NSCvFnJ9sD8I5ZpyE0mrXnWcenGbkz/+Zg
+6bucZx78Yn2E6ssQO5WpSg==
+</denc:CipherValue>
+            </denc:CipherData>
+        </denc:EncryptedKey>
+    </ds:KeyInfo>
+    <denc:CipherData>
+        <denc:CipherValue>p3L+k9BT5bZ/JMZhEWyaoImsQXj2VUX3ClCcaXrm2S5ZIpUDAw==
+</denc:CipherValue>
+    </denc:CipherData>
+    <denc:EncryptionProperties>
+        <denc:EncryptionProperty Name="DocumentFormat">ENCDOC-XML|1.1</denc:EncryptionProperty>
+        <denc:EncryptionProperty Name="Filename">example1.txt</denc:EncryptionProperty>
+        <denc:EncryptionProperty Name="orig_file">example1.txt|9|application/octet-stream|D0</denc:EncryptionProperty>
+        <denc:EncryptionProperty Name="LibraryVersion">qdigidoc4|4.0.0.23</denc:EncryptionProperty>
+    </denc:EncryptionProperties>
+</denc:EncryptedData>

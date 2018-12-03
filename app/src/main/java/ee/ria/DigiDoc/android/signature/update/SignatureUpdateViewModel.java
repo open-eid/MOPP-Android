@@ -38,10 +38,6 @@ public final class SignatureUpdateViewModel extends
         } else if (intent instanceof Intent.DocumentsAddIntent) {
             return Action.DocumentsAddAction
                     .create(((Intent.DocumentsAddIntent) intent).containerFile());
-        } else if (intent instanceof Intent.DocumentOpenIntent) {
-            Intent.DocumentOpenIntent openDocumentIntent = (Intent.DocumentOpenIntent) intent;
-            return Action.DocumentOpenAction.create(openDocumentIntent.containerFile(),
-                    openDocumentIntent.document());
         } else if (intent instanceof Intent.DocumentRemoveIntent) {
             Intent.DocumentRemoveIntent documentRemoveIntent = (Intent.DocumentRemoveIntent) intent;
             return Action.DocumentRemoveAction.create(documentRemoveIntent.showConfirmation(),
@@ -58,6 +54,8 @@ public final class SignatureUpdateViewModel extends
                     signatureAddIntent.request());
         } else if (intent instanceof Intent.SendIntent) {
             return Action.SendAction.create(((Intent.SendIntent) intent).containerFile());
+        } else if (intent instanceof Action) {
+            return (Action) intent;
         } else {
             throw new IllegalArgumentException("Unknown intent " + intent);
         }

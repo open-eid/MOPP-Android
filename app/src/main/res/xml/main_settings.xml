@@ -9,8 +9,13 @@
     <EditTextPreference
         android:key="@string/main_settings_personal_code_key"
         android:title="@string/main_settings_personal_code_title"
-
         android:inputType="number" />
+
+    <ee.ria.DigiDoc.android.main.settings.TsaUrlPreference
+        android:key="@string/main_settings_tsa_url_key"
+        android:title="@string/main_settings_tsa_url_title"
+        android:inputType="textUri"
+        android:hint="@string/main_settings_tsa_url_default" />
 
     <!--<EditTextPreference-->
         <!--android:key="@string/main_settings_role_key"-->
@@ -36,12 +41,5 @@
         <!--android:key="@string/main_settings_postal_code_key"-->
         <!--android:title="@string/main_settings_postal_code_title"-->
         <!--android:inputType="number" />-->
-
-    <ListPreference
-        android:key="@string/main_settings_signature_profile_key"
-        android:title="@string/main_settings_signature_profile_title"
-        android:entryValues="@array/main_settings_signature_profile_entry_values"
-        android:entries="@array/main_settings_signature_profile_entries"
-        android:defaultValue="@string/main_settings_signature_profile_time_mark_key" />
 
 </PreferenceScreen>

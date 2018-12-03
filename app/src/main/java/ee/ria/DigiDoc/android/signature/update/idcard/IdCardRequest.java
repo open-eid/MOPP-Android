@@ -3,7 +3,7 @@ package ee.ria.DigiDoc.android.signature.update.idcard;
 import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.signature.update.SignatureAddRequest;
-import ee.ria.tokenlibrary.Token;
+import ee.ria.DigiDoc.idcard.Token;
 
 @AutoValue
 public abstract class IdCardRequest implements SignatureAddRequest {
