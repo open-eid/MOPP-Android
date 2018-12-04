@@ -4,7 +4,7 @@ import com.google.common.base.CharMatcher;
 
 import java.util.Locale;
 
-public class LdapFilter {
+class LdapFilter {
 
     private final String query;
     private final boolean serialNumberSearch;
@@ -26,8 +26,7 @@ public class LdapFilter {
         if (isSerialNumberSearch()) {
             return String.format(Locale.US, "(serialNumber=%s)", query);
         } else {
-            return String.format(Locale.US, "(cn=%s)", query);
+            return String.format(Locale.US, "(cn=*%s*)", query);
         }
     }
-
 }

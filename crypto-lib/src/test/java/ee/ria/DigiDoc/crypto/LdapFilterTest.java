@@ -29,6 +29,6 @@ public class LdapFilterTest {
     @Test
     public void shouldReturnCnFilterStringWhenNotSerialNumberQuery() {
         String filterString = new LdapFilter(CN_QUERY).filterString();
-        assertThat(filterString, is("(cn=" + CN_QUERY + ")"));
+        assertThat(filterString, is("(cn=*" + CN_QUERY + "*)"));
     }
 }

@@ -24,7 +24,8 @@ import static ee.ria.DigiDoc.sign.SignedContainerSubject.assertThat;
 public final class SignedContainerTest {
 
     static {
-        SignLib.init(InstrumentationRegistry.getTargetContext());
+        SignLib.init(InstrumentationRegistry.getTargetContext(), "tsa_url",
+                "http://dd-at.ria.ee/tsa");
     }
 
     private static final String DIR = "signed-containers";
