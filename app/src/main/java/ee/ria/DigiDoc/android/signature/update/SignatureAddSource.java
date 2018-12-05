@@ -90,13 +90,14 @@ final class SignatureAddSource {
             IdCardRequest idCardRequest = (IdCardRequest) request;
             return signatureContainerDataSource
                     .get(containerFile)
-                    .flatMapObservable(container ->
+                    .flatMap(container ->
                             idCardService.data()
                                     .filter(dataResponse -> dataResponse.token() != null)
                                     .switchMapSingle(dataResponse ->
                                             idCardService.sign(dataResponse.token(), container,
-                                                    idCardRequest.pin2())))
+                                                    idCardRequest.pin2())).firstOrError())
                     .map(IdCardResponse::success)
+                    .toObservable()
                     .onErrorResumeNext(error -> {
                         if (error instanceof CodeVerificationException) {
                             return idCardService.data()
