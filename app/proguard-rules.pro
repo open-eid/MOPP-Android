@@ -8,6 +8,7 @@
     public static int wtf(...);
     public static int println(...);
 }
+
 -ignorewarnings
 
 -dontobfuscate
@@ -42,7 +43,7 @@
 # Keep public classes and methods.
 -dontwarn com.bea.xml.stream.**
 -dontwarn org.simpleframework.xml.stream.**
--keep class org.simpleframework.xml.**{ *; }
+-keep class org.simpleframework.xml.** { *; }
 -keepclassmembers,allowobfuscation class * {
     @org.simpleframework.xml.* <fields>;
     @org.simpleframework.xml.* <init>(...);
@@ -67,3 +68,7 @@
 
 # BouncyCastle
 -keep class org.bouncycastle.** { *; }
+
+# Woodstox
+-keep class com.ctc.wstx.stax.** { *; }
+-keep class javax.xml.namespace.** { *; }
