@@ -58,6 +58,9 @@ android {
             applicationIdSuffix '.develop'
             signingConfig signingConfigs.debug
             matchingFallbacks = ['debug']
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
         }
         envtest {
             debuggable true
@@ -66,7 +69,7 @@ android {
             matchingFallbacks = ['envtest', 'debug']
         }
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro'
         }
