@@ -85,6 +85,11 @@ public final class SignLib {
             Timber.e(e, "Setting HOME environment variable failed");
         }
         digidoc.initializeLib("libdigidoc Android", path);
+        forcePKCS12Certificate();
+    }
+
+    private static void forcePKCS12Certificate() {
+        XmlConfV3.instance().setPKCS12Cert("798.p12");
     }
 
     private static void initTsaUrl(Context context, String preferenceKey, String defaultValue) {
