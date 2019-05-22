@@ -19,7 +19,7 @@ final class MobileCreateSignatureRequestHelper {
     private static final String FORMAT = "BDOC";
     private static final String VERSION = "2.1";
     private static final String MESSAGING_MODE = "asynchClientServer";
-    private static final String SERVICE_NAME = "DigiDoc3";
+    private static final String SERVICE_NAME = "DigiDoc4";
     private static final int ASYNC_CONFIGURATION = 0;
 
     private static final String ESTONIAN_PHONE_CODE = "372";

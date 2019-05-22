@@ -44,8 +44,7 @@ public class ServiceGenerator {
             .connectTimeout(30, TimeUnit.SECONDS)
             .certificatePinner(new CertificatePinner.Builder().add("digidocservice.sk.ee",
                     "sha256/69i1y4v6AUAp3dDArytNsYC0GjRqMDIPYRI78k/Ig6I=",
-                    "sha256/21pSl8+gYIgzVrmihoLqfp4XlT3k97qo+M2ZGRQsy4Q=",
-                    "sha256/VhdNOtlxqJRJZLGJgR8wCEk6apBCLjxYBOyDjU+U9iI=").build());
+                    "sha256/Z7dYz+iD/lRZ0p/tctsXZB2QnaSKz3EozBkonbPmc/w=").build());
     private static HttpLoggingInterceptor loggingInterceptor;
 
     private static Retrofit retrofit;
