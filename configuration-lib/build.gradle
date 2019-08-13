@@ -1,0 +1,66 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion project.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunnerArguments clearPackageData: 'true'
+    }
+
+    lintOptions {
+        lintConfig file('../lint.xml')
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+dependencies {
+    api "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
+    api "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+
+    implementation "com.jakewharton.timber:timber:${timberVersion}"
+    implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
+    annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+
+    testImplementation "junit:junit:${junitVersion}"
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation "org.json:json:20190722"
+
+
+    androidTestUtil "com.android.support.test:orchestrator:${androidSupportTestVersion}"
+    androidTestAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+    androidTestImplementation "com.android.support.test:runner:${androidSupportTestVersion}"
+    androidTestImplementation "com.android.support.test:rules:${androidSupportTestVersion}"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:${espressoVersion}"
+    androidTestImplementation "com.google.truth:truth:${truthVersion}"
+}
+
+configurations {
+    generateMatchers { extendsFrom api }
+}
+
+task updateToBePackagedDefaultConfiguration(type: JavaExec, dependsOn: build) {
+    classpath files(getBuildDir().toString() + "/intermediates/javac/release/compileReleaseJavaWithJavac/classes")
+    classpath configurations.generateMatchers
+    main = 'ee.ria.DigiDoc.configuration.task.UpdatePackagedDefaultConfigurationTask'
+    doLast {
+        copy {
+            from file("${projectDir}/src/main/assets/config")
+            into file("${buildDir}/intermediates/library_assets/debug/out/config")
+        }
+        copy {
+            from file("${projectDir}/src/main/assets/config")
+            into file("${buildDir}/intermediates/library_assets/release/out/config")
+        }
+    }
+}

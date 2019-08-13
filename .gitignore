@@ -46,3 +46,4 @@ captures/
 
 ### Android Patch ###
 gen-external-apklibs
+configuration-lib/src/main/assets/
