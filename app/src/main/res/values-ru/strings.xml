@@ -43,6 +43,9 @@
     <string name="main_diagnostics_application_version_title">Версия приложения:\u0020</string>
     <string name="main_diagnostics_operating_system_title">Операционная система:\u0020</string>
     <string name="main_diagnostics_libraries_title">Библиотеки:</string>
+    <string name="main_diagnostics_urls_title">URLs:</string>
+    <string name="main_diagnostics_central_configuration_title">Центральная конфигурация:</string>
+    <string name="main_diagnostics_configuration_check_for_update_button">CHECK FOR CONFIGURATION UPDATE</string>
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Выберите файл для подписания или проверки</string>

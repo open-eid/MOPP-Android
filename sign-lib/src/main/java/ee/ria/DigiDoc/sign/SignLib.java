@@ -9,15 +9,20 @@ import android.text.TextUtils;
 
 import com.google.common.io.ByteStreams;
 
+import org.bouncycastle.util.encoders.Base64;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.libdigidocpp.Conf;
-import ee.ria.libdigidocpp.XmlConfV3;
+import ee.ria.libdigidocpp.DigiDocConf;
 import ee.ria.libdigidocpp.digidoc;
 import timber.log.Timber;
 
@@ -35,15 +40,15 @@ public final class SignLib {
      * <p>
      * Unzips the schema, access certificate and initializes libdigidocpp.
      */
-    public static void init(Context context, String tsaUrlPreferenceKey, String defaultTsaUrl) {
+    public static void init(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider) {
         initNativeLibs();
         try {
             initSchema(context);
         } catch (IOException e) {
             Timber.e(e, "Init schema failed");
         }
-        initLibDigiDocpp(context);
-        initTsaUrl(context, tsaUrlPreferenceKey, defaultTsaUrl);
+
+        initLibDigiDocpp(context, tsaUrlPreferenceKey, configurationProvider);
     }
 
     public static String accessTokenPass() {
@@ -77,19 +82,55 @@ public final class SignLib {
         }
     }
 
-    private static void initLibDigiDocpp(Context context) {
+    private static void initLibDigiDocpp(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider) {
         String path = getSchemaDir(context).getAbsolutePath();
         try {
             Os.setenv("HOME", path, true);
         } catch (ErrnoException e) {
             Timber.e(e, "Setting HOME environment variable failed");
         }
+
+        initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider);
         digidoc.initializeLib("libdigidoc Android", path);
+
+    }
+
+    private static void initLibDigiDocConfiguration(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider) {
+        DigiDocConf conf = new DigiDocConf(getSchemaDir(context).getAbsolutePath());
+        Conf.init(conf.transfer());
+
         forcePKCS12Certificate();
+        overrideTSLUrl(configurationProvider.getTslUrl());
+        overrideTSLCert(configurationProvider.getTslCerts());
+        overrideSignatureValidationServiceUrl(configurationProvider.getSivaUrl());
+        overrideOCSPUrls(configurationProvider.getOCSPUrls());
+        initTsaUrl(context, tsaUrlPreferenceKey, configurationProvider.getTsaUrl());
     }
 
     private static void forcePKCS12Certificate() {
-        XmlConfV3.instance().setPKCS12Cert("798.p12");
+        DigiDocConf.instance().setPKCS12Cert("798.p12");
+    }
+
+    private static void overrideTSLUrl(String TSLUrl) {
+        DigiDocConf.instance().setTSLUrl(TSLUrl);
+    }
+
+    private static void overrideTSLCert(List<String> tslCerts) {
+        DigiDocConf.instance().setTSLCert(new byte[0]); // Clear existing TSL certificates list
+        DigiDocConf.instance().setTSLCert(Base64.decode(tslCerts.get(tslCerts.size() - 1)));
+    }
+
+    private static void overrideSignatureValidationServiceUrl(String sivaUrl) {
+        DigiDocConf.instance().setVerifyServiceUri(sivaUrl);
+//        DigiDocConf.instance().setVerifyServiceCert(new byte[0]);
+    }
+
+    private static void overrideOCSPUrls(Map<String, String> ocspUrls) {
+        ee.ria.libdigidocpp.StringMap stringMap = new ee.ria.libdigidocpp.StringMap();
+        for (Map.Entry<String, String> entry : ocspUrls.entrySet()) {
+            stringMap.put(entry.getKey(), entry.getValue());
+        }
+        DigiDocConf.instance().setOCSPUrls(stringMap);
     }
 
     private static void initTsaUrl(Context context, String preferenceKey, String defaultValue) {
@@ -126,7 +167,7 @@ public final class SignLib {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (TextUtils.equals(key, preferenceKey)) {
-                XmlConfV3.instance().setTSUrl(sharedPreferences.getString(key, defaultValue));
+                DigiDocConf.instance().setTSUrl(sharedPreferences.getString(key, defaultValue));
             }
         }
     }

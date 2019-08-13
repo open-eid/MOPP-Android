@@ -31,12 +31,17 @@ import static com.unboundid.ldap.sdk.SearchScope.SUB;
  */
 public final class RecipientRepository {
 
-    private static final String EST_EID_LDAP_HOST = "esteid.ldap.sk.ee";
     private static final int EST_EID_LDAP_PORT = 636;
-    private static final String LDAP_SK_EE_HOST = "ldap.sk.ee";
-    private static final int LDAP_SK_EE_PORT = 389;
     private static final String CERT_BINARY_ATTR = "userCertificate;binary";
     private static final String BASE_DN = "c=EE";
+
+    private final String ldapPersonServiceUrl;
+    private final String ldapCorpServiceUrl;
+
+    public RecipientRepository(String ldapPersonServiceUrl, String ldapCorpServiceUrl) {
+        this.ldapPersonServiceUrl = ldapPersonServiceUrl;
+        this.ldapCorpServiceUrl = ldapCorpServiceUrl;
+    }
 
     /**
      * Tries to find certificates first from ESTEID SK LDAP server. If that fails or no certificates
@@ -50,26 +55,13 @@ public final class RecipientRepository {
      */
     @WorkerThread
     public final ImmutableList<Certificate> find(String query) throws CryptoException {
-        try {
-            ImmutableList<Certificate> certs = findFromEsteidLdap(query);
-            return certs.isEmpty() ? findFromLdap(query) : certs;
-        } catch (CryptoException e) {
-            return findFromLdap(query);
-        }
+        return findFromEsteidLdap(query);
     }
 
     private ImmutableList<Certificate> findFromEsteidLdap(String query) throws CryptoException {
         try (LDAPConnection connection = new LDAPConnection(getSslSocketFactory())) {
-            connection.connect(EST_EID_LDAP_HOST, EST_EID_LDAP_PORT);
+            connection.connect(ldapPersonServiceUrl, EST_EID_LDAP_PORT);
             return executeSearch(connection, new EstEidLdapFilter(query));
-        } catch (Exception e) {
-            throw new CryptoException("Finding recipients failed", e);
-        }
-    }
-
-    private ImmutableList<Certificate> findFromLdap(String query) throws CryptoException {
-        try (LDAPConnection connection = new LDAPConnection(LDAP_SK_EE_HOST, LDAP_SK_EE_PORT)) {
-            return executeSearch(connection, new LdapFilter(query));
         } catch (Exception e) {
             throw new CryptoException("Finding recipients failed", e);
         }

@@ -10,6 +10,9 @@ import android.widget.CheckBox;
 import com.takisoft.fix.support.v7.preference.EditTextPreference;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.configuration.ConfigurationProvider;
+import ee.ria.DigiDoc.sign.SignLib;
 
 public class TsaUrlPreference extends EditTextPreference {
 
@@ -30,6 +33,8 @@ public class TsaUrlPreference extends EditTextPreference {
     public TsaUrlPreference(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                             int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        ConfigurationProvider configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
+        getEditText().setHint(configurationProvider.getTsaUrl());
         checkBox = new AppCompatCheckBox(context);
         checkBox.setId(android.R.id.checkbox);
         checkBox.setText(R.string.main_settings_tsa_url_use_default);

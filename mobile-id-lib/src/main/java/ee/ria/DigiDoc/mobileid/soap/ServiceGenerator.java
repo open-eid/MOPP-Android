@@ -19,8 +19,6 @@
 
 package ee.ria.DigiDoc.mobileid.soap;
 
-import android.content.res.Resources;
-
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.strategy.VisitorStrategy;
@@ -30,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 
 import ee.ria.DigiDoc.mobileid.BuildConfig;
-import ee.ria.DigiDoc.mobileid.R;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -39,23 +36,18 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 import timber.log.Timber;
 
 public class ServiceGenerator {
-
-    private static OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .certificatePinner(new CertificatePinner.Builder().add("digidocservice.sk.ee",
-                    "sha256/69i1y4v6AUAp3dDArytNsYC0GjRqMDIPYRI78k/Ig6I=",
-                    "sha256/Z7dYz+iD/lRZ0p/tctsXZB2QnaSKz3EozBkonbPmc/w=").build());
+;
     private static HttpLoggingInterceptor loggingInterceptor;
 
     private static Retrofit retrofit;
 
-    public static <S> S createService(Resources resources, Class<S> serviceClass, SSLContext sslContext) {
+    public static <S> S createService(Class<S> serviceClass, SSLContext sslContext, String midSignServiceUrl) {
         if (retrofit == null) {
             Timber.d("Creating new retrofit instance");
             retrofit = new Retrofit.Builder()
-                    .baseUrl(resources.getString(R.string.mobile_id_service_url))
+                    .baseUrl(midSignServiceUrl)
                     .addConverterFactory(SimpleXmlConverterFactory.create(visitorStrategySerializer()))
-                    .client(buildHttpClient(sslContext))
+                    .client(buildHttpClient(sslContext, midSignServiceUrl))
                     .build();
         }
         Timber.d("Creating service client instance");
@@ -66,9 +58,14 @@ public class ServiceGenerator {
         return retrofit;
     }
 
-    private static OkHttpClient buildHttpClient(SSLContext sslContext) {
+    private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl) {
         Timber.d("Building new httpClient");
-        addLoggingInterceptor();
+        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .certificatePinner(new CertificatePinner.Builder().add(midSignServiceUrl,
+                        "sha256/69i1y4v6AUAp3dDArytNsYC0GjRqMDIPYRI78k/Ig6I=",
+                        "sha256/Z7dYz+iD/lRZ0p/tctsXZB2QnaSKz3EozBkonbPmc/w=").build());
+        addLoggingInterceptor(httpClientBuilder);
         if (sslContext != null) {
             try {
                 httpClientBuilder.sslSocketFactory(sslContext.getSocketFactory());
@@ -79,7 +76,7 @@ public class ServiceGenerator {
         return httpClientBuilder.build();
     }
 
-    private static void addLoggingInterceptor() {
+    private static void addLoggingInterceptor(OkHttpClient.Builder httpClientBuilder) {
         if (BuildConfig.DEBUG) {
             Timber.d("adding logging interceptor to http client");
             if (loggingInterceptor == null) {

@@ -59,6 +59,10 @@ import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
+import ee.ria.DigiDoc.configuration.ConfigurationManager;
+import ee.ria.DigiDoc.configuration.ConfigurationProperties;
+import ee.ria.DigiDoc.configuration.ConfigurationProvider;
+import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
@@ -69,6 +73,9 @@ import timber.log.Timber;
 
 public class Application extends android.app.Application {
 
+    private static ConfigurationProvider configurationProvider;
+    private ConfigurationManager configurationManager;
+
     @Override
     public void onCreate() {
         setupStrictMode();
@@ -76,6 +83,7 @@ public class Application extends android.app.Application {
         setupBouncyCastle();
         setupTimber();
         setupThreeTenAbp();
+        setupConfiguration();
         setupSignLib();
         setupRxJava();
         setupDagger();
@@ -114,12 +122,26 @@ public class Application extends android.app.Application {
     // Container configuration
 
     private void setupSignLib() {
-        SignLib.init(this, getString(R.string.main_settings_tsa_url_key),
-                getString(R.string.main_settings_tsa_url_default));
+        SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider());
     }
 
     private void setupRxJava() {
         RxJavaPlugins.setErrorHandler(throwable -> Timber.e(throwable, "RxJava error handler"));
+    }
+
+    private void setupConfiguration() {
+        ConfigurationProperties configurationProperties = new ConfigurationProperties(getAssets());
+        CachedConfigurationHandler cachedConfigurationHandler = new CachedConfigurationHandler(getCacheDir());
+        configurationManager = new ConfigurationManager(this, configurationProperties, cachedConfigurationHandler);
+        configurationProvider = configurationManager.getConfiguration();
+    }
+
+    public void updateConfiguration() {
+        configurationProvider = configurationManager.forceLoadCentralConfiguration();
+    }
+
+    public ConfigurationProvider getConfigurationProvider() {
+        return configurationProvider;
     }
 
     // Dagger
@@ -249,7 +271,7 @@ public class Application extends android.app.Application {
 
         @Provides @Singleton
         static RecipientRepository recipientRepository() {
-            return new RecipientRepository();
+            return new RecipientRepository(configurationProvider.getLdapPersonUrl(), configurationProvider.getLdapCorpUrl());
         }
     }
 

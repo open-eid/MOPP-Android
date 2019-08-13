@@ -14,8 +14,7 @@
     <ee.ria.DigiDoc.android.main.settings.TsaUrlPreference
         android:key="@string/main_settings_tsa_url_key"
         android:title="@string/main_settings_tsa_url_title"
-        android:inputType="textUri"
-        android:hint="@string/main_settings_tsa_url_default" />
+        android:inputType="textUri" />
 
     <!--<EditTextPreference-->
         <!--android:key="@string/main_settings_role_key"-->

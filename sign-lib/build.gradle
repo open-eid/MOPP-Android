@@ -54,4 +54,7 @@ dependencies {
     androidTestImplementation "com.android.support.test:rules:${androidSupportTestVersion}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${espressoVersion}"
     androidTestImplementation "com.google.truth:truth:${truthVersion}"
+
+    testImplementation "junit:junit:${junitVersion}"
+    api project(':configuration-lib')
 }

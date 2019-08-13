@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
@@ -28,6 +29,7 @@ import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATU
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MID_BROADCAST_ACTION;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MID_BROADCAST_TYPE_KEY;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SERVICE_FAULT;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SIGN_SERVICE_URL;
 
 public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileIdResponse> {
 
@@ -97,6 +99,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         intent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));
         intent.putExtra(ACCESS_TOKEN_PASS, SignLib.accessTokenPass());
         intent.putExtra(ACCESS_TOKEN_PATH, SignLib.accessTokenPath());
+        intent.putExtra(SIGN_SERVICE_URL, ((Application) navigator.activity().getApplication()).getConfigurationProvider().getMidSignUrl());
         navigator.activity().startService(intent);
     }
 }

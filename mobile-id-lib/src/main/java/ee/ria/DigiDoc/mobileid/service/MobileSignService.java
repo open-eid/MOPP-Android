@@ -38,6 +38,7 @@ import static ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest.f
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SIGN_SERVICE_URL;
 
 public class MobileSignService extends IntentService {
 
@@ -67,8 +68,7 @@ public class MobileSignService extends IntentService {
             Timber.e(e, "Can't create SSL config");
             ddsSSLConfig = null;
         }
-        ddsClient = ServiceGenerator.createService(getResources(), DigidocServiceClient.class,
-                ddsSSLConfig);
+        ddsClient = ServiceGenerator.createService(DigidocServiceClient.class, ddsSSLConfig, intent.getStringExtra(SIGN_SERVICE_URL));
 
         Call<MobileCreateSignatureResponse> call = ddsClient.mobileCreateSignature(wrapInEnvelope(request));
 

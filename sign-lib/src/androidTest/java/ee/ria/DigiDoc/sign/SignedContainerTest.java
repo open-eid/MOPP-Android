@@ -17,6 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import ee.ria.DigiDoc.configuration.ConfigurationManager;
+import ee.ria.DigiDoc.configuration.ConfigurationProperties;
+import ee.ria.DigiDoc.configuration.ConfigurationProvider;
+
 import static com.google.common.io.Files.getFileExtension;
 import static com.google.common.io.Files.getNameWithoutExtension;
 import static ee.ria.DigiDoc.sign.SignedContainerSubject.assertThat;
@@ -24,8 +28,8 @@ import static ee.ria.DigiDoc.sign.SignedContainerSubject.assertThat;
 public final class SignedContainerTest {
 
     static {
-        SignLib.init(InstrumentationRegistry.getTargetContext(), "tsa_url",
-                "http://dd-at.ria.ee/tsa");
+        ConfigurationManager configurationManager = new ConfigurationManager(InstrumentationRegistry.getTargetContext());
+        SignLib.init(InstrumentationRegistry.getTargetContext(), "tsa_url", configurationManager.getConfiguration());
     }
 
     private static final String DIR = "signed-containers";

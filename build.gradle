@@ -5,7 +5,7 @@ allprojects {
             jcenter()
         }
         dependencies {
-            classpath 'com.android.tools.build:gradle:3.2.1'
+            classpath 'com.android.tools.build:gradle:3.4.2'
         }
     }
     repositories {
@@ -27,7 +27,7 @@ ext {
     guavaVersion = '25.1-android'
     okioVersion = '1.14.1'
     timberVersion = '4.7.1'
-    okhttpVersion = '3.11.0'
+    okhttpVersion = '4.0.0'
     retrofitVersion = '2.4.0'
     bouncycastleVersion = '1.60'
     materialValuesVersion = '1.1.1'
@@ -45,5 +45,5 @@ ext {
     slf4jVersion = '1.7.25'
     junitVersion = '4.12'
     truthVersion = '0.42'
-    mockitoVersion = '2.19.1'
+    mockitoVersion = '3.0.0'
 }
