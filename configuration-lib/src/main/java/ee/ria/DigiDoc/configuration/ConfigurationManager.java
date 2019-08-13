@@ -17,21 +17,35 @@ import timber.log.Timber;
  * For initial application startup configuration is loaded from central configuration service.
  * If loading from central configuration service fails then configuration is loaded from cache (if exists).
  * If loading from cache fails or cache does not yet exist than default configuration is loaded.
- * Default configuration is packaged to the APK assets folder and is updated by gradle task
- * UpdatePackagedDefaultConfigurationTask during APK building process.
  *
- * Loaded configuration is then cached to the devices drive. Configuration consists of configuration json,
- * it's signature and public key. Along with named configuration files a configuration-info.properties file
- * containing is also cached. This properties file contains parameter <configuration.last-update-check-date>
- * which is updated each time central configuration is downloaded and parameter <configuration.update-date>
- * which is updated each time downloaded central configuration is actually loaded for usage.
+ * Default configuration is packaged to the APK assets folder and is updated by gradle task
+ * UpdatePackagedDefaultConfigurationTask during APK building process. Along with default configuration
+ * files configuration.properties file is packaged to APK which contains:
+ *      * central-configuration-service.url: Central configuration service url from where the configuration
+ *      is download throughout the application. Defaults to "https://id.eesti.ee".
+ *      * configuration.update-interval: Interval in days for how often configuration is updated against central
+ *      configuration service. Defaults to 7.
+ * These values can be overridden during building APK, for example:
+ *      gradle clean updateToBePackagedDefaultConfiguration --args="https://id.eesti.ee 7" app:assemble
+ * Default values are hardcoded in resources/default-configuration.properties file.
+ *
+ * When configuration is loaded then it is cached to the devices drive. Configuration consists of configuration
+ * json, it's signature and public key. Along with named configuration files a configuration-info.properties
+ * file is also cached. This properties file contains:
+ *      * configuration.last-update-check-date: Date of last central configuration loading. Is updated each
+ *      time central configuration is downloaded.
+ *      * configuration.update-date: Date of last configuration update. Updated each time downloaded central
+ *      configuration is actually loaded for usage (download configuration differs from cached configuration).
  *
  * During each application start-up cached configuration update date (configuration.update-date) is compared
- * to current date and if the difference in days exceeds <configuration.update-interval (packaged to the APK
- * assets through configuration.properties, configurable through task UpdatePackagedDefaultConfigurationTask,
- * defaults to 7)>, then configuration is downloaded from central configuration service.
- * If downloaded central configuration differs from cached configuration then central configuration is loaded
- * for use and cached configuration is updated, else cached version is used.
+ * to current date and if the difference in days exceeds <configuration.update-interval> then configuration
+ * is downloaded from central configuration service. If downloaded central configuration differs from cached
+ * configuration then central configuration is loaded for use and cached configuration is updated, else cached
+ * version is used.
+ *
+ * If central configuration download fails for whatever reason then cached configuration is loaded.
+ * If cached configuration loading fails for whatever reason then default configuration loaded.
+ * If default configuration loading fails then application startup fails.
  */
 public class ConfigurationManager {
 
