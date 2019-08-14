@@ -15,16 +15,16 @@ allprojects {
 }
 
 ext {
-    compileSdkVersion = 27
+    compileSdkVersion = 28
     minSdkVersion = 21
     targetSdkVersion = 27
 
-    androidSupportLibraryVersion = '27.1.1'
+    androidSupportLibraryVersion = '28.0.0'
     androidArchVersion= '1.1.1'
     androidSupportTestVersion = '1.0.2'
     espressoVersion = '3.0.2'
-    preferenceV7FixVersion = '27.1.1.0'
-    guavaVersion = '25.1-android'
+    preferenceV7FixVersion = '27.1.1.1'
+    guavaVersion = '28.0-android'
     okioVersion = '1.14.1'
     timberVersion = '4.7.1'
     okhttpVersion = '4.0.0'
@@ -34,8 +34,8 @@ ext {
     daggerVersion = '2.16'
     conductorVersion = '2.1.4'
     rxJavaVersion = '2.1.16'
-    rxAndroidVersion = '2.0.2'
-    rxBindingVersion = '2.1.1'
+    rxAndroidVersion = '2.1.1'
+    rxBindingVersion = '2.2.0'
     autoValueVersion = '1.6.2'
     autoValueParcelVersion = '0.2.6'
     threetenabpVersion = '1.1.0'
