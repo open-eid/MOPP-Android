@@ -19,14 +19,14 @@ import timber.log.Timber;
  * If loading from cache fails or cache does not yet exist than default configuration is loaded.
  *
  * Default configuration is packaged to the APK assets folder and is updated by gradle task
- * UpdatePackagedDefaultConfigurationTask during APK building process. Along with default configuration
+ * FetchAndPackageDefaultConfigurationTask during APK building process. Along with default configuration
  * files configuration.properties file is packaged to APK which contains:
  *      * central-configuration-service.url: Central configuration service url from where the configuration
  *      is download throughout the application. Defaults to "https://id.eesti.ee".
  *      * configuration.update-interval: Interval in days for how often configuration is updated against central
  *      configuration service. Defaults to 7.
  * These values can be overridden during building APK, for example:
- *      gradle clean updateToBePackagedDefaultConfiguration --args="https://id.eesti.ee 7" app:assemble
+ *      gradle clean fetchAndPackageDefaultConfiguration --args="https://id.eesti.ee 7" app:assemble
  * Default values are hardcoded in resources/default-configuration.properties file.
  *
  * When configuration is loaded then it is cached to the devices drive. Configuration consists of configuration

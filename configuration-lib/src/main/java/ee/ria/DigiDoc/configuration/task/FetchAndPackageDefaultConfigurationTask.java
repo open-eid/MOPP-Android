@@ -22,9 +22,9 @@ import ee.ria.DigiDoc.configuration.loader.DefaultConfigurationLoader;
  * that can be overridden by arguments to this task.
  *
  * One can pass 2 arguments to this task: central configuration service url and configuration update interval
- * (example: gradle updateToBePackagedDefaultConfiguration --args="https://id.eesti.ee 7")
+ * (example: gradle fetchAndPackageDefaultConfiguration --args="https://id.eesti.ee 7")
  */
-public class UpdatePackagedDefaultConfigurationTask {
+public class FetchAndPackageDefaultConfigurationTask {
 
     private static final String DEFAULT_CONFIGURATION_PROPERTIES_FILE_NAME = "default-configuration.properties";
     private static Properties properties = new Properties();
@@ -35,6 +35,7 @@ public class UpdatePackagedDefaultConfigurationTask {
         String configurationServiceUrl = determineCentralConfigurationServiceUrl(args);
         CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl);
         confLoader.load();
+        assertConfigurationLoaded(confLoader);
         storeAsDefaultConfiguration(confLoader);
         storeApplicationProperties(configurationServiceUrl, determineConfigurationUpdateInterval(args));
     }
@@ -67,6 +68,12 @@ public class UpdatePackagedDefaultConfigurationTask {
             return Integer.parseInt(args[1]);
         } else {
             return Integer.parseInt(properties.getProperty(ConfigurationProperties.CONFIGURATION_UPDATE_INTERVAL_PROPERTY));
+        }
+    }
+
+    private static void assertConfigurationLoaded(CentralConfigurationLoader confLoader) {
+        if (confLoader.getConfigurationJson() == null || confLoader.getConfigurationSignature() == null || confLoader.getConfigurationSignaturePublicKey() == null) {
+            throw new IllegalStateException("Configuration loading has failed");
         }
     }
 
