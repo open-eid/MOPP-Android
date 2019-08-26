@@ -18,31 +18,36 @@ import ee.ria.DigiDoc.configuration.loader.DefaultConfigurationLoader;
  * task completion.
  *
  * Also creates configuration.properties file to assets folder.
- * configuration.properties initial values will read from resources/default-configuration.properties
- * that can be overridden by arguments to this task.
+ * configuration.properties hard-coded values will read from resources/default-configuration.properties
  *
- * One can pass 2 arguments to this task: central configuration service url and configuration update interval
- * (example: gradle fetchAndPackageDefaultConfiguration --args="https://id.eesti.ee 7")
+ * Two separate configuration file sets will be created. One for 'envtest' build variant and one for all
+ * other build variants..
  */
 public class FetchAndPackageDefaultConfigurationTask {
 
+    private static final String PROD_CENTRAL_CONF_SERVICE_ULR_NAME = "prod.central-configuration-service.url";
+    private static final String TEST_CENTRAL_CONF_SERVICE_ULR_NAME = "test.central-configuration-service.url";
     private static final String DEFAULT_CONFIGURATION_PROPERTIES_FILE_NAME = "default-configuration.properties";
     private static Properties properties = new Properties();
+    private static String buildVariant;
 
     public static void main(String[] args) {
-        validateArgs(args);
         loadResourcesProperties();
-        String configurationServiceUrl = determineCentralConfigurationServiceUrl(args);
+        loadAndStoreDefaultConfiguration(PROD_CENTRAL_CONF_SERVICE_ULR_NAME, "main");
+        loadAndStoreDefaultConfiguration(TEST_CENTRAL_CONF_SERVICE_ULR_NAME, "envtest");
+    }
+
+    private static void loadAndStoreDefaultConfiguration(String serviceUrlPropertyName, String buildVariant) {
+        FetchAndPackageDefaultConfigurationTask.buildVariant = buildVariant;
+        String configurationServiceUrl = properties.getProperty(serviceUrlPropertyName);
         CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl);
         confLoader.load();
         assertConfigurationLoaded(confLoader);
         storeAsDefaultConfiguration(confLoader);
-        storeApplicationProperties(configurationServiceUrl, determineConfigurationUpdateInterval(args));
-    }
-
-    private static void validateArgs(String[] args) {
-        if (args.length > 2) {
-            throw new IllegalArgumentException("Found " + args.length + " arguments, but expected 2");
+        if (buildVariant.equals("envtest")) {
+            storeApplicationProperties(configurationServiceUrl + "/pop", determineConfigurationUpdateInterval());
+        } else {
+            storeApplicationProperties(configurationServiceUrl, determineConfigurationUpdateInterval());
         }
     }
 
@@ -55,20 +60,8 @@ public class FetchAndPackageDefaultConfigurationTask {
         }
     }
 
-    private static String determineCentralConfigurationServiceUrl(String[] args) {
-        if (args.length > 0) {
-            return args[0];
-        } else {
-            return properties.getProperty(ConfigurationProperties.CENTRAL_CONFIGURATION_SERVICE_URL_PROPERTY);
-        }
-    }
-
-    private static int determineConfigurationUpdateInterval(String[] args) {
-        if (args.length > 1) {
-            return Integer.parseInt(args[1]);
-        } else {
-            return Integer.parseInt(properties.getProperty(ConfigurationProperties.CONFIGURATION_UPDATE_INTERVAL_PROPERTY));
-        }
+    private static int determineConfigurationUpdateInterval() {
+        return Integer.parseInt(properties.getProperty(ConfigurationProperties.CONFIGURATION_UPDATE_INTERVAL_PROPERTY));
     }
 
     private static void assertConfigurationLoaded(CentralConfigurationLoader confLoader) {
@@ -104,7 +97,7 @@ public class FetchAndPackageDefaultConfigurationTask {
     }
 
     private static File configFileDir(String filename) {
-        File file = new File(System.getProperty("user.dir") + "/src/main/assets/config/" + filename);
+        File file = new File(System.getProperty("user.dir") + "/src/" + buildVariant + "/assets/config/" + filename);
         file.getParentFile().mkdirs();
         return file;
     }

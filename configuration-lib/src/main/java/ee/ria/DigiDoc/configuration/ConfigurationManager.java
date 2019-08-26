@@ -25,8 +25,6 @@ import timber.log.Timber;
  *      is download throughout the application. Defaults to "https://id.eesti.ee".
  *      * configuration.update-interval: Interval in days for how often configuration is updated against central
  *      configuration service. Defaults to 7.
- * These values can be overridden during building APK, for example:
- *      gradle clean fetchAndPackageDefaultConfiguration --args="https://id.eesti.ee 7" app:assemble
  * Default values are hardcoded in resources/default-configuration.properties file.
  *
  * When configuration is loaded then it is cached to the devices drive. Configuration consists of configuration

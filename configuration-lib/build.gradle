@@ -22,6 +22,13 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+
+    buildTypes {
+        envtest {
+            initWith debug
+            matchingFallbacks = ['debug']
+        }
+    }
 }
 
 dependencies {
@@ -62,6 +69,10 @@ task fetchAndPackageDefaultConfiguration(type: JavaExec, dependsOn: build) {
         copy {
             from file("${projectDir}/src/main/assets/config")
             into file("${buildDir}/intermediates/library_assets/release/out/config")
+        }
+        copy {
+            from file("${projectDir}/src/envtest/assets/config")
+            into file("${buildDir}/intermediates/library_assets/envtest/out/config")
         }
     }
 }
