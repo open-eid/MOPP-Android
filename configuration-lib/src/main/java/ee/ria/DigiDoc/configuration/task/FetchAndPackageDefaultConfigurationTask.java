@@ -3,8 +3,12 @@ package ee.ria.DigiDoc.configuration.task;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Properties;
 
 import ee.ria.DigiDoc.configuration.ConfigurationProperties;
@@ -33,22 +37,18 @@ public class FetchAndPackageDefaultConfigurationTask {
 
     public static void main(String[] args) {
         loadResourcesProperties();
-        loadAndStoreDefaultConfiguration(PROD_CENTRAL_CONF_SERVICE_ULR_NAME, "main");
-        loadAndStoreDefaultConfiguration(TEST_CENTRAL_CONF_SERVICE_ULR_NAME, "envtest");
+        loadAndStoreDefaultConfiguration(PROD_CENTRAL_CONF_SERVICE_ULR_NAME, "main", null);
+        loadAndStoreDefaultConfiguration(TEST_CENTRAL_CONF_SERVICE_ULR_NAME, "envtest", loadCentralConfServiceSSLCert());
     }
 
-    private static void loadAndStoreDefaultConfiguration(String serviceUrlPropertyName, String buildVariant) {
+    private static void loadAndStoreDefaultConfiguration(String serviceUrlPropertyName, String buildVariant, X509Certificate sslCertificate) {
         FetchAndPackageDefaultConfigurationTask.buildVariant = buildVariant;
         String configurationServiceUrl = properties.getProperty(serviceUrlPropertyName);
-        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl);
+        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, sslCertificate);
         confLoader.load();
         assertConfigurationLoaded(confLoader);
         storeAsDefaultConfiguration(confLoader);
-        if (buildVariant.equals("envtest")) {
-            storeApplicationProperties(configurationServiceUrl + "/pop", determineConfigurationUpdateInterval());
-        } else {
-            storeApplicationProperties(configurationServiceUrl, determineConfigurationUpdateInterval());
-        }
+        storeApplicationProperties(configurationServiceUrl, determineConfigurationUpdateInterval());
     }
 
     private static void loadResourcesProperties() {
@@ -100,5 +100,15 @@ public class FetchAndPackageDefaultConfigurationTask {
         File file = new File(System.getProperty("user.dir") + "/src/" + buildVariant + "/assets/config/" + filename);
         file.getParentFile().mkdirs();
         return file;
+    }
+
+    private static X509Certificate loadCentralConfServiceSSLCert() {
+        try {
+            FileInputStream is = new FileInputStream(System.getProperty("user.dir") + "/src/envtest/assets/certs/test-ca.cer");
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            return (X509Certificate)cf.generateCertificate(is);
+        } catch (CertificateException | FileNotFoundException e) {
+            throw new IllegalStateException("Failed to load SSL certificate", e);
+        }
     }
 }

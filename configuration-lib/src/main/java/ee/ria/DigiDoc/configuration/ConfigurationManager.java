@@ -1,7 +1,14 @@
 package ee.ria.DigiDoc.configuration;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Date;
 
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
@@ -58,7 +65,7 @@ public class ConfigurationManager {
         this.cachedConfigurationHandler = cachedConfigurationHandler;
         this.centralConfigurationServiceUrl = configurationProperties.getCentralConfigurationServiceUrl();
         this.configurationUpdateInterval = configurationProperties.getConfigurationUpdateInterval();
-        this.centralConfigurationLoader = new CentralConfigurationLoader(centralConfigurationServiceUrl);
+        this.centralConfigurationLoader = new CentralConfigurationLoader(centralConfigurationServiceUrl, loadCentralConfServiceSSlCertIfPresent(context.getAssets()));
         this.defaultConfigurationLoader = new DefaultConfigurationLoader(context.getAssets());
         this.cachedConfigurationLoader = new CachedConfigurationLoader(cachedConfigurationHandler);
     }
@@ -182,5 +189,18 @@ public class ConfigurationManager {
 
     private boolean isTestMode() {
         return centralConfigurationServiceUrl.contains("test");
+    }
+
+    private X509Certificate loadCentralConfServiceSSlCertIfPresent(AssetManager assetManager) {
+        try {
+            InputStream certStream = assetManager.open("certs/test-ca.cer");
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            return (X509Certificate)cf.generateCertificate(certStream);
+        } catch (FileNotFoundException e) {
+            // No explicit SSL certificate found in assets, using java default cacerts
+            return null;
+        } catch (IOException | CertificateException e) {
+            throw new IllegalStateException("Failed to load SSL certificate", e);
+        }
     }
 }
