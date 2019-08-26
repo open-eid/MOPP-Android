@@ -1,1 +1,12 @@
-<manifest package="ee.ria.DigiDoc.configuration" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        package="ee.ria.DigiDoc.configuration">
+
+    <application>
+
+        <service
+            android:name=".ConfigurationManagerService"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

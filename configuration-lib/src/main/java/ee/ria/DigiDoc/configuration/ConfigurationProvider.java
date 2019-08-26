@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.configuration;
 
+import android.os.Parcelable;
+
 import com.google.auto.value.AutoValue;
 
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @AutoValue
-public abstract class ConfigurationProvider {
+public abstract class ConfigurationProvider implements Parcelable {
 
     public abstract MetaInf getMetaInf();
     public abstract String getConfigUrl();
@@ -49,7 +51,7 @@ public abstract class ConfigurationProvider {
     }
 
     @AutoValue
-    public static abstract class MetaInf {
+    public static abstract class MetaInf implements Parcelable {
         public abstract String getUrl();
         public abstract String getDate();
         public abstract int getSerial();

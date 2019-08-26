@@ -39,7 +39,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
         ConfigurationProvider configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
         disposables = new ViewDisposables();
 
-        findViewById(R.id.configurationUpdateButton).setOnClickListener(view -> updateView());
+        findViewById(R.id.configurationUpdateButton).setOnClickListener(view -> updateConfiguration());
         setData(configurationProvider);
     }
 
@@ -57,10 +57,13 @@ public final class DiagnosticsView extends CoordinatorLayout {
         super.onDetachedFromWindow();
     }
 
-    private void updateView() {
+    public void updateViewData(ConfigurationProvider configurationProvider) {
+        setData(configurationProvider);
+    }
+
+    private void updateConfiguration() {
         Application application = (Application) getContext().getApplicationContext();
-        application.updateConfiguration();
-        setData(application.getConfigurationProvider());
+        application.updateConfiguration(this);
     }
 
     private void setData(ConfigurationProvider configurationProvider) {

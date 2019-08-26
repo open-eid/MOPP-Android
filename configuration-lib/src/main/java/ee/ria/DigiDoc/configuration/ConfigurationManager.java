@@ -71,7 +71,7 @@ public class ConfigurationManager {
         return parseAndConstructConfigurationProvider(configurationParser);
     }
 
-    public ConfigurationProvider forceLoadCentralConfiguration() {
+    ConfigurationProvider forceLoadCentralConfiguration() {
         String configurationJson = loadCentralConfiguration();
         ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
         return parseAndConstructConfigurationProvider(configurationParser);

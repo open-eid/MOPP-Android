@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.sign;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.support.test.InstrumentationRegistry;
 
@@ -19,7 +20,7 @@ import java.io.OutputStream;
 
 import ee.ria.DigiDoc.configuration.ConfigurationManager;
 import ee.ria.DigiDoc.configuration.ConfigurationProperties;
-import ee.ria.DigiDoc.configuration.ConfigurationProvider;
+import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 
 import static com.google.common.io.Files.getFileExtension;
 import static com.google.common.io.Files.getNameWithoutExtension;
@@ -28,8 +29,11 @@ import static ee.ria.DigiDoc.sign.SignedContainerSubject.assertThat;
 public final class SignedContainerTest {
 
     static {
-        ConfigurationManager configurationManager = new ConfigurationManager(InstrumentationRegistry.getTargetContext());
-        SignLib.init(InstrumentationRegistry.getTargetContext(), "tsa_url", configurationManager.getConfiguration());
+        Context targetContext = InstrumentationRegistry.getTargetContext();
+        ConfigurationProperties configurationProperties = new ConfigurationProperties(targetContext.getAssets());
+        CachedConfigurationHandler cachedConfigurationHandler = new CachedConfigurationHandler(targetContext.getCacheDir());
+        ConfigurationManager configurationManager = new ConfigurationManager(targetContext, configurationProperties, cachedConfigurationHandler);
+        SignLib.init(targetContext, "tsa_url", configurationManager.getConfiguration());
     }
 
     private static final String DIR = "signed-containers";

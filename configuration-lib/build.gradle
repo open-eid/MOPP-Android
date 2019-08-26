@@ -31,6 +31,7 @@ dependencies {
     implementation "com.jakewharton.timber:timber:${timberVersion}"
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+    annotationProcessor "com.ryanharter.auto.value:auto-value-parcel:${autoValueParcelVersion}"
 
     testImplementation "junit:junit:${junitVersion}"
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"

@@ -23,7 +23,11 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.usb.UsbManager;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 
@@ -49,6 +53,7 @@ import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateViewModel;
 import ee.ria.DigiDoc.android.eid.EIDHomeViewModel;
+import ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsView;
 import ee.ria.DigiDoc.android.main.home.HomeViewModel;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
@@ -59,10 +64,9 @@ import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
-import ee.ria.DigiDoc.configuration.ConfigurationManager;
-import ee.ria.DigiDoc.configuration.ConfigurationProperties;
+import ee.ria.DigiDoc.configuration.ConfigurationConstants;
+import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
-import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
@@ -74,7 +78,6 @@ import timber.log.Timber;
 public class Application extends android.app.Application {
 
     private static ConfigurationProvider configurationProvider;
-    private ConfigurationManager configurationManager;
 
     @Override
     public void onCreate() {
@@ -84,7 +87,6 @@ public class Application extends android.app.Application {
         setupTimber();
         setupThreeTenAbp();
         setupConfiguration();
-        setupSignLib();
         setupRxJava();
         setupDagger();
     }
@@ -130,18 +132,44 @@ public class Application extends android.app.Application {
     }
 
     private void setupConfiguration() {
-        ConfigurationProperties configurationProperties = new ConfigurationProperties(getAssets());
-        CachedConfigurationHandler cachedConfigurationHandler = new CachedConfigurationHandler(getCacheDir());
-        configurationManager = new ConfigurationManager(this, configurationProperties, cachedConfigurationHandler);
-        configurationProvider = configurationManager.getConfiguration();
+        Intent intent = new Intent(this, ConfigurationManagerService.class);
+        intent.putExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER, new ConfigurationProviderReceiver(new Handler()));
+        this.startService(intent);
     }
 
-    public void updateConfiguration() {
-        configurationProvider = configurationManager.forceLoadCentralConfiguration();
+    public void updateConfiguration(DiagnosticsView diagnosticsView) {
+        Intent intent = new Intent(this, ConfigurationManagerService.class);
+        ConfigurationProviderReceiver confReceiver = new ConfigurationProviderReceiver(new Handler());
+        confReceiver.setDiagnosticView(diagnosticsView);
+        intent.putExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER, confReceiver);
+        intent.putExtra(ConfigurationConstants.FORCE_LOAD_CENTRAL_CONFIGURATION, true);
+        this.startService(intent);
     }
 
     public ConfigurationProvider getConfigurationProvider() {
         return configurationProvider;
+    }
+
+    public class ConfigurationProviderReceiver extends ResultReceiver {
+
+        private DiagnosticsView diagnosticsView;
+
+        ConfigurationProviderReceiver(Handler handler) {
+            super(handler);
+        }
+
+        void setDiagnosticView(DiagnosticsView diagnosticView) {
+            this.diagnosticsView = diagnosticView;
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            configurationProvider = resultData.getParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER);
+            setupSignLib();
+            if (diagnosticsView != null) {
+                diagnosticsView.updateViewData(configurationProvider);
+            }
+        }
     }
 
     // Dagger
