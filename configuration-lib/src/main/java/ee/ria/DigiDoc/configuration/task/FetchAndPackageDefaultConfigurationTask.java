@@ -23,13 +23,17 @@ import ee.ria.DigiDoc.configuration.loader.DefaultConfigurationLoader;
  *
  * Also creates configuration.properties file to assets folder.
  * configuration.properties hard-coded values will read from resources/default-configuration.properties
+ * that can be overridden by arguments to this task.
+ *
+ * One can pass 2 arguments to this task: central configuration service url and configuration update interval
+ * (example: gradle fetchAndPackageDefaultConfiguration --args="https://id.eesti.ee 7")
  *
  * Two separate configuration file sets will be created. One for 'envtest' build variant and one for all
- * other build variants..
+ * other build variants. 'envtest' build variant is always hard-coded and ignores passed argument value.
  */
 public class FetchAndPackageDefaultConfigurationTask {
 
-    private static final String PROD_CENTRAL_CONF_SERVICE_ULR_NAME = "prod.central-configuration-service.url";
+    private static final String CENTRAL_CONF_SERVICE_ULR_NAME = "central-configuration-service.url";
     private static final String TEST_CENTRAL_CONF_SERVICE_ULR_NAME = "test.central-configuration-service.url";
     private static final String DEFAULT_CONFIGURATION_PROPERTIES_FILE_NAME = "default-configuration.properties";
     private static Properties properties = new Properties();
@@ -37,18 +41,36 @@ public class FetchAndPackageDefaultConfigurationTask {
 
     public static void main(String[] args) {
         loadResourcesProperties();
-        loadAndStoreDefaultConfiguration(PROD_CENTRAL_CONF_SERVICE_ULR_NAME, "main", null);
-        loadAndStoreDefaultConfiguration(TEST_CENTRAL_CONF_SERVICE_ULR_NAME, "envtest", loadCentralConfServiceSSLCert());
+        loadAndStoreDefaultConfiguration(args);
+        loadAndStoreEnvTestDefaultConfiguration(args);
     }
 
-    private static void loadAndStoreDefaultConfiguration(String serviceUrlPropertyName, String buildVariant, X509Certificate sslCertificate) {
-        FetchAndPackageDefaultConfigurationTask.buildVariant = buildVariant;
-        String configurationServiceUrl = properties.getProperty(serviceUrlPropertyName);
-        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, sslCertificate);
+    private static void loadAndStoreDefaultConfiguration(String[] args) {
+        FetchAndPackageDefaultConfigurationTask.buildVariant = "main";
+        String configurationServiceUrl = determineCentralConfigurationServiceUrl(args);
+        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, null);
         confLoader.load();
         assertConfigurationLoaded(confLoader);
         storeAsDefaultConfiguration(confLoader);
-        storeApplicationProperties(configurationServiceUrl, determineConfigurationUpdateInterval());
+        storeApplicationProperties(configurationServiceUrl, determineConfigurationUpdateInterval(args));
+    }
+
+    private static void loadAndStoreEnvTestDefaultConfiguration(String[] args) {
+        FetchAndPackageDefaultConfigurationTask.buildVariant = "envtest";
+        String configurationServiceUrl = properties.getProperty(TEST_CENTRAL_CONF_SERVICE_ULR_NAME);
+        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, loadCentralConfServiceSSLCert());
+        confLoader.load();
+        assertConfigurationLoaded(confLoader);
+        storeAsDefaultConfiguration(confLoader);
+        storeApplicationProperties(configurationServiceUrl, determineConfigurationUpdateInterval(args));
+    }
+
+    private static String determineCentralConfigurationServiceUrl(String[] args) {
+        if (args.length > 0) {
+            return args[0];
+        } else {
+            return properties.getProperty(CENTRAL_CONF_SERVICE_ULR_NAME);
+        }
     }
 
     private static void loadResourcesProperties() {
@@ -60,8 +82,12 @@ public class FetchAndPackageDefaultConfigurationTask {
         }
     }
 
-    private static int determineConfigurationUpdateInterval() {
-        return Integer.parseInt(properties.getProperty(ConfigurationProperties.CONFIGURATION_UPDATE_INTERVAL_PROPERTY));
+    private static int determineConfigurationUpdateInterval(String[] args) {
+        if (args.length > 1) {
+            return Integer.parseInt(args[1]);
+        } else {
+            return Integer.parseInt(properties.getProperty(ConfigurationProperties.CONFIGURATION_UPDATE_INTERVAL_PROPERTY));
+        }
     }
 
     private static void assertConfigurationLoaded(CentralConfigurationLoader confLoader) {
