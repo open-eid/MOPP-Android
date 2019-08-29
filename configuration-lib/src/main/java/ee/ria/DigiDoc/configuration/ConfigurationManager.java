@@ -65,8 +65,6 @@ public class ConfigurationManager {
     private final ConfigurationLoader cachedConfigurationLoader;
     private final CachedConfigurationHandler cachedConfigurationHandler;
 
-    private ConfigurationParser configurationParser;
-
     public ConfigurationManager(Context context, ConfigurationProperties configurationProperties, CachedConfigurationHandler cachedConfigurationHandler) {
         this.cachedConfigurationHandler = cachedConfigurationHandler;
         this.centralConfigurationServiceUrl = configurationProperties.getCentralConfigurationServiceUrl();
@@ -78,25 +76,25 @@ public class ConfigurationManager {
 
     public ConfigurationProvider getConfiguration() {
         String configurationJson = loadConfiguration();
-        configurationParser = new ConfigurationParser(configurationJson);
+        ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
         return parseAndConstructConfigurationProvider(configurationParser);
     }
 
     public ConfigurationProvider forceLoadCachedConfiguration() {
         String configurationJson = loadCachedConfiguration();
-        configurationParser = new ConfigurationParser(configurationJson);
+        ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
         return parseAndConstructConfigurationProvider(configurationParser);
     }
 
     public ConfigurationProvider forceLoadDefaultConfiguration() {
         String configurationJson = loadCachedConfiguration();
-        configurationParser = new ConfigurationParser(configurationJson);
+        ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
         return parseAndConstructConfigurationProvider(configurationParser);
     }
 
     ConfigurationProvider forceLoadCentralConfiguration() {
         String configurationJson = loadCentralConfiguration();
-        configurationParser = new ConfigurationParser(configurationJson);
+        ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
         return parseAndConstructConfigurationProvider(configurationParser);
     }
 
@@ -168,11 +166,13 @@ public class ConfigurationManager {
     }
 
     private void cacheConfiguration(ConfigurationLoader configurationLoader) {
-        cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_JSON, configurationLoader.getConfigurationJson());
+        String configurationJson = configurationLoader.getConfigurationJson();
+        cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_JSON, configurationJson);
         cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_RSA, configurationLoader.getConfigurationSignature());
         cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_PUB, configurationLoader.getConfigurationSignaturePublicKey());
         if (configurationLoader instanceof CentralConfigurationLoader) {
             cachedConfigurationHandler.updateConfigurationUpdatedDate(new Date());
+            ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
             cachedConfigurationHandler.updateConfigurationVersionSerial(configurationParser.parseIntValue("META-INF", "SERIAL"));
         }
     }
@@ -187,8 +187,6 @@ public class ConfigurationManager {
 
         String midSignUrl = isTestMode() ? configurationParser.parseStringValue("MID-SIGN-TEST-URL") : configurationParser.parseStringValue("MID-SIGN-URL");
         String ldapPersonUrl = configurationParser.parseStringValue("LDAP-PERSON-URL").split("://")[1];
-
-        configurationParser.parseStringValues("TSL-CERTS");
 
         return ConfigurationProvider.builder()
                 .setMetaInf(metaInf)
