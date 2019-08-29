@@ -139,11 +139,11 @@ public class Application extends android.app.Application {
         ConfigurationProperties confProperties = new ConfigurationProperties(getAssets());
         ConfigurationManager confManager = new ConfigurationManager(this, confProperties, cachedConfHandler);
 
-        // Initially load default configuration in blocking manner, so there would be no state where asynchronous
-        // central configuration loading timed out or not ready yet and application features not working due to
-        // missing configuration.
+        // Initially load cached (if exists) or default configuration in blocking manner, so there would be no
+        // state where asynchronous central configuration loading timed out or not ready yet and application
+        // features not working due to missing configuration.
         Bundle bundle = new Bundle();
-        bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, confManager.forceLoadDefaultConfiguration());
+        bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, confManager.forceLoadCachedOrDefaultConfiguration());
         ConfigurationProviderReceiver confProviderReceiver = new ConfigurationProviderReceiver(new Handler());
         confProviderReceiver.send(1, bundle);
 

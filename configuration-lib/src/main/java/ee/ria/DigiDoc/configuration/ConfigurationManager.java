@@ -21,8 +21,8 @@ import timber.log.Timber;
 /**
  * Configuration manager that loads and initialises configuration.
  *
- * For initial application startup default configuration is loaded in blocking manner. And same time
- * asynchronous loading from central configuration service is initiated.
+ * For initial application startup cached (if exists) or default configuration is loaded in blocking manner.
+ * And same time asynchronous loading from central configuration service is initiated.
  * If loading from central configuration service fails then configuration is loaded from cache (if exists).
  * If loading from cache fails or cache does not yet exist then default configuration is loaded.
  *
@@ -79,8 +79,8 @@ public class ConfigurationManager {
         return parseAndConstructConfigurationProvider(configurationParser);
     }
 
-    public ConfigurationProvider forceLoadDefaultConfiguration() {
-        String configurationJson = loadDefaultConfiguration();
+    public ConfigurationProvider forceLoadCachedOrDefaultConfiguration() {
+        String configurationJson = loadCachedConfiguration();
         ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
         return parseAndConstructConfigurationProvider(configurationParser);
     }
