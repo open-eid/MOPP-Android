@@ -18,7 +18,7 @@ import okhttp3.ResponseBody;
 
 class CentralConfigurationClient {
 
-    private static final int DEFAULT_TIMEOUT = 10;
+    private static final int DEFAULT_TIMEOUT = 5;
     private final OkHttpClient httpClient;
     private final String centralConfigurationServiceUrl;
     private final X509Certificate explicitSSLCert;

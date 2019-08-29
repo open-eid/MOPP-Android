@@ -49,6 +49,27 @@ public final class ConfigurationManagerTest {
         long processEndDate = inSeconds(new Date());
         assertConfigurationValues(configuration);
         assertConfigurationUpdateDates(configuration, processStartDate, processEndDate);
+        assertNotNull(configuration.getConfigurationLastUpdateCheckDate());
+        assertNotNull(configuration.getConfigurationUpdateDate());
+    }
+
+    @Test
+    public void forceLoadCentralConfiguration() {
+        long processStartDate = inSeconds(new Date());
+        ConfigurationProvider configuration = configurationManager.forceLoadCentralConfiguration();
+        long processEndDate = inSeconds(new Date());
+        assertConfigurationValues(configuration);
+        assertConfigurationUpdateDates(configuration, processStartDate, processEndDate);
+        assertNotNull(configuration.getConfigurationLastUpdateCheckDate());
+        assertNotNull(configuration.getConfigurationUpdateDate());
+    }
+
+    @Test
+    public void forceLoadDefaultConfiguration() {
+        ConfigurationProvider configuration = configurationManager.forceLoadDefaultConfiguration();
+        assertConfigurationValues(configuration);
+        assertNull(configuration.getConfigurationLastUpdateCheckDate());
+        assertNull(configuration.getConfigurationUpdateDate());
     }
 
     @Test

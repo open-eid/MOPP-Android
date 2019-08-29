@@ -65,8 +65,11 @@ import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
 import ee.ria.DigiDoc.configuration.ConfigurationConstants;
+import ee.ria.DigiDoc.configuration.ConfigurationManager;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
+import ee.ria.DigiDoc.configuration.ConfigurationProperties;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
+import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
@@ -132,17 +135,33 @@ public class Application extends android.app.Application {
     }
 
     private void setupConfiguration() {
-        Intent intent = new Intent(this, ConfigurationManagerService.class);
-        intent.putExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER, new ConfigurationProviderReceiver(new Handler()));
-        this.startService(intent);
+        CachedConfigurationHandler cachedConfHandler = new CachedConfigurationHandler(getCacheDir());
+        ConfigurationProperties confProperties = new ConfigurationProperties(getAssets());
+        ConfigurationManager confManager = new ConfigurationManager(this, confProperties, cachedConfHandler);
+
+        // Initially load default configuration in blocking manner, so there would be no state where asynchronous
+        // central configuration loading timed out or not ready yet and application features not working due to
+        // missing configuration.
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, confManager.forceLoadDefaultConfiguration());
+        ConfigurationProviderReceiver confProviderReceiver = new ConfigurationProviderReceiver(new Handler());
+        confProviderReceiver.send(1, bundle);
+
+        // Load configuration again in asynchronous manner, from central if needed or cache if present.
+        initAsyncConfigurationLoad(new ConfigurationProviderReceiver(new Handler()), false);
     }
 
+    // Following configuration updating should be asynchronous
     public void updateConfiguration(DiagnosticsView diagnosticsView) {
+        ConfigurationProviderReceiver confProviderReceiver = new ConfigurationProviderReceiver(new Handler());
+        confProviderReceiver.setDiagnosticView(diagnosticsView);
+        initAsyncConfigurationLoad(confProviderReceiver, true);
+    }
+
+    private void initAsyncConfigurationLoad(ConfigurationProviderReceiver confProviderReceiver, boolean forceLoadCentral) {
         Intent intent = new Intent(this, ConfigurationManagerService.class);
-        ConfigurationProviderReceiver confReceiver = new ConfigurationProviderReceiver(new Handler());
-        confReceiver.setDiagnosticView(diagnosticsView);
-        intent.putExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER, confReceiver);
-        intent.putExtra(ConfigurationConstants.FORCE_LOAD_CENTRAL_CONFIGURATION, true);
+        intent.putExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER, confProviderReceiver);
+        intent.putExtra(ConfigurationConstants.FORCE_LOAD_CENTRAL_CONFIGURATION, forceLoadCentral);
         this.startService(intent);
     }
 

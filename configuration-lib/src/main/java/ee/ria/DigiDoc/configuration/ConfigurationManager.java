@@ -21,9 +21,10 @@ import timber.log.Timber;
 /**
  * Configuration manager that loads and initialises configuration.
  *
- * For initial application startup configuration is loaded from central configuration service.
+ * For initial application startup default configuration is loaded in blocking manner. And same time
+ * asynchronous loading from central configuration service is initiated.
  * If loading from central configuration service fails then configuration is loaded from cache (if exists).
- * If loading from cache fails or cache does not yet exist than default configuration is loaded.
+ * If loading from cache fails or cache does not yet exist then default configuration is loaded.
  *
  * Default configuration is packaged to the APK assets folder and is updated by gradle task
  * FetchAndPackageDefaultConfigurationTask during APK building process. Along with default configuration
@@ -32,7 +33,9 @@ import timber.log.Timber;
  *      is download throughout the application. Defaults to "https://id.eesti.ee".
  *      * configuration.update-interval: Interval in days for how often configuration is updated against central
  *      configuration service. Defaults to 7.
- * Default values are hardcoded in resources/default-configuration.properties file.
+ * Default values are in resources/default-configuration.properties file.
+ * These values can be overridden during building APK, for example:
+ *      gradle clean fetchAndPackageDefaultConfiguration --args="https://id.eesti.ee 7" app:assemble
  *
  * When configuration is loaded then it is cached to the devices drive. Configuration consists of configuration
  * json, it's signature and public key. Along with named configuration files a configuration-info.properties
@@ -72,6 +75,12 @@ public class ConfigurationManager {
 
     public ConfigurationProvider getConfiguration() {
         String configurationJson = loadConfiguration();
+        ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
+        return parseAndConstructConfigurationProvider(configurationParser);
+    }
+
+    public ConfigurationProvider forceLoadDefaultConfiguration() {
+        String configurationJson = loadDefaultConfiguration();
         ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
         return parseAndConstructConfigurationProvider(configurationParser);
     }
