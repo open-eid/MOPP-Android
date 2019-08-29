@@ -10,8 +10,11 @@ public abstract class ConfigurationLoader {
 
     public void load() {
         this.configurationJson = loadConfigurationJson().trim();
+        assertValueNotBlank(configurationJson, "configuration json");
         this.configurationSignature = loadConfigurationSignature().trim();
+        assertValueNotBlank(configurationJson, "configuration signature");
         this.configurationSignaturePublicKey = loadConfigurationSignaturePublicKey().trim();
+        assertValueNotBlank(configurationJson, "configuration signature public key");
 
         verifyConfigurationSignature();
     }
@@ -33,6 +36,12 @@ public abstract class ConfigurationLoader {
     abstract String loadConfigurationSignature();
 
     abstract String loadConfigurationSignaturePublicKey();
+
+    private void assertValueNotBlank(String value, String valueName) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalStateException("Loaded " + valueName + " file is blank");
+        }
+    }
 
     private void verifyConfigurationSignature() {
         boolean signatureValid = SignatureVerifier.verify(configurationSignature, configurationSignaturePublicKey, configurationJson);
