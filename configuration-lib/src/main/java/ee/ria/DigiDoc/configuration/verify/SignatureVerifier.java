@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.configuration;
+package ee.ria.DigiDoc.configuration.verify;
 
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
@@ -21,9 +21,9 @@ import java.security.spec.RSAPublicKeySpec;
 /**
  * Helper class for verifying configuration signature.
  */
-public class SignatureVerifier {
+class SignatureVerifier {
 
-    public static boolean verify(String base64EncodedSignature, String publicKeyPEM, String signedContent) {
+    static boolean verify(String base64EncodedSignature, String publicKeyPEM, String signedContent) {
         SubjectPublicKeyInfo publicKeyInfo = parsePublicKeyInfo(publicKeyPEM);
         PublicKey publicKey = convertPublicKeyInfoToPublicKey(publicKeyInfo);
         return verifySignature(base64EncodedSignature, publicKey, signedContent);

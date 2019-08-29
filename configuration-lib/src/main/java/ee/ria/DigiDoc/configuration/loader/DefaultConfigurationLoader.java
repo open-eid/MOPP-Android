@@ -33,7 +33,7 @@ public class DefaultConfigurationLoader extends ConfigurationLoader {
     }
 
     @Override
-    String loadConfigurationSignaturePublicKey() {
+    public String loadConfigurationSignaturePublicKey() {
         return readFileContent(DEFAULT_CONFIG_PUB);
     }
 

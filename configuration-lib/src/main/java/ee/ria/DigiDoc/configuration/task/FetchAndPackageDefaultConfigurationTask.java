@@ -13,7 +13,9 @@ import java.util.Properties;
 
 import ee.ria.DigiDoc.configuration.ConfigurationProperties;
 import ee.ria.DigiDoc.configuration.loader.CentralConfigurationLoader;
+import ee.ria.DigiDoc.configuration.loader.ConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.DefaultConfigurationLoader;
+import ee.ria.DigiDoc.configuration.verify.ConfigurationSignatureVerifier;
 
 /**
  * Task for loading configuration from central configuration service and storing it to assets folder.
@@ -50,6 +52,7 @@ public class FetchAndPackageDefaultConfigurationTask {
         String configurationServiceUrl = determineCentralConfigurationServiceUrl(args);
         CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, null);
         confLoader.load();
+        verifyConfigurationSignature(confLoader);
         assertConfigurationLoaded(confLoader);
         storeAsDefaultConfiguration(confLoader);
         storeApplicationProperties(configurationServiceUrl, determineConfigurationUpdateInterval(args));
@@ -60,6 +63,7 @@ public class FetchAndPackageDefaultConfigurationTask {
         String configurationServiceUrl = properties.getProperty(TEST_CENTRAL_CONF_SERVICE_ULR_NAME);
         CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, loadCentralConfServiceSSLCert());
         confLoader.load();
+        verifyConfigurationSignature(confLoader);
         assertConfigurationLoaded(confLoader);
         storeAsDefaultConfiguration(confLoader);
         storeApplicationProperties(configurationServiceUrl, determineConfigurationUpdateInterval(args));
@@ -136,5 +140,14 @@ public class FetchAndPackageDefaultConfigurationTask {
         } catch (CertificateException | FileNotFoundException e) {
             throw new IllegalStateException("Failed to load SSL certificate", e);
         }
+    }
+
+    private static void verifyConfigurationSignature(ConfigurationLoader configurationLoader) {
+        ConfigurationSignatureVerifier configurationSignatureVerifier =
+                new ConfigurationSignatureVerifier(configurationLoader.getConfigurationSignaturePublicKey());
+        configurationSignatureVerifier.verifyConfigurationSignature(
+                configurationLoader.getConfigurationJson(),
+                configurationLoader.getConfigurationSignature()
+        );
     }
 }

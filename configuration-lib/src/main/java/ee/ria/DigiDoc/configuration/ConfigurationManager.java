@@ -16,6 +16,7 @@ import ee.ria.DigiDoc.configuration.loader.CachedConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.CentralConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.ConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.DefaultConfigurationLoader;
+import ee.ria.DigiDoc.configuration.verify.ConfigurationSignatureVerifier;
 import timber.log.Timber;
 
 /**
@@ -37,6 +38,9 @@ import timber.log.Timber;
  * Default values are in resources/default-configuration.properties file.
  * These values can be overridden during building APK, for example:
  *      gradle clean fetchAndPackageDefaultConfiguration --args="https://id.eesti.ee 7" app:assemble
+ *
+ * After each load, configuration's signature is verified against the default configuration signature public key
+ * that is packaged with the APK.
  *
  * When configuration is loaded then it is cached to the devices drive. Configuration consists of configuration
  * json, it's signature and public key. Along with named configuration files a configuration-info.properties
@@ -64,6 +68,8 @@ public class ConfigurationManager {
     private final ConfigurationLoader defaultConfigurationLoader;
     private final ConfigurationLoader cachedConfigurationLoader;
     private final CachedConfigurationHandler cachedConfigurationHandler;
+
+    private ConfigurationSignatureVerifier confSignatureVerifier;
 
     public ConfigurationManager(Context context, ConfigurationProperties configurationProperties, CachedConfigurationHandler cachedConfigurationHandler) {
         this.cachedConfigurationHandler = cachedConfigurationHandler;
@@ -127,6 +133,7 @@ public class ConfigurationManager {
                 cachedConfigurationHandler.updateConfigurationLastCheckDate(new Date());
                 return loadCachedConfiguration();
             }
+            verifyConfigurationSignature(centralConfigurationLoader);
             cacheConfiguration(centralConfigurationLoader);
             Timber.i("Configuration successfully loaded from central configuration service");
             return centralConfigurationLoader.getConfigurationJson();
@@ -140,6 +147,7 @@ public class ConfigurationManager {
         try {
             Timber.i("Attempting to load cached configuration");
             cachedConfigurationLoader.load();
+            verifyConfigurationSignature(cachedConfigurationLoader);
             Timber.i("Cached configuration successfully loaded");
             return cachedConfigurationLoader.getConfigurationJson();
         } catch (Exception e) {
@@ -152,6 +160,7 @@ public class ConfigurationManager {
         try {
             Timber.i("Attempting to load default configuration");
             defaultConfigurationLoader.load();
+            verifyConfigurationSignature(defaultConfigurationLoader);
             Timber.i("Default configuration successfully loaded");
             cacheConfiguration(defaultConfigurationLoader);
             return defaultConfigurationLoader.getConfigurationJson();
@@ -161,6 +170,18 @@ public class ConfigurationManager {
     }
 
     private boolean isCachedConfLatest() {
+    private void verifyConfigurationSignature(ConfigurationLoader configurationLoader) {
+        if (confSignatureVerifier == null) {
+            String publicKey = defaultConfigurationLoader.getConfigurationSignaturePublicKey();
+            if (publicKey == null) {
+                publicKey = defaultConfigurationLoader.loadConfigurationSignaturePublicKey();
+            }
+            confSignatureVerifier = new ConfigurationSignatureVerifier(publicKey);
+        }
+        confSignatureVerifier.verifyConfigurationSignature(
+                configurationLoader.getConfigurationJson(), configurationLoader.getConfigurationSignature());
+    }
+
         String cachedConfSignature = cachedConfigurationHandler.readFileContent(CachedConfigurationHandler.CACHED_CONFIG_RSA);
         return cachedConfSignature.equals(centralConfigurationLoader.getConfigurationSignature());
     }

@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.configuration;
+package ee.ria.DigiDoc.configuration.verify;
 
 import org.junit.Test;
 

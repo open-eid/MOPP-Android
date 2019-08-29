@@ -1,7 +1,5 @@
 package ee.ria.DigiDoc.configuration.loader;
 
-import ee.ria.DigiDoc.configuration.SignatureVerifier;
-
 public abstract class ConfigurationLoader {
 
     private String configurationJson;
@@ -15,8 +13,6 @@ public abstract class ConfigurationLoader {
         assertValueNotBlank(configurationJson, "configuration signature");
         this.configurationSignaturePublicKey = loadConfigurationSignaturePublicKey().trim();
         assertValueNotBlank(configurationJson, "configuration signature public key");
-
-        verifyConfigurationSignature();
     }
 
     public String getConfigurationJson() {
@@ -40,13 +36,6 @@ public abstract class ConfigurationLoader {
     private void assertValueNotBlank(String value, String valueName) {
         if (value == null || value.isEmpty()) {
             throw new IllegalStateException("Loaded " + valueName + " file is blank");
-        }
-    }
-
-    private void verifyConfigurationSignature() {
-        boolean signatureValid = SignatureVerifier.verify(configurationSignature, configurationSignaturePublicKey, configurationJson);
-        if (!signatureValid) {
-            throw new IllegalStateException("Configuration signature validation failed!");
         }
     }
 }
