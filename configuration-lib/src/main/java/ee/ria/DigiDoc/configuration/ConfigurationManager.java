@@ -28,6 +28,9 @@ import timber.log.Timber;
  * from cache (if exists). If loading from cache fails or cache does not yet exist then default configuration
  * is loaded.
  *
+ * If downloaded central service configuration signature matches with cached configuration signature then
+ * cached configuration is loaded instead.
+ *
  * Default configuration is packaged to the APK assets folder and is updated by gradle task
  * FetchAndPackageDefaultConfigurationTask during APK building process. Along with default configuration
  * files configuration.properties file is packaged to APK which contains:
@@ -64,9 +67,9 @@ public class ConfigurationManager {
 
     private final String centralConfigurationServiceUrl;
     private final int configurationUpdateInterval;
-    private final ConfigurationLoader centralConfigurationLoader;
-    private final ConfigurationLoader defaultConfigurationLoader;
-    private final ConfigurationLoader cachedConfigurationLoader;
+    private final CentralConfigurationLoader centralConfigurationLoader;
+    private final DefaultConfigurationLoader defaultConfigurationLoader;
+    private final CachedConfigurationLoader cachedConfigurationLoader;
     private final CachedConfigurationHandler cachedConfigurationHandler;
 
     private ConfigurationSignatureVerifier confSignatureVerifier;
@@ -127,13 +130,17 @@ public class ConfigurationManager {
     private String loadCentralConfiguration() {
         try {
             Timber.i("Attempting to load configuration from central configuration service <%s>", centralConfigurationServiceUrl);
-            centralConfigurationLoader.load();
-            if (cachedConfigurationHandler.doesCachedConfigurationInfoExist() && isCachedConfLatest()) {
+            String centralConfigurationSignature = centralConfigurationLoader.loadConfigurationSignature();
+            if (cachedConfigurationHandler.doesCachedConfigurationInfoExist() && isCachedConfUpToDate(centralConfigurationSignature)) {
                 Timber.i("Cached configuration signature matches with central configuration signature. Not updating and using cached configuration");
                 cachedConfigurationHandler.updateConfigurationLastCheckDate(new Date());
                 return loadCachedConfiguration();
             }
+
+            centralConfigurationLoader.loadConfigurationJson();
             verifyConfigurationSignature(centralConfigurationLoader);
+
+            cachedConfigurationHandler.updateConfigurationUpdatedDate(new Date());
             cacheConfiguration(centralConfigurationLoader);
             Timber.i("Configuration successfully loaded from central configuration service");
             return centralConfigurationLoader.getConfigurationJson();
@@ -169,7 +176,6 @@ public class ConfigurationManager {
         }
     }
 
-    private boolean isCachedConfLatest() {
     private void verifyConfigurationSignature(ConfigurationLoader configurationLoader) {
         if (confSignatureVerifier == null) {
             String publicKey = defaultConfigurationLoader.getConfigurationSignaturePublicKey();
@@ -182,17 +188,23 @@ public class ConfigurationManager {
                 configurationLoader.getConfigurationJson(), configurationLoader.getConfigurationSignature());
     }
 
+    private boolean isCachedConfUpToDate(String centralConfigurationSignature) {
         String cachedConfSignature = cachedConfigurationHandler.readFileContent(CachedConfigurationHandler.CACHED_CONFIG_RSA);
-        return cachedConfSignature.equals(centralConfigurationLoader.getConfigurationSignature());
+        return cachedConfSignature.equals(centralConfigurationSignature);
     }
 
     private void cacheConfiguration(ConfigurationLoader configurationLoader) {
-        String configurationJson = configurationLoader.getConfigurationJson();
+        cacheConfiguration(
+                configurationLoader.getConfigurationJson(),
+                configurationLoader.getConfigurationSignature(),
+                configurationLoader.getConfigurationSignaturePublicKey());
+    }
+
+    private void cacheConfiguration(String configurationJson, String configurationSignature, String configurationSignaturePublicKey) {
         cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_JSON, configurationJson);
-        cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_RSA, configurationLoader.getConfigurationSignature());
-        cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_PUB, configurationLoader.getConfigurationSignaturePublicKey());
-        if (configurationLoader instanceof CentralConfigurationLoader) {
-            cachedConfigurationHandler.updateConfigurationUpdatedDate(new Date());
+        cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_RSA, configurationSignature);
+        cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_PUB, configurationSignaturePublicKey);
+        if (cachedConfigurationHandler.doesCachedConfigurationInfoExist()) {
             ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
             cachedConfigurationHandler.updateConfigurationVersionSerial(configurationParser.parseIntValue("META-INF", "SERIAL"));
         }

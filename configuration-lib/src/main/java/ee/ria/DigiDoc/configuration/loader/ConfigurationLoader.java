@@ -2,9 +2,9 @@ package ee.ria.DigiDoc.configuration.loader;
 
 public abstract class ConfigurationLoader {
 
-    private String configurationJson;
-    private String configurationSignature;
-    private String configurationSignaturePublicKey;
+    String configurationJson;
+    String configurationSignature;
+    String configurationSignaturePublicKey;
 
     public void load() {
         this.configurationJson = loadConfigurationJson().trim();
@@ -33,7 +33,7 @@ public abstract class ConfigurationLoader {
 
     abstract String loadConfigurationSignaturePublicKey();
 
-    private void assertValueNotBlank(String value, String valueName) {
+    void assertValueNotBlank(String value, String valueName) {
         if (value == null || value.isEmpty()) {
             throw new IllegalStateException("Loaded " + valueName + " file is blank");
         }

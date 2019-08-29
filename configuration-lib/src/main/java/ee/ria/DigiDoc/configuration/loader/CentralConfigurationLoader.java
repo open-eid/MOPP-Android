@@ -14,17 +14,23 @@ public class CentralConfigurationLoader extends ConfigurationLoader {
     }
 
     @Override
-    String loadConfigurationJson() {
-        return configurationClient.getConfiguration();
+    public String loadConfigurationJson() {
+        super.configurationJson = configurationClient.getConfiguration().trim();
+        assertValueNotBlank(configurationJson, "configuration json");
+        return configurationJson;
     }
 
     @Override
-    String loadConfigurationSignature() {
-        return configurationClient.getConfigurationSignature();
+    public String loadConfigurationSignature() {
+        super.configurationSignature = configurationClient.getConfigurationSignature().trim();
+        assertValueNotBlank(configurationSignature, "configuration signature");
+        return configurationSignature;
     }
 
     @Override
-    String loadConfigurationSignaturePublicKey() {
-        return configurationClient.getConfigurationSignaturePublicKey();
+    public String loadConfigurationSignaturePublicKey() {
+        super.configurationSignaturePublicKey = configurationClient.getConfigurationSignaturePublicKey().trim();
+        assertValueNotBlank(configurationSignaturePublicKey, "configuration signature public key");
+        return configurationSignaturePublicKey;
     }
 }

@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
+import ee.ria.DigiDoc.configuration.loader.DefaultConfigurationLoader;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -208,8 +209,8 @@ public final class ConfigurationManagerTest {
     private void assertDefaultConfigurationValues(ConfigurationProvider configuration) {
         assertNotNull(configuration);
         assertEquals(configurationProperties.getCentralConfigurationServiceUrl(), configuration.getConfigUrl());
-        assertNotNull(configuration.getLdapCorpUrl());
-        assertEquals("esteid.ldap.sk.ee", configuration.getLdapPersonUrl());
+        assertEquals("ldaps://k3.ldap.sk.ee", configuration.getLdapCorpUrl());
+        assertEquals("ldaps://esteid.ldap.sk.ee", configuration.getLdapPersonUrl());
         assertEquals("https://digidocservice.sk.ee", configuration.getMidSignUrl());
         assertEquals("https://siva.eesti.ee/V2/validate", configuration.getSivaUrl());
         assertEquals("http://dd-at.ria.ee/tsa", configuration.getTsaUrl());
@@ -224,6 +225,8 @@ public final class ConfigurationManagerTest {
 
 
     private void assertConfigurationUpdateDates(ConfigurationProvider configuration, long processStartDate, long processEndDate) {
+        assertNotNull(configuration.getConfigurationUpdateDate());
+        assertNotNull(configuration.getConfigurationLastUpdateCheckDate());
         long confUpdateDate = inSeconds(configuration.getConfigurationUpdateDate());
         long confLastUpdateCheck = inSeconds(configuration.getConfigurationLastUpdateCheckDate());
 
