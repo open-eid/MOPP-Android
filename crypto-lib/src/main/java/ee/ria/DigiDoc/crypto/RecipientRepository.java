@@ -31,7 +31,7 @@ import static com.unboundid.ldap.sdk.SearchScope.SUB;
  */
 public final class RecipientRepository {
 
-    private static final int EST_EID_LDAP_PORT = 636;
+    private static final int LDAP_PORT = 636;
     private static final String CERT_BINARY_ATTR = "userCertificate;binary";
     private static final String BASE_DN = "c=EE";
 
@@ -55,13 +55,27 @@ public final class RecipientRepository {
      */
     @WorkerThread
     public final ImmutableList<Certificate> find(String query) throws CryptoException {
-        return findFromEsteidLdap(query);
+        ImmutableList<Certificate> certs;
+        try {
+            certs = findPersonCertificate(query);
+        } catch (CryptoException e) {
+            return findCorporationCertificate(query);
+        }
+        return certs.isEmpty() ? findCorporationCertificate(query) : certs;
     }
 
-    private ImmutableList<Certificate> findFromEsteidLdap(String query) throws CryptoException {
+    private ImmutableList<Certificate> findPersonCertificate(String query) throws CryptoException {
+        return search(ldapPersonServiceUrl, new EstEidLdapFilter(query));
+    }
+
+    private ImmutableList<Certificate> findCorporationCertificate(String query) throws CryptoException {
+        return search(ldapCorpServiceUrl, new LdapFilter(query));
+    }
+
+    private ImmutableList<Certificate> search(String url, LdapFilter ldapFilter) throws CryptoException {
         try (LDAPConnection connection = new LDAPConnection(getSslSocketFactory())) {
-            connection.connect(ldapPersonServiceUrl, EST_EID_LDAP_PORT);
-            return executeSearch(connection, new EstEidLdapFilter(query));
+            connection.connect(url, LDAP_PORT);
+            return executeSearch(connection, ldapFilter);
         } catch (Exception e) {
             throw new CryptoException("Finding recipients failed", e);
         }
