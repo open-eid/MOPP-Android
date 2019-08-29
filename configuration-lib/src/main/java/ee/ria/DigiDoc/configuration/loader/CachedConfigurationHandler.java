@@ -117,11 +117,9 @@ public class CachedConfigurationHandler {
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(new FileInputStream(cacheDir(filename))))) {
             StringBuilder sb = new StringBuilder();
-            String line = reader.readLine();
-            while (line != null) {
-                sb.append(line);
-                sb.append("\n");
-                line = reader.readLine();
+            int i;
+            while((i = reader.read()) != -1) {
+                sb.append((char) i);
             }
             return sb.toString().trim();
         } catch (IOException e) {
