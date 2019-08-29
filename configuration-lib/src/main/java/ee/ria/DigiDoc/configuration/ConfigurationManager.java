@@ -87,7 +87,7 @@ public class ConfigurationManager {
     }
 
     public ConfigurationProvider forceLoadDefaultConfiguration() {
-        String configurationJson = loadCachedConfiguration();
+        String configurationJson = loadDefaultConfiguration();
         ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
         return parseAndConstructConfigurationProvider(configurationParser);
     }
