@@ -39,8 +39,9 @@ public final class RecipientRepository {
     private final String ldapCorpServiceUrl;
 
     public RecipientRepository(String ldapPersonServiceUrl, String ldapCorpServiceUrl) {
-        this.ldapPersonServiceUrl = ldapPersonServiceUrl;
-        this.ldapCorpServiceUrl = ldapCorpServiceUrl;
+        // Removing protocols from URL-s
+        this.ldapPersonServiceUrl = ldapPersonServiceUrl.split("://")[1];
+        this.ldapCorpServiceUrl = ldapCorpServiceUrl.split("://")[1];
     }
 
     /**

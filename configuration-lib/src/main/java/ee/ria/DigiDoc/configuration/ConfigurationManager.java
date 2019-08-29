@@ -186,8 +186,6 @@ public class ConfigurationManager {
                 .build();
 
         String midSignUrl = isTestMode() ? configurationParser.parseStringValue("MID-SIGN-TEST-URL") : configurationParser.parseStringValue("MID-SIGN-URL");
-        String ldapPersonUrl = configurationParser.parseStringValue("LDAP-PERSON-URL").split("://")[1];
-        String ldapCorpUrl = configurationParser.parseStringValue("LDAP-CORP-URL").split("://")[1];
 
         return ConfigurationProvider.builder()
                 .setMetaInf(metaInf)
@@ -197,8 +195,8 @@ public class ConfigurationManager {
                 .setTslCerts(configurationParser.parseStringValues("TSL-CERTS"))
                 .setTsaUrl(configurationParser.parseStringValue("TSA-URL"))
                 .setMidSignUrl(midSignUrl)
-                .setLdapPersonUrl(ldapPersonUrl)
-                .setLdapCorpUrl(ldapCorpUrl)
+                .setLdapPersonUrl(configurationParser.parseStringValue("LDAP-PERSON-URL"))
+                .setLdapCorpUrl(configurationParser.parseStringValue("LDAP-CORP-URL"))
                 .setOCSPUrls(configurationParser.parseStringValuesToMap("OCSP-URL-ISSUER"))
                 .setConfigurationLastUpdateCheckDate(cachedConfigurationHandler.getConfLastUpdateCheckDate())
                 .setConfigurationUpdateDate(cachedConfigurationHandler.getConfUpdateDate())
