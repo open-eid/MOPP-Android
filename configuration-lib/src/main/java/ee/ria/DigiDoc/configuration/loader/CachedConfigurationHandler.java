@@ -26,6 +26,8 @@ public class CachedConfigurationHandler {
     private static final String CONFIGURATION_INFO_FILE_NAME = "configuration-info.properties";
     private static final String CONFIGURATION_LAST_UPDATE_CHECK_DATE_PROPERTY_NAME = "configuration.last-update-check-date";
     private static final String CONFIGURATION_UPDATE_DATE_PROPERTY_NAME = "configuration.update-date";
+    private static final String CONFIGURATION_VERSION_SERIAL_PROPERTY_NAME = "configuration.version-serial";
+
     private final File cacheDir;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
     private Properties properties;
@@ -45,6 +47,14 @@ public class CachedConfigurationHandler {
 
     public Date getConfUpdateDate() {
         return loadProperty(CONFIGURATION_UPDATE_DATE_PROPERTY_NAME);
+    }
+
+    public Integer getConfigurationVersionSerial() {
+        String versionSerial = properties.getProperty(CONFIGURATION_VERSION_SERIAL_PROPERTY_NAME);
+        if (versionSerial == null) {
+            return null;
+        }
+        return Integer.parseInt(versionSerial);
     }
 
     private Date loadProperty(String propertyName) {
@@ -95,6 +105,11 @@ public class CachedConfigurationHandler {
 
     public void updateConfigurationLastCheckDate(Date date) {
         properties.setProperty(CONFIGURATION_LAST_UPDATE_CHECK_DATE_PROPERTY_NAME, dateFormat.format(date));
+        updateProperties();
+    }
+
+    public void updateConfigurationVersionSerial(int versionSerial) {
+        properties.setProperty(CONFIGURATION_VERSION_SERIAL_PROPERTY_NAME, String.valueOf(versionSerial));
         updateProperties();
     }
 

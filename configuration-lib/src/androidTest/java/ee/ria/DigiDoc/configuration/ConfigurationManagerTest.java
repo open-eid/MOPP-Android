@@ -65,8 +65,16 @@ public final class ConfigurationManagerTest {
     }
 
     @Test
-    public void forceLoadCachedOrDefaultConfiguration() {
-        ConfigurationProvider configuration = configurationManager.forceLoadCachedOrDefaultConfiguration();
+    public void forceLoadCachedConfiguration() {
+        ConfigurationProvider configuration = configurationManager.forceLoadCachedConfiguration();
+        assertConfigurationValues(configuration);
+        assertNull(configuration.getConfigurationLastUpdateCheckDate());
+        assertNull(configuration.getConfigurationUpdateDate());
+    }
+
+    @Test
+    public void forceLoadDefaultConfiguration() {
+        ConfigurationProvider configuration = configurationManager.forceLoadDefaultConfiguration();
         assertConfigurationValues(configuration);
         assertNull(configuration.getConfigurationLastUpdateCheckDate());
         assertNull(configuration.getConfigurationUpdateDate());

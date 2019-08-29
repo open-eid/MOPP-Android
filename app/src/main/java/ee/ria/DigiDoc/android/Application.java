@@ -139,16 +139,31 @@ public class Application extends android.app.Application {
         ConfigurationProperties confProperties = new ConfigurationProperties(getAssets());
         ConfigurationManager confManager = new ConfigurationManager(this, confProperties, cachedConfHandler);
 
-        // Initially load cached (if exists) or default configuration in blocking manner, so there would be no
-        // state where asynchronous central configuration loading timed out or not ready yet and application
-        // features not working due to missing configuration.
+        // Initially load cached configuration, if it exists and default configuration is not newer in a blocking (synchronous)
+        // manner. If default conf is newer then load default conf (case where application was updated and cache was not removed,
+        // then in new packaged APK the default might be newer than the previously cached conf).
+        // Initial conf is load synchronously so there would be no state where asynchronous central configuration loading timed
+        // out or not ready yet and application features not working due to missing configuration.
+        ConfigurationProvider configurationProvider = confManager.forceLoadDefaultConfiguration();
+        int defaultConfVersionSerial = configurationProvider.getMetaInf().getSerial();
+        if (cachedConfHandler.doesCachedConfigurationInfoExist()) {
+            Integer cachedConfVersionSerial = cachedConfHandler.getConfigurationVersionSerial();
+            if (cachedConfVersionSerial != null && !defaultConfNewerThanCachedConf(defaultConfVersionSerial, cachedConfVersionSerial)) {
+                configurationProvider = confManager.forceLoadCachedConfiguration();
+            }
+        }
+
         Bundle bundle = new Bundle();
-        bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, confManager.forceLoadCachedOrDefaultConfiguration());
+        bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, configurationProvider);
         ConfigurationProviderReceiver confProviderReceiver = new ConfigurationProviderReceiver(new Handler());
         confProviderReceiver.send(1, bundle);
 
         // Load configuration again in asynchronous manner, from central if needed or cache if present.
         initAsyncConfigurationLoad(new ConfigurationProviderReceiver(new Handler()), false);
+    }
+
+    private boolean defaultConfNewerThanCachedConf(Integer defaultConfVersionSerial, Integer cachedConfVersionSerial) {
+        return defaultConfVersionSerial > cachedConfVersionSerial;
     }
 
     // Following configuration updating should be asynchronous

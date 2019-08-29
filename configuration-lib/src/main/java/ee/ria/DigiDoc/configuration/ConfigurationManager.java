@@ -21,10 +21,11 @@ import timber.log.Timber;
 /**
  * Configuration manager that loads and initialises configuration.
  *
- * For initial application startup cached (if exists) or default configuration is loaded in blocking manner.
- * And same time asynchronous loading from central configuration service is initiated.
- * If loading from central configuration service fails then configuration is loaded from cache (if exists).
- * If loading from cache fails or cache does not yet exist then default configuration is loaded.
+ * For initial application startup cached (if exists and is older than default configuration) or default
+ * configuration is loaded in blocking manner. And same time asynchronous loading from central configuration
+ * service is initiated. If loading from central configuration service fails then configuration is loaded
+ * from cache (if exists). If loading from cache fails or cache does not yet exist then default configuration
+ * is loaded.
  *
  * Default configuration is packaged to the APK assets folder and is updated by gradle task
  * FetchAndPackageDefaultConfigurationTask during APK building process. Along with default configuration
@@ -64,6 +65,8 @@ public class ConfigurationManager {
     private final ConfigurationLoader cachedConfigurationLoader;
     private final CachedConfigurationHandler cachedConfigurationHandler;
 
+    private ConfigurationParser configurationParser;
+
     public ConfigurationManager(Context context, ConfigurationProperties configurationProperties, CachedConfigurationHandler cachedConfigurationHandler) {
         this.cachedConfigurationHandler = cachedConfigurationHandler;
         this.centralConfigurationServiceUrl = configurationProperties.getCentralConfigurationServiceUrl();
@@ -75,19 +78,25 @@ public class ConfigurationManager {
 
     public ConfigurationProvider getConfiguration() {
         String configurationJson = loadConfiguration();
-        ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
+        configurationParser = new ConfigurationParser(configurationJson);
         return parseAndConstructConfigurationProvider(configurationParser);
     }
 
-    public ConfigurationProvider forceLoadCachedOrDefaultConfiguration() {
+    public ConfigurationProvider forceLoadCachedConfiguration() {
         String configurationJson = loadCachedConfiguration();
-        ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
+        configurationParser = new ConfigurationParser(configurationJson);
+        return parseAndConstructConfigurationProvider(configurationParser);
+    }
+
+    public ConfigurationProvider forceLoadDefaultConfiguration() {
+        String configurationJson = loadCachedConfiguration();
+        configurationParser = new ConfigurationParser(configurationJson);
         return parseAndConstructConfigurationProvider(configurationParser);
     }
 
     ConfigurationProvider forceLoadCentralConfiguration() {
         String configurationJson = loadCentralConfiguration();
-        ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
+        configurationParser = new ConfigurationParser(configurationJson);
         return parseAndConstructConfigurationProvider(configurationParser);
     }
 
@@ -164,6 +173,7 @@ public class ConfigurationManager {
         cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_PUB, configurationLoader.getConfigurationSignaturePublicKey());
         if (configurationLoader instanceof CentralConfigurationLoader) {
             cachedConfigurationHandler.updateConfigurationUpdatedDate(new Date());
+            cachedConfigurationHandler.updateConfigurationVersionSerial(configurationParser.parseIntValue("META-INF", "SERIAL"));
         }
     }
 
