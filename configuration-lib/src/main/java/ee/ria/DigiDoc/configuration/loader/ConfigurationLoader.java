@@ -8,11 +8,23 @@ public abstract class ConfigurationLoader {
 
     public void load() {
         this.configurationJson = loadConfigurationJson().trim();
-        assertValueNotBlank(configurationJson, "configuration json");
+        assertConfigurationJson();
         this.configurationSignature = loadConfigurationSignature().trim();
-        assertValueNotBlank(configurationJson, "configuration signature");
+        assertConfigurationSignature();
         this.configurationSignaturePublicKey = loadConfigurationSignaturePublicKey().trim();
-        assertValueNotBlank(configurationJson, "configuration signature public key");
+        assertConfigurationSignaturePublicKey();
+    }
+
+    void assertConfigurationJson() {
+        assertValueNotBlank(configurationJson, "configuration json");
+    }
+
+    void assertConfigurationSignature() {
+        assertValueNotBlank(configurationSignature, "configuration signature");
+    }
+
+    void assertConfigurationSignaturePublicKey() {
+        assertValueNotBlank(configurationSignaturePublicKey, "configuration signature public key");
     }
 
     public String getConfigurationJson() {

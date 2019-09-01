@@ -16,6 +16,7 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.sign.SignLib;
 
@@ -23,7 +24,7 @@ import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationC
 
 public final class DiagnosticsView extends CoordinatorLayout {
 
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+    private final SimpleDateFormat dateFormat;
     private final Toolbar toolbarView;
 
     private final Navigator navigator;
@@ -109,7 +110,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
             return "";
         }
 
-        return dateFormatter.format(date);
+        return dateFormat.format(date);
     }
 
     private static String getAppVersion() {

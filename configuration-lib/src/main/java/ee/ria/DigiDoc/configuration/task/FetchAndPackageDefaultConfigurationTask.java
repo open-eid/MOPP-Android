@@ -9,8 +9,11 @@ import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.Properties;
 
+import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
+import ee.ria.DigiDoc.configuration.ConfigurationParser;
 import ee.ria.DigiDoc.configuration.ConfigurationProperties;
 import ee.ria.DigiDoc.configuration.loader.CentralConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.ConfigurationLoader;
@@ -51,22 +54,24 @@ public class FetchAndPackageDefaultConfigurationTask {
         FetchAndPackageDefaultConfigurationTask.buildVariant = "main";
         String configurationServiceUrl = determineCentralConfigurationServiceUrl(args);
         CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, null);
-        confLoader.load();
-        verifyConfigurationSignature(confLoader);
-        assertConfigurationLoaded(confLoader);
-        storeAsDefaultConfiguration(confLoader);
-        storeApplicationProperties(configurationServiceUrl, determineConfigurationUpdateInterval(args));
+        loadAndAssertConfiguration(confLoader, configurationServiceUrl, args);
     }
 
     private static void loadAndStoreEnvTestDefaultConfiguration(String[] args) {
         FetchAndPackageDefaultConfigurationTask.buildVariant = "envtest";
         String configurationServiceUrl = properties.getProperty(TEST_CENTRAL_CONF_SERVICE_ULR_NAME);
         CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, loadCentralConfServiceSSLCert());
+        loadAndAssertConfiguration(confLoader, configurationServiceUrl, args);
+    }
+
+    private static void loadAndAssertConfiguration(CentralConfigurationLoader confLoader, String confServiceUrl, String[] args) {
         confLoader.load();
         verifyConfigurationSignature(confLoader);
         assertConfigurationLoaded(confLoader);
         storeAsDefaultConfiguration(confLoader);
-        storeApplicationProperties(configurationServiceUrl, determineConfigurationUpdateInterval(args));
+        ConfigurationParser configurationParser = new ConfigurationParser(confLoader.getConfigurationJson());
+        int confVersionSerial = configurationParser.parseIntValue("META-INF", "SERIAL");
+        storeApplicationProperties(confServiceUrl, confVersionSerial, determineConfigurationUpdateInterval(args));
     }
 
     private static String determineCentralConfigurationServiceUrl(String[] args) {
@@ -106,7 +111,7 @@ public class FetchAndPackageDefaultConfigurationTask {
         storeFile(DefaultConfigurationLoader.DEFAULT_CONFIG_PUB, confLoader.getConfigurationSignaturePublicKey());
     }
 
-    private static void storeApplicationProperties(String configurationServiceUrl, int configurationUpdateInterval) {
+    private static void storeApplicationProperties(String configurationServiceUrl, int confVersionSerial, int configurationUpdateInterval) {
         StringBuilder propertiesFileBuilder = new StringBuilder()
                 .append(ConfigurationProperties.CENTRAL_CONFIGURATION_SERVICE_URL_PROPERTY)
                 .append("=")
@@ -114,7 +119,15 @@ public class FetchAndPackageDefaultConfigurationTask {
                 .append("\n")
                 .append(ConfigurationProperties.CONFIGURATION_UPDATE_INTERVAL_PROPERTY)
                 .append("=")
-                .append(configurationUpdateInterval);
+                .append(configurationUpdateInterval)
+                .append("\n")
+                .append(ConfigurationProperties.CONFIGURATION_VERSION_SERIAL_PROPERTY)
+                .append("=")
+                .append(confVersionSerial)
+                .append("\n")
+                .append(ConfigurationProperties.CONFIGURATION_DOWNLOAD_DATE_PROPERTY)
+                .append("=")
+                .append(ConfigurationDateUtil.getDateFormat().format(new Date()));
         storeFile(ConfigurationProperties.PROPERTIES_FILE_NAME, propertiesFileBuilder.toString());
     }
 

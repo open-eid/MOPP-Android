@@ -13,11 +13,11 @@ import java.util.Map;
 /**
  * Helper class for parsing values from configuration json.
  */
-class ConfigurationParser {
+public class ConfigurationParser {
 
     private final JSONObject configurationJson;
 
-    ConfigurationParser(String configuration) {
+    public ConfigurationParser(String configuration) {
         try {
             configurationJson = new JSONObject(configuration);
         } catch (JSONException e) {
@@ -57,7 +57,7 @@ class ConfigurationParser {
         return parsedValues;
     }
 
-    int parseIntValue(String... parameterNames) {
+    public int parseIntValue(String... parameterNames) {
         return (int) parseValue(parameterNames);
     }
 

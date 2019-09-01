@@ -46,4 +46,5 @@ ext {
     junitVersion = '4.12'
     truthVersion = '0.42'
     mockitoVersion = '3.0.0'
+    jsonVersion = '20190722'
 }

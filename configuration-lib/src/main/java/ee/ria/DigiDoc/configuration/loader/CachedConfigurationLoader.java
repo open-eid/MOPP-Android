@@ -20,6 +20,11 @@ public class CachedConfigurationLoader extends ConfigurationLoader {
 
     @Override
     String loadConfigurationSignaturePublicKey() {
-        return confCacheHandler.readFileContent(CachedConfigurationHandler.CACHED_CONFIG_PUB);
+        return "";
+    }
+
+    @Override
+    void assertConfigurationSignaturePublicKey() {
+        // Do nothing
     }
 }

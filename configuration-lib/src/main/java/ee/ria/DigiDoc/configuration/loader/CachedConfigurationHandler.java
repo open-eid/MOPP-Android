@@ -11,9 +11,9 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Properties;
 
+import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
 import timber.log.Timber;
 
 public class CachedConfigurationHandler {
@@ -29,48 +29,53 @@ public class CachedConfigurationHandler {
     private static final String CONFIGURATION_VERSION_SERIAL_PROPERTY_NAME = "configuration.version-serial";
 
     private final File cacheDir;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+    private final SimpleDateFormat dateFormat;
     private Properties properties;
 
     public CachedConfigurationHandler(File cacheDir) {
         this.cacheDir = cacheDir;
         loadProperties();
-    }
-
-    public boolean doesCachedConfigurationInfoExist() {
-        return properties != null;
-    }
-
-    public Date getConfLastUpdateCheckDate() {
-        return loadProperty(CONFIGURATION_LAST_UPDATE_CHECK_DATE_PROPERTY_NAME);
-    }
-
-    public Date getConfUpdateDate() {
-        return loadProperty(CONFIGURATION_UPDATE_DATE_PROPERTY_NAME);
+        if (properties == null) {
+            // Cached properties file missing, generating a empty one
+            cacheFile(CONFIGURATION_INFO_FILE_NAME, "");
+            loadProperties();
+            if (properties == null) {
+                throw new IllegalStateException("Failed to load properties file " + CONFIGURATION_INFO_FILE_NAME);
+            }
+        }
+        this.dateFormat = ConfigurationDateUtil.getDateFormat();
     }
 
     public Integer getConfigurationVersionSerial() {
-        String versionSerial = properties.getProperty(CONFIGURATION_VERSION_SERIAL_PROPERTY_NAME);
+        String versionSerial = loadProperty(CONFIGURATION_VERSION_SERIAL_PROPERTY_NAME);
         if (versionSerial == null) {
             return null;
         }
         return Integer.parseInt(versionSerial);
     }
 
-    private Date loadProperty(String propertyName) {
+    public Date getConfLastUpdateCheckDate() {
+        return loadPropertyDate(CONFIGURATION_LAST_UPDATE_CHECK_DATE_PROPERTY_NAME);
+    }
+
+    public Date getConfUpdateDate() {
+        return loadPropertyDate(CONFIGURATION_UPDATE_DATE_PROPERTY_NAME);
+    }
+
+    private Date loadPropertyDate(String propertyName) {
         try {
-            if (properties == null) {
-                return null;
-            }
-            String property = properties.getProperty(propertyName);
+            String property = loadProperty(propertyName);
             if (property == null) {
                 return null;
             }
-
             return dateFormat.parse(property);
         } catch (ParseException e) {
-            throw new IllegalStateException("Failed to parse configuration update date date", e);
+            throw new IllegalStateException("Failed to parse configuration update date", e);
         }
+    }
+
+    private String loadProperty(String propertyName) {
+        return properties.getProperty(propertyName);
     }
 
     public void cacheFile(String fileName, String content) {
@@ -85,32 +90,16 @@ public class CachedConfigurationHandler {
 
     public void updateConfigurationUpdatedDate(Date date) {
         String formattedUpdateDate = dateFormat.format(date);
-        if (properties != null) {
-            properties.setProperty(CONFIGURATION_UPDATE_DATE_PROPERTY_NAME, formattedUpdateDate);
-            properties.setProperty(CONFIGURATION_LAST_UPDATE_CHECK_DATE_PROPERTY_NAME, formattedUpdateDate);
-            updateProperties();
-        } else {
-            StringBuilder confInfoBuilder = new StringBuilder()
-                    .append(CONFIGURATION_UPDATE_DATE_PROPERTY_NAME)
-                    .append("=")
-                    .append(formattedUpdateDate)
-                    .append("\n")
-                    .append(CONFIGURATION_LAST_UPDATE_CHECK_DATE_PROPERTY_NAME)
-                    .append("=")
-                    .append(formattedUpdateDate);
-            cacheFile(CONFIGURATION_INFO_FILE_NAME, confInfoBuilder.toString());
-            loadProperties();
-        }
+        properties.setProperty(CONFIGURATION_UPDATE_DATE_PROPERTY_NAME, formattedUpdateDate);
+        properties.setProperty(CONFIGURATION_LAST_UPDATE_CHECK_DATE_PROPERTY_NAME, formattedUpdateDate);
     }
 
     public void updateConfigurationLastCheckDate(Date date) {
         properties.setProperty(CONFIGURATION_LAST_UPDATE_CHECK_DATE_PROPERTY_NAME, dateFormat.format(date));
-        updateProperties();
     }
 
     public void updateConfigurationVersionSerial(int versionSerial) {
         properties.setProperty(CONFIGURATION_VERSION_SERIAL_PROPERTY_NAME, String.valueOf(versionSerial));
-        updateProperties();
     }
 
     public String readFileContent(String filename) {
@@ -125,6 +114,10 @@ public class CachedConfigurationHandler {
         } catch (IOException e) {
             throw new IllegalStateException("Failed to read content of cached file '" + filename + "'", e);
         }
+    }
+
+    public boolean doesCachedConfigurationExist() {
+        return doesCachedConfigurationFileExists(CACHED_CONFIG_JSON);
     }
 
     public boolean doesCachedConfigurationFileExists(String fileName) {
@@ -142,7 +135,7 @@ public class CachedConfigurationHandler {
         }
     }
 
-    private void updateProperties() {
+    public void updateProperties() {
         try (FileOutputStream fileOutputStream = new FileOutputStream(cacheDir(CONFIGURATION_INFO_FILE_NAME))) {
             properties.store(fileOutputStream, null);
         } catch (IOException e) {

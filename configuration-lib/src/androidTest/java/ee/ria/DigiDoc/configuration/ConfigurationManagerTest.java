@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.Properties;
 
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
-import ee.ria.DigiDoc.configuration.loader.DefaultConfigurationLoader;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -144,7 +143,7 @@ public final class ConfigurationManagerTest {
         // Set central configuration url invalid, to emulate online configuration loading failure
         properties.setProperty(ConfigurationProperties.CENTRAL_CONFIGURATION_SERVICE_URL_PROPERTY, "invalid_url");
 
-        assertFalse(cacheConfHandler.doesCachedConfigurationInfoExist());
+        assertFalse(cacheConfHandler.doesCachedConfExist());
         assertFalse(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_JSON));
         assertFalse(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_PUB));
         assertFalse(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_RSA));
@@ -158,7 +157,7 @@ public final class ConfigurationManagerTest {
         assertNull(configuration.getConfigurationLastUpdateCheckDate());
         assertNull(configuration.getConfigurationUpdateDate());
 
-        assertFalse(cacheConfHandler.doesCachedConfigurationInfoExist());
+        assertFalse(cacheConfHandler.doesCachedConfExist());
         assertTrue(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_JSON));
         assertTrue(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_PUB));
         assertTrue(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_RSA));
@@ -175,7 +174,7 @@ public final class ConfigurationManagerTest {
         assertConfigurationValues(configuration);
         assertConfigurationUpdateDates(configuration, processStartDate, processEndDate);
 
-        assertTrue(cacheConfHandler.doesCachedConfigurationInfoExist());
+        assertTrue(cacheConfHandler.doesCachedConfExist());
         assertEquals(configuration.getConfigurationLastUpdateCheckDate(), cacheConfHandler.getConfLastUpdateCheckDate());
         assertEquals(configuration.getConfigurationUpdateDate(), cacheConfHandler.getConfUpdateDate());
         assertTrue(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_JSON));

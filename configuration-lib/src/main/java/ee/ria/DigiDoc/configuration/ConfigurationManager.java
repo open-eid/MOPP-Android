@@ -1,3 +1,4 @@
+
 package ee.ria.DigiDoc.configuration;
 
 import android.content.Context;
@@ -28,8 +29,8 @@ import timber.log.Timber;
  * from cache (if exists). If loading from cache fails or cache does not yet exist then default configuration
  * is loaded.
  *
- * If downloaded central service configuration signature matches with cached configuration signature then
- * cached configuration is loaded instead.
+ * If downloaded central service configuration signature matches with currently cached configuration signature
+ * then cached configuration is loaded instead.
  *
  * Default configuration is packaged to the APK assets folder and is updated by gradle task
  * FetchAndPackageDefaultConfigurationTask during APK building process. Along with default configuration
@@ -60,117 +61,109 @@ import timber.log.Timber;
  * version is used.
  *
  * If central configuration download fails for whatever reason then cached configuration is loaded.
- * If cached configuration loading fails for whatever reason then default configuration loaded.
+ * If cached configuration loading fails for whatever reason then default configuration is loaded.
  * If default configuration loading fails then application startup fails.
  */
 public class ConfigurationManager {
 
     private final String centralConfigurationServiceUrl;
-    private final int configurationUpdateInterval;
     private final CentralConfigurationLoader centralConfigurationLoader;
     private final DefaultConfigurationLoader defaultConfigurationLoader;
     private final CachedConfigurationLoader cachedConfigurationLoader;
     private final CachedConfigurationHandler cachedConfigurationHandler;
+    private final ConfigurationProperties configurationProperties;
 
     private ConfigurationSignatureVerifier confSignatureVerifier;
 
     public ConfigurationManager(Context context, ConfigurationProperties configurationProperties, CachedConfigurationHandler cachedConfigurationHandler) {
         this.cachedConfigurationHandler = cachedConfigurationHandler;
         this.centralConfigurationServiceUrl = configurationProperties.getCentralConfigurationServiceUrl();
-        this.configurationUpdateInterval = configurationProperties.getConfigurationUpdateInterval();
+        this.configurationProperties = configurationProperties;
         this.centralConfigurationLoader = new CentralConfigurationLoader(centralConfigurationServiceUrl, loadCentralConfServiceSSlCertIfPresent(context.getAssets()));
         this.defaultConfigurationLoader = new DefaultConfigurationLoader(context.getAssets());
         this.cachedConfigurationLoader = new CachedConfigurationLoader(cachedConfigurationHandler);
     }
 
     public ConfigurationProvider getConfiguration() {
-        String configurationJson = loadConfiguration();
-        ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
-        return parseAndConstructConfigurationProvider(configurationParser);
+        if (shouldUpdateConfiguration()) {
+            return loadCentralConfiguration();
+        }
+        // Continue using currently loaded and cached configuration
+        return null;
     }
 
     public ConfigurationProvider forceLoadCachedConfiguration() {
-        String configurationJson = loadCachedConfiguration();
-        ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
-        return parseAndConstructConfigurationProvider(configurationParser);
+        return loadCachedConfiguration();
     }
 
     public ConfigurationProvider forceLoadDefaultConfiguration() {
-        String configurationJson = loadDefaultConfiguration();
-        ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
-        return parseAndConstructConfigurationProvider(configurationParser);
+        return loadDefaultConfiguration();
     }
 
     ConfigurationProvider forceLoadCentralConfiguration() {
-        String configurationJson = loadCentralConfiguration();
-        ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
-        return parseAndConstructConfigurationProvider(configurationParser);
-    }
-
-    private String loadConfiguration() {
-        if (shouldUpdateConfiguration()) {
-            return loadCentralConfiguration();
-        } else {
-            return loadCachedConfiguration();
-        }
+        return loadCentralConfiguration();
     }
 
     private boolean shouldUpdateConfiguration() {
-        return !cachedConfigurationHandler.doesCachedConfigurationInfoExist() || isConfigurationOutdated();
+        return !cachedConfigurationHandler.doesCachedConfigurationExist() || isConfigurationOutdated();
     }
 
     private boolean isConfigurationOutdated() {
         Date currentDate = new Date();
         Date confLastUpdateDate = cachedConfigurationHandler.getConfLastUpdateCheckDate();
+        if (confLastUpdateDate == null) {
+            return true;
+        }
         long diffTime = currentDate.getTime() - confLastUpdateDate.getTime();
         long differenceInDays = diffTime / (1000 * 60 * 60 * 24);
-        return differenceInDays > configurationUpdateInterval;
+        return differenceInDays > configurationProperties.getConfigurationUpdateInterval();
     }
 
-    private String loadCentralConfiguration() {
+    private ConfigurationProvider loadCentralConfiguration() {
         try {
             Timber.i("Attempting to load configuration from central configuration service <%s>", centralConfigurationServiceUrl);
             String centralConfigurationSignature = centralConfigurationLoader.loadConfigurationSignature();
-            if (cachedConfigurationHandler.doesCachedConfigurationInfoExist() && isCachedConfUpToDate(centralConfigurationSignature)) {
+            if (cachedConfigurationHandler.doesCachedConfigurationExist() && isCachedConfUpToDate(centralConfigurationSignature)) {
                 Timber.i("Cached configuration signature matches with central configuration signature. Not updating and using cached configuration");
                 cachedConfigurationHandler.updateConfigurationLastCheckDate(new Date());
-                return loadCachedConfiguration();
+                cachedConfigurationHandler.updateProperties();
+                // Continue using currently loaded and cached configuration
+                return null;
             }
 
             centralConfigurationLoader.loadConfigurationJson();
             verifyConfigurationSignature(centralConfigurationLoader);
 
             cachedConfigurationHandler.updateConfigurationUpdatedDate(new Date());
-            cacheConfiguration(centralConfigurationLoader);
             Timber.i("Configuration successfully loaded from central configuration service");
-            return centralConfigurationLoader.getConfigurationJson();
+            return parseAndCacheConfiguration(centralConfigurationLoader);
         } catch (Exception e) {
             Timber.e(e, "Failed to load configuration from central configuration service");
             return loadCachedConfiguration();
         }
     }
 
-    private String loadCachedConfiguration() {
+    private ConfigurationProvider loadCachedConfiguration() {
         try {
             Timber.i("Attempting to load cached configuration");
             cachedConfigurationLoader.load();
             verifyConfigurationSignature(cachedConfigurationLoader);
             Timber.i("Cached configuration successfully loaded");
-            return cachedConfigurationLoader.getConfigurationJson();
+            return parseConfigurationProvider(cachedConfigurationLoader.getConfigurationJson());
         } catch (Exception e) {
             Timber.e(e, "Failed to load cached configuration");
             return loadDefaultConfiguration();
         }
     }
 
-    private String loadDefaultConfiguration() {
+    private ConfigurationProvider loadDefaultConfiguration() {
         try {
             Timber.i("Attempting to load default configuration");
             defaultConfigurationLoader.load();
             verifyConfigurationSignature(defaultConfigurationLoader);
             Timber.i("Default configuration successfully loaded");
-            cacheConfiguration(defaultConfigurationLoader);
-            return defaultConfigurationLoader.getConfigurationJson();
+            overrideConfUpdateDateWithDefaultConfigurationInitDownloadDate();
+            return parseAndCacheConfiguration(defaultConfigurationLoader);
         } catch (Exception e) {
             throw new IllegalStateException("Failed to load default configuration", e);
         }
@@ -193,21 +186,33 @@ public class ConfigurationManager {
         return cachedConfSignature.equals(centralConfigurationSignature);
     }
 
-    private void cacheConfiguration(ConfigurationLoader configurationLoader) {
-        cacheConfiguration(
-                configurationLoader.getConfigurationJson(),
-                configurationLoader.getConfigurationSignature(),
-                configurationLoader.getConfigurationSignaturePublicKey());
+    private void overrideConfUpdateDateWithDefaultConfigurationInitDownloadDate() {
+        Date defaultConfInitDownloadDate = configurationProperties.getPackagedConfigurationInitialDownloadDate();
+        Date cachedConfUpdateDate = cachedConfigurationHandler.getConfUpdateDate();
+        if (cachedConfUpdateDate == null || defaultConfInitDownloadDate.after(cachedConfUpdateDate)) {
+            cachedConfigurationHandler.updateConfigurationUpdatedDate(defaultConfInitDownloadDate);
+        }
     }
 
-    private void cacheConfiguration(String configurationJson, String configurationSignature, String configurationSignaturePublicKey) {
+    private ConfigurationProvider parseAndCacheConfiguration(ConfigurationLoader configurationLoader) {
+        ConfigurationProvider configurationProvider = parseConfigurationProvider(configurationLoader.getConfigurationJson());
+        cacheConfiguration(configurationLoader, configurationProvider);
+        Timber.i("Configuration successfully cached");
+
+        cachedConfigurationHandler.updateProperties();
+        return configurationProvider;
+    }
+
+    private ConfigurationProvider parseConfigurationProvider(String configurationJson) {
+        ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
+        return parseAndConstructConfigurationProvider(configurationParser);
+    }
+
+    private void cacheConfiguration(ConfigurationLoader configurationLoader, ConfigurationProvider configurationProvider) {
+        String configurationJson = configurationLoader.getConfigurationJson();
         cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_JSON, configurationJson);
-        cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_RSA, configurationSignature);
-        cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_PUB, configurationSignaturePublicKey);
-        if (cachedConfigurationHandler.doesCachedConfigurationInfoExist()) {
-            ConfigurationParser configurationParser = new ConfigurationParser(configurationJson);
-            cachedConfigurationHandler.updateConfigurationVersionSerial(configurationParser.parseIntValue("META-INF", "SERIAL"));
-        }
+        cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_RSA, configurationLoader.getConfigurationSignature());
+        cachedConfigurationHandler.updateConfigurationVersionSerial(configurationProvider.getMetaInf().getSerial());
     }
 
     private ConfigurationProvider parseAndConstructConfigurationProvider(final ConfigurationParser configurationParser) {

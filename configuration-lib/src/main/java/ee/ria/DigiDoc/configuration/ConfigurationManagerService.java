@@ -12,6 +12,7 @@ public class ConfigurationManagerService extends IntentService {
 
     public static final String TAG = ConfigurationManagerService.class.getName();
     private ConfigurationManager configurationManager;
+    private CachedConfigurationHandler cachedConfigurationHandler;
 
     public ConfigurationManagerService() {
         super(TAG);
@@ -21,8 +22,8 @@ public class ConfigurationManagerService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+        cachedConfigurationHandler = new CachedConfigurationHandler(getCacheDir());
         ConfigurationProperties configurationProperties = new ConfigurationProperties(getAssets());
-        CachedConfigurationHandler cachedConfigurationHandler = new CachedConfigurationHandler(getCacheDir());
         configurationManager = new ConfigurationManager(this, configurationProperties, cachedConfigurationHandler);
     }
 
@@ -30,7 +31,21 @@ public class ConfigurationManagerService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         ResultReceiver confResultReceiver = intent.getParcelableExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER);
         Bundle bundle = new Bundle();
-        bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, getConfiguration(intent));
+
+        ConfigurationProvider configurationProvider = getConfiguration(intent);
+
+        /*
+            Hackish solution: if returned configuration provider is null, that means central configuration equals
+            with currently loaded and cached configuration and no new configuration was loaded.
+            But during that process last update check date was changed. Since configuration provider is immutable,
+            building new provider from currently loaded one, with last update check date updated.
+         */
+        if (configurationProvider == null) {
+            configurationProvider = intent.getParcelableExtra(ConfigurationConstants.CONFIGURATION_PROVIDER);
+            configurationProvider = updateConfLastUpdateCheckDate(configurationProvider);
+        }
+
+        bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, configurationProvider);
         confResultReceiver.send(1, bundle);
     }
 
@@ -40,6 +55,23 @@ public class ConfigurationManagerService extends IntentService {
         } else {
             return configurationManager.getConfiguration();
         }
+    }
+
+    private ConfigurationProvider updateConfLastUpdateCheckDate(ConfigurationProvider configurationProvider) {
+        return ConfigurationProvider.builder()
+                .setMetaInf(configurationProvider.getMetaInf())
+                .setConfigUrl(configurationProvider.getConfigUrl())
+                .setSivaUrl(configurationProvider.getSivaUrl())
+                .setTslUrl(configurationProvider.getTslUrl())
+                .setTslCerts(configurationProvider.getTslCerts())
+                .setTsaUrl(configurationProvider.getTsaUrl())
+                .setMidSignUrl(configurationProvider.getMidSignUrl())
+                .setLdapPersonUrl(configurationProvider.getLdapPersonUrl())
+                .setLdapCorpUrl(configurationProvider.getLdapCorpUrl())
+                .setOCSPUrls(configurationProvider.getOCSPUrls())
+                .setConfigurationLastUpdateCheckDate(cachedConfigurationHandler.getConfLastUpdateCheckDate())
+                .setConfigurationUpdateDate(configurationProvider.getConfigurationUpdateDate())
+                .build();
     }
 }
 
