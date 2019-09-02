@@ -1,19 +1,16 @@
 package ee.ria.DigiDoc.configuration.loader;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
 import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
+import ee.ria.DigiDoc.configuration.util.FileUtils;
 import timber.log.Timber;
 
 public class CachedConfigurationHandler {
@@ -79,23 +76,11 @@ public class CachedConfigurationHandler {
     }
 
     public void cacheFile(String fileName, String content) {
-        File file = new File(cacheDir(fileName));
-        file.getParentFile().mkdirs();
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(content);
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to cache file '" + fileName + "'!", e);
-        }
+        FileUtils.storeFile(cacheDir(fileName), content);
     }
 
     public void cacheFile(String fileName, byte[] content) {
-        File file = new File(cacheDir(fileName));
-        file.getParentFile().mkdirs();
-        try (FileOutputStream os = new FileOutputStream(file)) {
-            os.write(content);
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to cache file '" + fileName + "'!", e);
-        }
+        FileUtils.storeFile(cacheDir(fileName), content);
     }
 
     public void updateConfigurationUpdatedDate(Date date) {
@@ -111,28 +96,11 @@ public class CachedConfigurationHandler {
     }
 
     String readFileContent(String filename) {
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(new FileInputStream(cacheDir(filename))))) {
-            StringBuilder sb = new StringBuilder();
-            int i;
-            while((i = reader.read()) != -1) {
-                sb.append((char) i);
-            }
-            return sb.toString().trim();
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to read content of cached file '" + filename + "'", e);
-        }
+        return FileUtils.readFileContent(cacheDir(filename));
     }
 
     public byte[] readFileContentBytes(String filename) {
-        File file = new File(cacheDir(filename));
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            byte[] data = new byte[(int) file.length()];
-            fileInputStream.read(data);
-            return data;
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to read content of cached file '" + filename + "'", e);
-        }
+        return FileUtils.readFileContentBytes(cacheDir(filename));
     }
 
     public boolean doesCachedConfigurationExist() {

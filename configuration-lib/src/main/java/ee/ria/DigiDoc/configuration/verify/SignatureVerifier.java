@@ -4,7 +4,6 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.util.encoders.Base64;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -23,10 +22,10 @@ import java.security.spec.RSAPublicKeySpec;
  */
 class SignatureVerifier {
 
-    static boolean verify(String base64EncodedSignature, String publicKeyPEM, String signedContent) {
+    static boolean verify(byte[] signature, String publicKeyPEM, String signedContent) {
         SubjectPublicKeyInfo publicKeyInfo = parsePublicKeyInfo(publicKeyPEM);
         PublicKey publicKey = convertPublicKeyInfoToPublicKey(publicKeyInfo);
-        return verifySignature(base64EncodedSignature, publicKey, signedContent);
+        return verifySignature(signature, publicKey, signedContent);
     }
 
     private static PublicKey convertPublicKeyInfoToPublicKey(SubjectPublicKeyInfo publicKeyInfo) {
@@ -48,12 +47,12 @@ class SignatureVerifier {
         }
     }
 
-    private static boolean verifySignature(String base64EncodedSignature, PublicKey publicKey, String signedContent) {
+    private static boolean verifySignature(byte[] signatureBytes, PublicKey publicKey, String signedContent) {
         try {
             Signature signature = Signature.getInstance("SHA512withRSA");
             signature.initVerify(publicKey);
             signature.update(signedContent.getBytes(StandardCharsets.UTF_8));
-            return signature.verify(Base64.decode(base64EncodedSignature));
+            return signature.verify(signatureBytes);
         } catch (NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
             throw new IllegalStateException("Failed to verify signature", e);
         }

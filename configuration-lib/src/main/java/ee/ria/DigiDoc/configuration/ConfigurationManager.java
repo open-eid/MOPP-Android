@@ -4,8 +4,6 @@ package ee.ria.DigiDoc.configuration;
 import android.content.Context;
 import android.content.res.AssetManager;
 
-import org.bouncycastle.util.encoders.Base64;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -125,7 +123,7 @@ public class ConfigurationManager {
     private ConfigurationProvider loadCentralConfiguration() {
         try {
             Timber.i("Attempting to load configuration from central configuration service <%s>", centralConfigurationServiceUrl);
-            String centralConfigurationSignature = centralConfigurationLoader.loadConfigurationSignature();
+            byte[] centralConfigurationSignature = centralConfigurationLoader.loadConfigurationSignature();
             Date currentDate = new Date();
             cachedConfigurationHandler.updateConfigurationLastCheckDate(currentDate);
             if (cachedConfigurationHandler.doesCachedConfigurationExist() && isCachedConfUpToDate(centralConfigurationSignature)) {
@@ -184,9 +182,9 @@ public class ConfigurationManager {
                 configurationLoader.getConfigurationJson(), configurationLoader.getConfigurationSignature());
     }
 
-    private boolean isCachedConfUpToDate(String centralConfigurationSignature) {
+    private boolean isCachedConfUpToDate(byte[] centralConfigurationSignature) {
         byte[] cachedConfSignature = cachedConfigurationHandler.readFileContentBytes(CachedConfigurationHandler.CACHED_CONFIG_RSA);
-        return Arrays.equals(cachedConfSignature, Base64.decode(centralConfigurationSignature));
+        return Arrays.equals(cachedConfSignature, centralConfigurationSignature);
     }
 
     private void overrideConfUpdateDateWithDefaultConfigurationInitDownloadDate() {
@@ -214,8 +212,7 @@ public class ConfigurationManager {
     private void cacheConfiguration(ConfigurationLoader configurationLoader, ConfigurationProvider configurationProvider) {
         String configurationJson = configurationLoader.getConfigurationJson();
         cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_JSON, configurationJson);
-        byte[] configurationSignature = Base64.decode(configurationLoader.getConfigurationSignature());
-        cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_RSA, configurationSignature);
+        cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_RSA, configurationLoader.getConfigurationSignature());
         cachedConfigurationHandler.updateConfigurationVersionSerial(configurationProvider.getMetaInf().getSerial());
     }
 

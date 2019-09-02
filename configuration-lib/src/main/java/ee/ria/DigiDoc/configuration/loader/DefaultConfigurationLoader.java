@@ -2,9 +2,10 @@ package ee.ria.DigiDoc.configuration.loader;
 
 import android.content.res.AssetManager;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
+
+import ee.ria.DigiDoc.configuration.util.FileUtils;
 
 /**
  * Default configuration loader.
@@ -28,8 +29,8 @@ public class DefaultConfigurationLoader extends ConfigurationLoader {
     }
 
     @Override
-    String loadConfigurationSignature() {
-        return readFileContent(DEFAULT_CONFIG_RSA);
+    byte[] loadConfigurationSignature() {
+        return readFileContentBytes(DEFAULT_CONFIG_RSA);
     }
 
     @Override
@@ -38,19 +39,18 @@ public class DefaultConfigurationLoader extends ConfigurationLoader {
     }
 
     private String readFileContent(String filename) {
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(
-                        assetManager.open("config/" + filename)))) {
-            StringBuilder sb = new StringBuilder();
-            String line = reader.readLine();
-            while (line != null) {
-                sb.append(line);
-                sb.append("\n");
-                line = reader.readLine();
-            }
-            return sb.toString();
+        try (InputStream inputStream = assetManager.open("config/" + filename)) {
+            return FileUtils.readFileContent(inputStream);
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to read file content", e);
+            throw new IllegalStateException("Failed to read file content '" + filename + "'", e);
+        }
+    }
+
+    private byte[] readFileContentBytes(String filename) {
+        try (InputStream inputStream = assetManager.open("config/" + filename)) {
+            return FileUtils.readFileContentBytes(inputStream);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to read file content '" + filename + "'", e);
         }
     }
 }

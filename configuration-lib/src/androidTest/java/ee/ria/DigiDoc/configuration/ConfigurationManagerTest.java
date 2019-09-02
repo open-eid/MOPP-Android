@@ -70,7 +70,7 @@ public final class ConfigurationManagerTest {
         assertConfigurationValues(configuration);
         assertNull(configuration.getConfigurationLastUpdateCheckDate());
         // Packaged default configuration download date, initialized during APK build
-        assertEquals("Fri Aug 30 14:22:02 GMT+03:00 2019", configuration.getConfigurationUpdateDate().toString());
+        assertEquals("Mon Sep 02 18:38:15 GMT+03:00 2019", configuration.getConfigurationUpdateDate().toString());
     }
 
     @Test
@@ -80,7 +80,7 @@ public final class ConfigurationManagerTest {
         assertNull(configuration.getConfigurationLastUpdateCheckDate());
         assertNotNull(configuration.getConfigurationUpdateDate());
         // Packaged default configuration download date, initialized during APK build
-        assertEquals("Fri Aug 30 14:22:02 GMT+03:00 2019", configuration.getConfigurationUpdateDate().toString());
+        assertEquals("Mon Sep 02 18:38:15 GMT+03:00 2019", configuration.getConfigurationUpdateDate().toString());
     }
 
     @Test
@@ -158,7 +158,7 @@ public final class ConfigurationManagerTest {
         assertDefaultConfigurationValues(configuration);
         assertNull(configuration.getConfigurationLastUpdateCheckDate());
         // Packaged default configuration download date, initialized during APK build
-        assertEquals("Fri Aug 30 14:22:02 GMT+03:00 2019", configuration.getConfigurationUpdateDate().toString());
+        assertEquals("Mon Sep 02 18:38:15 GMT+03:00 2019", configuration.getConfigurationUpdateDate().toString());
 
         assertTrue(cacheConfHandler.doesCachedConfigurationExist());
         assertTrue(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_JSON));
@@ -214,8 +214,8 @@ public final class ConfigurationManagerTest {
         assertEquals("https://digidocservice.sk.ee", configuration.getMidSignUrl());
         assertEquals("https://siva.eesti.ee/V2/validate", configuration.getSivaUrl());
         assertEquals("http://dd-at.ria.ee/tsa", configuration.getTsaUrl());
-        assertEquals("https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl-mp.xml", configuration.getTslUrl());
-        assertEquals("20190805110015Z", configuration.getMetaInf().getDate());
+        assertEquals("https://ec.europa.eu/tools/lotl/eu-lotl.xml", configuration.getTslUrl());
+        assertEquals("20190816123015Z", configuration.getMetaInf().getDate());
         assertEquals("https://id.eesti.ee/config.json", configuration.getMetaInf().getUrl());
         assertSame(93, configuration.getMetaInf().getSerial());
         assertSame(1, configuration.getMetaInf().getVersion());

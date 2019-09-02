@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.configuration.loader;
 
+import org.bouncycastle.util.encoders.Base64;
+
 import java.security.cert.X509Certificate;
 
 /**
@@ -16,21 +18,22 @@ public class CentralConfigurationLoader extends ConfigurationLoader {
     @Override
     public String loadConfigurationJson() {
         super.configurationJson = configurationClient.getConfiguration().trim();
-        assertValueNotBlank(configurationJson, "configuration json");
+        assertConfigurationJson();
         return configurationJson;
     }
 
     @Override
-    public String loadConfigurationSignature() {
-        super.configurationSignature = configurationClient.getConfigurationSignature().trim();
-        assertValueNotBlank(configurationSignature, "configuration signature");
+    public byte[] loadConfigurationSignature() {
+        String trimmedConfigurationSignature = configurationClient.getConfigurationSignature().trim();
+        super.configurationSignature = Base64.decode(trimmedConfigurationSignature);
+        assertConfigurationSignature();
         return configurationSignature;
     }
 
     @Override
     public String loadConfigurationSignaturePublicKey() {
         super.configurationSignaturePublicKey = configurationClient.getConfigurationSignaturePublicKey().trim();
-        assertValueNotBlank(configurationSignaturePublicKey, "configuration signature public key");
+        assertConfigurationSignaturePublicKey();
         return configurationSignaturePublicKey;
     }
 }

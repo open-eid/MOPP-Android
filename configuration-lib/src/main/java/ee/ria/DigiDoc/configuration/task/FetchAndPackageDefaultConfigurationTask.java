@@ -1,10 +1,7 @@
 package ee.ria.DigiDoc.configuration.task;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -18,6 +15,7 @@ import ee.ria.DigiDoc.configuration.ConfigurationProperties;
 import ee.ria.DigiDoc.configuration.loader.CentralConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.ConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.DefaultConfigurationLoader;
+import ee.ria.DigiDoc.configuration.util.FileUtils;
 import ee.ria.DigiDoc.configuration.verify.ConfigurationSignatureVerifier;
 
 /**
@@ -132,17 +130,15 @@ public class FetchAndPackageDefaultConfigurationTask {
     }
 
     private static void storeFile(String filename, String fileContent) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(configFileDir(filename)))) {
-            writer.write(fileContent);
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to store file '" + filename + "' as default configuration", e);
-        }
+        FileUtils.storeFile(configFileDir(filename), fileContent);
     }
 
-    private static File configFileDir(String filename) {
-        File file = new File(System.getProperty("user.dir") + "/src/" + buildVariant + "/assets/config/" + filename);
-        file.getParentFile().mkdirs();
-        return file;
+    private static void storeFile(String filename, byte[] fileContent) {
+        FileUtils.storeFile(configFileDir(filename), fileContent);
+    }
+
+    private static String configFileDir(String filename) {
+        return System.getProperty("user.dir") + "/src/" + buildVariant + "/assets/config/" + filename;
     }
 
     private static X509Certificate loadCentralConfServiceSSLCert() {

@@ -14,8 +14,8 @@ public class CachedConfigurationLoader extends ConfigurationLoader {
     }
 
     @Override
-    String loadConfigurationSignature() {
-        return confCacheHandler.readFileContent(CachedConfigurationHandler.CACHED_CONFIG_RSA);
+    byte[] loadConfigurationSignature() {
+        return confCacheHandler.readFileContentBytes(CachedConfigurationHandler.CACHED_CONFIG_RSA);
     }
 
     @Override

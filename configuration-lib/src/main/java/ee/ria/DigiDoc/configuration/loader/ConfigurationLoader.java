@@ -3,13 +3,13 @@ package ee.ria.DigiDoc.configuration.loader;
 public abstract class ConfigurationLoader {
 
     String configurationJson;
-    String configurationSignature;
+    byte[] configurationSignature;
     String configurationSignaturePublicKey;
 
     public void load() {
         this.configurationJson = loadConfigurationJson().trim();
         assertConfigurationJson();
-        this.configurationSignature = loadConfigurationSignature().trim();
+        this.configurationSignature = loadConfigurationSignature();
         assertConfigurationSignature();
         this.configurationSignaturePublicKey = loadConfigurationSignaturePublicKey().trim();
         assertConfigurationSignaturePublicKey();
@@ -20,7 +20,9 @@ public abstract class ConfigurationLoader {
     }
 
     void assertConfigurationSignature() {
-        assertValueNotBlank(configurationSignature, "configuration signature");
+        if (configurationSignature == null || configurationSignature.length <= 0) {
+            throw new IllegalStateException("Loaded configuration signature file is blank");
+        }
     }
 
     void assertConfigurationSignaturePublicKey() {
@@ -31,7 +33,7 @@ public abstract class ConfigurationLoader {
         return configurationJson;
     }
 
-    public String getConfigurationSignature() {
+    public byte[] getConfigurationSignature() {
         return configurationSignature;
     }
 
@@ -41,11 +43,11 @@ public abstract class ConfigurationLoader {
 
     abstract String loadConfigurationJson();
 
-    abstract String loadConfigurationSignature();
+    abstract byte[] loadConfigurationSignature();
 
     abstract String loadConfigurationSignaturePublicKey();
 
-    void assertValueNotBlank(String value, String valueName) {
+    private void assertValueNotBlank(String value, String valueName) {
         if (value == null || value.isEmpty()) {
             throw new IllegalStateException("Loaded " + valueName + " file is blank");
         }
