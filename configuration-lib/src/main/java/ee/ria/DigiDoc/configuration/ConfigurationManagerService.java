@@ -1,22 +1,27 @@
 package ee.ria.DigiDoc.configuration;
 
-import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
+
+import java.util.Date;
 
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
-import timber.log.Timber;
 
-public class ConfigurationManagerService extends IntentService {
+public class ConfigurationManagerService extends JobIntentService {
 
-    public static final String TAG = ConfigurationManagerService.class.getName();
+    public static final int INIT_LIBDIGIDOC_RESULT_CODE = 1;
+
     private ConfigurationManager configurationManager;
     private CachedConfigurationHandler cachedConfigurationHandler;
 
-    public ConfigurationManagerService() {
-        super(TAG);
-        Timber.tag(TAG);
+    private static final int JOB_ID = 1000;
+
+    public static void enqueueWork(Context context, Intent intent) {
+        enqueueWork(context, ConfigurationManagerService.class, JOB_ID, intent);
     }
 
     @Override
@@ -28,11 +33,12 @@ public class ConfigurationManagerService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleWork(@NonNull Intent intent) {
         ResultReceiver confResultReceiver = intent.getParcelableExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER);
         Bundle bundle = new Bundle();
 
         ConfigurationProvider configurationProvider = getConfiguration(intent);
+        int resultCode = 2;
 
         /*
             Hackish solution: if returned configuration provider is null, that means central configuration equals
@@ -40,13 +46,14 @@ public class ConfigurationManagerService extends IntentService {
             But during that process last update check date was changed. Since configuration provider is immutable,
             building new provider from currently loaded one, with last update check date updated.
          */
-        if (configurationProvider == null) {
-            configurationProvider = intent.getParcelableExtra(ConfigurationConstants.CONFIGURATION_PROVIDER);
-            configurationProvider = updateConfLastUpdateCheckDate(configurationProvider);
+        Date lastConfigurationUpdateDate = intent.getParcelableExtra(ConfigurationConstants.LAST_CONFIGURATION_UPDATE);
+        Date confUpdateDate = configurationProvider.getConfigurationUpdateDate();
+        if (lastConfigurationUpdateDate == null || (confUpdateDate != null && confUpdateDate.after(lastConfigurationUpdateDate))) {
+            resultCode = INIT_LIBDIGIDOC_RESULT_CODE;
         }
 
         bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, configurationProvider);
-        confResultReceiver.send(1, bundle);
+        confResultReceiver.send(resultCode, bundle);
     }
 
     private ConfigurationProvider getConfiguration(Intent intent) {
@@ -55,23 +62,6 @@ public class ConfigurationManagerService extends IntentService {
         } else {
             return configurationManager.getConfiguration();
         }
-    }
-
-    private ConfigurationProvider updateConfLastUpdateCheckDate(ConfigurationProvider configurationProvider) {
-        return ConfigurationProvider.builder()
-                .setMetaInf(configurationProvider.getMetaInf())
-                .setConfigUrl(configurationProvider.getConfigUrl())
-                .setSivaUrl(configurationProvider.getSivaUrl())
-                .setTslUrl(configurationProvider.getTslUrl())
-                .setTslCerts(configurationProvider.getTslCerts())
-                .setTsaUrl(configurationProvider.getTsaUrl())
-                .setMidSignUrl(configurationProvider.getMidSignUrl())
-                .setLdapPersonUrl(configurationProvider.getLdapPersonUrl())
-                .setLdapCorpUrl(configurationProvider.getLdapCorpUrl())
-                .setOCSPUrls(configurationProvider.getOCSPUrls())
-                .setConfigurationLastUpdateCheckDate(cachedConfigurationHandler.getConfLastUpdateCheckDate())
-                .setConfigurationUpdateDate(configurationProvider.getConfigurationUpdateDate())
-                .build();
     }
 }
 

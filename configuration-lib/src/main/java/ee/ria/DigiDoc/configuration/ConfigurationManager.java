@@ -87,9 +87,9 @@ public class ConfigurationManager {
     public ConfigurationProvider getConfiguration() {
         if (shouldUpdateConfiguration()) {
             return loadCentralConfiguration();
+        } else {
+            return loadCachedConfiguration();
         }
-        // Continue using currently loaded and cached configuration
-        return null;
     }
 
     public ConfigurationProvider forceLoadCachedConfiguration() {
@@ -123,12 +123,11 @@ public class ConfigurationManager {
         try {
             Timber.i("Attempting to load configuration from central configuration service <%s>", centralConfigurationServiceUrl);
             String centralConfigurationSignature = centralConfigurationLoader.loadConfigurationSignature();
+            cachedConfigurationHandler.updateConfigurationLastCheckDate(new Date());
             if (cachedConfigurationHandler.doesCachedConfigurationExist() && isCachedConfUpToDate(centralConfigurationSignature)) {
                 Timber.i("Cached configuration signature matches with central configuration signature. Not updating and using cached configuration");
-                cachedConfigurationHandler.updateConfigurationLastCheckDate(new Date());
                 cachedConfigurationHandler.updateProperties();
-                // Continue using currently loaded and cached configuration
-                return null;
+                return loadCachedConfiguration();
             }
 
             centralConfigurationLoader.loadConfigurationJson();

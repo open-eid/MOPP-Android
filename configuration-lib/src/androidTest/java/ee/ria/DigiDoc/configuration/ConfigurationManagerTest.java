@@ -69,7 +69,8 @@ public final class ConfigurationManagerTest {
         ConfigurationProvider configuration = configurationManager.forceLoadCachedConfiguration();
         assertConfigurationValues(configuration);
         assertNull(configuration.getConfigurationLastUpdateCheckDate());
-        assertNull(configuration.getConfigurationUpdateDate());
+        // Packaged default configuration download date, initialized during APK build
+        assertEquals("Fri Aug 30 14:22:02 GMT+03:00 2019", configuration.getConfigurationUpdateDate().toString());
     }
 
     @Test
@@ -77,7 +78,9 @@ public final class ConfigurationManagerTest {
         ConfigurationProvider configuration = configurationManager.forceLoadDefaultConfiguration();
         assertConfigurationValues(configuration);
         assertNull(configuration.getConfigurationLastUpdateCheckDate());
-        assertNull(configuration.getConfigurationUpdateDate());
+        assertNotNull(configuration.getConfigurationUpdateDate());
+        // Packaged default configuration download date, initialized during APK build
+        assertEquals("Fri Aug 30 14:22:02 GMT+03:00 2019", configuration.getConfigurationUpdateDate().toString());
     }
 
     @Test
@@ -143,9 +146,8 @@ public final class ConfigurationManagerTest {
         // Set central configuration url invalid, to emulate online configuration loading failure
         properties.setProperty(ConfigurationProperties.CENTRAL_CONFIGURATION_SERVICE_URL_PROPERTY, "invalid_url");
 
-        assertFalse(cacheConfHandler.doesCachedConfExist());
+        assertFalse(cacheConfHandler.doesCachedConfigurationExist());
         assertFalse(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_JSON));
-        assertFalse(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_PUB));
         assertFalse(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_RSA));
 
         configurationManager = new ConfigurationManager(InstrumentationRegistry.getTargetContext(), configurationProperties, cacheConfHandler);
@@ -155,11 +157,11 @@ public final class ConfigurationManagerTest {
         ConfigurationProvider configuration = configurationManager.getConfiguration();
         assertDefaultConfigurationValues(configuration);
         assertNull(configuration.getConfigurationLastUpdateCheckDate());
-        assertNull(configuration.getConfigurationUpdateDate());
+        // Packaged default configuration download date, initialized during APK build
+        assertEquals("Fri Aug 30 14:22:02 GMT+03:00 2019", configuration.getConfigurationUpdateDate().toString());
 
-        assertFalse(cacheConfHandler.doesCachedConfExist());
+        assertTrue(cacheConfHandler.doesCachedConfigurationExist());
         assertTrue(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_JSON));
-        assertTrue(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_PUB));
         assertTrue(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_RSA));
 
         // Set central configuration url back to valid, to emulate online configuration loading successful case
@@ -174,11 +176,10 @@ public final class ConfigurationManagerTest {
         assertConfigurationValues(configuration);
         assertConfigurationUpdateDates(configuration, processStartDate, processEndDate);
 
-        assertTrue(cacheConfHandler.doesCachedConfExist());
+        assertTrue(cacheConfHandler.doesCachedConfigurationExist());
         assertEquals(configuration.getConfigurationLastUpdateCheckDate(), cacheConfHandler.getConfLastUpdateCheckDate());
         assertEquals(configuration.getConfigurationUpdateDate(), cacheConfHandler.getConfUpdateDate());
         assertTrue(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_JSON));
-        assertTrue(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_PUB));
         assertTrue(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_RSA));
     }
 

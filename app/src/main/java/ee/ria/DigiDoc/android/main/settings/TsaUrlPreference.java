@@ -12,7 +12,6 @@ import com.takisoft.fix.support.v7.preference.EditTextPreference;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
-import ee.ria.DigiDoc.sign.SignLib;
 
 public class TsaUrlPreference extends EditTextPreference {
 

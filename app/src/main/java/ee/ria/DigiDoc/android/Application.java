@@ -153,7 +153,7 @@ public class Application extends android.app.Application {
         Bundle bundle = new Bundle();
         bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, configurationProvider);
         ConfigurationProviderReceiver confProviderReceiver = new ConfigurationProviderReceiver(new Handler());
-        confProviderReceiver.send(1, bundle);
+        confProviderReceiver.send(ConfigurationManagerService.INIT_LIBDIGIDOC_RESULT_CODE, bundle);
 
         // Load configuration again in asynchronous manner, from central if needed or cache if present.
         initAsyncConfigurationLoad(new ConfigurationProviderReceiver(new Handler()), false);
@@ -176,8 +176,8 @@ public class Application extends android.app.Application {
         Intent intent = new Intent(this, ConfigurationManagerService.class);
         intent.putExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER, confProviderReceiver);
         intent.putExtra(ConfigurationConstants.FORCE_LOAD_CENTRAL_CONFIGURATION, forceLoadCentral);
-        intent.putExtra(ConfigurationConstants.CONFIGURATION_PROVIDER, configurationProvider);
-        this.startService(intent);
+        intent.putExtra(ConfigurationConstants.LAST_CONFIGURATION_UPDATE, configurationProvider.getConfigurationUpdateDate());
+        ConfigurationManagerService.enqueueWork(this, intent);
     }
 
     public ConfigurationProvider getConfigurationProvider() {
@@ -199,7 +199,9 @@ public class Application extends android.app.Application {
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             configurationProvider = resultData.getParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER);
-            setupSignLib();
+            if (resultCode == ConfigurationManagerService.INIT_LIBDIGIDOC_RESULT_CODE) {
+                setupSignLib();
+            }
             if (diagnosticsView != null) {
                 diagnosticsView.updateViewData(configurationProvider);
             }

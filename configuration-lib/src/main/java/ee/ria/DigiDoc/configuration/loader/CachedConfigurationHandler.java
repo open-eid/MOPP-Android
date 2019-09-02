@@ -89,9 +89,7 @@ public class CachedConfigurationHandler {
     }
 
     public void updateConfigurationUpdatedDate(Date date) {
-        String formattedUpdateDate = dateFormat.format(date);
-        properties.setProperty(CONFIGURATION_UPDATE_DATE_PROPERTY_NAME, formattedUpdateDate);
-        properties.setProperty(CONFIGURATION_LAST_UPDATE_CHECK_DATE_PROPERTY_NAME, formattedUpdateDate);
+        properties.setProperty(CONFIGURATION_UPDATE_DATE_PROPERTY_NAME, dateFormat.format(date));
     }
 
     public void updateConfigurationLastCheckDate(Date date) {

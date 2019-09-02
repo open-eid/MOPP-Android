@@ -33,6 +33,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
     public DiagnosticsView(Context context) {
         super(context);
+        dateFormat = ConfigurationDateUtil.getDateFormat();
         inflate(context, R.layout.main_diagnostics, this);
         toolbarView = findViewById(R.id.toolbar);
         navigator = Application.component(context).navigator();
