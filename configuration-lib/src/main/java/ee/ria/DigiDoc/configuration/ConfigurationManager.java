@@ -4,12 +4,15 @@ package ee.ria.DigiDoc.configuration;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import org.bouncycastle.util.encoders.Base64;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Date;
 
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
@@ -123,7 +126,8 @@ public class ConfigurationManager {
         try {
             Timber.i("Attempting to load configuration from central configuration service <%s>", centralConfigurationServiceUrl);
             String centralConfigurationSignature = centralConfigurationLoader.loadConfigurationSignature();
-            cachedConfigurationHandler.updateConfigurationLastCheckDate(new Date());
+            Date currentDate = new Date();
+            cachedConfigurationHandler.updateConfigurationLastCheckDate(currentDate);
             if (cachedConfigurationHandler.doesCachedConfigurationExist() && isCachedConfUpToDate(centralConfigurationSignature)) {
                 Timber.i("Cached configuration signature matches with central configuration signature. Not updating and using cached configuration");
                 cachedConfigurationHandler.updateProperties();
@@ -133,7 +137,7 @@ public class ConfigurationManager {
             centralConfigurationLoader.loadConfigurationJson();
             verifyConfigurationSignature(centralConfigurationLoader);
 
-            cachedConfigurationHandler.updateConfigurationUpdatedDate(new Date());
+            cachedConfigurationHandler.updateConfigurationUpdatedDate(currentDate);
             Timber.i("Configuration successfully loaded from central configuration service");
             return parseAndCacheConfiguration(centralConfigurationLoader);
         } catch (Exception e) {
@@ -181,8 +185,8 @@ public class ConfigurationManager {
     }
 
     private boolean isCachedConfUpToDate(String centralConfigurationSignature) {
-        String cachedConfSignature = cachedConfigurationHandler.readFileContent(CachedConfigurationHandler.CACHED_CONFIG_RSA);
-        return cachedConfSignature.equals(centralConfigurationSignature);
+        byte[] cachedConfSignature = cachedConfigurationHandler.readFileContentBytes(CachedConfigurationHandler.CACHED_CONFIG_RSA);
+        return Arrays.equals(cachedConfSignature, Base64.decode(centralConfigurationSignature));
     }
 
     private void overrideConfUpdateDateWithDefaultConfigurationInitDownloadDate() {
@@ -210,7 +214,8 @@ public class ConfigurationManager {
     private void cacheConfiguration(ConfigurationLoader configurationLoader, ConfigurationProvider configurationProvider) {
         String configurationJson = configurationLoader.getConfigurationJson();
         cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_JSON, configurationJson);
-        cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_RSA, configurationLoader.getConfigurationSignature());
+        byte[] configurationSignature = Base64.decode(configurationLoader.getConfigurationSignature());
+        cachedConfigurationHandler.cacheFile(CachedConfigurationHandler.CACHED_CONFIG_RSA, configurationSignature);
         cachedConfigurationHandler.updateConfigurationVersionSerial(configurationProvider.getMetaInf().getSerial());
     }
 

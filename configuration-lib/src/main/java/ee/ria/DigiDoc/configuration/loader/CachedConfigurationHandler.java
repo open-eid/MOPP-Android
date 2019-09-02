@@ -88,6 +88,16 @@ public class CachedConfigurationHandler {
         }
     }
 
+    public void cacheFile(String fileName, byte[] content) {
+        File file = new File(cacheDir(fileName));
+        file.getParentFile().mkdirs();
+        try (FileOutputStream os = new FileOutputStream(file)) {
+            os.write(content);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to cache file '" + fileName + "'!", e);
+        }
+    }
+
     public void updateConfigurationUpdatedDate(Date date) {
         properties.setProperty(CONFIGURATION_UPDATE_DATE_PROPERTY_NAME, dateFormat.format(date));
     }
@@ -100,7 +110,7 @@ public class CachedConfigurationHandler {
         properties.setProperty(CONFIGURATION_VERSION_SERIAL_PROPERTY_NAME, String.valueOf(versionSerial));
     }
 
-    public String readFileContent(String filename) {
+    String readFileContent(String filename) {
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(new FileInputStream(cacheDir(filename))))) {
             StringBuilder sb = new StringBuilder();
@@ -109,6 +119,17 @@ public class CachedConfigurationHandler {
                 sb.append((char) i);
             }
             return sb.toString().trim();
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to read content of cached file '" + filename + "'", e);
+        }
+    }
+
+    public byte[] readFileContentBytes(String filename) {
+        File file = new File(cacheDir(filename));
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            byte[] data = new byte[(int) file.length()];
+            fileInputStream.read(data);
+            return data;
         } catch (IOException e) {
             throw new IllegalStateException("Failed to read content of cached file '" + filename + "'", e);
         }
