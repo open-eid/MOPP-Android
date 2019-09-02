@@ -85,6 +85,12 @@ android {
     }
 }
 
+configurations {
+    all {
+        exclude group: 'org.json', module: 'json'
+    }
+}
+
 dependencies {
     implementation "com.android.support:support-annotations:${androidSupportLibraryVersion}"
     implementation "com.android.support:support-v4:${androidSupportLibraryVersion}"
