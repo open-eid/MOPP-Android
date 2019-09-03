@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcel;
 import android.os.ResultReceiver;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
@@ -37,6 +38,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.Security;
+import java.util.Date;
 import java.util.Map;
 
 import javax.inject.Provider;
@@ -176,7 +178,10 @@ public class Application extends android.app.Application {
         Intent intent = new Intent(this, ConfigurationManagerService.class);
         intent.putExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER, confProviderReceiver);
         intent.putExtra(ConfigurationConstants.FORCE_LOAD_CENTRAL_CONFIGURATION, forceLoadCentral);
-        intent.putExtra(ConfigurationConstants.LAST_CONFIGURATION_UPDATE, configurationProvider.getConfigurationUpdateDate());
+        Date configurationUpdateDate = configurationProvider.getConfigurationUpdateDate();
+        if (configurationUpdateDate != null) {
+            intent.putExtra(ConfigurationConstants.LAST_CONFIGURATION_UPDATE, configurationUpdateDate.getTime());
+        }
         ConfigurationManagerService.enqueueWork(this, intent);
     }
 
