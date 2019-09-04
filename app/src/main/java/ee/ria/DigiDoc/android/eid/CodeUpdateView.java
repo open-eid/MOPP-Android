@@ -7,11 +7,13 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeInvalidError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeMinLengthError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfDateOfBirthError;
@@ -80,7 +82,50 @@ public final class CodeUpdateView extends CoordinatorLayout {
         activityOverlayView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);
         activityIndicatorView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);
 
+        int changeButtonDescriptionResId;
+        int cancelButtonDescriptionResId;
+        int overlayPaneTitleResId;
+        switch (action.pinType()) {
+            case PIN1:
+                if (action.updateType().equals(CodeUpdateType.UNBLOCK)) {
+                    changeButtonDescriptionResId = R.string.confirm_pin1_unblock;
+                    cancelButtonDescriptionResId = R.string.cancel_pin1_unblock;
+                    overlayPaneTitleResId = R.string.eid_home_code_update_title_pin1_unblock;
+                } else {
+                    changeButtonDescriptionResId = R.string.confirm_pin1_change;
+                    cancelButtonDescriptionResId = R.string.cancel_pin1_change;
+                    overlayPaneTitleResId = R.string.eid_home_code_update_title_pin1_edit;
+                }
+                break;
+            case PIN2:
+                if (action.updateType().equals(CodeUpdateType.UNBLOCK)) {
+                    changeButtonDescriptionResId = R.string.confirm_pin2_unblock;
+                    cancelButtonDescriptionResId = R.string.cancel_pin2_unblock;
+                    overlayPaneTitleResId = R.string.eid_home_code_update_title_pin2_unblock;
+                } else {
+                    changeButtonDescriptionResId = R.string.confirm_pin2_change;
+                    cancelButtonDescriptionResId = R.string.cancel_pin2_change;
+                    overlayPaneTitleResId = R.string.eid_home_code_update_title_pin2_edit;
+                }
+                break;
+            case PUK:
+                changeButtonDescriptionResId = R.string.confirm_puk_change;
+                cancelButtonDescriptionResId = R.string.cancel_puk_change;
+                overlayPaneTitleResId = R.string.eid_home_code_update_title_puk_edit;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown pin type " + action.pinType());
+        }
+
+        positiveButton.setContentDescription(getResources().getString(changeButtonDescriptionResId));
+        negativeButton.setContentDescription(getResources().getString(cancelButtonDescriptionResId));
+        AccessibilityUtils.setAccessibilityPaneTitle(toolbarView, overlayPaneTitleResId);
+
         successMessageView.setVisibility(successMessageVisible ? VISIBLE : GONE);
+        if (successMessageVisible) {
+            AccessibilityUtils.sendAccessibilityEvent(getContext(),
+                        AccessibilityEvent.TYPE_ANNOUNCEMENT, successMessageView.getText());
+        }
 
         if (state.equals(State.CLEAR)) {
             clear();
@@ -147,10 +192,14 @@ public final class CodeUpdateView extends CoordinatorLayout {
     }
 
     public Observable<CodeUpdateRequest> requests() {
-        return clicks(positiveButton).map(ignored ->
-                CodeUpdateRequest.create(currentView.getText().toString().trim(),
+        return clicks(positiveButton)
+                .map(ignored -> CodeUpdateRequest.create(currentView.getText().toString().trim(),
                         newView.getText().toString().trim(),
-                        repeatView.getText().toString().trim()));
+                        repeatView.getText().toString().trim()))
+                .doOnSubscribe(ignored -> {
+                    AccessibilityUtils.sendAccessibilityEvent(
+                            getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.container_name_changed);
+                });
     }
 
     @Override

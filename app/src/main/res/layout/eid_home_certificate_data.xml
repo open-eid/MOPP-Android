@@ -6,19 +6,26 @@
     tools:layout_height="match_parent"
     tools:orientation="vertical">
 
-    <TextView
-        android:id="@id/eidHomeCertificateDataTitle"
-        style="@style/Widget.Application.EID.Title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/eid_home_certificate_data_title_auth" />
+        android:focusable="true"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@id/eidHomeCertificateDataValidity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="@string/eid_home_certificate_data_valid" />
+        <TextView
+            android:id="@id/eidHomeCertificateDataTitle"
+            style="@style/Widget.Application.EID.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/eid_home_certificate_data_title_auth" />
+
+        <TextView
+            android:id="@id/eidHomeCertificateDataValidity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/eid_home_certificate_data_valid" />
+    </LinearLayout>
 
     <Button
         android:id="@id/eidHomeCertificateDataButton"

@@ -27,7 +27,6 @@ import android.content.Intent;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcel;
 import android.os.ResultReceiver;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;

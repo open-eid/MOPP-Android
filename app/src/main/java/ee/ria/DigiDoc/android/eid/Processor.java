@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.eid;
 
 import android.app.Application;
+import android.view.accessibility.AccessibilityEvent;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeInvalidError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeMinLengthError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfDateOfBirthError;
@@ -70,8 +72,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
             CodeUpdateRequest request = action.request();
             IdCardData data = action.data();
             Token token = action.token();
-            if (updateAction == null) {
-                return Observable.just(Result.CodeUpdateResult.clear());
+            if (action.cleared()) {
+                // TODO: back ei peaks siin triggerima
+                return Observable.just(Result.CodeUpdateResult.clear())
+                        .doFinally(() -> sendCancellationAccessibilityEvent(updateAction, application));
             } else if (request == null || data == null || token == null) {
                 if (updateAction.pinType().equals(CodeType.PUK)
                         && updateAction.updateType().equals(CodeUpdateType.UNBLOCK)) {
@@ -225,5 +229,30 @@ final class Processor implements ObservableTransformer<Action, Result> {
         } else {
             return data.pin2RetryCount();
         }
+    }
+
+    private void sendCancellationAccessibilityEvent(CodeUpdateAction updateAction, Application application) {
+        int clearingMessageId;
+        switch (updateAction.pinType()) {
+            case PIN1:
+                if (updateAction.updateType().equals(CodeUpdateType.UNBLOCK)) {
+                    clearingMessageId = R.string.pin1_unblock_cancelled;
+                } else {
+                    clearingMessageId = R.string.pin1_change_cancelled;
+                }
+                break;
+            case PIN2:
+                if (updateAction.updateType().equals(CodeUpdateType.UNBLOCK)) {
+                    clearingMessageId = R.string.pin2_unblock_cancelled;
+                } else {
+                    clearingMessageId = R.string.pin2_change_cancelled;
+                }
+                break;
+            case PUK:  clearingMessageId = R.string.puk_code_change_cancelled; break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + updateAction.pinType());
+        }
+        AccessibilityUtils.sendAccessibilityEvent(
+                application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, clearingMessageId);
     }
 }

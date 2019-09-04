@@ -2,8 +2,10 @@ package ee.ria.DigiDoc.android.eid;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -11,6 +13,7 @@ import com.google.common.collect.ImmutableMap;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.home.HomeToolbar;
 import ee.ria.DigiDoc.android.main.home.HomeView;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
@@ -101,7 +104,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
         //noinspection unchecked
         return Observable
                 .mergeArray(dataView.actions().map(Intent.CodeUpdateIntent::show),
-                        codeUpdateView.closes().map(ignored -> Intent.CodeUpdateIntent.clear()),
+                        codeUpdateView.closes().map(ignored -> Intent.CodeUpdateIntent.clear(codeUpdateAction)),
                         codeUpdateView.requests()
                                 .filter(ignored ->
                                         codeUpdateAction != null && data != null && token != null)
@@ -161,6 +164,10 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
         } else {
             errorDialog.dismiss();
             codeUpdateErrorDialog.dismiss();
+        }
+
+        if (progressMessageView.getVisibility() == VISIBLE) {
+            AccessibilityUtils.sendAccessibilityEvent(getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, progressMessageView.getText());
         }
     }
 

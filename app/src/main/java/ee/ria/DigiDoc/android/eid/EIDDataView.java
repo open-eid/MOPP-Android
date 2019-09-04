@@ -6,6 +6,9 @@ import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.AccessibilityDelegateCompat;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -108,6 +111,8 @@ public final class EIDDataView extends LinearLayout {
                 : R.drawable.ic_icon_accordion_collapsed;
         certificatesTitleView.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, 0, 0, 0);
         tintCompoundDrawables(certificatesTitleView);
+        setCustomClickAccessibilityFeedBack(certificatesTitleView);
+
         certificatesContainerView.setExpanded(certificateContainerExpanded);
 
         authCertificateDataView.data(CertificateType.AUTHENTICATION, data.authCertificate(),
@@ -153,5 +158,23 @@ public final class EIDDataView extends LinearLayout {
                         .map(ignored ->
                                 CodeUpdateAction.create(CodeType.PUK, CodeUpdateType.UNBLOCK))
         );
+    }
+
+    private void setCustomClickAccessibilityFeedBack(TextView certificatesTitleView) {
+        ViewCompat.setAccessibilityDelegate(certificatesTitleView, new AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                String message;
+                if (certificatesContainerView.isExpanded()) {
+                    message = "deactivate";
+                } else {
+                    message = "activate";
+                }
+                AccessibilityNodeInfoCompat.AccessibilityActionCompat customClick = new AccessibilityNodeInfoCompat.AccessibilityActionCompat(
+                        AccessibilityNodeInfoCompat.ACTION_CLICK, message);
+                info.addAction(customClick);
+            }
+        });
     }
 }

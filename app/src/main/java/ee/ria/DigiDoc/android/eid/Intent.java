@@ -47,23 +47,29 @@ interface Intent extends MviIntent {
 
         @Nullable abstract Token token();
 
+        abstract boolean cleared();
+
         static CodeUpdateIntent show(CodeUpdateAction action) {
-            return create(action, null, null, null);
+            return create(action, null, null, null, false);
         }
 
         static CodeUpdateIntent request(CodeUpdateAction action, CodeUpdateRequest request,
                                         IdCardData data, Token token) {
-            return create(action, request, data, token);
+            return create(action, request, data, token, false);
         }
 
         static CodeUpdateIntent clear() {
-            return create(null, null, null, null);
+            return create(null, null, null, null, false);
+        }
+
+        static CodeUpdateIntent clear(CodeUpdateAction action) {
+            return create(action, null, null, null, true);
         }
 
         static CodeUpdateIntent create(@Nullable CodeUpdateAction action,
                                        @Nullable CodeUpdateRequest request,
-                                       @Nullable IdCardData data, @Nullable Token token) {
-            return new AutoValue_Intent_CodeUpdateIntent(action, request, data, token);
+                                       @Nullable IdCardData data, @Nullable Token token, boolean cleared) {
+            return new AutoValue_Intent_CodeUpdateIntent(action, request, data, token, cleared);
         }
     }
 }

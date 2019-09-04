@@ -7,142 +7,183 @@
     tools:layout_height="match_parent"
     tools:orientation="vertical">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/material_content_edge_margin_horizontal"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Label"
-        android:textAllCaps="false"
-        android:labelFor="@id/eidHomeDataType"
-        android:text="@string/eid_home_data_type" />
+        android:focusable="true"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@id/eidHomeDataType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Value"
-        tools:text="ID-CARD" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_content_edge_margin_horizontal"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Label"
+            android:textAllCaps="false"
+            android:text="@string/eid_home_data_type"
             android:contentDescription="@string/my_eid_content_description" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/material_baseline_grid_1x"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Label"
-        android:labelFor="@id/eidHomeDataGivenNames"
-        android:text="@string/eid_home_data_given_names" />
+        <TextView
+            android:id="@id/eidHomeDataType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Value" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@id/eidHomeDataGivenNames"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Value"
-        tools:text="MIKO" />
+        android:focusable="true"
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/material_baseline_grid_1x"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Label"
-        android:labelFor="@id/eidHomeDataSurname"
-        android:text="@string/eid_home_data_surname" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_baseline_grid_1x"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Label"
+            android:labelFor="@id/eidHomeDataGivenNames"
+            android:text="@string/eid_home_data_given_names" />
 
-    <TextView
-        android:id="@id/eidHomeDataSurname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Value"
-        tools:text="VÄLI" />
+        <TextView
+            android:id="@id/eidHomeDataGivenNames"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Value" />
+    </LinearLayout>
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/material_baseline_grid_1x"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Label"
-        android:labelFor="@id/eidHomeDataPersonalCode"
-        android:text="@string/eid_home_data_personal_code" />
+        android:focusable="true"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@id/eidHomeDataPersonalCode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Value"
-        tools:text="38802132712" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_baseline_grid_1x"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Label"
+            android:labelFor="@id/eidHomeDataSurname"
+            android:text="@string/eid_home_data_surname" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/material_baseline_grid_1x"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Label"
-        android:labelFor="@id/eidHomeDataCitizenship"
-        android:text="@string/eid_home_data_citizenship" />
+        <TextView
+            android:id="@id/eidHomeDataSurname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Value" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@id/eidHomeDataCitizenship"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Value"
-        tools:text="EST" />
+        android:focusable="true"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@id/eidHomeDataDocumentNumberLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/material_baseline_grid_1x"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Label"
-        android:labelFor="@id/eidHomeDataDocumentNumber"
-        android:text="@string/eid_home_data_document_number" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_baseline_grid_1x"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Label"
+            android:labelFor="@id/eidHomeDataPersonalCode"
+            android:text="@string/eid_home_data_personal_code" />
 
-    <TextView
-        android:id="@id/eidHomeDataDocumentNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Value"
-        tools:text="A202112" />
+        <TextView
+            android:id="@id/eidHomeDataPersonalCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Value" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@id/eidHomeDataExpiryDateLabel"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/material_baseline_grid_1x"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Label"
-        android:labelFor="@id/eidHomeDataExpiryDate"
-        android:text="@string/eid_home_data_expiry_date" />
+        android:focusable="true"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@id/eidHomeDataExpiryDate"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_baseline_grid_1x"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Label"
+            android:labelFor="@id/eidHomeDataCitizenship"
+            android:text="@string/eid_home_data_citizenship" />
+
+        <TextView
+            android:id="@id/eidHomeDataCitizenship"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Value" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
-        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
-        android:textAppearance="@style/TextAppearance.Application.Value"
-        tools:text="2019-02-11 | Valid" />
+        android:focusable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@id/eidHomeDataDocumentNumberLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_baseline_grid_1x"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Label"
+            android:labelFor="@id/eidHomeDataDocumentNumber"
+            android:text="@string/eid_home_data_document_number" />
+
+        <TextView
+            android:id="@id/eidHomeDataDocumentNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Value" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@id/eidHomeDataExpiryDateLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/material_baseline_grid_1x"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Label"
+            android:labelFor="@id/eidHomeDataExpiryDate"
+            android:text="@string/eid_home_data_expiry_date" />
+
+        <TextView
+            android:id="@id/eidHomeDataExpiryDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+            android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+            android:textAppearance="@style/TextAppearance.Application.Value" />
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
@@ -203,19 +244,26 @@
                 android:layout_marginBottom="@dimen/material_baseline_grid_1.5x"
                 android:background="@color/divider" />
 
-            <TextView
-                android:id="@id/eidHomeDataCertificatesPukTitle"
-                style="@style/Widget.Application.EID.Title"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/eid_home_data_certificates_puk_title" />
+                android:focusable="true"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@id/eidHomeDataCertificatesPukText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/eid_home_data_certificates_puk_text" />
+                <TextView
+                    android:id="@id/eidHomeDataCertificatesPukTitle"
+                    style="@style/Widget.Application.EID.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/eid_home_data_certificates_puk_title" />
+
+                <TextView
+                    android:id="@id/eidHomeDataCertificatesPukText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/eid_home_data_certificates_puk_text" />
+            </LinearLayout>
 
             <Button
                 android:id="@id/eidHomeDataCertificatesPukButton"
