@@ -26,6 +26,7 @@
         android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
         android:textAppearance="@style/TextAppearance.Application.Value"
         tools:text="ID-CARD" />
+            android:contentDescription="@string/my_eid_content_description" />
 
     <TextView
         android:layout_width="match_parent"
