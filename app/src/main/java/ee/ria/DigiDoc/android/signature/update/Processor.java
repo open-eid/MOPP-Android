@@ -331,10 +331,12 @@ final class Processor implements ObservableTransformer<Action, Result> {
             int invalidSignatureCount = container.invalidSignatureCounts().get(SignatureStatus.INVALID);
             messageBuilder.append("Container is invalid, contains");
             if (unknownSignaturesCount > 0) {
-                messageBuilder.append(" ").append(unknownSignaturesCount).append(" unknown signatures");
+                messageBuilder.append(" ").append(context.getResources().getQuantityString(
+                        R.plurals.signature_update_signatures_unknown, unknownSignaturesCount, unknownSignaturesCount));
             }
             if (invalidSignatureCount > 0) {
-                messageBuilder.append(" ").append(invalidSignatureCount).append(" invalid signatures");
+                messageBuilder.append(" ").append(context.getResources().getQuantityString(
+                        R.plurals.signature_update_signatures_invalid, invalidSignatureCount, invalidSignatureCount));
             }
         }
         AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, messageBuilder.toString());

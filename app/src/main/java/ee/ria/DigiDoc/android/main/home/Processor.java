@@ -7,6 +7,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseIntArray;
+import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 
 import com.google.common.collect.ImmutableBiMap;
@@ -104,6 +105,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         navigation = upstream -> upstream.switchMap(action -> {
             if (action.item() != R.id.mainHomeNavigationEID) {
                 clearEidViewModel();
+            } else {
+                View myEidView = navigator.activity().findViewById(R.id.mainHomeNavigationEID);
+                myEidView.setContentDescription(application.getResources().getString(R.string.my_eid_content_description));
             }
             return Observable.just(Result.NavigationResult
                     .create(NAVIGATION_ITEM_VIEWS.get(action.item())));

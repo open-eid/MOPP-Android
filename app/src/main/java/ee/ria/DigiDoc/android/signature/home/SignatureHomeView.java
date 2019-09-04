@@ -4,10 +4,12 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.home.HomeToolbar;
 import ee.ria.DigiDoc.android.main.home.HomeView;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
@@ -42,6 +44,7 @@ public final class SignatureHomeView extends CoordinatorLayout implements HomeVi
         createButton = findViewById(R.id.signatureHomeCreateButton);
         navigator = Application.component(context).navigator();
         disposables = new ViewDisposables();
+        AccessibilityUtils.setAccessibilityPaneTitle(this, R.string.main_home_navigation_signature);
     }
 
     @Override

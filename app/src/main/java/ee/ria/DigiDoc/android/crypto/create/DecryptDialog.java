@@ -156,16 +156,22 @@ final class DecryptDialog extends AlertDialog {
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         Button confirmButton = getButton(BUTTON_POSITIVE);
-        confirmButton.setContentDescription(getContext().getString(R.string.decrypt_button_description));
+        if (confirmButton != null) {
+            confirmButton.setContentDescription(getContext().getString(R.string.decrypt_button_description));
+        }
         Button cancelButton = getButton(BUTTON_NEGATIVE);
-        cancelButton.setContentDescription(getContext().getString(R.string.cancel_decryption));
+        if (cancelButton != null) {
+            cancelButton.setContentDescription(getContext().getString(R.string.cancel_decryption));
+        }
 
         disposables.attach();
         disposables.add(positiveButtonEnabled().subscribe(enabled -> {
             Button decryptButton = getButton(BUTTON_POSITIVE);
-            decryptButton.setEnabled(enabled);
-            if (enabled) {
-                clicks(getButton(BUTTON_POSITIVE)).subscribe(positiveButtonClicksSubject);
+            if (decryptButton != null) {
+                decryptButton.setEnabled(enabled);
+                if (enabled) {
+                    clicks(decryptButton).subscribe(positiveButtonClicksSubject);
+                }
             }
         }));
     }

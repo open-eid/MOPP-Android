@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.widget.Button;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.files.FileAlreadyExistsException;
@@ -65,6 +66,10 @@ public final class NameUpdateDialog extends AlertDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Button confirmButton = getButton(BUTTON_POSITIVE);
+        confirmButton.setContentDescription(getContext().getString(R.string.confirm_container_name_change));
+        Button cancelButton = getButton(BUTTON_NEGATIVE);
+        cancelButton.setContentDescription(getContext().getString(R.string.cancel_container_name_change));
         // override default click listener to prevent dialog dismiss
         clicks(getButton(BUTTON_POSITIVE)).subscribe(positiveButtonClicksSubject);
     }

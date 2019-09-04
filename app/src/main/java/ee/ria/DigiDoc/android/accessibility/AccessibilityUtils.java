@@ -53,7 +53,7 @@ public class AccessibilityUtils {
 
     public static void setAccessibilityPaneTitle(View view, String title) {
         if (Build.VERSION.SDK_INT >= 28) {
-            view.setAccessibilityPaneTitle(title);
+            view.setAccessibilityPaneTitle(title + " pane");
         }
     }
 
@@ -74,7 +74,7 @@ public class AccessibilityUtils {
     private static String combineMessages(CharSequence... messages) {
         StringBuilder combinedMessage = new StringBuilder();
         for (CharSequence message : messages) {
-            combinedMessage.append(message).append(",");
+            combinedMessage.append(message).append(", ");
         }
         return combinedMessage.toString();
     }

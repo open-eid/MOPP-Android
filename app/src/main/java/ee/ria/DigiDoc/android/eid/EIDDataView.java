@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.eid;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import net.cachapa.expandablelayout.ExpandableLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.idcard.CertificateType;
@@ -69,6 +71,7 @@ public final class EIDDataView extends LinearLayout {
         formatter = Application.component(context).formatter();
         setOrientation(VERTICAL);
         inflate(context, R.layout.eid_home_data, this);
+        AccessibilityUtils.setAccessibilityPaneTitle(this, "ID-card information");
         typeView = findViewById(R.id.eidHomeDataType);
         givenNamesView = findViewById(R.id.eidHomeDataGivenNames);
         surnameView = findViewById(R.id.eidHomeDataSurname);

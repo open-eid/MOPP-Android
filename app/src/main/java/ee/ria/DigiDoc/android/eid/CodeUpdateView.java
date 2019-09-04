@@ -195,11 +195,7 @@ public final class CodeUpdateView extends CoordinatorLayout {
         return clicks(positiveButton)
                 .map(ignored -> CodeUpdateRequest.create(currentView.getText().toString().trim(),
                         newView.getText().toString().trim(),
-                        repeatView.getText().toString().trim()))
-                .doOnSubscribe(ignored -> {
-                    AccessibilityUtils.sendAccessibilityEvent(
-                            getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.container_name_changed);
-                });
+                        repeatView.getText().toString().trim()));
     }
 
     @Override

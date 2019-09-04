@@ -10,6 +10,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import io.reactivex.Observable;
 
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
@@ -39,7 +40,11 @@ public final class HomeMenuView extends NestedScrollView {
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.main_home_menu, this);
         closeButton = findViewById(R.id.mainHomeMenuCloseButton);
+        closeButton.setContentDescription(getResources().getString(R.string.close_menu));
         helpView = findViewById(R.id.mainHomeMenuHelp);
+        helpView.setContentDescription(
+                getResources().getString(R.string.main_home_menu_help) +
+                " link to www.id.ee");
         recentView = findViewById(R.id.mainHomeMenuRecent);
         settingsView = findViewById(R.id.mainHomeMenuSettings);
         aboutView = findViewById(R.id.mainHomeMenuAbout);

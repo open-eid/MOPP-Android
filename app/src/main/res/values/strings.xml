@@ -378,7 +378,8 @@
     <string name="language_changed">Language changed</string>
     <string name="close_menu">Close menu</string>
 
-
+    <string name="confirm_container_name_change">Confirm container name change</string>
+    <string name="cancel_container_name_change">Cancel container name change</string>
     <string name="decrypt_button_description">Decrypt document(s)</string>
     <string name="cancel_decryption">Cancel decryption</string>
     <string name="sign_container">Sign container</string>
