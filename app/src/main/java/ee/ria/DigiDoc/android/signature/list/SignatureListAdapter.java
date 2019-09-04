@@ -50,6 +50,10 @@ final class SignatureListAdapter extends
     @Override
     public void onBindViewHolder(SignatureViewHolder holder, int position) {
         holder.nameView.setText(data.get(position).getName());
+        String documentNameDescription = holder.nameView.getResources().getString(R.string.document);
+        holder.nameView.setContentDescription(documentNameDescription + " " + holder.nameView.getText());
+        String removeDocumentButtonText = holder.nameView.getResources().getString(R.string.signature_list_remove_button);
+        holder.removeButton.setContentDescription(removeDocumentButtonText + " " + holder.nameView.getText());
         clicks(holder.itemView)
                 .map(ignored -> data.get(holder.getAdapterPosition()))
                 .subscribe(itemClickSubject);

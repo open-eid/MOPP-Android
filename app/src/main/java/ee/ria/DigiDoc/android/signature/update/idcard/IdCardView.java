@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardSignResponse;
@@ -21,6 +22,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding2.widget.RxTextView.afterTextChangeEvents;
 import static ee.ria.DigiDoc.android.Constants.VOID;
 
@@ -74,6 +76,7 @@ public final class IdCardView extends LinearLayout implements
     @Override
     public void reset(@Nullable SignatureUpdateViewModel viewModel) {
         signPin2View.setText(null);
+        progressMessageView.setContentDescription(null);
     }
 
     @Override
@@ -144,6 +147,16 @@ public final class IdCardView extends LinearLayout implements
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(R.string.signature_update_id_card_progress_message_initial);
             signContainerView.setVisibility(GONE);
+        }
+
+        if (progressContainerView.getVisibility() == VISIBLE) {
+            AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, progressMessageView.getText());
+        }
+        if (signContainerView.getVisibility() == VISIBLE) {
+            String readyToSignDesc = getResources().getString(R.string.signature_update_id_card_sign_message);
+            CharSequence signerInfo = signDataView.getText();
+            String enterPin2Desc = getResources().getString(R.string.signature_update_id_card_sign_pin2);
+            AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, readyToSignDesc, signerInfo, enterPin2Desc);
         }
     }
 }

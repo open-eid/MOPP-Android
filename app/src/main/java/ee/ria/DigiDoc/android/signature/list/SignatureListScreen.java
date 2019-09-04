@@ -16,6 +16,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
@@ -132,6 +133,8 @@ public final class SignatureListScreen extends Controller implements Screen,
         removeConfirmationDialog = new ConfirmationDialog(container.getContext(),
                 R.string.signature_list_remove_confirmation_message);
         View view = inflater.inflate(R.layout.signature_list_screen, container, false);
+        AccessibilityUtils.setAccessibilityPaneTitle(view, R.string.signature_list_title);
+
         toolbarView = view.findViewById(R.id.toolbar);
         listView = view.findViewById(R.id.signatureList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));

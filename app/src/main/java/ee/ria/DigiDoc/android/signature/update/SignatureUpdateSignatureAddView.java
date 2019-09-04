@@ -3,10 +3,13 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardView;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
@@ -53,10 +56,10 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
 
     public Observable<Boolean> positiveButtonEnabled() {
         return Observable
-                .merge(methodChanges().startWith(Observable.fromCallable(this::method)),
-                        idCardView.positiveButtonState())
+                .merge( methodChanges().startWith(Observable.fromCallable(this::method)),
+                        idCardView.positiveButtonState(), mobileIdView.positiveButtonState())
                 .map(ignored ->
-                        method() == R.id.signatureUpdateSignatureAddMethodMobileId
+                        (method() == R.id.signatureUpdateSignatureAddMethodMobileId && mobileIdView.positiveButtonEnabled())
                                 || idCardView.positiveButtonEnabled());
     }
 
@@ -81,8 +84,14 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
 
     public void reset(SignatureUpdateViewModel viewModel) {
         methodView.check(R.id.signatureUpdateSignatureAddMethodMobileId);
-        mobileIdView.reset(viewModel);
-        idCardView.reset(viewModel);
+        if (idCardView.getVisibility() == VISIBLE) {
+            idCardView.reset(viewModel);
+        } else if (mobileIdView.getVisibility() == VISIBLE) {
+            mobileIdView.reset(viewModel);
+        } else {
+            idCardView.reset(viewModel);
+            mobileIdView.reset(viewModel);
+        }
     }
 
     public SignatureAddRequest request() {
@@ -97,8 +106,9 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
     }
 
     public void response(SignatureAddResponse response) {
-        if (response == null) {
+        if (response == null && mobileIdView.getVisibility() == VISIBLE) {
             mobileIdView.response(null);
+        } else if (response == null && idCardView.getVisibility() == VISIBLE) {
             idCardView.response(null);
         } else if (response instanceof MobileIdResponse) {
             mobileIdView.response((MobileIdResponse) response);
@@ -107,5 +117,10 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         } else {
             throw new IllegalArgumentException("Unknown response " + response);
         }
+    }
+
+    public boolean isMobileIdAsSigningMethodSelected() {
+        RadioButton selectedRadioButton = findViewById(methodView.getCheckedRadioButtonId());
+        return selectedRadioButton.getText().equals("Mobile-ID");
     }
 }

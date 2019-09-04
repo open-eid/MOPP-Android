@@ -1,9 +1,14 @@
 package ee.ria.DigiDoc.android.signature.list;
 
+import android.app.Application;
+import android.view.accessibility.AccessibilityEvent;
+
 import java.io.File;
 
 import javax.inject.Inject;
 
+import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
@@ -29,7 +34,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<Action.ContainerRemoveAction, Result.ContainerRemoveResult>
             containerRemove;
 
-    @Inject Processor(Navigator navigator,
+    @Inject Processor(Application application, Navigator navigator,
                       SignatureContainerDataSource signatureContainerDataSource) {
         containersLoad = upstream -> upstream.switchMap(action ->
                 signatureContainerDataSource.find()
@@ -66,7 +71,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return signatureContainerDataSource.remove(action.containerFile())
                         .andThen(signatureContainerDataSource.find())
                         .toObservable()
-                        .map(Result.ContainerRemoveResult::success)
+                        .map(file -> {
+                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.document_removed);
+                            return Result.ContainerRemoveResult.success(file);
+                        })
                         .onErrorReturn(Result.ContainerRemoveResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

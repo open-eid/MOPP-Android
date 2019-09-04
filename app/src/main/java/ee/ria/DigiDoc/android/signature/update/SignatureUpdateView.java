@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdStatusMessages;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -33,6 +35,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
@@ -42,6 +45,7 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
 
     private static final int DEFAULT_SIGN_METHOD = R.id.signatureUpdateSignatureAddMethodMobileId;
+    private static final String EMPTY_MOBILE_ID_CHALLENGE = "____";
 
     private final boolean isExistingContainer;
     private final boolean isNestedContainer;
@@ -83,11 +87,14 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @Nullable private DataFile documentRemoveConfirmation;
     @Nullable private Signature signatureRemoveConfirmation;
 
+    private boolean signingInfoDelegated = false;
+
     public SignatureUpdateView(Context context, String screenId, boolean isExistingContainer,
                                boolean isNestedContainer, File containerFile,
                                boolean signatureAddVisible,
                                boolean signatureAddSuccessMessageVisible) {
         super(context);
+
         this.isExistingContainer = isExistingContainer;
         this.isNestedContainer = isNestedContainer;
         this.containerFile = containerFile;
@@ -108,6 +115,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         mobileIdStatusView = findViewById(R.id.signatureUpdateMobileIdStatus);
         mobileIdChallengeView = findViewById(R.id.signatureUpdateMobileIdChallenge);
         sendButton = findViewById(R.id.signatureUpdateSendButton);
+        sendButton.setContentDescription(getResources().getString(R.string.share_container));
         buttonSpace = findViewById(R.id.signatureUpdateButtonSpace);
         signatureAddButton = findViewById(R.id.signatureUpdateSignatureAddButton);
 
@@ -147,9 +155,12 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         nameUpdateDialog.render(state.nameUpdateShowing(), state.nameUpdateName(),
                 state.nameUpdateError(), state.container());
 
-        toolbarView.setTitle(isExistingContainer
-                ? R.string.signature_update_title_existing
-                : R.string.signature_update_title_created);
+        int titleResId = isExistingContainer ? R.string.signature_update_title_existing
+                : R.string.signature_update_title_created;
+        toolbarView.setTitle(titleResId);
+
+        AccessibilityUtils.setAccessibilityPaneTitle(this, isExistingContainer ? getResources().getString(titleResId) : "Container signing");
+
         if (isNestedContainer) {
             sendButton.setVisibility(GONE);
             buttonSpace.setVisibility(GONE);
@@ -159,6 +170,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             buttonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
             signatureAddButton.setVisibility(VISIBLE);
         }
+
+        signatureAddButton.setContentDescription(getResources().getString(R.string.sign_container_button_description));
 
         setActivity(state.containerLoadInProgress() || state.documentsAddInProgress()
                 || state.documentViewState().equals(State.ACTIVE)
@@ -194,6 +207,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         SignatureAddResponse signatureAddResponse = state.signatureAddResponse();
         signatureAddView.response(signatureAddResponse);
+
         // should be in the MobileIdView in dialog
         mobileIdContainerView.setVisibility(
                 signatureAddResponse != null && signatureAddResponse instanceof MobileIdResponse
@@ -210,13 +224,31 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             if (mobileIdChallenge != null) {
                 mobileIdChallengeView.setText(mobileIdChallenge);
             } else {
-                mobileIdChallengeView.setText(
-                        R.string.signature_add_mobile_id_challenge_placeholder);
+                mobileIdChallengeView.setText(EMPTY_MOBILE_ID_CHALLENGE);
             }
         }
 
         tintCompoundDrawables(sendButton);
         tintCompoundDrawables(signatureAddButton);
+
+        if (mobileIdContainerView.getVisibility() == VISIBLE) {
+            if (Build.VERSION.SDK_INT >= 26) {
+                mobileIdContainerView.setFocusedByDefault(true);
+            }
+            mobileIdContainerView.setFocusable(true);
+            mobileIdContainerView.setFocusableInTouchMode(true);
+
+            if (!signingInfoDelegated) {
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_mobile_id_status_request_sent);
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_mobile_id_info);
+                signingInfoDelegated = true;
+            }
+
+            if (!mobileIdChallengeView.getText().equals(EMPTY_MOBILE_ID_CHALLENGE)) {
+                String mobileIdChallengeDescription = getResources().getString(R.string.mobile_id_challenge) + mobileIdChallengeView.getText();
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, mobileIdChallengeDescription);
+            }
+        }
     }
 
     private void setActivity(boolean activity) {
