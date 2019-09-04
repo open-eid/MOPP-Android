@@ -16,7 +16,7 @@
     <color name="menuSeparator">#59ffffff</color>
     <color name="menuLocaleBackground">#47586F</color>
     <color name="menuLocaleBackgroundChecked">#041E42</color>
-    <color name="menuLocaleText">#A7AAAC</color>
+    <color name="menuLocaleText">#C9CBDF</color>
     <color name="menuLocaleTextChecked">#F4F5F6</color>
 
 </resources>
