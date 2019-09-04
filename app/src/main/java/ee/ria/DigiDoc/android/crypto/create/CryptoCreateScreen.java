@@ -26,6 +26,7 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
+import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientsEmptyException;
@@ -80,7 +81,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private TextView sendButton;
     private View buttonSpaceView;
     private DecryptDialog decryptDialog;
-    private AlertDialog errorDialog;
+    private ErrorDialog errorDialog;
 
     private String name;
     private ImmutableList<File> dataFiles = ImmutableList.of();
@@ -296,10 +297,10 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         sendButton = view.findViewById(R.id.cryptoCreateSendButton);
         buttonSpaceView = view.findViewById(R.id.cryptoCreateButtonSpace);
         decryptDialog = new DecryptDialog(inflater.getContext());
-        errorDialog = new AlertDialog.Builder(inflater.getContext())
-                .setMessage(R.string.crypto_create_error)
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.cancel())
-                .create();
+
+        this.errorDialog = new ErrorDialog(inflater.getContext());
+        this.errorDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.ok), (dialog, which) -> dialog.cancel());
+        this.errorDialog.setMessage(getResources().getString(R.string.crypto_create_error));
 
         listView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());

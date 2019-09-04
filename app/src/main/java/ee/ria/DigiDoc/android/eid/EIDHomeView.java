@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.app.AlertDialog;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -18,6 +17,7 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.idcard.Token;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
@@ -48,9 +48,9 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
     private final HomeToolbar toolbarView;
     private final TextView progressMessageView;
     private final EIDDataView dataView;
-    private final AlertDialog errorDialog;
+    private final ErrorDialog errorDialog;
     private final CodeUpdateView codeUpdateView;
-    private final AlertDialog codeUpdateErrorDialog;
+    private final ErrorDialog codeUpdateErrorDialog;
 
     private final ViewDisposables disposables = new ViewDisposables();
     private final Navigator navigator;
@@ -71,14 +71,15 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
         toolbarView = findViewById(R.id.toolbar);
         progressMessageView = findViewById(R.id.eidHomeProgressMessage);
         dataView = findViewById(R.id.eidHomeData);
-        errorDialog = new AlertDialog.Builder(context)
-                .setMessage(R.string.eid_home_error)
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.cancel())
-                .create();
+
+        errorDialog = new ErrorDialog(context);
+        errorDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.ok), (dialog, which) -> dialog.cancel());
+        errorDialog.setMessage(getResources().getString(R.string.eid_home_error));
+
         codeUpdateView = findViewById(R.id.eidHomeCodeUpdate);
-        codeUpdateErrorDialog = new AlertDialog.Builder(context)
-                .setPositiveButton(android.R.string.ok, ((dialog, which) -> dialog.cancel()))
-                .create();
+        codeUpdateErrorDialog = new ErrorDialog(context);
+        codeUpdateErrorDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.ok), (dialog, which) -> dialog.cancel());
+        
         navigator = Application.component(context).navigator();
     }
 

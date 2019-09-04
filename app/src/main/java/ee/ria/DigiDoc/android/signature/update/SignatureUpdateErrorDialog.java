@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import java.lang.annotation.Retention;
@@ -13,15 +12,16 @@ import java.lang.annotation.RetentionPolicy;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
+import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import io.reactivex.subjects.Subject;
 
-import static ee.ria.DigiDoc.android.signature.update.ErrorDialog.Type.DOCUMENTS_ADD;
-import static ee.ria.DigiDoc.android.signature.update.ErrorDialog.Type.DOCUMENT_REMOVE;
-import static ee.ria.DigiDoc.android.signature.update.ErrorDialog.Type.SIGNATURE_ADD;
-import static ee.ria.DigiDoc.android.signature.update.ErrorDialog.Type.SIGNATURE_REMOVE;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENT_REMOVE;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_ADD;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_REMOVE;
 
-final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismissListener {
+final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInterface.OnDismissListener {
 
     @StringDef({DOCUMENTS_ADD, DOCUMENT_REMOVE, SIGNATURE_ADD, SIGNATURE_REMOVE})
     @Retention(RetentionPolicy.SOURCE)
@@ -36,19 +36,22 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
     private final Subject<Intent.DocumentRemoveIntent> documentRemoveIntentSubject;
     private final Subject<Intent.SignatureAddIntent> signatureAddIntentSubject;
     private final Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject;
+    private final SignatureUpdateSignatureAddDialog signatureAddDialog;
 
     private String type;
 
-    ErrorDialog(@NonNull Context context,
-                Subject<Intent.DocumentsAddIntent> documentsAddIntentSubject,
-                Subject<Intent.DocumentRemoveIntent> documentRemoveIntentSubject,
-                Subject<Intent.SignatureAddIntent> signatureAddIntentSubject,
-                Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject) {
+    SignatureUpdateErrorDialog(@NonNull Context context,
+                               Subject<Intent.DocumentsAddIntent> documentsAddIntentSubject,
+                               Subject<Intent.DocumentRemoveIntent> documentRemoveIntentSubject,
+                               Subject<Intent.SignatureAddIntent> signatureAddIntentSubject,
+                               Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject,
+                               SignatureUpdateSignatureAddDialog signatureAddDialog) {
         super(context);
         this.documentsAddIntentSubject = documentsAddIntentSubject;
         this.documentRemoveIntentSubject = documentRemoveIntentSubject;
         this.signatureAddIntentSubject = signatureAddIntentSubject;
         this.signatureRemoveIntentSubject = signatureRemoveIntentSubject;
+        this.signatureAddDialog = signatureAddDialog;
         setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), (dialog, which) -> {});
         setOnDismissListener(this);
     }
@@ -92,6 +95,11 @@ final class ErrorDialog extends AlertDialog implements DialogInterface.OnDismiss
             documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent.clear());
         } else if (TextUtils.equals(type, SIGNATURE_ADD)) {
             signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clear());
+
+            // In case of mobile-id signing, reopen signing view after process failure message dismissal
+            if (signatureAddDialog.view().isMobileIdAsSigningMethodSelected()) {
+                signatureAddDialog.show();
+            }
         } else if (TextUtils.equals(type, SIGNATURE_REMOVE)) {
             signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear());
         }

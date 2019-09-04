@@ -61,7 +61,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final Button sendButton;
     private final View buttonSpace;
     private final Button signatureAddButton;
-    private final ErrorDialog errorDialog;
+    private final SignatureUpdateErrorDialog errorDialog;
     private final ConfirmationDialog documentRemoveConfirmationDialog;
     private final ConfirmationDialog signatureRemoveConfirmationDialog;
     private final SignatureUpdateSignatureAddDialog signatureAddDialog;
@@ -114,9 +114,6 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         listView.setLayoutManager(new LinearLayoutManager(context));
         listView.setAdapter(adapter = new SignatureUpdateAdapter());
 
-        errorDialog = new ErrorDialog(context, documentsAddIntentSubject,
-                documentRemoveIntentSubject, signatureAddIntentSubject,
-                signatureRemoveIntentSubject);
         documentRemoveConfirmationDialog = new ConfirmationDialog(context,
                 R.string.signature_update_document_remove_confirmation_message);
         signatureRemoveConfirmationDialog = new ConfirmationDialog(context,
@@ -124,6 +121,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         signatureAddDialog = new SignatureUpdateSignatureAddDialog(context);
         signatureAddView = signatureAddDialog.view();
         resetSignatureAddDialog();
+
+        errorDialog = new SignatureUpdateErrorDialog(context, documentsAddIntentSubject,
+                documentRemoveIntentSubject, signatureAddIntentSubject,
+                signatureRemoveIntentSubject, signatureAddDialog);
     }
 
     @SuppressWarnings("unchecked")
