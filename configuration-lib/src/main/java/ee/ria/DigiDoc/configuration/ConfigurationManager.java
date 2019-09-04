@@ -224,8 +224,6 @@ public class ConfigurationManager {
                 .setVersion(configurationParser.parseIntValue("META-INF", "VER"))
                 .build();
 
-        String midSignUrl = isTestMode() ? configurationParser.parseStringValue("MID-SIGN-TEST-URL") : configurationParser.parseStringValue("MID-SIGN-URL");
-
         return ConfigurationProvider.builder()
                 .setMetaInf(metaInf)
                 .setConfigUrl(centralConfigurationServiceUrl)
@@ -233,17 +231,13 @@ public class ConfigurationManager {
                 .setTslUrl(configurationParser.parseStringValue("TSL-URL"))
                 .setTslCerts(configurationParser.parseStringValues("TSL-CERTS"))
                 .setTsaUrl(configurationParser.parseStringValue("TSA-URL"))
-                .setMidSignUrl(midSignUrl)
+                .setMidSignUrl(configurationParser.parseStringValue("MID-SIGN-URL"))
                 .setLdapPersonUrl(configurationParser.parseStringValue("LDAP-PERSON-URL"))
                 .setLdapCorpUrl(configurationParser.parseStringValue("LDAP-CORP-URL"))
                 .setOCSPUrls(configurationParser.parseStringValuesToMap("OCSP-URL-ISSUER"))
                 .setConfigurationLastUpdateCheckDate(cachedConfigurationHandler.getConfLastUpdateCheckDate())
                 .setConfigurationUpdateDate(cachedConfigurationHandler.getConfUpdateDate())
                 .build();
-    }
-
-    private boolean isTestMode() {
-        return centralConfigurationServiceUrl.contains("test");
     }
 
     private X509Certificate loadCentralConfServiceSSlCertIfPresent(AssetManager assetManager) {
