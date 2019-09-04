@@ -1,10 +1,10 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -17,9 +17,11 @@ import com.bluelinelabs.conductor.Controller;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
+import java.util.Objects;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -72,6 +74,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private final ViewDisposables disposables = new ViewDisposables();
     private CryptoCreateViewModel viewModel;
 
+    private View view;
     private Toolbar toolbarView;
     private CryptoCreateAdapter adapter;
     private View activityOverlayView;
@@ -202,9 +205,11 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         setActivity(state.dataFilesAddState().equals(State.ACTIVE) ||
                 state.encryptState().equals(State.ACTIVE));
 
-        toolbarView.setTitle(state.encryptButtonVisible()
-                ? R.string.crypto_create_title_encrypt
-                : R.string.crypto_create_title_decrypt);
+        int titleResId = state.encryptButtonVisible() ? R.string.crypto_create_title_encrypt
+                : R.string.crypto_create_title_decrypt;
+        toolbarView.setTitle(titleResId);
+
+        AccessibilityUtils.setAccessibilityPaneTitle(view, "File " + Objects.requireNonNull(getResources()).getString(titleResId));
 
         adapter.dataForContainer(name, dataFiles, state.dataFilesViewEnabled(),
                 state.dataFilesAddEnabled(), state.dataFilesRemoveEnabled(), recipients,
@@ -226,8 +231,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 decryptionPin1Locked = true;
             }
             decryptDialog.show();
-            decryptDialog.idCardDataResponse(decryptionIdCardDataResponse, state.decryptState(),
-                    decryptError);
+            decryptDialog.idCardDataResponse(decryptionIdCardDataResponse, state.decryptState(), decryptError);
         } else {
             decryptionPin1Locked = true;
             decryptDialog.dismiss();
@@ -287,7 +291,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     @NonNull
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
-        View view = inflater.inflate(R.layout.crypto_create_screen, container, false);
+        view = inflater.inflate(R.layout.crypto_create_screen, container, false);
         toolbarView = view.findViewById(R.id.toolbar);
         RecyclerView listView = view.findViewById(R.id.cryptoCreateList);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
@@ -295,6 +299,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         encryptButton = view.findViewById(R.id.cryptoCreateEncryptButton);
         decryptButton = view.findViewById(R.id.cryptoCreateDecryptButton);
         sendButton = view.findViewById(R.id.cryptoCreateSendButton);
+        sendButton.setContentDescription(getResources().getString(R.string.share_container));
         buttonSpaceView = view.findViewById(R.id.cryptoCreateButtonSpace);
         decryptDialog = new DecryptDialog(inflater.getContext());
 

@@ -15,8 +15,7 @@
             android:id="@id/cryptoCreateDecryptProgressMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/crypto_create_decrypt_progress_message_initial" />
+            android:gravity="center_horizontal" />
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -32,25 +31,30 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/crypto_create_decrypt_message" />
+            android:focusable="true"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/crypto_create_decrypt_message" />
 
-        <TextView
-            android:id="@id/cryptoCreateDecryptData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            tools:text="Miko Väli (38802132727)" />
+            <TextView
+                android:id="@id/cryptoCreateDecryptData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="@string/crypto_create_decrypt_pin1"
-            android:labelFor="@id/cryptoCreateDecryptPin1" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/crypto_create_decrypt_pin1"
+                android:labelFor="@id/cryptoCreateDecryptPin1" />
+        </LinearLayout>
 
         <EditText
             android:id="@id/cryptoCreateDecryptPin1"

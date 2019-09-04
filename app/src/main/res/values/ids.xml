@@ -157,6 +157,7 @@
 
     <item type="id" name="cryptoSubheadTitle" />
     <item type="id" name="cryptoEmptyText" />
+    <item type="id" name="cryptoRecipient" />
     <item type="id" name="cryptoRecipientType" />
     <item type="id" name="cryptoRecipientName" />
     <item type="id" name="cryptoRecipientInfo" />

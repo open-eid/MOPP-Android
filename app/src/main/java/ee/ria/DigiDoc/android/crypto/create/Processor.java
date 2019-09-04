@@ -2,6 +2,8 @@ package ee.ria.DigiDoc.android.crypto.create;
 
 import android.app.Application;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.view.accessibility.AccessibilityEvent;
 
 import com.google.common.collect.ImmutableList;
 
@@ -10,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
@@ -31,6 +35,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_DATA_FILE_ADD;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_INITIAL;
 import static ee.ria.DigiDoc.android.utils.Immutables.with;
@@ -132,6 +137,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             if (dataFiles == null) {
                 return Observable.just(Result.DataFilesAddResult.clear());
             }
+
             navigator.execute(Transaction.activityForResult(RC_CRYPTO_CREATE_DATA_FILE_ADD,
                     createGetContentIntent(), null));
             return navigator.activityResults()
@@ -152,6 +158,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                                 throw new IllegalArgumentException(
                                                         "File already exists in the container");
                                             }
+                                            AccessibilityUtils.sendAccessibilityEvent(
+                                                    application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.file_added);
                                             builder.add(dataFile);
                                         }
                                         return builder.build();
@@ -179,6 +187,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             return Result.DataFileRemoveResult.create(
                                     without(intent.dataFiles(), intent.dataFile()));
                         })
+                        .doFinally(() -> AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.file_removed))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread()));
 
@@ -221,7 +230,21 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             } else {
                 return Observable
                         .fromCallable(() -> recipientRepository.find(intent.query()))
-                        .map(Result.RecipientsSearchResult::success)
+                        .map(searchResult -> {
+                            Context context = application.getApplicationContext();
+                            if (searchResult.size() > 1) {
+                                String resultString = context.getResources().getString(R.string.recipients_found);
+                                AccessibilityUtils.sendAccessibilityEvent(
+                                        context, TYPE_ANNOUNCEMENT, searchResult.size() + " " + resultString);
+                            } else if (searchResult.size() == 1) {
+                                AccessibilityUtils.sendAccessibilityEvent(
+                                        context, TYPE_ANNOUNCEMENT, R.string.recipient_found);
+                            } else {
+                                AccessibilityUtils.sendAccessibilityEvent(
+                                        context, TYPE_ANNOUNCEMENT, R.string.crypto_recipients_search_result_empty);
+                            }
+                            return Result.RecipientsSearchResult.success(searchResult);
+                        })
                         .onErrorReturn(Result.RecipientsSearchResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -231,13 +254,15 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
         recipientAdd = upstream -> upstream.switchMap(intent ->
                 Observable.fromCallable(() ->
-                        Result.RecipientAddResult.create(
-                                with(intent.recipients(), intent.recipient(), false))));
+                        Result.RecipientAddResult.create(with(intent.recipients(), intent.recipient(), false)))
+                    .doFinally(() ->
+                        AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_added)));
 
         recipientRemove = upstream -> upstream.switchMap(intent ->
                 Observable.fromCallable(() ->
-                        Result.RecipientRemoveResult.create(
-                                without(intent.recipients(), intent.recipient()))));
+                        Result.RecipientRemoveResult.create(without(intent.recipients(), intent.recipient())))
+                    .doFinally(() ->
+                        AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_removed)));
 
         encrypt = upstream -> upstream.switchMap(intent -> {
             String name = intent.name();
@@ -248,8 +273,13 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .fromCallable(() -> {
                             File containerFile = fileSystem.generateSignatureContainerFile(name);
                             try {
-                                return CryptoContainer.encrypt(dataFiles, recipients, containerFile)
-                                        .file();
+                                File file = CryptoContainer.encrypt(dataFiles, recipients, containerFile).file();
+                                if (dataFiles.size() > 1) {
+                                    AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.files_encrypted);
+                                } else {
+                                    AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.crypto_create_encrypt_success_message);
+                                }
+                                return file;
                             } catch (Exception e) {
                                 //noinspection ResultOfMethodCallIgnored
                                 containerFile.delete();
@@ -286,6 +316,10 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 Token token = request.token();
                 return idCardService
                         .decrypt(token, request.containerFile(), request.pin1())
+                        .doOnSuccess(ignored ->
+                                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(),
+                                        AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.crypto_create_decrypt_success_message)
+                        )
                         .flatMapObservable(dataFiles ->
                                 Observable
                                         .timer(3, TimeUnit.SECONDS)

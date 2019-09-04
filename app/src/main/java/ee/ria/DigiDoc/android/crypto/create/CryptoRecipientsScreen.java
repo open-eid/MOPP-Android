@@ -17,6 +17,7 @@ import com.jakewharton.rxbinding2.support.v7.widget.SearchViewQueryTextEvent;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -139,6 +140,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
         View view = inflater.inflate(R.layout.crypto_recipients_screen, container, false);
+        AccessibilityUtils.setAccessibilityPaneTitle(view, R.string.crypto_recipients_title);
+
         toolbarView = view.findViewById(R.id.toolbar);
         searchView = view.findViewById(R.id.cryptoRecipientsSearch);
         searchView.setSubmitButtonEnabled(true);

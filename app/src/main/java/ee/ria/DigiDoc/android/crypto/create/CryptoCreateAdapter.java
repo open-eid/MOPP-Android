@@ -19,6 +19,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.common.Certificate;
@@ -66,7 +67,7 @@ final class CryptoCreateAdapter extends
             builder.add(DataFileItem.create(dataFile, dataFileRemoveButtonVisible));
         }
         if (dataFilesAddEnabled) {
-            builder.add(AddButtonItem.create(R.string.crypto_create_data_files_add_button));
+            builder.add(AddButtonItem.create(R.string.crypto_create_data_files_add_button, R.string.crypto_create_data_files_add_button_description));
         }
         builder.add(SubheadItem.create(R.string.crypto_create_recipients_title));
         for (Certificate recipient : recipients) {
@@ -76,7 +77,7 @@ final class CryptoCreateAdapter extends
             builder.add(EmptyTextItem.create(R.string.crypto_create_recipients_empty));
         }
         if (recipientsAddEnabled) {
-            builder.add(AddButtonItem.create(R.string.crypto_create_recipients_add_button));
+            builder.add(AddButtonItem.create(R.string.crypto_create_recipients_add_button, R.string.crypto_create_recipients_add_button_description));
         }
         items(builder.build());
     }
@@ -248,6 +249,7 @@ final class CryptoCreateAdapter extends
         @Override
         void bind(CryptoCreateAdapter adapter, AddButtonItem item) {
             buttonView.setText(item.text());
+            buttonView.setContentDescription(buttonView.getResources().getString(item.contentDescription()));
             clicks(buttonView)
                     .map(ignored ->
                             ((AddButtonItem) adapter.items.get(getAdapterPosition())).text())
@@ -288,6 +290,11 @@ final class CryptoCreateAdapter extends
                             ((DataFileItem) adapter.items.get(getAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileClicksSubject);
             nameView.setText(item.dataFile().getName());
+            String fileNameDescription = nameView.getResources().getString(R.string.file);
+            nameView.setContentDescription(fileNameDescription + " " + nameView.getText());
+
+            String removeButtonText = removeButton.getResources().getString(R.string.crypto_create_data_file_remove_button);
+            removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton)
                     .map(ignored ->
@@ -308,6 +315,7 @@ final class CryptoCreateAdapter extends
         RecipientViewHolder(View itemView) {
             super(itemView);
             formatter = Application.component(itemView.getContext()).formatter();
+            AccessibilityUtils.disableDoubleTapToActivateFeedback(itemView.findViewById(R.id.cryptoRecipient));
             nameView = itemView.findViewById(R.id.cryptoRecipientName);
             infoView = itemView.findViewById(R.id.cryptoRecipientInfo);
             removeButton = itemView.findViewById(R.id.cryptoRecipientRemoveButton);
@@ -324,6 +332,9 @@ final class CryptoCreateAdapter extends
             infoView.setText(itemView.getResources().getString(
                     R.string.crypto_recipient_info, formatter.eidType(item.recipient().type()),
                     formatter.instant(item.recipient().notAfter())));
+
+            String removeRecipientDescription = removeButton.getResources().getString(R.string.crypto_recipient_remove_button);
+            removeButton.setContentDescription(removeRecipientDescription + " " + nameView.getText());
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton)
                     .map(ignored ->
@@ -334,6 +345,10 @@ final class CryptoCreateAdapter extends
             addButton.setText(item.addButtonEnabled()
                     ? R.string.crypto_recipient_add_button
                     : R.string.crypto_recipient_add_button_added);
+            if (item.addButtonEnabled()) {
+                String addRecipientDescription = addButton.getResources().getString(R.string.add_recipient);
+                addButton.setContentDescription(addRecipientDescription + " " + nameView.getText());
+            }
             clicks(addButton)
                     .map(ignored ->
                             ((RecipientItem) adapter.items.get(getAdapterPosition())).recipient())
@@ -384,9 +399,11 @@ final class CryptoCreateAdapter extends
 
         @StringRes abstract int text();
 
-        static AddButtonItem create(@StringRes int text) {
+        @StringRes abstract int contentDescription();
+
+        static AddButtonItem create(@StringRes int text, @StringRes int contentDescription) {
             return new AutoValue_CryptoCreateAdapter_AddButtonItem(
-                    R.layout.crypto_create_list_item_add_button, text);
+                    R.layout.crypto_create_list_item_add_button, text, contentDescription);
         }
     }
 
