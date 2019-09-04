@@ -25,6 +25,7 @@ public final class Activity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.Theme_Application);
+        setTitle(""); // ACCESSIBILITY: prevents application name read during each activity launch
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE);
