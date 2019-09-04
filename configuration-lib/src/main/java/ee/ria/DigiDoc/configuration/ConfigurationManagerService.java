@@ -13,10 +13,10 @@ import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 
 public class ConfigurationManagerService extends JobIntentService {
 
-    public static final int INIT_LIBDIGIDOC_RESULT_CODE = 1;
+    public static final int NEW_CONFIGURATION_LOADED = 1;
+    public static final int CONFIGURATION_UP_TO_DATE = 2;
 
     private ConfigurationManager configurationManager;
-    private CachedConfigurationHandler cachedConfigurationHandler;
 
     private static final int JOB_ID = 1000;
 
@@ -27,7 +27,7 @@ public class ConfigurationManagerService extends JobIntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        cachedConfigurationHandler = new CachedConfigurationHandler(getCacheDir());
+        CachedConfigurationHandler cachedConfigurationHandler = new CachedConfigurationHandler(getCacheDir());
         ConfigurationProperties configurationProperties = new ConfigurationProperties(getAssets());
         configurationManager = new ConfigurationManager(this, configurationProperties, cachedConfigurationHandler);
     }
@@ -38,18 +38,13 @@ public class ConfigurationManagerService extends JobIntentService {
         Bundle bundle = new Bundle();
 
         ConfigurationProvider configurationProvider = getConfiguration(intent);
-        int resultCode = 2;
 
-        /*
-            Hackish solution: if returned configuration provider is null, that means central configuration equals
-            with currently loaded and cached configuration and no new configuration was loaded.
-            But during that process last update check date was changed. Since configuration provider is immutable,
-            building new provider from currently loaded one, with last update check date updated.
-         */
         long lastConfigurationUpdateEpoch = intent.getLongExtra(ConfigurationConstants.LAST_CONFIGURATION_UPDATE, 0);
         Date confUpdateDate = configurationProvider.getConfigurationUpdateDate();
+
+        int resultCode = CONFIGURATION_UP_TO_DATE;
         if (lastConfigurationUpdateEpoch == 0 || (confUpdateDate != null && confUpdateDate.after(new Date(lastConfigurationUpdateEpoch)))) {
-            resultCode = INIT_LIBDIGIDOC_RESULT_CODE;
+            resultCode = NEW_CONFIGURATION_LOADED;
         }
 
         bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, configurationProvider);

@@ -155,10 +155,10 @@ public class Application extends android.app.Application {
         Bundle bundle = new Bundle();
         bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, configurationProvider);
         ConfigurationProviderReceiver confProviderReceiver = new ConfigurationProviderReceiver(new Handler());
-        confProviderReceiver.send(ConfigurationManagerService.INIT_LIBDIGIDOC_RESULT_CODE, bundle);
+        confProviderReceiver.send(ConfigurationManagerService.NEW_CONFIGURATION_LOADED, bundle);
 
         // Load configuration again in asynchronous manner, from central if needed or cache if present.
-        initAsyncConfigurationLoad(new ConfigurationProviderReceiver(new Handler()), false);
+//        initAsyncConfigurationLoad(new ConfigurationProviderReceiver(new Handler()), false);
     }
 
     private boolean isDefaultConfNewerThanCachedConf(ConfigurationProperties confProperties, CachedConfigurationHandler cachedConfHandler) {
@@ -204,11 +204,11 @@ public class Application extends android.app.Application {
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             configurationProvider = resultData.getParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER);
-            if (resultCode == ConfigurationManagerService.INIT_LIBDIGIDOC_RESULT_CODE) {
+            if (resultCode == ConfigurationManagerService.NEW_CONFIGURATION_LOADED) {
                 setupSignLib();
             }
             if (diagnosticsView != null) {
-                diagnosticsView.updateViewData(configurationProvider);
+                diagnosticsView.updateViewData(configurationProvider, resultCode);
             }
         }
     }

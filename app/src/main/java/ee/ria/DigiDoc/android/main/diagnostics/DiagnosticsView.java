@@ -4,19 +4,22 @@ import android.content.Context;
 import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessUtils;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
+import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.sign.SignLib;
 
@@ -59,8 +62,15 @@ public final class DiagnosticsView extends CoordinatorLayout {
         super.onDetachedFromWindow();
     }
 
-    public void updateViewData(ConfigurationProvider configurationProvider) {
+    public void updateViewData(ConfigurationProvider configurationProvider, int resultCode) {
         setData(configurationProvider);
+        int messageResId;
+        if (resultCode == ConfigurationManagerService.NEW_CONFIGURATION_LOADED) {
+            messageResId = R.string.configuration_updated;
+        } else {
+            messageResId = R.string.configuration_is_already_up_to_date;
+        }
+        AccessibilityUtils.sendAccessibilityEvent(getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, messageResId);
     }
 
     private void updateConfiguration() {
