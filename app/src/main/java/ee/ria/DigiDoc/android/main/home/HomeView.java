@@ -2,10 +2,13 @@ package ee.ria.DigiDoc.android.main.home;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.widget.BottomNavigationView;
 import android.util.SparseArray;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -60,6 +63,9 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         inflate(context, R.layout.main_home, this);
         navigationContainerView = findViewById(R.id.mainHomeNavigationContainer);
         navigationView = findViewById(R.id.mainHomeNavigation);
+        BottomNavigationItemView item = findViewById(R.id.mainHomeNavigationEID);
+        item.setContentDescription(getResources().getString(R.string.my_eid_content_description));
+
         menuDialog = new HomeMenuDialog(context);
         menuView = menuDialog.getMenuView();
         viewModel = Application.component(context).navigator().viewModel(screenId,

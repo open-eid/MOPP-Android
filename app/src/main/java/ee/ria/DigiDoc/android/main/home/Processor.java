@@ -7,6 +7,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseIntArray;
+import android.view.accessibility.AccessibilityEvent;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
@@ -16,6 +17,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.main.about.AboutScreen;
 import ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen;
@@ -129,7 +131,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         localeService.applicationLocale(new Locale(LOCALES.get(intent.item())));
                         return Result.LocaleChangeResult.create(LOCALES.inverse().get(
                                 localeService.applicationLocale().getLanguage()));
-                    });
+                    })
+                    .doFinally(() -> AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.language_changed));
         });
     }
 

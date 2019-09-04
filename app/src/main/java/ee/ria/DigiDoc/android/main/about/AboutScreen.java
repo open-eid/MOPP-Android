@@ -12,6 +12,7 @@ import com.bluelinelabs.conductor.Controller;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 
@@ -34,6 +35,8 @@ public final class AboutScreen extends Controller implements Screen {
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
         View view = inflater.inflate(R.layout.main_about_screen, container, false);
+        AccessibilityUtils.setAccessibilityPaneTitle(view, R.string.main_about_title);
+
         Toolbar toolbarView = view.findViewById(R.id.toolbar);
         RecyclerView listView = view.findViewById(R.id.mainAboutList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));

@@ -12,7 +12,6 @@ import java.util.Date;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.accessibility.AccessUtils;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -38,6 +37,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
         super(context);
         dateFormat = ConfigurationDateUtil.getDateFormat();
         inflate(context, R.layout.main_diagnostics, this);
+        AccessibilityUtils.setAccessibilityPaneTitle(this, R.string.main_diagnostics_title);
         toolbarView = findViewById(R.id.toolbar);
         navigator = Application.component(context).navigator();
 
