@@ -46,14 +46,13 @@ public class AccessibilityUtils {
         }
     }
 
-    // TODO: lisada lõppu PANE?
     public static void setAccessibilityPaneTitle(View view, @StringRes int titleResId) {
         setAccessibilityPaneTitle(view, view.getResources().getString(titleResId));
     }
 
     public static void setAccessibilityPaneTitle(View view, String title) {
         if (Build.VERSION.SDK_INT >= 28) {
-            view.setAccessibilityPaneTitle(title + " pane");
+            view.setAccessibilityPaneTitle("Displaying " + title + " pane");
         }
     }
 

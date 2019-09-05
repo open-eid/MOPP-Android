@@ -104,7 +104,8 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
         //noinspection unchecked
         return Observable
                 .mergeArray(dataView.actions().map(Intent.CodeUpdateIntent::show),
-                        codeUpdateView.closes().map(ignored -> Intent.CodeUpdateIntent.clear(codeUpdateAction)),
+                        codeUpdateView.closeButtonClick().map(ignored -> Intent.CodeUpdateIntent.clear(codeUpdateAction)),
+                        codeUpdateView.backButtonClick().map(ignored -> Intent.CodeUpdateIntent.clear()),
                         codeUpdateView.requests()
                                 .filter(ignored ->
                                         codeUpdateAction != null && data != null && token != null)

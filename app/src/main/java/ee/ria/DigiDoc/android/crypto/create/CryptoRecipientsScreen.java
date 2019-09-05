@@ -148,6 +148,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());
+        listView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         doneButton = view.findViewById(R.id.cryptoRecipientsDoneButton);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);

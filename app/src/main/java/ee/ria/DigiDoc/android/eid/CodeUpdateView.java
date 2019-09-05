@@ -187,8 +187,12 @@ public final class CodeUpdateView extends CoordinatorLayout {
         hideSoftKeyboard(this);
     }
 
-    public Observable<Object> closes() {
-        return Observable.merge(navigationClicks(toolbarView), clicks(negativeButton));
+    public Observable<Object> closeButtonClick() {
+        return clicks(negativeButton);
+    }
+
+    public Observable<Object> backButtonClick() {
+        return navigationClicks(toolbarView);
     }
 
     public Observable<CodeUpdateRequest> requests() {

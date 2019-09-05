@@ -73,9 +73,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
             IdCardData data = action.data();
             Token token = action.token();
             if (action.cleared()) {
-                // TODO: back ei peaks siin triggerima
                 return Observable.just(Result.CodeUpdateResult.clear())
                         .doFinally(() -> sendCancellationAccessibilityEvent(updateAction, application));
+            } else if (updateAction == null) {
+                return Observable.just(Result.CodeUpdateResult.clear());
             } else if (request == null || data == null || token == null) {
                 if (updateAction.pinType().equals(CodeType.PUK)
                         && updateAction.updateType().equals(CodeUpdateType.UNBLOCK)) {
