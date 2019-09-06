@@ -117,7 +117,9 @@ public final class SignLib {
 
     private static void overrideTSLCert(List<String> tslCerts) {
         DigiDocConf.instance().setTSLCert(new byte[0]); // Clear existing TSL certificates list
-        DigiDocConf.instance().setTSLCert(Base64.decode(tslCerts.get(tslCerts.size() - 1)));
+        for (String tslCert : tslCerts) {
+            DigiDocConf.instance().addTSLCert(Base64.decode(tslCert));
+        }
     }
 
     private static void overrideSignatureValidationServiceUrl(String sivaUrl) {
