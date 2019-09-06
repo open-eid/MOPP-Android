@@ -12,6 +12,7 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.home.HomeScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -27,8 +28,11 @@ public final class Activity extends AppCompatActivity {
         setTheme(R.style.Theme_Application);
         setTitle(""); // ACCESSIBILITY: prevents application name read during each activity launch
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
+
+        if (!BuildConfig.BUILD_TYPE.contentEquals("develop")) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                    WindowManager.LayoutParams.FLAG_SECURE);
+        }
         rootScreenFactory.intent(getIntent());
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
     }
