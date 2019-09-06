@@ -86,8 +86,6 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         methodView.check(R.id.signatureUpdateSignatureAddMethodMobileId);
         if (idCardView.getVisibility() == VISIBLE) {
             idCardView.reset(viewModel);
-        } else if (mobileIdView.getVisibility() == VISIBLE) {
-            mobileIdView.reset(viewModel);
         } else {
             idCardView.reset(viewModel);
             mobileIdView.reset(viewModel);
