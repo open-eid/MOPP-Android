@@ -117,6 +117,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     throw new IOException();
                                 }
 
+                                if (newFile.getName().startsWith(".")) {
+                                    throw new IOException();
+                                }
+
                                 AccessibilityUtils.sendAccessibilityEvent(
                                         application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.container_name_changed);
                                 return newFile;
