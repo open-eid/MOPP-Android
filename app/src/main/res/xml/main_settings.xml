@@ -4,7 +4,8 @@
     <EditTextPreference
         android:key="@string/main_settings_phone_no_key"
         android:title="@string/main_settings_phone_no_title"
-        android:inputType="phone" />
+        android:inputType="phone"
+        android:digits="0123456789"/>
 
     <EditTextPreference
         android:key="@string/main_settings_personal_code_key"

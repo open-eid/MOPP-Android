@@ -23,7 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="phone"
-            android:hint="@string/signature_update_mobile_id_phone_no" />
+            android:hint="@string/signature_update_mobile_id_phone_no"
+            android:digits="0123456789"/>
 
     </android.support.design.widget.TextInputLayout>
 
