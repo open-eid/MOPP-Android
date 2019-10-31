@@ -109,7 +109,9 @@ public final class SignLib {
         initializingMessage.append("libdigidoc/").append(getAppVersion(context));
         initializingMessage.append(" (Android ").append(Build.VERSION.RELEASE).append(")");
         initializingMessage.append(" Lang: ").append(Locale.getDefault().getLanguage());
-        initializingMessage.append(" Devices: ").append(TextUtils.join(", ", devices));
+        if (devices.size() > 0) {
+            initializingMessage.append(" Devices: ").append(TextUtils.join(", ", devices));
+        }
 
 
 

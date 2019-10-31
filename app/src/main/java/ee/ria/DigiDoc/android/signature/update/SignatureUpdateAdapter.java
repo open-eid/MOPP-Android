@@ -239,8 +239,18 @@ final class SignatureUpdateAdapter extends
         @Override
         void bind(SignatureUpdateAdapter adapter, NameItem item) {
             nameView.setText(item.name());
-            updateButton.setVisibility(item.updateButtonVisible() ? View.VISIBLE : View.GONE);
+            updateButton.setVisibility(item.updateButtonVisible() && !isContainerSigned(adapter) ? View.VISIBLE : View.GONE);
             clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
+        }
+
+        private boolean isContainerSigned(SignatureUpdateAdapter adapter) {
+            for (Item signature : adapter.items) {
+                if (signature instanceof SignatureItem && ((SignatureItem) signature).signature() != null) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 

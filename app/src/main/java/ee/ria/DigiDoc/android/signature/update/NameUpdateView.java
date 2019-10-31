@@ -36,7 +36,14 @@ public final class NameUpdateView extends TextInputLayout {
     }
 
     public void name(String name) {
-        editText.setText(name);
+        editText.setText(nameWithoutExtension(name));
+    }
+
+    private String nameWithoutExtension(String name) {
+            String[] containerNameParts = name.split("\\.");
+            String containerNameExtension = containerNameParts[containerNameParts.length - 1];
+
+            return name.replace("." + containerNameExtension, "");
     }
 
     public void error(@Nullable @StringRes Integer errorRes) {
