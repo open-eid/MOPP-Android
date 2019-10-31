@@ -43,6 +43,12 @@ public final class NameUpdateDialog extends AlertDialog {
         if (name != null) {
             view.name(name);
         }
+
+        if (container != null && container.signatures().size() > 0) {
+            showing = false;
+            view.setEnabled(false);
+        }
+
         if (showing && container != null) {
             show();
             Integer errorRes;
