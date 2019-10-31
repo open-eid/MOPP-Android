@@ -2,6 +2,10 @@ package ee.ria.DigiDoc.sign;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.system.ErrnoException;
 import android.system.Os;
@@ -14,7 +18,10 @@ import org.bouncycastle.util.encoders.Base64;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
@@ -25,6 +32,8 @@ import ee.ria.libdigidocpp.Conf;
 import ee.ria.libdigidocpp.DigiDocConf;
 import ee.ria.libdigidocpp.digidoc;
 import timber.log.Timber;
+
+import static android.content.Context.USB_SERVICE;
 
 public final class SignLib {
 
@@ -90,8 +99,22 @@ public final class SignLib {
             Timber.e(e, "Setting HOME environment variable failed");
         }
 
+        ArrayList<String> devices = new ArrayList<>();
+
+        for (UsbDevice device : getConnectedUsbs(context)) {
+            devices.add(device.getProductName());
+        }
+
+        StringBuilder initializingMessage = new StringBuilder();
+        initializingMessage.append("libdigidoc/").append(getAppVersion(context));
+        initializingMessage.append(" (Android ").append(Build.VERSION.RELEASE).append(")");
+        initializingMessage.append(" Lang: ").append(Locale.getDefault().getLanguage());
+        initializingMessage.append(" Devices: ").append(TextUtils.join(", ", devices));
+
+
+
         initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider);
-        digidoc.initializeLib("libdigidoc Android", path);
+        digidoc.initializeLib(initializingMessage.toString(), path);
 
     }
 
@@ -150,6 +173,34 @@ public final class SignLib {
         //noinspection ResultOfMethodCallIgnored
         schemaDir.mkdirs();
         return schemaDir;
+    }
+
+    private static List<UsbDevice> getConnectedUsbs(Context context) {
+        UsbManager usbManager = (UsbManager)context.getSystemService(USB_SERVICE);
+        HashMap<String, UsbDevice> devices = usbManager.getDeviceList();
+        Object[] devicesArray = devices.values().toArray();
+        List<UsbDevice> usbDevices = new ArrayList<>();
+
+        for (Object device : devicesArray) {
+            usbDevices.add((UsbDevice) device);
+        }
+
+        return usbDevices;
+    }
+
+    private static StringBuilder getAppVersion(Context context) {
+        StringBuilder versionName = new StringBuilder();
+        try {
+             versionName.append(context.getPackageManager()
+                     .getPackageInfo(context.getPackageName(), 0).versionName)
+                     .append(".")
+                     .append(context.getPackageManager()
+                        .getPackageInfo(context.getPackageName(), 0).versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        return versionName;
     }
 
     private SignLib() {
