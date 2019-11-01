@@ -70,8 +70,7 @@ public final class SettingsFragment extends PreferenceFragmentCompatDividers {
     private void setDefaultPhoneNoPrefix(String key, String defaultText) {
         if (key.equals("mobile_nr")) {
             phoneNoPreference = (EditTextPreference)findPreference(key);
-            EditText phoneNo = phoneNoPreference.getEditText();
-            phoneNo.setText(defaultText);
+            phoneNoPreference.setText(defaultText);
         }
     }
 
