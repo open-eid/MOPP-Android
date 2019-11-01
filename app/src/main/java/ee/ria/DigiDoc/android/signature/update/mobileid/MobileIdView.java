@@ -80,6 +80,13 @@ public final class MobileIdView extends LinearLayout implements
     public void setDefaultPhoneNoPrefix(String phoneNoPrefix) {
         if (TextUtils.isEmpty(phoneNoView.getText())) {
             phoneNoView.setText(phoneNoPrefix, TextView.BufferType.EDITABLE);
+            phoneNoView.setOnFocusChangeListener((view, hasfocus) -> {
+                if (hasfocus) {
+                    phoneNoView.setHint("372XXXXXXXX");
+                } else {
+                    phoneNoView.setHint("");
+                }
+            });
         }
     }
 
