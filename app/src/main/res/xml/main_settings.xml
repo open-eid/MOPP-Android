@@ -11,7 +11,8 @@
     <EditTextPreference
         android:key="@string/main_settings_personal_code_key"
         android:title="@string/main_settings_personal_code_title"
-        android:inputType="number" />
+        android:inputType="number"
+        android:maxLength="11"/>
 
     <ee.ria.DigiDoc.android.main.settings.TsaUrlPreference
         android:key="@string/main_settings_tsa_url_key"
