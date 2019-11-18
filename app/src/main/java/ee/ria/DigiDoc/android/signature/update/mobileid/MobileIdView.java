@@ -103,6 +103,6 @@ public final class MobileIdView extends LinearLayout implements
     }
 
     public boolean positiveButtonEnabled() {
-        return phoneNoView.getText().length() > 0 && personalCodeView.getText().length() > 0;
+        return phoneNoView.getText().length() > 3 && personalCodeView.getText().length() == 11;
     }
 }
