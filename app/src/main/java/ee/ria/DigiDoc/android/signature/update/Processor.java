@@ -91,10 +91,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         nameUpdate = upstream -> upstream.switchMap(action -> {
             File containerFile = action.containerFile();
-            String name = action.name();
-            if (name != null) {
-                name = addContainerExtension(containerFile, name);
-            }
+            String name = assignName(action, containerFile);
 
             if (containerFile == null) {
                 return Observable.just(Result.NameUpdateResult.hide());
@@ -108,10 +105,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return Observable.just(Result.NameUpdateResult
                         .failure(containerFile, new IOException()));
             } else {
-                String finalName = name;
                 return Observable
                         .fromCallable(() -> {
-                            File newFile = new File(containerFile.getParentFile(), finalName);
+                            File newFile = new File(containerFile.getParentFile(), name);
                             if (!newFile.getParentFile().equals(containerFile.getParentFile())) {
                                 throw new IOException("Can't jump directories");
                             } else if (newFile.createNewFile()) {
@@ -341,6 +337,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
         String oldContainerNamePart = oldContainerNameParts[oldContainerNameParts.length - 1];
 
         return newName.concat(".").concat(oldContainerNamePart);
+    }
+
+    private String assignName(Intent.NameUpdateIntent action, File containerFile) {
+        String name = action.name();
+        if (name != null) {
+            name = addContainerExtension(containerFile, name);
+        }
+
+        return name;
     }
 
 
