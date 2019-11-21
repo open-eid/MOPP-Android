@@ -19,6 +19,7 @@ import ee.ria.DigiDoc.android.main.home.HomeScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
+import timber.log.Timber;
 
 public final class Activity extends AppCompatActivity {
 
@@ -41,7 +42,13 @@ public final class Activity extends AppCompatActivity {
         if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
             handleIncomingFiles(intent);
         } else {
-            rootScreenFactory.intent(getIntent());
+            // Avoid blank screen on language change
+            if (savedInstanceState != null) {
+                finish();
+                startActivity(intent);
+                overridePendingTransition (0, 0);
+            }
+            rootScreenFactory.intent(intent);
         }
 
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
@@ -52,7 +59,7 @@ public final class Activity extends AppCompatActivity {
             intent.setDataAndType(intent.getData(), "*/*");
             rootScreenFactory.intent(intent);
         } catch (ActivityNotFoundException e) {
-            e.getStackTrace();
+            Timber.e(e, "Handling incoming file intent");
         }
 
     }

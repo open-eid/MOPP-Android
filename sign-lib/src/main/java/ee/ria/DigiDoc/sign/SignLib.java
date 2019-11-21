@@ -199,7 +199,7 @@ public final class SignLib {
                      .append(context.getPackageManager()
                         .getPackageInfo(context.getPackageName(), 0).versionCode);
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            Timber.e(e, "Getting package info");
         }
         
         return versionName;

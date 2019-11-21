@@ -36,7 +36,11 @@ public final class NameUpdateView extends TextInputLayout {
     }
 
     public void name(String name) {
-        editText.setText(nameWithoutExtension(name));
+        if (name.startsWith(".")) {
+            editText.setText(nameWithoutExtension("newFile" + name));
+        } else {
+            editText.setText(nameWithoutExtension(name));
+        }
     }
 
     private String nameWithoutExtension(String name) {

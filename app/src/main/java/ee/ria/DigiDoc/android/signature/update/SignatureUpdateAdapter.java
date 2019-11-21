@@ -238,7 +238,11 @@ final class SignatureUpdateAdapter extends
 
         @Override
         void bind(SignatureUpdateAdapter adapter, NameItem item) {
-            nameView.setText(item.name());
+            if (item.name().startsWith(".")) {
+                nameView.setText("newFile" + item.name());
+            } else {
+                nameView.setText(item.name());
+            }
             updateButton.setVisibility(item.updateButtonVisible() && !isContainerSigned(adapter) ? View.VISIBLE : View.GONE);
             clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
         }

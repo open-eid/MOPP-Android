@@ -92,8 +92,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
         nameUpdate = upstream -> upstream.switchMap(action -> {
             File containerFile = action.containerFile();
             String name = action.name();
-            if (action.name() != null) {
-                name = addContainerExtension(containerFile, action.name());
+            if (name != null) {
+                name = addContainerExtension(containerFile, name);
             }
 
             if (containerFile == null) {
