@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,8 +16,10 @@ import javax.inject.Singleton;
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.home.HomeScreen;
+import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
+import timber.log.Timber;
 
 public final class Activity extends AppCompatActivity {
 
@@ -33,8 +36,32 @@ public final class Activity extends AppCompatActivity {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE);
         }
-        rootScreenFactory.intent(getIntent());
+
+        Intent intent = getIntent();
+
+        if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
+            handleIncomingFiles(intent);
+        } else {
+            // Avoid blank screen on language change
+            if (savedInstanceState != null) {
+                finish();
+                startActivity(intent);
+                overridePendingTransition (0, 0);
+            }
+            rootScreenFactory.intent(intent);
+        }
+
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
+    }
+
+    private void handleIncomingFiles(Intent intent) {
+        try {
+            intent.setDataAndType(intent.getData(), "*/*");
+            rootScreenFactory.intent(intent);
+        } catch (ActivityNotFoundException e) {
+            Timber.e(e, "Handling incoming file intent");
+        }
+
     }
 
     @Override
@@ -69,9 +96,15 @@ public final class Activity extends AppCompatActivity {
             this.intent = intent;
         }
 
+
         @Override
         public Screen call() {
+            if (intent.getAction() != null && Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
+                return SignatureCreateScreen.create(intent);
+            }
             return HomeScreen.create(intent);
         }
     }
+
+
 }

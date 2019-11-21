@@ -2,11 +2,13 @@ package ee.ria.DigiDoc.android.signature.update.mobileid;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -72,6 +74,19 @@ public final class MobileIdView extends LinearLayout implements
     public void response(@Nullable MobileIdResponse response) {
         if (response != null && response.status() != null && response.status() == GetMobileCreateSignatureStatusResponse.ProcessStatus.SIGNATURE) {
             AccessibilityUtils.sendAccessibilityEvent(this.getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.container_signature_added);
+        }
+    }
+
+    public void setDefaultPhoneNoPrefix(String phoneNoPrefix) {
+        if (TextUtils.isEmpty(phoneNoView.getText())) {
+            phoneNoView.setText(phoneNoPrefix, TextView.BufferType.EDITABLE);
+            phoneNoView.setOnFocusChangeListener((view, hasfocus) -> {
+                if (hasfocus) {
+                    phoneNoView.setHint("372XXXXXXXX");
+                } else {
+                    phoneNoView.setHint("");
+                }
+            });
         }
     }
 

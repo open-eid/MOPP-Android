@@ -91,7 +91,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         nameUpdate = upstream -> upstream.switchMap(action -> {
             File containerFile = action.containerFile();
-            String name = action.name();
+            String name = assignName(action, containerFile);
 
             if (containerFile == null) {
                 return Observable.just(Result.NameUpdateResult.hide());
@@ -111,6 +111,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             if (!newFile.getParentFile().equals(containerFile.getParentFile())) {
                                 throw new IOException("Can't jump directories");
                             } else if (newFile.createNewFile()) {
+
+                                checkContainerName(newFile);
+
                                 //noinspection ResultOfMethodCallIgnored
                                 newFile.delete();
                                 if (!containerFile.renameTo(newFile)) {
@@ -119,8 +122,12 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
                                 AccessibilityUtils.sendAccessibilityEvent(
                                         application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.container_name_changed);
+
+
                                 return newFile;
                             } else {
+                                checkContainerName(newFile);
+
                                 throw new FileAlreadyExistsException(newFile);
                             }
                         })
@@ -317,6 +324,28 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd),
                 shared.ofType(Action.SendAction.class).compose(send)));
+    }
+
+    private void checkContainerName(File newContainerFileName) throws IOException {
+        if (newContainerFileName.getName().startsWith(".")) {
+            throw new IOException();
+        }
+    }
+
+    private String addContainerExtension(File oldContainerFileName, String newName) {
+        String[] oldContainerNameParts = oldContainerFileName.getName().split("\\.");
+        String oldContainerNamePart = oldContainerNameParts[oldContainerNameParts.length - 1];
+
+        return newName.concat(".").concat(oldContainerNamePart);
+    }
+
+    private String assignName(Intent.NameUpdateIntent action, File containerFile) {
+        String name = action.name();
+        if (name != null) {
+            name = addContainerExtension(containerFile, name);
+        }
+
+        return name;
     }
 
 

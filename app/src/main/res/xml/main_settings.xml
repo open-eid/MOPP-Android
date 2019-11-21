@@ -4,12 +4,15 @@
     <EditTextPreference
         android:key="@string/main_settings_phone_no_key"
         android:title="@string/main_settings_phone_no_title"
-        android:inputType="phone" />
+        android:inputType="phone"
+        android:digits="0123456789"
+        android:hint="372XXXXXXXX" />
 
     <EditTextPreference
         android:key="@string/main_settings_personal_code_key"
         android:title="@string/main_settings_personal_code_title"
-        android:inputType="number" />
+        android:inputType="number"
+        android:maxLength="11"/>
 
     <ee.ria.DigiDoc.android.main.settings.TsaUrlPreference
         android:key="@string/main_settings_tsa_url_key"
