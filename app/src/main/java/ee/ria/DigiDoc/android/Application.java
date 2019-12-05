@@ -117,8 +117,8 @@ public class Application extends android.app.Application {
             for (String fileName : tslFiles) {
                 try (BufferedReader reader = new BufferedReader(
                         new InputStreamReader(getAssets().open(assetsPath + File.separator + fileName), StandardCharsets.UTF_8))) {
-                    FileUtils.checkDirectory(destination);
-                    FileUtils.writeToFileFromFile(reader, destination, fileName);
+                    FileUtils.createDirectoryIfNotExist(destination);
+                    FileUtils.writeToFile(reader, destination, fileName);
                 } catch (IOException ex) {
                     Timber.e(ex, "Failed to open file: %s", fileName);
                 }

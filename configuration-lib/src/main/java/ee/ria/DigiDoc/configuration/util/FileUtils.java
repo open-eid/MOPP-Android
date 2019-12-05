@@ -78,14 +78,14 @@ public class FileUtils {
         }
     }
 
-    public static void checkDirectory(String destinationDirectory) {
-        File directory = new File(destinationDirectory);
-        if (!directory.exists()) {
-            directory.mkdirs();
+    public static void createDirectoryIfNotExist(String directory) {
+        File destinationDirectory = new File(directory);
+        if (!destinationDirectory.exists()) {
+            destinationDirectory.mkdirs();
         }
     }
 
-    public static void writeToFileFromFile(BufferedReader reader, String destinationPath, String fileName) {
+    public static void writeToFile(BufferedReader reader, String destinationPath, String fileName) {
         try (FileOutputStream fileStream = new FileOutputStream(new File(destinationPath + File.separator + fileName));
              OutputStreamWriter writer = new OutputStreamWriter(fileStream)) {
 
