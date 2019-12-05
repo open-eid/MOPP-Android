@@ -10,6 +10,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
+import timber.log.Timber;
 
 public class FileUtils {
 
@@ -72,6 +75,26 @@ public class FileUtils {
             os.write(content);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to store file '" + filePath + "'!", e);
+        }
+    }
+
+    public static void createDirectoryIfNotExist(String directory) {
+        File destinationDirectory = new File(directory);
+        if (!destinationDirectory.exists()) {
+            destinationDirectory.mkdirs();
+        }
+    }
+
+    public static void writeToFile(BufferedReader reader, String destinationPath, String fileName) {
+        try (FileOutputStream fileStream = new FileOutputStream(new File(destinationPath + File.separator + fileName));
+             OutputStreamWriter writer = new OutputStreamWriter(fileStream)) {
+
+            String fileLine;
+            while ((fileLine = reader.readLine()) != null) {
+                writer.write(fileLine + System.getProperty("line.separator"));
+            }
+        } catch (IOException e) {
+            Timber.e(e, "Failed to open file: %s", fileName);
         }
     }
 }
