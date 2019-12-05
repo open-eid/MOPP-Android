@@ -36,6 +36,11 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.security.Security;
 import java.util.Date;
 import java.util.Map;
@@ -71,6 +76,7 @@ import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProperties;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
+import ee.ria.DigiDoc.configuration.util.FileUtils;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
@@ -85,6 +91,7 @@ public class Application extends android.app.Application {
 
     @Override
     public void onCreate() {
+        setupTSLFiles();
         setupStrictMode();
         super.onCreate();
         setupBouncyCastle();
@@ -93,6 +100,30 @@ public class Application extends android.app.Application {
         setupConfiguration();
         setupRxJava();
         setupDagger();
+    }
+
+    // TSL files
+    private void setupTSLFiles() {
+        String destination = getCacheDir().toString() + "/schema";
+        String assetsPath = "tslFiles";
+        String[] tslFiles = null;
+        try {
+            tslFiles = getAssets().list(assetsPath);
+        } catch (IOException e) {
+            Timber.e(e, "Failed to get folder list: %s", assetsPath);
+        }
+
+        if (tslFiles != null && tslFiles.length > 0) {
+            for (String fileName : tslFiles) {
+                try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(getAssets().open(assetsPath + File.separator + fileName), StandardCharsets.UTF_8))) {
+                    FileUtils.checkDirectory(destination);
+                    FileUtils.writeToFileFromFile(reader, destination, fileName);
+                } catch (IOException ex) {
+                    Timber.e(ex, "Failed to open file: %s", fileName);
+                }
+            }
+        }
     }
 
     // StrictMode
