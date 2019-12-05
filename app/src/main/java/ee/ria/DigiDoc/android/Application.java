@@ -115,14 +115,18 @@ public class Application extends android.app.Application {
 
         if (tslFiles != null && tslFiles.length > 0) {
             for (String fileName : tslFiles) {
-                try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(getAssets().open(assetsPath + File.separator + fileName), StandardCharsets.UTF_8))) {
-                    FileUtils.createDirectoryIfNotExist(destination);
-                    FileUtils.writeToFile(reader, destination, fileName);
-                } catch (IOException ex) {
-                    Timber.e(ex, "Failed to open file: %s", fileName);
-                }
+                cacheTSLFiles(assetsPath, fileName, destination);
             }
+        }
+    }
+
+    private void cacheTSLFiles(String assetsPath, String fileName, String directory) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(getAssets().open(assetsPath + File.separator + fileName), StandardCharsets.UTF_8))) {
+            FileUtils.createDirectoryIfNotExist(directory);
+            FileUtils.writeToFile(reader, directory, fileName);
+        } catch (IOException ex) {
+            Timber.e(ex, "Failed to open file: %s", fileName);
         }
     }
 
