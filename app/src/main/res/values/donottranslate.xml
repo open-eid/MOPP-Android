@@ -17,6 +17,7 @@
     <string name="main_settings_county_key">mainSettingsCounty</string>
     <string name="main_settings_country_key">mainSettingsCountry</string>
     <string name="main_settings_postal_code_key">mainSettingsPostalCode</string>
+    <string name="main_settings_open_all_filetypes_key">mainSettingsOpenAllFilesTypes</string>
 
     <string name="signature_add_mobile_id_challenge_placeholder">____</string>
 

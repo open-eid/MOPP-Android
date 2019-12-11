@@ -39,6 +39,7 @@
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsFragment" />
+    <item type="id" name="mainSettingsOpenAllFileTypes" />
 
     <!-- Main About -->
     <item type="id" name="mainAboutList" />
