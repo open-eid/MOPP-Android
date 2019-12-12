@@ -29,6 +29,8 @@ final class SignatureAddSource {
     private final SettingsDataStore settingsDataStore;
     private final IdCardService idCardService;
 
+    private static final String EMPTY_VALUE = "";
+
     @Inject SignatureAddSource(Navigator navigator,
                                SignatureContainerDataSource signatureContainerDataSource,
                                SettingsDataStore settingsDataStore, IdCardService idCardService) {
@@ -64,6 +66,9 @@ final class SignatureAddSource {
             if (mobileIdRequest.rememberMe()) {
                 settingsDataStore.setPhoneNo(mobileIdRequest.phoneNo());
                 settingsDataStore.setPersonalCode(mobileIdRequest.personalCode());
+            } else {
+                settingsDataStore.setPhoneNo(EMPTY_VALUE);
+                settingsDataStore.setPersonalCode(EMPTY_VALUE);
             }
             return signatureContainerDataSource
                     .get(containerFile)

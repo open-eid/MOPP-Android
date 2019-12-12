@@ -1,11 +1,15 @@
 package ee.ria.DigiDoc.android;
 
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.view.WindowManager;
 
 import java.util.concurrent.Callable;
@@ -39,17 +43,30 @@ public final class Activity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
+        if ((Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setAction(intent.getAction());
             handleIncomingFiles(intent);
-        } else {
-            // Avoid blank screen on language change
-            if (savedInstanceState != null) {
-                finish();
-                startActivity(intent);
-                overridePendingTransition (0, 0);
-            }
-            rootScreenFactory.intent(intent);
+        } else if (Intent.ACTION_CONFIGURATION_CHANGED.equals(intent.getAction())) {
+            getIntent().setAction(Intent.ACTION_MAIN);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            finish();
+            startActivity(intent);
+            overridePendingTransition (0, 0);
         }
+        else {
+          // Avoid blank screen on language change
+          if (savedInstanceState != null) {
+              finish();
+              startActivity(intent);
+              overridePendingTransition (0, 0);
+          }
+          rootScreenFactory.intent(intent);
+        }
+
+        initializeApplicationFileTypesAssociation();
 
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
     }
@@ -61,7 +78,21 @@ public final class Activity extends AppCompatActivity {
         } catch (ActivityNotFoundException e) {
             Timber.e(e, "Handling incoming file intent");
         }
+    }
 
+    private void initializeApplicationFileTypesAssociation() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean isOpenAllTypesEnabled = sharedPreferences.getBoolean(getString(R.string.main_settings_open_all_filetypes_key), true);
+
+        if (isOpenAllTypesEnabled) {
+            PackageManager pm = getApplicationContext().getPackageManager();
+            ComponentName componentName = new ComponentName(getPackageName(), getClass().getName() + ".OPEN_ALL_FILE_TYPES");
+            pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+        } else {
+            PackageManager pm = getApplicationContext().getPackageManager();
+            ComponentName componentName = new ComponentName(getPackageName(), getClass().getName() + ".OPEN_ALL_FILE_TYPES");
+            pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        }
     }
 
     @Override
@@ -76,6 +107,10 @@ public final class Activity extends AppCompatActivity {
     public void onBackPressed() {
         if (!navigator.onBackPressed()) {
             super.onBackPressed();
+
+            finishAffinity();
+
+            System.exit(0);
         }
     }
 
@@ -99,7 +134,7 @@ public final class Activity extends AppCompatActivity {
 
         @Override
         public Screen call() {
-            if (intent.getAction() != null && Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
+            if ((intent.getAction() != null && Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
                 return SignatureCreateScreen.create(intent);
             }
             return HomeScreen.create(intent);
