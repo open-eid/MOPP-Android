@@ -42,12 +42,17 @@ public final class Activity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
+        if ((Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setAction(intent.getAction());
             handleIncomingFiles(intent);
         } else if (Intent.ACTION_CONFIGURATION_CHANGED.equals(intent.getAction())) {
-            finish();
             getIntent().setAction(Intent.ACTION_MAIN);
-            startActivity(getIntent());
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            finish();
+            startActivity(intent);
             overridePendingTransition (0, 0);
         }
         else {
@@ -95,6 +100,10 @@ public final class Activity extends AppCompatActivity {
     public void onBackPressed() {
         if (!navigator.onBackPressed()) {
             super.onBackPressed();
+
+            finishAffinity();
+
+            System.exit(0);
         }
     }
 
@@ -118,7 +127,7 @@ public final class Activity extends AppCompatActivity {
 
         @Override
         public Screen call() {
-            if (intent.getAction() != null && Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null) {
+            if ((intent.getAction() != null && Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
                 return SignatureCreateScreen.create(intent);
             }
             return HomeScreen.create(intent);
