@@ -107,10 +107,6 @@ public final class Activity extends AppCompatActivity {
     public void onBackPressed() {
         if (!navigator.onBackPressed()) {
             super.onBackPressed();
-
-            finishAffinity();
-
-            System.exit(0);
         }
     }
 
