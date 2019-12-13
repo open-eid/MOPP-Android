@@ -51,7 +51,14 @@ android {
 
     buildTypes {
         debug {
+            debuggable true
             applicationIdSuffix '.debug'
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['debug']
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
         }
         develop {
             debuggable true
@@ -59,6 +66,7 @@ android {
             signingConfig signingConfigs.debug
             matchingFallbacks = ['debug']
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro'
         }
@@ -69,7 +77,8 @@ android {
             matchingFallbacks = ['envtest', 'debug']
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro'
         }
