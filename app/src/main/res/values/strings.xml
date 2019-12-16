@@ -344,6 +344,9 @@
     <!--  General  -->
     <string name="my_eid_content_description">My e-ID</string>
 
+    <!-- Sharing Screen -->
+    <string name="sharing_screen_title">Choose file</string>
+
     <string name="document">Document</string>
     <string name="container_has">Container has</string>
     <string name="file">File</string>

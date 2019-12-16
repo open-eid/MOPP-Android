@@ -220,4 +220,7 @@
     <item type="id" name="eidHomeCodeUpdateNegativeButton" />
     <item type="id" name="eidHomeCodeUpdatePositiveButton" />
 
+    <!-- Sharing Screen -->
+    <item type="id" name="sharingScreenList" />
+
 </resources>

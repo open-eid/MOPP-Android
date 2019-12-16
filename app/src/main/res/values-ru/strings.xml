@@ -344,6 +344,9 @@
     <!--  General  -->
     <string name="my_eid_content_description">Мой e-ID</string>
 
+    <!-- Sharing Screen -->
+    <string name="sharing_screen_title">Выбрать файл</string>
+
     <!--  TODO: tõlked  -->
     <string name="document">Document</string>
     <string name="container_has">Container has</string>

@@ -20,6 +20,7 @@ import javax.inject.Singleton;
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.home.HomeScreen;
+import ee.ria.DigiDoc.android.main.sharing.SharingScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
@@ -52,16 +53,14 @@ public final class Activity extends AppCompatActivity {
             getIntent().setAction(Intent.ACTION_MAIN);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            finish();
-            startActivity(intent);
-            overridePendingTransition (0, 0);
+            restartAppWithIntent(intent);
+        } else if (Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
+            rootScreenFactory.intent(intent);
         }
         else {
           // Avoid blank screen on language change
           if (savedInstanceState != null) {
-              finish();
-              startActivity(intent);
-              overridePendingTransition (0, 0);
+              restartAppWithIntent(intent);
           }
           rootScreenFactory.intent(intent);
         }
@@ -69,6 +68,12 @@ public final class Activity extends AppCompatActivity {
         initializeApplicationFileTypesAssociation();
 
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
+    }
+
+    public void restartAppWithIntent(Intent intent) {
+        finish();
+        startActivity(intent);
+        overridePendingTransition (0, 0);
     }
 
     private void handleIncomingFiles(Intent intent) {
@@ -132,6 +137,8 @@ public final class Activity extends AppCompatActivity {
         public Screen call() {
             if ((intent.getAction() != null && Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
                 return SignatureCreateScreen.create(intent);
+            } else if (intent.getAction() != null && Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
+                return SharingScreen.create();
             }
             return HomeScreen.create(intent);
         }

@@ -347,6 +347,9 @@
     <string name="container_has">Container has</string>
     <string name="file">File</string>
 
+    <!-- Sharing Screen -->
+    <string name="sharing_screen_title">Vali fail</string>
+
 
     <!--  TODO: tõlked  -->
     <string name="signature_removed">Signature removed</string>
