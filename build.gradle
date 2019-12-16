@@ -12,6 +12,16 @@ allprojects {
         google()
         jcenter()
     }
+
+    def buildFolder = new File("app/${buildDir}/bundle")
+
+    gradle.buildFinished {
+        if (!buildFolder.exists()) {
+            buildDir = "app/${buildDir}/bundle"
+        } else {
+            buildDir = "${buildDir}"
+        }
+    }
 }
 
 ext {
