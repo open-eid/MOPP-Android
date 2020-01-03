@@ -17,7 +17,7 @@ allprojects {
 
     gradle.buildFinished {
         if (!buildFolder.exists()) {
-            buildDir = "app/${buildDir}/bundle"
+            buildDir = buildFolder
         } else {
             buildDir = "${buildDir}"
         }

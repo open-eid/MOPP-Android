@@ -93,9 +93,13 @@ public final class SharingScreenView extends CoordinatorLayout {
 
         ArrayList<String> containerFileNames = getContainerFileNames(containerFilesList);
 
-        ArrayAdapter<File> arrayAdapter3 = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, containerFilesList);
-        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, containerFileNames);
-        listView.setAdapter(arrayAdapter2);
+        ArrayAdapter<String> containerFileNamesList = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, containerFileNames);
+        listView.setAdapter(containerFileNamesList);
+
+        showFilesListener(listView, containerFilesList);
+    }
+
+    private void showFilesListener(ListView listView, ArrayList<File> containerFilesList) {
         listView.setOnItemClickListener((parent, view, position, id) -> {
 
             File requestFile = containerFilesList.get(position);
