@@ -28,6 +28,7 @@ public final class IntentUtils {
                 .createChooser(new Intent(Intent.ACTION_GET_CONTENT)
                         .setType("*/*")
                         .addCategory(Intent.CATEGORY_OPENABLE)
+                        .putExtra(Intent.EXTRA_REFERRER, R.string.application_name)
                         .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true), null);
     }
 

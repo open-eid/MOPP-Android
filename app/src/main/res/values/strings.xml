@@ -30,6 +30,7 @@
     <string name="main_settings_country_title">Country</string>
     <string name="main_settings_postal_code_title">ZIP code</string>
     <string name="main_settings_signature_profile_title">Default file type</string>
+    <string name="main_settings_open_all_filetypes_title">Allow app to use all file types (requires app restart)</string>
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
@@ -342,6 +343,9 @@
 
     <!--  General  -->
     <string name="my_eid_content_description">My e-ID</string>
+
+    <!-- Sharing Screen -->
+    <string name="sharing_screen_title">Choose file</string>
 
     <string name="document">Document</string>
     <string name="container_has">Container has</string>

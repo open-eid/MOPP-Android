@@ -44,6 +44,7 @@
 -dontwarn com.bea.xml.stream.**
 -dontwarn org.simpleframework.xml.stream.**
 -keep class org.simpleframework.xml.** { *; }
+-keep public class com.bea.xml.stream.**
 -keepclassmembers,allowobfuscation class * {
     @org.simpleframework.xml.* <fields>;
     @org.simpleframework.xml.* <init>(...);

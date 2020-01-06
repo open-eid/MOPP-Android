@@ -47,7 +47,7 @@
         android:id="@id/signatureUpdateMobileIdRememberMe"
         android:layout_width="200dp"
         android:layout_height="48dp"
-        android:checked="true"
+        android:checked="false"
         android:text="@string/signature_update_mobile_id_remember_me" />
 
 </merge>

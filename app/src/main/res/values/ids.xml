@@ -39,6 +39,7 @@
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsFragment" />
+    <item type="id" name="mainSettingsOpenAllFileTypes" />
 
     <!-- Main About -->
     <item type="id" name="mainAboutList" />
@@ -218,5 +219,8 @@
     <item type="id" name="eidHomeCodeUpdateRepeat" />
     <item type="id" name="eidHomeCodeUpdateNegativeButton" />
     <item type="id" name="eidHomeCodeUpdatePositiveButton" />
+
+    <!-- Sharing Screen -->
+    <item type="id" name="sharingScreenList" />
 
 </resources>

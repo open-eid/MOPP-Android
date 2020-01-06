@@ -14,25 +14,33 @@
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
         android:label="@string/application_name"
-        android:theme="@style/Theme.Application.Launch">
+        android:theme="@style/Theme.Application.Launch"
+        android:launchMode="singleInstance">
 
         <activity
             android:name=".android.Activity"
-            android:exported="true" />
+            android:exported="true"
+            android:launchMode="singleInstance" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
 
         <activity-alias
             android:name="LauncherActivity"
-            android:targetActivity=".android.Activity">
+            android:targetActivity=".android.Activity"
+            android:launchMode="singleInstance" >
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-            <intent-filter tools:ignore="AppLinkUrlError">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="application/octet-stream" />
             </intent-filter>
 
             <intent-filter>
@@ -61,11 +69,66 @@
 
         </activity-alias>
 
+        <activity-alias
+            android:name=".android.Activity.OPEN_CUSTOM_TYPES"
+            android:label="@string/application_name"
+            android:targetActivity=".android.Activity"
+            tools:ignore="AppLinkUrlError"
+            android:launchMode="singleInstance" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:host="*" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+
+                <data android:mimeType="application/x-cdoc" />
+                <data android:mimeType="application/x-p12d" />
+                <data android:mimeType="application/vnd.lt.archyvai.adoc-2008" />
+
+                <data android:mimeType="application/x-ddoc" />
+                <data android:mimeType="application/vnd.etsi.asic-s+zip" />
+
+                <data android:mimeType="application/vnd.etsi.asic-e+zip" />
+                <data android:mimeType="application/x-zip" />
+
+                <data android:mimeType="application/pdf" />
+
+                <data android:mimeType="application/octet-stream" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".android.Activity.OPEN_ALL_FILE_TYPES"
+            android:label="@string/application_name"
+            android:targetActivity=".android.Activity"
+            tools:ignore="AppLinkUrlError"
+            android:launchMode="singleInstance" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:host="*" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity-alias>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="@string/file_provider_authority"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
 
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
