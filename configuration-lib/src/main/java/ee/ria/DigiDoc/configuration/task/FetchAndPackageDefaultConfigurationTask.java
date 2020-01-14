@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.configuration.task;
 
+import android.app.Activity;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -49,16 +51,18 @@ public class FetchAndPackageDefaultConfigurationTask {
     }
 
     private static void loadAndStoreDefaultConfiguration(String[] args) {
+        Activity activity = new Activity();
         FetchAndPackageDefaultConfigurationTask.buildVariant = "main";
         String configurationServiceUrl = determineCentralConfigurationServiceUrl(args);
-        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, null);
+        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, null, activity.getApplicationContext());
         loadAndAssertConfiguration(confLoader, configurationServiceUrl, args);
     }
 
     private static void loadAndStoreEnvTestDefaultConfiguration(String[] args) {
+        Activity activity = new Activity();
         FetchAndPackageDefaultConfigurationTask.buildVariant = "envtest";
         String configurationServiceUrl = properties.getProperty(TEST_CENTRAL_CONF_SERVICE_ULR_NAME);
-        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, loadCentralConfServiceSSLCert());
+        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, loadCentralConfServiceSSLCert(), activity.getApplicationContext());
         loadAndAssertConfiguration(confLoader, configurationServiceUrl, args);
     }
 

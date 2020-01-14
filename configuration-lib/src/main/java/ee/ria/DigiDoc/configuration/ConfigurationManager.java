@@ -80,7 +80,7 @@ public class ConfigurationManager {
         this.cachedConfigurationHandler = cachedConfigurationHandler;
         this.centralConfigurationServiceUrl = configurationProperties.getCentralConfigurationServiceUrl();
         this.configurationProperties = configurationProperties;
-        this.centralConfigurationLoader = new CentralConfigurationLoader(centralConfigurationServiceUrl, loadCentralConfServiceSSlCertIfPresent(context.getAssets()));
+        this.centralConfigurationLoader = new CentralConfigurationLoader(centralConfigurationServiceUrl, loadCentralConfServiceSSlCertIfPresent(context.getAssets()), context);
         this.defaultConfigurationLoader = new DefaultConfigurationLoader(context.getAssets());
         this.cachedConfigurationLoader = new CachedConfigurationLoader(cachedConfigurationHandler);
     }

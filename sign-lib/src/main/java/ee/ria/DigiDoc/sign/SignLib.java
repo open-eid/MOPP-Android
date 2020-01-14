@@ -49,7 +49,7 @@ public final class SignLib {
      * <p>
      * Unzips the schema, access certificate and initializes libdigidocpp.
      */
-    public static void init(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider) {
+    public static void init(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent) {
         initNativeLibs();
         try {
             initSchema(context);
@@ -57,7 +57,8 @@ public final class SignLib {
             Timber.e(e, "Init schema failed");
         }
 
-        initLibDigiDocpp(context, tsaUrlPreferenceKey, configurationProvider);
+        initLibDigiDocpp(context, tsaUrlPreferenceKey, configurationProvider, userAgent);
+
     }
 
     public static String accessTokenPass() {
@@ -91,7 +92,7 @@ public final class SignLib {
         }
     }
 
-    private static void initLibDigiDocpp(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider) {
+    private static void initLibDigiDocpp(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent) {
         String path = getSchemaDir(context).getAbsolutePath();
         try {
             Os.setenv("HOME", path, true);
@@ -99,24 +100,8 @@ public final class SignLib {
             Timber.e(e, "Setting HOME environment variable failed");
         }
 
-        ArrayList<String> devices = new ArrayList<>();
-
-        for (UsbDevice device : getConnectedUsbs(context)) {
-            devices.add(device.getProductName());
-        }
-
-        StringBuilder initializingMessage = new StringBuilder();
-        initializingMessage.append("libdigidoc/").append(getAppVersion(context));
-        initializingMessage.append(" (Android ").append(Build.VERSION.RELEASE).append(")");
-        initializingMessage.append(" Lang: ").append(Locale.getDefault().getLanguage());
-        if (devices.size() > 0) {
-            initializingMessage.append(" Devices: ").append(TextUtils.join(", ", devices));
-        }
-
-
-
         initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider);
-        digidoc.initializeLib(initializingMessage.toString(), path);
+        digidoc.initializeLib(userAgent, path);
 
     }
 
@@ -175,34 +160,6 @@ public final class SignLib {
         //noinspection ResultOfMethodCallIgnored
         schemaDir.mkdirs();
         return schemaDir;
-    }
-
-    private static List<UsbDevice> getConnectedUsbs(Context context) {
-        UsbManager usbManager = (UsbManager)context.getSystemService(USB_SERVICE);
-        HashMap<String, UsbDevice> devices = usbManager.getDeviceList();
-        Object[] devicesArray = devices.values().toArray();
-        List<UsbDevice> usbDevices = new ArrayList<>();
-
-        for (Object device : devicesArray) {
-            usbDevices.add((UsbDevice) device);
-        }
-
-        return usbDevices;
-    }
-
-    private static StringBuilder getAppVersion(Context context) {
-        StringBuilder versionName = new StringBuilder();
-        try {
-             versionName.append(context.getPackageManager()
-                     .getPackageInfo(context.getPackageName(), 0).versionName)
-                     .append(".")
-                     .append(context.getPackageManager()
-                        .getPackageInfo(context.getPackageName(), 0).versionCode);
-        } catch (PackageManager.NameNotFoundException e) {
-            Timber.e(e, "Getting package info");
-        }
-        
-        return versionName;
     }
 
     private SignLib() {
