@@ -76,13 +76,20 @@ public class ConfigurationManager {
 
     private ConfigurationSignatureVerifier confSignatureVerifier;
 
-    public ConfigurationManager(Context context, ConfigurationProperties configurationProperties, CachedConfigurationHandler cachedConfigurationHandler) {
+    private static String userAgent;
+
+    public ConfigurationManager(Context context, ConfigurationProperties configurationProperties, CachedConfigurationHandler cachedConfigurationHandler, String userAgent) {
         this.cachedConfigurationHandler = cachedConfigurationHandler;
         this.centralConfigurationServiceUrl = configurationProperties.getCentralConfigurationServiceUrl();
         this.configurationProperties = configurationProperties;
-        this.centralConfigurationLoader = new CentralConfigurationLoader(centralConfigurationServiceUrl, loadCentralConfServiceSSlCertIfPresent(context.getAssets()), context);
+        this.centralConfigurationLoader = new CentralConfigurationLoader(centralConfigurationServiceUrl, loadCentralConfServiceSSlCertIfPresent(context.getAssets()), userAgent);
         this.defaultConfigurationLoader = new DefaultConfigurationLoader(context.getAssets());
         this.cachedConfigurationLoader = new CachedConfigurationLoader(cachedConfigurationHandler);
+        ConfigurationManager.userAgent = userAgent;
+    }
+
+    public static String getUserAgent() {
+        return userAgent;
     }
 
     public ConfigurationProvider getConfiguration() {

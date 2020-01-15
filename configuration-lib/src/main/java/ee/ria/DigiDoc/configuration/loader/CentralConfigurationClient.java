@@ -1,7 +1,5 @@
 package ee.ria.DigiDoc.configuration.loader;
 
-import android.content.Context;
-
 import java.io.IOException;
 import java.security.KeyStore;
 import java.security.SecureRandom;
@@ -12,26 +10,25 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import ee.ria.DigiDoc.configuration.util.useragent.UserAgentUtil;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class CentralConfigurationClient {
+class CentralConfigurationClient {
 
     private static final int DEFAULT_TIMEOUT = 5;
     private final OkHttpClient httpClient;
     private final String centralConfigurationServiceUrl;
     private final X509Certificate explicitSSLCert;
-    private final Context context;
+    private final String userAgent;
 
-    CentralConfigurationClient(String centralConfigurationServiceUrl, X509Certificate explicitSSLCert, Context context) {
+    CentralConfigurationClient(String centralConfigurationServiceUrl, X509Certificate explicitSSLCert, String userAgent) {
         this.centralConfigurationServiceUrl = centralConfigurationServiceUrl;
         this.explicitSSLCert = explicitSSLCert;
         httpClient = constructHttpClient();
-        this.context = context;
+        this.userAgent = userAgent;
     }
 
     String getConfiguration() {
@@ -48,12 +45,10 @@ public class CentralConfigurationClient {
 
     private String requestData(String url) {
 
-        UserAgentUtil userAgentUtil = new UserAgentUtil(context);
-
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("User-Agent", userAgentUtil.getUserAgent())
+                .addHeader("User-Agent", userAgent)
                 .build();
 
         Call call = httpClient.newCall(request);

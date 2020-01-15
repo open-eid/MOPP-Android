@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
+import ee.ria.DigiDoc.configuration.ConfigurationManager;
 import ee.ria.DigiDoc.configuration.ConfigurationParser;
 import ee.ria.DigiDoc.configuration.ConfigurationProperties;
 import ee.ria.DigiDoc.configuration.loader.CentralConfigurationLoader;
@@ -51,18 +52,16 @@ public class FetchAndPackageDefaultConfigurationTask {
     }
 
     private static void loadAndStoreDefaultConfiguration(String[] args) {
-        Activity activity = new Activity();
         FetchAndPackageDefaultConfigurationTask.buildVariant = "main";
         String configurationServiceUrl = determineCentralConfigurationServiceUrl(args);
-        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, null, activity.getApplicationContext());
+        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, null, ConfigurationManager.getUserAgent());
         loadAndAssertConfiguration(confLoader, configurationServiceUrl, args);
     }
 
     private static void loadAndStoreEnvTestDefaultConfiguration(String[] args) {
-        Activity activity = new Activity();
         FetchAndPackageDefaultConfigurationTask.buildVariant = "envtest";
         String configurationServiceUrl = properties.getProperty(TEST_CENTRAL_CONF_SERVICE_ULR_NAME);
-        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, loadCentralConfServiceSSLCert(), activity.getApplicationContext());
+        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, loadCentralConfServiceSSLCert(), ConfigurationManager.getUserAgent());
         loadAndAssertConfiguration(confLoader, configurationServiceUrl, args);
     }
 

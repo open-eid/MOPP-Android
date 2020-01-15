@@ -1,6 +1,5 @@
-package ee.ria.DigiDoc.configuration.util.useragent;
+package ee.ria.DigiDoc.android.utils.useragent;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
@@ -9,6 +8,7 @@ import android.os.Build;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -19,23 +19,40 @@ import static android.content.Context.USB_SERVICE;
 
 public final class UserAgentUtil {
 
-    private final Context context;
+    public UserAgentUtil() {}
 
-    public UserAgentUtil(Context context) {
-        this.context = context;
+    public static String getUserAgent(Context context) {
+
+        ArrayList<String> deviceProductNames = new ArrayList<>();
+        StringBuilder initializingMessage = new StringBuilder();
+
+        if (context != null) {
+            for (UsbDevice device : getConnectedUsbs(context)) {
+                deviceProductNames.add(device.getProductName());
+            }
+
+            initializingMessage.append("libdigidoc/").append(getAppVersion(context));
+            initializingMessage.append(" (Android ").append(Build.VERSION.RELEASE).append(")");
+            initializingMessage.append(" Lang: ").append(Locale.getDefault().getLanguage());
+            if (deviceProductNames.size() > 0) {
+                initializingMessage.append(" Devices: ").append(TextUtils.join(", ", deviceProductNames));
+            }
+        }
+
+        return initializingMessage.toString();
     }
 
     private static List<UsbDevice> getConnectedUsbs(Context context) {
         UsbManager usbManager = (UsbManager)context.getSystemService(USB_SERVICE);
         HashMap<String, UsbDevice> devices = usbManager.getDeviceList();
         Object[] devicesArray = devices.values().toArray();
-        List<UsbDevice> usbDevices = new ArrayList<>();
+        Collection<UsbDevice> usbDevices = devices.values();
 
         for (Object device : devicesArray) {
             usbDevices.add((UsbDevice) device);
         }
 
-        return usbDevices;
+        return new ArrayList<>(usbDevices);
     }
 
     private static StringBuilder getAppVersion(Context context) {
@@ -47,31 +64,10 @@ public final class UserAgentUtil {
                     .append(context.getPackageManager()
                             .getPackageInfo(context.getPackageName(), 0).versionCode);
         } catch (PackageManager.NameNotFoundException e) {
-            Timber.e(e, "Getting package info");
+            Timber.e(e, "Failed getting app version from package info");
         }
 
         return versionName;
-    }
-
-    public String getUserAgent() {
-
-        ArrayList<String> devices = new ArrayList<>();
-        StringBuilder initializingMessage = new StringBuilder();
-
-        if (context != null) {
-            for (UsbDevice device : getConnectedUsbs(context)) {
-                devices.add(device.getProductName());
-            }
-
-            initializingMessage.append("libdigidoc/").append(getAppVersion(context));
-            initializingMessage.append(" (Android ").append(Build.VERSION.RELEASE).append(")");
-            initializingMessage.append(" Lang: ").append(Locale.getDefault().getLanguage());
-            if (devices.size() > 0) {
-                initializingMessage.append(" Devices: ").append(TextUtils.join(", ", devices));
-            }
-        }
-
-        return initializingMessage.toString();
     }
 
 }

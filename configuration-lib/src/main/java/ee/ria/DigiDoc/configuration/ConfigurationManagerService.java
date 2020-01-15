@@ -29,7 +29,7 @@ public class ConfigurationManagerService extends JobIntentService {
         super.onCreate();
         CachedConfigurationHandler cachedConfigurationHandler = new CachedConfigurationHandler(getCacheDir());
         ConfigurationProperties configurationProperties = new ConfigurationProperties(getAssets());
-        configurationManager = new ConfigurationManager(this, configurationProperties, cachedConfigurationHandler);
+        configurationManager = new ConfigurationManager(this, configurationProperties, cachedConfigurationHandler, ConfigurationManager.getUserAgent());
     }
 
     @Override

@@ -70,7 +70,7 @@ import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
-import ee.ria.DigiDoc.configuration.util.useragent.UserAgentUtil;
+import ee.ria.DigiDoc.android.utils.useragent.UserAgentUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationConstants;
 import ee.ria.DigiDoc.configuration.ConfigurationManager;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
@@ -164,8 +164,7 @@ public class Application extends android.app.Application {
     // Container configuration
 
     private void setupSignLib() {
-        UserAgentUtil userAgent = new UserAgentUtil(getApplicationContext());
-        SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider(), userAgent.getUserAgent());
+        SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider(), UserAgentUtil.getUserAgent(getApplicationContext()));
     }
 
     private void setupRxJava() {
@@ -175,7 +174,7 @@ public class Application extends android.app.Application {
     private void setupConfiguration() {
         CachedConfigurationHandler cachedConfHandler = new CachedConfigurationHandler(getCacheDir());
         ConfigurationProperties confProperties = new ConfigurationProperties(getAssets());
-        ConfigurationManager confManager = new ConfigurationManager(this, confProperties, cachedConfHandler);
+        ConfigurationManager confManager = new ConfigurationManager(this, confProperties, cachedConfHandler, UserAgentUtil.getUserAgent(getApplicationContext()));
 
         // Initially load cached configuration (if it exists and default configuration is not newer) in a blocking (synchronous)
         // manner. If default conf is newer then load default conf (case where application was updated and cache was not removed,
