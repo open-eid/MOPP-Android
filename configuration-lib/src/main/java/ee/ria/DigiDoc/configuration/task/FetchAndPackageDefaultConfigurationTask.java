@@ -19,6 +19,7 @@ import ee.ria.DigiDoc.configuration.loader.CentralConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.ConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.DefaultConfigurationLoader;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
+import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
 import ee.ria.DigiDoc.configuration.verify.ConfigurationSignatureVerifier;
 
 /**
@@ -54,14 +55,14 @@ public class FetchAndPackageDefaultConfigurationTask {
     private static void loadAndStoreDefaultConfiguration(String[] args) {
         FetchAndPackageDefaultConfigurationTask.buildVariant = "main";
         String configurationServiceUrl = determineCentralConfigurationServiceUrl(args);
-        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, null, ConfigurationManager.getUserAgent());
+        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, null, "Jenkins");
         loadAndAssertConfiguration(confLoader, configurationServiceUrl, args);
     }
 
     private static void loadAndStoreEnvTestDefaultConfiguration(String[] args) {
         FetchAndPackageDefaultConfigurationTask.buildVariant = "envtest";
         String configurationServiceUrl = properties.getProperty(TEST_CENTRAL_CONF_SERVICE_ULR_NAME);
-        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, loadCentralConfServiceSSLCert(), ConfigurationManager.getUserAgent());
+        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, loadCentralConfServiceSSLCert(), "Jenkins");
         loadAndAssertConfiguration(confLoader, configurationServiceUrl, args);
     }
 

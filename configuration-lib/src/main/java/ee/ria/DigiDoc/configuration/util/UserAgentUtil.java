@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.utils.useragent;
+package ee.ria.DigiDoc.configuration.util;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -8,7 +8,6 @@ import android.os.Build;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -19,7 +18,7 @@ import static android.content.Context.USB_SERVICE;
 
 public final class UserAgentUtil {
 
-    public UserAgentUtil() {}
+    private UserAgentUtil() {}
 
     public static String getUserAgent(Context context) {
 
@@ -46,13 +45,13 @@ public final class UserAgentUtil {
         UsbManager usbManager = (UsbManager)context.getSystemService(USB_SERVICE);
         HashMap<String, UsbDevice> devices = usbManager.getDeviceList();
         Object[] devicesArray = devices.values().toArray();
-        Collection<UsbDevice> usbDevices = devices.values();
+        List<UsbDevice> usbDevices = new ArrayList<>(devices.values());
 
         for (Object device : devicesArray) {
             usbDevices.add((UsbDevice) device);
         }
 
-        return new ArrayList<>(usbDevices);
+        return usbDevices;
     }
 
     private static StringBuilder getAppVersion(Context context) {

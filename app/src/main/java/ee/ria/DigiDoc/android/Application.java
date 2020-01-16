@@ -70,7 +70,7 @@ import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
-import ee.ria.DigiDoc.android.utils.useragent.UserAgentUtil;
+import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationConstants;
 import ee.ria.DigiDoc.configuration.ConfigurationManager;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
