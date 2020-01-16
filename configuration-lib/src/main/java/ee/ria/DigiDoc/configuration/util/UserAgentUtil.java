@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.configuration.util;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
@@ -44,14 +45,8 @@ public final class UserAgentUtil {
     private static List<UsbDevice> getConnectedUsbs(Context context) {
         UsbManager usbManager = (UsbManager)context.getSystemService(USB_SERVICE);
         HashMap<String, UsbDevice> devices = usbManager.getDeviceList();
-        Object[] devicesArray = devices.values().toArray();
-        List<UsbDevice> usbDevices = new ArrayList<>(devices.values());
 
-        for (Object device : devicesArray) {
-            usbDevices.add((UsbDevice) device);
-        }
-
-        return usbDevices;
+        return new ArrayList<>(devices.values());
     }
 
     private static StringBuilder getAppVersion(Context context) {
