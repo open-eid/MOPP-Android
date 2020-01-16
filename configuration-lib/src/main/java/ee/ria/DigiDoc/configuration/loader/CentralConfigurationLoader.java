@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.configuration.loader;
 
+import android.content.Context;
+
 import org.bouncycastle.util.encoders.Base64;
 
 import java.security.cert.X509Certificate;
@@ -11,8 +13,8 @@ public class CentralConfigurationLoader extends ConfigurationLoader {
 
     private final CentralConfigurationClient configurationClient;
 
-    public CentralConfigurationLoader(String configurationServiceUrl, X509Certificate sslCert) {
-        this.configurationClient = new CentralConfigurationClient(configurationServiceUrl, sslCert);
+    public CentralConfigurationLoader(String configurationServiceUrl, X509Certificate sslCert, String userAgent) {
+        this.configurationClient = new CentralConfigurationClient(configurationServiceUrl, sslCert, userAgent);
     }
 
     @Override

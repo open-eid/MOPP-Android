@@ -22,11 +22,13 @@ class CentralConfigurationClient {
     private final OkHttpClient httpClient;
     private final String centralConfigurationServiceUrl;
     private final X509Certificate explicitSSLCert;
+    private final String userAgent;
 
-    CentralConfigurationClient(String centralConfigurationServiceUrl, X509Certificate explicitSSLCert) {
+    CentralConfigurationClient(String centralConfigurationServiceUrl, X509Certificate explicitSSLCert, String userAgent) {
         this.centralConfigurationServiceUrl = centralConfigurationServiceUrl;
         this.explicitSSLCert = explicitSSLCert;
         httpClient = constructHttpClient();
+        this.userAgent = userAgent;
     }
 
     String getConfiguration() {
@@ -42,9 +44,11 @@ class CentralConfigurationClient {
     }
 
     private String requestData(String url) {
+
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("Content-Type", "application/json")
+                .addHeader("User-Agent", userAgent)
                 .build();
 
         Call call = httpClient.newCall(request);
