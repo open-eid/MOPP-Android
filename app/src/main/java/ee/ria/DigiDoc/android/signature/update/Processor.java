@@ -91,7 +91,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         nameUpdate = upstream -> upstream.switchMap(action -> {
             File containerFile = action.containerFile();
-            String name = assignName(action, containerFile);
+            String name = containerFile != null ? assignName(action, containerFile) : null;
 
             if (containerFile == null) {
                 return Observable.just(Result.NameUpdateResult.hide());
@@ -341,8 +341,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private String assignName(Intent.NameUpdateIntent action, File containerFile) {
         String name = action.name();
-        if (name != null) {
-            name = addContainerExtension(containerFile, name);
+        if (name != null && !name.equals("") && !name.equals(" ") && !name.isEmpty()) {
+            return addContainerExtension(containerFile, name);
         }
 
         return name;
