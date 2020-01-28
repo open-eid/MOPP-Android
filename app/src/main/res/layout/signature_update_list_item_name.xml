@@ -5,6 +5,7 @@
     android:paddingStart="@dimen/material_list_text_first_position_margin_start"
     android:paddingTop="@dimen/material_baseline_grid_1x"
     android:paddingEnd="@dimen/material_baseline_grid_1x"
+    android:paddingBottom="@dimen/material_baseline_grid_1x"
     android:orientation="horizontal"
     android:background="@color/primary">
 
