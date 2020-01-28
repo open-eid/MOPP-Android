@@ -32,8 +32,8 @@ public final class SignedContainerTest {
         Context targetContext = InstrumentationRegistry.getTargetContext();
         ConfigurationProperties configurationProperties = new ConfigurationProperties(targetContext.getAssets());
         CachedConfigurationHandler cachedConfigurationHandler = new CachedConfigurationHandler(targetContext.getCacheDir());
-        ConfigurationManager configurationManager = new ConfigurationManager(targetContext, configurationProperties, cachedConfigurationHandler);
-        SignLib.init(targetContext, "tsa_url", configurationManager.getConfiguration());
+        ConfigurationManager configurationManager = new ConfigurationManager(targetContext, configurationProperties, cachedConfigurationHandler, "SignedContainerTest-User-Agent");
+        SignLib.init(targetContext, "tsa_url", configurationManager.getConfiguration(), "SignedContainerTest-User-Agent");
     }
 
     private static final String DIR = "signed-containers";
