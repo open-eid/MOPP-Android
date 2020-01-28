@@ -3,9 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingStart="@dimen/material_list_text_first_position_margin_start"
-    android:paddingTop="@dimen/material_list_text_only_margin_horizontal"
-    android:paddingEnd="@dimen/material_list_text_last_position_margin_end"
-    android:paddingBottom="@dimen/material_list_text_only_margin_horizontal"
+    android:paddingTop="@dimen/material_baseline_grid_1x"
+    android:paddingEnd="@dimen/material_baseline_grid_1x"
     android:orientation="horizontal"
     android:background="@color/primary">
 

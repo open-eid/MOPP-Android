@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:minHeight="@dimen/material_list_two_line_normal_height"
+        android:minHeight="@dimen/material_baseline_grid_7x"
         android:paddingTop="@dimen/material_list_normal_padding_vertical"
         android:paddingBottom="@dimen/material_list_normal_padding_vertical"
         android:gravity="center_vertical">
