@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.configuration.task;
 
+import android.app.Activity;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,12 +12,14 @@ import java.util.Date;
 import java.util.Properties;
 
 import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
+import ee.ria.DigiDoc.configuration.ConfigurationManager;
 import ee.ria.DigiDoc.configuration.ConfigurationParser;
 import ee.ria.DigiDoc.configuration.ConfigurationProperties;
 import ee.ria.DigiDoc.configuration.loader.CentralConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.ConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.DefaultConfigurationLoader;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
+import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
 import ee.ria.DigiDoc.configuration.verify.ConfigurationSignatureVerifier;
 
 /**
@@ -51,14 +55,14 @@ public class FetchAndPackageDefaultConfigurationTask {
     private static void loadAndStoreDefaultConfiguration(String[] args) {
         FetchAndPackageDefaultConfigurationTask.buildVariant = "main";
         String configurationServiceUrl = determineCentralConfigurationServiceUrl(args);
-        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, null);
+        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, null, "Jenkins");
         loadAndAssertConfiguration(confLoader, configurationServiceUrl, args);
     }
 
     private static void loadAndStoreEnvTestDefaultConfiguration(String[] args) {
         FetchAndPackageDefaultConfigurationTask.buildVariant = "envtest";
         String configurationServiceUrl = properties.getProperty(TEST_CENTRAL_CONF_SERVICE_ULR_NAME);
-        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, loadCentralConfServiceSSLCert());
+        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, loadCentralConfServiceSSLCert(), "Jenkins");
         loadAndAssertConfiguration(confLoader, configurationServiceUrl, args);
     }
 

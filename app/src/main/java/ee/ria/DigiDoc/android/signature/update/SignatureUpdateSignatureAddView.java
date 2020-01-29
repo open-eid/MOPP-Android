@@ -72,6 +72,7 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
             case R.id.signatureUpdateSignatureAddMethodMobileId:
                 mobileIdView.setVisibility(VISIBLE);
                 idCardView.setVisibility(GONE);
+                mobileIdView.setDefaultPhoneNoPrefix("372");
                 break;
             case R.id.signatureUpdateSignatureAddMethodIdCard:
                 mobileIdView.setVisibility(GONE);

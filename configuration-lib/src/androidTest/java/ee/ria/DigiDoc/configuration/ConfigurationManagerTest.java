@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
+import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -39,7 +40,7 @@ public final class ConfigurationManagerTest {
         Context context = InstrumentationRegistry.getTargetContext();
         configurationProperties = new ConfigurationProperties(context.getAssets());
         cacheConfHandler = new CachedConfigurationHandler(context.getCacheDir());
-        configurationManager = new ConfigurationManager(context, configurationProperties, cacheConfHandler);
+        configurationManager = new ConfigurationManager(context, configurationProperties, cacheConfHandler, UserAgentUtil.getUserAgent(context));
     }
 
     @Test
@@ -150,7 +151,7 @@ public final class ConfigurationManagerTest {
         assertFalse(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_JSON));
         assertFalse(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_RSA));
 
-        configurationManager = new ConfigurationManager(InstrumentationRegistry.getTargetContext(), configurationProperties, cacheConfHandler);
+        configurationManager = new ConfigurationManager(InstrumentationRegistry.getTargetContext(), configurationProperties, cacheConfHandler, "Test User-Agent");
         // Loading configuration.
         // Online configuration should fail and default configuration loaded, because cached configuration does not exist yet.
         // Default conf cached.
@@ -167,7 +168,7 @@ public final class ConfigurationManagerTest {
         // Set central configuration url back to valid, to emulate online configuration loading successful case
         properties.setProperty(ConfigurationProperties.CENTRAL_CONFIGURATION_SERVICE_URL_PROPERTY, confServiceValidUrl);
 
-        configurationManager = new ConfigurationManager(InstrumentationRegistry.getTargetContext(), configurationProperties, cacheConfHandler);
+        configurationManager = new ConfigurationManager(InstrumentationRegistry.getTargetContext(), configurationProperties, cacheConfHandler, "Test User-Agent");
 
         // Load configuration again, now online load should succeed, and cached configuration overridden with given conf
         long processStartDate = inSeconds(new Date());

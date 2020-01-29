@@ -36,6 +36,11 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.security.Security;
 import java.util.Date;
 import java.util.Map;
@@ -65,12 +70,14 @@ import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
+import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationConstants;
 import ee.ria.DigiDoc.configuration.ConfigurationManager;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProperties;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
+import ee.ria.DigiDoc.configuration.util.FileUtils;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
@@ -85,6 +92,7 @@ public class Application extends android.app.Application {
 
     @Override
     public void onCreate() {
+        setupTSLFiles();
         setupStrictMode();
         super.onCreate();
         setupBouncyCastle();
@@ -93,6 +101,34 @@ public class Application extends android.app.Application {
         setupConfiguration();
         setupRxJava();
         setupDagger();
+    }
+
+    // TSL files
+    private void setupTSLFiles() {
+        String destination = getCacheDir().toString() + "/schema";
+        String assetsPath = "tslFiles";
+        String[] tslFiles = null;
+        try {
+            tslFiles = getAssets().list(assetsPath);
+        } catch (IOException e) {
+            Timber.e(e, "Failed to get folder list: %s", assetsPath);
+        }
+
+        if (tslFiles != null && tslFiles.length > 0) {
+            for (String fileName : tslFiles) {
+                cacheTSLFiles(assetsPath, fileName, destination);
+            }
+        }
+    }
+
+    private void cacheTSLFiles(String assetsPath, String fileName, String directory) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(getAssets().open(assetsPath + File.separator + fileName), StandardCharsets.UTF_8))) {
+            FileUtils.createDirectoryIfNotExist(directory);
+            FileUtils.writeToFile(reader, directory, fileName);
+        } catch (IOException ex) {
+            Timber.e(ex, "Failed to open file: %s", fileName);
+        }
     }
 
     // StrictMode
@@ -128,7 +164,7 @@ public class Application extends android.app.Application {
     // Container configuration
 
     private void setupSignLib() {
-        SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider());
+        SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider(), UserAgentUtil.getUserAgent(getApplicationContext()));
     }
 
     private void setupRxJava() {
@@ -138,7 +174,7 @@ public class Application extends android.app.Application {
     private void setupConfiguration() {
         CachedConfigurationHandler cachedConfHandler = new CachedConfigurationHandler(getCacheDir());
         ConfigurationProperties confProperties = new ConfigurationProperties(getAssets());
-        ConfigurationManager confManager = new ConfigurationManager(this, confProperties, cachedConfHandler);
+        ConfigurationManager confManager = new ConfigurationManager(this, confProperties, cachedConfHandler, UserAgentUtil.getUserAgent(getApplicationContext()));
 
         // Initially load cached configuration (if it exists and default configuration is not newer) in a blocking (synchronous)
         // manner. If default conf is newer then load default conf (case where application was updated and cache was not removed,

@@ -44,13 +44,14 @@ public class UpdateLibdigidocppTask extends DefaultTask {
         ABIS.add("arm64-v8a");
         ABIS.add("armeabi-v7a");
         ABIS.add("x86");
+        ABIS.add("x86_64");
 
         ABI_FILES.put("arm64-v8a", "androidarm64");
         ABI_FILES.put("armeabi-v7a", "androidarm");
         ABI_FILES.put("x86", "androidx86");
+        ABI_FILES.put("x86_64", "androidx86_64");
 
         ABI_DIRS.put("arm64-v8a", "aarch64-linux-android");
-        ABI_DIRS.put("armeabi-v7a", "arm-linux-androideabi");
         ABI_DIRS.put("x86", "i686-linux-android");
     }
 
@@ -145,23 +146,25 @@ public class UpdateLibdigidocppTask extends DefaultTask {
 
         if (isTestTsl) {
             Files.copy(
-                    new File(cacheDir, "lib/libdigidoc_java-debug.so").toPath(),
+                    new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
                     new File(getProject().getProjectDir(), "src/envtest/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
                     StandardCopyOption.REPLACE_EXISTING
             );
         } else {
-            Files.copy(
-                    new File(cacheDir, ABI_DIRS.get(abi) + "/lib/libc++_shared.so").toPath(),
-                    new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
-                    StandardCopyOption.REPLACE_EXISTING
-            );
+            if (!abi.equals("armeabi-v7a") && !abi.equals("x86_64")) {
+                Files.copy(
+                        new File(cacheDir, ABI_DIRS.get(abi) + "/lib/libc++_shared.so").toPath(),
+                        new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
+                        StandardCopyOption.REPLACE_EXISTING
+                );
+            }
             Files.copy(
                     new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
                     new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
                     StandardCopyOption.REPLACE_EXISTING
             );
             Files.copy(
-                    new File(cacheDir, "lib/libdigidoc_java-debug.so").toPath(),
+                    new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
                     new File(getProject().getProjectDir(), "src/debug/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
                     StandardCopyOption.REPLACE_EXISTING
             );

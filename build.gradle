@@ -12,12 +12,22 @@ allprojects {
         google()
         jcenter()
     }
+
+    def buildFolder = new File("app/${buildDir}/bundle")
+
+    gradle.buildFinished {
+        if (!buildFolder.exists()) {
+            buildDir = buildFolder
+        } else {
+            buildDir = "${buildDir}"
+        }
+    }
 }
 
 ext {
-    compileSdkVersion = 28
+    compileSdkVersion = 29
     minSdkVersion = 21
-    targetSdkVersion = 27
+    targetSdkVersion = 29
 
     androidSupportLibraryVersion = '28.0.0'
     androidArchVersion= '1.1.1'

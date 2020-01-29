@@ -2,11 +2,13 @@ package ee.ria.DigiDoc.android.signature.update.mobileid;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -59,7 +61,7 @@ public final class MobileIdView extends LinearLayout implements
     public void reset(SignatureUpdateViewModel viewModel) {
         phoneNoView.setText(viewModel.phoneNo());
         personalCodeView.setText(viewModel.personalCode());
-        rememberMeView.setChecked(true);
+        setDefaultCheckBoxToggle(viewModel);
     }
 
     @Override
@@ -75,11 +77,32 @@ public final class MobileIdView extends LinearLayout implements
         }
     }
 
+    public void setDefaultPhoneNoPrefix(String phoneNoPrefix) {
+        if (TextUtils.isEmpty(phoneNoView.getText())) {
+            phoneNoView.setText(phoneNoPrefix, TextView.BufferType.EDITABLE);
+            phoneNoView.setOnFocusChangeListener((view, hasfocus) -> {
+                if (hasfocus) {
+                    phoneNoView.setHint("372XXXXXXXX");
+                } else {
+                    phoneNoView.setHint("");
+                }
+            });
+        }
+    }
+
+    private void setDefaultCheckBoxToggle(SignatureUpdateViewModel viewModel) {
+        if (viewModel.phoneNo().length() > 0 && viewModel.personalCode().length() > 0) {
+            rememberMeView.setChecked(true);
+        } else {
+            rememberMeView.setChecked(false);
+        }
+    }
+
     public Observable<Object> positiveButtonState() {
         return Observable.merge(positiveButtonStateSubject, afterTextChangeEvents(phoneNoView), afterTextChangeEvents(personalCodeView));
     }
 
     public boolean positiveButtonEnabled() {
-        return phoneNoView.getText().length() > 0 && personalCodeView.getText().length() > 0;
+        return phoneNoView.getText().length() > 3 && personalCodeView.getText().length() == 11;
     }
 }

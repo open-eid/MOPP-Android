@@ -23,7 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="phone"
-            android:hint="@string/signature_update_mobile_id_phone_no" />
+            android:hint="@string/signature_update_mobile_id_phone_no"
+            android:digits="0123456789"/>
 
     </android.support.design.widget.TextInputLayout>
 
@@ -37,7 +38,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:hint="@string/signature_update_mobile_id_personal_code" />
+            android:hint="@string/signature_update_mobile_id_personal_code"
+            android:maxLength="11" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -45,7 +47,7 @@
         android:id="@id/signatureUpdateMobileIdRememberMe"
         android:layout_width="200dp"
         android:layout_height="48dp"
-        android:checked="true"
+        android:checked="false"
         android:text="@string/signature_update_mobile_id_remember_me" />
 
 </merge>

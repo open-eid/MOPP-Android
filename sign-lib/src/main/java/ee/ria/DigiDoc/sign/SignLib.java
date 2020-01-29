@@ -2,6 +2,10 @@ package ee.ria.DigiDoc.sign;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.system.ErrnoException;
 import android.system.Os;
@@ -14,7 +18,10 @@ import org.bouncycastle.util.encoders.Base64;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
@@ -25,6 +32,8 @@ import ee.ria.libdigidocpp.Conf;
 import ee.ria.libdigidocpp.DigiDocConf;
 import ee.ria.libdigidocpp.digidoc;
 import timber.log.Timber;
+
+import static android.content.Context.USB_SERVICE;
 
 public final class SignLib {
 
@@ -40,7 +49,7 @@ public final class SignLib {
      * <p>
      * Unzips the schema, access certificate and initializes libdigidocpp.
      */
-    public static void init(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider) {
+    public static void init(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent) {
         initNativeLibs();
         try {
             initSchema(context);
@@ -48,7 +57,8 @@ public final class SignLib {
             Timber.e(e, "Init schema failed");
         }
 
-        initLibDigiDocpp(context, tsaUrlPreferenceKey, configurationProvider);
+        initLibDigiDocpp(context, tsaUrlPreferenceKey, configurationProvider, userAgent);
+
     }
 
     public static String accessTokenPass() {
@@ -82,7 +92,7 @@ public final class SignLib {
         }
     }
 
-    private static void initLibDigiDocpp(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider) {
+    private static void initLibDigiDocpp(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent) {
         String path = getSchemaDir(context).getAbsolutePath();
         try {
             Os.setenv("HOME", path, true);
@@ -91,7 +101,7 @@ public final class SignLib {
         }
 
         initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider);
-        digidoc.initializeLib("libdigidoc Android", path);
+        digidoc.initializeLib(userAgent, path);
 
     }
 

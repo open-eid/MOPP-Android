@@ -10,6 +10,7 @@ import android.support.v4.app.JobIntentService;
 import java.util.Date;
 
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
+import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
 
 public class ConfigurationManagerService extends JobIntentService {
 
@@ -29,7 +30,7 @@ public class ConfigurationManagerService extends JobIntentService {
         super.onCreate();
         CachedConfigurationHandler cachedConfigurationHandler = new CachedConfigurationHandler(getCacheDir());
         ConfigurationProperties configurationProperties = new ConfigurationProperties(getAssets());
-        configurationManager = new ConfigurationManager(this, configurationProperties, cachedConfigurationHandler);
+        configurationManager = new ConfigurationManager(this, configurationProperties, cachedConfigurationHandler, UserAgentUtil.getUserAgent(getApplicationContext()));
     }
 
     @Override

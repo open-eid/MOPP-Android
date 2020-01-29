@@ -30,6 +30,7 @@
     <string name="main_settings_country_title">Riik</string>
     <string name="main_settings_postal_code_title">Postikood</string>
     <string name="main_settings_signature_profile_title">Vaikimisi faili tüüp</string>
+    <string name="main_settings_open_all_filetypes_title">Luba rakendusel avada kõiki failitüüpe (vajab rakenduse taaskäivitamist)</string>
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
@@ -345,6 +346,9 @@
     <string name="document">Document</string>
     <string name="container_has">Container has</string>
     <string name="file">File</string>
+
+    <!-- Sharing Screen -->
+    <string name="sharing_screen_title">Vali fail</string>
 
 
     <!--  TODO: tõlked  -->
