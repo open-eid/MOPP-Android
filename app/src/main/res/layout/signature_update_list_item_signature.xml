@@ -33,6 +33,7 @@
             android:textAppearance="?attr/textAppearanceListItem"
             android:singleLine="true"
             android:ellipsize="end"
+            android:textStyle="bold"
             tools:text="Mari Maasikas, 48405050123" />
 
         <LinearLayout
