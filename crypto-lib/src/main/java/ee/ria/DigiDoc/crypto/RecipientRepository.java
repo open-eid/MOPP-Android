@@ -6,9 +6,12 @@ import com.google.common.collect.ImmutableList;
 import com.unboundid.asn1.ASN1OctetString;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.LDAPConnection;
-import com.unboundid.ldap.sdk.LDAPSearchException;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldap.sdk.SearchRequest;
 import com.unboundid.ldap.sdk.SearchResult;
 import com.unboundid.ldap.sdk.SearchResultEntry;
+import com.unboundid.ldap.sdk.controls.SimplePagedResultsControl;
+import com.unboundid.util.LDAPTestUtils;
 import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustAllTrustManager;
 
@@ -83,20 +86,35 @@ public final class RecipientRepository {
     }
 
     private ImmutableList<Certificate> executeSearch(LDAPConnection connection, LdapFilter ldapFilter)
-            throws LDAPSearchException, IOException
-    {
+            throws LDAPException, IOException {
+
+        int maximumNumberOfResults = 50;
+        SearchRequest searchRequest = new SearchRequest(BASE_DN, SUB, ldapFilter.filterString(), CERT_BINARY_ATTR);
+        ASN1OctetString extraResponseCookie = null;
         ImmutableList.Builder<Certificate> builder = ImmutableList.builder();
-        SearchResult result = connection.search(BASE_DN, SUB, ldapFilter.filterString(), CERT_BINARY_ATTR);
-        for (SearchResultEntry entry : result.getSearchEntries()) {
-            for (Attribute attribute : entry.getAttributes()) {
-                for (ASN1OctetString value : attribute.getRawValues()) {
-                    Certificate certificate = Certificate.create(ByteString.of(value.getValue()));
-                    if (isSuitableKeyAndNotMobileId(certificate)) {
-                        builder.add(certificate);
+        while (true) {
+            searchRequest.setControls(new SimplePagedResultsControl(maximumNumberOfResults, extraResponseCookie));
+            SearchResult searchResult = connection.search(searchRequest);
+            for (SearchResultEntry entry : searchResult.getSearchEntries()) {
+                for (Attribute attribute : entry.getAttributes()) {
+                    for (ASN1OctetString value : attribute.getRawValues()) {
+                        Certificate certificate = Certificate.create(ByteString.of(value.getValue()));
+                        if (isSuitableKeyAndNotMobileId(certificate)) {
+                            builder.add(certificate);
+                        }
                     }
                 }
             }
+
+            LDAPTestUtils.assertHasControl(searchResult, SimplePagedResultsControl.PAGED_RESULTS_OID);
+            SimplePagedResultsControl releaseControl = SimplePagedResultsControl.get(searchResult);
+            if (releaseControl.moreResultsToReturn() && searchResult.getEntryCount() < maximumNumberOfResults) {
+                extraResponseCookie = releaseControl.getCookie();
+            } else {
+                break;
+            }
         }
+
         return builder.build();
     }
 
