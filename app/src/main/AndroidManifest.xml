@@ -20,6 +20,7 @@
         <activity
             android:name=".android.Activity"
             android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleInstance" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
@@ -36,6 +37,7 @@
         <activity-alias
             android:name="LauncherActivity"
             android:targetActivity=".android.Activity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleInstance" >
 
             <intent-filter>
