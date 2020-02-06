@@ -53,6 +53,7 @@ public class UpdateLibdigidocppTask extends DefaultTask {
 
         ABI_DIRS.put("arm64-v8a", "aarch64-linux-android");
         ABI_DIRS.put("x86", "i686-linux-android");
+        ABI_DIRS.put("x86_64", "x86_64-linux-android");
     }
 
     private String dir = ".";
@@ -151,6 +152,13 @@ public class UpdateLibdigidocppTask extends DefaultTask {
                     StandardCopyOption.REPLACE_EXISTING
             );
         } else {
+            if (abi.equals("x86_64")) {
+                Files.copy(
+                        new File(cacheDir, ABI_DIRS.get(abi) + "/lib64/libc++_shared.so").toPath(),
+                        new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
+                        StandardCopyOption.REPLACE_EXISTING
+                );
+            }
             if (!abi.equals("armeabi-v7a") && !abi.equals("x86_64")) {
                 Files.copy(
                         new File(cacheDir, ABI_DIRS.get(abi) + "/lib/libc++_shared.so").toPath(),

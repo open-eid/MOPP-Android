@@ -7,11 +7,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.view.WindowManager;
 
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -37,7 +41,7 @@ public final class Activity extends AppCompatActivity {
         setTitle(""); // ACCESSIBILITY: prevents application name read during each activity launch
         super.onCreate(savedInstanceState);
 
-        if (!BuildConfig.BUILD_TYPE.contentEquals("develop")) {
+        if (!BuildConfig.BUILD_TYPE.contentEquals("debug")) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE);
         }
