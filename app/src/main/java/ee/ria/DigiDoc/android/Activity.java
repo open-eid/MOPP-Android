@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.PersistableBundle;
@@ -72,6 +73,11 @@ public final class Activity extends AppCompatActivity {
         initializeApplicationFileTypesAssociation();
 
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
     public void restartAppWithIntent(Intent intent) {
