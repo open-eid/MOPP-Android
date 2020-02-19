@@ -8,15 +8,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.PersistableBundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.view.WindowManager;
 
-import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -124,6 +120,16 @@ public final class Activity extends AppCompatActivity {
     public void onBackPressed() {
         if (!navigator.onBackPressed()) {
             super.onBackPressed();
+
+            ComponentName openAllTypesComponent = new ComponentName(getPackageName(), getClass().getName() + ".OPEN_ALL_FILE_TYPES");
+            ComponentName openCustomTypesComponent = new ComponentName(getPackageName(), getClass().getName() + ".OPEN_CUSTOM_TYPES");
+            String packageClassName = getIntent().resolveActivity (getApplicationContext().getPackageManager()).getClassName();
+            if (packageClassName.equals(openAllTypesComponent.getClassName()) || packageClassName.equals(openCustomTypesComponent.getClassName())) {
+                finishAndRemoveTask();
+                System.exit(0);
+            }
+
+
         }
     }
 
