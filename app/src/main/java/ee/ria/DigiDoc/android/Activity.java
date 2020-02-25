@@ -92,19 +92,10 @@ public final class Activity extends AppCompatActivity {
     }
 
     private void initializeApplicationFileTypesAssociation() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        boolean isOpenAllTypesEnabled = sharedPreferences.getBoolean(getString(R.string.main_settings_open_all_filetypes_key), true);
-
-        PackageManager pm = getApplicationContext().getPackageManager();
-        ComponentName openAllTypesComponent = new ComponentName(getPackageName(), getClass().getName() + ".OPEN_ALL_FILE_TYPES");
-        ComponentName openCustomTypesComponent = new ComponentName(getPackageName(), getClass().getName() + ".OPEN_CUSTOM_TYPES");
-
-        if (isOpenAllTypesEnabled) {
-            pm.setComponentEnabledSetting(openAllTypesComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-            pm.setComponentEnabledSetting(openCustomTypesComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        if (isOpenAllTypesEnabled()) {
+            enableOpenAllFileTypes();
         } else {
-            pm.setComponentEnabledSetting(openCustomTypesComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-            pm.setComponentEnabledSetting(openAllTypesComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+            disableOpenAllFileTypes();
         }
     }
 
@@ -120,17 +111,41 @@ public final class Activity extends AppCompatActivity {
     public void onBackPressed() {
         if (!navigator.onBackPressed()) {
             super.onBackPressed();
-
-            ComponentName openAllTypesComponent = new ComponentName(getPackageName(), getClass().getName() + ".OPEN_ALL_FILE_TYPES");
-            ComponentName openCustomTypesComponent = new ComponentName(getPackageName(), getClass().getName() + ".OPEN_CUSTOM_TYPES");
-            String packageClassName = getIntent().resolveActivity (getApplicationContext().getPackageManager()).getClassName();
-            if (packageClassName.equals(openAllTypesComponent.getClassName()) || packageClassName.equals(openCustomTypesComponent.getClassName())) {
-                finishAndRemoveTask();
-                System.exit(0);
-            }
-
-
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (isOpenAllTypesEnabled()) {
+            enableOpenAllFileTypes();
+        }
+    }
+
+    private ComponentName getAllTypesComponentName() {
+        return new ComponentName(getPackageName(), getClass().getName() + ".OPEN_ALL_FILE_TYPES");
+    }
+
+    private ComponentName getCustomTypesComponentName() {
+        return new ComponentName(getPackageName(), getClass().getName() + ".OPEN_CUSTOM_TYPES");
+    }
+
+    private boolean isOpenAllTypesEnabled() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        return sharedPreferences.getBoolean(getString(R.string.main_settings_open_all_filetypes_key), true);
+    }
+
+    private void enableOpenAllFileTypes() {
+        PackageManager pm = getApplicationContext().getPackageManager();
+        pm.setComponentEnabledSetting(getAllTypesComponentName(), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+        pm.setComponentEnabledSetting(getCustomTypesComponentName(), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+    }
+
+    private void disableOpenAllFileTypes() {
+        PackageManager pm = getApplicationContext().getPackageManager();
+        pm.setComponentEnabledSetting(getAllTypesComponentName(), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        pm.setComponentEnabledSetting(getCustomTypesComponentName(), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
     }
 
     @Override

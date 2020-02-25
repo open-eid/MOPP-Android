@@ -1,7 +1,9 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.view.accessibility.AccessibilityEvent;
 
 import com.google.common.collect.ImmutableList;
@@ -14,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
@@ -180,6 +183,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         documentView = upstream -> upstream.switchMap(action -> {
             File containerFile = action.containerFile();
+            // Disable opening files in container with DigiDoc app
+            disableOpenAllTypes(application);
             return signatureContainerDataSource
                     .getDocumentFile(containerFile, action.document())
                     .toObservable()
@@ -346,6 +351,16 @@ final class Processor implements ObservableTransformer<Action, Result> {
         }
 
         return name;
+    }
+
+    private void disableOpenAllTypes(Application application) {
+        Activity activity = new Activity();
+        PackageManager pm = application.getApplicationContext().getPackageManager();
+        ComponentName openAllTypesComponent = new ComponentName(application.getPackageName(), activity.getClass().getName() + ".OPEN_ALL_FILE_TYPES");
+        ComponentName openCustomTypesComponent = new ComponentName(application.getPackageName(), activity.getClass().getName() + ".OPEN_CUSTOM_TYPES");
+
+        pm.setComponentEnabledSetting(openAllTypesComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        pm.setComponentEnabledSetting(openCustomTypesComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
     }
 
 
