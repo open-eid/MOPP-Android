@@ -98,11 +98,23 @@
                 <data android:mimeType="application/vnd.etsi.asic-e+zip" />
                 <data android:mimeType="application/x-zip" />
 
-                <data android:mimeType="application/pdf" />
-
                 <data android:mimeType="application/octet-stream" />
             </intent-filter>
         </activity-alias>
+
+        <activity-alias
+            android:name=".android.Activity.OPEN_PDF_TYPE"
+            android:label="@string/application_name"
+            android:targetActivity=".android.Activity"
+            tools:ignore="AppLinkUrlError"
+            android:launchMode="singleInstance" >
+
+            <intent-filter>
+                <data android:mimeType="application/pdf" />
+            </intent-filter>
+        </activity-alias>
+
+
 
         <activity-alias
             android:name=".android.Activity.OPEN_ALL_FILE_TYPES"

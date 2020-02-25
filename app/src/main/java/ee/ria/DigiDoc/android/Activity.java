@@ -131,6 +131,10 @@ public final class Activity extends AppCompatActivity {
         return new ComponentName(getPackageName(), getClass().getName() + ".OPEN_CUSTOM_TYPES");
     }
 
+    private ComponentName getOpenPDFComponentName() {
+        return new ComponentName(getPackageName(), getClass().getName() + ".OPEN_PDF_TYPE");
+    }
+
     private boolean isOpenAllTypesEnabled() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         return sharedPreferences.getBoolean(getString(R.string.main_settings_open_all_filetypes_key), true);
@@ -139,12 +143,14 @@ public final class Activity extends AppCompatActivity {
     private void enableOpenAllFileTypes() {
         PackageManager pm = getApplicationContext().getPackageManager();
         pm.setComponentEnabledSetting(getAllTypesComponentName(), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+        pm.setComponentEnabledSetting(getOpenPDFComponentName(), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
         pm.setComponentEnabledSetting(getCustomTypesComponentName(), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
     }
 
     private void disableOpenAllFileTypes() {
         PackageManager pm = getApplicationContext().getPackageManager();
         pm.setComponentEnabledSetting(getAllTypesComponentName(), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        pm.setComponentEnabledSetting(getOpenPDFComponentName(), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         pm.setComponentEnabledSetting(getCustomTypesComponentName(), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
     }
 

@@ -358,8 +358,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
         PackageManager pm = application.getApplicationContext().getPackageManager();
         ComponentName openAllTypesComponent = new ComponentName(application.getPackageName(), activity.getClass().getName() + ".OPEN_ALL_FILE_TYPES");
         ComponentName openCustomTypesComponent = new ComponentName(application.getPackageName(), activity.getClass().getName() + ".OPEN_CUSTOM_TYPES");
+        ComponentName openPDFComponent = new ComponentName(application.getPackageName(), activity.getClass().getName() + ".OPEN_PDF_TYPE");
 
         pm.setComponentEnabledSetting(openAllTypesComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        pm.setComponentEnabledSetting(openPDFComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         pm.setComponentEnabledSetting(openCustomTypesComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
     }
 
