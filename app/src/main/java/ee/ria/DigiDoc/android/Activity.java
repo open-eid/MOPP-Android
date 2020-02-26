@@ -92,11 +92,7 @@ public final class Activity extends AppCompatActivity {
     }
 
     private void initializeApplicationFileTypesAssociation() {
-        if (isOpenAllTypesEnabled()) {
-            enableOpenAllFileTypes();
-        } else {
-            disableOpenAllFileTypes();
-        }
+        enableOpenAllFileTypesIfNeeded();
     }
 
     @Override
@@ -118,8 +114,21 @@ public final class Activity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        enableOpenAllFileTypesIfNeeded();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        enableOpenAllFileTypesIfNeeded();
+    }
+
+    private void enableOpenAllFileTypesIfNeeded() {
         if (isOpenAllTypesEnabled()) {
             enableOpenAllFileTypes();
+        } else {
+            disableOpenAllFileTypes();
         }
     }
 

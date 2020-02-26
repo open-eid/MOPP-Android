@@ -354,11 +354,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
     }
 
     private void disableOpenAllTypes(Application application) {
-        Activity activity = new Activity();
         PackageManager pm = application.getApplicationContext().getPackageManager();
-        ComponentName openAllTypesComponent = new ComponentName(application.getPackageName(), activity.getClass().getName() + ".OPEN_ALL_FILE_TYPES");
-        ComponentName openCustomTypesComponent = new ComponentName(application.getPackageName(), activity.getClass().getName() + ".OPEN_CUSTOM_TYPES");
-        ComponentName openPDFComponent = new ComponentName(application.getPackageName(), activity.getClass().getName() + ".OPEN_PDF_TYPE");
+        ComponentName openAllTypesComponent = new ComponentName(application.getPackageName(), Activity.class.getName() + ".OPEN_ALL_FILE_TYPES");
+        ComponentName openCustomTypesComponent = new ComponentName(application.getPackageName(), Activity.class.getName() + ".OPEN_CUSTOM_TYPES");
+        ComponentName openPDFComponent = new ComponentName(application.getPackageName(), Activity.class.getName() + ".OPEN_PDF_TYPE");
 
         pm.setComponentEnabledSetting(openAllTypesComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         pm.setComponentEnabledSetting(openPDFComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);

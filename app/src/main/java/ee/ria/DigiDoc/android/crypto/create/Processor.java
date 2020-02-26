@@ -1,8 +1,10 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.view.accessibility.AccessibilityEvent;
 
 import com.google.common.collect.ImmutableList;
@@ -13,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
@@ -192,6 +195,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .observeOn(AndroidSchedulers.mainThread()));
 
         dataFileView = upstream -> upstream.switchMap(intent -> {
+            disableOpenAllTypes(application);
             return Observable
                     .fromCallable(() -> {
                         File file = intent.dataFile();
@@ -396,5 +400,16 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .startWith(Result.InitialResult.activity());
+    }
+
+    private void disableOpenAllTypes(Application application) {
+        PackageManager pm = application.getApplicationContext().getPackageManager();
+        ComponentName openAllTypesComponent = new ComponentName(application.getPackageName(), Activity.class.getName() + ".OPEN_ALL_FILE_TYPES");
+        ComponentName openCustomTypesComponent = new ComponentName(application.getPackageName(), Activity.class.getName() + ".OPEN_CUSTOM_TYPES");
+        ComponentName openPDFComponent = new ComponentName(application.getPackageName(), Activity.class.getName() + ".OPEN_PDF_TYPE");
+
+        pm.setComponentEnabledSetting(openAllTypesComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        pm.setComponentEnabledSetting(openPDFComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        pm.setComponentEnabledSetting(openCustomTypesComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
     }
 }
