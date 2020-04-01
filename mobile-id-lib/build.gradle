@@ -25,6 +25,10 @@ dependencies {
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
 
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+
+    implementation project(':common-lib')
+
     implementation "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
     implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"

@@ -17,10 +17,16 @@ import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdRequest;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
-import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse;
+import ee.ria.DigiDoc.idcard.Token;
+import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import okio.ByteString;
+
+import static ee.ria.DigiDoc.sign.SignedContainer.open;
 
 final class SignatureAddSource {
 
@@ -90,7 +96,7 @@ final class SignatureAddSource {
                         }
                     })
                     .startWith(MobileIdResponse
-                            .status(GetMobileCreateSignatureStatusResponse.ProcessStatus.DEFAULT));
+                            .status(MobileCreateSignatureSessionStatusResponse.ProcessStatus.OK));
         } else if (request instanceof IdCardRequest) {
             IdCardRequest idCardRequest = (IdCardRequest) request;
             return signatureContainerDataSource
@@ -127,5 +133,13 @@ final class SignatureAddSource {
         } else {
             throw new IllegalArgumentException("Unknown request " + request);
         }
+    }
+
+    public Single<SignedContainer> sign(String signatureValue, byte[] dataToSign, SignedContainer container) {
+        return Single
+                .fromCallable(() -> container.sign(ByteString.of(dataToSign),
+                        signData -> ByteString.of(signatureValue.getBytes())))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

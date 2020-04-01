@@ -57,4 +57,5 @@ ext {
     truthVersion = '0.42'
     mockitoVersion = '3.0.0'
     jsonVersion = '20190722'
+    jacksonVersion = '2.10.3'
 }

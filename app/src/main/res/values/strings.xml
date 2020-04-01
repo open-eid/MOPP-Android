@@ -119,25 +119,28 @@
     <string name="signature_update_mobile_id_personal_code">Personal code</string>
     <string name="signature_update_mobile_id_remember_me">Remember me</string>
     <string name="signature_update_mobile_id_info">Make sure the control code matches the one on phone screen and enter Mobile-ID PIN2-code</string>
-    <string name="signature_update_mobile_id_display_message">Sign %1$s</string>
+    <string name="signature_update_mobile_id_display_message">Sign document</string>
 
     <string name="signature_update_mobile_id_status_request_sent">Signing request sent</string>
     <string name="signature_update_mobile_id_status_request_ok">Request accepted</string>
-    <string name="signature_update_mobile_id_status_expired_transaction">Request timeout</string>
+    <string name="signature_update_mobile_id_status_no_country_code">Please include correct country code</string>
+    <string name="signature_update_mobile_id_status_expired_transaction">Your Mobile-ID transaction has expired. Please try again</string>
     <string name="signature_update_mobile_id_status_user_cancel">User denied or cancelled</string>
     <string name="signature_update_mobile_id_status_signature">Got signature</string>
     <string name="signature_update_mobile_id_status_outstanding_transaction">Request pending</string>
     <string name="signature_update_mobile_id_status_mid_not_ready">Mobile-ID not ready, try again later</string>
-    <string name="signature_update_mobile_id_status_phone_absent">Phone is switched off or out of coverage</string>
-    <string name="signature_update_mobile_id_status_sending_error">Request sending error</string>
-    <string name="signature_update_mobile_id_status_sim_error">SIM application error</string>
+    <string name="signature_update_mobile_id_status_phone_absent">Phone is not in coverage area</string>
+    <string name="signature_update_mobile_id_status_delivery_error">Request sending error</string>
+    <string name="signature_update_mobile_id_status_sim_error">SIM error</string>
     <string name="signature_update_mobile_id_status_not_valid">Signature is not valid</string>
     <string name="signature_update_mobile_id_status_revoked_certificate">Certificate revoked</string>
+    <string name="signature_update_mobile_id_status_signature_hash_mismatch">Your Mobile-ID transaction has failed. Please contact your mobile network operator</string>
     <string name="signature_update_mobile_id_status_internal_error">Technical error</string>
 
     <string name="signature_update_mobile_id_error_unknown">Unknown error occurred when signing with Mobile-ID</string>
     <string name="signature_update_mobile_id_error_local_service_exception">Something went wrong, try again later</string>
     <string name="signature_update_mobile_id_error_general_client">Something went wrong, try again</string>
+    <string name="signature_update_mobile_id_error_no_response">Please check your internet connection</string>
     <string name="signature_update_mobile_id_error_incorrect_input_parameters">Incorrect mobile number and/or personal code, non-Estonian mobile numbers must be prefixed with the country code</string>
     <string name="signature_update_mobile_id_error_missing_input_parameters">Missing mobile number and/or personal code</string>
     <string name="signature_update_mobile_id_error_ocsp_unauthorized">Unable to access mobile signing service</string>
@@ -146,12 +149,13 @@
     <string name="signature_update_mobile_id_error_certificate_validity_unknown">Unable to verify certificate validity</string>
     <string name="signature_update_mobile_id_error_session_locked">Mobile signing session is locked, try again later</string>
     <string name="signature_update_mobile_id_error_general_user">An error occurred with the signers mobile phone</string>
-    <string name="signature_update_mobile_id_error_not_mobile_id_user">Not a mobile ID user</string>
+    <string name="signature_update_mobile_id_error_not_mobile_id_user">User is not a Mobile-ID client</string>
     <string name="signature_update_mobile_id_error_user_certificate_revoked">Your mobile signing certificate is revoked</string>
     <string name="signature_update_mobile_id_error_user_certificate_status_unknown">Your mobile signing certificate status is unknown</string>
     <string name="signature_update_mobile_id_error_user_certificate_suspended">Your mobile signing certificate is suspended</string>
     <string name="signature_update_mobile_id_error_user_certificate_expired">Your mobile signing certificate is expired</string>
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Too many datafiles in container</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. Additional information (https://www.id.ee/index.php?id=39023)</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Simultaneous requests limit exceeded</string>
 
     <string name="signature_update_id_card_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>

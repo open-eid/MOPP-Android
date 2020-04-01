@@ -73,6 +73,13 @@
     <string name="main_about_lgpl_license_url">https://www.gnu.org/copyleft/lesser.html</string>
     <string name="main_about_lgpl_2_1_license_title">GNU Lesser General Public License Version 2.1</string>
     <string name="main_about_lgpl_2_1_license_url">https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html</string>
+    <string name="main_about_jackson_core_title">jackson-core %1$s</string>
+    <string name="main_about_jackson_core_license_url">https://github.com/FasterXML/jackson-core/blob/master/LICENSE</string>
+    <string name="main_about_jackson_databind_title">jackson-databind %1$s</string>
+    <string name="main_about_jackson_databind_license_url">https://github.com/FasterXML/jackson-databind/blob/master/LICENSE</string>
+    <string name="main_about_apache_2_0_license_title">Apache License 2.0</string>
+    <string name="main_about_mid_rest_api_java_title">mid-rest-java-client %1$s</string>
+    <string name="main_about_mid_rest_api_java_license_url">https://github.com/SK-EID/mid-rest-java-client/blob/master/LICENSE</string>
 
     <!-- EID Home -->
     <string name="eid_home_certificate_pin_auth">PIN1</string>
