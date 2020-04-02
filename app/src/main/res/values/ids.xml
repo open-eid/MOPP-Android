@@ -60,6 +60,7 @@
     <item type="id" name="mainDiagnosticsMidSignUrl" />
     <item type="id" name="mainDiagnosticsLdapPersonUrl" />
     <item type="id" name="mainDiagnosticsLdapCorpUrl" />
+    <item type="id" name="mainDiagnosticsMobileIDUrl" />
     <item type="id" name="mainDiagnosticsCentralConfigurationDate" />
     <item type="id" name="mainDiagnosticsCentralConfigurationSerial" />
     <item type="id" name="mainDiagnosticsCentralConfigurationUrl" />
