@@ -155,7 +155,9 @@
     <string name="signature_update_mobile_id_error_user_certificate_suspended">Teie Mobiil-ID\'ga allkirjastamise sertifikaadi kehtivus on peatatud</string>
     <string name="signature_update_mobile_id_error_user_certificate_expired">Teie Mobiil-ID allkirjastamise sertifikaat on aegunud</string>
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Liiga palju faile ühes konteineris</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. Loe täpsemalt siit (https://id.ee/index.php?id=39021)</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. https://id.ee/index.php?id=39021</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Loe täpsemalt siit</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://id.ee/index.php?id=39021</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Samaaegsete pöördumiste limiit ületatud</string>
 
     <string name="signature_update_id_card_progress_message_initial">Ühenda kaardilugeja telefoniga ja sisesta ID-kaart lugejasse</string>

@@ -155,7 +155,9 @@
     <string name="signature_update_mobile_id_error_user_certificate_suspended">Ваш сертификат цифровой подписи временно приостановлен</string>
     <string name="signature_update_mobile_id_error_user_certificate_expired">Срок действительности Вашего сертификата цифровой подписи истек</string>
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Слишком много файлов в контейнере</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. Дополнительная информация (https://www.id.ee/index.php?id=39025)</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/index.php?id=39025</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Дополнительная информация</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/index.php?id=39025</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Превышен лимит одновременных запросов</string>
 
     <string name="signature_update_id_card_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>

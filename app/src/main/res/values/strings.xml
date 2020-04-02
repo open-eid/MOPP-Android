@@ -155,7 +155,9 @@
     <string name="signature_update_mobile_id_error_user_certificate_suspended">Your mobile signing certificate is suspended</string>
     <string name="signature_update_mobile_id_error_user_certificate_expired">Your mobile signing certificate is expired</string>
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Too many datafiles in container</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. Additional information (https://www.id.ee/index.php?id=39023)</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. https://www.id.ee/index.php?id=39023</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Additional information</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/index.php?id=39023</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Simultaneous requests limit exceeded</string>
 
     <string name="signature_update_id_card_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>

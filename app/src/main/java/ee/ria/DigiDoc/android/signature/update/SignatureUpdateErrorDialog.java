@@ -5,16 +5,15 @@ import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
-import android.text.SpannableString;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
-import android.view.autofill.AutofillValue;
-import android.widget.LinearLayout;
+import android.util.Patterns;
 import android.widget.TextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.regex.Matcher;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
@@ -22,7 +21,6 @@ import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import io.reactivex.subjects.Subject;
 
-import static android.app.Activity.RESULT_OK;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENT_REMOVE;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_ADD;
@@ -78,10 +76,15 @@ final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInte
                 setMessage(getContext().getString(
                         R.string.signature_update_id_card_sign_pin2_locked));
             } else if (signatureAddError instanceof MobileIdMessageException) {
-                final SpannableString ss = new SpannableString(signatureAddError.getMessage());
-                // Find links in message
-                Linkify.addLinks(ss, Linkify.WEB_URLS);
-                setMessage(ss);
+                if (!extractLink(signatureAddError.getMessage()).isEmpty()) {
+                    setMessage(
+                            Html.fromHtml("<span>" +
+                                    removeLink(signatureAddError.getMessage()) + "</span><a href=" +
+                                            extractLink(getTextFromTranslation(R.string.signature_update_mobile_id_error_message_too_many_requests_additional_information_link)) + ">" +
+                                            getTextFromTranslation(R.string.signature_update_mobile_id_error_message_too_many_requests_additional_information) + "</a>"));
+                } else {
+                    setMessage(signatureAddError.getMessage());
+                }
             } else {
                 setTitle(R.string.signature_update_signature_add_error);
                 setMessage(signatureAddError.getMessage());
@@ -97,6 +100,30 @@ final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInte
         // Make links in dialog clickable
         ((TextView)this.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
+
+    private String getTextFromTranslation(int textId) {
+        return getContext().getResources().getString(textId);
+    }
+
+    private String extractLink(String text) {
+        Matcher m = Patterns.WEB_URL.matcher(text);
+        while (m.find()) {
+            return m.group();
+        }
+
+        return text;
+    }
+
+    private String removeLink(String text) {
+        Matcher m = Patterns.WEB_URL.matcher(text);
+        while (m.find()) {
+            return text.replace(m.group(),"");
+        }
+
+        return text;
+    }
+
+
 
     @Override
     public void onDismiss(DialogInterface dialog) {
