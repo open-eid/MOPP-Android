@@ -111,7 +111,7 @@ final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInte
             return m.group();
         }
 
-        return text;
+        return "";
     }
 
     private String removeLink(String text) {
