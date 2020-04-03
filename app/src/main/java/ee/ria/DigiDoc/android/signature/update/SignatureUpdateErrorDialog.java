@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.text.Html;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.widget.TextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -77,7 +79,7 @@ final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInte
                 setMessage(signatureAddError.getMessage());
             } else if (signatureAddError instanceof TooManyRequestsException) {
                 setMessage(Html.fromHtml(new ErrorMessageWithURL().messageWithURL(getContext(),
-                        signatureAddError.getMessage(),
+                        R.string.signature_update_signature_error_message_too_many_requests,
                         R.string.signature_update_signature_error_message_too_many_requests_additional_information_link,
                         R.string.signature_update_signature_error_message_too_many_requests_additional_information)));
             } else {
@@ -92,6 +94,8 @@ final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInte
             return;
         }
         show();
+
+        ((TextView)this.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override

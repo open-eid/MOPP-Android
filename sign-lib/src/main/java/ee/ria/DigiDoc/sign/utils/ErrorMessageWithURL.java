@@ -7,7 +7,8 @@ import java.util.regex.Matcher;
 
 public class ErrorMessageWithURL {
 
-    public String messageWithURL(Context context, String errorMessage, int urlTranslation, int messageTranslation) {
+    public String messageWithURL(Context context, int errorMessageTranslation, int urlTranslation, int messageTranslation) {
+        String errorMessage = getTextFromTranslation(context, errorMessageTranslation);
         if (!extractLink(errorMessage).isEmpty()) {
             return "<span>" +
                     removeLink(errorMessage) + "</span> <a href=" +

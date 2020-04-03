@@ -121,8 +121,7 @@ final class SignatureAddSource {
                                         return Observable.error(error);
                                     });
                         } else if (error instanceof TooManyRequestsException) {
-                            TooManyRequestsException exception = new TooManyRequestsException(navigator.activity().getApplicationContext().getResources().getString(R.string.signature_update_signature_error_message_too_many_requests), error);
-                            return Observable.error(exception);
+                            return Observable.error(error);
                         }
                         return Observable.error(error);
                     })
