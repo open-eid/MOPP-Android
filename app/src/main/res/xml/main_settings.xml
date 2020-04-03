@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <EditTextPreference
         android:key="@string/main_settings_phone_no_key"
         android:title="@string/main_settings_phone_no_title"
         android:inputType="phone"
         android:digits="0123456789"
-        android:hint="372XXXXXXXX" />
+        android:hint="372XXXXXXXX"
+        android:widgetLayout="@layout/widget_icon_layout"
+        app:iconSpaceReserved="false" />
 
     <EditTextPreference
         android:key="@string/main_settings_personal_code_key"
         android:title="@string/main_settings_personal_code_title"
         android:inputType="number"
+        app:iconSpaceReserved="false"
+        android:widgetLayout="@layout/widget_icon_layout"
         android:maxLength="11"/>
 
     <ee.ria.DigiDoc.android.main.settings.TsaUrlPreference
         android:key="@string/main_settings_tsa_url_key"
         android:title="@string/main_settings_tsa_url_title"
+        app:iconSpaceReserved="false"
+        android:widgetLayout="@layout/widget_icon_layout"
         android:inputType="textUri" />
 
     <ee.ria.DigiDoc.android.main.settings.OpenAllFiletypesPreference
         android:id="@+id/mainSettingsOpenAllFileTypes"
         android:key="@string/main_settings_open_all_filetypes_key"
         android:title="@string/main_settings_open_all_filetypes_title"
+        app:iconSpaceReserved="false"
         android:defaultValue="true"/>
 
     <!--<EditTextPreference-->
