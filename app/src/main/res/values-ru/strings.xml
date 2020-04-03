@@ -114,6 +114,10 @@
     <string name="signature_update_signature_add_success">ПОДПИСЬ ДОБАВЛЕНА</string>
     <string name="signature_update_signature_add_error">Что-то пошло не так</string>
 
+    <string name="signature_update_signature_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/index.php?id=39025</string>
+    <string name="signature_update_signature_error_message_too_many_requests_additional_information">Дополнительная информация</string>
+    <string name="signature_update_signature_error_message_too_many_requests_additional_information_link">https://www.id.ee/index.php?id=39025</string>
+
     <string name="signature_update_mobile_id_message">Введите свой телефонный номер и личный код для подписания с помощью Mobiil-ID</string>
     <string name="signature_update_mobile_id_phone_no">Код страны и телефонный номер</string>
     <string name="signature_update_mobile_id_personal_code">Личный код</string>

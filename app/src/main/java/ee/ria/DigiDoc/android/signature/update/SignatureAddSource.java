@@ -18,6 +18,8 @@ import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse;
+import ee.ria.DigiDoc.sign.TooManyRequestsException;
+import ee.ria.DigiDoc.sign.utils.ErrorMessageWithURL;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -118,6 +120,9 @@ final class SignatureAddSource {
                                         }
                                         return Observable.error(error);
                                     });
+                        } else if (error instanceof TooManyRequestsException) {
+                            TooManyRequestsException exception = new TooManyRequestsException(navigator.activity().getApplicationContext().getResources().getString(R.string.signature_update_signature_error_message_too_many_requests), error);
+                            return Observable.error(exception);
                         }
                         return Observable.error(error);
                     })

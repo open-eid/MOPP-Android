@@ -114,6 +114,10 @@
     <string name="signature_update_signature_add_success">SIGNATURE ADDED</string>
     <string name="signature_update_signature_add_error">Something went wrong</string>
 
+    <string name="signature_update_signature_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. https://www.id.ee/index.php?id=39023</string>
+    <string name="signature_update_signature_error_message_too_many_requests_additional_information">Additional information</string>
+    <string name="signature_update_signature_error_message_too_many_requests_additional_information_link">https://www.id.ee/index.php?id=39023</string>
+
     <string name="signature_update_mobile_id_message">Enter your mobile number and personal code to sign with Mobile-ID</string>
     <string name="signature_update_mobile_id_phone_no">Country code and phone number</string>
     <string name="signature_update_mobile_id_personal_code">Personal code</string>
