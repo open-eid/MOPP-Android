@@ -107,7 +107,7 @@ public class UpdateLibdigidocppTask extends DefaultTask {
         unzip(zipFile, outputDir);
         File cacheDir = new File(outputDir, PREFIX + ABI_FILES.get(abi));
 
-        if (generateJar.getAndSet(false)) {
+        if (generateJar.getAndSet(false) && getProject().getName().equals("common-lib")) {
             log("Generating %s from %s", JAR, zipFile);
             File sourceDir = new File(cacheDir, "include");
             File jarFile = new File(cacheDir, JAR);
@@ -119,7 +119,7 @@ public class UpdateLibdigidocppTask extends DefaultTask {
                     StandardCopyOption.REPLACE_EXISTING
             );
         }
-        if (generateSchema.getAndSet(false)) {
+        if (generateSchema.getAndSet(false) && !getProject().getName().equals("common-lib")) {
             log("Generating %s from %s", SCHEMA, zipFile);
             File schemaCacheDir = new File(cacheDir, "etc");
             if (isTestTsl) {
@@ -145,37 +145,39 @@ public class UpdateLibdigidocppTask extends DefaultTask {
             );
         }
 
-        if (isTestTsl) {
-            Files.copy(
-                    new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
-                    new File(getProject().getProjectDir(), "src/envtest/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-        } else {
-            if (abi.equals("x86_64")) {
+        if (getProject().getName().equals("sign-lib")) {
+            if (isTestTsl) {
                 Files.copy(
-                        new File(cacheDir, ABI_DIRS.get(abi) + "/lib64/libc++_shared.so").toPath(),
-                        new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
+                        new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
+                        new File(getProject().getProjectDir(), "src/envtest/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
+                        StandardCopyOption.REPLACE_EXISTING
+                );
+            } else {
+                if (abi.equals("x86_64")) {
+                    Files.copy(
+                            new File(cacheDir, ABI_DIRS.get(abi) + "/lib64/libc++_shared.so").toPath(),
+                            new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
+                            StandardCopyOption.REPLACE_EXISTING
+                    );
+                }
+                if (!abi.equals("armeabi-v7a") && !abi.equals("x86_64")) {
+                    Files.copy(
+                            new File(cacheDir, ABI_DIRS.get(abi) + "/lib/libc++_shared.so").toPath(),
+                            new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
+                            StandardCopyOption.REPLACE_EXISTING
+                    );
+                }
+                Files.copy(
+                        new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
+                        new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
+                        StandardCopyOption.REPLACE_EXISTING
+                );
+                Files.copy(
+                        new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
+                        new File(getProject().getProjectDir(), "src/debug/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
                         StandardCopyOption.REPLACE_EXISTING
                 );
             }
-            if (!abi.equals("armeabi-v7a") && !abi.equals("x86_64")) {
-                Files.copy(
-                        new File(cacheDir, ABI_DIRS.get(abi) + "/lib/libc++_shared.so").toPath(),
-                        new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
-                        StandardCopyOption.REPLACE_EXISTING
-                );
-            }
-            Files.copy(
-                    new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
-                    new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-            Files.copy(
-                    new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
-                    new File(getProject().getProjectDir(), "src/debug/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
-                    StandardCopyOption.REPLACE_EXISTING
-            );
         }
     }
 

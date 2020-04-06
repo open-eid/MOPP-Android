@@ -1,4 +1,7 @@
+import ee.ria.DigiDoc.android.LibdigidocppPlugin
+
 apply plugin: 'com.android.library'
+apply plugin: LibdigidocppPlugin
 
 android {
     compileSdkVersion project.compileSdkVersion
