@@ -19,6 +19,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
+import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import io.reactivex.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
@@ -75,6 +76,8 @@ final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInte
             if (signatureAddError instanceof CodeVerificationException) {
                 setMessage(getContext().getString(
                         R.string.signature_update_id_card_sign_pin2_locked));
+            } else if (signatureAddError instanceof NoInternetConnectionException) {
+                setMessage(getContext().getString(R.string.signature_update_signature_error_no_response));
             } else if (signatureAddError instanceof MobileIdMessageException) {
                 if (!extractLink(signatureAddError.getMessage()).isEmpty()) {
                     setMessage(
@@ -134,11 +137,6 @@ final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInte
             documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent.clear());
         } else if (TextUtils.equals(type, SIGNATURE_ADD)) {
             signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clear());
-
-            // In case of mobile-id signing, reopen signing view after process failure message dismissal
-            if (signatureAddDialog.view().isMobileIdAsSigningMethodSelected()) {
-                signatureAddDialog.show();
-            }
         } else if (TextUtils.equals(type, SIGNATURE_REMOVE)) {
             signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear());
         }

@@ -255,7 +255,7 @@
                         style="@style/MaterialTypography.Dense.Body1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="MOBILEID_URL: " />
+                        android:text="MID-PROXY-URL: " />
 
                     <TextView
                         android:id="@id/mainDiagnosticsMobileIDUrl"
