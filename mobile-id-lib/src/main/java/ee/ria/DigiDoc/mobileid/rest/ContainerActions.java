@@ -93,7 +93,6 @@ public class ContainerActions {
 
             return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             Timber.e(e, "Exception when validating signature");
             return false;
         }
@@ -111,7 +110,6 @@ public class ContainerActions {
                         break;
                     }
                 } catch (Exception e) {
-                    System.out.println("Could not remove signature from container: " + e.getMessage());
                     Timber.e(e, "Unable to remove signature from container");
                     throw new IllegalArgumentException("Could not remove signature from container");
                 }
@@ -127,7 +125,6 @@ public class ContainerActions {
         try {
             return container.prepareWebSignature(certificate.getEncoded(), signatureProfile);
         } catch (CertificateEncodingException e) {
-            System.out.println("Error preparing signature: " + e.getMessage());
             Timber.e(e, "Unable to prepare signature. Certificate encoding failed");
             throw new CertificateEncodingException();
         }

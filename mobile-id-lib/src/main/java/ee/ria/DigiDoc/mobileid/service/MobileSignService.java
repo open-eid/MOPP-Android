@@ -104,7 +104,6 @@ public class MobileSignService extends IntentService {
         }
 
         Call<MobileCreateSignatureCertificateResponse> call = midRestServiceClient.getCertificate(certificateRequest);
-        System.out.println("GETTING CERTIFICATE RESPONSE...");
         try {
             Response<MobileCreateSignatureCertificateResponse> responseWrapper = call.execute();
             if (!responseWrapper.isSuccessful()) {
@@ -114,12 +113,10 @@ public class MobileSignService extends IntentService {
                 if (isResponseError(responseWrapper, response, MobileCreateSignatureCertificateResponse.class)) {
                     return;
                 }
-                System.out.println("GENERATING HASH...");
                 containerActions = new ContainerActions(request.getContainerPath(), response.getCert());
                 String hash = generateHash();
                 broadcastMobileCreateSignatureResponse();
                 sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
-                System.out.println("GETTING SESSION ID...");
                 String sessionId = getMobileIdSession(hash, request);
                 doCreateSignatureStatusRequestLoop(new GetMobileCreateSignatureSessionStatusRequest(sessionId));
             }
@@ -155,29 +152,22 @@ public class MobileSignService extends IntentService {
 
     private void doCreateSignatureStatusRequestLoop(GetMobileCreateSignatureSessionStatusRequest request) throws IOException {
         Call<MobileCreateSignatureSessionStatusResponse> responseCall = midRestServiceClient.getMobileCreateSignatureSessionStatus(request.getSessionId(), request.getTimeoutMs());
-        System.out.println("Session status request: " + responseCall.request().toString());
-        System.out.println("GETTING RESPONSE...");
+
         try {
             Response<MobileCreateSignatureSessionStatusResponse> responseWrapper = responseCall.execute();
-            System.out.println("GOT RESPONSE");
             if (!responseWrapper.isSuccessful()) {
                 parseErrorAndBroadcast(responseWrapper);
                 return;
             }
 
             MobileCreateSignatureSessionStatusResponse response = responseWrapper.body();
-            System.out.println("SESSION STATUS RESULT: " + response.getResult());
-            System.out.println("Session status response:" + response.toString());
             if (response != null && isSessionStatusRequestComplete(response.getState())) {
                 if (isResponseError(responseWrapper, response, MobileCreateSignatureSessionStatusResponse.class)) {
                     containerActions.removeSignatureFromContainer();
                     return;
                 }
                 try {
-                    System.out.println("REQUEST COMPLETE");
-                    System.out.println("VALIDATING SIGNATURE");
                     if (containerActions.validateSignature(response.getSignature().getValue())) {
-                        System.out.println("SIGNATURE VALIDATED");
                         broadcastMobileCreateSignatureStatusResponse(response, containerActions.getContainer());
                     } else {
                         containerActions.removeSignatureFromContainer();
@@ -194,11 +184,9 @@ public class MobileSignService extends IntentService {
 
             if (timeout > TIMEOUT_CANCEL) {
                 broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TIMEOUT));
-                System.out.println("REQUEST TIMEOUT");
                 Timber.d("Request timeout");
                 return;
             }
-            System.out.println("MAKING A NEW REQUEST");
             sleep(SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
             doCreateSignatureStatusRequestLoop(request);
         } catch (UnknownHostException e) {
