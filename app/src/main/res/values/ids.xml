@@ -5,6 +5,7 @@
     <item type="id" name="appBar" />
     <item type="id" name="toolbar" />
     <item type="id" name="activityIndicator" />
+    <item type="id" name="activityIndicator_mobile_id" />
     <item type="id" name="activityOverlay" />
     <item type="id" name="listEmpty" />
 
@@ -118,8 +119,10 @@
     <item type="id" name="signatureUpdateNameUpdateName" />
 
     <item type="id" name="signatureUpdateMobileId" />
+    <item type="id" name="signatureUpdateMobileIdPhoneNoText" />
     <item type="id" name="signatureUpdateMobileIdPhoneNoLabel" />
     <item type="id" name="signatureUpdateMobileIdPhoneNo" />
+    <item type="id" name="signatureUpdateMobileIdPersonalCodeText" />
     <item type="id" name="signatureUpdateMobileIdPersonalCodeLabel" />
     <item type="id" name="signatureUpdateMobileIdPersonalCode" />
     <item type="id" name="signatureUpdateMobileIdRememberMe" />

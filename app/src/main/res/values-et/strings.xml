@@ -114,6 +114,8 @@
     <string name="signature_update_signature_add_success">ALLKIRI LISATUD</string>
     <string name="signature_update_signature_add_error">Midagi läks valesti</string>
 
+    <string name="signature_update_signature_error_no_response">Palun kontrollige internetiühendust</string>
+
     <string name="signature_update_mobile_id_message">Sisesta oma telefoninumber ja isikukood Mobiil-IDga allkirjastamiseks</string>
     <string name="signature_update_mobile_id_phone_no">Riigi kood ja telefoninumber</string>
     <string name="signature_update_mobile_id_personal_code">Isikukood</string>
@@ -140,7 +142,6 @@
     <string name="signature_update_mobile_id_error_unknown">Tundmatu viga Mobiil-IDga allkirjastamisel</string>
     <string name="signature_update_mobile_id_error_local_service_exception">Midagi läks valesti, proovi hiljem uuesti</string>
     <string name="signature_update_mobile_id_error_general_client">Midagi läks valesti, proovi uuesti</string>
-    <string name="signature_update_mobile_id_error_no_response">Palun kontrollige internetiühendust</string>
     <string name="signature_update_mobile_id_error_incorrect_input_parameters">Vigane telefoninumber ja/või isikukood, välismaa telefoninumber peab algama riigikoodiga</string>
     <string name="signature_update_mobile_id_error_missing_input_parameters">Puudub telefoninumber ja/või isikukood</string>
     <string name="signature_update_mobile_id_error_ocsp_unauthorized">Mobiilse allkirjastamise teenusele ei õnnestu ligi pääseda</string>
@@ -370,7 +371,7 @@
     <string name="recipient_removed">Recipient removed</string>
     <string name="add_recipient">Add recipient</string>
     <string name="container_name_changed">Container name changed</string>
-    <string name="sign_container_button_description">Sign container</string>
+    <string name="sign_container_button_description">Allkirjasta</string>
     <string name="container_signing_cancelled">Container signing cancelled</string>
     <string name="container_signature_added">Container signature added</string>
     <string name="files_encrypted">Files encrypted</string>
@@ -395,8 +396,8 @@
     <string name="cancel_container_name_change">Cancel container name change</string>
     <string name="decrypt_button_description">Decrypt document(s)</string>
     <string name="cancel_decryption">Cancel decryption</string>
-    <string name="sign_container">Sign container</string>
-    <string name="cancel_signing_process">Cancel signing process</string>
+    <string name="sign_container">Allkirjasta</string>
+    <string name="cancel_signing_process">Tühista</string>
     <string name="confirm_pin1_change">Confirm Pin1 change</string>
     <string name="cancel_pin1_change">Cancel Pin1 changing process</string>
     <string name="confirm_pin1_unblock">Confirm Pin1 unblock</string>
