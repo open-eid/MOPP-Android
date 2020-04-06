@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -28,7 +29,8 @@ import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
-import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse.ProcessStatus;
+import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
+import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse.ProcessStatus;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
 import io.reactivex.Observable;
@@ -215,11 +217,6 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                         : GONE);
         if (signatureAddResponse instanceof MobileIdResponse) {
             MobileIdResponse mobileIdResponse = (MobileIdResponse) signatureAddResponse;
-            ProcessStatus mobileIdStatus = mobileIdResponse.status() == null
-                    ? ProcessStatus.DEFAULT
-                    : mobileIdResponse.status();
-            mobileIdStatusView.setText(
-                    MobileIdStatusMessages.message(getContext(), mobileIdStatus));
             String mobileIdChallenge = mobileIdResponse.challenge();
             if (mobileIdChallenge != null) {
                 mobileIdChallengeView.setText(mobileIdChallenge);

@@ -277,19 +277,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return signatureAddSource.sign(containerFile, request)
                         .switchMap(response -> {
                             if (response.container() != null) {
-                                if (existingContainer) {
-                                    return Observable
-                                            .timer(3, TimeUnit.SECONDS)
-                                            .map(ignored -> Result.SignatureAddResult.clear())
-                                            .startWith(Result.SignatureAddResult
-                                                    .success(response.container()));
-                                } else {
-                                    return Observable.fromCallable(() -> {
-                                        navigator.execute(Transaction.replace(SignatureUpdateScreen
-                                                .create(true, false, containerFile, false, true)));
-                                        return Result.SignatureAddResult.method(method, response);
-                                    });
-                                }
+                                return Observable.fromCallable(() -> {
+                                    navigator.execute(Transaction.replace(SignatureUpdateScreen
+                                            .create(true, false, containerFile, false, true)));
+                                    return Result.SignatureAddResult.method(method, response);
+                                });
                             } else {
                                 return Observable
                                         .just(Result.SignatureAddResult.method(method, response));

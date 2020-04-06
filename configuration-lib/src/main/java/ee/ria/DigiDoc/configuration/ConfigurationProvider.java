@@ -22,6 +22,7 @@ public abstract class ConfigurationProvider implements Parcelable {
     public abstract String getMidSignUrl();
     public abstract String getLdapPersonUrl();
     public abstract String getLdapCorpUrl();
+    public abstract String getMidRestUrl();
     public abstract Map<String, String> getOCSPUrls();
 
     @Nullable
@@ -44,6 +45,7 @@ public abstract class ConfigurationProvider implements Parcelable {
         abstract ConfigurationProviderBuilder setMidSignUrl(String midSignUrl);
         abstract ConfigurationProviderBuilder setLdapPersonUrl(String ldapPersonUrl);
         abstract ConfigurationProviderBuilder setLdapCorpUrl(String ldapCorpUrl);
+        abstract ConfigurationProviderBuilder setMidRestUrl(String midRestUrl);
         abstract ConfigurationProviderBuilder setOCSPUrls(Map<String, String> OCSPUrls);
         abstract ConfigurationProviderBuilder setConfigurationLastUpdateCheckDate(Date lastUpdateCheckDate);
         abstract ConfigurationProviderBuilder setConfigurationUpdateDate(Date updateDate);

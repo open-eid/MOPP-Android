@@ -119,25 +119,28 @@
     <string name="signature_update_mobile_id_personal_code">Личный код</string>
     <string name="signature_update_mobile_id_remember_me">Запомни меня</string>
     <string name="signature_update_mobile_id_info">Убедитесь в правильности контрольного кодa и введите PIN2-код для Mobiil-ID</string>
-    <string name="signature_update_mobile_id_display_message">Подписать %1$s</string>
+    <string name="signature_update_mobile_id_display_message">Подписать документ</string>
 
     <string name="signature_update_mobile_id_status_request_sent">Запрос на подпись отправлен</string>
     <string name="signature_update_mobile_id_status_request_ok">Запрос принят</string>
-    <string name="signature_update_mobile_id_status_expired_transaction">Время запроса истекло</string>
+    <string name="signature_update_mobile_id_status_no_country_code">Номер телефона должен содержать код страны</string>
+    <string name="signature_update_mobile_id_status_expired_transaction">Срок действия вашей транзакции Mobiil-ID истек. Пожалуйста, попробуйте еще раз.</string>
     <string name="signature_update_mobile_id_status_user_cancel">Пользователю отказано</string>
     <string name="signature_update_mobile_id_status_signature">Подпись получена</string>
     <string name="signature_update_mobile_id_status_outstanding_transaction">Запрос в ожидании</string>
     <string name="signature_update_mobile_id_status_mid_not_ready">Mobiil-ID не готов, попробуйте позже</string>
-    <string name="signature_update_mobile_id_status_phone_absent">Телефон выключен или находится вне зоны доступа</string>
-    <string name="signature_update_mobile_id_status_sending_error">Ошибка запроса</string>
-    <string name="signature_update_mobile_id_status_sim_error">Ошибка SIM-приложения</string>
+    <string name="signature_update_mobile_id_status_phone_absent">Телефон вне сети интернет</string>
+    <string name="signature_update_mobile_id_status_delivery_error">Ошибка запроса</string>
+    <string name="signature_update_mobile_id_status_sim_error">Ошибка SIM карты</string>
     <string name="signature_update_mobile_id_status_not_valid">Подпись недействительна</string>
     <string name="signature_update_mobile_id_status_revoked_certificate">Сертификаты отозваны</string>
+    <string name="signature_update_mobile_id_status_signature_hash_mismatch">Не удалось выполнить операцию Mobiil-ID. Пожалуйста, свяжитесь со своим мобильным оператором.</string>
     <string name="signature_update_mobile_id_status_internal_error">Техническая ошибка</string>
 
     <string name="signature_update_mobile_id_error_unknown">Неизвестная ошибка при подписании с помощю Mobiil-ID</string>
     <string name="signature_update_mobile_id_error_local_service_exception">Что-то пошло не так, попробуйте позже</string>
     <string name="signature_update_mobile_id_error_general_client">Что-то полшло не так, попробуйте снова</string>
+    <string name="signature_update_mobile_id_error_no_response">Пожалуйста проверьте подключение к интернету</string>
     <string name="signature_update_mobile_id_error_incorrect_input_parameters">Неверный номер телефона и/или личный код, не эстонские номера телефонов должны начинаться с кода страны</string>
     <string name="signature_update_mobile_id_error_missing_input_parameters">Отсутствует номер телефона и/или личный код</string>
     <string name="signature_update_mobile_id_error_ocsp_unauthorized">Сервис мобильной подписи недоступен</string>
@@ -146,12 +149,15 @@
     <string name="signature_update_mobile_id_error_certificate_validity_unknown">Не удалось проверить действительность сертификата</string>
     <string name="signature_update_mobile_id_error_session_locked">Сессия мобильной подписи заблокирована, попробуйте позже</string>
     <string name="signature_update_mobile_id_error_general_user">Ошабка приложения Mobiil-ID в телефоне пользователя</string>
-    <string name="signature_update_mobile_id_error_not_mobile_id_user">Не пользователь Mobiil-ID</string>
+    <string name="signature_update_mobile_id_error_not_mobile_id_user">Пользователь не является клиентом Mobiil-ID</string>
     <string name="signature_update_mobile_id_error_user_certificate_revoked">Ваш сертификат цифровой подписи отозван</string>
     <string name="signature_update_mobile_id_error_user_certificate_status_unknown">Статус Вашего сертификата цифровой подписи неизвестен</string>
     <string name="signature_update_mobile_id_error_user_certificate_suspended">Ваш сертификат цифровой подписи временно приостановлен</string>
     <string name="signature_update_mobile_id_error_user_certificate_expired">Срок действительности Вашего сертификата цифровой подписи истек</string>
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Слишком много файлов в контейнере</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/index.php?id=39025</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Дополнительная информация</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/index.php?id=39025</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Превышен лимит одновременных запросов</string>
 
     <string name="signature_update_id_card_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>

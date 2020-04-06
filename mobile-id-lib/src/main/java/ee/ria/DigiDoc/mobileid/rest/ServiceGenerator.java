@@ -17,11 +17,7 @@
  *
  */
 
-package ee.ria.DigiDoc.mobileid.soap;
-
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
-import org.simpleframework.xml.strategy.VisitorStrategy;
+package ee.ria.DigiDoc.mobileid.rest;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,11 +28,11 @@ import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
 public class ServiceGenerator {
-;
+
     private static HttpLoggingInterceptor loggingInterceptor;
 
     private static Retrofit retrofit;
@@ -46,7 +42,7 @@ public class ServiceGenerator {
             Timber.d("Creating new retrofit instance");
             retrofit = new Retrofit.Builder()
                     .baseUrl(midSignServiceUrl)
-                    .addConverterFactory(SimpleXmlConverterFactory.create(visitorStrategySerializer()))
+                    .addConverterFactory(GsonConverterFactory.create())
                     .client(buildHttpClient(sslContext, midSignServiceUrl))
                     .build();
         }
@@ -78,7 +74,7 @@ public class ServiceGenerator {
 
     private static void addLoggingInterceptor(OkHttpClient.Builder httpClientBuilder) {
         if (BuildConfig.DEBUG) {
-            Timber.d("adding logging interceptor to http client");
+            Timber.d("Adding logging interceptor to HTTP client");
             if (loggingInterceptor == null) {
                 loggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
             }
@@ -86,9 +82,5 @@ public class ServiceGenerator {
                 httpClientBuilder.addInterceptor(loggingInterceptor);
             }
         }
-    }
-
-    private static Serializer visitorStrategySerializer() {
-        return new Persister(new VisitorStrategy(new RequestObjectInterceptor()));
     }
 }

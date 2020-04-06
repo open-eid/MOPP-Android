@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.main.about;
 
 import android.content.res.Resources;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
@@ -184,6 +185,24 @@ final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     "1.2",
                     R.string.main_about_terms_and_conditions,
                     R.string.main_about_identiv_license_url))
+            .add(Component.create(
+                    R.string.main_about_jackson_core_title,
+                    BuildConfig.JACKSON_VERSION,
+                    R.string.main_about_apache_2_0_license_title,
+                    R.string.main_about_jackson_core_license_url
+            ))
+            .add(Component.create(
+                    R.string.main_about_jackson_databind_title,
+                    BuildConfig.JACKSON_VERSION,
+                    R.string.main_about_apache_2_0_license_title,
+                    R.string.main_about_jackson_databind_license_url
+            ))
+            .add(Component.create(
+                    R.string.main_about_mid_rest_api_java_title,
+                    "1.1",
+                    R.string.main_about_mit_license_title,
+                    R.string.main_about_mid_rest_api_java_license_url
+            ))
             .build();
 
     @NonNull

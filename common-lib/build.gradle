@@ -29,6 +29,8 @@ dependencies {
 
     api "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
 
+    api files('libs/libdigidocpp.jar')
+
     testImplementation "junit:junit:${junitVersion}"
     testImplementation "com.google.truth:truth:${truthVersion}"
 }

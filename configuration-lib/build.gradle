@@ -73,9 +73,5 @@ task fetchAndPackageDefaultConfiguration(type: JavaExec, dependsOn: build) {
             from file("${projectDir}/src/main/assets/config")
             into file("${buildDir}/intermediates/library_assets/release/out/config")
         }
-        copy {
-            from file("${projectDir}/src/envtest/assets/config")
-            into file("${buildDir}/intermediates/library_assets/envtest/out/config")
-        }
     }
 }
