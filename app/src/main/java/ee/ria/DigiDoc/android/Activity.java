@@ -8,15 +8,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.PersistableBundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.view.WindowManager;
 
-import java.util.Arrays;
+import java.lang.ref.WeakReference;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -35,6 +32,8 @@ public final class Activity extends AppCompatActivity {
 
     private Navigator navigator;
     private RootScreenFactory rootScreenFactory;
+
+    private static WeakReference<Context> mContext;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +68,8 @@ public final class Activity extends AppCompatActivity {
           }
           rootScreenFactory.intent(intent);
         }
+
+        mContext = new WeakReference<>(this);
 
         initializeApplicationFileTypesAssociation();
 
@@ -131,6 +132,10 @@ public final class Activity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         navigator.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public static WeakReference<Context> getContext() {
+        return mContext;
     }
 
     @Singleton

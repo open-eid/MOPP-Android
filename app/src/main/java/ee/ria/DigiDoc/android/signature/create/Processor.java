@@ -6,6 +6,7 @@ import android.widget.Toast;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.navigator.ActivityResult;
@@ -67,7 +68,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                         false))))
                                 .doOnError(throwable1 -> {
                                     Timber.d(throwable1, "Add signed container failed");
-                                    Toast.makeText(application, R.string.signature_create_error,
+                                    Toast.makeText(application, Activity.getContext().get().getString(R.string.signature_create_error),
                                                     Toast.LENGTH_LONG)
                                             .show();
                                     navigator.execute(Transaction.pop());
