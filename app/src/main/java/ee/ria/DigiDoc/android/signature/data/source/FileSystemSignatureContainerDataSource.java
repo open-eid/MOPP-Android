@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -74,7 +76,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
         return Single.fromCallable(() ->
                 SignedContainer
                         .open(containerFile)
-                        .addDataFiles(cacheFileStreams(documentStreams)));
+                        .addDataFiles(cacheFileStreams(getNewDocuments(containerFile, documentStreams))));
     }
 
     @Override
@@ -107,6 +109,43 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
                 SignedContainer
                         .open(containerFile)
                         .addAdEsSignature(signature.getBytes()));
+    }
+
+    private ImmutableList<FileStream> getNewDocuments(File containerFile, ImmutableList<FileStream> documentStreams) throws IOException {
+        ImmutableList.Builder<FileStream> fileStreamList = ImmutableList.builder();
+        List<String> fileNamesInContainer = getFileNamesInContainer(containerFile);
+        List<String> fileNamesToAdd = getFileNamesToAddToContainer(documentStreams);
+        for (int i = 0; i < fileNamesToAdd.size(); i++) {
+            if (!fileNamesInContainer.contains(fileNamesToAdd.get(i))) {
+                fileStreamList.add(documentStreams.get(i));
+            }
+        }
+
+        if (fileStreamList.build().isEmpty()) {
+            return documentStreams;
+        }
+
+        return fileStreamList.build();
+    }
+
+    private List<String> getFileNamesInContainer(File containerFile) throws IOException {
+        List<String> containerFileNames = new ArrayList<>();
+        ImmutableList<DataFile> dataFiles = SignedContainer.open(containerFile).dataFiles();
+
+        for (int i = 0; i < dataFiles.size(); i++) {
+            containerFileNames.add(dataFiles.get(i).name());
+        }
+
+        return containerFileNames;
+    }
+
+    private List<String> getFileNamesToAddToContainer(ImmutableList<FileStream> documentStreams) {
+        List<String> documentNamesToAdd = new ArrayList<>();
+        for (FileStream fileStream : documentStreams) {
+            documentNamesToAdd.add(fileStream.displayName());
+        }
+
+        return documentNamesToAdd;
     }
 
     private ImmutableList<File> cacheFileStreams(ImmutableList<FileStream> fileStreams) throws
