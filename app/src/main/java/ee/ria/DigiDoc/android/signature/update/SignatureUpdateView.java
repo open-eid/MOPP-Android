@@ -92,6 +92,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @Nullable private Signature signatureRemoveConfirmation;
 
     private boolean signingInfoDelegated = false;
+    ProgressBar progressBar;
 
     public SignatureUpdateView(Context context, String screenId, boolean isExistingContainer,
                                boolean isNestedContainer, File containerFile,
@@ -137,6 +138,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         errorDialog = new SignatureUpdateErrorDialog(context, documentsAddIntentSubject,
                 documentRemoveIntentSubject, signatureAddIntentSubject,
                 signatureRemoveIntentSubject, signatureAddDialog);
+
+        initializeProgressBar();
     }
 
     @SuppressWarnings("unchecked")
@@ -262,10 +265,15 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
         sendButton.setEnabled(!activity);
         signatureAddButton.setEnabled(!activity);
+        if (!activity && isTimerStarted) stopProgressBar();
     }
 
     private void resetSignatureAddDialog() {
         signatureAddView.reset(viewModel);
+    }
+
+    private void initializeProgressBar() {
+        progressBar = (ProgressBar) activityIndicatorView;
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
@@ -327,18 +335,14 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     }
 
     private void startProgressBar() {
-
-
-
         timeoutTimer = new CountDownTimer(PROGRESS_BAR_TIMEOUT_CANCEL, 1000) {
-            ProgressBar pb = (ProgressBar) activityIndicatorView;
+
             public void onTick(long millisUntilFinished) {
-                pb.setMax((int) (PROGRESS_BAR_TIMEOUT_CANCEL / 1000));
-                pb.incrementProgressBy(1);
+                progressBar.setMax((int) (PROGRESS_BAR_TIMEOUT_CANCEL / 1000));
+                progressBar.incrementProgressBy(1);
             }
 
             public void onFinish() {
-                pb.setProgress(0);
                 stopProgressBar();
             }
 
@@ -346,6 +350,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     }
 
     private void stopProgressBar() {
+        progressBar.setProgress(0);
         timeoutTimer.cancel();
         isTimerStarted = false;
     }
@@ -387,7 +392,6 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         errorDialog.setOnDismissListener(null);
         errorDialog.dismiss();
         nameUpdateDialog.dismiss();
-        stopProgressBar();
         super.onDetachedFromWindow();
     }
 
