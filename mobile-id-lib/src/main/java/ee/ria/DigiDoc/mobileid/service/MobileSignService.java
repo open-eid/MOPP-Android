@@ -40,6 +40,7 @@ import java.security.cert.CertificateException;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLPeerUnverifiedException;
 
 import ee.ria.DigiDoc.mobileid.dto.MobileCertificateResultType;
 import ee.ria.DigiDoc.mobileid.dto.request.GetMobileCreateSignatureSessionStatusRequest;
@@ -61,6 +62,7 @@ import timber.log.Timber;
 
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CERTIFICATE_CERT_BUNDLE;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SIGN_SERVICE_URL;
 
@@ -95,7 +97,7 @@ public class MobileSignService extends IntentService {
             Timber.e(e, "Can't create SSL config");
             restSSLConfig = null;
         }
-        midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class, restSSLConfig, intent.getStringExtra(SIGN_SERVICE_URL));
+        midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class, restSSLConfig, intent.getStringExtra(SIGN_SERVICE_URL), intent.getStringArrayListExtra(CERTIFICATE_CERT_BUNDLE));
 
         if (isCountryCodeError(request.getPhoneNumber())) {
             broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_COUNTRY_CODE));
@@ -123,6 +125,9 @@ public class MobileSignService extends IntentService {
         } catch (UnknownHostException e) {
             broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE));
             Timber.e(e, "REST API certificate request failed. Unknown host");
+        } catch (SSLPeerUnverifiedException e) {
+            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
+            Timber.e(e, "SSL handshake failed");
         } catch (IOException e) {
             broadcastFault(defaultError());
             Timber.e(e, "REST API certificate request failed");

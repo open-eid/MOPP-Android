@@ -115,6 +115,7 @@
     <string name="signature_update_signature_add_error">Что-то пошло не так</string>
 
     <string name="signature_update_signature_error_no_response">Пожалуйста проверьте подключение к интернету</string>
+    <string name="signature_update_signature_error_invalid_ssl_handshake">Не удалось создать SSL канал передачи данных. Проверьте настройки вашего приложения или обновления программного обеспечения.</string>
 
     <string name="signature_update_mobile_id_message">Введите свой телефонный номер и личный код для подписания с помощью Mobiil-ID</string>
     <string name="signature_update_mobile_id_phone_no">Код страны и телефонный номер</string>

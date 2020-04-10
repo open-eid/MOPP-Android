@@ -147,7 +147,7 @@ public class ContainerActions {
         return currentSignature;
     }
 
-    private X509Certificate x509Certificate(String cert) throws CertificateException {
+    public static X509Certificate x509Certificate(String cert) throws CertificateException {
         return (X509Certificate) CertificateFactory.getInstance("X.509")
                 .generateCertificate(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
     }

@@ -115,6 +115,7 @@
     <string name="signature_update_signature_add_error">Midagi läks valesti</string>
 
     <string name="signature_update_signature_error_no_response">Palun kontrollige internetiühendust</string>
+    <string name="signature_update_signature_error_invalid_ssl_handshake">SSL ühenduskanali loomine ebaõnnestus. Kontrolli rakenduse seadeid või tarkvara uuendusi</string>
 
     <string name="signature_update_mobile_id_message">Sisesta oma telefoninumber ja isikukood Mobiil-IDga allkirjastamiseks</string>
     <string name="signature_update_mobile_id_phone_no">Riigi kood ja telefoninumber</string>

@@ -350,9 +350,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     }
 
     private void stopProgressBar() {
-        progressBar.setProgress(0);
-        timeoutTimer.cancel();
-        isTimerStarted = false;
+        if (isTimerStarted && timeoutTimer != null) {
+            progressBar.setProgress(0);
+            timeoutTimer.cancel();
+            isTimerStarted = false;
+        }
     }
 
     @Override

@@ -138,7 +138,8 @@ public class MobileCreateSignatureSessionStatusResponse {
         TOO_MANY_REQUESTS,
         GENERAL_ERROR,
         NO_RESPONSE,
-        INVALID_COUNTRY_CODE
+        INVALID_COUNTRY_CODE,
+        INVALID_SSL_HANDSHAKE
     }
 }
 

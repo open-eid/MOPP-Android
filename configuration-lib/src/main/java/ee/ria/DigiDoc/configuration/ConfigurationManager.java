@@ -236,6 +236,7 @@ public class ConfigurationManager {
                 .setLdapCorpUrl(configurationParser.parseStringValue("LDAP-CORP-URL"))
                 .setMidRestUrl(configurationParser.parseStringValue("MID-PROXY-URL"))
                 .setOCSPUrls(configurationParser.parseStringValuesToMap("OCSP-URL-ISSUER"))
+                .setCertBundle(configurationParser.parseStringValues("CERT-BUNDLE"))
                 .setConfigurationLastUpdateCheckDate(cachedConfigurationHandler.getConfLastUpdateCheckDate())
                 .setConfigurationUpdateDate(cachedConfigurationHandler.getConfUpdateDate())
                 .build();

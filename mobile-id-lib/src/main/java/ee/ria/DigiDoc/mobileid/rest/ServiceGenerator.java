@@ -19,6 +19,16 @@
 
 package ee.ria.DigiDoc.mobileid.rest;
 
+import org.bouncycastle.util.encoders.Base64;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -33,17 +43,20 @@ import timber.log.Timber;
 
 public class ServiceGenerator {
 
+    private static final String PEM_BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
+    private static final String PEM_END_CERT = "-----END CERTIFICATE-----";
+
     private static HttpLoggingInterceptor loggingInterceptor;
 
     private static Retrofit retrofit;
 
-    public static <S> S createService(Class<S> serviceClass, SSLContext sslContext, String midSignServiceUrl) {
+    public static <S> S createService(Class<S> serviceClass, SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle) {
         if (retrofit == null) {
             Timber.d("Creating new retrofit instance");
             retrofit = new Retrofit.Builder()
                     .baseUrl(midSignServiceUrl)
                     .addConverterFactory(GsonConverterFactory.create())
-                    .client(buildHttpClient(sslContext, midSignServiceUrl))
+                    .client(buildHttpClient(sslContext, midSignServiceUrl, certBundle))
                     .build();
         }
         Timber.d("Creating service client instance");
@@ -54,13 +67,11 @@ public class ServiceGenerator {
         return retrofit;
     }
 
-    private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl) {
+    private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle) {
         Timber.d("Building new httpClient");
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
-                .certificatePinner(new CertificatePinner.Builder().add(midSignServiceUrl,
-                        "sha256/69i1y4v6AUAp3dDArytNsYC0GjRqMDIPYRI78k/Ig6I=",
-                        "sha256/Z7dYz+iD/lRZ0p/tctsXZB2QnaSKz3EozBkonbPmc/w=").build());
+                .certificatePinner(trustedCertificates(midSignServiceUrl, certBundle));
         addLoggingInterceptor(httpClientBuilder);
         if (sslContext != null) {
             try {
@@ -81,6 +92,51 @@ public class ServiceGenerator {
             if (!httpClientBuilder.interceptors().contains(loggingInterceptor)) {
                 httpClientBuilder.addInterceptor(loggingInterceptor);
             }
+        }
+    }
+
+    private static CertificatePinner trustedCertificates(String midSignServiceUrl, ArrayList<String> certBundle) {
+        URI uri = toURI(midSignServiceUrl);
+
+        if (uri != null) {
+            String[] sha256Certificates = new String[certBundle.size()];
+            try {
+                for (int i = 0; i < certBundle.size(); i++) {
+                    String pemCert = PEM_BEGIN_CERT + "\n" + certBundle.get(i) + "\n" + PEM_END_CERT;
+                    sha256Certificates[i] = "sha256/" + getSHA256FromCertificate(ContainerActions.x509Certificate(pemCert));
+                }
+            } catch (CertificateException e) {
+                Timber.e(e, "Failed to convert to Certificate object");
+            }
+
+            CertificatePinner.Builder certificatePinner = new CertificatePinner.Builder()
+                    .add(uri.getHost(), sha256Certificates);
+
+            return certificatePinner.build();
+        }
+
+        return new CertificatePinner.Builder().build();
+    }
+
+    private static URI toURI(String url) {
+        try {
+            return new URI(url);
+        } catch (URISyntaxException e) {
+            Timber.e(e, "Failed to convert URI from URL");
+            return null;
+        }
+    }
+
+    private static String getSHA256FromCertificate(Certificate cert) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] encodedHash = digest.digest(cert.getPublicKey().getEncoded());
+            byte[] base64EncodedHash = Base64.encode(encodedHash);
+
+            return new String(base64EncodedHash, StandardCharsets.UTF_8);
+        } catch (NoSuchAlgorithmException e) {
+            Timber.e(e, "Unable to get instance of algorithm");
+            return "";
         }
     }
 }
