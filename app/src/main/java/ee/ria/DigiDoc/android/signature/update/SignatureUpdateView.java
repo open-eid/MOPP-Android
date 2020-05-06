@@ -47,9 +47,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private static final int DEFAULT_SIGN_METHOD = R.id.signatureUpdateSignatureAddMethodMobileId;
     private static final String EMPTY_MOBILE_ID_CHALLENGE = "____";
 
-    private static final long PROGRESS_BAR_TIMEOUT_CANCEL = 125 * 1000;
     private boolean isTimerStarted = false;
-    private CountDownTimer timeoutTimer;
 
     private final boolean isExistingContainer;
     private final boolean isNestedContainer;
