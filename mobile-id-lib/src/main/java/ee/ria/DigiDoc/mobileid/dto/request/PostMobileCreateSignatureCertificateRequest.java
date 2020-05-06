@@ -28,8 +28,8 @@ public class PostMobileCreateSignatureCertificateRequest {
     private String phoneNumber;
     private String nationalIdentityNumber;
 
-    public static String toJson(PostMobileCreateSignatureCertificateRequest fault) {
-        return new Gson().toJson(fault);
+    public static String toJson(PostMobileCreateSignatureCertificateRequest request) {
+        return new Gson().toJson(request);
     }
 
     public static PostMobileCreateSignatureCertificateRequest fromJson(String json) {

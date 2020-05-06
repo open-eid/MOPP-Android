@@ -14,6 +14,7 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
+import ee.ria.DigiDoc.mobileid.dto.response.MobileIdServiceResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.RESTServiceFault;
 import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.SignLib;
@@ -73,8 +74,8 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                         emitter.onNext(MobileIdResponse.challenge(challenge));
                         break;
                     case CREATE_SIGNATURE_STATUS:
-                        ee.ria.DigiDoc.mobileid.dto.response.MobileIdResponse status =
-                                ee.ria.DigiDoc.mobileid.dto.response.MobileIdResponse.fromJson(
+                        MobileIdServiceResponse status =
+                                MobileIdServiceResponse.fromJson(
                                         intent.getStringExtra(CREATE_SIGNATURE_STATUS));
                         switch (status.getStatus()) {
                             case USER_CANCELLED:

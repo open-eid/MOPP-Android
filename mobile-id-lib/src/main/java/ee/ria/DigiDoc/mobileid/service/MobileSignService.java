@@ -50,7 +50,7 @@ import ee.ria.DigiDoc.mobileid.dto.request.PostMobileCreateSignatureSessionReque
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureCertificateResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
-import ee.ria.DigiDoc.mobileid.dto.response.MobileIdResponse;
+import ee.ria.DigiDoc.mobileid.dto.response.MobileIdServiceResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.RESTServiceFault;
 import ee.ria.DigiDoc.mobileid.rest.ContainerActions;
 import ee.ria.DigiDoc.mobileid.rest.MIDRestServiceClient;
@@ -260,7 +260,7 @@ public class MobileSignService extends IntentService {
     private void broadcastMobileCreateSignatureStatusResponse(MobileCreateSignatureSessionStatusResponse response, Container container) {
         Intent localIntent = new Intent(MobileSignConstants.MID_BROADCAST_ACTION)
                 .putExtra(MobileSignConstants.MID_BROADCAST_TYPE_KEY, MobileSignConstants.CREATE_SIGNATURE_STATUS)
-                .putExtra(MobileSignConstants.CREATE_SIGNATURE_STATUS, MobileIdResponse.toJson(generateMobileIdResponse(response, container)));
+                .putExtra(MobileSignConstants.CREATE_SIGNATURE_STATUS, MobileIdServiceResponse.toJson(generateMobileIdResponse(response, container)));
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
@@ -277,8 +277,8 @@ public class MobileSignService extends IntentService {
         return phoneNumber.length() <= 9;
     }
 
-    private MobileIdResponse generateMobileIdResponse(MobileCreateSignatureSessionStatusResponse response, Container container) {
-        MobileIdResponse mobileIdResponse = new MobileIdResponse();
+    private MobileIdServiceResponse generateMobileIdResponse(MobileCreateSignatureSessionStatusResponse response, Container container) {
+        MobileIdServiceResponse mobileIdResponse = new MobileIdServiceResponse();
         mobileIdResponse.setContainer(container);
         mobileIdResponse.setStatus(response.getResult());
         mobileIdResponse.setSignature(response.getSignature().getValue());

@@ -139,7 +139,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 documentRemoveIntentSubject, signatureAddIntentSubject,
                 signatureRemoveIntentSubject, signatureAddDialog);
 
-        initializeProgressBar();
+        progressBar = (ProgressBar) activityIndicatorView;
     }
 
     @SuppressWarnings("unchecked")
@@ -156,7 +156,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             Toast.makeText(getContext(), R.string.signature_update_container_load_error,
                     Toast.LENGTH_LONG).show();
             navigator.execute(Transaction.pop());
-            stopProgressBar();
+            SignatureUpdateProgressBar.stopProgressBar(progressBar, isTimerStarted);
+            isTimerStarted = false;
             return;
         }
 
@@ -242,7 +243,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             mobileIdContainerView.setFocusableInTouchMode(true);
 
             if (isTimerStarted) {
-                startProgressBar();
+                SignatureUpdateProgressBar.startProgressBar(progressBar);
             }
 
             isTimerStarted = true;
@@ -265,15 +266,14 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
         sendButton.setEnabled(!activity);
         signatureAddButton.setEnabled(!activity);
-        if (!activity && isTimerStarted) stopProgressBar();
+        if (!activity && isTimerStarted) {
+            SignatureUpdateProgressBar.stopProgressBar(progressBar, isTimerStarted);
+            isTimerStarted = false;
+        }
     }
 
     private void resetSignatureAddDialog() {
         signatureAddView.reset(viewModel);
-    }
-
-    private void initializeProgressBar() {
-        progressBar = (ProgressBar) activityIndicatorView;
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
@@ -332,29 +332,6 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private Observable<Intent.SendIntent> sendIntent() {
         return clicks(sendButton)
                 .map(ignored -> Intent.SendIntent.create(containerFile));
-    }
-
-    private void startProgressBar() {
-        timeoutTimer = new CountDownTimer(PROGRESS_BAR_TIMEOUT_CANCEL, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                progressBar.setMax((int) (PROGRESS_BAR_TIMEOUT_CANCEL / 1000));
-                progressBar.incrementProgressBy(1);
-            }
-
-            public void onFinish() {
-                stopProgressBar();
-            }
-
-        }.start();
-    }
-
-    private void stopProgressBar() {
-        if (isTimerStarted && timeoutTimer != null) {
-            progressBar.setProgress(0);
-            timeoutTimer.cancel();
-            isTimerStarted = false;
-        }
     }
 
     @Override

@@ -4,18 +4,18 @@ import com.google.gson.Gson;
 
 import ee.ria.libdigidocpp.Container;
 
-public class MobileIdResponse {
+public class MobileIdServiceResponse {
 
     private MobileCreateSignatureSessionStatusResponse.ProcessStatus status;
     private Container container;
     private String signature;
 
-    public static String toJson(MobileIdResponse response) {
+    public static String toJson(MobileIdServiceResponse response) {
         return new Gson().toJson(response);
     }
 
-    public static MobileIdResponse fromJson(String json) {
-        return new Gson().fromJson(json, MobileIdResponse.class);
+    public static MobileIdServiceResponse fromJson(String json) {
+        return new Gson().fromJson(json, MobileIdServiceResponse.class);
     }
 
     public MobileCreateSignatureSessionStatusResponse.ProcessStatus getStatus() {

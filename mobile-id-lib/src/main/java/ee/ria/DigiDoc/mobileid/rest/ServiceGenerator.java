@@ -29,6 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -43,8 +44,8 @@ import timber.log.Timber;
 
 public class ServiceGenerator {
 
-    private static final String PEM_BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
-    private static final String PEM_END_CERT = "-----END CERTIFICATE-----";
+    private static final String CERT_PEM_HEADER = "-----BEGIN CERTIFICATE-----";
+    private static final String CERT_PEM_FOOTER = "-----END CERTIFICATE-----";
 
     private static HttpLoggingInterceptor loggingInterceptor;
 
@@ -102,7 +103,7 @@ public class ServiceGenerator {
             String[] sha256Certificates = new String[certBundle.size()];
             try {
                 for (int i = 0; i < certBundle.size(); i++) {
-                    String pemCert = PEM_BEGIN_CERT + "\n" + certBundle.get(i) + "\n" + PEM_END_CERT;
+                    String pemCert = CERT_PEM_HEADER + "\n" + certBundle.get(i) + "\n" + CERT_PEM_FOOTER;
                     sha256Certificates[i] = "sha256/" + getSHA256FromCertificate(ContainerActions.x509Certificate(pemCert));
                 }
             } catch (CertificateException e) {

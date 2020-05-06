@@ -76,7 +76,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
         return Single.fromCallable(() ->
                 SignedContainer
                         .open(containerFile)
-                        .addDataFiles(cacheFileStreams(getNewDocuments(containerFile, documentStreams))));
+                        .addDataFiles(cacheFileStreams(getContainerFiles(containerFile, documentStreams))));
     }
 
     @Override
@@ -111,7 +111,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
                         .addAdEsSignature(signature.getBytes()));
     }
 
-    private ImmutableList<FileStream> getNewDocuments(File containerFile, ImmutableList<FileStream> documentStreams) throws IOException {
+    private ImmutableList<FileStream> getContainerFiles(File containerFile, ImmutableList<FileStream> documentStreams) throws IOException {
         ImmutableList.Builder<FileStream> fileStreamList = ImmutableList.builder();
         List<String> fileNamesInContainer = getFileNamesInContainer(containerFile);
         List<String> fileNamesToAdd = getFileNamesToAddToContainer(documentStreams);

@@ -17,6 +17,8 @@ import java.util.regex.Matcher;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
+import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
+import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
@@ -27,7 +29,7 @@ import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_ADD;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_REMOVE;
 
-final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInterface.OnDismissListener {
+public final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInterface.OnDismissListener {
 
     @StringDef({DOCUMENTS_ADD, DOCUMENT_REMOVE, SIGNATURE_ADD, SIGNATURE_REMOVE})
     @Retention(RetentionPolicy.SOURCE)
@@ -79,11 +81,11 @@ final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInte
             } else if (signatureAddError instanceof NoInternetConnectionException) {
                 setMessage(getContext().getString(R.string.signature_update_signature_error_no_response));
             } else if (signatureAddError instanceof MobileIdMessageException) {
-                if (!extractLink(signatureAddError.getMessage()).isEmpty()) {
+                if (!ErrorMessageUtil.extractLink(signatureAddError.getMessage()).isEmpty()) {
                     setMessage(
                             Html.fromHtml("<span>" +
                                     removeLink(signatureAddError.getMessage()) + "</span><a href=" +
-                                            extractLink(getTextFromTranslation(R.string.signature_update_mobile_id_error_message_too_many_requests_additional_information_link)) + ">" +
+                                            ErrorMessageUtil.extractLink(getTextFromTranslation(R.string.signature_update_mobile_id_error_message_too_many_requests_additional_information_link)) + ">" +
                                             getTextFromTranslation(R.string.signature_update_mobile_id_error_message_too_many_requests_additional_information) + "</a>"));
                 } else {
                     setMessage(signatureAddError.getMessage());
@@ -101,20 +103,11 @@ final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInte
         }
         show();
         // Make links in dialog clickable
-        ((TextView)this.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+        ClickableDialogUtil.makeLinksInDialogClickable(this);
     }
 
     private String getTextFromTranslation(int textId) {
         return getContext().getResources().getString(textId);
-    }
-
-    private String extractLink(String text) {
-        Matcher m = Patterns.WEB_URL.matcher(text);
-        while (m.find()) {
-            return m.group();
-        }
-
-        return "";
     }
 
     private String removeLink(String text) {
