@@ -170,6 +170,8 @@ public abstract class SignedContainer {
             if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
                 throw new TooManyRequestsException();
             }
+
+            throw e;
         }
         return open(file());
     }

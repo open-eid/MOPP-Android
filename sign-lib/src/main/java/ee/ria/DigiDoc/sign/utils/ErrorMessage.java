@@ -5,9 +5,9 @@ import android.util.Patterns;
 
 import java.util.regex.Matcher;
 
-public class ErrorMessageWithURL {
+public class ErrorMessage {
 
-    public String messageWithURL(Context context, int errorMessageTranslation, int urlTranslation, int messageTranslation) {
+    public static String withURL(Context context, int errorMessageTranslation, int urlTranslation, int messageTranslation) {
         String errorMessage = getTextFromTranslation(context, errorMessageTranslation);
         if (!extractLink(errorMessage).isEmpty()) {
             return "<span>" +
@@ -19,11 +19,11 @@ public class ErrorMessageWithURL {
         return errorMessage;
     }
 
-    private String getTextFromTranslation(Context context, int textId) {
+    private static String getTextFromTranslation(Context context, int textId) {
         return context.getResources().getString(textId);
     }
 
-    private String extractLink(String text) {
+    private static String extractLink(String text) {
         Matcher m = Patterns.WEB_URL.matcher(text);
         while (m.find()) {
             return m.group();
@@ -32,7 +32,7 @@ public class ErrorMessageWithURL {
         return "";
     }
 
-    private String removeLink(String text) {
+    private static String removeLink(String text) {
         Matcher m = Patterns.WEB_URL.matcher(text);
         while (m.find()) {
             return text.replace(m.group(),"");
