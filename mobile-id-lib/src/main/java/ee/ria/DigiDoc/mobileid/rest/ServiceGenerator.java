@@ -57,7 +57,7 @@ public class ServiceGenerator {
             retrofit = new Retrofit.Builder()
                     .baseUrl(midSignServiceUrl)
                     .addConverterFactory(GsonConverterFactory.create())
-
+                    .client(buildHttpClient(sslContext, midSignServiceUrl, certBundle))
                     .build();
         }
         Timber.d("Creating service client instance");
