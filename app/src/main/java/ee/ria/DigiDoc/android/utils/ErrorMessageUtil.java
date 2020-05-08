@@ -13,4 +13,13 @@ public final class ErrorMessageUtil {
 
         return "";
     }
+
+    public static String removeLink(String text) {
+        Matcher m = Patterns.WEB_URL.matcher(text);
+        while (m.find()) {
+            return text.replace(m.group(),"");
+        }
+
+        return text;
+    }
 }

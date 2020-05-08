@@ -111,9 +111,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         intent.putExtra(SIGN_SERVICE_URL, ((Application) navigator.activity().getApplication()).getConfigurationProvider().getMidRestUrl() + "/");
 
         List<String> certBundle = ((Application) navigator.activity().getApplication()).getConfigurationProvider().getCertBundle();
-        ArrayList<String> certBundleArrayList = new ArrayList<>(certBundle.size());
-        certBundleArrayList.addAll(certBundle);
-        intent.putStringArrayListExtra(CERTIFICATE_CERT_BUNDLE, certBundleArrayList);
+        intent.putStringArrayListExtra(CERTIFICATE_CERT_BUNDLE, new ArrayList<>(certBundle));
         navigator.activity().startService(intent);
     }
 }

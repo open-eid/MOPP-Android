@@ -51,7 +51,7 @@ public class ServiceGenerator {
 
     private static Retrofit retrofit;
 
-    public static <S> S createService(Class<S> serviceClass, SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle) {
+    public static <S> S createService(Class<S> serviceClass, SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle) throws CertificateException, NoSuchAlgorithmException {
         if (retrofit == null) {
             Timber.d("Creating new retrofit instance");
             retrofit = new Retrofit.Builder()
@@ -68,7 +68,7 @@ public class ServiceGenerator {
         return retrofit;
     }
 
-    private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle) {
+    private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle) throws CertificateException, NoSuchAlgorithmException {
         Timber.d("Building new httpClient");
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
@@ -96,7 +96,7 @@ public class ServiceGenerator {
         }
     }
 
-    private static CertificatePinner trustedCertificates(String midSignServiceUrl, ArrayList<String> certBundle) {
+    private static CertificatePinner trustedCertificates(String midSignServiceUrl, ArrayList<String> certBundle) throws CertificateException, NoSuchAlgorithmException {
         URI uri = toURI(midSignServiceUrl);
 
         if (uri != null) {
@@ -106,8 +106,9 @@ public class ServiceGenerator {
                     String pemCert = CERT_PEM_HEADER + "\n" + certBundle.get(i) + "\n" + CERT_PEM_FOOTER;
                     sha256Certificates[i] = "sha256/" + getSHA256FromCertificate(ContainerActions.x509Certificate(pemCert));
                 }
-            } catch (CertificateException e) {
+            } catch (CertificateException | NoSuchAlgorithmException e) {
                 Timber.e(e, "Failed to convert to Certificate object");
+                throw e;
             }
 
             CertificatePinner.Builder certificatePinner = new CertificatePinner.Builder()
@@ -128,7 +129,7 @@ public class ServiceGenerator {
         }
     }
 
-    private static String getSHA256FromCertificate(Certificate cert) {
+    private static String getSHA256FromCertificate(Certificate cert) throws NoSuchAlgorithmException {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] encodedHash = digest.digest(cert.getPublicKey().getEncoded());
@@ -137,7 +138,7 @@ public class ServiceGenerator {
             return new String(base64EncodedHash, StandardCharsets.UTF_8);
         } catch (NoSuchAlgorithmException e) {
             Timber.e(e, "Unable to get instance of algorithm");
-            return "";
+            throw e;
         }
     }
 }

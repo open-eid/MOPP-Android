@@ -91,6 +91,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private boolean signingInfoDelegated = false;
     ProgressBar progressBar;
+    SignatureUpdateProgressBar signatureUpdateProgressBar = new SignatureUpdateProgressBar();
 
     public SignatureUpdateView(Context context, String screenId, boolean isExistingContainer,
                                boolean isNestedContainer, File containerFile,
@@ -154,7 +155,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             Toast.makeText(getContext(), R.string.signature_update_container_load_error,
                     Toast.LENGTH_LONG).show();
             navigator.execute(Transaction.pop());
-            SignatureUpdateProgressBar.stopProgressBar(progressBar, isTimerStarted);
+            signatureUpdateProgressBar.stopProgressBar(progressBar, isTimerStarted);
             isTimerStarted = false;
             return;
         }
@@ -241,7 +242,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             mobileIdContainerView.setFocusableInTouchMode(true);
 
             if (isTimerStarted) {
-                SignatureUpdateProgressBar.startProgressBar(progressBar);
+                signatureUpdateProgressBar.startProgressBar(progressBar);
             }
 
             isTimerStarted = true;
@@ -265,7 +266,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         sendButton.setEnabled(!activity);
         signatureAddButton.setEnabled(!activity);
         if (!activity && isTimerStarted) {
-            SignatureUpdateProgressBar.stopProgressBar(progressBar, isTimerStarted);
+            signatureUpdateProgressBar.stopProgressBar(progressBar, isTimerStarted);
             isTimerStarted = false;
         }
     }

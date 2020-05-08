@@ -3,12 +3,12 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.os.CountDownTimer;
 import android.widget.ProgressBar;
 
-public class SignatureUpdateProgressBar {
+class SignatureUpdateProgressBar {
 
     private static final long PROGRESS_BAR_TIMEOUT_CANCEL = 125 * 1000;
     private static CountDownTimer timeoutTimer;
 
-    public static void startProgressBar(ProgressBar progressBar) {
+    void startProgressBar(ProgressBar progressBar) {
         timeoutTimer = new CountDownTimer(PROGRESS_BAR_TIMEOUT_CANCEL, 1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -23,7 +23,7 @@ public class SignatureUpdateProgressBar {
         }.start();
     }
 
-    public static void stopProgressBar(ProgressBar progressBar, boolean isTimerStarted) {
+    void stopProgressBar(ProgressBar progressBar, boolean isTimerStarted) {
         if (isTimerStarted && timeoutTimer != null) {
             progressBar.setProgress(0);
             timeoutTimer.cancel();

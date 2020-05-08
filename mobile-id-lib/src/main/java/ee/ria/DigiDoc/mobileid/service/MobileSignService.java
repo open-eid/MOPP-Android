@@ -97,7 +97,13 @@ public class MobileSignService extends IntentService {
             Timber.e(e, "Can't create SSL config");
             restSSLConfig = null;
         }
-        midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class, restSSLConfig, intent.getStringExtra(SIGN_SERVICE_URL), intent.getStringArrayListExtra(CERTIFICATE_CERT_BUNDLE));
+
+        try {
+            midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class, restSSLConfig, intent.getStringExtra(SIGN_SERVICE_URL), intent.getStringArrayListExtra(CERTIFICATE_CERT_BUNDLE));
+        } catch (CertificateException | NoSuchAlgorithmException e) {
+            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
+            return;
+        }
 
         if (isCountryCodeError(request.getPhoneNumber())) {
             broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_COUNTRY_CODE));

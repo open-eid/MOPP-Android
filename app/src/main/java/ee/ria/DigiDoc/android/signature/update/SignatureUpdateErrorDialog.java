@@ -84,7 +84,7 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                 if (!ErrorMessageUtil.extractLink(signatureAddError.getMessage()).isEmpty()) {
                     setMessage(
                             Html.fromHtml("<span>" +
-                                    removeLink(signatureAddError.getMessage()) + "</span><a href=" +
+                                    ErrorMessageUtil.removeLink(signatureAddError.getMessage()) + "</span><a href=" +
                                             ErrorMessageUtil.extractLink(getTextFromTranslation(R.string.signature_update_mobile_id_error_message_too_many_requests_additional_information_link)) + ">" +
                                             getTextFromTranslation(R.string.signature_update_mobile_id_error_message_too_many_requests_additional_information) + "</a>"));
                 } else {
@@ -102,21 +102,12 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
             return;
         }
         show();
-        // Make links in dialog clickable
+
         ClickableDialogUtil.makeLinksInDialogClickable(this);
     }
 
     private String getTextFromTranslation(int textId) {
         return getContext().getResources().getString(textId);
-    }
-
-    private String removeLink(String text) {
-        Matcher m = Patterns.WEB_URL.matcher(text);
-        while (m.find()) {
-            return text.replace(m.group(),"");
-        }
-
-        return text;
     }
 
 
