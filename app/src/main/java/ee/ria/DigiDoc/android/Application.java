@@ -193,7 +193,7 @@ public class Application extends android.app.Application {
         confProviderReceiver.send(ConfigurationManagerService.NEW_CONFIGURATION_LOADED, bundle);
 
         // Load configuration again in asynchronous manner, from central if needed or cache if present.
-//        initAsyncConfigurationLoad(new ConfigurationProviderReceiver(new Handler()), false);
+        initAsyncConfigurationLoad(new ConfigurationProviderReceiver(new Handler()), false);
     }
 
     private boolean isDefaultConfNewerThanCachedConf(ConfigurationProperties confProperties, CachedConfigurationHandler cachedConfHandler) {
