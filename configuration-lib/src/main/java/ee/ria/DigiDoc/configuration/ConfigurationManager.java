@@ -234,7 +234,9 @@ public class ConfigurationManager {
                 .setMidSignUrl(configurationParser.parseStringValue("MID-SIGN-URL"))
                 .setLdapPersonUrl(configurationParser.parseStringValue("LDAP-PERSON-URL"))
                 .setLdapCorpUrl(configurationParser.parseStringValue("LDAP-CORP-URL"))
+                .setMidRestUrl(configurationParser.parseStringValue("MID-PROXY-URL"))
                 .setOCSPUrls(configurationParser.parseStringValuesToMap("OCSP-URL-ISSUER"))
+                .setCertBundle(configurationParser.parseStringValues("CERT-BUNDLE"))
                 .setConfigurationLastUpdateCheckDate(cachedConfigurationHandler.getConfLastUpdateCheckDate())
                 .setConfigurationUpdateDate(cachedConfigurationHandler.getConfUpdateDate())
                 .build();

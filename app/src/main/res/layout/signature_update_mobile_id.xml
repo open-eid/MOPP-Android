@@ -1,53 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:parentTag="android.widget.LinearLayout"
-    tools:layout_width="match_parent"
-    tools:layout_height="wrap_content"
-    tools:orientation="vertical">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="@string/signature_update_mobile_id_message" />
+        android:orientation="vertical">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@id/signatureUpdateMobileIdPhoneNoLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/material_baseline_grid_1.5x">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@id/signatureUpdateMobileIdPhoneNo"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="phone"
-            android:hint="@string/signature_update_mobile_id_phone_no"
-            android:digits="0123456789"/>
+            android:gravity="center_horizontal"
+            android:text="@string/signature_update_mobile_id_message" />
 
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@id/signatureUpdateMobileIdPersonalCodeLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@id/signatureUpdateMobileIdPersonalCode"
+        <TextView
+            android:id="@id/signatureUpdateMobileIdPhoneNoText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:hint="@string/signature_update_mobile_id_personal_code"
-            android:maxLength="11" />
+            android:gravity="start"
+            android:layout_marginTop="11dp"
+            android:layout_marginStart="4dp"
+            android:text="@string/signature_update_mobile_id_phone_no"
+            android:importantForAccessibility="1"
+            android:accessibilityTraversalBefore="@id/signatureUpdateMobileIdPhoneNoLabel"
+            android:paddingTop="1px"/>
 
-    </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@id/signatureUpdateMobileIdPhoneNoLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="-10dp"
+            android:importantForAccessibility="1"
+            android:accessibilityTraversalAfter="@id/signatureUpdateMobileIdPhoneNoText">
 
-    <CheckBox
-        android:id="@id/signatureUpdateMobileIdRememberMe"
-        android:layout_width="200dp"
-        android:layout_height="48dp"
-        android:checked="false"
-        android:text="@string/signature_update_mobile_id_remember_me" />
+            <android.support.design.widget.TextInputEditText
+                android:id="@id/signatureUpdateMobileIdPhoneNo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:digits="0123456789"
+                android:importantForAccessibility="1" />
 
-</merge>
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@id/signatureUpdateMobileIdPersonalCodeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="11dp"
+            android:layout_marginStart="4dp"
+
+            android:text="@string/signature_update_mobile_id_personal_code"
+            android:importantForAccessibility="1"
+            android:accessibilityTraversalAfter="@id/signatureUpdateMobileIdPhoneNoLabel"
+            android:accessibilityTraversalBefore="@id/signatureUpdateMobileIdPersonalCodeLabel" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@id/signatureUpdateMobileIdPersonalCodeLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="-10dp"
+            android:importantForAccessibility="1">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@id/signatureUpdateMobileIdPersonalCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="11"
+                android:importantForAccessibility="1"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <CheckBox
+            android:id="@id/signatureUpdateMobileIdRememberMe"
+            android:layout_width="200dp"
+            android:layout_height="48dp"
+            android:checked="false"
+            android:text="@string/signature_update_mobile_id_remember_me" />
+
+
+    </LinearLayout>
+
+</ScrollView>

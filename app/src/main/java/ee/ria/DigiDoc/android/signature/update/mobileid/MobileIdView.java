@@ -14,7 +14,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
-import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse;
+import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -72,7 +72,7 @@ public final class MobileIdView extends LinearLayout implements
 
     @Override
     public void response(@Nullable MobileIdResponse response) {
-        if (response != null && response.status() != null && response.status() == GetMobileCreateSignatureStatusResponse.ProcessStatus.SIGNATURE) {
+        if (response != null && response.status() != null && response.status() == MobileCreateSignatureSessionStatusResponse.ProcessStatus.OK) {
             AccessibilityUtils.sendAccessibilityEvent(this.getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.container_signature_added);
         }
     }

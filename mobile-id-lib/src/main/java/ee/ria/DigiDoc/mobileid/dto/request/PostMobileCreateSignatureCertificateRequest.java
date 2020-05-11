@@ -21,22 +21,19 @@ package ee.ria.DigiDoc.mobileid.dto.request;
 
 import com.google.gson.Gson;
 
-public class MobileCreateSignatureRequest {
+public class PostMobileCreateSignatureCertificateRequest {
 
     private String relyingPartyName;
     private String relyingPartyUUID;
     private String phoneNumber;
     private String nationalIdentityNumber;
 
-    private String containerPath;
-
-    private String hashType;
-    private String language;
-    private String displayText;
-    private String displayTextFormat;
-
-    public static String toJson(MobileCreateSignatureRequest request) {
+    public static String toJson(PostMobileCreateSignatureCertificateRequest request) {
         return new Gson().toJson(request);
+    }
+
+    public static PostMobileCreateSignatureCertificateRequest fromJson(String json) {
+        return new Gson().fromJson(json, PostMobileCreateSignatureCertificateRequest.class);
     }
 
     public String getRelyingPartyName() {
@@ -71,58 +68,13 @@ public class MobileCreateSignatureRequest {
         this.nationalIdentityNumber = nationalIdentityNumber;
     }
 
-    public String getContainerPath() {
-        return containerPath;
-    }
-
-    public void setContainerPath(String containerPath) {
-        this.containerPath = containerPath;
-    }
-
-    public String getHashType() {
-        return hashType;
-    }
-
-    public void setHashType(String hashType) {
-        this.hashType = hashType;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getDisplayText() {
-        return displayText;
-    }
-
-    public void setDisplayText(String displayText) {
-        this.displayText = displayText;
-    }
-
-    public String getDisplayTextFormat() {
-        return displayTextFormat;
-    }
-
-    public void setDisplayTextFormat(String displayTextFormat) {
-        this.displayTextFormat = displayTextFormat;
-    }
-
     @Override
     public String toString() {
-        return "MobileCreateSignatureRequest{" +
+        return "GetMobileCertificateRequest{" +
                 "relyingPartyName='" + relyingPartyName + '\'' +
                 ", relyingPartyUUID='" + relyingPartyUUID + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", nationalIdentityNumber='" + nationalIdentityNumber + '\'' +
-                ", containerPath='" + containerPath + '\'' +
-                ", hashType='" + hashType + '\'' +
-                ", language='" + language + '\'' +
-                ", displayText='" + displayText + '\'' +
-                ", displayTextFormat='" + displayTextFormat + '\'' +
                 '}';
     }
 }

@@ -19,25 +19,19 @@
 
 package ee.ria.DigiDoc.mobileid.dto.request;
 
-import com.google.gson.Gson;
-
-public class MobileCreateSignatureRequest {
+public class PostMobileCreateSignatureSessionRequest {
 
     private String relyingPartyName;
     private String relyingPartyUUID;
     private String phoneNumber;
     private String nationalIdentityNumber;
 
-    private String containerPath;
+    private String hash;
 
     private String hashType;
     private String language;
     private String displayText;
     private String displayTextFormat;
-
-    public static String toJson(MobileCreateSignatureRequest request) {
-        return new Gson().toJson(request);
-    }
 
     public String getRelyingPartyName() {
         return relyingPartyName;
@@ -71,12 +65,12 @@ public class MobileCreateSignatureRequest {
         this.nationalIdentityNumber = nationalIdentityNumber;
     }
 
-    public String getContainerPath() {
-        return containerPath;
+    public String getHash() {
+        return hash;
     }
 
-    public void setContainerPath(String containerPath) {
-        this.containerPath = containerPath;
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 
     public String getHashType() {
@@ -113,12 +107,12 @@ public class MobileCreateSignatureRequest {
 
     @Override
     public String toString() {
-        return "MobileCreateSignatureRequest{" +
+        return "PostMobileCreateSignatureSessionRequest{" +
                 "relyingPartyName='" + relyingPartyName + '\'' +
                 ", relyingPartyUUID='" + relyingPartyUUID + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", nationalIdentityNumber='" + nationalIdentityNumber + '\'' +
-                ", containerPath='" + containerPath + '\'' +
+                ", hash='" + hash + '\'' +
                 ", hashType='" + hashType + '\'' +
                 ", language='" + language + '\'' +
                 ", displayText='" + displayText + '\'' +

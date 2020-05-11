@@ -6,14 +6,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
-import ee.ria.DigiDoc.mobileid.dto.response.GetMobileCreateSignatureStatusResponse;
-import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureResponse;
-import ee.ria.DigiDoc.mobileid.dto.response.ServiceFault;
+import ee.ria.DigiDoc.mobileid.dto.response.MobileIdServiceResponse;
+import ee.ria.DigiDoc.mobileid.dto.response.RESTServiceFault;
 import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.sign.SignedContainer;
@@ -23,6 +25,7 @@ import io.reactivex.ObservableOnSubscribe;
 import static ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest.toJson;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CERTIFICATE_CERT_BUNDLE;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_CHALLENGE;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_STATUS;
@@ -55,26 +58,32 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getStringExtra(MID_BROADCAST_TYPE_KEY)) {
                     case SERVICE_FAULT:
-                        ServiceFault fault = ServiceFault
+                        RESTServiceFault fault = RESTServiceFault
                                 .fromJson(intent.getStringExtra(SERVICE_FAULT));
-                        emitter.onError(MobileIdMessageException
-                                .create(navigator.activity(), fault.getReason()));
+                        if (fault.getStatus() != null) {
+                            emitter.onError(MobileIdMessageException
+                                    .create(navigator.activity(), fault.getStatus()));
+                        } else {
+                            emitter.onError(MobileIdMessageException
+                                    .create(navigator.activity(), fault.getResult()));
+                        }
                         break;
                     case CREATE_SIGNATURE_CHALLENGE:
-                        MobileCreateSignatureResponse challenge = MobileCreateSignatureResponse
-                                .fromJson(intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE));
-                        emitter.onNext(MobileIdResponse.challenge(challenge.getChallengeID()));
+                        String challenge =
+                                intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE);
+                        emitter.onNext(MobileIdResponse.challenge(challenge));
                         break;
                     case CREATE_SIGNATURE_STATUS:
-                        GetMobileCreateSignatureStatusResponse status =
-                                GetMobileCreateSignatureStatusResponse.fromJson(
+                        MobileIdServiceResponse status =
+                                MobileIdServiceResponse.fromJson(
                                         intent.getStringExtra(CREATE_SIGNATURE_STATUS));
                         switch (status.getStatus()) {
-                            case OUTSTANDING_TRANSACTION:
+                            case USER_CANCELLED:
                                 emitter.onNext(MobileIdResponse.status(status.getStatus()));
                                 break;
-                            case SIGNATURE:
+                            case OK:
                                 emitter.onNext(MobileIdResponse.signature(status.getSignature()));
+                                emitter.onNext(MobileIdResponse.success(container));
                                 emitter.onComplete();
                                 break;
                             default:
@@ -91,7 +100,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         emitter.setCancellable(() -> broadcastManager.unregisterReceiver(receiver));
 
         String displayMessage = navigator.activity()
-                .getString(R.string.signature_update_mobile_id_display_message, container.name());
+                .getString(R.string.signature_update_mobile_id_display_message);
         MobileCreateSignatureRequest request = MobileCreateSignatureRequestHelper
                 .create(container, personalCode, phoneNo, displayMessage);
 
@@ -99,7 +108,10 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         intent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));
         intent.putExtra(ACCESS_TOKEN_PASS, SignLib.accessTokenPass());
         intent.putExtra(ACCESS_TOKEN_PATH, SignLib.accessTokenPath());
-        intent.putExtra(SIGN_SERVICE_URL, ((Application) navigator.activity().getApplication()).getConfigurationProvider().getMidSignUrl());
+        intent.putExtra(SIGN_SERVICE_URL, ((Application) navigator.activity().getApplication()).getConfigurationProvider().getMidRestUrl() + "/");
+
+        List<String> certBundle = ((Application) navigator.activity().getApplication()).getConfigurationProvider().getCertBundle();
+        intent.putStringArrayListExtra(CERTIFICATE_CERT_BUNDLE, new ArrayList<>(certBundle));
         navigator.activity().startService(intent);
     }
 }

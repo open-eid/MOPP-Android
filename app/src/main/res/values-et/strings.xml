@@ -118,25 +118,30 @@
     <string name="signature_update_signature_error_message_too_many_requests_additional_information">Loe täpsemalt siit</string>
     <string name="signature_update_signature_error_message_too_many_requests_additional_information_link">https://id.ee/index.php?id=39021</string>
 
+    <string name="signature_update_signature_error_no_response">Palun kontrollige internetiühendust</string>
+    <string name="signature_update_signature_error_invalid_ssl_handshake">SSL ühenduskanali loomine ebaõnnestus. Kontrolli rakenduse seadeid või tarkvara uuendusi</string>
+
     <string name="signature_update_mobile_id_message">Sisesta oma telefoninumber ja isikukood Mobiil-IDga allkirjastamiseks</string>
     <string name="signature_update_mobile_id_phone_no">Riigi kood ja telefoninumber</string>
     <string name="signature_update_mobile_id_personal_code">Isikukood</string>
     <string name="signature_update_mobile_id_remember_me">Pea mind meeles</string>
     <string name="signature_update_mobile_id_info">Veendu kontrollkoodi õiguses ja sisesta telefonil Mobiil-ID PIN2 kood.</string>
-    <string name="signature_update_mobile_id_display_message">Allkirjasta %1$s</string>
+    <string name="signature_update_mobile_id_display_message">Allkirjasta dokument</string>
 
     <string name="signature_update_mobile_id_status_request_sent">Allkirjastamispäring saadetud</string>
     <string name="signature_update_mobile_id_status_request_ok">Päring vastuvõetud</string>
-    <string name="signature_update_mobile_id_status_expired_transaction">Päringu ajalõpp</string>
-    <string name="signature_update_mobile_id_status_user_cancel">Kasutaja katkestas</string>
+    <string name="signature_update_mobile_id_status_no_country_code">Telefoninumber peab sisaldama riigikoodi</string>
+    <string name="signature_update_mobile_id_status_expired_transaction">Teie Mobiil-ID toiming aegus. Palun proovige uuesti.</string>
+    <string name="signature_update_mobile_id_status_user_cancel">Kasutaja keeldus või katkestas</string>
     <string name="signature_update_mobile_id_status_signature">Allkiri saadud</string>
     <string name="signature_update_mobile_id_status_outstanding_transaction">Päring käimas</string>
     <string name="signature_update_mobile_id_status_mid_not_ready">Mobiil-ID pole saadaval, proovi hiljem uuesti</string>
-    <string name="signature_update_mobile_id_status_phone_absent">Telefon on välja lülitatud või asub väljaspool levi piirkonda</string>
-    <string name="signature_update_mobile_id_status_sending_error">Viga päringu saatmisel</string>
-    <string name="signature_update_mobile_id_status_sim_error">SIM-i tööriistakomplekti viga</string>
+    <string name="signature_update_mobile_id_status_phone_absent">Telefon ei ole levis</string>
+    <string name="signature_update_mobile_id_status_delivery_error">Päringu saatmise viga</string>
+    <string name="signature_update_mobile_id_status_sim_error">SIM kaardi viga</string>
     <string name="signature_update_mobile_id_status_not_valid">Allkiri ei ole kehtiv</string>
     <string name="signature_update_mobile_id_status_revoked_certificate">Sertifikaat tühistatud</string>
+    <string name="signature_update_mobile_id_status_signature_hash_mismatch">Teie Mobiil-ID toiming ebaõnnestus. Palun võtke ühendust enda mobiilioperaatoriga.</string>
     <string name="signature_update_mobile_id_status_internal_error">Tehniline viga</string>
 
     <string name="signature_update_mobile_id_error_unknown">Tundmatu viga Mobiil-IDga allkirjastamisel</string>
@@ -150,12 +155,15 @@
     <string name="signature_update_mobile_id_error_certificate_validity_unknown">Sertifikaadi kehtivust ei õnnestu kontrollida</string>
     <string name="signature_update_mobile_id_error_session_locked">Mobiilse allkirjastamise sessioon on lukustunud, proovi hiljem uuesti</string>
     <string name="signature_update_mobile_id_error_general_user">Viga Mobiil-ID kasutamisel kasutaja telefonis</string>
-    <string name="signature_update_mobile_id_error_not_mobile_id_user">Pole Mobiil-ID kasutaja</string>
+    <string name="signature_update_mobile_id_error_not_mobile_id_user">Kasutaja ei ole Mobiil-ID klient</string>
     <string name="signature_update_mobile_id_error_user_certificate_revoked">Teie Mobiil-ID allkirjastamise sertifikaat on tühistatud</string>
     <string name="signature_update_mobile_id_error_user_certificate_status_unknown">Teie Mobiil-ID allkirjastamise sertifikaadi olek on teadmata</string>
     <string name="signature_update_mobile_id_error_user_certificate_suspended">Teie Mobiil-ID\'ga allkirjastamise sertifikaadi kehtivus on peatatud</string>
     <string name="signature_update_mobile_id_error_user_certificate_expired">Teie Mobiil-ID allkirjastamise sertifikaat on aegunud</string>
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Liiga palju faile ühes konteineris</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. https://id.ee/index.php?id=39021</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Loe täpsemalt siit</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://id.ee/index.php?id=39021</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Samaaegsete pöördumiste limiit ületatud</string>
 
     <string name="signature_update_id_card_progress_message_initial">Ühenda kaardilugeja telefoniga ja sisesta ID-kaart lugejasse</string>
@@ -368,7 +376,7 @@
     <string name="recipient_removed">Recipient removed</string>
     <string name="add_recipient">Add recipient</string>
     <string name="container_name_changed">Container name changed</string>
-    <string name="sign_container_button_description">Sign container</string>
+    <string name="sign_container_button_description">Allkirjasta</string>
     <string name="container_signing_cancelled">Container signing cancelled</string>
     <string name="container_signature_added">Container signature added</string>
     <string name="files_encrypted">Files encrypted</string>
@@ -393,8 +401,8 @@
     <string name="cancel_container_name_change">Cancel container name change</string>
     <string name="decrypt_button_description">Decrypt document(s)</string>
     <string name="cancel_decryption">Cancel decryption</string>
-    <string name="sign_container">Sign container</string>
-    <string name="cancel_signing_process">Cancel signing process</string>
+    <string name="sign_container">Allkirjasta</string>
+    <string name="cancel_signing_process">Tühista</string>
     <string name="confirm_pin1_change">Confirm Pin1 change</string>
     <string name="cancel_pin1_change">Cancel Pin1 changing process</string>
     <string name="confirm_pin1_unblock">Confirm Pin1 unblock</string>

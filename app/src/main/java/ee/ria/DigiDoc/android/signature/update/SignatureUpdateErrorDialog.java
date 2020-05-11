@@ -8,17 +8,26 @@ import android.support.annotation.StringDef;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+
+import android.util.Patterns;
+
 import android.widget.TextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.regex.Matcher;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
+import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
+import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
+
 import ee.ria.DigiDoc.sign.TooManyRequestsException;
-import ee.ria.DigiDoc.sign.utils.ErrorMessage;
+
+import ee.ria.DigiDoc.sign.NoInternetConnectionException;
+
 import io.reactivex.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
@@ -26,7 +35,7 @@ import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_ADD;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_REMOVE;
 
-final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInterface.OnDismissListener {
+public final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInterface.OnDismissListener {
 
     @StringDef({DOCUMENTS_ADD, DOCUMENT_REMOVE, SIGNATURE_ADD, SIGNATURE_REMOVE})
     @Retention(RetentionPolicy.SOURCE)
@@ -75,13 +84,18 @@ final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInte
             if (signatureAddError instanceof CodeVerificationException) {
                 setMessage(getContext().getString(
                         R.string.signature_update_id_card_sign_pin2_locked));
+            } else if (signatureAddError instanceof NoInternetConnectionException) {
+                setMessage(getContext().getString(R.string.signature_update_signature_error_no_response));
             } else if (signatureAddError instanceof MobileIdMessageException) {
-                setMessage(signatureAddError.getMessage());
-            } else if (signatureAddError instanceof TooManyRequestsException) {
-                setMessage(Html.fromHtml(ErrorMessage.withURL(getContext(),
-                        R.string.signature_update_signature_error_message_too_many_requests,
-                        R.string.signature_update_signature_error_message_too_many_requests_additional_information_link,
-                        R.string.signature_update_signature_error_message_too_many_requests_additional_information)));
+                if (!ErrorMessageUtil.extractLink(signatureAddError.getMessage()).isEmpty()) {
+                    setMessage(
+                            Html.fromHtml("<span>" +
+                                    ErrorMessageUtil.removeLink(signatureAddError.getMessage()) + "</span><a href=" +
+                                            ErrorMessageUtil.extractLink(getTextFromTranslation(R.string.signature_update_mobile_id_error_message_too_many_requests_additional_information_link)) + ">" +
+                                            getTextFromTranslation(R.string.signature_update_mobile_id_error_message_too_many_requests_additional_information) + "</a>"));
+                } else {
+                    setMessage(signatureAddError.getMessage());
+                }
             } else {
                 setTitle(R.string.signature_update_signature_add_error);
                 setMessage(signatureAddError.getMessage());
@@ -95,8 +109,14 @@ final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInte
         }
         show();
 
-        ((TextView)this.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+        ClickableDialogUtil.makeLinksInDialogClickable(this);
     }
+
+    private String getTextFromTranslation(int textId) {
+        return getContext().getResources().getString(textId);
+    }
+
+
 
     @Override
     public void onDismiss(DialogInterface dialog) {
@@ -107,11 +127,6 @@ final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInte
             documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent.clear());
         } else if (TextUtils.equals(type, SIGNATURE_ADD)) {
             signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clear());
-
-            // In case of mobile-id signing, reopen signing view after process failure message dismissal
-            if (signatureAddDialog.view().isMobileIdAsSigningMethodSelected()) {
-                signatureAddDialog.show();
-            }
         } else if (TextUtils.equals(type, SIGNATURE_REMOVE)) {
             signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear());
         }
