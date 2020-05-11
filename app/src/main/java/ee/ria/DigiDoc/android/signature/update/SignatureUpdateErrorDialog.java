@@ -8,7 +8,9 @@ import android.support.annotation.StringDef;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+
 import android.util.Patterns;
+
 import android.widget.TextView;
 
 import java.lang.annotation.Retention;
@@ -21,7 +23,11 @@ import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
+
+import ee.ria.DigiDoc.sign.TooManyRequestsException;
+
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
+
 import io.reactivex.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;

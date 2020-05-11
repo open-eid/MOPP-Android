@@ -125,6 +125,7 @@ final class SignatureAddSource {
                                         return Observable.error(error);
                                     });
                         }
+
                         return Observable.error(error);
                     })
                     .subscribeOn(Schedulers.io())

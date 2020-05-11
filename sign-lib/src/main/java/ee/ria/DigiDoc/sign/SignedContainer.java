@@ -161,6 +161,7 @@ public abstract class SignedContainer {
 
         try {
             Container container = container(file());
+          
             ee.ria.libdigidocpp.Signature signature = container
                     .prepareWebSignature(certificate.toByteArray(), signatureProfile());
             ByteString signatureData = signFunction.apply(ByteString.of(signature.dataToSign()));
@@ -169,9 +170,14 @@ public abstract class SignedContainer {
             container.save();
             return open(file());
         } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
+                throw new TooManyRequestsException();
+            }
+            
             if (e.getMessage() != null && e.getMessage().contains("Failed to connect")) {
                 throw new NoInternetConnectionException();
             }
+
             throw e;
         }
     }

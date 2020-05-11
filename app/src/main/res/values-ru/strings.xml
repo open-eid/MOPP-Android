@@ -114,6 +114,10 @@
     <string name="signature_update_signature_add_success">ПОДПИСЬ ДОБАВЛЕНА</string>
     <string name="signature_update_signature_add_error">Что-то пошло не так</string>
 
+    <string name="signature_update_signature_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/index.php?id=39025</string>
+    <string name="signature_update_signature_error_message_too_many_requests_additional_information">Дополнительная информация</string>
+    <string name="signature_update_signature_error_message_too_many_requests_additional_information_link">https://www.id.ee/index.php?id=39025</string>
+
     <string name="signature_update_signature_error_no_response">Пожалуйста проверьте подключение к интернету</string>
     <string name="signature_update_signature_error_invalid_ssl_handshake">Не удалось создать SSL канал передачи данных. Проверьте настройки вашего приложения или обновления программного обеспечения.</string>
 
