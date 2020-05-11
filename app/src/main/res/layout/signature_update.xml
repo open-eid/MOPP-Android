@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             app:layout_anchor="@id/appBar"
             app:layout_anchorGravity="bottom"
-            android:indeterminate="true" />
+            android:indeterminate="false" />
 
         <android.support.v7.widget.CardView
             android:id="@id/signatureUpdateMobileIdContainer"

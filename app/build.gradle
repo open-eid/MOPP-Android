@@ -41,6 +41,7 @@ android {
         buildConfigField 'String', 'JUNIT_VERSION', "\"$junitVersion\""
         buildConfigField 'String', 'TRUTH_VERSION', "\"$truthVersion\""
         buildConfigField 'String', 'MOCKITO_VERSION', "\"$mockitoVersion\""
+        buildConfigField 'String', 'JACKSON_VERSION', "\"$jacksonVersion\""
     }
 
     signingConfigs {

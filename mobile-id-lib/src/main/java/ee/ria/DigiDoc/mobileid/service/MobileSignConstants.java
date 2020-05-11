@@ -28,6 +28,7 @@ public interface MobileSignConstants {
     String ACCESS_TOKEN_PASS = "ee.ria.mopp.androidmobileid.ACCESS_TOKEN_PASS";
     String ACCESS_TOKEN_PATH = "ee.ria.mopp.androidmobileid.ACCESS_TOKEN_PATH";
     String SIGN_SERVICE_URL = "ee.ria.mopp.androidmobileid.SIGN_SERVICE_URL";
+    String CERTIFICATE_CERT_BUNDLE = "ee.ria.mopp.androidmobileid.CERTIFICATE_CERT_BUNDLE";
     String CREATE_SIGNATURE_CHALLENGE = "ee.ria.mopp.androidmobileid.MID_CHALLENGE";
     String CREATE_SIGNATURE_STATUS = "ee.ria.mopp.androidmobileid.CREATE_SIGNATURE_STATUS";
     String SERVICE_FAULT = "ee.ria.mopp.androidmobileid.SERVICE_FAULT";

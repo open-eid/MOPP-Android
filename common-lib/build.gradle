@@ -1,4 +1,7 @@
+import ee.ria.DigiDoc.android.LibdigidocppPlugin
+
 apply plugin: 'com.android.library'
+apply plugin: LibdigidocppPlugin
 
 android {
     compileSdkVersion project.compileSdkVersion
@@ -28,6 +31,8 @@ dependencies {
     api "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
 
     api "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
+
+    api files('libs/libdigidocpp.jar')
 
     testImplementation "junit:junit:${junitVersion}"
     testImplementation "com.google.truth:truth:${truthVersion}"

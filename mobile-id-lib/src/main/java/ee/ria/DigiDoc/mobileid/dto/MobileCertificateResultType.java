@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Riigi Infosüsteemide Amet
+ * Copyright 2020 Riigi Infosüsteemide Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,9 +17,10 @@
  *
  */
 
-package ee.ria.DigiDoc.mobileid.soap;
+package ee.ria.DigiDoc.mobileid.dto;
 
-public interface RequestObject {
-
-    String getOperationName();
+public enum MobileCertificateResultType {
+    OK,
+    NOT_FOUND,
+    NOT_ACTIVE
 }
