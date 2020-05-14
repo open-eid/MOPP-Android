@@ -28,6 +28,7 @@ import ee.ria.DigiDoc.sign.TooManyRequestsException;
 
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 
+import ee.ria.DigiDoc.sign.utils.ErrorMessage;
 import io.reactivex.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
@@ -96,6 +97,11 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                 } else {
                     setMessage(signatureAddError.getMessage());
                 }
+            } else if (signatureAddError instanceof TooManyRequestsException) {
+                setMessage(Html.fromHtml(ErrorMessage.withURL(getContext(),
+                        R.string.signature_update_signature_error_message_too_many_requests,
+                        R.string.signature_update_signature_error_message_too_many_requests_additional_information_link,
+                        R.string.signature_update_signature_error_message_too_many_requests_additional_information)));
             } else {
                 setTitle(R.string.signature_update_signature_add_error);
                 setMessage(signatureAddError.getMessage());

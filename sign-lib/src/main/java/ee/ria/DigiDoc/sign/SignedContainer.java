@@ -171,10 +171,12 @@ public abstract class SignedContainer {
             return open(file());
         } catch (Exception e) {
             if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
+                Timber.e(e, "Failed to sign with ID-card - Too Many Requests");
                 throw new TooManyRequestsException();
             }
             
             if (e.getMessage() != null && e.getMessage().contains("Failed to connect")) {
+                Timber.e(e, "Failed to connect to Internet");
                 throw new NoInternetConnectionException();
             }
 

@@ -94,7 +94,7 @@ public class ContainerActions {
             return true;
         } catch (Exception e) {
             Timber.e(e, "Exception when validating signature");
-            return false;
+            throw e;
         }
     }
 

@@ -187,9 +187,17 @@ public class MobileSignService extends IntentService {
                     }
                     return;
                 } catch (Exception e) {
-                    RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.GENERAL_ERROR);
-                    broadcastFault(fault);
-                    Timber.e(e, "Unable to validate signature");
+                    if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
+                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS);
+                        broadcastFault(fault);
+                        Timber.e(e, "Failed to sign with Mobile-ID - Too Many Requests");
+                    } else {
+                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.GENERAL_ERROR);
+                        broadcastFault(fault);
+                        Timber.e(e, "Unable to validate signature");
+                    }
+
+                    return;
                 }
             }
 
