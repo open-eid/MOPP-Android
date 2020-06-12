@@ -25,6 +25,7 @@ public class MobileCreateSignatureRequest {
 
     private String relyingPartyName;
     private String relyingPartyUUID;
+    private String url;
     private String phoneNumber;
     private String nationalIdentityNumber;
 
@@ -53,6 +54,14 @@ public class MobileCreateSignatureRequest {
 
     public void setRelyingPartyUUID(String relyingPartyUUID) {
         this.relyingPartyUUID = relyingPartyUUID;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getPhoneNumber() {

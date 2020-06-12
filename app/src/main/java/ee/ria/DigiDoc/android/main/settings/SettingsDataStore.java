@@ -24,6 +24,26 @@ public final class SettingsDataStore {
         this.resources = application.getResources();
     }
 
+    public int getSignatureAddMethod() {
+        return preferences.getInt(resources.getString(R.string.main_settings_signature_add_method_key), R.id.signatureUpdateSignatureAddMethodMobileId);
+    }
+
+    public void setSignatureAddMethod(int method) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(resources.getString(R.string.main_settings_signature_add_method_key), method);
+        editor.apply();
+    }
+
+    public String getUuid() {
+        return preferences.getString(resources.getString(R.string.main_settings_uuid_key), "");
+    }
+
+    public void setUuid(String uuid) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_uuid_key), uuid);
+        editor.apply();
+    }
+
     public String getPhoneNo() {
         return preferences.getString(resources.getString(R.string.main_settings_phone_no_key), "");
     }
@@ -43,6 +63,30 @@ public final class SettingsDataStore {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(resources.getString(R.string.main_settings_personal_code_key),
                 personalCode);
+        editor.apply();
+    }
+
+    public String getSidPersonalCode() {
+        return preferences.getString(resources.getString(R.string.main_settings_sid_personal_code_key),
+                "");
+    }
+
+    public void setSidPersonalCode(String personalCode) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_sid_personal_code_key),
+                personalCode);
+        editor.apply();
+    }
+
+    public String getCountry() {
+        return preferences.getString(resources.getString(R.string.main_settings_smartid_country_key),
+                "EE");
+    }
+
+    public void setCountry(String country) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_smartid_country_key),
+                country);
         editor.apply();
     }
 

@@ -23,6 +23,7 @@
     <string name="main_settings_phone_no_title">Riigi kood ja telefoninumber</string>
     <string name="main_settings_personal_code_title">Isikukood</string>
     <string name="main_settings_tsa_url_title">Ajatempli teenuse URL</string>
+    <string name="main_settings_uuid_title">Ligipääs mobiil-ID ja Smart-ID teenusele</string>
     <string name="main_settings_tsa_url_use_default">Kasuta vaikeväärtust</string>
     <string name="main_settings_role_title">Roll</string>
     <string name="main_settings_city_title">Linn</string>
@@ -109,6 +110,7 @@
     <string name="signature_update_signature_add_button">ALLKIRJASTA</string>
 
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>
+    <string name="signature_update_signature_add_method_smart_id">Smart-ID</string>
     <string name="signature_update_signature_add_method_id_card">ID-kaart</string>
     <string name="signature_update_signature_add_positive_button">ALLKIRJASTA</string>
     <string name="signature_update_signature_add_success">ALLKIRI LISATUD</string>
@@ -165,6 +167,20 @@
     <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Loe täpsemalt siit</string>
     <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://id.ee/index.php?id=39021</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Samaaegsete pöördumiste limiit ületatud</string>
+
+    <string name="signature_update_smart_id_message">Sisesta oma isikukood Smart-IDga allkirjastamiseks</string>
+    <string name="signature_update_smart_id_country">Riik</string>
+    <string name="signature_update_smart_id_info">Veendu kontrollkoodi õigsuses ja sisesta nutiseadmes Smart-ID PIN2-kood</string>
+    <string name="signature_update_smart_id_select_device">Allkirjastamiseks kinnita seade Smart-ID rakenduses.</string>
+    <string name="signature_update_smart_id_status_expired_transaction">Teie Smart-ID toiming aegus. Palun proovige uuesti.</string>
+    <string name="signature_update_smart_id_status_document_unusable">Teie Smart-ID toiming ebaõnnestus. Palun kontrollige Smart-ID rakendust või võtke ühendust Smart-ID klienditoega.</string>
+    <string name="signature_update_smart_id_status_wrong_vc">Viga: valiti vale kontrollkood</string>
+    <string name="signature_update_smart_id_error_message_not_qualified">RIA DigiDoc mobiilirakenduses allkirjastamiseks peab teie Smart-ID vastama tasemele kõrge.</string>
+    <string name="signature_update_smart_id_error_message_old_api">RIA DigiDoc mobiilirakendus vajab uuendamist. Paigaldage uus versioon mobiilirakenduse poest. Lisainfo ID-abiliini telefonil (+372) 666 8888.</string>
+    <string name="signature_update_smart_id_error_message_under_maintenance">Smart-ID teenuses esinevad tehnilised tõrked. Palun proovige mõne aja pärast uuesti.</string>
+    <string name="signature_update_smart_id_error_message_account_not_found">Kontot ei leitud</string>
+    <string name="signature_update_smart_id_error_message_session_not_found">Sessiooni ei leitud</string>
+    <string name="signature_update_smart_id_error_message_forbidden">Ümbriku allkirjastamine ebaõnnestus. Kontrolli Smart-ID teenuse ligipääsu seadeid. https://id.ee/index.php?id=39021</string>
 
     <string name="signature_update_id_card_progress_message_initial">Ühenda kaardilugeja telefoniga ja sisesta ID-kaart lugejasse</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>
@@ -390,6 +406,7 @@
     <string name="puk_code_change_cancelled">PUK code change cancelled</string>
 
     <string name="mobile_id_challenge">Mobile-ID challenge</string>
+    <string name="smart_id_challenge">Smart-ID challenge</string>
 
     <string name="configuration_is_already_up_to_date">configuration is already up-to-date</string>
     <string name="configuration_updated">Configuration updated</string>

@@ -29,7 +29,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -49,23 +48,14 @@ public class ServiceGenerator {
 
     private static HttpLoggingInterceptor loggingInterceptor;
 
-    private static Retrofit retrofit;
-
     public static <S> S createService(Class<S> serviceClass, SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle) throws CertificateException, NoSuchAlgorithmException {
-        if (retrofit == null) {
-            Timber.d("Creating new retrofit instance");
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(midSignServiceUrl)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(buildHttpClient(sslContext, midSignServiceUrl, certBundle))
-                    .build();
-        }
-        Timber.d("Creating service client instance");
-        return retrofit.create(serviceClass);
-    }
-
-    static Retrofit retrofit() {
-        return retrofit;
+        Timber.d("Creating new retrofit instance");
+        return new Retrofit.Builder()
+                .baseUrl(midSignServiceUrl + "/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(buildHttpClient(sslContext, midSignServiceUrl, certBundle))
+                .build()
+                .create(serviceClass);
     }
 
     private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle) throws CertificateException, NoSuchAlgorithmException {

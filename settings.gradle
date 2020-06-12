@@ -3,6 +3,7 @@ include ':app',
         ':sign-lib',
         ':crypto-lib',
         ':mobile-id-lib',
+        ':smart-id-lib',
         ':id-card-lib',
         ':smart-card-reader-lib',
         ':common-lib'

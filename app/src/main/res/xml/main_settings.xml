@@ -18,12 +18,19 @@
         android:widgetLayout="@layout/widget_icon_layout"
         android:maxLength="11"/>
 
+    <ee.ria.DigiDoc.android.main.settings.UUIDPreference
+        android:key="@string/main_settings_uuid_key"
+        android:title="@string/main_settings_uuid_title"
+        android:widgetLayout="@layout/widget_icon_layout"
+        app:iconSpaceReserved="false"
+        android:inputType="textPassword" />
+
     <ee.ria.DigiDoc.android.main.settings.TsaUrlPreference
+        android:inputType="textUri"
         android:key="@string/main_settings_tsa_url_key"
         android:title="@string/main_settings_tsa_url_title"
-        app:iconSpaceReserved="false"
         android:widgetLayout="@layout/widget_icon_layout"
-        android:inputType="textUri" />
+        app:iconSpaceReserved="false" />
 
     <ee.ria.DigiDoc.android.main.settings.OpenAllFiletypesPreference
         android:id="@+id/mainSettingsOpenAllFileTypes"

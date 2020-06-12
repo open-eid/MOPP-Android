@@ -23,6 +23,9 @@ public abstract class ConfigurationProvider implements Parcelable {
     public abstract String getLdapPersonUrl();
     public abstract String getLdapCorpUrl();
     public abstract String getMidRestUrl();
+    public abstract String getMidSkRestUrl();
+    public abstract String getSidRestUrl();
+    public abstract String getSidSkRestUrl();
     public abstract Map<String, String> getOCSPUrls();
     public abstract List<String> getCertBundle();
 
@@ -47,6 +50,9 @@ public abstract class ConfigurationProvider implements Parcelable {
         abstract ConfigurationProviderBuilder setLdapPersonUrl(String ldapPersonUrl);
         abstract ConfigurationProviderBuilder setLdapCorpUrl(String ldapCorpUrl);
         abstract ConfigurationProviderBuilder setMidRestUrl(String midRestUrl);
+        abstract ConfigurationProviderBuilder setMidSkRestUrl(String midRestUrl);
+        abstract ConfigurationProviderBuilder setSidRestUrl(String sidRestUrl);
+        abstract ConfigurationProviderBuilder setSidSkRestUrl(String sidRestUrl);
         abstract ConfigurationProviderBuilder setOCSPUrls(Map<String, String> OCSPUrls);
         abstract ConfigurationProviderBuilder setCertBundle(List<String> certBundle);
         abstract ConfigurationProviderBuilder setConfigurationLastUpdateCheckDate(Date lastUpdateCheckDate);

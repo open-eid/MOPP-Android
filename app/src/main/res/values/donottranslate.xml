@@ -9,8 +9,12 @@
     <string name="main_home_menu_locale_ru">Русский язык</string>
     <string name="main_home_menu_locale_en">English</string>
 
+    <string name="main_settings_signature_add_method_key">signature_add_method</string>
+    <string name="main_settings_uuid_key">uuid</string>
     <string name="main_settings_phone_no_key">mobile_nr</string>
     <string name="main_settings_personal_code_key">personal_code</string>
+    <string name="main_settings_sid_personal_code_key">sid_personal_code</string>
+    <string name="main_settings_smartid_country_key">smartid_country</string>
     <string name="main_settings_tsa_url_key">tsa_url</string>
     <string name="main_settings_role_key">mainSettingsRole</string>
     <string name="main_settings_city_key">mainSettingsCity</string>

@@ -265,6 +265,63 @@
                         android:layout_weight="1" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MID-SK-URL: " />
+
+                    <TextView
+                        android:id="@id/mainDiagnosticsMobileIDSKUrl"
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SID-PROXY-URL: " />
+
+                    <TextView
+                        android:id="@id/mainDiagnosticsSmartIDUrl"
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SID-SK-URL: " />
+
+                    <TextView
+                        android:id="@id/mainDiagnosticsSmartIDSKUrl"
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout

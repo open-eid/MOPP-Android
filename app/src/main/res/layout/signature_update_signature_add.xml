@@ -24,6 +24,15 @@
             android:text="@string/signature_update_signature_add_method_mobile_id" />
 
         <RadioButton
+            android:id="@+id/signatureUpdateSignatureAddMethodSmartId"
+            style="@style/Widget.Application.SignatureAddMethod"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="@string/signature_update_signature_add_method_smart_id" />
+
+        <RadioButton
             android:id="@id/signatureUpdateSignatureAddMethodIdCard"
             style="@style/Widget.Application.SignatureAddMethod"
             android:layout_width="0dp"
@@ -38,6 +47,12 @@
         android:id="@id/signatureUpdateMobileId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <ee.ria.DigiDoc.android.signature.update.smartid.SmartIdView
+        android:id="@id/signatureUpdateSmartId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
     <ee.ria.DigiDoc.android.signature.update.idcard.IdCardView
         android:id="@id/signatureUpdateIdCard"

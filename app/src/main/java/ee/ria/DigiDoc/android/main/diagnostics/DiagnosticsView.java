@@ -90,6 +90,9 @@ public final class DiagnosticsView extends CoordinatorLayout {
         TextView ldapPersonUrl = findViewById(R.id.mainDiagnosticsLdapPersonUrl);
         TextView ldapCorpUrl = findViewById(R.id.mainDiagnosticsLdapCorpUrl);
         TextView mobileIDUrl = findViewById(R.id.mainDiagnosticsMobileIDUrl);
+        TextView mobileIDSKUrl = findViewById(R.id.mainDiagnosticsMobileIDSKUrl);
+        TextView smartIDUrl = findViewById(R.id.mainDiagnosticsSmartIDUrl);
+        TextView smartIDSKUrl = findViewById(R.id.mainDiagnosticsSmartIDSKUrl);
         TextView centralConfigurationDate = findViewById(R.id.mainDiagnosticsCentralConfigurationDate);
         TextView centralConfigurationSerial = findViewById(R.id.mainDiagnosticsCentralConfigurationSerial);
         TextView centralConfigurationUrl = findViewById(R.id.mainDiagnosticsCentralConfigurationUrl);
@@ -109,6 +112,9 @@ public final class DiagnosticsView extends CoordinatorLayout {
         ldapPersonUrl.setText(configurationProvider.getLdapPersonUrl());
         ldapCorpUrl.setText(configurationProvider.getLdapCorpUrl());
         mobileIDUrl.setText(configurationProvider.getMidRestUrl());
+        mobileIDSKUrl.setText(configurationProvider.getMidSkRestUrl());
+        smartIDUrl.setText(configurationProvider.getSidRestUrl());
+        smartIDSKUrl.setText(configurationProvider.getSidSkRestUrl());
 
         centralConfigurationDate.setText(configurationProvider.getMetaInf().getDate());
         centralConfigurationSerial.setText(String.valueOf(configurationProvider.getMetaInf().getSerial()));
