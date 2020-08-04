@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.List;
 
 import okio.ByteString;
 
@@ -31,6 +33,8 @@ public abstract class Certificate {
     public abstract EIDType type();
 
     public abstract String commonName();
+
+    public abstract String friendlyName();
 
     public abstract Instant notAfter();
 
@@ -61,6 +65,20 @@ public abstract class Certificate {
         RDN[] rdNs = certificate.getSubject().getRDNs(ASN1ObjectIdentifier.getInstance(BCStyle.CN));
         String commonName = rdNs[0].getFirst().getValue().toString().trim();
 
+        RDN[] rdSNNs = certificate.getSubject().getRDNs(ASN1ObjectIdentifier.getInstance(BCStyle.SURNAME));
+        RDN[] rdGNNs = certificate.getSubject().getRDNs(ASN1ObjectIdentifier.getInstance(BCStyle.GIVENNAME));
+        RDN[] rdSERIALNs = certificate.getSubject().getRDNs(ASN1ObjectIdentifier.getInstance(BCStyle.SERIALNUMBER));
+
+        // http://www.etsi.org/deliver/etsi_en/319400_319499/31941201/01.01.01_60/en_31941201v010101p.pdf
+        final List<String> types = Arrays.asList("PAS", "IDC", "PNO", "TAX", "TIN");
+        String serialNR = rdSERIALNs.length == 0 ? "" : rdSERIALNs[0].getFirst().getValue().toString().trim();
+        if(serialNR.length() > 6 && (types.contains(serialNR.substring(0, 3)) || serialNR.charAt(2) == ':') && serialNR.charAt(5) == '-')
+            serialNR = serialNR.substring(6);
+
+        String friendlyName = rdSNNs.length == 0 || rdGNNs.length == 0 ? commonName :
+                rdSNNs[0].getFirst().getValue().toString().trim() + "," +
+                rdGNNs[0].getFirst().getValue().toString().trim() + "," + serialNR;
+
         Instant notAfter = Instant.ofEpochMilli(certificate.getNotAfter().getTime());
 
         boolean ellipticCurve = certificate.getSubjectPublicKeyInfo().getAlgorithm().getAlgorithm()
@@ -73,7 +91,7 @@ public abstract class Certificate {
             extendedKeyUsage = new ExtendedKeyUsage(new KeyPurposeId[]{});
         }
 
-        return new AutoValue_Certificate(type, commonName, notAfter, ellipticCurve, keyUsage,
+        return new AutoValue_Certificate(type, commonName, friendlyName, notAfter, ellipticCurve, keyUsage,
                 extendedKeyUsage, data);
     }
 }

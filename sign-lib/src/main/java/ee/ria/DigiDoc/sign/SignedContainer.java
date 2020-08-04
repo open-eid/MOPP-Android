@@ -307,7 +307,7 @@ public abstract class SignedContainer {
         String commonName;
         try {
             commonName = Certificate.create(ByteString.of(signature.signingCertificateDer()))
-                    .commonName();
+                    .friendlyName();
         } catch (IOException e) {
             Timber.e(e, "Can't parse certificate to get CN");
             commonName = null;
