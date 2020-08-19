@@ -23,6 +23,7 @@
     <string name="main_settings_phone_no_title">Код страны и телефонный номер</string>
     <string name="main_settings_personal_code_title">Личный код</string>
     <string name="main_settings_tsa_url_title">URL-адрес временного штампа</string>
+    <string name="main_settings_uuid_title">Доступ к услуге Mobiil-ID и Smart-ID</string>
     <string name="main_settings_tsa_url_use_default">Использовать значение по умолчанию</string>
     <string name="main_settings_role_title">Роль</string>
     <string name="main_settings_city_title">Город</string>
@@ -109,6 +110,7 @@
     <string name="signature_update_signature_add_button">ПОДПИСАТЬ</string>
 
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>
+    <string name="signature_update_signature_add_method_smart_id">Smart-ID</string>
     <string name="signature_update_signature_add_method_id_card">ID-карта</string>
     <string name="signature_update_signature_add_positive_button">ПОДПИСАТЬ</string>
     <string name="signature_update_signature_add_success">ПОДПИСЬ ДОБАВЛЕНА</string>
@@ -167,6 +169,20 @@
     <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Дополнительная информация</string>
     <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/index.php?id=39025</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Превышен лимит одновременных запросов</string>
+
+    <string name="signature_update_smart_id_message">Введите свой личный код для подписи с Smart-ID</string>
+    <string name="signature_update_smart_id_country">Страна</string>
+    <string name="signature_update_smart_id_info">Убедитесь в правильности контрольного кодa и введите PIN2-код для Smart-ID</string>
+    <string name="signature_update_smart_id_select_device">Для проставления подписи подтвердите устройство в приложении Smart-ID.</string>
+    <string name="signature_update_smart_id_status_expired_transaction">Срок действия вашей транзакции Smart-ID истек. Пожалуйста, попробуйте еще раз.</string>
+    <string name="signature_update_smart_id_status_document_unusable">Не удалось выполнить операцию Smart-ID. Пожалуйста, проверьте приложение Smart-ID или свяжитесь со службой поддержки Smart-ID.</string>
+    <string name="signature_update_smart_id_status_wrong_vc">Ошибка: выбран неправильный контрольный код</string>
+    <string name="signature_update_smart_id_error_message_not_qualified">Для проставления подписи в мобильном приложении RIA DigiDoc, ваш Smart-ID должен соответствовать уровню "высокий".</string>
+    <string name="signature_update_smart_id_error_message_old_api">Мобильное приложение RIA DigiDoc нуждается в обновлении. Пожалуйста, установите новую версию из магазина мобильных приложений. Дополнительную информацию можно получить по телефону (+372) 666 888</string>
+    <string name="signature_update_smart_id_error_message_under_maintenance">Технический сбой услуги Smart-ID. Пожалуйста, попробуйте позже.</string>
+    <string name="signature_update_smart_id_error_message_account_not_found">Счет не найден</string>
+    <string name="signature_update_smart_id_error_message_session_not_found">Сессия не найден</string>
+    <string name="signature_update_smart_id_error_message_forbidden">Не удалось подписать контейнер. Проверьте настройки доступа услуги Smart-ID. https://www.id.ee/index.php?id=39025</string>
 
     <string name="signature_update_id_card_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
@@ -391,6 +407,7 @@
     <string name="puk_code_change_cancelled">PUK code change cancelled</string>
 
     <string name="mobile_id_challenge">Mobile-ID challenge</string>
+    <string name="smart_id_challenge">Smart-ID challenge</string>
 
     <string name="configuration_is_already_up_to_date">configuration is already up-to-date</string>
     <string name="configuration_updated">Configuration updated</string>
@@ -413,6 +430,5 @@
     <string name="cancel_pin2_unblock">Cancel Pin2 unblocking process</string>
     <string name="confirm_puk_change">Confirm PUK change</string>
     <string name="cancel_puk_change">Cancel PUK changing process</string>
-
 
 </resources>

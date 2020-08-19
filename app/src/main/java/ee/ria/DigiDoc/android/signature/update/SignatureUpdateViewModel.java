@@ -15,12 +15,24 @@ public final class SignatureUpdateViewModel extends
         this.settingsDataStore = settingsDataStore;
     }
 
+    public int signatureAddMethod() { return settingsDataStore.getSignatureAddMethod(); }
+
+    public void setSignatureAddMethod(int method) { settingsDataStore.setSignatureAddMethod(method); }
+
     public String phoneNo() {
         return settingsDataStore.getPhoneNo();
     }
 
+    public String country() {
+        return settingsDataStore.getCountry();
+    }
+
     public String personalCode() {
         return settingsDataStore.getPersonalCode();
+    }
+
+    public String sidPersonalCode() {
+        return settingsDataStore.getSidPersonalCode();
     }
 
     @Override

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="smart_id_country">
+        <item>Eesti</item>
+        <item>Leedu</item>
+        <item>Läti</item>
+    </string-array>
+</resources>

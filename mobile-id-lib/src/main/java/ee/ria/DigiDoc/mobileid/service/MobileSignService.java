@@ -64,7 +64,6 @@ import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_P
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CERTIFICATE_CERT_BUNDLE;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
-import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SIGN_SERVICE_URL;
 
 public class MobileSignService extends IntentService {
 
@@ -99,7 +98,7 @@ public class MobileSignService extends IntentService {
         }
 
         try {
-            midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class, restSSLConfig, intent.getStringExtra(SIGN_SERVICE_URL), intent.getStringArrayListExtra(CERTIFICATE_CERT_BUNDLE));
+            midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class, restSSLConfig, request.getUrl(), intent.getStringArrayListExtra(CERTIFICATE_CERT_BUNDLE));
         } catch (CertificateException | NoSuchAlgorithmException e) {
             broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
             return;

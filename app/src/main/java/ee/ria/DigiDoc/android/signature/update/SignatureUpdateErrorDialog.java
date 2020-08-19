@@ -7,27 +7,19 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
-
-import android.util.Patterns;
-
-import android.widget.TextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.regex.Matcher;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
+import ee.ria.DigiDoc.android.model.smartid.SmartIdMessageException;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
-
-import ee.ria.DigiDoc.sign.TooManyRequestsException;
-
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
-
+import ee.ria.DigiDoc.sign.TooManyRequestsException;
 import ee.ria.DigiDoc.sign.utils.ErrorMessage;
 import io.reactivex.subjects.Subject;
 
@@ -87,7 +79,8 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                         R.string.signature_update_id_card_sign_pin2_locked));
             } else if (signatureAddError instanceof NoInternetConnectionException) {
                 setMessage(getContext().getString(R.string.signature_update_signature_error_no_response));
-            } else if (signatureAddError instanceof MobileIdMessageException) {
+            } else if (signatureAddError instanceof MobileIdMessageException ||
+                    signatureAddError instanceof SmartIdMessageException) {
                 if (!ErrorMessageUtil.extractLink(signatureAddError.getMessage()).isEmpty()) {
                     setMessage(
                             Html.fromHtml("<span>" +

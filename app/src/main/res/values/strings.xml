@@ -23,6 +23,7 @@
     <string name="main_settings_phone_no_title">Country code and phone number</string>
     <string name="main_settings_personal_code_title">Personal code</string>
     <string name="main_settings_tsa_url_title">Time Stamp service URL</string>
+    <string name="main_settings_uuid_title">Access to Mobile-ID and Smart-ID service</string>
     <string name="main_settings_tsa_url_use_default">Use default</string>
     <string name="main_settings_role_title">Role</string>
     <string name="main_settings_city_title">City</string>
@@ -109,6 +110,7 @@
     <string name="signature_update_signature_add_button">SIGN</string>
 
     <string name="signature_update_signature_add_method_mobile_id">Mobile-ID</string>
+    <string name="signature_update_signature_add_method_smart_id">Smart-ID</string>
     <string name="signature_update_signature_add_method_id_card">ID-card</string>
     <string name="signature_update_signature_add_positive_button">SIGN</string>
     <string name="signature_update_signature_add_success">SIGNATURE ADDED</string>
@@ -165,6 +167,20 @@
     <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Additional information</string>
     <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/index.php?id=39023</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Simultaneous requests limit exceeded</string>
+
+    <string name="signature_update_smart_id_message">Enter your personal code to sign with Smart-ID</string>
+    <string name="signature_update_smart_id_country">Country</string>
+    <string name="signature_update_smart_id_info">Make sure control code matches with one in phone screen and enter Smart-ID PIN2-code</string>
+    <string name="signature_update_smart_id_select_device">Confirm device for signing in Smart-ID application.</string>
+    <string name="signature_update_smart_id_status_expired_transaction">Your Smart-ID transaction has expired. Please try again</string>
+    <string name="signature_update_smart_id_status_document_unusable">Your Smart-ID transaction has failed. Please check your Smart-ID application or contact Smart-ID customer support.</string>
+    <string name="signature_update_smart_id_status_wrong_vc">Error: an incorrect control code was chosen</string>
+    <string name="signature_update_smart_id_error_message_not_qualified">Your Smart-ID certificate level must be qualified to sign documents in RIA DigiDoc mobile application.</string>
+    <string name="signature_update_smart_id_error_message_old_api">RIA DigiDoc mobile application needs an upgrade. Please install new version from the mobile app store. Additional info is available ID-helpline (+372) 666 8888.</string>
+    <string name="signature_update_smart_id_error_message_under_maintenance">Smart-ID service has encountered technical errors. Please try again later.</string>
+    <string name="signature_update_smart_id_error_message_account_not_found">Account not found</string>
+    <string name="signature_update_smart_id_error_message_session_not_found">Session not found</string>
+    <string name="signature_update_smart_id_error_message_forbidden">Failed to sign container. Check your Smart-ID service access settings. https://www.id.ee/index.php?id=39023</string>
 
     <string name="signature_update_id_card_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Reader found. Insert your ID-card into the reader.</string>
@@ -388,6 +404,7 @@
     <string name="puk_code_change_cancelled">PUK code change cancelled</string>
 
     <string name="mobile_id_challenge">Mobile-ID challenge</string>
+    <string name="smart_id_challenge">Smart-ID challenge</string>
 
     <string name="configuration_is_already_up_to_date">configuration is already up-to-date</string>
     <string name="configuration_updated">Configuration updated</string>

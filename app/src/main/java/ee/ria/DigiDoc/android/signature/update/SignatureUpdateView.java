@@ -3,7 +3,6 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
-import android.os.CountDownTimer;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +21,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
+import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
@@ -44,7 +44,6 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
 
-    private static final int DEFAULT_SIGN_METHOD = R.id.signatureUpdateSignatureAddMethodMobileId;
     private static final String EMPTY_MOBILE_ID_CHALLENGE = "____";
 
     private boolean isTimerStarted = false;
@@ -62,8 +61,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final View activityIndicatorView;
     private final View activityOverlayView;
     private final View mobileIdContainerView;
-    private final TextView mobileIdStatusView;
     private final TextView mobileIdChallengeView;
+    private final View smartIdContainerView;
+    private final TextView smartIdInfo;
+    private final TextView smartIdChallengeView;
     private final Button sendButton;
     private final View buttonSpace;
     private final Button signatureAddButton;
@@ -116,8 +117,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         activityIndicatorView = findViewById(R.id.activityIndicator);
         activityOverlayView = findViewById(R.id.activityOverlay);
         mobileIdContainerView = findViewById(R.id.signatureUpdateMobileIdContainer);
-        mobileIdStatusView = findViewById(R.id.signatureUpdateMobileIdStatus);
         mobileIdChallengeView = findViewById(R.id.signatureUpdateMobileIdChallenge);
+        smartIdContainerView = findViewById(R.id.signatureUpdateSmartIdContainer);
+        smartIdInfo = findViewById(R.id.signatureUpdateSmartIdInfo);
+        smartIdChallengeView = findViewById(R.id.signatureUpdateSmartIdChallenge);
         sendButton = findViewById(R.id.signatureUpdateSendButton);
         sendButton.setContentDescription(getResources().getString(R.string.share_container));
         buttonSpace = findViewById(R.id.signatureUpdateButtonSpace);
@@ -218,7 +221,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         // should be in the MobileIdView in dialog
         mobileIdContainerView.setVisibility(
-                signatureAddResponse != null && signatureAddResponse instanceof MobileIdResponse
+                signatureAddResponse instanceof MobileIdResponse
                         ? VISIBLE
                         : GONE);
         if (signatureAddResponse instanceof MobileIdResponse) {
@@ -258,6 +261,42 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, mobileIdChallengeDescription);
             }
         }
+
+        smartIdContainerView.setVisibility(
+                signatureAddResponse instanceof SmartIdResponse ? VISIBLE : GONE);
+        if (smartIdContainerView.getVisibility() == VISIBLE) {
+            if (Build.VERSION.SDK_INT >= 26) {
+                smartIdContainerView.setFocusedByDefault(true);
+            }
+            smartIdContainerView.setFocusable(true);
+            smartIdContainerView.setFocusableInTouchMode(true);
+
+            if (isTimerStarted) {
+                signatureUpdateProgressBar.startProgressBar(progressBar);
+            }
+            isTimerStarted = true;
+
+            if (!signingInfoDelegated) {
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_mobile_id_status_request_sent);
+                signingInfoDelegated = true;
+            }
+
+            SmartIdResponse smartIdResponse = (SmartIdResponse) signatureAddResponse;
+            if (smartIdResponse.selectDevice()) {
+                smartIdInfo.setText(R.string.signature_update_smart_id_select_device);
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, smartIdInfo.getText());
+            }
+            String smartIdChallenge = smartIdResponse.challenge();
+            if (smartIdChallenge != null) {
+                smartIdChallengeView.setText(smartIdChallenge);
+                smartIdInfo.setText(R.string.signature_update_smart_id_info);
+                String smartIdChallengeDescription = getResources().getString(R.string.smart_id_challenge) + smartIdChallenge;
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, smartIdChallengeDescription);
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_smart_id_info);
+            } else {
+                smartIdChallengeView.setText(EMPTY_MOBILE_ID_CHALLENGE);
+            }
+        }
     }
 
     private void setActivity(boolean activity) {
@@ -277,7 +316,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private Observable<Intent.InitialIntent> initialIntent() {
         return Observable.just(Intent.InitialIntent.create(isExistingContainer, containerFile,
-                signatureAddVisible ? DEFAULT_SIGN_METHOD : null,
+                signatureAddVisible ? viewModel.signatureAddMethod() : null,
                 signatureAddSuccessMessageVisible));
     }
 
@@ -316,12 +355,14 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 clicks(signatureAddButton)
                         .doOnNext(ignored -> resetSignatureAddDialog())
                         .map(ignored -> Intent.SignatureAddIntent
-                                .show(DEFAULT_SIGN_METHOD, isExistingContainer, containerFile)),
+                                .show(viewModel.signatureAddMethod(), isExistingContainer, containerFile)),
                 cancels(signatureAddDialog)
                         .doOnNext(ignored -> resetSignatureAddDialog())
                         .map(ignored -> Intent.SignatureAddIntent.clear()),
-                signatureAddView.methodChanges().map(method ->
-                        Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile)),
+                signatureAddView.methodChanges().map(method -> {
+                        viewModel.setSignatureAddMethod(method);
+                        return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile);
+                }),
                 signatureAddDialog.positiveButtonClicks().map(ignored ->
                         Intent.SignatureAddIntent.sign(signatureAddView.method(),
                                 isExistingContainer, containerFile, signatureAddView.request())),

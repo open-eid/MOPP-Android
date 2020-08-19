@@ -33,11 +33,13 @@ final class MobileCreateSignatureRequestHelper {
     private static final String RELYING_PARTY_UUID = "00000000-0000-0000-0000-000000000000";
     private static final String DISPLAY_TEXT_FORMAT = "GSM-7";
 
-    static MobileCreateSignatureRequest create(SignedContainer container, String personalCode,
+    static MobileCreateSignatureRequest create(SignedContainer container, String uuid, String proxyUrl,
+                                               String skUrl, String personalCode,
                                                String phoneNo, String displayMessage) {
         MobileCreateSignatureRequest request = new MobileCreateSignatureRequest();
         request.setRelyingPartyName(RELYING_PARTY_NAME);
-        request.setRelyingPartyUUID(RELYING_PARTY_UUID);
+        request.setRelyingPartyUUID(uuid == null || uuid.isEmpty() ? RELYING_PARTY_UUID : uuid);
+        request.setUrl(uuid == null || uuid.isEmpty() ? proxyUrl : skUrl);
         request.setPhoneNumber("+" + phoneNo);
         request.setNationalIdentityNumber(personalCode);
 

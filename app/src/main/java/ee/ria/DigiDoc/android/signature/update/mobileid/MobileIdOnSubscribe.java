@@ -7,12 +7,12 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileIdServiceResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.RESTServiceFault;
@@ -32,21 +32,22 @@ import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATU
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MID_BROADCAST_ACTION;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MID_BROADCAST_TYPE_KEY;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SERVICE_FAULT;
-import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SIGN_SERVICE_URL;
 
 public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileIdResponse> {
 
     private final Navigator navigator;
     private final SignedContainer container;
     private final LocalBroadcastManager broadcastManager;
+    private final String uuid;
     private final String personalCode;
     private final String phoneNo;
 
-    public MobileIdOnSubscribe(Navigator navigator, SignedContainer container, String personalCode,
-                               String phoneNo) {
+    public MobileIdOnSubscribe(Navigator navigator, SignedContainer container, String uuid,
+                               String personalCode, String phoneNo) {
         this.navigator = navigator;
         this.container = container;
         this.broadcastManager = LocalBroadcastManager.getInstance(navigator.activity());
+        this.uuid = uuid;
         this.personalCode = personalCode;
         this.phoneNo = phoneNo;
     }
@@ -99,19 +100,20 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         broadcastManager.registerReceiver(receiver, new IntentFilter(MID_BROADCAST_ACTION));
         emitter.setCancellable(() -> broadcastManager.unregisterReceiver(receiver));
 
+        ConfigurationProvider configurationProvider =
+                ((Application) navigator.activity().getApplication()).getConfigurationProvider();
         String displayMessage = navigator.activity()
                 .getString(R.string.signature_update_mobile_id_display_message);
         MobileCreateSignatureRequest request = MobileCreateSignatureRequestHelper
-                .create(container, personalCode, phoneNo, displayMessage);
+                .create(container, uuid, configurationProvider.getMidRestUrl(),
+                        configurationProvider.getMidSkRestUrl(), personalCode, phoneNo, displayMessage);
 
         android.content.Intent intent = new Intent(navigator.activity(), MobileSignService.class);
         intent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));
         intent.putExtra(ACCESS_TOKEN_PASS, SignLib.accessTokenPass());
         intent.putExtra(ACCESS_TOKEN_PATH, SignLib.accessTokenPath());
-        intent.putExtra(SIGN_SERVICE_URL, ((Application) navigator.activity().getApplication()).getConfigurationProvider().getMidRestUrl() + "/");
-
-        List<String> certBundle = ((Application) navigator.activity().getApplication()).getConfigurationProvider().getCertBundle();
-        intent.putStringArrayListExtra(CERTIFICATE_CERT_BUNDLE, new ArrayList<>(certBundle));
+        intent.putStringArrayListExtra(CERTIFICATE_CERT_BUNDLE,
+                new ArrayList<>(configurationProvider.getCertBundle()));
         navigator.activity().startService(intent);
     }
 }
