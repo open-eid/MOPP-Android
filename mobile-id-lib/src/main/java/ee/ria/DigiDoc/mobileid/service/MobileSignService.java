@@ -26,6 +26,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.bouncycastle.util.encoders.Base64;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,6 +44,8 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
+import ee.ria.DigiDoc.common.ContainerWrapper;
+import ee.ria.DigiDoc.common.VerificationCodeUtil;
 import ee.ria.DigiDoc.mobileid.dto.MobileCertificateResultType;
 import ee.ria.DigiDoc.mobileid.dto.request.GetMobileCreateSignatureSessionStatusRequest;
 import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
@@ -52,7 +56,6 @@ import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionResponse
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileIdServiceResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.RESTServiceFault;
-import ee.ria.DigiDoc.mobileid.rest.ContainerActions;
 import ee.ria.DigiDoc.mobileid.rest.MIDRestServiceClient;
 import ee.ria.DigiDoc.mobileid.rest.ServiceGenerator;
 import ee.ria.libdigidocpp.Container;
@@ -67,6 +70,9 @@ import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATU
 
 public class MobileSignService extends IntentService {
 
+    private static final String PEM_BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
+    private static final String PEM_END_CERT = "-----END CERTIFICATE-----";
+
     public static final String TAG = MobileSignService.class.getName();
 
     private static final long INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 1000;
@@ -74,7 +80,7 @@ public class MobileSignService extends IntentService {
     private static final long TIMEOUT_CANCEL = 120 * 1000;
     private long timeout;
 
-    private ContainerActions containerActions;
+    private ContainerWrapper containerWrapper;
 
     private MIDRestServiceClient midRestServiceClient;
 
@@ -120,11 +126,11 @@ public class MobileSignService extends IntentService {
                 if (isResponseError(responseWrapper, response, MobileCreateSignatureCertificateResponse.class)) {
                     return;
                 }
-                containerActions = new ContainerActions(request.getContainerPath(), response.getCert());
-                String hash = generateHash();
-                broadcastMobileCreateSignatureResponse();
+                containerWrapper = new ContainerWrapper(request.getContainerPath());
+                String base64Hash = containerWrapper.prepareSignature(getCertificatePem(response.getCert()));
+                broadcastMobileCreateSignatureResponse(base64Hash);
                 sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
-                String sessionId = getMobileIdSession(hash, request);
+                String sessionId = getMobileIdSession(base64Hash, request);
                 doCreateSignatureStatusRequestLoop(new GetMobileCreateSignatureSessionStatusRequest(sessionId));
             }
         } catch (UnknownHostException e) {
@@ -140,6 +146,10 @@ public class MobileSignService extends IntentService {
             broadcastFault(defaultError());
             Timber.e(e, "Generating certificate failed");
         }
+    }
+
+    private String getCertificatePem(String cert) {
+        return PEM_BEGIN_CERT + "\n" + cert + "\n" + PEM_END_CERT;
     }
 
     private static SSLContext createSSLConfig(Intent intent) throws CertificateException, IOException,
@@ -173,17 +183,11 @@ public class MobileSignService extends IntentService {
             MobileCreateSignatureSessionStatusResponse response = responseWrapper.body();
             if (response != null && isSessionStatusRequestComplete(response.getState())) {
                 if (isResponseError(responseWrapper, response, MobileCreateSignatureSessionStatusResponse.class)) {
-                    containerActions.removeSignatureFromContainer();
                     return;
                 }
                 try {
-                    if (containerActions.validateSignature(response.getSignature().getValue())) {
-                        broadcastMobileCreateSignatureStatusResponse(response, containerActions.getContainer());
-                    } else {
-                        containerActions.removeSignatureFromContainer();
-                        broadcastFault(defaultError());
-                        Timber.e("Signature validation failed");
-                    }
+                    containerWrapper.finalizeSignature(response.getSignature().getValue());
+                    broadcastMobileCreateSignatureStatusResponse(response, containerWrapper.getContainer());
                     return;
                 } catch (Exception e) {
                     if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
@@ -193,9 +197,8 @@ public class MobileSignService extends IntentService {
                     } else {
                         RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.GENERAL_ERROR);
                         broadcastFault(fault);
-                        Timber.e(e, "Unable to validate signature");
+                        Timber.e(e, "Signature validation failed");
                     }
-
                     return;
                 }
             }
@@ -217,10 +220,6 @@ public class MobileSignService extends IntentService {
         return state.equals(MobileCreateSignatureSessionStatusResponse.ProcessState.COMPLETE);
     }
 
-    private String generateHash() throws CertificateException {
-        return containerActions.generateHash();
-    }
-
     private String getMobileIdSession(String hash, MobileCreateSignatureRequest request) {
         PostMobileCreateSignatureSessionRequest sessionRequest = getSessionRequest(request);
         sessionRequest.setHash(hash);
@@ -233,7 +232,6 @@ public class MobileSignService extends IntentService {
             Response<MobileCreateSignatureSessionResponse> responseWrapper = call.execute();
             if (!responseWrapper.isSuccessful()) {
                 if (isResponseError(responseWrapper, null, MobileCreateSignatureSessionResponse.class)) {
-                    containerActions.removeSignatureFromContainer();
                     return "";
                 }
 
@@ -277,12 +275,10 @@ public class MobileSignService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
-    private void broadcastMobileCreateSignatureResponse() {
+    private void broadcastMobileCreateSignatureResponse(String base64Hash) {
         Intent localIntent = new Intent(MobileSignConstants.MID_BROADCAST_ACTION)
                 .putExtra(MobileSignConstants.MID_BROADCAST_TYPE_KEY, MobileSignConstants.CREATE_SIGNATURE_CHALLENGE)
-                .putExtra(MobileSignConstants.CREATE_SIGNATURE_CHALLENGE, ContainerActions.calculateMobileIdVerificationCode(
-                        containerActions.getDataToSign()
-                ));
+                .putExtra(MobileSignConstants.CREATE_SIGNATURE_CHALLENGE, VerificationCodeUtil.calculateMobileIdVerificationCode(Base64.decode(base64Hash)));
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 

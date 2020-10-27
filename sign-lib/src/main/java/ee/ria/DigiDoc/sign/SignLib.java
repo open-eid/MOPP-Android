@@ -2,10 +2,6 @@ package ee.ria.DigiDoc.sign;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.system.ErrnoException;
 import android.system.Os;
@@ -18,10 +14,7 @@ import org.bouncycastle.util.encoders.Base64;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
@@ -32,8 +25,6 @@ import ee.ria.libdigidocpp.Conf;
 import ee.ria.libdigidocpp.DigiDocConf;
 import ee.ria.libdigidocpp.digidoc;
 import timber.log.Timber;
-
-import static android.content.Context.USB_SERVICE;
 
 public final class SignLib {
 

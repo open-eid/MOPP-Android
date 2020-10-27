@@ -23,8 +23,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Arrays;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MobileCreateSignatureSessionStatusResponse {
 

@@ -31,13 +31,14 @@ import java.security.cert.CertificateException;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 
+import ee.ria.DigiDoc.common.ContainerWrapper;
+import ee.ria.DigiDoc.common.VerificationCodeUtil;
 import ee.ria.DigiDoc.smartid.dto.request.PostCertificateRequest;
 import ee.ria.DigiDoc.smartid.dto.request.PostCreateSignatureRequest;
 import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
 import ee.ria.DigiDoc.smartid.dto.response.SessionResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SmartIDServiceResponse;
-import ee.ria.DigiDoc.smartid.rest.ContainerActions;
 import ee.ria.DigiDoc.smartid.rest.SIDRestServiceClient;
 import ee.ria.DigiDoc.smartid.rest.ServiceGenerator;
 import retrofit2.Call;
@@ -45,6 +46,9 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class SmartSignService extends IntentService {
+
+    private static final String PEM_BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
+    private static final String PEM_END_CERT = "-----END CERTIFICATE-----";
 
     public static final String TAG = SmartSignService.class.getName();
 
@@ -81,18 +85,17 @@ public class SmartSignService extends IntentService {
                 return;
             }
 
-            ContainerActions containerActions = new ContainerActions(
-                    request.getContainerPath(), sessionStatusResponse.getCert().getValue());
-            String hash = containerActions.generateHash();
-            broadcastSmartCreateSignatureChallengeResponse(hash);
+            ContainerWrapper containerWrapper = new ContainerWrapper(request.getContainerPath());
+            String base64Hash = containerWrapper.prepareSignature(getCertificatePem(sessionStatusResponse.getCert().getValue()));
+            broadcastSmartCreateSignatureChallengeResponse(base64Hash);
             Thread.sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
 
             sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCreateSignature(
-                    sessionStatusResponse.getResult().getDocumentNumber(), getSignatureRequest(request, hash)), false);
+                    sessionStatusResponse.getResult().getDocumentNumber(), getSignatureRequest(request, base64Hash)), false);
             if (sessionStatusResponse == null) {
                 return;
             }
-            containerActions.setSignatureValueAndValidate(sessionStatusResponse.getSignature().getValue());
+            containerWrapper.finalizeSignature(sessionStatusResponse.getSignature().getValue());
             broadcastSmartCreateSignatureStatusResponse(sessionStatusResponse);
         } catch (UnknownHostException e) {
             broadcastFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE);
@@ -121,6 +124,10 @@ public class SmartSignService extends IntentService {
                 Timber.e(e, "Exception when validating signature");
             }
         }
+    }
+
+    private String getCertificatePem(String cert) {
+        return PEM_BEGIN_CERT + "\n" + cert + "\n" + PEM_END_CERT;
     }
 
     private SessionStatusResponse doSessionStatusRequestLoop(Call<SessionResponse> request, boolean certRequest) throws IOException {
@@ -190,11 +197,11 @@ public class SmartSignService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
-    private void broadcastSmartCreateSignatureChallengeResponse(String dataToSign) throws NoSuchAlgorithmException {
+    private void broadcastSmartCreateSignatureChallengeResponse(String base64Hash) throws NoSuchAlgorithmException {
         Intent localIntent = new Intent(SmartSignConstants.SID_BROADCAST_ACTION)
                 .putExtra(SmartSignConstants.SID_BROADCAST_TYPE_KEY, SmartSignConstants.CREATE_SIGNATURE_CHALLENGE)
                 .putExtra(SmartSignConstants.CREATE_SIGNATURE_CHALLENGE,
-                        ContainerActions.calculateSmartIdVerificationCode(dataToSign));
+                        VerificationCodeUtil.calculateSmartIdVerificationCode(base64Hash));
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 

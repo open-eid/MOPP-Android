@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
+import ee.ria.DigiDoc.common.CertificateUtil;
 import ee.ria.DigiDoc.mobileid.BuildConfig;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
@@ -94,7 +95,7 @@ public class ServiceGenerator {
             try {
                 for (int i = 0; i < certBundle.size(); i++) {
                     String pemCert = CERT_PEM_HEADER + "\n" + certBundle.get(i) + "\n" + CERT_PEM_FOOTER;
-                    sha256Certificates[i] = "sha256/" + getSHA256FromCertificate(ContainerActions.x509Certificate(pemCert));
+                    sha256Certificates[i] = "sha256/" + getSHA256FromCertificate(CertificateUtil.x509Certificate(pemCert));
                 }
             } catch (CertificateException | NoSuchAlgorithmException e) {
                 Timber.e(e, "Failed to convert to Certificate object");

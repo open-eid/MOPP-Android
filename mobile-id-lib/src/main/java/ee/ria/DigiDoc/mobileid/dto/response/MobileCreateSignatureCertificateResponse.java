@@ -20,7 +20,6 @@
 package ee.ria.DigiDoc.mobileid.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import org.jetbrains.annotations.NotNull;
