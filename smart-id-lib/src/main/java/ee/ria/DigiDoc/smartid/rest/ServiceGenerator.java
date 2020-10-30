@@ -32,6 +32,7 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import ee.ria.DigiDoc.common.CertificateUtil;
 import ee.ria.DigiDoc.smartid.BuildConfig;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
@@ -90,7 +91,7 @@ public class ServiceGenerator {
         String[] sha256Certificates = new String[certBundle.size()];
         try {
             for (int i = 0; i < certBundle.size(); i++) {
-                sha256Certificates[i] = "sha256/" + getSHA256FromCertificate(ContainerActions.x509Certificate(certBundle.get(i)));
+                sha256Certificates[i] = "sha256/" + getSHA256FromCertificate(CertificateUtil.x509Certificate(Base64.decode(certBundle.get(i))));
             }
         } catch (CertificateException | NoSuchAlgorithmException e) {
             Timber.e(e, "Failed to convert to Certificate object");
