@@ -21,7 +21,7 @@
 package ee.ria.DigiDoc.android.signature.update.smartid;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.InputFilter;
 import android.util.AttributeSet;
 import android.view.View;

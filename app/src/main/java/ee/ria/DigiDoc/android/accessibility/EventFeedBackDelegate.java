@@ -1,6 +1,6 @@
 package ee.ria.DigiDoc.android.accessibility;
 
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 

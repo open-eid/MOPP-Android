@@ -2,8 +2,8 @@ package ee.ria.DigiDoc.android.main.diagnostics;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.appcompat.widget.Toolbar;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.TextView;
 

@@ -1,10 +1,9 @@
 package ee.ria.DigiDoc.android.signature.home;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import android.util.AttributeSet;
-import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 
 import ee.ria.DigiDoc.R;

@@ -1,7 +1,7 @@
 package ee.ria.DigiDoc.android.eid;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.Button;
 import android.widget.LinearLayout;

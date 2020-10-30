@@ -3,8 +3,8 @@ package ee.ria.DigiDoc.android.main.settings;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.support.annotation.Nullable;
-import android.support.v7.preference.PreferenceManager;
+import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
 import java.util.Locale;
 
@@ -105,4 +105,15 @@ public final class SettingsDataStore {
             preferences.edit().putString(KEY_LOCALE, locale.getLanguage()).apply();
         }
     }
+
+    public Boolean getAlwaysSendCrashReport() {
+        return preferences.getBoolean(resources.getString(R.string.main_settings_crash_report_setting_key), false);
+    }
+
+    public void setAlwaysSendCrashReport(boolean alwaysSend) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(resources.getString(R.string.main_settings_crash_report_setting_key), alwaysSend);
+        editor.apply();
+    }
+
 }

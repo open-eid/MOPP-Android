@@ -1,10 +1,10 @@
 package ee.ria.DigiDoc.android.eid;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import com.google.android.material.textfield.TextInputLayout;
+import androidx.appcompat.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;

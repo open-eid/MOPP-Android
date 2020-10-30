@@ -20,7 +20,7 @@
 
 package ee.ria.DigiDoc.android.signature.update.smartid;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 

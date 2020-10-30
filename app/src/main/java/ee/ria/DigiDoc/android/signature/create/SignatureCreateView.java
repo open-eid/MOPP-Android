@@ -2,8 +2,8 @@ package ee.ria.DigiDoc.android.signature.create;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.widget.FrameLayout;
 
 import ee.ria.DigiDoc.R;

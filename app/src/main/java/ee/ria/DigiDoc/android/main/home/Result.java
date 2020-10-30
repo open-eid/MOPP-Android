@@ -1,7 +1,7 @@
 package ee.ria.DigiDoc.android.main.home;
 
-import android.support.annotation.IdRes;
-import android.support.annotation.Nullable;
+import androidx.annotation.IdRes;
+import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 

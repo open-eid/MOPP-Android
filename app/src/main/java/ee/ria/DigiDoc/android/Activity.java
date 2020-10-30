@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android;
 
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -8,10 +9,15 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+
 import android.view.WindowManager;
+import android.widget.Button;
+
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Callable;
@@ -22,6 +28,7 @@ import javax.inject.Singleton;
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.home.HomeScreen;
+import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.main.sharing.SharingScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -32,6 +39,7 @@ public final class Activity extends AppCompatActivity {
 
     private Navigator navigator;
     private RootScreenFactory rootScreenFactory;
+    private SettingsDataStore settingsDataStore;
 
     private static WeakReference<Context> mContext;
 
@@ -40,6 +48,8 @@ public final class Activity extends AppCompatActivity {
         setTheme(R.style.Theme_Application);
         setTitle(""); // ACCESSIBILITY: prevents application name read during each activity launch
         super.onCreate(savedInstanceState);
+
+        handleCrashOnPreviousExecution();
 
         if (!BuildConfig.BUILD_TYPE.contentEquals("debug")) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
@@ -74,6 +84,46 @@ public final class Activity extends AppCompatActivity {
         initializeApplicationFileTypesAssociation();
 
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
+    }
+
+    private void handleCrashOnPreviousExecution() {
+        if (FirebaseCrashlytics.getInstance().didCrashOnPreviousExecution()) {
+            if (settingsDataStore.getAlwaysSendCrashReport()) {
+                sendUnsentCrashReports();
+                return;
+            }
+            Dialog crashReportDialog = new Dialog(this);
+            crashReportDialog.setContentView(R.layout.crash_report_dialog);
+
+            Button sendButton = crashReportDialog.findViewById(R.id.sendButton);
+            sendButton.setOnClickListener(v -> {
+                sendUnsentCrashReports();
+                crashReportDialog.dismiss();
+            });
+            Button alwaysSendButton = crashReportDialog.findViewById(R.id.alwaysSendButton);
+            alwaysSendButton.setOnClickListener(v -> {
+                settingsDataStore.setAlwaysSendCrashReport(true);
+                sendUnsentCrashReports();
+                crashReportDialog.dismiss();
+            });
+            Button dontSendButton = crashReportDialog.findViewById(R.id.dontSendButton);
+            dontSendButton.setOnClickListener(v -> {
+                crashReportDialog.dismiss();
+            });
+
+            crashReportDialog.show();
+        }
+    }
+
+    private void sendUnsentCrashReports() {
+        Task<Boolean> task = FirebaseCrashlytics.getInstance().checkForUnsentReports();
+        task.addOnSuccessListener(hasUnsentReports -> {
+            if (hasUnsentReports) {
+                FirebaseCrashlytics.getInstance().sendUnsentReports();
+            } else {
+                FirebaseCrashlytics.getInstance().deleteUnsentReports();
+            }
+        });
     }
 
     @Override
@@ -118,6 +168,7 @@ public final class Activity extends AppCompatActivity {
         Application.ApplicationComponent component = Application.component(newBase);
         navigator = component.navigator();
         rootScreenFactory = component.rootScreenFactory();
+        settingsDataStore = component.settingsDataStore();
         super.attachBaseContext(component.localeService().attachBaseContext(newBase));
     }
 

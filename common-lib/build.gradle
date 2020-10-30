@@ -22,7 +22,7 @@ android {
 }
 
 dependencies {
-    api "com.android.support:support-annotations:${androidSupportLibraryVersion}"
+    api "androidx.annotation:annotation:${androidxVersion}"
     api "com.squareup.okio:okio:${okioVersion}"
 
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"

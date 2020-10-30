@@ -428,4 +428,11 @@
     <string name="confirm_puk_change">Confirm PUK change</string>
     <string name="cancel_puk_change">Cancel PUK changing process</string>
 
+    <string name="crash_report_dialog_header">Send crash report?</string>
+    <string name="crash_report_dialog_text">Hey. Looks like we crashed! Please help us fix the problem by sending a crash report.</string>
+    <string name="crash_report_dialog_send_button">Send</string>
+    <string name="crash_report_dialog_always_send_button">Always Send</string>
+    <string name="crash_report_dialog_dont_send_button">Don\'t Send</string>
+
+
 </resources>

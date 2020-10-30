@@ -1,6 +1,6 @@
 package ee.ria.DigiDoc.android.signature.update.mobileid;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 

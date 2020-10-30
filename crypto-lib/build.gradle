@@ -23,7 +23,7 @@ android {
 }
 
 dependencies {
-    api "com.android.support:support-annotations:${androidSupportLibraryVersion}"
+    api "androidx.annotation:annotation:${androidxVersion}"
 
     api "com.google.guava:guava:${guavaVersion}"
     api "com.squareup.okio:okio:${okioVersion}"

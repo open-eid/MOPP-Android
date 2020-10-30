@@ -1,6 +1,6 @@
 package ee.ria.DigiDoc.sign.utils;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Like {@link com.google.common.base.Function} but throws Exception.

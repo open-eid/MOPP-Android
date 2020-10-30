@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.support.annotation.Nullable;
-import android.support.v14.preference.SwitchPreference;
-import android.support.v7.preference.PreferenceManager;
+import androidx.annotation.Nullable;
+import androidx.preference.SwitchPreference;
+import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 
 import ee.ria.DigiDoc.R;

@@ -1,10 +1,10 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import android.text.InputType;
 import android.util.AttributeSet;
 

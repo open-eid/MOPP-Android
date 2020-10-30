@@ -1,6 +1,6 @@
 package ee.ria.DigiDoc.crypto;
 
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 
 import com.google.common.collect.ImmutableList;
 import com.unboundid.asn1.ASN1OctetString;

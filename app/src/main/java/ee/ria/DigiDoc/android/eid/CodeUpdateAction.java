@@ -1,7 +1,7 @@
 package ee.ria.DigiDoc.android.eid;
 
 import android.os.Parcelable;
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;

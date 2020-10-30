@@ -431,4 +431,10 @@
     <string name="confirm_puk_change">Confirm PUK change</string>
     <string name="cancel_puk_change">Cancel PUK changing process</string>
 
+    <string name="crash_report_dialog_header">Отправить отчет о сбое?</string>
+    <string name="crash_report_dialog_text">Похоже, произошел какой-то сбой! Помогите нам решить проблему отправив отчет о сбое.</string>
+    <string name="crash_report_dialog_send_button">Отправить</string>
+    <string name="crash_report_dialog_always_send_button">Всегда отправлять</string>
+    <string name="crash_report_dialog_dont_send_button">Не отправлять</string>
+
 </resources>

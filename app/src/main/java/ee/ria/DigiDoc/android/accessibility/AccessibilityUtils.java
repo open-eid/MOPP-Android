@@ -2,10 +2,10 @@ package ee.ria.DigiDoc.android.accessibility;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.StringRes;
-import android.support.v4.view.AccessibilityDelegateCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
+import androidx.annotation.StringRes;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;

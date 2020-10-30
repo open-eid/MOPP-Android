@@ -1,0 +1,58 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <TextView
+        android:id="@+id/crashReportDialogHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/crash_report_dialog_header"
+        android:textSize="17sp"
+        android:textStyle="bold" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/crashReportDialogText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/crashReportDialogHeader"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:text="@string/crash_report_dialog_text"
+        android:textSize="15sp" >
+    </TextView>
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/crashReportDialogText"
+        android:layout_marginTop="20dp"
+        android:paddingBottom="20dp"
+        android:layout_centerHorizontal="true" >
+
+        <TableRow>
+            <Button
+                android:id="@+id/sendButton"
+                android:text="@string/crash_report_dialog_send_button" >
+            </Button>
+        </TableRow>
+        <TableRow>
+            <Button
+                android:id="@+id/alwaysSendButton"
+                android:text="@string/crash_report_dialog_always_send_button" >
+            </Button>
+        </TableRow>
+        <TableRow>
+            <Button
+                android:id="@+id/dontSendButton"
+                android:text="@string/crash_report_dialog_dont_send_button" >
+            </Button>
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>

@@ -1,6 +1,6 @@
 package ee.ria.DigiDoc.android.model.idcard;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 

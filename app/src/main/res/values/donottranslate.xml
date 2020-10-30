@@ -89,4 +89,6 @@
     <string name="eid_home_certificate_pin_auth">PIN1</string>
     <string name="eid_home_certificate_pin_sign">PIN2</string>
 
+    <string name="main_settings_crash_report_setting_key">crash_seport_setting</string>
+
 </resources>

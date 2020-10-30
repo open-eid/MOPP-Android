@@ -1,6 +1,6 @@
 package ee.ria.DigiDoc.sign;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
 

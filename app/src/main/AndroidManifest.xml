@@ -126,7 +126,7 @@
         </activity-alias>
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="@string/file_provider_authority"
             android:exported="false"
             android:grantUriPermissions="true"
@@ -137,6 +137,10 @@
                 android:resource="@xml/file_provider_paths" />
 
         </provider>
+
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
 
     </application>
 
