@@ -2,11 +2,11 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringDef;
-import android.support.annotation.StringRes;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringDef;
+import androidx.annotation.StringRes;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +32,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
-import static android.support.v4.content.res.ResourcesCompat.getColor;
+import static androidx.core.content.res.ResourcesCompat.getColor;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.Constants.VOID;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.DOCUMENT;

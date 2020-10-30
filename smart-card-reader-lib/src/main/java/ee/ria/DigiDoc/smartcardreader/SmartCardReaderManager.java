@@ -3,7 +3,7 @@ package ee.ria.DigiDoc.smartcardreader;
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 

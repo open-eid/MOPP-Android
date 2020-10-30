@@ -6,7 +6,7 @@ android {
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
-        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
@@ -37,7 +37,7 @@ dependencies {
     api "com.squareup.okhttp3:okhttp:${okhttpVersion}"
     api "org.json:json:${jsonVersion}"
 
-    implementation "com.android.support:support-compat:${androidSupportLibraryVersion}"
+    implementation 'androidx.core:core:1.0.0'
     implementation "com.jakewharton.timber:timber:${timberVersion}"
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
@@ -47,12 +47,12 @@ dependencies {
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testImplementation "org.json:json:${jsonVersion}"
 
-    androidTestUtil "com.android.support.test:orchestrator:${androidSupportTestVersion}"
+    androidTestUtil "androidx.test:orchestrator:${androidxTestVersion}"
     androidTestAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
-    androidTestImplementation "com.android.support:support-annotations:${androidSupportLibraryVersion}"
-    androidTestImplementation "com.android.support.test:runner:${androidSupportTestVersion}"
-    androidTestImplementation "com.android.support.test:rules:${androidSupportTestVersion}"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:${espressoVersion}"
+    androidTestImplementation "androidx.annotation:annotation:${androidxVersion}"
+    androidTestImplementation "androidx.test.ext:junit:${androidxTestVersion}"
+    androidTestImplementation "androidx.test:rules:${androidxTestVersion}"
+    androidTestImplementation "androidx.test.espresso:espresso-core:${androidxTestEspressoVersion}"
     androidTestImplementation "com.google.truth:truth:${truthVersion}"
 }
 

@@ -1,10 +1,10 @@
 package ee.ria.DigiDoc.android.utils.navigator;
 
 import android.app.Activity;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.ViewGroup;
 
 import io.reactivex.Observable;

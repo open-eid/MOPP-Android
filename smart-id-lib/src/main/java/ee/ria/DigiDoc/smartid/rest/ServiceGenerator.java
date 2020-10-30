@@ -71,7 +71,8 @@ public class ServiceGenerator {
         if (BuildConfig.DEBUG) {
             Timber.d("Adding logging interceptor to HTTP client");
             if (loggingInterceptor == null) {
-                loggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
+                loggingInterceptor = new HttpLoggingInterceptor();
+                loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
             }
             if (!httpClientBuilder.interceptors().contains(loggingInterceptor)) {
                 httpClientBuilder.addInterceptor(loggingInterceptor);

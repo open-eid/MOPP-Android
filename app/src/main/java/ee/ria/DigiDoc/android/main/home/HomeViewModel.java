@@ -1,6 +1,6 @@
 package ee.ria.DigiDoc.android.main.home;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import javax.inject.Inject;
 

@@ -1,8 +1,8 @@
 package ee.ria.DigiDoc.android.eid;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import android.text.SpannableString;
 import android.text.style.BulletSpan;
 import android.util.AttributeSet;

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@id/cryptoRecipientsScreen"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_insetEdge="top">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@id/toolbar"
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
@@ -21,7 +21,7 @@
             app:navigationContentDescription="@string/back"
             app:title="@string/crypto_recipients_title" />
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,7 +29,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:orientation="vertical">
 
-        <android.support.v7.widget.SearchView
+        <androidx.appcompat.widget.SearchView
             android:id="@id/cryptoRecipientsSearch"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -37,7 +37,7 @@
             app:queryHint="@string/crypto_recipients_search"
             app:iconifiedByDefault="false" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@id/cryptoRecipientsList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -71,4 +71,4 @@
         app:layout_anchorGravity="bottom"
         android:indeterminate="true" />
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

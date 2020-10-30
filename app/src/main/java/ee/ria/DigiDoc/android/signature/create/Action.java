@@ -1,7 +1,7 @@
 package ee.ria.DigiDoc.android.signature.create;
 
 import android.content.Intent;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 

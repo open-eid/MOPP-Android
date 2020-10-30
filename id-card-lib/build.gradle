@@ -19,8 +19,8 @@ android {
 }
 
 dependencies {
-    api "com.android.support:support-annotations:${androidSupportLibraryVersion}"
-    implementation "com.android.support:appcompat-v7:${androidSupportLibraryVersion}"
+    api "androidx.annotation:annotation:${androidxVersion}"
+    implementation "androidx.appcompat:appcompat:${androidxVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
 

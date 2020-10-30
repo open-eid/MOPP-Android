@@ -20,6 +20,9 @@ See [Build your app from the command line](https://developer.android.com/studio/
 
 Or import project from Android Studio and run it from there.
 
+> **NOTE**: In order for the build to succeed the Firebase Crashlytics plugin requires google-services.json
+> config file to be present inside "app" folder root
+
 * To validate signatures in offline mode, download latest TSL files:  
 &nbsp;&nbsp; 1. https://ec.europa.eu/tools/lotl/eu-lotl.xml -> Rename file to "eu-lotl.xml"  
 &nbsp;&nbsp; 2. https://sr.riik.ee/tsl/estonian-tsl.xml -> Rename file to "EE.xml"  

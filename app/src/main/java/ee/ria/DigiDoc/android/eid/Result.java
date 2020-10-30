@@ -1,6 +1,6 @@
 package ee.ria.DigiDoc.android.eid;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 

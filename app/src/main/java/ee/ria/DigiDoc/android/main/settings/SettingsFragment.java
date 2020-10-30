@@ -1,16 +1,13 @@
 package ee.ria.DigiDoc.android.main.settings;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v7.preference.ListPreference;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.InputType;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
+
 import android.text.TextUtils;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.takisoft.fix.support.v7.preference.EditTextPreference;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers;

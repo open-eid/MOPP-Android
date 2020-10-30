@@ -19,8 +19,8 @@
 
 package ee.ria.DigiDoc.android;
 
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +29,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.os.StrictMode;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 import com.jakewharton.threetenabp.AndroidThreeTen;
@@ -61,6 +61,7 @@ import ee.ria.DigiDoc.android.crypto.create.CryptoCreateViewModel;
 import ee.ria.DigiDoc.android.eid.EIDHomeViewModel;
 import ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsView;
 import ee.ria.DigiDoc.android.main.home.HomeViewModel;
+import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.data.source.FileSystemSignatureContainerDataSource;
@@ -278,6 +279,8 @@ public class Application extends android.app.Application {
         Activity.RootScreenFactory rootScreenFactory();
 
         LocaleService localeService();
+
+        SettingsDataStore settingsDataStore();
 
         @Component.Builder
         interface Builder {

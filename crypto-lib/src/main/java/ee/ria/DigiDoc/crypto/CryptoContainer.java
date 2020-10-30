@@ -1,6 +1,6 @@
 package ee.ria.DigiDoc.crypto;
 
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
