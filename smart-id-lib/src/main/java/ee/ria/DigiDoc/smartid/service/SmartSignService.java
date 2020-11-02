@@ -122,7 +122,7 @@ public class SmartSignService extends IntentService {
                 Timber.e(e, "Failed to sign with Smart-ID - Too Many Requests");
             } else {
                 broadcastFault();
-                Timber.e(e, "Exception when validating signature");
+                Timber.e(e, "Failed to sign with Smart-ID");
             }
         }
     }

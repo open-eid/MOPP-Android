@@ -198,7 +198,7 @@ public class MobileSignService extends IntentService {
                     } else {
                         RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.GENERAL_ERROR);
                         broadcastFault(fault);
-                        Timber.e(e, "Signature validation failed");
+                        Timber.e(e, "Failed to sign with Mobile-ID");
                     }
                     return;
                 }
