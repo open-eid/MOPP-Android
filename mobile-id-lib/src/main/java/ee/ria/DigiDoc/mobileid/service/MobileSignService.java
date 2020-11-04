@@ -77,7 +77,7 @@ public class MobileSignService extends IntentService {
     public static final String TAG = MobileSignService.class.getName();
 
     private static final long INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 1000;
-    private static final long SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 1000;
+    private static final long SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 5 * 1000;
     private static final long TIMEOUT_CANCEL = 120 * 1000;
     private long timeout;
 
