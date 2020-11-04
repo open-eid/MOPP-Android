@@ -55,7 +55,6 @@ public class ContainerWrapper {
         byte[] signatureValueBytes = Base64.decode(signatureValue);
         signature.setSignatureValue(signatureValueBytes);
         signature.extendSignatureProfile(SIGNATURE_PROFILE_TS);
-        signature.validate();
         container.save();
     }
 
