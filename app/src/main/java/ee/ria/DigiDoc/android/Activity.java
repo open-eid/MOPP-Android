@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -18,6 +19,7 @@ import android.widget.Button;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.firebase.crashlytics.internal.common.CommonUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Callable;
@@ -33,6 +35,7 @@ import ee.ria.DigiDoc.android.main.sharing.SharingScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
+import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import timber.log.Timber;
 
 public final class Activity extends AppCompatActivity {
@@ -45,6 +48,8 @@ public final class Activity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        handleRootedDevice();
+
         setTheme(R.style.Theme_Application);
         setTitle(""); // ACCESSIBILITY: prevents application name read during each activity launch
         super.onCreate(savedInstanceState);
@@ -84,6 +89,15 @@ public final class Activity extends AppCompatActivity {
         initializeApplicationFileTypesAssociation();
 
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
+    }
+
+    private void handleRootedDevice() {
+        if (CommonUtils.isRooted(getApplicationContext())) {
+            ErrorDialog errorDialog = new ErrorDialog(this);
+            errorDialog.setMessage(getResources().getString(R.string.rooted_device));
+            errorDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.ok), (dialog, which) -> dialog.cancel());
+            errorDialog.show();
+        }
     }
 
     private void handleCrashOnPreviousExecution() {
