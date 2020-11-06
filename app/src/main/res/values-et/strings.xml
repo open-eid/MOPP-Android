@@ -437,7 +437,6 @@
     <string name="crash_report_dialog_always_send_button">Saada Alati</string>
     <string name="crash_report_dialog_dont_send_button">Ära saada</string>
 
-    <!-- TODO -->
-    <string name="rooted_device">We\'ve detected that your device may be rooted.\nFor security reasons we recommend using this app on a non-rooted device.</string>
+    <string name="rooted_device">Tuvastasime, et sinu nutiseade võib olla ruuditud. Turvalisuse kaalutlustel ei soovita me kasutada seda rakendust ruuditud seadmel.</string>
 
 </resources>

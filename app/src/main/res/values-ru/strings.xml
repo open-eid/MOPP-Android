@@ -437,7 +437,6 @@
     <string name="crash_report_dialog_always_send_button">Всегда отправлять</string>
     <string name="crash_report_dialog_dont_send_button">Не отправлять</string>
 
-    <!-- TODO -->
-    <string name="rooted_device">We\'ve detected that your device may be rooted.\nFor security reasons we recommend using this app on a non-rooted device.</string>
+    <string name="rooted_device">Мы обнаружили, что ваше интеллектуальное устройство может быть рутировано. По соображениям безопасности мы не рекомендуем использовать это приложение на рутированом устройстве.</string>
 
 </resources>
