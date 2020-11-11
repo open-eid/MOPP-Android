@@ -1,10 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/dialog"
+    android:id="@id/dialog"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
     <TextView
-        android:id="@+id/crashReportDialogHeader"
+        android:id="@id/crashReportDialogHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -15,10 +15,10 @@
     </TextView>
 
     <TextView
-        android:id="@+id/crashReportDialogText"
+        android:id="@id/crashReportDialogText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/crashReportDialogHeader"
+        android:layout_below="@id/crashReportDialogHeader"
         android:layout_marginTop="10dp"
         android:gravity="center_vertical|center_horizontal"
         android:paddingLeft="20dp"
@@ -30,26 +30,26 @@
     <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/crashReportDialogText"
+        android:layout_below="@id/crashReportDialogText"
         android:layout_marginTop="20dp"
         android:paddingBottom="20dp"
         android:layout_centerHorizontal="true" >
 
         <TableRow>
             <Button
-                android:id="@+id/sendButton"
+                android:id="@id/sendButton"
                 android:text="@string/crash_report_dialog_send_button" >
             </Button>
         </TableRow>
         <TableRow>
             <Button
-                android:id="@+id/alwaysSendButton"
+                android:id="@id/alwaysSendButton"
                 android:text="@string/crash_report_dialog_always_send_button" >
             </Button>
         </TableRow>
         <TableRow>
             <Button
-                android:id="@+id/dontSendButton"
+                android:id="@id/dontSendButton"
                 android:text="@string/crash_report_dialog_dont_send_button" >
             </Button>
         </TableRow>

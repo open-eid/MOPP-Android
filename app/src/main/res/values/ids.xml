@@ -240,4 +240,12 @@
     <!-- Sharing Screen -->
     <item type="id" name="sharingScreenList" />
 
+    <!-- Crash Report Dialog -->
+    <item type="id" name="dialog" />
+    <item type="id" name="crashReportDialogHeader" />
+    <item type="id" name="crashReportDialogText" />
+    <item type="id" name="sendButton" />
+    <item type="id" name="alwaysSendButton" />
+    <item type="id" name="dontSendButton" />
+
 </resources>
