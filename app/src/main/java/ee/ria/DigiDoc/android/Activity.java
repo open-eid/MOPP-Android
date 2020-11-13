@@ -17,7 +17,9 @@ import androidx.preference.PreferenceManager;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import com.google.android.gms.common.util.CollectionUtils;
 import com.google.android.gms.tasks.Task;
+import com.google.common.collect.ImmutableList;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.crashlytics.internal.common.CommonUtils;
 
@@ -29,10 +31,13 @@ import javax.inject.Singleton;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.main.home.HomeScreen;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.main.sharing.SharingScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
+import ee.ria.DigiDoc.android.utils.IntentUtils;
+import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
@@ -218,11 +223,23 @@ public final class Activity extends AppCompatActivity {
         @Override
         public Screen call() {
             if ((intent.getAction() != null && Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
-                return SignatureCreateScreen.create(intent);
+                return chooseScreen(intent);
             } else if (intent.getAction() != null && Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
                 return SharingScreen.create();
             }
             return HomeScreen.create(intent);
+        }
+
+        private Screen chooseScreen(Intent intent) {
+            ImmutableList<FileStream> fileStreams = IntentUtils.parseGetContentIntent(getContext().get().getContentResolver(), intent);
+            if (!CollectionUtils.isEmpty(fileStreams)) {
+                String fileName = fileStreams.get(0).displayName();
+                String extension = fileName.substring(fileName.lastIndexOf("."));
+                if (".cdoc".equals(extension)) {
+                    return CryptoCreateScreen.open(intent);
+                }
+            }
+            return SignatureCreateScreen.create(intent);
         }
     }
 
