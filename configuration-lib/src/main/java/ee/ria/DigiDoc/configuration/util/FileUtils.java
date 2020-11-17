@@ -85,6 +85,10 @@ public class FileUtils {
         }
     }
 
+    public static boolean fileExists(String filePath) {
+        return new File(filePath).exists();
+    }
+
     public static void writeToFile(BufferedReader reader, String destinationPath, String fileName) {
         try (FileOutputStream fileStream = new FileOutputStream(new File(destinationPath + File.separator + fileName));
              OutputStreamWriter writer = new OutputStreamWriter(fileStream)) {
