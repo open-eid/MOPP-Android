@@ -123,6 +123,7 @@ public class Application extends android.app.Application {
             for (String fileName : tslFiles) {
                 if (shouldCopyTSL(assetsPath, fileName, destination)) {
                     copyTSLFromAssets(assetsPath, fileName, destination);
+                    removeExistingETag(destination + File.separator + fileName);
                 }
             }
         }
@@ -154,6 +155,11 @@ public class Application extends android.app.Application {
         } catch (IOException ex) {
             Timber.e(ex, "Failed to copy file: %s from assets", fileName);
         }
+    }
+
+    private void removeExistingETag(String filePath) {
+        String eTagPath = filePath + ".etag";
+        FileUtils.removeFile(eTagPath);
     }
 
     // StrictMode
