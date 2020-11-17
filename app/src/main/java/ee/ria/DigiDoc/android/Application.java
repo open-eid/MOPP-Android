@@ -38,7 +38,9 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
@@ -69,6 +71,7 @@ import ee.ria.DigiDoc.android.signature.list.SignatureListViewModel;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.LocaleService;
+import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
 import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
@@ -104,7 +107,7 @@ public class Application extends android.app.Application {
         setupDagger();
     }
 
-    // TSL files
+    // Copy every TSL file from APKs assets into cache if non-existent
     private void setupTSLFiles() {
         String destination = getCacheDir().toString() + "/schema";
         String assetsPath = "tslFiles";
@@ -116,20 +119,47 @@ public class Application extends android.app.Application {
         }
 
         if (tslFiles != null && tslFiles.length > 0) {
+            FileUtils.createDirectoryIfNotExist(destination);
             for (String fileName : tslFiles) {
-                cacheTSLFiles(assetsPath, fileName, destination);
+                if (shouldCopyTSL(assetsPath, fileName, destination)) {
+                    copyTSLFromAssets(assetsPath, fileName, destination);
+                    removeExistingETag(destination + File.separator + fileName);
+                }
             }
         }
     }
 
-    private void cacheTSLFiles(String assetsPath, String fileName, String directory) {
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(getAssets().open(assetsPath + File.separator + fileName), StandardCharsets.UTF_8))) {
-            FileUtils.createDirectoryIfNotExist(directory);
-            FileUtils.writeToFile(reader, directory, fileName);
-        } catch (IOException ex) {
-            Timber.e(ex, "Failed to open file: %s", fileName);
+    private boolean shouldCopyTSL(String sourcePath, String fileName, String destionationDir) {
+        if (!FileUtils.fileExists(destionationDir + File.separator + fileName)) {
+            return true;
+        } else {
+            try (
+                    InputStream assetsTSLInputStream = getAssets().open(sourcePath + File.separator + fileName);
+                    InputStream cachedTSLInputStream = new FileInputStream(destionationDir + File.separator + fileName)
+            ) {
+                Integer assetsTslVersion = TSLUtil.readSequenceNumber(assetsTSLInputStream);
+                Integer cachedTslVersion = TSLUtil.readSequenceNumber(cachedTSLInputStream);
+                return assetsTslVersion != null && assetsTslVersion > cachedTslVersion;
+            } catch (Exception e) {
+                String message = "Error comparing sequence number between assets and cached TSLs";
+                Timber.e(e, message);
+                return false;
+            }
         }
+    }
+
+    private void copyTSLFromAssets(String sourcePath, String fileName, String destionationDir) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open(sourcePath + File.separator + fileName),
+                StandardCharsets.UTF_8))) {
+            FileUtils.writeToFile(reader, destionationDir, fileName);
+        } catch (IOException ex) {
+            Timber.e(ex, "Failed to copy file: %s from assets", fileName);
+        }
+    }
+
+    private void removeExistingETag(String filePath) {
+        String eTagPath = filePath + ".etag";
+        FileUtils.removeFile(eTagPath);
     }
 
     // StrictMode
