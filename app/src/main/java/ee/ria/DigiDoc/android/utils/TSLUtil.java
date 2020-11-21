@@ -25,7 +25,7 @@ public final class TSLUtil {
             }
             eventType = parser.next();
         }
-        return null;
+        throw new TSLException("Error reading version from TSL");
     }
 
 }

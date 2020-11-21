@@ -7,13 +7,16 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.TextView;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.utils.TSLException;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
@@ -21,6 +24,14 @@ import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.sign.SignLib;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import timber.log.Timber;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 
@@ -32,6 +43,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
     private final Navigator navigator;
 
     private final ViewDisposables disposables;
+
+    private Disposable tslVersionDisposable;
 
     public DiagnosticsView(Context context) {
         super(context);
@@ -59,6 +72,9 @@ public final class DiagnosticsView extends CoordinatorLayout {
     @Override
     public void onDetachedFromWindow() {
         disposables.detach();
+        if (tslVersionDisposable != null) {
+            tslVersionDisposable.dispose();
+        }
         super.onDetachedFromWindow();
     }
 
@@ -106,6 +122,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
         configUrl.setText(configurationProvider.getConfigUrl());
         tslUrl.setText(configurationProvider.getTslUrl());
+        appendTslVersion(tslUrl, configurationProvider.getTslUrl());
         sivaUrl.setText(configurationProvider.getSivaUrl());
         tsaUrl.setText(configurationProvider.getTsaUrl());
         midSignUrl.setText(configurationProvider.getMidSignUrl());
@@ -122,6 +139,33 @@ public final class DiagnosticsView extends CoordinatorLayout {
         centralConfigurationVersion.setText(String.valueOf(configurationProvider.getMetaInf().getVersion()));
         centralConfigurationLastCheck.setText(displayDate(configurationProvider.getConfigurationLastUpdateCheckDate()));
         centralConfigurationUpdateDate.setText(displayDate(configurationProvider.getConfigurationUpdateDate()));
+    }
+
+    private void appendTslVersion(TextView tslUrlTextView, String tslUrl) {
+        tslVersionDisposable = getObservableTslVersion(tslUrl )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        (tslVersion) -> tslUrlTextView.append(" ("+ tslVersion + ")"),
+                        (error) -> Timber.e(error, "Error reading TSL version")
+                );
+    }
+
+    private Observable<Integer> getObservableTslVersion(String tslUrl) {
+        return Observable.fromCallable(() -> {
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder().url(tslUrl).build();
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                 try (InputStream responseBody = response.body().byteStream()) {
+                     return TSLUtil.readSequenceNumber(responseBody);
+                 }
+            } else {
+                String message = "Error fetching TSL, response code: " + response.code();
+                Timber.e(message);
+                throw new TSLException(message);
+            }
+        });
     }
 
     private String displayDate(Date date) {
