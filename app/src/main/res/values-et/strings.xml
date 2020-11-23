@@ -12,7 +12,7 @@
     <string name="main_home_menu_title">Menüü</string>
     <string name="main_home_menu_button">Menüü</string>
     <string name="main_home_menu_help">ABI</string>
-    <string name="main_home_menu_help_url">https://www.id.ee/index.php?id=10583</string>
+    <string name="main_home_menu_help_url">https://www.id.ee/id-abikeskus/</string>
     <string name="main_home_menu_recent">HILJUTISED DOKUMENDID</string>
     <string name="main_home_menu_settings">SEADED</string>
     <string name="main_home_menu_about">INFO</string>
@@ -20,9 +20,9 @@
 
     <!-- Main Settings -->
     <string name="main_settings_title">Seaded</string>
-    <string name="main_settings_phone_no_title">Riigi kood ja telefoninumber</string>
+    <string name="main_settings_phone_no_title">Riigikood ja telefoninumber</string>
     <string name="main_settings_personal_code_title">Isikukood</string>
-    <string name="main_settings_tsa_url_title">Ajatempli teenuse URL</string>
+    <string name="main_settings_tsa_url_title">Ligipääs ajatempliteenusele</string>
     <string name="main_settings_uuid_title">Ligipääs mobiil-ID ja Smart-ID teenusele</string>
     <string name="main_settings_tsa_url_use_default">Kasuta vaikeväärtust</string>
     <string name="main_settings_role_title">Roll</string>
@@ -60,7 +60,7 @@
     <string name="signature_list_title">Hiljutised dokumendid</string>
     <string name="signature_list_empty_message">Dokumendid puuduvad</string>
     <string name="signature_list_remove_button">Eemalda dokument</string>
-    <string name="signature_list_remove_confirmation_message">Soovid eemaldada dokumenti?</string>
+    <string name="signature_list_remove_confirmation_message">Soovid eemaldada dokumendi?</string>
 
     <!-- Signature Create -->
     <string name="signature_create_error">Failide laadimine ebaõnnestus</string>
@@ -116,37 +116,37 @@
     <string name="signature_update_signature_add_success">ALLKIRI LISATUD</string>
     <string name="signature_update_signature_add_error">Midagi läks valesti</string>
 
-    <string name="signature_update_signature_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. https://id.ee/index.php?id=39021</string>
+    <string name="signature_update_signature_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
     <string name="signature_update_signature_error_message_too_many_requests_additional_information">Loe täpsemalt siit</string>
-    <string name="signature_update_signature_error_message_too_many_requests_additional_information_link">https://id.ee/index.php?id=39021</string>
+    <string name="signature_update_signature_error_message_too_many_requests_additional_information_link">https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
 
-    <string name="signature_update_signature_error_no_response">Palun kontrollige internetiühendust</string>
+    <string name="signature_update_signature_error_no_response">Palun kontrolli internetiühendust</string>
     <string name="signature_update_signature_error_invalid_ssl_handshake">SSL ühenduskanali loomine ebaõnnestus. Kontrolli rakenduse seadeid või tarkvara uuendusi</string>
 
-    <string name="signature_update_mobile_id_message">Sisesta oma telefoninumber ja isikukood Mobiil-IDga allkirjastamiseks</string>
-    <string name="signature_update_mobile_id_phone_no">Riigi kood ja telefoninumber</string>
+    <string name="signature_update_mobile_id_message">Sisesta oma telefoninumber ja isikukood mobiil-IDga allkirjastamiseks</string>
+    <string name="signature_update_mobile_id_phone_no">Riigikood ja telefoninumber</string>
     <string name="signature_update_mobile_id_personal_code">Isikukood</string>
     <string name="signature_update_mobile_id_remember_me">Pea mind meeles</string>
-    <string name="signature_update_mobile_id_info">Veendu kontrollkoodi õiguses ja sisesta telefonil Mobiil-ID PIN2 kood.</string>
+    <string name="signature_update_mobile_id_info">Veendu kontrollkoodi õiguses ja sisesta telefonil mobiil-ID PIN2-kood.</string>
     <string name="signature_update_mobile_id_display_message">Allkirjasta dokument</string>
 
     <string name="signature_update_mobile_id_status_request_sent">Allkirjastamispäring saadetud</string>
     <string name="signature_update_mobile_id_status_request_ok">Päring vastuvõetud</string>
     <string name="signature_update_mobile_id_status_no_country_code">Telefoninumber peab sisaldama riigikoodi</string>
-    <string name="signature_update_mobile_id_status_expired_transaction">Teie Mobiil-ID toiming aegus. Palun proovige uuesti.</string>
+    <string name="signature_update_mobile_id_status_expired_transaction">Sinu mobiil-ID toiming aegus. Palun proovi uuesti.</string>
     <string name="signature_update_mobile_id_status_user_cancel">Kasutaja keeldus või katkestas</string>
     <string name="signature_update_mobile_id_status_signature">Allkiri saadud</string>
     <string name="signature_update_mobile_id_status_outstanding_transaction">Päring käimas</string>
     <string name="signature_update_mobile_id_status_mid_not_ready">Mobiil-ID pole saadaval, proovi hiljem uuesti</string>
     <string name="signature_update_mobile_id_status_phone_absent">Telefon ei ole levis</string>
     <string name="signature_update_mobile_id_status_delivery_error">Päringu saatmise viga</string>
-    <string name="signature_update_mobile_id_status_sim_error">SIM kaardi viga</string>
+    <string name="signature_update_mobile_id_status_sim_error">SIM-kaardi viga</string>
     <string name="signature_update_mobile_id_status_not_valid">Allkiri ei ole kehtiv</string>
     <string name="signature_update_mobile_id_status_revoked_certificate">Sertifikaat tühistatud</string>
-    <string name="signature_update_mobile_id_status_signature_hash_mismatch">Teie Mobiil-ID toiming ebaõnnestus. Palun võtke ühendust enda mobiilioperaatoriga.</string>
+    <string name="signature_update_mobile_id_status_signature_hash_mismatch">Sinu mobiil-ID toiming ebaõnnestus. Palun võta ühendust enda mobiilioperaatoriga.</string>
     <string name="signature_update_mobile_id_status_internal_error">Tehniline viga</string>
 
-    <string name="signature_update_mobile_id_error_unknown">Tundmatu viga Mobiil-IDga allkirjastamisel</string>
+    <string name="signature_update_mobile_id_error_unknown">Tundmatu viga mobiil-IDga allkirjastamisel</string>
     <string name="signature_update_mobile_id_error_local_service_exception">Midagi läks valesti, proovi hiljem uuesti</string>
     <string name="signature_update_mobile_id_error_general_client">Midagi läks valesti, proovi uuesti</string>
     <string name="signature_update_mobile_id_error_incorrect_input_parameters">Vigane telefoninumber ja/või isikukood, välismaa telefoninumber peab algama riigikoodiga</string>
@@ -156,45 +156,45 @@
     <string name="signature_update_mobile_id_error_missing_user_certificate">Kasutaja sertifikaat puudub</string>
     <string name="signature_update_mobile_id_error_certificate_validity_unknown">Sertifikaadi kehtivust ei õnnestu kontrollida</string>
     <string name="signature_update_mobile_id_error_session_locked">Mobiilse allkirjastamise sessioon on lukustunud, proovi hiljem uuesti</string>
-    <string name="signature_update_mobile_id_error_general_user">Viga Mobiil-ID kasutamisel kasutaja telefonis</string>
-    <string name="signature_update_mobile_id_error_not_mobile_id_user">Kasutaja ei ole Mobiil-ID klient</string>
-    <string name="signature_update_mobile_id_error_user_certificate_revoked">Teie Mobiil-ID allkirjastamise sertifikaat on tühistatud</string>
-    <string name="signature_update_mobile_id_error_user_certificate_status_unknown">Teie Mobiil-ID allkirjastamise sertifikaadi olek on teadmata</string>
-    <string name="signature_update_mobile_id_error_user_certificate_suspended">Teie Mobiil-ID\'ga allkirjastamise sertifikaadi kehtivus on peatatud</string>
-    <string name="signature_update_mobile_id_error_user_certificate_expired">Teie Mobiil-ID allkirjastamise sertifikaat on aegunud</string>
+    <string name="signature_update_mobile_id_error_general_user">Viga mobiil-ID kasutamisel kasutaja telefonis</string>
+    <string name="signature_update_mobile_id_error_not_mobile_id_user">Kasutaja ei ole mobiil-ID klient</string>
+    <string name="signature_update_mobile_id_error_user_certificate_revoked">Sinu mobiil-ID allkirjastamise sertifikaat on tühistatud</string>
+    <string name="signature_update_mobile_id_error_user_certificate_status_unknown">Sinu mobiil-ID allkirjastamise sertifikaadi olek on teadmata</string>
+    <string name="signature_update_mobile_id_error_user_certificate_suspended">Sinu mobiil-ID allkirjastamise sertifikaadi kehtivus on peatatud</string>
+    <string name="signature_update_mobile_id_error_user_certificate_expired">Sinu mobiil-ID allkirjastamise sertifikaat on aegunud</string>
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Liiga palju faile ühes konteineris</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. https://id.ee/index.php?id=39021</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
     <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Loe täpsemalt siit</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://id.ee/index.php?id=39021</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Samaaegsete pöördumiste limiit ületatud</string>
 
     <string name="signature_update_smart_id_message">Sisesta oma isikukood Smart-IDga allkirjastamiseks</string>
     <string name="signature_update_smart_id_country">Riik</string>
     <string name="signature_update_smart_id_info">Veendu kontrollkoodi õigsuses ja sisesta nutiseadmes Smart-ID PIN2-kood</string>
     <string name="signature_update_smart_id_select_device">Allkirjastamiseks kinnita seade Smart-ID rakenduses.</string>
-    <string name="signature_update_smart_id_status_expired_transaction">Teie Smart-ID toiming aegus. Palun proovige uuesti.</string>
-    <string name="signature_update_smart_id_status_document_unusable">Teie Smart-ID toiming ebaõnnestus. Palun kontrollige Smart-ID rakendust või võtke ühendust Smart-ID klienditoega.</string>
+    <string name="signature_update_smart_id_status_expired_transaction">Sinu Smart-ID toiming aegus. Palun proovi uuesti.</string>
+    <string name="signature_update_smart_id_status_document_unusable">Sinu Smart-ID toiming ebaõnnestus. Palun kontrolli Smart-ID rakendust või võta ühendust Smart-ID klienditoega.</string>
     <string name="signature_update_smart_id_status_wrong_vc">Viga: valiti vale kontrollkood</string>
-    <string name="signature_update_smart_id_error_message_not_qualified">RIA DigiDoc mobiilirakenduses allkirjastamiseks peab teie Smart-ID vastama tasemele kõrge.</string>
-    <string name="signature_update_smart_id_error_message_old_api">RIA DigiDoc mobiilirakendus vajab uuendamist. Paigaldage uus versioon mobiilirakenduse poest. Lisainfo ID-abiliini telefonil (+372) 666 8888.</string>
-    <string name="signature_update_smart_id_error_message_under_maintenance">Smart-ID teenuses esinevad tehnilised tõrked. Palun proovige mõne aja pärast uuesti.</string>
+    <string name="signature_update_smart_id_error_message_not_qualified">RIA DigiDoc mobiilirakenduses allkirjastamiseks peab sinu Smart-ID vastama tasemele kõrge.</string>
+    <string name="signature_update_smart_id_error_message_old_api">RIA DigiDoc mobiilirakendus vajab uuendamist. Paigalda uus versioon mobiilirakenduse poest. Lisainfo ID-abiliini telefonil (+372) 666 8888.</string>
+    <string name="signature_update_smart_id_error_message_under_maintenance">Smart-ID teenuses esinevad tehnilised tõrked. Palun proovi mõne aja pärast uuesti.</string>
     <string name="signature_update_smart_id_error_message_account_not_found">Kontot ei leitud</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Sessiooni ei leitud</string>
-    <string name="signature_update_smart_id_error_message_forbidden">Ümbriku allkirjastamine ebaõnnestus. Kontrolli Smart-ID teenuse ligipääsu seadeid. https://id.ee/index.php?id=39021</string>
+    <string name="signature_update_smart_id_error_message_forbidden">Ümbriku allkirjastamine ebaõnnestus. Kontrolli Smart-ID teenuse ligipääsu seadeid. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
 
-    <string name="signature_update_id_card_progress_message_initial">Ühenda kaardilugeja telefoniga ja sisesta ID-kaart lugejasse</string>
+    <string name="signature_update_id_card_progress_message_initial">Ühenda kaardilugeja nutiseadmega ja sisesta ID-kaart lugejasse</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>
-    <string name="signature_update_id_card_progress_message_card_detected">ID-kaart leitud. Pärin andmeid.</string>
+    <string name="signature_update_id_card_progress_message_card_detected">ID-kaart leitud. Pärin andmeid...</string>
     <string name="signature_update_id_card_sign_message">ID-kaart on valmis allkirjastamiseks</string>
     <string name="signature_update_id_card_sign_data">%1$s %2$s (%3$s)</string>
     <string name="signature_update_id_card_sign_pin2">Sisesta PIN2</string>
     <string name="signature_update_id_card_progress_message_signing">Toimub allkirjastamine. Palun oota.</string>
-    <string name="signature_update_id_card_sign_pin2_invalid">Vale PIN2. Saad PIN2 koodi sisestada veel %1$d korda.</string>
+    <string name="signature_update_id_card_sign_pin2_invalid">Vale PIN2. Saad PIN2-koodi sisestada veel %1$d korda.</string>
     <string name="signature_update_id_card_sign_pin2_invalid_final">Vale PIN2. Järgmise vale sisestusega lukustub PIN.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 on lukus. Mine Minu eID, et avada.</string>
 
     <!-- Crypto Home -->
-    <string name="crypto_home_create_text">Vali fail krüpteerimiseks või dekrüpteerimiseks</string>
+    <string name="crypto_home_create_text">Krüpteerimiseks või dekrüpteerimiseks vali fail</string>
     <string name="crypto_home_create_button">VALI FAIL</string>
 
     <!-- Crypto Create -->
@@ -203,7 +203,7 @@
     <string name="crypto_create_encrypt_success_message">KRÜPTEERIMINE ÕNNESTUS</string>
     <string name="crypto_create_decrypt_success_message">DEKRÜPTEERIMINE ÕNNESTUS</string>
     <string name="crypto_create_name">ÜMBRIK:</string>
-    <string name="crypto_create_data_files_title">Krüpteerimiseks valitud failid</string>
+    <string name="crypto_create_data_files_title">Krüpteeritud failid</string>
     <string name="crypto_create_data_files_add_button_description">LISA VEEL FAILE</string>
     <string name="crypto_create_data_files_add_button">+ LISA VEEL FAILE</string>
     <string name="crypto_create_data_files_add_error_exists">Fail on juba ümbrikus olemas</string>
@@ -228,25 +228,25 @@
     <string name="crypto_recipients_title">Adressaatide lisamine</string>
     <string name="crypto_recipients_search">Sisesta isikukood, asutus või registrikood</string>
     <string name="crypto_recipients_search_result_empty">Isikul või asutusel puudub kehtiv sertifikaat. \nKrüpteerimiseks on vaja kehtivat sertikaati.\nKüsimuste korral pöörduge id.ee.</string>
-    <string name="crypto_recipients_selected_subhead">Adressaadid</string>
-    <string name="crypto_recipients_done_button">KINNITA VALIK</string>
+    <string name="crypto_recipients_selected_subhead">Lisatud adressaadid</string>
+    <string name="crypto_recipients_done_button">KINNITA</string>
 
-    <string name="crypto_create_decrypt_progress_message_initial">Ühenda kaardilugeja telefoniga ja sisesta ID-kaart lugejasse</string>
+    <string name="crypto_create_decrypt_progress_message_initial">Ühenda kaardilugeja nutiseadmega ja sisesta ID-kaart lugejasse</string>
     <string name="crypto_create_decrypt_progress_message_reader_detected">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>
-    <string name="crypto_create_decrypt_progress_message_card_detected">ID-kaart leitud. Pärin andmeid.</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">ID-kaart leitud. Pärin andmeid...</string>
     <string name="crypto_create_decrypt_message">Valmis dekrüpteerimiseks ID-kaardiga.</string>
     <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
     <string name="crypto_create_decrypt_pin1">Palun sisesta PIN1.</string>
-    <string name="crypto_create_decrypt_pin1_invalid">Vale PIN1. Saad PIN1 koodi sisestada veel %1$d korda.</string>
+    <string name="crypto_create_decrypt_pin1_invalid">Vale PIN1. Saad PIN1-koodi sisestada veel %1$d korda.</string>
     <string name="crypto_create_decrypt_pin1_invalid_final">Vale PIN1. Järgmise vale sisestusega lukustub PIN.</string>
     <string name="crypto_create_decrypt_pin1_locked">PIN1 on lukus. Mine Minu eID, et avada.</string>
     <string name="crypto_create_decrypt_active">Toimub dekrüpteerimine.\nPalun oota.</string>
     <string name="crypto_create_decrypt_error">Midagi läks dekrüpteerimisel valesti. Palun proovi uuesti.</string>
 
     <!-- EID Home -->
-    <string name="eid_home_id_card_status_initial_message">Ühenda kaardilugeja telefoniga ja sisesta ID-kaart lugejasse.</string>
+    <string name="eid_home_id_card_status_initial_message">Ühenda kaardilugeja nutiseadmega ja sisesta ID-kaart lugejasse.</string>
     <string name="eid_home_id_card_status_reader_detected_message">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>
-    <string name="eid_home_id_card_status_card_detected_message">ID-kaart leitud. Pärin andmeid.</string>
+    <string name="eid_home_id_card_status_card_detected_message">ID-kaart leitud. Pärin andmeid...</string>
     <string name="eid_home_error">Midagi läks valesti. Palun proovi uuesti.</string>
 
     <string name="eid_home_data_type">Minu eID</string>
@@ -259,13 +259,13 @@
     <string name="eid_home_data_expiry_date_valid">Kehtib</string>
     <string name="eid_home_data_expiry_date_expired">Aegunud</string>
     <string name="eid_home_data_expiry_date_invalid">Teadmata</string>
-    <string name="eid_home_data_certificates_title">PIN/PUK KOODID JA SERTIFIKAATIDE KONTROLL</string>
-    <string name="eid_home_data_certificates_puk_title">PUK kood</string>
-    <string name="eid_home_data_certificates_puk_text">PUK koodi leiad enda koodiümbrikust</string>
+    <string name="eid_home_data_certificates_title">PIN-/PUK-KOODID JA SERTIFIKAATIDE KONTROLL</string>
+    <string name="eid_home_data_certificates_puk_title">PUK-kood</string>
+    <string name="eid_home_data_certificates_puk_text">PUK-koodi leiad enda koodiümbrikust</string>
     <string name="eid_home_data_certificates_puk_button">MUUDA PUK</string>
-    <string name="eid_home_data_certificates_puk_error">PUK on blokeeritud, kuna PUK koodi on sisestatud 3 korda valesti.</string>
-    <string name="eid_home_data_certificates_puk_link">Juhised uue dokumendi taotlemiseks leiad siit.</string>
-    <string name="eid_home_data_certificates_puk_link_url">https://www.id.ee/index.php?id=30133</string>
+    <string name="eid_home_data_certificates_puk_error">PUK on blokeeritud, kuna PUK-koodi on sisestatud 3 korda valesti. PUK-koodi ei saa ise lahti blokeerida.</string>
+    <string name="eid_home_data_certificates_puk_link">Uue PUK-koodi saamiseks külasta klienditeeninduspunkti, kust saad koodiümbriku uute koodidega.</string>
+    <string name="eid_home_data_certificates_puk_link_url">https://www.politsei.ee/et/juhend/id-kaardi-taotlemine-taeiskasvanule/id-kaardi-kasutaja-meelespea/</string>
 
     <string name="eid_home_certificate_data_title_auth">Isikutuvastamise sertifikaat</string>
     <string name="eid_home_certificate_data_title_sign">Allkirjastamise sertifikaat</string>
@@ -275,10 +275,10 @@
     <string name="eid_home_certificate_data_button_change_sign">MUUDA PIN2</string>
     <string name="eid_home_certificate_data_button_unblock_auth">TÜHISTA BLOKEERING</string>
     <string name="eid_home_certificate_data_button_unblock_sign">TÜHISTA BLOKEERING</string>
-    <string name="eid_home_certificate_data_link_auth">Unustasid PIN1 koodi?</string>
-    <string name="eid_home_certificate_data_link_sign">Unustasid PIN2 koodi?</string>
-    <string name="eid_home_certificate_data_error_auth">PIN1 on blokeeritud, kuna PIN1 koodi on sisestatud 3 korda valesti.</string>
-    <string name="eid_home_certificate_data_error_sign">PIN2 on blokeeritud, kuna PIN2 koodi on sisestatud 3 korda valesti.</string>
+    <string name="eid_home_certificate_data_link_auth">Unustasid PIN1-koodi?</string>
+    <string name="eid_home_certificate_data_link_sign">Unustasid PIN2-koodi?</string>
+    <string name="eid_home_certificate_data_error_auth">PIN1 on blokeeritud, kuna PIN1-koodi on sisestatud 3 korda valesti.</string>
+    <string name="eid_home_certificate_data_error_sign">PIN2 on blokeeritud, kuna PIN2-koodi on sisestatud 3 korda valesti.</string>
 
     <string name="eid_type_id_card">ID-KAART</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
@@ -286,41 +286,41 @@
     <string name="eid_type_e_seal">e-Tempel</string>
     <string name="eid_type_unknown">TEADMATA</string>
 
-    <string name="eid_home_code_update_title_pin1_edit">PIN1 muutmine</string>
-    <string name="eid_home_code_update_title_pin1_unblock">PIN1 blokeeringu tühistamine</string>
-    <string name="eid_home_code_update_title_pin2_edit">PIN2 muutmine</string>
-    <string name="eid_home_code_update_title_pin2_unblock">PIN2 blokeeringu tühistamine</string>
-    <string name="eid_home_code_update_title_puk_edit">PUK muutmine</string>
+    <string name="eid_home_code_update_title_pin1_edit">PIN1-koodi vahetus</string>
+    <string name="eid_home_code_update_title_pin1_unblock">PIN1 lahti blokeerimine</string>
+    <string name="eid_home_code_update_title_pin2_edit">PIN22-koodi vahetus</string>
+    <string name="eid_home_code_update_title_pin2_unblock">PIN2 lahti blokeerimine</string>
+    <string name="eid_home_code_update_title_puk_edit">PUK-koodi vahetus</string>
     <string name="eid_home_code_update_text_row1_pin1_edit">Uus PIN1 peab olema erinev eelmisest.</string>
-    <string name="eid_home_code_update_text_row2_pin1_edit">PIN1 koodi kasutatakse isikutuvastamiseks.</string>
-    <string name="eid_home_code_update_text_row3_pin1_edit">Kui sisestad PIN1 koodi kolm korda valesti, siis isikutuvastamise sertifikaat blokeeritakse ning ID-kaarti pole võimalik isikutuvastamiseks kasutada enne blokeeringu tühistamist PUK koodi abil.</string>
+    <string name="eid_home_code_update_text_row2_pin1_edit">PIN1-koodi kasutatakse isikutuvastamiseks.</string>
+    <string name="eid_home_code_update_text_row3_pin1_edit">Kui sisestad PIN1-koodi kolm korda valesti, siis isikutuvastamise sertifikaat blokeeritakse ning ID-kaarti pole võimalik isikutuvastamiseks kasutada enne blokeeringu tühistamist PUK-koodi abil.</string>
     <string name="eid_home_code_update_text_row1_pin1_unblock">Uus PIN1 peab olema erinev eelmisest.</string>
-    <string name="eid_home_code_update_text_row2_pin1_unblock">PIN1 koodi kasutatakse isikutuvastamiseks.</string>
-    <string name="eid_home_code_update_text_row3_pin1_unblock">Kui olete unustanud PIN1 koodi, kuid teate PUK koodi, siis siin saate määrata uue PIN1 koodi.</string>
-    <string name="eid_home_code_update_text_row4_pin1_unblock">PUK koodi leiad ID-kaardi koodiümbrikus, kui sa pole seda vahepeal muutnud.</string>
+    <string name="eid_home_code_update_text_row2_pin1_unblock">PIN1-koodi kasutatakse isikutuvastamiseks.</string>
+    <string name="eid_home_code_update_text_row3_pin1_unblock">Kui oled unustanud PIN1-koodi, kuid tead PUK-koodi, siis siin saad määrata uue PIN1-koodi.</string>
+    <string name="eid_home_code_update_text_row4_pin1_unblock">PUK-koodi leiad ID-kaardi koodiümbrikus, kui sa pole seda vahepeal muutnud.</string>
     <string name="eid_home_code_update_text_row1_pin2_edit">Uus PIN2 peab olema erinev eelmisest.</string>
-    <string name="eid_home_code_update_text_row2_pin2_edit">PIN2 koodi kasutatakse digitaalallkirja andmiseks.</string>
-    <string name="eid_home_code_update_text_row3_pin2_edit">Kui sisestad PIN2 koodi kolm korda valesti, siis allkirjastamise sertifikaat blokeeritakse ning ID-kaarti pole võimalik allkirjastamiseks kasutada enne blokeeringu tühistamist PUK koodi abil.</string>
+    <string name="eid_home_code_update_text_row2_pin2_edit">PIN2-koodi kasutatakse digitaalallkirja andmiseks.</string>
+    <string name="eid_home_code_update_text_row3_pin2_edit">Kui sisestad PIN2-koodi kolm korda valesti, siis allkirjastamise sertifikaat blokeeritakse ning ID-kaarti pole võimalik allkirjastamiseks kasutada enne blokeeringu tühistamist PUK-koodi abil.</string>
     <string name="eid_home_code_update_text_row1_pin2_unblock">Uus PIN2 peab olema erinev eelmisest.</string>
-    <string name="eid_home_code_update_text_row2_pin2_unblock">PIN2 koodi kasutatakse digitaalallkirja andmiseks.</string>
-    <string name="eid_home_code_update_text_row3_pin2_unblock">Kui olete unustanud PIN2 koodi, kuid teate PUK koodi, siis siin saate määrata uue PIN2 koodi.</string>
-    <string name="eid_home_code_update_text_row4_pin2_unblock">PUK koodi leiad ID-kaardi koodiümbrikus, kui sa pole seda vahepeal muutnud.</string>
-    <string name="eid_home_code_update_text_row1_puk_edit">PUK koodi abil saab tühistada sertifikaadi blokeeringu, kui PIN1 või PIN2 koodi on 3 korda järjest valesti sisestatud.</string>
-    <string name="eid_home_code_update_text_row2_puk_edit">Kui peale vahetamist PUK kood ununeb ja sertifikaat jääb blokeerituks kolme vale PIN1 või PIN2 sisestamise järel, siis ainus võimalus ID-kaart jälle tööle saada on pöörduda klienditeeninduspunkti poole.</string>
-    <string name="eid_home_code_update_current_pin1_edit">KEHTIV PIN1 KOOD</string>
-    <string name="eid_home_code_update_current_pin1_unblock">KEHTIV PUK KOOD</string>
-    <string name="eid_home_code_update_current_pin2_edit">KEHTIV PIN2 KOOD</string>
-    <string name="eid_home_code_update_current_pin2_unblock">KEHTIV PUK KOOD</string>
-    <string name="eid_home_code_update_current_puk_edit">KEHTIV PUK KOOD</string>
-    <string name="eid_home_code_update_new_pin1">UUS PIN1 KOOD (vähemalt %1$d sümbolit)</string>
-    <string name="eid_home_code_update_new_pin2">UUS PIN2 KOOD (vähemalt %1$d sümbolit)</string>
-    <string name="eid_home_code_update_new_puk">UUS PUK KOOD (vähemalt %1$d sümbolit)</string>
-    <string name="eid_home_code_update_repeat_pin1">UUS PIN1 KOOD UUESTI</string>
-    <string name="eid_home_code_update_repeat_pin2">UUS PIN2 KOOD UUESTI</string>
-    <string name="eid_home_code_update_repeat_puk">UUS PUK KOOD UUESTI</string>
+    <string name="eid_home_code_update_text_row2_pin2_unblock">PIN2-koodi kasutatakse digitaalallkirja andmiseks.</string>
+    <string name="eid_home_code_update_text_row3_pin2_unblock">Kui oled unustanud PIN2-koodi, kuid tead PUK-koodi, siis siin saad määrata uue PIN2-koodi.</string>
+    <string name="eid_home_code_update_text_row4_pin2_unblock">PUK-koodi leiad ID-kaardi koodiümbrikus, kui sa pole seda vahepeal muutnud.</string>
+    <string name="eid_home_code_update_text_row1_puk_edit">PUK-koodi abil saab tühistada sertifikaadi blokeeringu, kui PIN1- või PIN2-koodi on 3 korda järjest valesti sisestatud.</string>
+    <string name="eid_home_code_update_text_row2_puk_edit">Kui peale vahetamist PUK-kood ununeb ja sertifikaat jääb blokeerituks kolme vale PIN1 või PIN2 sisestamise järel, siis ainus võimalus ID-kaart jälle tööle saada on pöörduda klienditeeninduspunkti poole.</string>
+    <string name="eid_home_code_update_current_pin1_edit">KEHTIV PIN1-KOOD</string>
+    <string name="eid_home_code_update_current_pin1_unblock">KEHTIV PUK-KOOD</string>
+    <string name="eid_home_code_update_current_pin2_edit">KEHTIV PIN2-KOOD</string>
+    <string name="eid_home_code_update_current_pin2_unblock">KEHTIV PUK-KOOD</string>
+    <string name="eid_home_code_update_current_puk_edit">KEHTIV PUK-KOOD</string>
+    <string name="eid_home_code_update_new_pin1">UUS PIN1-KOOD (vähemalt %1$d sümbolit)</string>
+    <string name="eid_home_code_update_new_pin2">UUS PIN2-KOOD (vähemalt %1$d sümbolit)</string>
+    <string name="eid_home_code_update_new_puk">UUS PUK-KOOD (vähemalt %1$d sümbolit)</string>
+    <string name="eid_home_code_update_repeat_pin1">UUS PIN1-KOOD UUESTI</string>
+    <string name="eid_home_code_update_repeat_pin2">UUS PIN2-KOOD UUESTI</string>
+    <string name="eid_home_code_update_repeat_puk">UUS PUK-KOOD UUESTI</string>
     <string name="eid_home_code_update_negative_button">KATKESTA</string>
     <string name="eid_home_code_update_positive_button_edit">MUUDA</string>
-    <string name="eid_home_code_update_positive_button_unblock">TÜHISTA BLOKEERING</string>
+    <string name="eid_home_code_update_positive_button_unblock">BLOKEERI LAHTI</string>
 
     <string name="eid_home_code_update_success_pin1_edit">PIN1 MUUDETUD</string>
     <string name="eid_home_code_update_success_pin1_unblock">PIN1 BLOKEERING TÜHISTATUD</string>
@@ -328,111 +328,111 @@
     <string name="eid_home_code_update_success_pin2_unblock">PIN2 BLOKEERING TÜHISTATUD</string>
     <string name="eid_home_code_update_success_puk_edit">PUK MUUDETUD</string>
 
-    <string name="eid_home_code_update_current_error_min_length_pin1_edit">Kehtiv PIN1 kood peab olema vähemalt %1$d-kohaline</string>
-    <string name="eid_home_code_update_current_error_min_length_pin1_unblock">Kehtiv PUK kood peab olema vähemalt %1$d-kohaline</string>
-    <string name="eid_home_code_update_current_error_min_length_pin2_edit">Kehtiv PIN2 kood peab olema vähemalt %1$d-kohaline</string>
-    <string name="eid_home_code_update_current_error_min_length_pin2_unblock">Kehtiv PUK kood peab olema vähemalt %1$d-kohaline</string>
-    <string name="eid_home_code_update_current_error_min_length_puk_edit">Kehtiv PUK kood peab olema vähemalt %1$d-kohaline</string>
-    <string name="eid_home_code_update_current_error_invalid_pin1_edit">Vale PIN1 kood. Saad veel proovida %1$d korda.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin1_unblock">Vale PUK kood. Saad veel proovida %1$d korda.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin2_edit">Vale PIN2 kood. Saad veel proovida %1$d korda.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin2_unblock">Vale PUK kood. Saad veel proovida %1$d korda.</string>
-    <string name="eid_home_code_update_current_error_invalid_puk_edit">Vale PUK kood. Saad veel proovida %1$d korda.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin1_edit_final">Vale PIN1 kood. Saad veel proovida 1 kord.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin1_unblock_final">Vale PUK kood. Saad veel proovida 1 kord.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin2_edit_final">Vale PIN2 kood. Saad veel proovida 1 kord.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin2_unblock_final">Vale PUK kood. Saad veel proovida 1 kord.</string>
-    <string name="eid_home_code_update_current_error_invalid_puk_edit_final">Vale PUK kood. Saad veel proovida 1 kord.</string>
-    <string name="eid_home_code_update_current_error_blocked_pin1_edit">PIN1 on blokeeritud, kuna PIN1 koodi on sisestatud 3 korda valesti. Tühista blokeering, et PIN1 taas kasutada.</string>
-    <string name="eid_home_code_update_current_error_blocked_pin1_unblock">PUK on blokeeritud, kuna PUK koodi on sisestatud 3 korda valesti. Tühista blokeering, et PUK taas kasutada.</string>
-    <string name="eid_home_code_update_current_error_blocked_pin2_edit">PIN2 on blokeeritud, kuna PIN2 koodi on sisestatud 3 korda valesti. Tühista blokeering, et PIN2 taas kasutada.</string>
-    <string name="eid_home_code_update_current_error_blocked_pin2_unblock">PUK on blokeeritud, kuna PUK koodi on sisestatud 3 korda valesti. Tühista blokeering, et PUK taas kasutada.</string>
-    <string name="eid_home_code_update_current_error_blocked_puk_edit">PUK on blokeeritud, kuna PUK koodi on sisestatud 3 korda valesti. Tühista blokeering, et PUK taas kasutada.</string>
+    <string name="eid_home_code_update_current_error_min_length_pin1_edit">Kehtiv PIN1-kood peab olema vähemalt %1$d-kohaline</string>
+    <string name="eid_home_code_update_current_error_min_length_pin1_unblock">Kehtiv PUK-kood peab olema vähemalt %1$d-kohaline</string>
+    <string name="eid_home_code_update_current_error_min_length_pin2_edit">Kehtiv PIN2-kood peab olema vähemalt %1$d-kohaline</string>
+    <string name="eid_home_code_update_current_error_min_length_pin2_unblock">Kehtiv PUK-kood peab olema vähemalt %1$d-kohaline</string>
+    <string name="eid_home_code_update_current_error_min_length_puk_edit">Kehtiv PUK-kood peab olema vähemalt %1$d-kohaline</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_edit">Vale PIN1-kood. Saad veel proovida %1$d korda.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_unblock">Vale PUK-kood. Saad veel proovida %1$d korda.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_edit">Vale PIN2-kood. Saad veel proovida %1$d korda.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_unblock">Vale PUK-kood. Saad veel proovida %1$d korda.</string>
+    <string name="eid_home_code_update_current_error_invalid_puk_edit">Vale PUK-kood. Saad veel proovida %1$d korda.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_edit_final">Vale PIN1-kood. Saad veel proovida 1 kord.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_unblock_final">Vale PUK-kood. Saad veel proovida 1 kord.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_edit_final">Vale PIN2-kood. Saad veel proovida 1 kord.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_unblock_final">Vale PUK-kood. Saad veel proovida 1 kord.</string>
+    <string name="eid_home_code_update_current_error_invalid_puk_edit_final">Vale PUK-kood. Saad veel proovida 1 kord.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin1_edit">PIN1 on blokeeritud, kuna PIN1-koodi on sisestatud 3 korda valesti. Tühista blokeering, et PIN1 taas kasutada.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin1_unblock">PUK on blokeeritud, kuna PUK-koodi on sisestatud 3 korda valesti. Tühista blokeering, et PUK taas kasutada.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin2_edit">PIN2 on blokeeritud, kuna PIN2-koodi on sisestatud 3 korda valesti. Tühista blokeering, et PIN2 taas kasutada.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin2_unblock">PUK on blokeeritud, kuna PUK-koodi on sisestatud 3 korda valesti. Tühista blokeering, et PUK taas kasutada.</string>
+    <string name="eid_home_code_update_current_error_blocked_puk_edit">PUK on blokeeritud, kuna PUK-koodi on sisestatud 3 korda valesti. Tühista blokeering, et PUK taas kasutada.</string>
 
-    <string name="eid_home_code_update_new_error_min_length_pin1">Uus PIN1 kood peab olema vähemalt %1$d-kohaline</string>
-    <string name="eid_home_code_update_new_error_min_length_pin2">Uus PIN2 kood peab olema vähemalt %1$d-kohaline</string>
-    <string name="eid_home_code_update_new_error_min_length_puk">Uus PUK kood peab olema vähemalt %1$d-kohaline</string>
-    <string name="eid_home_code_update_new_error_personal_code_pin1">Uus PIN1 kood ei saa olla osa sinu isikukoodist</string>
-    <string name="eid_home_code_update_new_error_personal_code_pin2">Uus PIN2 kood ei saa olla osa sinu isikukoodist</string>
-    <string name="eid_home_code_update_new_error_personal_code_puk">Uus PUK kood ei saa olla osa sinu isikukoodist</string>
-    <string name="eid_home_code_update_new_error_date_of_birth_pin1">Uus PIN1 kood ei saa olla sinu sünnikuupäev</string>
-    <string name="eid_home_code_update_new_error_date_of_birth_pin2">Uus PIN2 kood ei saa olla sinu sünnikuupäev</string>
-    <string name="eid_home_code_update_new_error_date_of_birth_puk">Uus PUK kood ei saa olla sinu sünnikuupäev</string>
-    <string name="eid_home_code_update_new_error_too_easy_pin1">Uus PIN1 kood ei saa olla nii lihtne</string>
-    <string name="eid_home_code_update_new_error_too_easy_pin2">Uus PIN2 kood ei saa olla nii lihtne</string>
-    <string name="eid_home_code_update_new_error_too_easy_puk">Uus PUK kood ei saa olla nii lihtne</string>
+    <string name="eid_home_code_update_new_error_min_length_pin1">Uus PIN1-kood peab olema vähemalt %1$d-kohaline</string>
+    <string name="eid_home_code_update_new_error_min_length_pin2">Uus PIN2-kood peab olema vähemalt %1$d-kohaline</string>
+    <string name="eid_home_code_update_new_error_min_length_puk">Uus PUK-kood peab olema vähemalt %1$d-kohaline</string>
+    <string name="eid_home_code_update_new_error_personal_code_pin1">Uus PIN1-kood ei saa olla osa sinu isikukoodist</string>
+    <string name="eid_home_code_update_new_error_personal_code_pin2">Uus PIN2-kood ei saa olla osa sinu isikukoodist</string>
+    <string name="eid_home_code_update_new_error_personal_code_puk">Uus PUK-kood ei saa olla osa sinu isikukoodist</string>
+    <string name="eid_home_code_update_new_error_date_of_birth_pin1">Uus PIN1-kood ei saa olla sinu sünnikuupäev</string>
+    <string name="eid_home_code_update_new_error_date_of_birth_pin2">Uus PIN2-kood ei saa olla sinu sünnikuupäev</string>
+    <string name="eid_home_code_update_new_error_date_of_birth_puk">Uus PUK-kood ei saa olla sinu sünnikuupäev</string>
+    <string name="eid_home_code_update_new_error_too_easy_pin1">Uus PIN1-kood ei saa olla nii lihtne</string>
+    <string name="eid_home_code_update_new_error_too_easy_pin2">Uus PIN2-kood ei saa olla nii lihtne</string>
+    <string name="eid_home_code_update_new_error_too_easy_puk">Uus PUK-kood ei saa olla nii lihtne</string>
     <string name="eid_home_code_update_new_error_same_as_current_pin1">Kehtiv ja uus PIN1 peavad olema erinevad</string>
     <string name="eid_home_code_update_new_error_same_as_current_pin2">Kehtiv ja uus PIN2 peavad olema erinevad</string>
     <string name="eid_home_code_update_new_error_same_as_current_puk">Kehtiv ja uus PUK peavad olema erinevad</string>
 
-    <string name="eid_home_code_update_repeat_error_mismatch_pin1">Uued PIN1 koodid peavad olema samad</string>
-    <string name="eid_home_code_update_repeat_error_mismatch_pin2">Uued PIN2 koodid peavad olema samad</string>
-    <string name="eid_home_code_update_repeat_error_mismatch_puk">Uued PUK koodid peavad olema samad</string>
+    <string name="eid_home_code_update_repeat_error_mismatch_pin1">Uued PIN1-koodid peavad olema samad</string>
+    <string name="eid_home_code_update_repeat_error_mismatch_pin2">Uued PIN2-koodid peavad olema samad</string>
+    <string name="eid_home_code_update_repeat_error_mismatch_puk">Uued PUK-koodid peavad olema samad</string>
 
     <!--  General  -->
-    <string name="my_eid_content_description">Minu e-ID</string>
-    <string name="document">Document</string>
-    <string name="container_has">Container has</string>
-    <string name="file">File</string>
+    <string name="my_eid_content_description">Minu eID</string>
+    <string name="document">Dokument</string>
+    <string name="container_has">Ümbrikus on</string>
+    <string name="file">Fail</string>
 
     <!-- Sharing Screen -->
     <string name="sharing_screen_title">Vali fail</string>
 
 
     <!--  TODO: tõlked  -->
-    <string name="signature_removed">Signature removed</string>
-    <string name="file_removed">File removed</string>
-    <string name="document_removed">Document removed</string>
-    <string name="file_added">File added</string>
-    <string name="error_dialog">Error dialog</string>
-    <string name="confirmation_dialog">Confirmation dialog</string>
-    <string name="recipients_found">Recipients found</string>
-    <string name="recipient_found">Recipient found</string>
-    <string name="recipient_added">Recipient added</string>
-    <string name="recipient_removed">Recipient removed</string>
-    <string name="add_recipient">Add recipient</string>
-    <string name="container_name_changed">Container name changed</string>
+    <string name="signature_removed">Allkiri eemaldatud</string>
+    <string name="file_removed">Fail eemaldatud</string>
+    <string name="document_removed">Dokument eemaldatud</string>
+    <string name="file_added">Fail lisatud</string>
+    <string name="error_dialog">Vea dialoogikast</string>
+    <string name="confirmation_dialog">Kinnitus dialoogikast</string>
+    <string name="recipients_found">Adressaadid leitud</string>
+    <string name="recipient_found">Adressaat leitud</string>
+    <string name="recipient_added">Adressaat lisatud</string>
+    <string name="recipient_removed">Adressaat eemaldatud</string>
+    <string name="add_recipient">Lisa adressaat</string>
+    <string name="container_name_changed">Ümbriku nimi muudetud</string>
     <string name="sign_container_button_description">Allkirjasta</string>
-    <string name="container_signing_cancelled">Container signing cancelled</string>
-    <string name="container_signature_added">Container signature added</string>
-    <string name="files_encrypted">Files encrypted</string>
-    <string name="file_decrypted">File decrypted</string>
-    <string name="file_decryption_cancelled">File decryption cancelled</string>
-    <string name="share_container">Share container</string>
-    <string name="pin1_change_cancelled">Pin1 change cancelled</string>
-    <string name="pin1_unblock_cancelled">Pin1 unblock cancelled</string>
-    <string name="pin2_change_cancelled">Pin2 change cancelled</string>
-    <string name="pin2_unblock_cancelled">Pin2 unblock cancelled</string>
-    <string name="puk_code_change_cancelled">PUK code change cancelled</string>
+    <string name="container_signing_cancelled">Ümbriku allkirjastamine katkestatud</string>
+    <string name="container_signature_added">Ümbrikule allkiri lisatud</string>
+    <string name="files_encrypted">Failid krüpteeritud</string>
+    <string name="file_decrypted">Fail dekrüpteeritud</string>
+    <string name="file_decryption_cancelled">Faili dekrüpteerimine katkestatud</string>
+    <string name="share_container">Jaga ümbrikut</string>
+    <string name="pin1_change_cancelled">Pin1 muutmine katkestatud</string>
+    <string name="pin1_unblock_cancelled">Pin1 lahti blokeerimine katkestatud</string>
+    <string name="pin2_change_cancelled">Pin2 muutmine katkestatud</string>
+    <string name="pin2_unblock_cancelled">Pin2 lahti blokeerimine katkestatud</string>
+    <string name="puk_code_change_cancelled">PUK-koodi muutmine katkestatud</string>
 
-    <string name="mobile_id_challenge">Mobile-ID challenge</string>
-    <string name="smart_id_challenge">Smart-ID challenge</string>
+    <string name="mobile_id_challenge">Mobiil-ID allkirjastamise kontrollkood</string>
+    <string name="smart_id_challenge">Smart-ID allkirjastamise kontrollkood</string>
 
-    <string name="configuration_is_already_up_to_date">configuration is already up-to-date</string>
-    <string name="configuration_updated">Configuration updated</string>
-    <string name="language_changed">Language changed</string>
-    <string name="close_menu">Close menu</string>
+    <string name="configuration_is_already_up_to_date">konfiguratsioon on juba ajakohane</string>
+    <string name="configuration_updated">Konfiguratsioon uuendatud</string>
+    <string name="language_changed">Keel muudetud</string>
+    <string name="close_menu">Sulge menüü</string>
 
 
-    <string name="confirm_container_name_change">Confirm container name change</string>
-    <string name="cancel_container_name_change">Cancel container name change</string>
-    <string name="decrypt_button_description">Decrypt document(s)</string>
-    <string name="cancel_decryption">Cancel decryption</string>
+    <string name="confirm_container_name_change">Kinnita ümbriku nime muutmine</string>
+    <string name="cancel_container_name_change">Katkesta ümbriku nime muutmine</string>
+    <string name="decrypt_button_description">Dekrüpteeri fail(id)</string>
+    <string name="cancel_decryption">Katkesta dekrüpteerimine</string>
     <string name="sign_container">Allkirjasta</string>
-    <string name="cancel_signing_process">Tühista</string>
-    <string name="confirm_pin1_change">Confirm Pin1 change</string>
-    <string name="cancel_pin1_change">Cancel Pin1 changing process</string>
-    <string name="confirm_pin1_unblock">Confirm Pin1 unblock</string>
-    <string name="cancel_pin1_unblock">Cancel Pin1 unblocking process</string>
-    <string name="confirm_pin2_change">Confirm Pin2 change</string>
-    <string name="cancel_pin2_change">Cancel Pin2 changing process</string>
-    <string name="confirm_pin2_unblock">Confirm Pin2 unblock</string>
-    <string name="cancel_pin2_unblock">Cancel Pin2 unblocking process</string>
-    <string name="confirm_puk_change">Confirm PUK change</string>
-    <string name="cancel_puk_change">Cancel PUK changing process</string>
+    <string name="cancel_signing_process">Katkesta</string>
+    <string name="confirm_pin1_change">Kinnita Pin1 muutmine</string>
+    <string name="cancel_pin1_change">Katkesta Pin1 muutmise protsess</string>
+    <string name="confirm_pin1_unblock">Kinnita Pin1 lahti blokeerimine</string>
+    <string name="cancel_pin1_unblock">Katkesta Pin1 lahti blokeerimise protsess</string>
+    <string name="confirm_pin2_change">Kinnita Pin2 muutmine</string>
+    <string name="cancel_pin2_change">Katkesta Pin2 muutmise protsess</string>
+    <string name="confirm_pin2_unblock">Kinnita Pin2 lahti blokeerimine</string>
+    <string name="cancel_pin2_unblock">Katkesta Pin2 lahti blokeerimise protsess</string>
+    <string name="confirm_puk_change">Kinnita PUK muutmine</string>
+    <string name="cancel_puk_change">Katkesta PUK muutmise protsess</string>
 
     <string name="crash_report_dialog_header">Kas saata vearaport?</string>
-    <string name="crash_report_dialog_text">Hei. Rakenduses juhtus viga. Palun aita meid ja saada meile vearaport, et saaksime selle vea parandada.</string>
+    <string name="crash_report_dialog_text">Rakenduses juhtus viga. Palun saada meile vearaport, et saaksime selle vea parandada.</string>
     <string name="crash_report_dialog_send_button">Saada</string>
     <string name="crash_report_dialog_always_send_button">Saada Alati</string>
     <string name="crash_report_dialog_dont_send_button">Ära saada</string>
