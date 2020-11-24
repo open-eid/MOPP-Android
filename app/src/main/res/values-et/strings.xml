@@ -51,6 +51,8 @@
     <string name="main_diagnostics_configuration_update_date">UUENDAMISE KUUPÄEV:\u0020</string>
     <string name="main_diagnostics_configuration_last_check_date">VIIMATI KONTROLLITUD:\u0020</string>
     <string name="main_diagnostics_configuration_check_for_update_button">KONTROLLI VÄRSKENDUSI</string>
+    <string name="main_diagnostics_rpuuid_default">vaikimisi määratud</string>
+    <string name="main_diagnostics_rpuuid_custom">käsitsi määratud</string>
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Allkirjastamiseks või kontrollimiseks vali fail</string>
