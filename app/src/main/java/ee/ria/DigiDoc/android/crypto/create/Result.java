@@ -100,6 +100,45 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
+    abstract class NameUpdateResult implements Result {
+
+        @Nullable abstract String name();
+
+        @Nullable abstract String newName();
+
+        abstract boolean inProgress();
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .nameUpdateShowing(name() != null)
+                    .newName(newName())
+                    .nameUpdateInProgress(inProgress())
+                    .nameUpdateError(error())
+                    .build();
+        }
+
+        static NameUpdateResult show(String name) {
+            return create(name, null,false, null);
+        }
+
+        static NameUpdateResult progress(String newName) {
+            return create(null, newName, true, null);
+        }
+
+        static NameUpdateResult failure(String name, Throwable error) {
+            return create(name, null, false, error);
+        }
+
+        private static NameUpdateResult create(@Nullable String name, @Nullable String newName,
+                                               boolean inProgress, @Nullable Throwable error) {
+            return new AutoValue_Result_NameUpdateResult(name, newName, inProgress, error);
+        }
+    }
+
+    @AutoValue
     abstract class DataFilesAddResult implements Result {
 
         @State abstract String state();

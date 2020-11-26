@@ -29,6 +29,7 @@ import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
+import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
 import io.reactivex.Observable;
@@ -163,8 +164,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             return;
         }
 
-        nameUpdateDialog.render(state.nameUpdateShowing(), state.nameUpdateName(),
-                state.nameUpdateError(), state.container());
+        nameUpdateDialog.render(showNameUpdate(state), state.nameUpdateName(), state.nameUpdateError());
 
         int titleResId = isExistingContainer ? R.string.signature_update_title_existing
                 : R.string.signature_update_title_created;
@@ -299,6 +299,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         }
     }
 
+    private boolean showNameUpdate(ViewState state) {
+        return state.container() != null && state.container().signatures().isEmpty() && state.nameUpdateShowing();
+    }
+
     private void setActivity(boolean activity) {
         activityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
         activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
@@ -323,11 +327,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @SuppressWarnings("unchecked")
     private Observable<Intent.NameUpdateIntent> nameUpdateIntent() {
         return Observable.mergeArray(
-                adapter.nameUpdateClicks()
-                        .map(ignored -> Intent.NameUpdateIntent.show(containerFile)),
+                adapter.nameUpdateClicks().map(ignored -> Intent.NameUpdateIntent.show(containerFile)),
                 cancels(nameUpdateDialog).map(ignored -> Intent.NameUpdateIntent.clear()),
-                nameUpdateDialog.updates()
-                        .map(name -> Intent.NameUpdateIntent.update(containerFile, name)));
+                nameUpdateDialog.updates().map(name -> Intent.NameUpdateIntent.update(containerFile, name)));
     }
 
     private Observable<Intent.DocumentsAddIntent> addDocumentsIntent() {

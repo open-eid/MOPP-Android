@@ -17,6 +17,7 @@ import com.bluelinelabs.conductor.Controller;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
+import java.util.List;
 import java.util.Objects;
 
 import ee.ria.DigiDoc.R;
@@ -24,6 +25,7 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
+import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -76,6 +78,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
     private View view;
     private Toolbar toolbarView;
+    private NameUpdateDialog nameUpdateDialog;
     private CryptoCreateAdapter adapter;
     private View activityOverlayView;
     private View activityIndicatorView;
@@ -105,6 +108,17 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
     private Observable<Intent.InitialIntent> initialIntent() {
         return Observable.just(Intent.InitialIntent.create(containerFile, intent));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Observable<Intent.NameUpdateIntent> nameUpdateIntent() {
+        return Observable.mergeArray(
+                adapter.nameUpdateClicks()
+                        .map(ignored -> Intent.NameUpdateIntent.show(name)),
+                cancels(nameUpdateDialog).map(ignored -> Intent.NameUpdateIntent.clear()),
+                nameUpdateDialog.updates()
+                        .map(newName -> Intent.NameUpdateIntent.update(name, newName))
+        );
     }
 
     private Observable<Intent.UpButtonClickIntent> upButtonClickIntent() {
@@ -184,7 +198,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
-        return Observable.mergeArray(initialIntent(), upButtonClickIntent(), dataFilesAddIntent(),
+        return Observable.mergeArray(initialIntent(), nameUpdateIntent(), upButtonClickIntent(), dataFilesAddIntent(),
                 dataFileRemoveIntent(), dataFileViewIntent(), recipientsAddButtonClickIntent(),
                 recipientRemoveIntent(), encryptIntent(), decryptionIntent(), decryptIntent(),
                 sendIntent(), errorIntents());
@@ -195,7 +209,8 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         if (state.containerFile() != null) {
             containerFile = state.containerFile();
         }
-        name = state.name();
+
+        name = state.newName() != null ? state.newName() : state.name();
         dataFiles = state.dataFiles();
         recipients = state.recipients();
         dataFilesAddError = state.dataFilesAddError();
@@ -205,13 +220,15 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         setActivity(state.dataFilesAddState().equals(State.ACTIVE) ||
                 state.encryptState().equals(State.ACTIVE));
 
+        nameUpdateDialog.render(state.nameUpdateShowing(), state.name(), state.nameUpdateError());
+
         int titleResId = state.encryptButtonVisible() ? R.string.crypto_create_title_encrypt
                 : R.string.crypto_create_title_decrypt;
         toolbarView.setTitle(titleResId);
 
         AccessibilityUtils.setAccessibilityPaneTitle(view, "File " + Objects.requireNonNull(getResources()).getString(titleResId));
 
-        adapter.dataForContainer(name, dataFiles, state.dataFilesViewEnabled(),
+        adapter.dataForContainer(name, containerFile, dataFiles, state.dataFilesViewEnabled(),
                 state.dataFilesAddEnabled(), state.dataFilesRemoveEnabled(), recipients,
                 state.recipientsAddEnabled(), state.recipientsRemoveEnabled(),
                 state.encryptSuccessMessageVisible(), state.decryptSuccessMessageVisible());
@@ -293,6 +310,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
         view = inflater.inflate(R.layout.crypto_create_screen, container, false);
         toolbarView = view.findViewById(R.id.toolbar);
+        nameUpdateDialog = new NameUpdateDialog(container.getContext());
         RecyclerView listView = view.findViewById(R.id.cryptoCreateList);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
