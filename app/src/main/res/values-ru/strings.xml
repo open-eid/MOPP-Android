@@ -12,7 +12,7 @@
     <string name="main_home_menu_title">Меню</string>
     <string name="main_home_menu_button">Меню</string>
     <string name="main_home_menu_help">ПОМОЩЬ</string>
-    <string name="main_home_menu_help_url">https://www.id.ee/index.php?id=30515</string>
+    <string name="main_home_menu_help_url">https://www.id.ee/ru/id-pomoshh/</string>
     <string name="main_home_menu_recent">НЕДАВНИЕ ДОКУМЕНТЫ</string>
     <string name="main_home_menu_settings">НАСТРОЙКИ</string>
     <string name="main_home_menu_about">ИНФОРМАЦИЯ</string>
@@ -22,8 +22,8 @@
     <string name="main_settings_title">Настройки</string>
     <string name="main_settings_phone_no_title">Код страны и телефонный номер</string>
     <string name="main_settings_personal_code_title">Личный код</string>
-    <string name="main_settings_tsa_url_title">URL-адрес временного штампа</string>
-    <string name="main_settings_uuid_title">Доступ к услуге Mobiil-ID и Smart-ID</string>
+    <string name="main_settings_tsa_url_title">Доступ к услугам отметки времени</string>
+    <string name="main_settings_uuid_title">Доступ к услуге mobiil-ID и Smart-ID</string>
     <string name="main_settings_tsa_url_use_default">Использовать значение по умолчанию</string>
     <string name="main_settings_role_title">Роль</string>
     <string name="main_settings_city_title">Город</string>
@@ -116,18 +116,18 @@
     <string name="signature_update_signature_add_success">ПОДПИСЬ ДОБАВЛЕНА</string>
     <string name="signature_update_signature_add_error">Что-то пошло не так</string>
 
-    <string name="signature_update_signature_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/index.php?id=39025</string>
+    <string name="signature_update_signature_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="signature_update_signature_error_message_too_many_requests_additional_information">Дополнительная информация</string>
-    <string name="signature_update_signature_error_message_too_many_requests_additional_information_link">https://www.id.ee/index.php?id=39025</string>
+    <string name="signature_update_signature_error_message_too_many_requests_additional_information_link">https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
 
     <string name="signature_update_signature_error_no_response">Пожалуйста проверьте подключение к интернету</string>
     <string name="signature_update_signature_error_invalid_ssl_handshake">Не удалось создать SSL канал передачи данных. Проверьте настройки вашего приложения или обновления программного обеспечения.</string>
 
-    <string name="signature_update_mobile_id_message">Введите свой телефонный номер и личный код для подписания с помощью Mobiil-ID</string>
+    <string name="signature_update_mobile_id_message">Введите свой телефонный номер и личный код для подписания с помощью mobiil-ID</string>
     <string name="signature_update_mobile_id_phone_no">Код страны и телефонный номер</string>
     <string name="signature_update_mobile_id_personal_code">Личный код</string>
     <string name="signature_update_mobile_id_remember_me">Запомни меня</string>
-    <string name="signature_update_mobile_id_info">Убедитесь в правильности контрольного кодa и введите PIN2-код для Mobiil-ID</string>
+    <string name="signature_update_mobile_id_info">Убедитесь в правильности контрольного кодa и введите PIN2-код для mobiil-ID</string>
 
     <!-- Currently must be in English -->
     <string name="signature_update_mobile_id_display_message">Sign document</string>
@@ -135,7 +135,7 @@
     <string name="signature_update_mobile_id_status_request_sent">Запрос на подпись отправлен</string>
     <string name="signature_update_mobile_id_status_request_ok">Запрос принят</string>
     <string name="signature_update_mobile_id_status_no_country_code">Номер телефона должен содержать код страны</string>
-    <string name="signature_update_mobile_id_status_expired_transaction">Срок действия вашей транзакции Mobiil-ID истек. Пожалуйста, попробуйте еще раз.</string>
+    <string name="signature_update_mobile_id_status_expired_transaction">Срок действия вашей транзакции mobiil-ID истек. Пожалуйста, попробуйте еще раз.</string>
     <string name="signature_update_mobile_id_status_user_cancel">Пользователю отказано</string>
     <string name="signature_update_mobile_id_status_signature">Подпись получена</string>
     <string name="signature_update_mobile_id_status_outstanding_transaction">Запрос в ожидании</string>
@@ -145,10 +145,10 @@
     <string name="signature_update_mobile_id_status_sim_error">Ошибка SIM карты</string>
     <string name="signature_update_mobile_id_status_not_valid">Подпись недействительна</string>
     <string name="signature_update_mobile_id_status_revoked_certificate">Сертификаты отозваны</string>
-    <string name="signature_update_mobile_id_status_signature_hash_mismatch">Не удалось выполнить операцию Mobiil-ID. Пожалуйста, свяжитесь со своим мобильным оператором.</string>
+    <string name="signature_update_mobile_id_status_signature_hash_mismatch">Не удалось выполнить операцию mobiil-ID. Пожалуйста, свяжитесь со своим мобильным оператором.</string>
     <string name="signature_update_mobile_id_status_internal_error">Техническая ошибка</string>
 
-    <string name="signature_update_mobile_id_error_unknown">Неизвестная ошибка при подписании с помощю Mobiil-ID</string>
+    <string name="signature_update_mobile_id_error_unknown">Неизвестная ошибка при подписании с помощю mobiil-ID</string>
     <string name="signature_update_mobile_id_error_local_service_exception">Что-то пошло не так, попробуйте позже</string>
     <string name="signature_update_mobile_id_error_general_client">Что-то пошло не так, попробуйте снова</string>
     <string name="signature_update_mobile_id_error_incorrect_input_parameters">Неверный номер телефона и/или личный код, не эстонские номера телефонов должны начинаться с кода страны</string>
@@ -158,16 +158,16 @@
     <string name="signature_update_mobile_id_error_missing_user_certificate">Отсутствует сертификат пользователя</string>
     <string name="signature_update_mobile_id_error_certificate_validity_unknown">Не удалось проверить действительность сертификата</string>
     <string name="signature_update_mobile_id_error_session_locked">Сессия мобильной подписи заблокирована, попробуйте позже</string>
-    <string name="signature_update_mobile_id_error_general_user">Ошабка приложения Mobiil-ID в телефоне пользователя</string>
-    <string name="signature_update_mobile_id_error_not_mobile_id_user">Пользователь не является клиентом Mobiil-ID</string>
+    <string name="signature_update_mobile_id_error_general_user">Ошабка приложения mobiil-ID в телефоне пользователя</string>
+    <string name="signature_update_mobile_id_error_not_mobile_id_user">Пользователь не является клиентом mobiil-ID</string>
     <string name="signature_update_mobile_id_error_user_certificate_revoked">Ваш сертификат цифровой подписи отозван</string>
     <string name="signature_update_mobile_id_error_user_certificate_status_unknown">Статус Вашего сертификата цифровой подписи неизвестен</string>
     <string name="signature_update_mobile_id_error_user_certificate_suspended">Ваш сертификат цифровой подписи временно приостановлен</string>
     <string name="signature_update_mobile_id_error_user_certificate_expired">Срок действительности Вашего сертификата цифровой подписи истек</string>
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Слишком много файлов в контейнере</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/index.php?id=39025</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Дополнительная информация</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/index.php?id=39025</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Превышен лимит одновременных запросов</string>
 
     <string name="signature_update_smart_id_message">Введите свой личный код для подписи с Smart-ID</string>
@@ -182,11 +182,11 @@
     <string name="signature_update_smart_id_error_message_under_maintenance">Технический сбой услуги Smart-ID. Пожалуйста, попробуйте позже.</string>
     <string name="signature_update_smart_id_error_message_account_not_found">Счет не найден</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Сессия не найден</string>
-    <string name="signature_update_smart_id_error_message_forbidden">Не удалось подписать контейнер. Проверьте настройки доступа услуги Smart-ID. https://www.id.ee/index.php?id=39025</string>
+    <string name="signature_update_smart_id_error_message_forbidden">Не удалось подписать контейнер. Проверьте настройки доступа услуги Smart-ID. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
 
     <string name="signature_update_id_card_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
-    <string name="signature_update_id_card_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация.</string>
+    <string name="signature_update_id_card_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация...</string>
     <string name="signature_update_id_card_sign_message">Готово к подписанию с использованием ID-карты</string>
     <string name="signature_update_id_card_sign_data">%1$s %2$s (%3$s)</string>
     <string name="signature_update_id_card_sign_pin2">Введите PIN2</string>
@@ -205,7 +205,7 @@
     <string name="crypto_create_encrypt_success_message">ШИФРОВАНИЕ УДАЛОСЬ</string>
     <string name="crypto_create_decrypt_success_message">ДЕШИФРОВАНИЕ УДАЛОСЬ</string>
     <string name="crypto_create_name">КОНТЕЙНЕР:</string>
-    <string name="crypto_create_data_files_title">Выбранные файлы для шифрования</string>
+    <string name="crypto_create_data_files_title">Зашифрованные файлы</string>
     <string name="crypto_create_data_files_add_button_description">ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
     <string name="crypto_create_data_files_add_button">+ ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
     <string name="crypto_create_data_files_add_error_exists">Файл уже существует в контейнере</string>
@@ -230,12 +230,12 @@
     <string name="crypto_recipients_title">Добавить получателей</string>
     <string name="crypto_recipients_search">Введите личный код, код компании или регистра</string>
     <string name="crypto_recipients_search_result_empty">У человека или компании нет действующего сертификата.\nДля шифрования необходимо иметь действующий сертификат.\nЕсли у вас возникнут вопросы, пожалуйста, обратитесь на id.ee.</string>
-    <string name="crypto_recipients_selected_subhead">Выбрать получателей</string>
-    <string name="crypto_recipients_done_button">ПОДВЕРДИТЬ ВЫБОР</string>
+    <string name="crypto_recipients_selected_subhead">Добавлен получатель</string>
+    <string name="crypto_recipients_done_button">ПОДТВЕРДИТЬ</string>
 
     <string name="crypto_create_decrypt_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>
     <string name="crypto_create_decrypt_progress_message_reader_detected">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
-    <string name="crypto_create_decrypt_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация.</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация...</string>
     <string name="crypto_create_decrypt_message">Готово к дешифрованию с помощью ID-карты.</string>
     <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
     <string name="crypto_create_decrypt_pin1">Пожалуйста, введите PIN1.</string>
@@ -248,7 +248,7 @@
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Подключите считыватель карты и вставьте в него Вашу ID-карту.</string>
     <string name="eid_home_id_card_status_reader_detected_message">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
-    <string name="eid_home_id_card_status_card_detected_message">Обнаружена ID-карта. Запрашивается информация.</string>
+    <string name="eid_home_id_card_status_card_detected_message">Обнаружена ID-карта. Запрашивается информация...</string>
     <string name="eid_home_error">Что-то пошло не так. Пожалуйста, попробуйте снова.</string>
 
     <string name="eid_home_data_type">Мой eID</string>
@@ -261,13 +261,13 @@
     <string name="eid_home_data_expiry_date_valid">Действителен</string>
     <string name="eid_home_data_expiry_date_expired">Недействителен</string>
     <string name="eid_home_data_expiry_date_invalid">Неизвестно</string>
-    <string name="eid_home_data_certificates_title">PIN/PUK КОДЫ И СЕРТИФИКАТЫ</string>
-    <string name="eid_home_data_certificates_puk_title">PUK код</string>
-    <string name="eid_home_data_certificates_puk_text">PUK код в Вашем конверте кодов</string>
+    <string name="eid_home_data_certificates_title">PIN/PUK И СЕРТИФИКАТЫ</string>
+    <string name="eid_home_data_certificates_puk_title">PUK-код</string>
+    <string name="eid_home_data_certificates_puk_text">PUK-код в Вашем конверте кодов</string>
     <string name="eid_home_data_certificates_puk_button">ПОМЕНЯТЬ PUK</string>
-    <string name="eid_home_data_certificates_puk_error">PUK заблокирован, потому что был неверно введен 3 раза.</string>
-    <string name="eid_home_data_certificates_puk_link">Здесь Вы можете найти инструкции о том, как получить новый документ.</string>
-    <string name="eid_home_data_certificates_puk_link_url">https://www.id.ee/?lang=ru&amp;id=33922</string>
+    <string name="eid_home_data_certificates_puk_error">PUK заблокирован, потому что был неверно введен 3 раза. PUK невозможно разблокировать самому.</string>
+    <string name="eid_home_data_certificates_puk_link">Для получения нового PUK кода для своей ID-карты, посетите центр обслуживания, где вы сможете получить конверт с кодами.</string>
+    <string name="eid_home_data_certificates_puk_link_url">https://www.politsei.ee/ru/instruktsii/hodataystvo-o-vydache-id-karty-vzroslomu/pamyatka-dlya-polzovatelya-id-karti/</string>
 
     <string name="eid_home_certificate_data_title_auth">Идентификационный сертификат</string>
     <string name="eid_home_certificate_data_title_sign">Сертификат цифровой подписи</string>
@@ -294,32 +294,32 @@
     <string name="eid_home_code_update_title_pin2_unblock">Разблокировать PIN2</string>
     <string name="eid_home_code_update_title_puk_edit">Изменить PUK</string>
     <string name="eid_home_code_update_text_row1_pin1_edit">Новый PIN1 должен отличаться от предыдущего PIN1.</string>
-    <string name="eid_home_code_update_text_row2_pin1_edit">PIN1 код используется для идентификации.</string>
-    <string name="eid_home_code_update_text_row3_pin1_edit">Если PIN1 введен неверно 3 раза, сертификат индентификации будет заблокирован и станет невозможным использовать ID-карту для проверки идентификации до тех пор, пока PIN1 будет не разблокирован с помощью PUK кода.</string>
+    <string name="eid_home_code_update_text_row2_pin1_edit">PIN1-код используется для идентификации.</string>
+    <string name="eid_home_code_update_text_row3_pin1_edit">Если PIN1 введен неверно 3 раза, сертификат индентификации будет заблокирован и станет невозможным использовать ID-карту для проверки идентификации до тех пор, пока PIN1 будет не разблокирован с помощью PUK-кода.</string>
     <string name="eid_home_code_update_text_row1_pin1_unblock">Новый PIN1 должен отличаться от предыдущего PIN1.</string>
-    <string name="eid_home_code_update_text_row2_pin1_unblock">PIN1 код используется для идентификации.</string>
-    <string name="eid_home_code_update_text_row3_pin1_unblock">Если Вы забыли PIN1 код, но Вы знаете Ваш PUK код, тогда Вы сможете поменять PIN1 с помощью PUK кода.</string>
-    <string name="eid_home_code_update_text_row4_pin1_unblock">PUK код написан в конверте, который прилагается к ID-карте.</string>
+    <string name="eid_home_code_update_text_row2_pin1_unblock">PIN1-код используется для идентификации.</string>
+    <string name="eid_home_code_update_text_row3_pin1_unblock">Если Вы забыли PIN1-код, но Вы знаете Ваш PUK-код, тогда Вы сможете поменять PIN1 с помощью PUK-кода.</string>
+    <string name="eid_home_code_update_text_row4_pin1_unblock">PUK-код написан в конверте, который прилагается к ID-карте.</string>
     <string name="eid_home_code_update_text_row1_pin2_edit">Новый PIN2 должен отличаться от предыдущего PIN2.</string>
-    <string name="eid_home_code_update_text_row2_pin2_edit">PIN2 код используется для дигитальной подписи документа.</string>
-    <string name="eid_home_code_update_text_row3_pin2_edit">Если PIN2 введен неверно 3 раза, сертификат подписи будет заблокирован и станет невозможным использовать ID-карту для дигитальной подписи до тех пор, пока PIN2 будет не разблокирован с помощью PUK кода.</string>
+    <string name="eid_home_code_update_text_row2_pin2_edit">PIN2-код используется для дигитальной подписи документа.</string>
+    <string name="eid_home_code_update_text_row3_pin2_edit">Если PIN2 введён 3 раза неверно, тогда блокируется сертификат цифровой подписи и использовать ID-карту для цифровой подписи невозможно, пока блокировка не снята PUK-кодом.</string>
     <string name="eid_home_code_update_text_row1_pin2_unblock">Новый PIN2 должен отличаться от предыдущего PIN2.</string>
-    <string name="eid_home_code_update_text_row2_pin2_unblock">PIN2 код используется для дигитальной подписи документа.</string>
-    <string name="eid_home_code_update_text_row3_pin2_unblock">Если Вы забыли PIN2 код, но Вы знаете Ваш PUK код, тогда Вы сможете поменять PIN2 с помощью PUK кода.</string>
-    <string name="eid_home_code_update_text_row4_pin2_unblock">PUK код написан в конверте, который прилагается к ID-карте.</string>
-    <string name="eid_home_code_update_text_row1_puk_edit">PUK код используется для разблокирования сертификатов, когда PIN1 или PIN2 были неверное введены 3 раза.</string>
-    <string name="eid_home_code_update_text_row2_puk_edit">Если Вы забудете PUK код или сертификаты остануться заблокированными, необходимо посетить центр обслуживания для получения новых кодов.</string>
-    <string name="eid_home_code_update_current_pin1_edit">ДЕЙСТВУЮЩИЙ PIN1 КОД</string>
-    <string name="eid_home_code_update_current_pin1_unblock">ДЕЙСТВУЮЩИЙ PUK КОД</string>
-    <string name="eid_home_code_update_current_pin2_edit">ДЕЙСТВУЮЩИЙ PIN2 КОД</string>
-    <string name="eid_home_code_update_current_pin2_unblock">ДЕЙСТВУЮЩИЙ PUK КОД</string>
-    <string name="eid_home_code_update_current_puk_edit">ДЕЙСТВУЮЩИЙ PUK КОД</string>
-    <string name="eid_home_code_update_new_pin1">НОВЫЙ PIN1 КОД (не меньше %1$d символов)</string>
-    <string name="eid_home_code_update_new_pin2">НОВЫЙ PIN2 КОД (не меньше %1$d символов)</string>
-    <string name="eid_home_code_update_new_puk">НОВЫЙ PUK КОД (не меньше %1$d символов)</string>
-    <string name="eid_home_code_update_repeat_pin1">ПОВТОРИТЬ НОВЫЙ PIN1 КОД</string>
-    <string name="eid_home_code_update_repeat_pin2">ПОВТОРИТЬ НОВЫЙ PIN2 КОД</string>
-    <string name="eid_home_code_update_repeat_puk">ПОВТОРИТЬ НОВЫЙ PUK КОД</string>
+    <string name="eid_home_code_update_text_row2_pin2_unblock">PIN2-код используется для дигитальной подписи документа.</string>
+    <string name="eid_home_code_update_text_row3_pin2_unblock">Если Вы забыли PIN2-код, но Вы знаете Ваш PUK-код, тогда Вы сможете поменять PIN2 с помощью PUK-кода.</string>
+    <string name="eid_home_code_update_text_row4_pin2_unblock">PUK-код написан в конверте, который прилагается к ID-карте.</string>
+    <string name="eid_home_code_update_text_row1_puk_edit">PUK-код используется для разблокирования сертификатов, когда PIN1 или PIN2 были неверно введены 3 раза.</string>
+    <string name="eid_home_code_update_text_row2_puk_edit">Если Вы забудете PUK-код или сертификаты остануться заблокированными, необходимо посетить центр обслуживания для получения новых кодов.</string>
+    <string name="eid_home_code_update_current_pin1_edit">ДЕЙСТВУЮЩИЙ PIN1-КОД</string>
+    <string name="eid_home_code_update_current_pin1_unblock">ДЕЙСТВУЮЩИЙ PUK-КОД</string>
+    <string name="eid_home_code_update_current_pin2_edit">ДЕЙСТВУЮЩИЙ PIN2-КОД</string>
+    <string name="eid_home_code_update_current_pin2_unblock">ДЕЙСТВУЮЩИЙ PUK-КОД</string>
+    <string name="eid_home_code_update_current_puk_edit">ДЕЙСТВУЮЩИЙ PUK-КОД</string>
+    <string name="eid_home_code_update_new_pin1">НОВЫЙ PIN1-КОД (не меньше %1$d символов)</string>
+    <string name="eid_home_code_update_new_pin2">НОВЫЙ PIN2-КОД (не меньше %1$d символов)</string>
+    <string name="eid_home_code_update_new_puk">НОВЫЙ PUK-КОД (не меньше %1$d символов)</string>
+    <string name="eid_home_code_update_repeat_pin1">ПОВТОРИТЬ НОВЫЙ PIN1-КОД</string>
+    <string name="eid_home_code_update_repeat_pin2">ПОВТОРИТЬ НОВЫЙ PIN2-КОД</string>
+    <string name="eid_home_code_update_repeat_puk">ПОВТОРИТЬ НОВЫЙ PUK-КОД</string>
     <string name="eid_home_code_update_negative_button">ОТМЕНИТЬ</string>
     <string name="eid_home_code_update_positive_button_edit">ИЗМЕНИТЬ</string>
     <string name="eid_home_code_update_positive_button_unblock">РАЗБЛОКИРОВАТЬ</string>
@@ -330,46 +330,46 @@
     <string name="eid_home_code_update_success_pin2_unblock">PIN2 РАЗБЛОКИРОВАН</string>
     <string name="eid_home_code_update_success_puk_edit">PUK ИЗМЕНЕН</string>
 
-    <string name="eid_home_code_update_current_error_min_length_pin1_edit">Действующий PIN1 код должен быть не менее %1$d символов</string>
-    <string name="eid_home_code_update_current_error_min_length_pin1_unblock">Действующий PUK код должен быть не менее %1$d символов</string>
-    <string name="eid_home_code_update_current_error_min_length_pin2_edit">Действующий PIN2 код должен быть не менее %1$d символов</string>
-    <string name="eid_home_code_update_current_error_min_length_pin2_unblock">Действующий PUK код должен быть не менее %1$d символов</string>
-    <string name="eid_home_code_update_current_error_min_length_puk_edit">Действующий PUK код должен быть не менее %1$d символов</string>
-    <string name="eid_home_code_update_current_error_invalid_pin1_edit">Неверный PIN1 код. Вы можете попробовать ещё %1$d раз.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin1_unblock">Неверный PUK код. Вы можете попробовать ещё %1$d раз.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin2_edit">Неверный PIN2 код. Вы можете попробовать ещё %1$d раз.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin2_unblock">Неверный PUK код. Вы можете попробовать ещё %1$d раз.</string>
-    <string name="eid_home_code_update_current_error_invalid_puk_edit">Неверный PUK код. Вы можете попробовать ещё %1$d раз.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin1_edit_final">Неверный PIN1 код. Вы можете попробовать ещё 1 раз.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin1_unblock_final">Неверный PUK код. Вы можете попробовать ещё 1 раз.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin2_edit_final">Неверный PIN2 код. Вы можете попробовать ещё 1 раз.</string>
-    <string name="eid_home_code_update_current_error_invalid_pin2_unblock_final">Неверный PUK код. Вы можете попробовать ещё 1 раз.</string>
-    <string name="eid_home_code_update_current_error_invalid_puk_edit_final">Неверный PUK код. Вы можете попробовать ещё %1$d раз.</string>
-    <string name="eid_home_code_update_current_error_blocked_pin1_edit">PIN1 заблокирован, потому что PIN1 код был введён неверно 3 раза. Разблокируйте, чтобы использовать PIN1.</string>
-    <string name="eid_home_code_update_current_error_blocked_pin1_unblock">PUK заблокирован, потому что PUK код был введён неверно 3 раза. Разблокируйте, чтобы использовать PUK.</string>
-    <string name="eid_home_code_update_current_error_blocked_pin2_edit">PIN2 заблокирован, потому что PIN2 код был введён неверно 3 раза. Разблокируйте, чтобы использовать PIN2.</string>
-    <string name="eid_home_code_update_current_error_blocked_pin2_unblock">PUK заблокирован, потому что PUK код был введён неверно 3 раза. Разблокируйте, чтобы использовать PUK.</string>
-    <string name="eid_home_code_update_current_error_blocked_puk_edit">PUK заблокирован, потому что PUK код был введён неверно 3 раза. Разблокируйте, чтобы использовать PUK.</string>
+    <string name="eid_home_code_update_current_error_min_length_pin1_edit">Действующий PIN1-код должен быть не менее %1$d символов</string>
+    <string name="eid_home_code_update_current_error_min_length_pin1_unblock">Действующий PUK-код должен быть не менее %1$d символов</string>
+    <string name="eid_home_code_update_current_error_min_length_pin2_edit">Действующий PIN2-код должен быть не менее %1$d символов</string>
+    <string name="eid_home_code_update_current_error_min_length_pin2_unblock">Действующий PUK-код должен быть не менее %1$d символов</string>
+    <string name="eid_home_code_update_current_error_min_length_puk_edit">Действующий PUK-код должен быть не менее %1$d символов</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_edit">Неверный PIN1-код. Вы можете попробовать ещё %1$d раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_unblock">Неверный PUK-код. Вы можете попробовать ещё %1$d раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_edit">Неверный PIN2-код. Вы можете попробовать ещё %1$d раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_unblock">Неверный PUK-код. Вы можете попробовать ещё %1$d раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_puk_edit">Неверный PUK-код. Вы можете попробовать ещё %1$d раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_edit_final">Неверный PIN1-код. Вы можете попробовать ещё 1 раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin1_unblock_final">Неверный PUK-код. Вы можете попробовать ещё 1 раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_edit_final">Неверный PIN2-код. Вы можете попробовать ещё 1 раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_pin2_unblock_final">Неверный PUK-код. Вы можете попробовать ещё 1 раз.</string>
+    <string name="eid_home_code_update_current_error_invalid_puk_edit_final">Неверный PUK-код. Вы можете попробовать ещё %1$d раз.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin1_edit">PIN1 заблокирован, потому что PIN1-код был введён неверно 3 раза. Разблокируйте, чтобы использовать PIN1.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin1_unblock">PUK заблокирован, потому что PUK-код был введён неверно 3 раза. PUK невозможно разблокировать самому.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin2_edit">PIN2 заблокирован, потому что PIN2-код был введён неверно 3 раза. Разблокируйте, чтобы использовать PIN2.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin2_unblock">PUK заблокирован, потому что PUK-код был введён неверно 3 раза. PUK невозможно разблокировать самому.</string>
+    <string name="eid_home_code_update_current_error_blocked_puk_edit">PUK заблокирован, потому что PUK-код был введён неверно 3 раза. PUK невозможно разблокировать самому.</string>
 
-    <string name="eid_home_code_update_new_error_min_length_pin1">Новый PIN1 код должен быть не менее %1$d символов</string>
-    <string name="eid_home_code_update_new_error_min_length_pin2">Новый PIN2 код должен быть не менее %1$d символов</string>
-    <string name="eid_home_code_update_new_error_min_length_puk">Новый PUK код должен быть не менее %1$d символов</string>
-    <string name="eid_home_code_update_new_error_personal_code_pin1">Новый PIN1 код не может быть частью Вашего личного кода</string>
-    <string name="eid_home_code_update_new_error_personal_code_pin2">Новый PIN2 код не может быть частью Вашего личного кода</string>
-    <string name="eid_home_code_update_new_error_personal_code_puk">Новый PUK код не может быть частью Вашего личного кода</string>
-    <string name="eid_home_code_update_new_error_date_of_birth_pin1">Новый PIN1 код не может быть датой Вашего рождения</string>
-    <string name="eid_home_code_update_new_error_date_of_birth_pin2">Новый PIN2 код не может быть датой Вашего рождения</string>
-    <string name="eid_home_code_update_new_error_date_of_birth_puk">Новый PUK код не может быть датой Вашего рождения</string>
-    <string name="eid_home_code_update_new_error_too_easy_pin1">Новый PIN1 код не может быть таким простым</string>
-    <string name="eid_home_code_update_new_error_too_easy_pin2">Новый PIN2 код не может быть таким простым</string>
-    <string name="eid_home_code_update_new_error_too_easy_puk">Новый PUK код не может быть таким простым</string>
+    <string name="eid_home_code_update_new_error_min_length_pin1">Новый PIN1-код должен быть не менее %1$d символов</string>
+    <string name="eid_home_code_update_new_error_min_length_pin2">Новый PIN2-код должен быть не менее %1$d символов</string>
+    <string name="eid_home_code_update_new_error_min_length_puk">Новый PUK-код должен быть не менее %1$d символов</string>
+    <string name="eid_home_code_update_new_error_personal_code_pin1">Новый PIN1-код не может быть частью Вашего личного кода</string>
+    <string name="eid_home_code_update_new_error_personal_code_pin2">Новый PIN2-код не может быть частью Вашего личного кода</string>
+    <string name="eid_home_code_update_new_error_personal_code_puk">Новый PUK-код не может быть частью Вашего личного кода</string>
+    <string name="eid_home_code_update_new_error_date_of_birth_pin1">Новый PIN1-код не может быть датой Вашего рождения</string>
+    <string name="eid_home_code_update_new_error_date_of_birth_pin2">Новый PIN2-код не может быть датой Вашего рождения</string>
+    <string name="eid_home_code_update_new_error_date_of_birth_puk">Новый PUK-код не может быть датой Вашего рождения</string>
+    <string name="eid_home_code_update_new_error_too_easy_pin1">Новый PIN1-код не может быть таким простым</string>
+    <string name="eid_home_code_update_new_error_too_easy_pin2">Новый PIN2-код не может быть таким простым</string>
+    <string name="eid_home_code_update_new_error_too_easy_puk">Новый PUK-код не может быть таким простым</string>
     <string name="eid_home_code_update_new_error_same_as_current_pin1">Старый и новый PIN1 должны быть разными</string>
     <string name="eid_home_code_update_new_error_same_as_current_pin2">Старый и новый PIN2 должны быть разными</string>
     <string name="eid_home_code_update_new_error_same_as_current_puk">Старый и новый PUK должны быть разными</string>
 
-    <string name="eid_home_code_update_repeat_error_mismatch_pin1">Новые PIN1 коды должны совпадать</string>
-    <string name="eid_home_code_update_repeat_error_mismatch_pin2">Новые PIN2 коды должны совпадать</string>
-    <string name="eid_home_code_update_repeat_error_mismatch_puk">Новые PUK коды должны совпадать</string>
+    <string name="eid_home_code_update_repeat_error_mismatch_pin1">Новые PIN1-коды должны совпадать</string>
+    <string name="eid_home_code_update_repeat_error_mismatch_pin2">Новые PIN2-коды должны совпадать</string>
+    <string name="eid_home_code_update_repeat_error_mismatch_puk">Новые PUK-коды должны совпадать</string>
 
     <!--  General  -->
     <string name="my_eid_content_description">Мой e-ID</string>
@@ -378,58 +378,58 @@
     <string name="sharing_screen_title">Выбрать файл</string>
 
     <!--  TODO: tõlked  -->
-    <string name="document">Document</string>
-    <string name="container_has">Container has</string>
-    <string name="file">File</string>
-    <string name="signature_removed">Signature removed</string>
-    <string name="file_removed">File removed</string>
-    <string name="document_removed">Document removed</string>
-    <string name="file_added">File added</string>
-    <string name="error_dialog">Error dialog</string>
-    <string name="confirmation_dialog">Confirmation dialog</string>
-    <string name="recipients_found">Recipients found</string>
-    <string name="recipient_found">Recipient found</string>
-    <string name="recipient_added">Recipient added</string>
-    <string name="recipient_removed">Recipient removed</string>
-    <string name="add_recipient">Add recipient</string>
-    <string name="container_name_changed">Container name changed</string>
+    <string name="document">Документ</string>
+    <string name="container_has">Содержание контейнера</string>
+    <string name="file">Файл</string>
+    <string name="signature_removed">Подпись удалена</string>
+    <string name="file_removed">Файл удален</string>
+    <string name="document_removed">Документ удален</string>
+    <string name="file_added">Файл добавлен</string>
+    <string name="error_dialog">Диалоговое окно ошибки</string>
+    <string name="confirmation_dialog">Диалоговое окно подтверждения</string>
+    <string name="recipients_found">Получатели найдены</string>
+    <string name="recipient_found">Получатель найден</string>
+    <string name="recipient_added">Получатель добавлен</string>
+    <string name="recipient_removed">Получатель удален</string>
+    <string name="add_recipient">Добавить получателя</string>
+    <string name="container_name_changed">Название контейнера изменено</string>
     <string name="sign_container_button_description">Подписать</string>
-    <string name="container_signing_cancelled">Container signing cancelled</string>
-    <string name="container_signature_added">Container signature added</string>
-    <string name="files_encrypted">Files encrypted</string>
-    <string name="file_decrypted">File decrypted</string>
-    <string name="file_decryption_cancelled">File decryption cancelled</string>
-    <string name="share_container">Share container</string>
-    <string name="pin1_change_cancelled">Pin1 change cancelled</string>
-    <string name="pin1_unblock_cancelled">Pin1 unblock cancelled</string>
-    <string name="pin2_change_cancelled">Pin2 change cancelled</string>
-    <string name="pin2_unblock_cancelled">Pin2 unblock cancelled</string>
-    <string name="puk_code_change_cancelled">PUK code change cancelled</string>
+    <string name="container_signing_cancelled">Подписание контейнера прервано</string>
+    <string name="container_signature_added">Контейнер подписан</string>
+    <string name="files_encrypted">Файлы зашифрованы</string>
+    <string name="file_decrypted">Файл расшифрован</string>
+    <string name="file_decryption_cancelled">Расшифровка файла прервана</string>
+    <string name="share_container">Поделиться контейнером</string>
+    <string name="pin1_change_cancelled">Изменение Pin1 прервано</string>
+    <string name="pin1_unblock_cancelled">Аннулирование блокировки Pin1 прервано</string>
+    <string name="pin2_change_cancelled">Изменение Pin2 прервано</string>
+    <string name="pin2_unblock_cancelled">Аннулирование блокировки Pin2 прервано</string>
+    <string name="puk_code_change_cancelled">Изменение PUK-кода прервано</string>
 
-    <string name="mobile_id_challenge">Mobile-ID challenge</string>
-    <string name="smart_id_challenge">Smart-ID challenge</string>
+    <string name="mobile_id_challenge">Проверочный код подписи mobiil-ID</string>
+    <string name="smart_id_challenge">Проверочный код подписи Smart-ID</string>
 
-    <string name="configuration_is_already_up_to_date">configuration is already up-to-date</string>
-    <string name="configuration_updated">Configuration updated</string>
-    <string name="language_changed">Language changed</string>
-    <string name="close_menu">Close menu</string>
+    <string name="configuration_is_already_up_to_date">У вас последняя версия конфигурации</string>
+    <string name="configuration_updated">Конфигурация удачно обновлена</string>
+    <string name="language_changed">Язык изменён</string>
+    <string name="close_menu">Закрыть меню</string>
 
-    <string name="confirm_container_name_change">Confirm container name change</string>
-    <string name="cancel_container_name_change">Cancel container name change</string>
-    <string name="decrypt_button_description">Decrypt document(s)</string>
-    <string name="cancel_decryption">Cancel decryption</string>
+    <string name="confirm_container_name_change">Подтвердить изменение названия контейнера</string>
+    <string name="cancel_container_name_change">Прервать изменение названия контейнера</string>
+    <string name="decrypt_button_description">Расшифровать файл(ы)</string>
+    <string name="cancel_decryption">Прервать расшифрование</string>
     <string name="sign_container">Подписать</string>
     <string name="cancel_signing_process">Отменить</string>
-    <string name="confirm_pin1_change">Confirm Pin1 change</string>
-    <string name="cancel_pin1_change">Cancel Pin1 changing process</string>
-    <string name="confirm_pin1_unblock">Confirm Pin1 unblock</string>
-    <string name="cancel_pin1_unblock">Cancel Pin1 unblocking process</string>
-    <string name="confirm_pin2_change">Confirm Pin2 change</string>
-    <string name="cancel_pin2_change">Cancel Pin2 changing process</string>
-    <string name="confirm_pin2_unblock">Confirm Pin2 unblock</string>
-    <string name="cancel_pin2_unblock">Cancel Pin2 unblocking process</string>
-    <string name="confirm_puk_change">Confirm PUK change</string>
-    <string name="cancel_puk_change">Cancel PUK changing process</string>
+    <string name="confirm_pin1_change">Подтвердить изменение Pin1</string>
+    <string name="cancel_pin1_change">Прервать процесс изменения Pin1</string>
+    <string name="confirm_pin1_unblock">Подтвердить аннулирование блокировки Pin1</string>
+    <string name="cancel_pin1_unblock">Прервать процесс аннулирования блокировки Pin1</string>
+    <string name="confirm_pin2_change">Подтвердить изменение Pin2</string>
+    <string name="cancel_pin2_change">Прервать процесс изменения Pin2</string>
+    <string name="confirm_pin2_unblock">Подтвердить аннулирование блокировки Pin2</string>
+    <string name="cancel_pin2_unblock">Прервать процесс аннулирования блокировки Pin2</string>
+    <string name="confirm_puk_change">Подтвердить изменение PUK-кода</string>
+    <string name="cancel_puk_change">Прервать процесс изменения PUK-кода</string>
 
     <string name="crash_report_dialog_header">Отправить отчет о сбое?</string>
     <string name="crash_report_dialog_text">Похоже, произошел какой-то сбой! Помогите нам решить проблему отправив отчет о сбое.</string>
