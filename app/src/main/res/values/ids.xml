@@ -65,6 +65,7 @@
     <item type="id" name="mainDiagnosticsMobileIDSKUrl" />
     <item type="id" name="mainDiagnosticsSmartIDUrl" />
     <item type="id" name="mainDiagnosticsSmartIDSKUrl" />
+    <item type="id" name="mainDiagnosticsRpUuid" />
     <item type="id" name="mainDiagnosticsCentralConfigurationDate" />
     <item type="id" name="mainDiagnosticsCentralConfigurationSerial" />
     <item type="id" name="mainDiagnosticsCentralConfigurationUrl" />

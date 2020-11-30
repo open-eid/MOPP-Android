@@ -13,6 +13,7 @@ import java.util.Date;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.TSLException;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -109,6 +110,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
         TextView mobileIDSKUrl = findViewById(R.id.mainDiagnosticsMobileIDSKUrl);
         TextView smartIDUrl = findViewById(R.id.mainDiagnosticsSmartIDUrl);
         TextView smartIDSKUrl = findViewById(R.id.mainDiagnosticsSmartIDSKUrl);
+        TextView rpUuid = findViewById(R.id.mainDiagnosticsRpUuid);
         TextView centralConfigurationDate = findViewById(R.id.mainDiagnosticsCentralConfigurationDate);
         TextView centralConfigurationSerial = findViewById(R.id.mainDiagnosticsCentralConfigurationSerial);
         TextView centralConfigurationUrl = findViewById(R.id.mainDiagnosticsCentralConfigurationUrl);
@@ -132,6 +134,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
         mobileIDSKUrl.setText(configurationProvider.getMidSkRestUrl());
         smartIDUrl.setText(configurationProvider.getSidRestUrl());
         smartIDSKUrl.setText(configurationProvider.getSidSkRestUrl());
+        rpUuid.setText(getRpUuidText());
 
         centralConfigurationDate.setText(configurationProvider.getMetaInf().getDate());
         centralConfigurationSerial.setText(String.valueOf(configurationProvider.getMetaInf().getSerial()));
@@ -166,6 +169,14 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 throw new TSLException(message);
             }
         });
+    }
+
+    private String getRpUuidText() {
+        String rpUuid = ((Activity) this.getContext()).getSettingsDataStore().getUuid();
+        int uuid = rpUuid == null || rpUuid.isEmpty()
+                ? R.string.main_diagnostics_rpuuid_default
+                : R.string.main_diagnostics_rpuuid_custom;
+        return getResources().getString(uuid);
     }
 
     private String displayDate(Date date) {

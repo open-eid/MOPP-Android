@@ -51,6 +51,10 @@ public final class Activity extends AppCompatActivity {
 
     private static WeakReference<Context> mContext;
 
+    public SettingsDataStore getSettingsDataStore() {
+        return settingsDataStore;
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         handleRootedDevice();

@@ -51,6 +51,8 @@
     <string name="main_diagnostics_configuration_update_date">ДАТА ОБНОВЛЕНИЯ:\u0020</string>
     <string name="main_diagnostics_configuration_last_check_date">ПОСЛЕДНЯЯ ПРОВЕРКА:\u0020</string>
     <string name="main_diagnostics_configuration_check_for_update_button">ПРОВЕРЬТЕ ОБНОВЛЕНИЯ</string>
+    <string name="main_diagnostics_rpuuid_default">назначено по умолчанию</string>
+    <string name="main_diagnostics_rpuuid_custom">назначено вручную</string>
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Выберите файл для подписания или проверки</string>
