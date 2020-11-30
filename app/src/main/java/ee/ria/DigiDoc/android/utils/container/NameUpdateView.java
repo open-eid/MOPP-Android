@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.signature.update;
+package ee.ria.DigiDoc.android.utils.container;
 
 import android.content.Context;
 import androidx.annotation.Nullable;
@@ -26,7 +26,7 @@ public final class NameUpdateView extends TextInputLayout {
         super(context, attrs, defStyleAttr);
         setHint(context.getString(R.string.signature_update_name_update_name));
         editText = new TextInputEditText(context);
-        editText.setId(R.id.signatureUpdateNameUpdateName);
+        editText.setId(R.id.nameUpdateName);
         editText.setInputType(InputType.TYPE_CLASS_TEXT);
         addView(editText, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     }

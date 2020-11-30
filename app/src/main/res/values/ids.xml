@@ -9,6 +9,9 @@
     <item type="id" name="activityOverlay" />
     <item type="id" name="listEmpty" />
 
+    <item type="id" name="nameUpdateNameLabel" />
+    <item type="id" name="nameUpdateName" />
+
     <!-- Main Home -->
     <item type="id" name="mainHomeScreen" />
     <item type="id" name="mainHomeNavigation" />
@@ -65,6 +68,7 @@
     <item type="id" name="mainDiagnosticsMobileIDSKUrl" />
     <item type="id" name="mainDiagnosticsSmartIDUrl" />
     <item type="id" name="mainDiagnosticsSmartIDSKUrl" />
+    <item type="id" name="mainDiagnosticsRpUuid" />
     <item type="id" name="mainDiagnosticsCentralConfigurationDate" />
     <item type="id" name="mainDiagnosticsCentralConfigurationSerial" />
     <item type="id" name="mainDiagnosticsCentralConfigurationUrl" />
@@ -119,9 +123,6 @@
     <item type="id" name="signatureUpdateSignatureAddMethodSmartId" />
     <item type="id" name="signatureUpdateSignatureAddMethodIdCard" />
 
-    <item type="id" name="signatureUpdateNameUpdateNameLabel" />
-    <item type="id" name="signatureUpdateNameUpdateName" />
-
     <item type="id" name="signatureUpdateMobileId" />
     <item type="id" name="signatureUpdateMobileIdPhoneNoText" />
     <item type="id" name="signatureUpdateMobileIdPhoneNoLabel" />
@@ -169,9 +170,13 @@
     <item type="id" name="cryptoCreateButtonSpace" />
     <item type="id" name="cryptoCreateSuccessMessage" />
     <item type="id" name="cryptoCreateName" />
+    <item type="id" name="cryptoCreateNameUpdateButton" />
     <item type="id" name="cryptoCreateAddButton" />
     <item type="id" name="cryptoCreateDataFileName" />
     <item type="id" name="cryptoCreateDataFileRemoveButton" />
+
+    <item type="id" name="cryptoCreateNameUpdateNameLabel" />
+    <item type="id" name="cryptoCreateNameUpdateName" />
 
     <item type="id" name="cryptoSubheadTitle" />
     <item type="id" name="cryptoEmptyText" />
@@ -239,5 +244,13 @@
 
     <!-- Sharing Screen -->
     <item type="id" name="sharingScreenList" />
+
+    <!-- Crash Report Dialog -->
+    <item type="id" name="dialog" />
+    <item type="id" name="crashReportDialogHeader" />
+    <item type="id" name="crashReportDialogText" />
+    <item type="id" name="sendButton" />
+    <item type="id" name="alwaysSendButton" />
+    <item type="id" name="dontSendButton" />
 
 </resources>

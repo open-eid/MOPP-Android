@@ -35,9 +35,9 @@ public final class SettingsFragment extends PreferenceFragmentCompatDividers {
     @Override
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.main_settings, null);
-        bindSummary(R.string.main_settings_phone_no_key);
-        bindSummary(R.string.main_settings_personal_code_key);
-        //bindSummary(R.string.main_settings_uuid_key);
+//        bindSummary(R.string.main_settings_phone_no_key);
+//        bindSummary(R.string.main_settings_personal_code_key);
+//        bindSummary(R.string.main_settings_uuid_key);
 //        bindSummary(R.string.main_settings_role_key);
 //        bindSummary(R.string.main_settings_city_key);
 //        bindSummary(R.string.main_settings_county_key);
@@ -65,12 +65,6 @@ public final class SettingsFragment extends PreferenceFragmentCompatDividers {
         return null;
     }
 
-    private void setDefaultPhoneNoPrefix(String key, String defaultText) {
-        if (key.equals("mobile_nr")) {
-            phoneNoPreference = (EditTextPreference)findPreference(key);
-            phoneNoPreference.setText(defaultText);
-        }
-    }
 
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {
@@ -78,9 +72,6 @@ public final class SettingsFragment extends PreferenceFragmentCompatDividers {
             displayPreferenceDialog(new TsaUrlPreferenceDialogFragment(), preference.getKey());
         } else if (preference instanceof UUIDPreference) {
             displayPreferenceDialog(new UUIDPreferenceDialogFragment(), preference.getKey());
-        } else {
-            setDefaultPhoneNoPrefix(preference.getKey(), "372");
-            super.onDisplayPreferenceDialog(preference);
         }
     }
 }

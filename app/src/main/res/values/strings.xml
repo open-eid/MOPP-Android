@@ -51,6 +51,8 @@
     <string name="main_diagnostics_configuration_update_date">UPDATE DATE:\u0020</string>
     <string name="main_diagnostics_configuration_last_check_date">LAST CHECK:\u0020</string>
     <string name="main_diagnostics_configuration_check_for_update_button">REFRESH CONFIGURATION</string>
+    <string name="main_diagnostics_rpuuid_default">is set by default</string>
+    <string name="main_diagnostics_rpuuid_custom">is set manually</string>
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Choose a file to sign or validate</string>
@@ -203,6 +205,7 @@
     <string name="crypto_create_encrypt_success_message">ENCRYPTION SUCCEEDED</string>
     <string name="crypto_create_decrypt_success_message">DECRYPTION SUCCESSFUL</string>
     <string name="crypto_create_name">CONTAINER:</string>
+    <string name="crypto_create_name_update_button">Edit container name</string>
     <string name="crypto_create_data_files_title">Encrypted files</string>
     <string name="crypto_create_data_files_add_button_description">ADD MORE FILES</string>
     <string name="crypto_create_data_files_add_button">+ ADD MORE FILES</string>
