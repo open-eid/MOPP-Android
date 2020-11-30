@@ -47,6 +47,7 @@
     <string name="main_diagnostics_operating_system_title">Operatsioonisüsteem:\u0020</string>
     <string name="main_diagnostics_libraries_title">Teegid:</string>
     <string name="main_diagnostics_urls_title">URLid:</string>
+    <string name="main_diagnostics_tsl_cache_title">TSL puhver:</string>
     <string name="main_diagnostics_central_configuration_title">Konfiguratsiooni andmed:</string>
     <string name="main_diagnostics_configuration_update_date">UUENDAMISE KUUPÄEV:\u0020</string>
     <string name="main_diagnostics_configuration_last_check_date">VIIMATI KONTROLLITUD:\u0020</string>

@@ -47,6 +47,7 @@
     <string name="main_diagnostics_operating_system_title">Операционная система:\u0020</string>
     <string name="main_diagnostics_libraries_title">Библиотеки:</string>
     <string name="main_diagnostics_urls_title">URLs:</string>
+    <string name="main_diagnostics_tsl_cache_title">TSL кеш:</string>
     <string name="main_diagnostics_central_configuration_title">Центральная конфигурация:</string>
     <string name="main_diagnostics_configuration_update_date">ДАТА ОБНОВЛЕНИЯ:\u0020</string>
     <string name="main_diagnostics_configuration_last_check_date">ПОСЛЕДНЯЯ ПРОВЕРКА:\u0020</string>

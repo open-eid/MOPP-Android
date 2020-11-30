@@ -4,9 +4,14 @@ import android.content.Context;
 import android.os.Build;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.appcompat.widget.Toolbar;
+
+import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -136,6 +141,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
         smartIDSKUrl.setText(configurationProvider.getSidSkRestUrl());
         rpUuid.setText(getRpUuidText());
 
+        setTslCacheData();
+
         centralConfigurationDate.setText(configurationProvider.getMetaInf().getDate());
         centralConfigurationSerial.setText(String.valueOf(configurationProvider.getMetaInf().getSerial()));
         centralConfigurationUrl.setText(configurationProvider.getMetaInf().getUrl());
@@ -177,6 +184,27 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 ? R.string.main_diagnostics_rpuuid_default
                 : R.string.main_diagnostics_rpuuid_custom;
         return getResources().getString(uuid);
+    }
+
+    private void setTslCacheData() {
+        LinearLayout tslCacheLayout = findViewById(R.id.mainDiagnosticsTslCacheLayout);
+
+        File tslCacheDir = new File(getContext().getApplicationContext().getCacheDir().getAbsolutePath() + "/schema");
+        File[] tslFiles = tslCacheDir.listFiles((directory, fileName) -> fileName.endsWith(".xml"));
+        for (File tslFile : tslFiles) {
+            try (InputStream tslInputStream = new FileInputStream(tslFile)) {
+                int version = TSLUtil.readSequenceNumber(tslInputStream);
+                TextView tslEntry = new TextView(tslCacheLayout.getContext());
+                tslEntry.setTextAppearance(R.style.MaterialTypography_Dense_Body1);
+                tslEntry.setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+                String tslEntryText = tslFile.getName() + " (" + version + ")";
+                tslEntry.setText(tslEntryText);
+                tslCacheLayout.addView(tslEntry);
+            } catch (Exception e) {
+                Timber.e(e, "Error displaying TSL version for: %s", tslFile.getAbsolutePath());
+            }
+        }
+
     }
 
     private String displayDate(Date date) {
