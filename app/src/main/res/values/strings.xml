@@ -12,7 +12,7 @@
     <string name="main_home_menu_title">Menu</string>
     <string name="main_home_menu_button">Menu</string>
     <string name="main_home_menu_help">HELP</string>
-    <string name="main_home_menu_help_url">https://www.id.ee/index.php?id=30466</string>
+    <string name="main_home_menu_help_url">https://www.id.ee/en/id-help/</string>
     <string name="main_home_menu_recent">RECENT DOCUMENTS</string>
     <string name="main_home_menu_settings">SETTINGS</string>
     <string name="main_home_menu_about">INFO</string>
@@ -22,8 +22,8 @@
     <string name="main_settings_title">Settings</string>
     <string name="main_settings_phone_no_title">Country code and phone number</string>
     <string name="main_settings_personal_code_title">Personal code</string>
-    <string name="main_settings_tsa_url_title">Time Stamp service URL</string>
-    <string name="main_settings_uuid_title">Access to Mobile-ID and Smart-ID service</string>
+    <string name="main_settings_tsa_url_title">Access to Time-Stamping service</string>
+    <string name="main_settings_uuid_title">Access to mobile-ID and Smart-ID service</string>
     <string name="main_settings_tsa_url_use_default">Use default</string>
     <string name="main_settings_role_title">Role</string>
     <string name="main_settings_city_title">City</string>
@@ -118,24 +118,24 @@
     <string name="signature_update_signature_add_success">SIGNATURE ADDED</string>
     <string name="signature_update_signature_add_error">Something went wrong</string>
 
-    <string name="signature_update_signature_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. https://www.id.ee/index.php?id=39023</string>
+    <string name="signature_update_signature_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
     <string name="signature_update_signature_error_message_too_many_requests_additional_information">Additional information</string>
-    <string name="signature_update_signature_error_message_too_many_requests_additional_information_link">https://www.id.ee/index.php?id=39023</string>
+    <string name="signature_update_signature_error_message_too_many_requests_additional_information_link">https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
 
     <string name="signature_update_signature_error_no_response">Please check your internet connection</string>
     <string name="signature_update_signature_error_invalid_ssl_handshake">SSL handshake failed. Check your application settings or software upgrades</string>
 
-    <string name="signature_update_mobile_id_message">Enter your mobile number and personal code to sign with Mobile-ID</string>
+    <string name="signature_update_mobile_id_message">Enter your mobile number and personal code to sign with mobile-ID</string>
     <string name="signature_update_mobile_id_phone_no">Country code and phone number</string>
     <string name="signature_update_mobile_id_personal_code">Personal code</string>
     <string name="signature_update_mobile_id_remember_me">Remember me</string>
-    <string name="signature_update_mobile_id_info">Make sure the control code matches the one on phone screen and enter Mobile-ID PIN2-code</string>
+    <string name="signature_update_mobile_id_info">Make sure the control code matches the one on phone screen and enter mobile-ID PIN2 code</string>
     <string name="signature_update_mobile_id_display_message">Sign document</string>
 
     <string name="signature_update_mobile_id_status_request_sent">Signing request sent</string>
     <string name="signature_update_mobile_id_status_request_ok">Request accepted</string>
     <string name="signature_update_mobile_id_status_no_country_code">Please include correct country code</string>
-    <string name="signature_update_mobile_id_status_expired_transaction">Your Mobile-ID transaction has expired. Please try again</string>
+    <string name="signature_update_mobile_id_status_expired_transaction">Your mobile-ID transaction has expired. Please try again</string>
     <string name="signature_update_mobile_id_status_user_cancel">User denied or cancelled</string>
     <string name="signature_update_mobile_id_status_signature">Got signature</string>
     <string name="signature_update_mobile_id_status_outstanding_transaction">Request pending</string>
@@ -145,10 +145,10 @@
     <string name="signature_update_mobile_id_status_sim_error">SIM error</string>
     <string name="signature_update_mobile_id_status_not_valid">Signature is not valid</string>
     <string name="signature_update_mobile_id_status_revoked_certificate">Certificate revoked</string>
-    <string name="signature_update_mobile_id_status_signature_hash_mismatch">Your Mobile-ID transaction has failed. Please contact your mobile network operator</string>
+    <string name="signature_update_mobile_id_status_signature_hash_mismatch">Your mobile-ID transaction has failed. Please contact your mobile network operator</string>
     <string name="signature_update_mobile_id_status_internal_error">Technical error</string>
 
-    <string name="signature_update_mobile_id_error_unknown">Unknown error occurred when signing with Mobile-ID</string>
+    <string name="signature_update_mobile_id_error_unknown">Unknown error occurred when signing with mobile-ID</string>
     <string name="signature_update_mobile_id_error_local_service_exception">Something went wrong, try again later</string>
     <string name="signature_update_mobile_id_error_general_client">Something went wrong, try again</string>
     <string name="signature_update_mobile_id_error_incorrect_input_parameters">Incorrect mobile number and/or personal code, non-Estonian mobile numbers must be prefixed with the country code</string>
@@ -159,20 +159,20 @@
     <string name="signature_update_mobile_id_error_certificate_validity_unknown">Unable to verify certificate validity</string>
     <string name="signature_update_mobile_id_error_session_locked">Mobile signing session is locked, try again later</string>
     <string name="signature_update_mobile_id_error_general_user">An error occurred with the signers mobile phone</string>
-    <string name="signature_update_mobile_id_error_not_mobile_id_user">User is not a Mobile-ID client</string>
+    <string name="signature_update_mobile_id_error_not_mobile_id_user">User is not a mobile-ID client</string>
     <string name="signature_update_mobile_id_error_user_certificate_revoked">Your mobile signing certificate is revoked</string>
     <string name="signature_update_mobile_id_error_user_certificate_status_unknown">Your mobile signing certificate status is unknown</string>
     <string name="signature_update_mobile_id_error_user_certificate_suspended">Your mobile signing certificate is suspended</string>
     <string name="signature_update_mobile_id_error_user_certificate_expired">Your mobile signing certificate is expired</string>
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Too many datafiles in container</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. https://www.id.ee/index.php?id=39023</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
     <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Additional information</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/index.php?id=39023</string>
+    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Simultaneous requests limit exceeded</string>
 
     <string name="signature_update_smart_id_message">Enter your personal code to sign with Smart-ID</string>
     <string name="signature_update_smart_id_country">Country</string>
-    <string name="signature_update_smart_id_info">Make sure control code matches with one in phone screen and enter Smart-ID PIN2-code</string>
+    <string name="signature_update_smart_id_info">Make sure control code matches with one in phone screen and enter Smart-ID PIN2 code</string>
     <string name="signature_update_smart_id_select_device">Confirm device for signing in Smart-ID application.</string>
     <string name="signature_update_smart_id_status_expired_transaction">Your Smart-ID transaction has expired. Please try again</string>
     <string name="signature_update_smart_id_status_document_unusable">Your Smart-ID transaction has failed. Please check your Smart-ID application or contact Smart-ID customer support.</string>
@@ -182,12 +182,12 @@
     <string name="signature_update_smart_id_error_message_under_maintenance">Smart-ID service has encountered technical errors. Please try again later.</string>
     <string name="signature_update_smart_id_error_message_account_not_found">Account not found</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Session not found</string>
-    <string name="signature_update_smart_id_error_message_forbidden">Failed to sign container. Check your Smart-ID service access settings. https://www.id.ee/index.php?id=39023</string>
+    <string name="signature_update_smart_id_error_message_forbidden">Failed to sign container. Check your Smart-ID service access settings. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
 
     <string name="signature_update_id_card_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Reader found. Insert your ID-card into the reader.</string>
-    <string name="signature_update_id_card_progress_message_card_detected">ID-card found. Requesting information.</string>
-    <string name="signature_update_id_card_sign_message">Ready to sign with ID card</string>
+    <string name="signature_update_id_card_progress_message_card_detected">ID-card found. Requesting information...</string>
+    <string name="signature_update_id_card_sign_message">Ready to sign with ID-card</string>
     <string name="signature_update_id_card_sign_data">%1$s %2$s (%3$s)</string>
     <string name="signature_update_id_card_sign_pin2">Enter PIN2</string>
     <string name="signature_update_id_card_progress_message_signing">Signing in progress. Please wait.</string>
@@ -206,7 +206,7 @@
     <string name="crypto_create_decrypt_success_message">DECRYPTION SUCCESSFUL</string>
     <string name="crypto_create_name">CONTAINER:</string>
     <string name="crypto_create_name_update_button">Edit container name</string>
-    <string name="crypto_create_data_files_title">Files chosen for encryption</string>
+    <string name="crypto_create_data_files_title">Encrypted files</string>
     <string name="crypto_create_data_files_add_button_description">ADD MORE FILES</string>
     <string name="crypto_create_data_files_add_button">+ ADD MORE FILES</string>
     <string name="crypto_create_data_files_add_error_exists">File already exists in the container</string>
@@ -216,7 +216,7 @@
     <string name="crypto_create_recipients_add_button_description">ADD RECIPIENT</string>
     <string name="crypto_create_recipients_add_button">+ ADD RECIPIENT</string>
     <string name="crypto_create_encrypt_button">ENCRYPT</string>
-    <string name="crypto_create_encrypt_error_no_recipients">No addressees specified</string>
+    <string name="crypto_create_encrypt_error_no_recipients">No recipients specified</string>
     <string name="crypto_create_decrypt_button">DECRYPT</string>
     <string name="crypto_create_decrypt_positive_button">Decrypt</string>
     <string name="crypto_create_send_button">SHARE</string>
@@ -231,12 +231,12 @@
     <string name="crypto_recipients_title">Add recipients</string>
     <string name="crypto_recipients_search">Enter personal code, company or registry code</string>
     <string name="crypto_recipients_search_result_empty">Person or company does not own a valid certificate.\nIt is necessary to have a valid certificate for encryption.\nIn case of questions please contact our support via id.ee.</string>
-    <string name="crypto_recipients_selected_subhead">Selected recipients</string>
-    <string name="crypto_recipients_done_button">CONFIRM SELECTION</string>
+    <string name="crypto_recipients_selected_subhead">Added recipients</string>
+    <string name="crypto_recipients_done_button">CONFIRM</string>
 
     <string name="crypto_create_decrypt_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>
     <string name="crypto_create_decrypt_progress_message_reader_detected">Reader found. Insert your ID-card into the reader.</string>
-    <string name="crypto_create_decrypt_progress_message_card_detected">ID-card found. Requesting information.</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">ID-card found. Requesting information...</string>
     <string name="crypto_create_decrypt_message">Ready to decrypt with ID-card.</string>
     <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
     <string name="crypto_create_decrypt_pin1">Please enter PIN1</string>
@@ -249,7 +249,7 @@
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Connect the card reader and insert your ID-card into the reader.</string>
     <string name="eid_home_id_card_status_reader_detected_message">Reader found. Insert your ID-card into the reader.</string>
-    <string name="eid_home_id_card_status_card_detected_message">ID-card found. Requesting information.</string>
+    <string name="eid_home_id_card_status_card_detected_message">ID-card found. Requesting information...</string>
     <string name="eid_home_error">Something went wrong. Please try again.</string>
 
     <string name="eid_home_data_type">MY eID</string>
@@ -266,9 +266,9 @@
     <string name="eid_home_data_certificates_puk_title">PUK code</string>
     <string name="eid_home_data_certificates_puk_text">PUK code is in your code envelope</string>
     <string name="eid_home_data_certificates_puk_button">CHANGE PUK</string>
-    <string name="eid_home_data_certificates_puk_error">PUK is blocked, because PUK code has been inserted 3 times incorrectly.</string>
-    <string name="eid_home_data_certificates_puk_link">You can find instructions on how to get a new document from here.</string>
-    <string name="eid_home_data_certificates_puk_link_url">https://www.id.ee/?lang=en&amp;id=31027</string>
+    <string name="eid_home_data_certificates_puk_error">PUK is blocked, because PUK code has been inserted 3 times incorrectly. You can not unblock the PUK code yourself.</string>
+    <string name="eid_home_data_certificates_puk_link">Please visit the service center to obtain new codes.</string>
+    <string name="eid_home_data_certificates_puk_link_url">https://www.politsei.ee/en/instructions/applying-for-an-id-card-for-an-adult/reminders-for-id-card-holders/</string>
 
     <string name="eid_home_certificate_data_title_auth">Authentication certificate</string>
     <string name="eid_home_certificate_data_title_sign">Signing certificate</string>
@@ -347,10 +347,10 @@
     <string name="eid_home_code_update_current_error_invalid_pin2_unblock_final">Wrong PUK code. You can try 1 more time.</string>
     <string name="eid_home_code_update_current_error_invalid_puk_edit_final">Wrong PUK code. You can try %1$d more times.</string>
     <string name="eid_home_code_update_current_error_blocked_pin1_edit">PIN1 has been blocked because PIN1 code has been entered incorrectly 3 times. Unblock to reuse PIN1.</string>
-    <string name="eid_home_code_update_current_error_blocked_pin1_unblock">PUK has been blocked because PUK code has been entered incorrectly 3 times. Unblock to reuse PUK.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin1_unblock">PUK has been blocked because PUK code has been entered incorrectly 3 times. You can not unblock the PUK code yourself.</string>
     <string name="eid_home_code_update_current_error_blocked_pin2_edit">PIN2 has been blocked because PIN2 code has been entered incorrectly 3 times. Unblock to reuse PIN2.</string>
-    <string name="eid_home_code_update_current_error_blocked_pin2_unblock">PUK has been blocked because PUK code has been entered incorrectly 3 times. Unblock to reuse PUK.</string>
-    <string name="eid_home_code_update_current_error_blocked_puk_edit">PUK has been blocked because PUK code has been entered incorrectly 3 times. Unblock to reuse PUK.</string>
+    <string name="eid_home_code_update_current_error_blocked_pin2_unblock">PUK has been blocked because PUK code has been entered incorrectly 3 times. You can not unblock the PUK code yourself.</string>
+    <string name="eid_home_code_update_current_error_blocked_puk_edit">PUK has been blocked because PUK code has been entered incorrectly 3 times. You can not unblock the PUK code yourself.</string>
 
     <string name="eid_home_code_update_new_error_min_length_pin1">New PIN1 code must be at least %1$d digits long</string>
     <string name="eid_home_code_update_new_error_min_length_pin2">New PIN2 code must be at least %1$d digits long</string>
@@ -406,8 +406,8 @@
     <string name="pin2_unblock_cancelled">Pin2 unblock cancelled</string>
     <string name="puk_code_change_cancelled">PUK code change cancelled</string>
 
-    <string name="mobile_id_challenge">Mobile-ID challenge</string>
-    <string name="smart_id_challenge">Smart-ID challenge</string>
+    <string name="mobile_id_challenge">Mobile-ID signing control code</string>
+    <string name="smart_id_challenge">Smart-ID signing control code</string>
 
     <string name="configuration_is_already_up_to_date">configuration is already up-to-date</string>
     <string name="configuration_updated">Configuration updated</string>
@@ -432,7 +432,7 @@
     <string name="cancel_puk_change">Cancel PUK changing process</string>
 
     <string name="crash_report_dialog_header">Send crash report?</string>
-    <string name="crash_report_dialog_text">Hey. Looks like we crashed! Please help us fix the problem by sending a crash report.</string>
+    <string name="crash_report_dialog_text">Application crashed. Please send us crash report, so we can fix the problem.</string>
     <string name="crash_report_dialog_send_button">Send</string>
     <string name="crash_report_dialog_always_send_button">Always Send</string>
     <string name="crash_report_dialog_dont_send_button">Don\'t Send</string>
