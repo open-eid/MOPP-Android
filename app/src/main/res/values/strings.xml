@@ -205,6 +205,7 @@
     <string name="crypto_create_encrypt_success_message">ENCRYPTION SUCCEEDED</string>
     <string name="crypto_create_decrypt_success_message">DECRYPTION SUCCESSFUL</string>
     <string name="crypto_create_name">CONTAINER:</string>
+    <string name="crypto_create_name_update_button">Edit container name</string>
     <string name="crypto_create_data_files_title">Files chosen for encryption</string>
     <string name="crypto_create_data_files_add_button_description">ADD MORE FILES</string>
     <string name="crypto_create_data_files_add_button">+ ADD MORE FILES</string>

@@ -6,6 +6,7 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
+import java.util.List;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
@@ -23,6 +24,30 @@ interface Intent extends MviIntent, MviAction {
         static InitialIntent create(@Nullable File containerFile,
                                     @Nullable android.content.Intent intent) {
             return new AutoValue_Intent_InitialIntent(containerFile, intent);
+        }
+    }
+
+    @AutoValue
+    abstract class NameUpdateIntent implements Intent {
+
+        @Nullable abstract String name();
+
+        @Nullable abstract String newName();
+
+        static NameUpdateIntent show(String name) {
+            return create(name, null);
+        }
+
+        static NameUpdateIntent update(String oldName, String newName) {
+            return create(oldName, newName);
+        }
+
+        static NameUpdateIntent clear() {
+            return create(null, null);
+        }
+
+        private static NameUpdateIntent create(String name, String newName) {
+            return new AutoValue_Intent_NameUpdateIntent(name, newName);
         }
     }
 

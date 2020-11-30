@@ -205,6 +205,7 @@
     <string name="crypto_create_encrypt_success_message">KRÜPTEERIMINE ÕNNESTUS</string>
     <string name="crypto_create_decrypt_success_message">DEKRÜPTEERIMINE ÕNNESTUS</string>
     <string name="crypto_create_name">ÜMBRIK:</string>
+    <string name="crypto_create_name_update_button">Muuda ümbriku nime</string>
     <string name="crypto_create_data_files_title">Krüpteerimiseks valitud failid</string>
     <string name="crypto_create_data_files_add_button_description">LISA VEEL FAILE</string>
     <string name="crypto_create_data_files_add_button">+ LISA VEEL FAILE</string>

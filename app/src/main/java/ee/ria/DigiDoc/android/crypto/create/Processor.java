@@ -6,8 +6,10 @@ import android.content.Context;
 import android.view.accessibility.AccessibilityEvent;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.Files;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -56,6 +58,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     private final ObservableTransformer<Intent.InitialIntent, Result.InitialResult> initial;
 
     private final ObservableTransformer<Intent.UpButtonClickIntent, Result> upButtonClick;
+
+    private final ObservableTransformer<Intent.NameUpdateIntent, Result.NameUpdateResult>
+            nameUpdate;
 
     private final ObservableTransformer<Intent.DataFilesAddIntent,
                                         Result.DataFilesAddResult> dataFilesAdd;
@@ -130,6 +135,25 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         upButtonClick = upstream -> upstream.switchMap(intent -> {
             navigator.execute(Transaction.pop());
             return Observable.empty();
+        });
+
+        nameUpdate = upstream -> upstream.switchMap(action -> {
+            String name = action.name();
+            String newName = action.newName();
+            if (newName != null) {
+                return Observable
+                        .fromCallable(() -> newName)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .map((renameTo) -> Result.NameUpdateResult.progress(assignName(name, renameTo)))
+                        .onErrorReturn(throwable -> Result.NameUpdateResult.failure(newName, throwable))
+                        .startWith(Result.NameUpdateResult.progress(name));
+            } else if (name != null) {
+                return Observable.just(Result.NameUpdateResult.show(name));
+            } else {
+                return Observable.just(Result.NameUpdateResult
+                        .failure(name, new IOException()));
+            }
         });
 
         dataFilesAdd = upstream -> upstream.switchMap(intent -> {
@@ -356,6 +380,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Intent.InitialIntent.class).compose(initial),
                 shared.ofType(Intent.UpButtonClickIntent.class).compose(upButtonClick),
+                shared.ofType(Intent.NameUpdateIntent.class).compose(nameUpdate),
                 shared.ofType(Intent.DataFilesAddIntent.class).compose(dataFilesAdd),
                 shared.ofType(Intent.DataFileRemoveIntent.class).compose(dataFileRemove),
                 shared.ofType(Intent.DataFileViewIntent.class).compose(dataFileView),
@@ -396,5 +421,15 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .startWith(Result.InitialResult.activity());
+    }
+
+    private String assignName(String oldName, String newName) {
+        if (oldName != null && !oldName.isEmpty()) {
+            String[] oldNameParts = oldName.split("\\.");
+            String oldNameExtension = oldNameParts[oldNameParts.length - 1];
+            return newName.concat(".").concat(oldNameExtension);
+
+        }
+        return newName;
     }
 }

@@ -9,6 +9,9 @@
     <item type="id" name="activityOverlay" />
     <item type="id" name="listEmpty" />
 
+    <item type="id" name="nameUpdateNameLabel" />
+    <item type="id" name="nameUpdateName" />
+
     <!-- Main Home -->
     <item type="id" name="mainHomeScreen" />
     <item type="id" name="mainHomeNavigation" />
@@ -120,9 +123,6 @@
     <item type="id" name="signatureUpdateSignatureAddMethodSmartId" />
     <item type="id" name="signatureUpdateSignatureAddMethodIdCard" />
 
-    <item type="id" name="signatureUpdateNameUpdateNameLabel" />
-    <item type="id" name="signatureUpdateNameUpdateName" />
-
     <item type="id" name="signatureUpdateMobileId" />
     <item type="id" name="signatureUpdateMobileIdPhoneNoText" />
     <item type="id" name="signatureUpdateMobileIdPhoneNoLabel" />
@@ -170,9 +170,13 @@
     <item type="id" name="cryptoCreateButtonSpace" />
     <item type="id" name="cryptoCreateSuccessMessage" />
     <item type="id" name="cryptoCreateName" />
+    <item type="id" name="cryptoCreateNameUpdateButton" />
     <item type="id" name="cryptoCreateAddButton" />
     <item type="id" name="cryptoCreateDataFileName" />
     <item type="id" name="cryptoCreateDataFileRemoveButton" />
+
+    <item type="id" name="cryptoCreateNameUpdateNameLabel" />
+    <item type="id" name="cryptoCreateNameUpdateName" />
 
     <item type="id" name="cryptoSubheadTitle" />
     <item type="id" name="cryptoEmptyText" />

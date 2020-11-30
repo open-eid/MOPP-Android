@@ -33,6 +33,7 @@ import static ee.ria.DigiDoc.android.Constants.VOID;
 final class CryptoCreateAdapter extends
         RecyclerView.Adapter<CryptoCreateAdapter.CreateViewHolder<CryptoCreateAdapter.Item>> {
 
+    final Subject<Object> nameUpdateClicksSubject = PublishSubject.create();
     final Subject<Integer> addButtonClicksSubject = PublishSubject.create();
     final Subject<File> dataFileClicksSubject = PublishSubject.create();
     final Subject<File> dataFileRemoveClicksSubject = PublishSubject.create();
@@ -44,7 +45,7 @@ final class CryptoCreateAdapter extends
 
     private ImmutableList<Item> items = ImmutableList.of();
 
-    void dataForContainer(@Nullable String name, ImmutableList<File> dataFiles,
+    void dataForContainer(@Nullable String name, @Nullable File containerFile, ImmutableList<File> dataFiles,
                           boolean dataFilesViewEnabled, boolean dataFilesAddEnabled,
                           boolean dataFilesRemoveEnabled, ImmutableList<Certificate> recipients,
                           boolean recipientsAddEnabled, boolean recipientsRemoveEnabled,
@@ -59,7 +60,7 @@ final class CryptoCreateAdapter extends
             builder.add(SuccessItem.create(R.string.crypto_create_decrypt_success_message));
         }
         if (name != null) {
-            builder.add(NameItem.create(name));
+            builder.add(NameItem.create(name, containerFile == null));
         }
         builder.add(SubheadItem.create(R.string.crypto_create_data_files_title));
         boolean dataFileRemoveButtonVisible = dataFilesRemoveEnabled && dataFiles.size() > 1;
@@ -108,6 +109,10 @@ final class CryptoCreateAdapter extends
                 .calculateDiff(new DiffUtilCallback(this.items, items));
         this.items = items;
         result.dispatchUpdatesTo(this);
+    }
+
+    Observable<Object> nameUpdateClicks() {
+        return nameUpdateClicksSubject;
     }
 
     Observable<Object> dataFilesAddButtonClicks() {
@@ -210,15 +215,19 @@ final class CryptoCreateAdapter extends
     static final class NameViewHolder extends CreateViewHolder<NameItem> {
 
         private final TextView nameView;
+        private final View updateButton;
 
         NameViewHolder(View itemView) {
             super(itemView);
             nameView = itemView.findViewById(R.id.cryptoCreateName);
+            updateButton = itemView.findViewById(R.id.cryptoCreateNameUpdateButton);
         }
 
         @Override
         void bind(CryptoCreateAdapter adapter, NameItem item) {
             nameView.setText(item.name());
+            updateButton.setVisibility(item.updateButtonVisible() ? View.VISIBLE : View.GONE);
+            clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
         }
     }
 
@@ -377,9 +386,12 @@ final class CryptoCreateAdapter extends
 
         abstract String name();
 
-        static NameItem create(String name) {
-            return new AutoValue_CryptoCreateAdapter_NameItem(R.layout.crypto_create_list_item_name,
-                    name);
+        abstract boolean updateButtonVisible();
+
+        static NameItem create(String name, boolean updateButtonVisible) {
+            return new AutoValue_CryptoCreateAdapter_NameItem(
+                    R.layout.crypto_create_list_item_name, name, updateButtonVisible
+            );
         }
     }
 

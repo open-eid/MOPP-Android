@@ -17,6 +17,12 @@ abstract class ViewState implements MviViewState {
 
     @Nullable abstract File containerFile();
     @Nullable abstract String name();
+
+    abstract boolean nameUpdateShowing();
+    @Nullable abstract String newName();
+    abstract boolean nameUpdateInProgress();
+    @Nullable abstract Throwable nameUpdateError();
+
     abstract ImmutableList<File> dataFiles();
     abstract boolean dataFilesViewEnabled();
     abstract boolean dataFilesAddEnabled();
@@ -49,6 +55,8 @@ abstract class ViewState implements MviViewState {
 
     static ViewState initial() {
         return new AutoValue_ViewState.Builder()
+                .nameUpdateShowing(false)
+                .nameUpdateInProgress(false)
                 .dataFiles(ImmutableList.of())
                 .dataFilesViewEnabled(false)
                 .dataFilesAddEnabled(false)
@@ -72,6 +80,10 @@ abstract class ViewState implements MviViewState {
     interface Builder {
         Builder containerFile(@Nullable File containerFile);
         Builder name(@Nullable String name);
+        Builder nameUpdateShowing(boolean nameUpdateShowing);
+        Builder newName(@Nullable String newName);
+        Builder nameUpdateInProgress(boolean nameUpdateInProgress);
+        Builder nameUpdateError(@Nullable Throwable nameUpdateError);
         Builder dataFiles(ImmutableList<File> dataFiles);
         Builder dataFilesViewEnabled(boolean dataFilesViewEnabled);
         Builder dataFilesAddEnabled(boolean dataFilesAddEnabled);
