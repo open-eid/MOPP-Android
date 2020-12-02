@@ -80,6 +80,7 @@
     <string name="signature_update_documents_add_button">+ ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
     <string name="signature_update_documents_add_error_exists">Файл уже существует в контейнере</string>
     <string name="signature_update_document_remove_button">Удалить файл</string>
+    <string name="signature_update_document_save_button">Сохраните файл</string>
     <string name="signature_update_document_remove_confirmation_message">Удалить файл из контейнера?</string>
     <string name="signature_update_document_remove_error">Файл не может быть удалён из контейнера</string>
     <string name="signature_update_signatures_title">Подписи контейнера</string>
@@ -213,6 +214,7 @@
     <string name="crypto_create_data_files_add_button">+ ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
     <string name="crypto_create_data_files_add_error_exists">Файл уже существует в контейнере</string>
     <string name="crypto_create_data_file_remove_button">Удалить файл</string>
+    <string name="crypto_create_data_file_save_button">Сохраните файл</string>
     <string name="crypto_create_recipients_title">Получатели</string>
     <string name="crypto_create_recipients_empty">Получатели отсутствуют</string>
     <string name="crypto_create_recipients_add_button_description">ДОБАВИТЬ ПОЛУЧАТЕЛЯ</string>
@@ -386,6 +388,7 @@
     <string name="file">Файл</string>
     <string name="signature_removed">Подпись удалена</string>
     <string name="file_removed">Файл удален</string>
+    <string name="file_saved">Файл сохранен</string>
     <string name="document_removed">Документ удален</string>
     <string name="file_added">Файл добавлен</string>
     <string name="error_dialog">Диалоговое окно ошибки</string>

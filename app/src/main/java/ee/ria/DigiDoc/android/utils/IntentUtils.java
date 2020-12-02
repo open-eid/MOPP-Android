@@ -5,6 +5,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.webkit.MimeTypeMap;
+
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
@@ -14,6 +16,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
+import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.SignedContainer;
 
 public final class IntentUtils {
@@ -88,6 +91,27 @@ public final class IntentUtils {
                 .createChooser(new Intent(Intent.ACTION_SEND)
                         .putExtra(Intent.EXTRA_STREAM, uri)
                         .setType(SignedContainer.mimeType(file)), null);
+    }
+
+    public static Intent createSaveIntent(DataFile dataFile) {
+        return Intent
+                .createChooser(new Intent(Intent.ACTION_CREATE_DOCUMENT)
+                        .addCategory(Intent.CATEGORY_OPENABLE)
+                        .putExtra(Intent.EXTRA_TITLE, dataFile.name())
+                        .setType(dataFile.mimeType())
+                        .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION), null);
+    }
+
+    public static Intent createSaveIntent(File file, ContentResolver contentResolver) {
+        int extensionIndex = file.getName().lastIndexOf(".");
+        String extension = extensionIndex != -1 ? file.getName().substring(extensionIndex + 1) : "";
+        String mimeType = !extension.isEmpty() ? MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) : "application/octet-stream";
+        return Intent
+                .createChooser(new Intent(Intent.ACTION_CREATE_DOCUMENT)
+                        .addCategory(Intent.CATEGORY_OPENABLE)
+                        .putExtra(Intent.EXTRA_TITLE, file.getName())
+                        .setType(mimeType)
+                        .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION), null);
     }
 
     public static Intent createBrowserIntent(Context context, int stringRes){

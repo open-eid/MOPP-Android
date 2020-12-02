@@ -46,6 +46,7 @@ final class SignatureUpdateAdapter extends
     final Subject<Object> nameUpdateClicksSubject = PublishSubject.create();
     final Subject<DataFile> documentClicksSubject = PublishSubject.create();
     final Subject<Object> documentAddClicksSubject = PublishSubject.create();
+    final Subject<DataFile> documentSaveClicksSubject = PublishSubject.create();
     final Subject<DataFile> documentRemoveClicksSubject = PublishSubject.create();
     final Subject<Signature> signatureClicksSubject = PublishSubject.create();
     final Subject<Signature> signatureRemoveClicksSubject = PublishSubject.create();
@@ -113,6 +114,10 @@ final class SignatureUpdateAdapter extends
 
     Observable<Object> documentAddClicks() {
         return documentAddClicksSubject;
+    }
+
+    Observable<DataFile> documentSaveClicks() {
+        return documentSaveClicksSubject;
     }
 
     Observable<DataFile> documentRemoveClicks() {
@@ -286,11 +291,13 @@ final class SignatureUpdateAdapter extends
     static final class DocumentViewHolder extends UpdateViewHolder<DocumentItem> {
 
         private final TextView nameView;
+        private final ImageButton saveButton;
         private final ImageButton removeButton;
 
         DocumentViewHolder(View itemView) {
             super(itemView);
             nameView = itemView.findViewById(R.id.signatureUpdateListDocumentName);
+            saveButton = itemView.findViewById(R.id.signatureUpdateListDocumentSaveButton);
             removeButton = itemView.findViewById(R.id.signatureUpdateListDocumentRemoveButton);
         }
 
@@ -302,6 +309,14 @@ final class SignatureUpdateAdapter extends
             nameView.setText(item.document().name());
             String fileNameDescription = nameView.getResources().getString(R.string.file);
             nameView.setContentDescription(fileNameDescription + " " + nameView.getText());
+
+            String saveButtonText = saveButton.getResources().getString(R.string.signature_update_document_save_button);
+            saveButton.setContentDescription(saveButtonText + " " + nameView.getText());
+            saveButton.setVisibility(View.VISIBLE);
+            clicks(saveButton).map(ignored ->
+                    ((DocumentItem) adapter.getItem(getAdapterPosition())).document())
+                    .subscribe(adapter.documentSaveClicksSubject);
+
             String removeButtonText = removeButton.getResources().getString(R.string.signature_update_document_remove_button);
             removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);

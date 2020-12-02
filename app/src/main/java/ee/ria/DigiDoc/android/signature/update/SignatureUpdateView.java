@@ -81,6 +81,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private final Subject<Intent.DocumentsAddIntent> documentsAddIntentSubject =
             PublishSubject.create();
+    private final Subject<Intent.DocumentSaveIntent> documentSaveIntentSubject =
+            PublishSubject.create();
     private final Subject<Intent.DocumentRemoveIntent> documentRemoveIntentSubject =
             PublishSubject.create();
     private final Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject =
@@ -149,7 +151,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), addDocumentsIntent(),
-                documentViewIntent(), documentRemoveIntent(), signatureRemoveIntent(),
+                documentViewIntent(), documentSaveIntent(), documentRemoveIntent(), signatureRemoveIntent(),
                 signatureAddIntent(), sendIntent());
     }
 
@@ -343,6 +345,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 .map(document -> Intent.DocumentViewIntent.create(containerFile, document));
     }
 
+    private Observable<Intent.DocumentSaveIntent> documentSaveIntent() {
+        return documentSaveIntentSubject;
+    }
+
     private Observable<Intent.DocumentRemoveIntent> documentRemoveIntent() {
         return documentRemoveIntentSubject;
     }
@@ -385,6 +391,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         disposables.add(navigationClicks(toolbarView).subscribe(o ->
                 navigator.execute(Transaction.pop())));
         disposables.add(adapter.scrollToTop().subscribe(ignored -> listView.scrollToPosition(0)));
+        disposables.add(adapter.documentSaveClicks().subscribe(document ->
+                documentSaveIntentSubject.onNext(Intent.DocumentSaveIntent
+                        .create(containerFile, document))));
         disposables.add(adapter.documentRemoveClicks().subscribe(document ->
                 documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent
                         .showConfirmation(containerFile, document))));

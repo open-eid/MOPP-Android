@@ -83,6 +83,18 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
+    abstract class DocumentSaveIntent implements Intent, Action {
+
+        abstract File containerFile();
+
+        abstract DataFile document();
+
+        static DocumentSaveIntent create(File containerFile, DataFile document) {
+            return new AutoValue_Intent_DocumentSaveIntent(containerFile, document);
+        }
+    }
+
+    @AutoValue
     abstract class DocumentRemoveIntent implements Intent {
 
         abstract boolean showConfirmation();

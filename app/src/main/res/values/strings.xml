@@ -80,6 +80,7 @@
     <string name="signature_update_documents_add_button_description">ADD MORE FILES</string>
     <string name="signature_update_documents_add_error_exists">File already exists in the container</string>
     <string name="signature_update_document_remove_button">Remove file</string>
+    <string name="signature_update_document_save_button">Save file</string>
     <string name="signature_update_document_remove_confirmation_message">Remove file from container?</string>
     <string name="signature_update_document_remove_error">Can\'t remove file from container</string>
     <string name="signature_update_signatures_title">Container signatures</string>
@@ -211,6 +212,7 @@
     <string name="crypto_create_data_files_add_button">+ ADD MORE FILES</string>
     <string name="crypto_create_data_files_add_error_exists">File already exists in the container</string>
     <string name="crypto_create_data_file_remove_button">Remove file</string>
+    <string name="crypto_create_data_file_save_button">Save file</string>
     <string name="crypto_create_recipients_title">Recipients</string>
     <string name="crypto_create_recipients_empty">Recipients are missing</string>
     <string name="crypto_create_recipients_add_button_description">ADD RECIPIENT</string>
@@ -383,6 +385,7 @@
     <string name="file">File</string>
     <string name="signature_removed">Signature removed</string>
     <string name="file_removed">File removed</string>
+    <string name="file_saved">File saved</string>
     <string name="document_removed">Document removed</string>
     <string name="file_added">File added</string>
     <string name="error_dialog">Error dialog</string>

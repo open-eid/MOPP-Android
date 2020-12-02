@@ -3,17 +3,23 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.app.Application;
 import android.content.Context;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.Toast;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.ByteStreams;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
@@ -33,6 +39,8 @@ import io.reactivex.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
 import static com.google.common.io.Files.getFileExtension;
+import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
@@ -49,6 +57,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Intent.DocumentViewIntent,
                                         Result.DocumentViewResult> documentView;
+
+    private final ObservableTransformer<Intent.DocumentSaveIntent,
+            Result> documentSave;
 
     private final ObservableTransformer<Action.DocumentRemoveAction,
                                         Result.DocumentRemoveResult> documentRemove;
@@ -208,6 +219,34 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     .startWith(Result.DocumentViewResult.activity());
         });
 
+        documentSave = upstream -> upstream.switchMap(action -> {
+            navigator.execute(Transaction.activityForResult(SAVE_FILE,
+                    createSaveIntent(action.document()), null));
+            return navigator.activityResults()
+                    .filter(activityResult ->
+                            activityResult.requestCode() == SAVE_FILE)
+                    .switchMap(activityResult -> {
+                        return signatureContainerDataSource
+                                .getDocumentFile(action.containerFile(), action.document())
+                                .toObservable()
+                                .map(documentFile -> {
+                                    if (activityResult.resultCode() == RESULT_OK) {
+                                        try (
+                                                InputStream inputStream = new FileInputStream(documentFile);
+                                                OutputStream outputStream = application.getContentResolver().openOutputStream(activityResult.data().getData())
+                                        ) {
+                                            ByteStreams.copy(inputStream, outputStream);
+                                        }
+                                        Toast.makeText(application, Activity.getContext().get().getString(R.string.file_saved),
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                    return Result.DocumentSaveResult.idle();
+                                })
+                                .onErrorReturn(ignored -> Result.DocumentSaveResult.idle())
+                                .startWith(Result.DocumentSaveResult.activity());
+                    });
+        });
+
         documentRemove = upstream -> upstream.flatMap(action -> {
             if (action.containerFile() == null || action.document() == null) {
                 return Observable.just(Result.DocumentRemoveResult.clear());
@@ -312,6 +351,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Intent.NameUpdateIntent.class).compose(nameUpdate),
                 shared.ofType(Action.DocumentsAddAction.class).compose(documentsAdd),
                 shared.ofType(Intent.DocumentViewIntent.class).compose(documentView),
+                shared.ofType(Intent.DocumentSaveIntent.class).compose(documentSave),
                 shared.ofType(Action.DocumentRemoveAction.class).compose(documentRemove),
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd),

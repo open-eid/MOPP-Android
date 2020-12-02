@@ -103,6 +103,7 @@
     <item type="id" name="signatureUpdateListDocumentIcon" />
     <item type="id" name="signatureUpdateListDocumentName" />
     <item type="id" name="signatureUpdateListDocumentSize" />
+    <item type="id" name="signatureUpdateListDocumentSaveButton" />
     <item type="id" name="signatureUpdateListDocumentRemoveButton" />
     <item type="id" name="signatureUpdateListSignatureType" />
     <item type="id" name="signatureUpdateListSignatureName" />
@@ -174,6 +175,7 @@
     <item type="id" name="cryptoCreateAddButton" />
     <item type="id" name="cryptoCreateDataFileName" />
     <item type="id" name="cryptoCreateDataFileRemoveButton" />
+    <item type="id" name="cryptoCreateDataFileSaveButton" />
 
     <item type="id" name="cryptoCreateNameUpdateNameLabel" />
     <item type="id" name="cryptoCreateNameUpdateName" />

@@ -37,6 +37,7 @@ final class CryptoCreateAdapter extends
     final Subject<Integer> addButtonClicksSubject = PublishSubject.create();
     final Subject<File> dataFileClicksSubject = PublishSubject.create();
     final Subject<File> dataFileRemoveClicksSubject = PublishSubject.create();
+    final Subject<File> dataFileSaveClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientRemoveClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientAddClicksSubject = PublishSubject.create();
@@ -128,6 +129,11 @@ final class CryptoCreateAdapter extends
 
     Observable<File> dataFileRemoveClicks() {
         return dataFileRemoveClicksSubject;
+    }
+
+    Observable<File> dataFileSaveClicks() {
+        return dataFileSaveClicksSubject
+                .filter(ignored -> dataFilesViewEnabled);
     }
 
     Observable<Object> recipientsAddButtonClicks() {
@@ -284,12 +290,14 @@ final class CryptoCreateAdapter extends
     static final class DataFileViewHolder extends CreateViewHolder<DataFileItem> {
 
         private final TextView nameView;
+        private final View saveButton;
         private final View removeButton;
 
         DataFileViewHolder(View itemView) {
             super(itemView);
             nameView = itemView.findViewById(R.id.cryptoCreateDataFileName);
             removeButton = itemView.findViewById(R.id.cryptoCreateDataFileRemoveButton);
+            saveButton = itemView.findViewById(R.id.cryptoCreateDataFileSaveButton);
         }
 
         @Override
@@ -309,6 +317,14 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((DataFileItem) adapter.items.get(getAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileRemoveClicksSubject);
+
+            String saveButtonText = saveButton.getResources().getString(R.string.crypto_create_data_file_save_button);
+            saveButton.setContentDescription(saveButtonText + " " + nameView.getText());
+            saveButton.setVisibility(adapter.dataFilesViewEnabled ? View.VISIBLE: View.GONE);
+            clicks(saveButton)
+                    .map(ignored ->
+                            ((DataFileItem) adapter.items.get(getAdapterPosition())).dataFile())
+                    .subscribe(adapter.dataFileSaveClicksSubject);
         }
     }
 

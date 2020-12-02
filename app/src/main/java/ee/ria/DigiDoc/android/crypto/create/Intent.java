@@ -6,7 +6,6 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
-import java.util.List;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
@@ -86,6 +85,16 @@ interface Intent extends MviIntent, MviAction {
 
         static DataFileRemoveIntent create(ImmutableList<File> dataFiles, File dataFile) {
             return new AutoValue_Intent_DataFileRemoveIntent(dataFiles, dataFile);
+        }
+    }
+
+    @AutoValue
+    abstract class DataFileSaveIntent implements Intent {
+
+        abstract File dataFile();
+
+        static DataFileSaveIntent create(File dataFile) {
+            return new AutoValue_Intent_DataFileSaveIntent(dataFile);
         }
     }
 
