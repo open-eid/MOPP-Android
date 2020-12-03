@@ -47,6 +47,7 @@
     <string name="main_diagnostics_operating_system_title">OS:\u0020</string>
     <string name="main_diagnostics_libraries_title">Libraries:</string>
     <string name="main_diagnostics_urls_title">URLs:</string>
+    <string name="main_diagnostics_tsl_cache_title">TSL cache:</string>
     <string name="main_diagnostics_central_configuration_title">Central configuration:</string>
     <string name="main_diagnostics_configuration_update_date">UPDATE DATE:\u0020</string>
     <string name="main_diagnostics_configuration_last_check_date">LAST CHECK:\u0020</string>
