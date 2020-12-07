@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 
 import ee.ria.DigiDoc.BuildConfig;
@@ -191,6 +193,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
         File tslCacheDir = new File(getContext().getApplicationContext().getCacheDir().getAbsolutePath() + "/schema");
         File[] tslFiles = tslCacheDir.listFiles((directory, fileName) -> fileName.endsWith(".xml"));
+        Arrays.sort(tslFiles, (f1, f2) -> f1.getName().compareToIgnoreCase(f2.getName()));
         for (File tslFile : tslFiles) {
             try (InputStream tslInputStream = new FileInputStream(tslFile)) {
                 int version = TSLUtil.readSequenceNumber(tslInputStream);
