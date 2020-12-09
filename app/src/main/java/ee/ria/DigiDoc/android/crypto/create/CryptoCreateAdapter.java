@@ -37,6 +37,7 @@ final class CryptoCreateAdapter extends
     final Subject<Integer> addButtonClicksSubject = PublishSubject.create();
     final Subject<File> dataFileClicksSubject = PublishSubject.create();
     final Subject<File> dataFileRemoveClicksSubject = PublishSubject.create();
+    final Subject<File> dataFileSaveClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientRemoveClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientAddClicksSubject = PublishSubject.create();
@@ -63,9 +64,8 @@ final class CryptoCreateAdapter extends
             builder.add(NameItem.create(name, containerFile == null));
         }
         builder.add(SubheadItem.create(R.string.crypto_create_data_files_title));
-        boolean dataFileRemoveButtonVisible = dataFilesRemoveEnabled && dataFiles.size() > 1;
         for (File dataFile : dataFiles) {
-            builder.add(DataFileItem.create(dataFile, dataFileRemoveButtonVisible));
+            builder.add(DataFileItem.create(dataFile, dataFilesRemoveEnabled, dataFilesViewEnabled));
         }
         if (dataFilesAddEnabled) {
             builder.add(AddButtonItem.create(R.string.crypto_create_data_files_add_button, R.string.crypto_create_data_files_add_button_description));
@@ -128,6 +128,11 @@ final class CryptoCreateAdapter extends
 
     Observable<File> dataFileRemoveClicks() {
         return dataFileRemoveClicksSubject;
+    }
+
+    Observable<File> dataFileSaveClicks() {
+        return dataFileSaveClicksSubject
+                .filter(ignored -> dataFilesViewEnabled);
     }
 
     Observable<Object> recipientsAddButtonClicks() {
@@ -284,12 +289,14 @@ final class CryptoCreateAdapter extends
     static final class DataFileViewHolder extends CreateViewHolder<DataFileItem> {
 
         private final TextView nameView;
+        private final View saveButton;
         private final View removeButton;
 
         DataFileViewHolder(View itemView) {
             super(itemView);
             nameView = itemView.findViewById(R.id.cryptoCreateDataFileName);
             removeButton = itemView.findViewById(R.id.cryptoCreateDataFileRemoveButton);
+            saveButton = itemView.findViewById(R.id.cryptoCreateDataFileSaveButton);
         }
 
         @Override
@@ -309,6 +316,14 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((DataFileItem) adapter.items.get(getAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileRemoveClicksSubject);
+
+            String saveButtonText = saveButton.getResources().getString(R.string.crypto_create_data_file_save_button);
+            saveButton.setContentDescription(saveButtonText + " " + nameView.getText());
+            saveButton.setVisibility(item.saveButtonVisible() ? View.VISIBLE: View.GONE);
+            clicks(saveButton)
+                    .map(ignored ->
+                            ((DataFileItem) adapter.items.get(getAdapterPosition())).dataFile())
+                    .subscribe(adapter.dataFileSaveClicksSubject);
         }
     }
 
@@ -437,9 +452,11 @@ final class CryptoCreateAdapter extends
 
         abstract boolean removeButtonVisible();
 
-        static DataFileItem create(File dataFile, boolean removeButtonVisible) {
+        abstract boolean saveButtonVisible();
+
+        static DataFileItem create(File dataFile, boolean removeButtonVisible, boolean saveButtonVisible) {
             return new AutoValue_CryptoCreateAdapter_DataFileItem(
-                    R.layout.crypto_create_list_item_data_file, dataFile, removeButtonVisible);
+                    R.layout.crypto_create_list_item_data_file, dataFile, removeButtonVisible, saveButtonVisible);
         }
     }
 

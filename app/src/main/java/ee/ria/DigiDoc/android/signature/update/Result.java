@@ -165,6 +165,31 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
+    abstract class DocumentSaveResult implements Result {
+
+        @State abstract String state();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .documentViewState(state())
+                    .build();
+        }
+
+        static DocumentViewResult activity() {
+            return create(State.ACTIVE);
+        }
+
+        static DocumentViewResult idle() {
+            return create(State.IDLE);
+        }
+
+        private static DocumentViewResult create(@State String state) {
+            return new AutoValue_Result_DocumentViewResult(state);
+        }
+    }
+
+    @AutoValue
     abstract class DocumentRemoveResult implements Result {
 
         @Nullable abstract DataFile showConfirmation();

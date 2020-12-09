@@ -135,6 +135,11 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 .map(dataFile -> Intent.DataFileRemoveIntent.create(dataFiles, dataFile));
     }
 
+    private Observable<Intent.DataFileSaveIntent> dataFileSaveIntent() {
+        return adapter.dataFileSaveClicks()
+                .map(Intent.DataFileSaveIntent::create);
+    }
+
     private Observable<Intent.DataFileViewIntent> dataFileViewIntent() {
         return adapter.dataFileClicks()
                 .map(Intent.DataFileViewIntent::create);
@@ -199,7 +204,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), upButtonClickIntent(), dataFilesAddIntent(),
-                dataFileRemoveIntent(), dataFileViewIntent(), recipientsAddButtonClickIntent(),
+                dataFileRemoveIntent(), dataFileSaveIntent(), dataFileViewIntent(), recipientsAddButtonClickIntent(),
                 recipientRemoveIntent(), encryptIntent(), decryptionIntent(), decryptIntent(),
                 sendIntent(), errorIntents());
     }

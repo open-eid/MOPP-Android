@@ -4,17 +4,22 @@ import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.Toast;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.Files;
+import com.google.common.io.ByteStreams;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
@@ -40,9 +45,11 @@ import static android.app.Activity.RESULT_OK;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_DATA_FILE_ADD;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_INITIAL;
+import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
 import static ee.ria.DigiDoc.android.utils.Immutables.with;
 import static ee.ria.DigiDoc.android.utils.Immutables.without;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
@@ -67,6 +74,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ObservableTransformer<Intent.DataFileRemoveIntent,
                                         Result.DataFileRemoveResult> dataFileRemove;
+
+    private final ObservableTransformer<Intent.DataFileSaveIntent, Result> dataFileSave;
 
     private final ObservableTransformer<Intent.DataFileViewIntent, Result> dataFileView;
 
@@ -214,6 +223,27 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .doFinally(() -> AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.file_removed))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread()));
+
+        dataFileSave = upstream -> upstream.switchMap(action -> {
+            navigator.execute(Transaction.activityForResult(SAVE_FILE,
+                    createSaveIntent(action.dataFile(), application.getContentResolver()), null));
+            return navigator.activityResults()
+                    .filter(activityResult ->
+                            activityResult.requestCode() == SAVE_FILE)
+                    .switchMap(activityResult -> {
+                        if (activityResult.resultCode() == RESULT_OK) {
+                            try (
+                                    InputStream inputStream = new FileInputStream(action.dataFile());
+                                    OutputStream outputStream = application.getContentResolver().openOutputStream(activityResult.data().getData())
+                            ) {
+                                ByteStreams.copy(inputStream, outputStream);
+                            }
+                            Toast.makeText(application, Activity.getContext().get().getString(R.string.file_saved),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        return Observable.empty();
+                    });
+        });
 
         dataFileView = upstream -> upstream.switchMap(intent -> {
             return Observable
@@ -383,6 +413,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.NameUpdateIntent.class).compose(nameUpdate),
                 shared.ofType(Intent.DataFilesAddIntent.class).compose(dataFilesAdd),
                 shared.ofType(Intent.DataFileRemoveIntent.class).compose(dataFileRemove),
+                shared.ofType(Intent.DataFileSaveIntent.class).compose(dataFileSave),
                 shared.ofType(Intent.DataFileViewIntent.class).compose(dataFileView),
                 shared.ofType(Intent.RecipientsAddButtonClickIntent.class)
                         .compose(recipientsAddButtonClick),

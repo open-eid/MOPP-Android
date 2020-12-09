@@ -81,6 +81,7 @@
     <string name="signature_update_documents_add_button_description">LISA VEEL FAILE</string>
     <string name="signature_update_documents_add_error_exists">Fail on juba ümbrikus olemas</string>
     <string name="signature_update_document_remove_button">Eemalda fail ümbrikust</string>
+    <string name="signature_update_document_save_button">Salvesta fail ümbrikust</string>
     <string name="signature_update_document_remove_confirmation_message">Soovid eemaldada faili ümbrikust?</string>
     <string name="signature_update_document_remove_error">Faili ümbrikust eemaldamine ebaõnnestus</string>
     <string name="signature_update_signatures_title">Ümbriku allkirjad</string>
@@ -212,6 +213,7 @@
     <string name="crypto_create_data_files_add_button">+ LISA VEEL FAILE</string>
     <string name="crypto_create_data_files_add_error_exists">Fail on juba ümbrikus olemas</string>
     <string name="crypto_create_data_file_remove_button">Eemalda fail</string>
+    <string name="crypto_create_data_file_save_button">Salvesta fail ümbrikust</string>
     <string name="crypto_create_recipients_title">Adressaadid</string>
     <string name="crypto_create_recipients_empty">Adressaadid puuduvad</string>
     <string name="crypto_create_recipients_add_button_description">LISA ADRESSAAT</string>
@@ -386,6 +388,7 @@
     <!--  TODO: tõlked  -->
     <string name="signature_removed">Allkiri eemaldatud</string>
     <string name="file_removed">Fail eemaldatud</string>
+    <string name="file_saved">Fail salvestatud</string>
     <string name="document_removed">Dokument eemaldatud</string>
     <string name="file_added">Fail lisatud</string>
     <string name="error_dialog">Vea dialoog</string>

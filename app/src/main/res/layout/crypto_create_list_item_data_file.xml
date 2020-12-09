@@ -18,14 +18,30 @@
         android:maxLines="2"
         android:ellipsize="end" />
 
-    <ImageButton
-        android:id="@id/cryptoCreateDataFileRemoveButton"
-        style="@style/Widget.Application.Button.Borderless.Colored"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/material_list_icon_last_position_margin_horizontal"
-        android:src="@drawable/ic_icon_remove"
-        android:tint="@color/error"
-        android:contentDescription="@string/crypto_create_data_file_remove_button" />
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@id/cryptoCreateDataFileRemoveButton"
+            style="@style/Widget.Application.Button.Borderless.Colored"
+            android:layout_width="@dimen/material_baseline_grid_4x"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_icon_remove"
+            android:tint="@color/error"
+            android:contentDescription="@string/crypto_create_data_file_remove_button" />
+
+        <ImageButton
+            android:id="@id/cryptoCreateDataFileSaveButton"
+            style="@style/Widget.Application.Button.Borderless.Colored"
+            android:layout_width="@dimen/material_baseline_grid_4x"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/material_list_icon_last_position_margin_horizontal"
+            android:src="@drawable/ic_icon_save"
+            android:tint="@color/accent"
+            android:contentDescription="@string/crypto_create_data_file_save_button" />
+
+    </LinearLayout>
 
 </LinearLayout>
