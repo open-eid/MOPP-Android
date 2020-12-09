@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.signature.update;
 import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
@@ -101,18 +102,20 @@ interface Intent extends MviIntent {
 
         @Nullable abstract File containerFile();
 
+        abstract ImmutableList<DataFile> documents();
+
         @Nullable abstract DataFile document();
 
-        static DocumentRemoveIntent showConfirmation(File containerFile, DataFile document) {
-            return new AutoValue_Intent_DocumentRemoveIntent(true, containerFile, document);
+        static DocumentRemoveIntent showConfirmation(File containerFile, ImmutableList<DataFile> documents, DataFile document) {
+            return new AutoValue_Intent_DocumentRemoveIntent(true, containerFile, documents, document);
         }
 
-        static DocumentRemoveIntent remove(File containerFile, DataFile document) {
-            return new AutoValue_Intent_DocumentRemoveIntent(false, containerFile, document);
+        static DocumentRemoveIntent remove(File containerFile, ImmutableList<DataFile> documents, DataFile document) {
+            return new AutoValue_Intent_DocumentRemoveIntent(false, containerFile, documents, document);
         }
 
         static DocumentRemoveIntent clear() {
-            return new AutoValue_Intent_DocumentRemoveIntent(false, null, null);
+            return new AutoValue_Intent_DocumentRemoveIntent(false, null, null, null);
         }
     }
 

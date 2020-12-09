@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.signature.update;
 import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
@@ -55,12 +56,13 @@ interface Action extends MviAction {
 
         @Nullable abstract File containerFile();
 
+        abstract ImmutableList<DataFile> documents();
+
         @Nullable abstract DataFile document();
 
         static DocumentRemoveAction create(boolean showConfirmation, @Nullable File containerFile,
-                                           @Nullable DataFile document) {
-            return new AutoValue_Action_DocumentRemoveAction(showConfirmation, containerFile,
-                    document);
+                                           ImmutableList<DataFile> documents, @Nullable DataFile document) {
+            return new AutoValue_Action_DocumentRemoveAction(showConfirmation, containerFile, documents, document);
         }
     }
 

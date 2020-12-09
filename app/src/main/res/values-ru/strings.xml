@@ -82,7 +82,8 @@
     <string name="signature_update_documents_add_error_exists">Файл уже существует в контейнере</string>
     <string name="signature_update_document_remove_button">Удалить файл</string>
     <string name="signature_update_document_save_button">Сохраните файл</string>
-    <string name="signature_update_document_remove_confirmation_message">Удалить файл из контейнера?</string>
+    <string name="signature_update_remove_document_confirmation_message">Удалить файл из контейнера?</string>
+    <string name="signature_update_remove_last_document_confirmation_message">Вы собираетесь удалить последний файл в контейнере, он удаляется вместе с контейнером.</string>
     <string name="signature_update_document_remove_error">Файл не может быть удалён из контейнера</string>
     <string name="signature_update_signatures_title">Подписи контейнера</string>
     <string name="signature_update_signatures_empty">Контейнер не подписан</string>
@@ -215,6 +216,8 @@
     <string name="crypto_create_data_files_add_button">+ ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
     <string name="crypto_create_data_files_add_error_exists">Файл уже существует в контейнере</string>
     <string name="crypto_create_data_file_remove_button">Удалить файл</string>
+    <string name="crypto_create_remove_data_file_confirmation_message">Удалить файл из контейнера?</string>
+    <string name="crypto_create_remove_last_data_file_confirmation_message">Вы собираетесь удалить последний файл в контейнере, он удаляется вместе с контейнером.</string>
     <string name="crypto_create_data_file_save_button">Сохраните файл</string>
     <string name="crypto_create_recipients_title">Получатели</string>
     <string name="crypto_create_recipients_empty">Получатели отсутствуют</string>

@@ -186,13 +186,22 @@ interface Result extends MviResult<ViewState> {
 
         abstract ImmutableList<File> dataFiles();
 
+        @Nullable abstract File showConfirmation();
+
         @Override
         public ViewState reduce(ViewState state) {
-            return state.buildWith().dataFiles(dataFiles()).build();
+            return state.buildWith()
+                    .dataFiles(dataFiles())
+                    .dataFileRemoveConfirmation(showConfirmation())
+                    .build();
         }
 
-        static DataFileRemoveResult create(ImmutableList<File> dataFiles) {
-            return new AutoValue_Result_DataFileRemoveResult(dataFiles);
+        static DataFileRemoveResult confirmation(ImmutableList<File> dataFiles, File dataFile) {
+            return new AutoValue_Result_DataFileRemoveResult(dataFiles , dataFile);
+        }
+
+        static DataFileRemoveResult success(ImmutableList<File> dataFiles) {
+            return new AutoValue_Result_DataFileRemoveResult(dataFiles, null);
         }
     }
 

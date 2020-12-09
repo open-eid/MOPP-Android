@@ -17,7 +17,6 @@ import com.bluelinelabs.conductor.Controller;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
-import java.util.List;
 import java.util.Objects;
 
 import ee.ria.DigiDoc.R;
@@ -30,6 +29,7 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
+import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
@@ -79,6 +79,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private View view;
     private Toolbar toolbarView;
     private NameUpdateDialog nameUpdateDialog;
+    private ConfirmationDialog fileRemoveConfirmationDialog;
     private CryptoCreateAdapter adapter;
     private View activityOverlayView;
     private View activityIndicatorView;
@@ -96,6 +97,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     @Nullable private Throwable dataFilesAddError;
     @Nullable private Throwable encryptError;
     @Nullable private Throwable decryptError;
+    @Nullable private File dataFileRemoveConfirmation;
 
     @SuppressWarnings("WeakerAccess")
     public CryptoCreateScreen(Bundle args) {
@@ -130,9 +132,15 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 .map(ignored -> Intent.DataFilesAddIntent.start(dataFiles));
     }
 
+    @SuppressWarnings("unchecked")
     private Observable<Intent.DataFileRemoveIntent> dataFileRemoveIntent() {
-        return adapter.dataFileRemoveClicks()
-                .map(dataFile -> Intent.DataFileRemoveIntent.create(dataFiles, dataFile));
+        return Observable.mergeArray(
+                adapter.dataFileRemoveClicks()
+                        .map(dataFile -> Intent.DataFileRemoveIntent.showConfirmation(dataFiles, dataFile)),
+                cancels(fileRemoveConfirmationDialog).map(ignored -> Intent.DataFileRemoveIntent.clear()),
+                fileRemoveConfirmationDialog.positiveButtonClicks()
+                        .map(ignored -> Intent.DataFileRemoveIntent.remove(containerFile, dataFiles, dataFileRemoveConfirmation))
+        );
     }
 
     private Observable<Intent.DataFileSaveIntent> dataFileSaveIntent() {
@@ -238,6 +246,18 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 state.recipientsAddEnabled(), state.recipientsRemoveEnabled(),
                 state.encryptSuccessMessageVisible(), state.decryptSuccessMessageVisible());
 
+        dataFileRemoveConfirmation = state.dataFileRemoveConfirmation();
+        if (dataFileRemoveConfirmation != null) {
+            if (dataFiles.size() == 1) {
+                fileRemoveConfirmationDialog.setMessage(getResources().getString(R.string.crypto_create_remove_last_data_file_confirmation_message));
+            } else {
+                fileRemoveConfirmationDialog.setMessage(getResources().getString(R.string.crypto_create_remove_data_file_confirmation_message));
+            }
+            fileRemoveConfirmationDialog.show();
+        } else {
+            fileRemoveConfirmationDialog.dismiss();
+        }
+
         encryptButton.setVisibility(state.encryptButtonVisible() ? View.VISIBLE : View.GONE);
         decryptButton.setVisibility(state.decryptButtonVisible() ? View.VISIBLE : View.GONE);
         sendButton.setVisibility(state.sendButtonVisible() ? View.VISIBLE : View.GONE);
@@ -316,6 +336,8 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         view = inflater.inflate(R.layout.crypto_create_screen, container, false);
         toolbarView = view.findViewById(R.id.toolbar);
         nameUpdateDialog = new NameUpdateDialog(container.getContext());
+        fileRemoveConfirmationDialog = new ConfirmationDialog(container.getContext(),
+                R.string.crypto_create_remove_data_file_confirmation_message);
         RecyclerView listView = view.findViewById(R.id.cryptoCreateList);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);

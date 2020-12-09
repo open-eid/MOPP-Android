@@ -208,8 +208,13 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                     });
         });
 
-        dataFileRemove = upstream -> upstream.switchMap(intent ->
-                Observable
+        dataFileRemove = upstream -> upstream.switchMap(intent -> {
+            if (intent.showConfirmation()) {
+                return Observable.just(
+                        Result.DataFileRemoveResult.confirmation(intent.dataFiles(), intent.dataFile())
+                );
+            } else {
+                return Observable
                         .fromCallable(() -> {
                             try {
                                 //noinspection ResultOfMethodCallIgnored
@@ -217,12 +222,19 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             } catch (Exception e) {
                                 // ignore because it's a cache file and is deleted anyway
                             }
-                            return Result.DataFileRemoveResult.create(
-                                    without(intent.dataFiles(), intent.dataFile()));
+                            ImmutableList<File> remainingDataFiles = without(intent.dataFiles(), intent.dataFile());
+                            if (remainingDataFiles.isEmpty()) {
+                                if (intent.containerFile() != null) {
+                                    intent.containerFile().delete();
+                                }
+                                navigator.execute(Transaction.pop());
+                            }
+                            return Result.DataFileRemoveResult.success(remainingDataFiles);
                         })
                         .doFinally(() -> AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.file_removed))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread()));
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+        });
 
         dataFileSave = upstream -> upstream.switchMap(action -> {
             navigator.execute(Transaction.activityForResult(SAVE_FILE,

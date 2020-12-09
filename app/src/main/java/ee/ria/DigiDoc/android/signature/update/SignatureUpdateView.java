@@ -15,6 +15,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.collect.ImmutableList;
+
 import java.io.File;
 
 import ee.ria.DigiDoc.R;
@@ -52,6 +54,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final boolean isExistingContainer;
     private final boolean isNestedContainer;
     private final File containerFile;
+    private ImmutableList<DataFile> dataFiles = ImmutableList.of();
     private final boolean signatureAddVisible;
     private final boolean signatureAddSuccessMessageVisible;
 
@@ -133,7 +136,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         listView.setAdapter(adapter = new SignatureUpdateAdapter());
 
         documentRemoveConfirmationDialog = new ConfirmationDialog(context,
-                R.string.signature_update_document_remove_confirmation_message);
+                R.string.signature_update_remove_document_confirmation_message);
         signatureRemoveConfirmationDialog = new ConfirmationDialog(context,
                 R.string.signature_update_signature_remove_confirmation_message);
         signatureAddDialog = new SignatureUpdateSignatureAddDialog(context);
@@ -166,6 +169,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             return;
         }
 
+
         nameUpdateDialog.render(showNameUpdate(state), state.nameUpdateName(), state.nameUpdateError());
 
         int titleResId = isExistingContainer ? R.string.signature_update_title_existing
@@ -184,6 +188,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             signatureAddButton.setVisibility(VISIBLE);
         }
 
+        if (state.container() != null) {
+            dataFiles = state.container().dataFiles();
+        }
         signatureAddButton.setContentDescription(getResources().getString(R.string.sign_container_button_description));
 
         setActivity(state.containerLoadInProgress() || state.documentsAddInProgress()
@@ -198,6 +205,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         documentRemoveConfirmation = state.documentRemoveConfirmation();
         if (documentRemoveConfirmation != null) {
+            if (dataFiles.size() == 1) {
+                documentRemoveConfirmationDialog.setMessage(getResources().getString(R.string.signature_update_remove_last_document_confirmation_message));
+            } else {
+                documentRemoveConfirmationDialog.setMessage(getResources().getString(R.string.signature_update_remove_document_confirmation_message));
+            }
             documentRemoveConfirmationDialog.show();
         } else {
             documentRemoveConfirmationDialog.dismiss();
@@ -396,10 +408,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                         .create(containerFile, document))));
         disposables.add(adapter.documentRemoveClicks().subscribe(document ->
                 documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent
-                        .showConfirmation(containerFile, document))));
+                        .showConfirmation(containerFile, dataFiles, document))));
         disposables.add(documentRemoveConfirmationDialog.positiveButtonClicks().subscribe(ignored ->
                 documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent
-                        .remove(containerFile, documentRemoveConfirmation))));
+                        .remove(containerFile, dataFiles, documentRemoveConfirmation))));
         disposables.add(documentRemoveConfirmationDialog.cancels().subscribe(ignored ->
                 documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent.clear())));
         disposables.add(adapter.signatureRemoveClicks().subscribe(signature ->

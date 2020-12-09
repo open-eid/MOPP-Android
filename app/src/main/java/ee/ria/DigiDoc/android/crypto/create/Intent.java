@@ -79,12 +79,28 @@ interface Intent extends MviIntent, MviAction {
     @AutoValue
     abstract class DataFileRemoveIntent implements Intent {
 
+        abstract boolean showConfirmation();
+
+        @Nullable abstract File containerFile();
+
         abstract ImmutableList<File> dataFiles();
 
         abstract File dataFile();
 
-        static DataFileRemoveIntent create(ImmutableList<File> dataFiles, File dataFile) {
-            return new AutoValue_Intent_DataFileRemoveIntent(dataFiles, dataFile);
+        static DataFileRemoveIntent showConfirmation(ImmutableList<File> dataFiles, File dataFile) {
+            return create(true, null,  dataFiles, dataFile);
+        }
+
+        static DataFileRemoveIntent remove(File containerFile, ImmutableList<File> dataFiles, File dataFile) {
+            return create(false, containerFile, dataFiles, dataFile);
+        }
+
+        static DataFileRemoveIntent clear() {
+            return create(false, null,null, null);
+        }
+
+        private static DataFileRemoveIntent create(boolean showConfirmation, File containerFile, ImmutableList<File> dataFiles, File dataFile) {
+            return new AutoValue_Intent_DataFileRemoveIntent(showConfirmation,containerFile, dataFiles, dataFile);
         }
     }
 

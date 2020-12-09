@@ -253,17 +253,23 @@ final class Processor implements ObservableTransformer<Action, Result> {
             } else if (action.showConfirmation()) {
                 return Observable.just(Result.DocumentRemoveResult.confirmation(action.document()));
             } else {
-                return signatureContainerDataSource
-                        .removeDocument(action.containerFile(), action.document())
-                        .toObservable()
-                        .map(container -> {
-                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.file_removed);
-                            return Result.DocumentRemoveResult.success(container);
-                        })
-                        .onErrorReturn(Result.DocumentRemoveResult::failure)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.DocumentRemoveResult.progress());
+                if (action.documents().size() == 1) {
+                    action.containerFile().delete();
+                    navigator.execute(Transaction.pop());
+                    return Observable.just(Result.DocumentRemoveResult.success(null));
+                } else {
+                    return signatureContainerDataSource
+                            .removeDocument(action.containerFile(), action.document())
+                            .toObservable()
+                            .map(container -> {
+                                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.file_removed);
+                                return Result.DocumentRemoveResult.success(container);
+                            })
+                            .onErrorReturn(Result.DocumentRemoveResult::failure)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .startWith(Result.DocumentRemoveResult.progress());
+                }
             }
         });
 
