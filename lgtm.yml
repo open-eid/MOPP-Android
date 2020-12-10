@@ -1,0 +1,6 @@
+extraction:
+  java:
+    index:
+      build_command:
+      - "./gradlew -Dorg.gradle.caching=false --no-daemon -S clean"
+      - "./gradlew -Dorg.gradle.caching=false --no-daemon -S app:assembleDebug -x app:processDebugGoogleServices -x app:uploadCrashlyticsMappingFileDebug"
