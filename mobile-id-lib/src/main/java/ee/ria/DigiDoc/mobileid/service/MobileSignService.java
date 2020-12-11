@@ -256,6 +256,8 @@ public class MobileSignService extends IntentService {
         if (responseWrapper.code() == 429) {
             broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS));
             Timber.d("Too many requests");
+        } else if (responseWrapper.code() == 401) {
+            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.UNAUTHORIZED));
         } else {
             broadcastFault(defaultError());
             Timber.d("Request unsuccessful, HTTP status code: %s", responseWrapper.code());

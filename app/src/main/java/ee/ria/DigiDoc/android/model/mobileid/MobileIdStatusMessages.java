@@ -28,6 +28,7 @@ public final class MobileIdStatusMessages {
                     .put(ProcessStatus.SIM_ERROR,
                             R.string.signature_update_mobile_id_status_sim_error)
                     .put(ProcessStatus.TOO_MANY_REQUESTS, R.string.signature_update_mobile_id_error_message_too_many_requests)
+                    .put(ProcessStatus.UNAUTHORIZED, R.string.signature_update_mobile_id_error_message_unauthorized)
                     .put(ProcessStatus.GENERAL_ERROR,
                             R.string.signature_update_mobile_id_error_general_client)
                     .put(ProcessStatus.NO_RESPONSE, R.string.signature_update_signature_error_no_response)

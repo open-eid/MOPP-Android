@@ -172,6 +172,7 @@
     <string name="signature_update_mobile_id_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Дополнительная информация</string>
     <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
+    <string name="signature_update_mobile_id_error_message_unauthorized">Не удалось подписать контейнер. Проверьте настройки доступа услуги mobiil-ID. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Превышен лимит одновременных запросов</string>
 
     <string name="signature_update_smart_id_message">Введите свой личный код для подписи с Smart-ID</string>
