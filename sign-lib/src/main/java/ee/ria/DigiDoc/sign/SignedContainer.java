@@ -58,7 +58,7 @@ public abstract class SignedContainer {
     }
 
     public final boolean dataFileRemoveEnabled() {
-        return dataFileAddEnabled() && dataFiles().size() != 1;
+        return dataFileAddEnabled();
     }
 
     public abstract ImmutableList<Signature> signatures();

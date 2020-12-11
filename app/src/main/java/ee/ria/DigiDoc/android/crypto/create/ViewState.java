@@ -27,6 +27,7 @@ abstract class ViewState implements MviViewState {
     abstract boolean dataFilesViewEnabled();
     abstract boolean dataFilesAddEnabled();
     abstract boolean dataFilesRemoveEnabled();
+    @Nullable abstract File dataFileRemoveConfirmation();
     abstract ImmutableList<Certificate> recipients();
     abstract boolean recipientsAddEnabled();
     abstract boolean recipientsRemoveEnabled();
@@ -88,6 +89,7 @@ abstract class ViewState implements MviViewState {
         Builder dataFilesViewEnabled(boolean dataFilesViewEnabled);
         Builder dataFilesAddEnabled(boolean dataFilesAddEnabled);
         Builder dataFilesRemoveEnabled(boolean dataFilesRemoveEnabled);
+        Builder dataFileRemoveConfirmation(@Nullable File dataFileRemoveConfirmation);
         Builder recipients(ImmutableList<Certificate> recipients);
         Builder recipientsAddEnabled(boolean recipientsAddEnabled);
         Builder recipientsRemoveEnabled(boolean recipientsRemoveEnabled);
