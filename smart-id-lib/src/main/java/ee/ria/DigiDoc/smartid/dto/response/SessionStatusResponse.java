@@ -70,6 +70,7 @@ public class SessionStatusResponse {
         TOO_MANY_REQUESTS,
         NOT_QUALIFIED,
         FORBIDDEN,
+        OCSP_INVALID_TIME_SLOT,
         OLD_API,
         UNDER_MAINTENANCE,
         GENERAL_ERROR,

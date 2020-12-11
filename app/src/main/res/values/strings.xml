@@ -120,9 +120,11 @@
     <string name="signature_update_signature_add_success">SIGNATURE ADDED</string>
     <string name="signature_update_signature_add_error">Something went wrong</string>
 
+    <string name="signature_update_signature_error_message_additional_information">Additional information</string>
+
     <string name="signature_update_signature_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
-    <string name="signature_update_signature_error_message_too_many_requests_additional_information">Additional information</string>
-    <string name="signature_update_signature_error_message_too_many_requests_additional_information_link">https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
+
+    <string name="signature_update_signature_error_message_invalid_time_slot">Please check your smart device time. https://www.id.ee/en/article/ria-digidoc-error-please-check-your-smart-device-time/</string>
 
     <string name="signature_update_signature_error_no_response">Please check your internet connection</string>
     <string name="signature_update_signature_error_invalid_ssl_handshake">SSL handshake failed. Check your application settings or software upgrades</string>
@@ -167,9 +169,6 @@
     <string name="signature_update_mobile_id_error_user_certificate_suspended">Your mobile signing certificate is suspended</string>
     <string name="signature_update_mobile_id_error_user_certificate_expired">Your mobile signing certificate is expired</string>
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Too many datafiles in container</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Additional information</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Simultaneous requests limit exceeded</string>
 
     <string name="signature_update_smart_id_message">Enter your personal code to sign with Smart-ID</string>

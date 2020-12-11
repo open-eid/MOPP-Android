@@ -120,9 +120,11 @@
     <string name="signature_update_signature_add_success">ПОДПИСЬ ДОБАВЛЕНА</string>
     <string name="signature_update_signature_add_error">Что-то пошло не так</string>
 
+    <string name="signature_update_signature_error_message_additional_information">Дополнительная информация</string>
+
     <string name="signature_update_signature_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
-    <string name="signature_update_signature_error_message_too_many_requests_additional_information">Дополнительная информация</string>
-    <string name="signature_update_signature_error_message_too_many_requests_additional_information_link">https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
+
+    <string name="signature_update_signature_error_message_invalid_time_slot">Пожалуйста, проверьте время на своем смарт-устройстве. https://www.id.ee/ru/artikkel/oshibka-ria-digidoc-pozhalujsta-proverte-vremya-na-svoem-smart-ustrojstve/</string>
 
     <string name="signature_update_signature_error_no_response">Пожалуйста проверьте подключение к интернету</string>
     <string name="signature_update_signature_error_invalid_ssl_handshake">Не удалось создать SSL канал передачи данных. Проверьте настройки вашего приложения или обновления программного обеспечения.</string>
@@ -169,9 +171,6 @@
     <string name="signature_update_mobile_id_error_user_certificate_suspended">Ваш сертификат цифровой подписи временно приостановлен</string>
     <string name="signature_update_mobile_id_error_user_certificate_expired">Срок действительности Вашего сертификата цифровой подписи истек</string>
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Слишком много файлов в контейнере</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Дополнительная информация</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Превышен лимит одновременных запросов</string>
 
     <string name="signature_update_smart_id_message">Введите свой личный код для подписи с Smart-ID</string>
