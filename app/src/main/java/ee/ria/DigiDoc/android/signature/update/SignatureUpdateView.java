@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Files;
 
 import java.io.File;
 
@@ -46,6 +48,8 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
+
+    private static final ImmutableSet<String> UNSIGNABLE_CONTAINER_EXTENSIONS = ImmutableSet.<String>builder().add("asics", "ddoc").build();
 
     private static final String EMPTY_MOBILE_ID_CHALLENGE = "____";
 
@@ -185,7 +189,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         } else {
             sendButton.setVisibility(isExistingContainer ? VISIBLE : GONE);
             buttonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
-            signatureAddButton.setVisibility(VISIBLE);
+            if (containerFile != null && UNSIGNABLE_CONTAINER_EXTENSIONS.contains(Files.getFileExtension(containerFile.getName()))) {
+                signatureAddButton.setVisibility(GONE);
+            } else {
+                signatureAddButton.setVisibility(VISIBLE);
+            }
         }
 
         if (state.container() != null) {
