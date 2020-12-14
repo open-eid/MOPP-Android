@@ -5,6 +5,7 @@ import android.app.Activity;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -85,9 +86,9 @@ public class FetchAndPackageDefaultConfigurationTask {
     }
 
     private static void loadResourcesProperties() {
-        try {
-            properties = new Properties();
-            properties.load(new FileInputStream(System.getProperty("user.dir") + "/src/main/resources/" + DEFAULT_CONFIGURATION_PROPERTIES_FILE_NAME));
+        properties = new Properties();
+        try (InputStream propsInputStream = new FileInputStream(System.getProperty("user.dir") + "/src/main/resources/" + DEFAULT_CONFIGURATION_PROPERTIES_FILE_NAME)) {
+            properties.load(propsInputStream);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to read '" + DEFAULT_CONFIGURATION_PROPERTIES_FILE_NAME + "' file", e);
         }
