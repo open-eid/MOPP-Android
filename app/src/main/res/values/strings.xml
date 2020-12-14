@@ -170,7 +170,7 @@
     <string name="signature_update_mobile_id_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
     <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Additional information</string>
     <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
-    <string name="signature_update_mobile_id_error_message_unauthorized">Failed to sign container. Check your mobile-ID service access settings. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
+    <string name="signature_update_mobile_id_error_message_access_rights">Failed to sign container. Check your mobile-ID service access settings. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Simultaneous requests limit exceeded</string>
 
     <string name="signature_update_smart_id_message">Enter your personal code to sign with Smart-ID</string>
@@ -185,7 +185,7 @@
     <string name="signature_update_smart_id_error_message_under_maintenance">Smart-ID service has encountered technical errors. Please try again later.</string>
     <string name="signature_update_smart_id_error_message_account_not_found">Account not found</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Session not found</string>
-    <string name="signature_update_smart_id_error_message_forbidden">Failed to sign container. Check your Smart-ID service access settings. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
+    <string name="signature_update_smart_id_error_message_access_rights">Failed to sign container. Check your Smart-ID service access settings. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
 
     <string name="signature_update_id_card_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Reader found. Insert your ID-card into the reader.</string>

@@ -51,8 +51,8 @@ public final class SmartIdStatusMessages {
                             R.string.signature_update_mobile_id_error_message_too_many_requests)
                     .put(ProcessStatus.NOT_QUALIFIED,
                             R.string.signature_update_smart_id_error_message_not_qualified)
-                    .put(ProcessStatus.FORBIDDEN,
-                            R.string.signature_update_smart_id_error_message_forbidden)
+                    .put(ProcessStatus.INVALID_ACCESS_RIGHTS,
+                            R.string.signature_update_smart_id_error_message_access_rights)
                     .put(ProcessStatus.OLD_API,
                             R.string.signature_update_smart_id_error_message_old_api)
                     .put(ProcessStatus.UNDER_MAINTENANCE,

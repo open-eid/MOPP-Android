@@ -46,6 +46,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
 import ee.ria.DigiDoc.common.ContainerWrapper;
+import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
 import ee.ria.DigiDoc.mobileid.dto.MobileCertificateResultType;
 import ee.ria.DigiDoc.mobileid.dto.request.GetMobileCreateSignatureSessionStatusRequest;
@@ -114,6 +115,12 @@ public class MobileSignService extends IntentService {
         if (isCountryCodeError(request.getPhoneNumber())) {
             broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_COUNTRY_CODE));
             Timber.d("Invalid country code");
+            return;
+        }
+
+        if (!UUIDUtil.isValid(request.getRelyingPartyUUID())) {
+            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS));
+            Timber.d("%s - Relying Party UUID not in valid format", request.getRelyingPartyUUID());
             return;
         }
 
@@ -257,7 +264,7 @@ public class MobileSignService extends IntentService {
             broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS));
             Timber.d("Too many requests");
         } else if (responseWrapper.code() == 401) {
-            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.UNAUTHORIZED));
+            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS));
         } else {
             broadcastFault(defaultError());
             Timber.d("Request unsuccessful, HTTP status code: %s", responseWrapper.code());

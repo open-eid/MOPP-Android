@@ -33,6 +33,7 @@ import java.security.cert.CertificateException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
 import ee.ria.DigiDoc.common.ContainerWrapper;
+import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
 import ee.ria.DigiDoc.smartid.dto.request.PostCertificateRequest;
 import ee.ria.DigiDoc.smartid.dto.request.PostCreateSignatureRequest;
@@ -76,6 +77,12 @@ public class SmartSignService extends IntentService {
         } catch (CertificateException | NoSuchAlgorithmException e) {
             broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE);
             Timber.e(e, "SSL handshake failed");
+            return;
+        }
+
+        if (!UUIDUtil.isValid(request.getRelyingPartyUUID())) {
+            broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS);
+            Timber.d("%s - Relying Party UUID not in valid format", request.getRelyingPartyUUID());
             return;
         }
 
@@ -237,7 +244,7 @@ public class SmartSignService extends IntentService {
             switch (httpResponse.code()) {
                 case 401:
                 case 403:
-                    broadcastFault(SessionStatusResponse.ProcessStatus.FORBIDDEN);
+                    broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS);
                     Timber.d("Forbidden");
                     break;
                 case 404:

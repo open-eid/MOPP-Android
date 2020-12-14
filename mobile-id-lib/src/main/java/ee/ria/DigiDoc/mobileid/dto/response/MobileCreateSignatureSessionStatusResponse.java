@@ -134,7 +134,7 @@ public class MobileCreateSignatureSessionStatusResponse {
         SIM_ERROR,
 
         TOO_MANY_REQUESTS,
-        UNAUTHORIZED,
+        INVALID_ACCESS_RIGHTS,
         GENERAL_ERROR,
         NO_RESPONSE,
         INVALID_COUNTRY_CODE,

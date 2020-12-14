@@ -69,7 +69,7 @@ public class SessionStatusResponse {
         MISSING_SESSIONID,
         TOO_MANY_REQUESTS,
         NOT_QUALIFIED,
-        FORBIDDEN,
+        INVALID_ACCESS_RIGHTS,
         OLD_API,
         UNDER_MAINTENANCE,
         GENERAL_ERROR,
