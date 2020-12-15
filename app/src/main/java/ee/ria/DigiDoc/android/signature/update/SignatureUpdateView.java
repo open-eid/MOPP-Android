@@ -33,6 +33,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
 import ee.ria.DigiDoc.sign.DataFile;
+import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.Signature;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -161,8 +162,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @Override
     public void render(ViewState state) {
         if (state.containerLoadError() != null) {
-            Toast.makeText(getContext(), R.string.signature_update_container_load_error,
-                    Toast.LENGTH_LONG).show();
+            int messageId = state.containerLoadError() instanceof NoInternetConnectionException
+                    ? R.string.no_internet_connection : R.string.signature_update_container_load_error;
+            Toast.makeText(getContext(), messageId, Toast.LENGTH_LONG).show();
             navigator.execute(Transaction.pop());
             signatureUpdateProgressBar.stopProgressBar(progressBar, isTimerStarted);
             isTimerStarted = false;

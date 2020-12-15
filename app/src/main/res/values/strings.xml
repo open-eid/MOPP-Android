@@ -127,7 +127,6 @@
 
     <string name="signature_update_signature_error_message_invalid_time_slot">Please check your smart device time. https://www.id.ee/en/article/ria-digidoc-error-please-check-your-smart-device-time/</string>
 
-    <string name="signature_update_signature_error_no_response">Please check your internet connection</string>
     <string name="signature_update_signature_error_invalid_ssl_handshake">SSL handshake failed. Check your application settings or software upgrades</string>
 
     <string name="signature_update_mobile_id_message">Enter your mobile number and personal code to sign with mobile-ID</string>
@@ -443,6 +442,8 @@
     <string name="crash_report_dialog_send_button">Send</string>
     <string name="crash_report_dialog_always_send_button">Always Send</string>
     <string name="crash_report_dialog_dont_send_button">Don\'t Send</string>
+
+    <string name="no_internet_connection">Please check your internet connection</string>
 
     <string name="rooted_device">We\'ve detected that your device may be rooted. For security reasons we don\'t recommend using this app on a rooted device.</string>
 
