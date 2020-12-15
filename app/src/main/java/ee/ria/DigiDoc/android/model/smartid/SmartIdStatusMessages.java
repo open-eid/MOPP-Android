@@ -53,8 +53,8 @@ public final class SmartIdStatusMessages {
                     .put(ProcessStatus.OCSP_INVALID_TIME_SLOT, R.string.signature_update_signature_error_message_invalid_time_slot)
                     .put(ProcessStatus.NOT_QUALIFIED,
                             R.string.signature_update_smart_id_error_message_not_qualified)
-                    .put(ProcessStatus.FORBIDDEN,
-                            R.string.signature_update_smart_id_error_message_forbidden)
+                    .put(ProcessStatus.INVALID_ACCESS_RIGHTS,
+                            R.string.signature_update_smart_id_error_message_access_rights)
                     .put(ProcessStatus.OLD_API,
                             R.string.signature_update_smart_id_error_message_old_api)
                     .put(ProcessStatus.UNDER_MAINTENANCE,

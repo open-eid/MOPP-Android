@@ -172,6 +172,7 @@
     <string name="signature_update_mobile_id_error_user_certificate_suspended">Ваш сертификат цифровой подписи временно приостановлен</string>
     <string name="signature_update_mobile_id_error_user_certificate_expired">Срок действительности Вашего сертификата цифровой подписи истек</string>
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Слишком много файлов в контейнере</string>
+    <string name="signature_update_mobile_id_error_message_access_rights">Не удалось подписать контейнер. Проверьте настройки доступа услуги mobiil-ID. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Превышен лимит одновременных запросов</string>
 
     <string name="signature_update_smart_id_message">Введите свой личный код для подписи с Smart-ID</string>
@@ -186,7 +187,7 @@
     <string name="signature_update_smart_id_error_message_under_maintenance">Технический сбой услуги Smart-ID. Пожалуйста, попробуйте позже.</string>
     <string name="signature_update_smart_id_error_message_account_not_found">Счет не найден</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Сессия не найден</string>
-    <string name="signature_update_smart_id_error_message_forbidden">Не удалось подписать контейнер. Проверьте настройки доступа услуги Smart-ID. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
+    <string name="signature_update_smart_id_error_message_access_rights">Не удалось подписать контейнер. Проверьте настройки доступа услуги Smart-ID. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
 
     <string name="signature_update_id_card_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
