@@ -134,6 +134,7 @@ public class MobileCreateSignatureSessionStatusResponse {
         SIM_ERROR,
 
         TOO_MANY_REQUESTS,
+        OCSP_INVALID_TIME_SLOT,
         GENERAL_ERROR,
         NO_RESPONSE,
         INVALID_COUNTRY_CODE,

@@ -25,6 +25,7 @@ import android.content.Context;
 import com.google.common.collect.ImmutableMap;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse.ProcessStatus;
 
 public final class SmartIdStatusMessages {
@@ -48,7 +49,8 @@ public final class SmartIdStatusMessages {
                     .put(ProcessStatus.MISSING_SESSIONID,
                             R.string.signature_update_mobile_id_error_general_client)
                     .put(ProcessStatus.TOO_MANY_REQUESTS,
-                            R.string.signature_update_mobile_id_error_message_too_many_requests)
+                            R.string.signature_update_signature_error_message_too_many_requests)
+                    .put(ProcessStatus.OCSP_INVALID_TIME_SLOT, R.string.signature_update_signature_error_message_invalid_time_slot)
                     .put(ProcessStatus.NOT_QUALIFIED,
                             R.string.signature_update_smart_id_error_message_not_qualified)
                     .put(ProcessStatus.FORBIDDEN,
