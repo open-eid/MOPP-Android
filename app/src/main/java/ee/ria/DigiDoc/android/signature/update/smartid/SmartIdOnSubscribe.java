@@ -82,6 +82,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getStringExtra(SID_BROADCAST_TYPE_KEY)) {
                     case SERVICE_FAULT: {
+                        NotificationManagerCompat.from(navigator.activity()).cancelAll();
                         SessionStatusResponse.ProcessStatus status =
                                 (SessionStatusResponse.ProcessStatus) intent.getSerializableExtra(SERVICE_FAULT);
                         emitter.onError(SmartIdMessageException
@@ -119,18 +120,12 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                         SmartIDServiceResponse status =
                                 SmartIDServiceResponse.fromJson(
                                         intent.getStringExtra(CREATE_SIGNATURE_STATUS));
-                        switch (status.getStatus()) {
-                            case USER_REFUSED:
-                                emitter.onNext(SmartIdResponse.status(status.getStatus()));
-                                break;
-                            case OK:
-                                emitter.onNext(SmartIdResponse.success(container));
-                                emitter.onComplete();
-                                break;
-                            default:
-                                emitter.onError(SmartIdMessageException
-                                        .create(navigator.activity(), status.getStatus()));
-                                break;
+                        if (status.getStatus() == SessionStatusResponse.ProcessStatus.OK) {
+                            emitter.onNext(SmartIdResponse.success(container));
+                            emitter.onComplete();
+                        } else {
+                            emitter.onError(SmartIdMessageException
+                                    .create(navigator.activity(), status.getStatus()));
                         }
                         break;
                 }
