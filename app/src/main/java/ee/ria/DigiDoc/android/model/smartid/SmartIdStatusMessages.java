@@ -25,7 +25,6 @@ import android.content.Context;
 import com.google.common.collect.ImmutableMap;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse.ProcessStatus;
 
 public final class SmartIdStatusMessages {
