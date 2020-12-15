@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -197,7 +198,9 @@ public class UpdateLibdigidocppTask extends DefaultTask {
     }
 
     private static void unzip(File zip, File destination) throws IOException {
-        unzip(new FileInputStream(zip), destination);
+        try (InputStream zipInputStream = new FileInputStream(zip)) {
+            unzip(zipInputStream, destination);
+        }
     }
 
     private static void unzip(InputStream stream, File destination) throws IOException {
@@ -224,18 +227,19 @@ public class UpdateLibdigidocppTask extends DefaultTask {
     private static void jar(File path, File jar) throws IOException {
         Manifest manifest = new Manifest();
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
-        JarOutputStream outputStream = new JarOutputStream(new FileOutputStream(jar), manifest);
-        for (File file : files(path)) {
-            if (!file.getName().endsWith(".class")) {
-                continue;
+        try (JarOutputStream outputStream = new JarOutputStream(new FileOutputStream(jar), manifest)) {
+            for (File file : files(path)) {
+                if (!file.getName().endsWith(".class")) {
+                    continue;
+                }
+                JarEntry entry = new JarEntry(path.toPath().relativize(file.toPath()).toString());
+                entry.setTime(file.lastModified());
+                outputStream.putNextEntry(entry);
+                Files.copy(file.toPath(), outputStream);
+                outputStream.closeEntry();
             }
-            JarEntry entry = new JarEntry(path.toPath().relativize(file.toPath()).toString());
-            entry.setTime(file.lastModified());
-            outputStream.putNextEntry(entry);
-            Files.copy(file.toPath(), outputStream);
-            outputStream.closeEntry();
+            outputStream.close();
         }
-        outputStream.close();
     }
 
     private static List<File> files(File dir) {

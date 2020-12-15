@@ -202,6 +202,10 @@ public class MobileSignService extends IntentService {
                         RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS);
                         broadcastFault(fault);
                         Timber.e(e, "Failed to sign with Mobile-ID - Too Many Requests");
+                    } else if (e.getMessage() != null && e.getMessage().contains("OCSP response not in valid time slot")) {
+                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.OCSP_INVALID_TIME_SLOT);
+                        broadcastFault(fault);
+                        Timber.e(e, "Failed to sign with Smart-ID - OCSP response not in valid time slot");
                     } else {
                         RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.GENERAL_ERROR);
                         broadcastFault(fault);

@@ -7,15 +7,14 @@ import java.util.regex.Matcher;
 
 public class ErrorMessage {
 
-    public static String withURL(Context context, int errorMessageTranslation, int urlTranslation, int messageTranslation) {
+    public static String withURL(Context context, int errorMessageTranslation, int urlMessageTranslation) {
         String errorMessage = getTextFromTranslation(context, errorMessageTranslation);
-        if (!extractLink(errorMessage).isEmpty()) {
+        String link = extractLink(errorMessage);
+        if (!link.isEmpty()) {
             return "<span>" +
-                    removeLink(errorMessage) + "</span> <a href=" +
-                    extractLink(getTextFromTranslation(context, urlTranslation)) + ">" +
-                    getTextFromTranslation(context, messageTranslation) + "</a>";
+                    removeLink(errorMessage) + "</span> <a href=" + link + ">" +
+                    getTextFromTranslation(context, urlMessageTranslation) + "</a>";
         }
-
         return errorMessage;
     }
 

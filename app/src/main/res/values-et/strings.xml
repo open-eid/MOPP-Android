@@ -82,7 +82,8 @@
     <string name="signature_update_documents_add_error_exists">Fail on juba ümbrikus olemas</string>
     <string name="signature_update_document_remove_button">Eemalda fail ümbrikust</string>
     <string name="signature_update_document_save_button">Salvesta fail ümbrikust</string>
-    <string name="signature_update_document_remove_confirmation_message">Soovid eemaldada faili ümbrikust?</string>
+    <string name="signature_update_remove_document_confirmation_message">Soovid eemaldada faili ümbrikust?</string>
+    <string name="signature_update_remove_last_document_confirmation_message">Oled kustutamas viimast faili ümbrikus, koos sellega eemaldatakse ka ümbrik.</string>
     <string name="signature_update_document_remove_error">Faili ümbrikust eemaldamine ebaõnnestus</string>
     <string name="signature_update_signatures_title">Ümbriku allkirjad</string>
     <string name="signature_update_signatures_empty">Allkirjad puuduvad</string>
@@ -120,9 +121,11 @@
     <string name="signature_update_signature_add_success">ALLKIRI LISATUD</string>
     <string name="signature_update_signature_add_error">Midagi läks valesti</string>
 
+    <string name="signature_update_signature_error_message_additional_information">Loe täpsemalt siit</string>
+
     <string name="signature_update_signature_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
-    <string name="signature_update_signature_error_message_too_many_requests_additional_information">Loe täpsemalt siit</string>
-    <string name="signature_update_signature_error_message_too_many_requests_additional_information_link">https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
+
+    <string name="signature_update_signature_error_message_invalid_time_slot">Palun kontrollige oma nutiseadme kellaaega. https://www.id.ee/artikkel/ria-digidoc-viga-palun-kontrollige-oma-nutiseadme-kellaaega/</string>
 
     <string name="signature_update_signature_error_no_response">Palun kontrolli internetiühendust</string>
     <string name="signature_update_signature_error_invalid_ssl_handshake">SSL ühenduskanali loomine ebaõnnestus. Kontrolli rakenduse seadeid või tarkvara uuendusi</string>
@@ -167,9 +170,6 @@
     <string name="signature_update_mobile_id_error_user_certificate_suspended">Sinu mobiil-ID allkirjastamise sertifikaadi kehtivus on peatatud</string>
     <string name="signature_update_mobile_id_error_user_certificate_expired">Sinu mobiil-ID allkirjastamise sertifikaat on aegunud</string>
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Liiga palju faile ühes konteineris</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information">Loe täpsemalt siit</string>
-    <string name="signature_update_mobile_id_error_message_too_many_requests_additional_information_link">https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
     <string name="signature_update_mobile_id_error_message_access_rights">Ümbriku allkirjastamine ebaõnnestus. Kontrolli mobiil-ID teenuse ligipääsu seadeid. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Samaaegsete pöördumiste limiit ületatud</string>
 
@@ -214,6 +214,8 @@
     <string name="crypto_create_data_files_add_button">+ LISA VEEL FAILE</string>
     <string name="crypto_create_data_files_add_error_exists">Fail on juba ümbrikus olemas</string>
     <string name="crypto_create_data_file_remove_button">Eemalda fail</string>
+    <string name="crypto_create_remove_data_file_confirmation_message">Soovid eemaldada faili ümbrikust?</string>
+    <string name="crypto_create_remove_last_data_file_confirmation_message">Oled kustutamas viimast faili ümbrikus, koos sellega eemaldatakse ka ümbrik.</string>
     <string name="crypto_create_data_file_save_button">Salvesta fail ümbrikust</string>
     <string name="crypto_create_recipients_title">Adressaadid</string>
     <string name="crypto_create_recipients_empty">Adressaadid puuduvad</string>

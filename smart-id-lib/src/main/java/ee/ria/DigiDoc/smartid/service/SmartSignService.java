@@ -127,6 +127,9 @@ public class SmartSignService extends IntentService {
             if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
                 broadcastFault(SessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS);
                 Timber.e(e, "Failed to sign with Smart-ID - Too Many Requests");
+            } else if (e.getMessage() != null && e.getMessage().contains("OCSP response not in valid time slot")) {
+                broadcastFault(SessionStatusResponse.ProcessStatus.OCSP_INVALID_TIME_SLOT);
+                Timber.e(e, "Failed to sign with Smart-ID - OCSP response not in valid time slot");
             } else {
                 broadcastFault();
                 Timber.e(e, "Failed to sign with Smart-ID");

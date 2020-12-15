@@ -19,6 +19,7 @@ import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
+import ee.ria.DigiDoc.sign.OcspInvalidTimeSlotException;
 import ee.ria.DigiDoc.sign.TooManyRequestsException;
 import ee.ria.DigiDoc.sign.utils.ErrorMessage;
 import io.reactivex.subjects.Subject;
@@ -81,20 +82,29 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                 setMessage(getContext().getString(R.string.signature_update_signature_error_no_response));
             } else if (signatureAddError instanceof MobileIdMessageException ||
                     signatureAddError instanceof SmartIdMessageException) {
-                if (!ErrorMessageUtil.extractLink(signatureAddError.getMessage()).isEmpty()) {
+                String link = ErrorMessageUtil.extractLink(signatureAddError.getMessage());
+                if (!link.isEmpty()) {
                     setMessage(
                             Html.fromHtml("<span>" +
-                                    ErrorMessageUtil.removeLink(signatureAddError.getMessage()) + "</span><a href=" +
-                                            ErrorMessageUtil.extractLink(getTextFromTranslation(R.string.signature_update_mobile_id_error_message_too_many_requests_additional_information_link)) + ">" +
-                                            getTextFromTranslation(R.string.signature_update_mobile_id_error_message_too_many_requests_additional_information) + "</a>"));
+                                    ErrorMessageUtil.removeLink(signatureAddError.getMessage()) + "</span><a href=" + link + ">" +
+                                    getTextFromTranslation(R.string.signature_update_signature_error_message_additional_information) + "</a>"
+                            )
+                    );
                 } else {
                     setMessage(signatureAddError.getMessage());
                 }
             } else if (signatureAddError instanceof TooManyRequestsException) {
-                setMessage(Html.fromHtml(ErrorMessage.withURL(getContext(),
+                setMessage(Html.fromHtml(ErrorMessage.withURL(
+                        getContext(),
                         R.string.signature_update_signature_error_message_too_many_requests,
-                        R.string.signature_update_signature_error_message_too_many_requests_additional_information_link,
-                        R.string.signature_update_signature_error_message_too_many_requests_additional_information)));
+                        R.string.signature_update_signature_error_message_additional_information
+                )));
+            } else if (signatureAddError instanceof OcspInvalidTimeSlotException) {
+                setMessage(Html.fromHtml(ErrorMessage.withURL(
+                        getContext(),
+                        R.string.signature_update_signature_error_message_invalid_time_slot,
+                        R.string.signature_update_signature_error_message_additional_information
+                )));
             } else {
                 setTitle(R.string.signature_update_signature_add_error);
                 setMessage(signatureAddError.getMessage());
