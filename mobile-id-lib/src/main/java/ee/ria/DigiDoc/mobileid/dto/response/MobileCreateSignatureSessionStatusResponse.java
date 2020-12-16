@@ -136,6 +136,7 @@ public class MobileCreateSignatureSessionStatusResponse {
         TOO_MANY_REQUESTS,
         INVALID_ACCESS_RIGHTS,
         OCSP_INVALID_TIME_SLOT,
+        CERTIFICATE_REVOKED,
         GENERAL_ERROR,
         NO_RESPONSE,
         INVALID_COUNTRY_CODE,

@@ -71,6 +71,7 @@ public class SessionStatusResponse {
         NOT_QUALIFIED,
         INVALID_ACCESS_RIGHTS,
         OCSP_INVALID_TIME_SLOT,
+        CERTIFICATE_REVOKED,
         OLD_API,
         UNDER_MAINTENANCE,
         GENERAL_ERROR,

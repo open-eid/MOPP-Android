@@ -205,7 +205,11 @@ public class MobileSignService extends IntentService {
                     } else if (e.getMessage() != null && e.getMessage().contains("OCSP response not in valid time slot")) {
                         RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.OCSP_INVALID_TIME_SLOT);
                         broadcastFault(fault);
-                        Timber.e(e, "Failed to sign with Smart-ID - OCSP response not in valid time slot");
+                        Timber.e(e, "Failed to sign with Mobile-ID - OCSP response not in valid time slot");
+                    } else if (e.getMessage() != null && e.getMessage().contains("Certificate status: revoked")) {
+                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.CERTIFICATE_REVOKED);
+                        broadcastFault(fault);
+                        Timber.e(e, "Failed to sign with Mobile-ID - Certificate status: revoked");
                     } else {
                         RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.GENERAL_ERROR);
                         broadcastFault(fault);
