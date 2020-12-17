@@ -23,13 +23,6 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
-
-    buildTypes {
-        envtest {
-            initWith debug
-            matchingFallbacks = ['debug']
-        }
-    }
 }
 
 dependencies {

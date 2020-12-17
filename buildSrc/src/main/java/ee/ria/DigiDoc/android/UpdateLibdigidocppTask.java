@@ -33,7 +33,6 @@ import javax.tools.ToolProvider;
 public class UpdateLibdigidocppTask extends DefaultTask {
 
     private static final String PREFIX = "libdigidocpp.";
-    private static final String TEST_TSL = "-testtsl";
     private static final String SUFFIX = ".zip";
     private static final String JAR = PREFIX + "jar";
     private static final String SCHEMA = "schema.zip";
@@ -84,22 +83,13 @@ public class UpdateLibdigidocppTask extends DefaultTask {
                     new File(inputDir, PREFIX + ABI_FILES.get(abi) + SUFFIX),
                     new File(outputDir, "unzipped"),
                     abi,
-                    false,
                     generateJar,
                     generateSchema
-            );
-            update(
-                    new File(inputDir, PREFIX + ABI_FILES.get(abi) + TEST_TSL + SUFFIX),
-                    new File(outputDir, "unzipped" + TEST_TSL),
-                    abi,
-                    true,
-                    generateJar,
-                    generateTestSchema
             );
         }
     }
 
-    private void update(File zipFile, File outputDir, String abi, boolean isTestTsl, AtomicBoolean generateJar, AtomicBoolean generateSchema) throws IOException {
+    private void update(File zipFile, File outputDir, String abi, AtomicBoolean generateJar, AtomicBoolean generateSchema) throws IOException {
         if (!zipFile.exists()) {
             log("Could not find file %s", zipFile);
             return;
@@ -123,9 +113,6 @@ public class UpdateLibdigidocppTask extends DefaultTask {
         if (generateSchema.getAndSet(false) && !getProject().getName().equals("common-lib")) {
             log("Generating %s from %s", SCHEMA, zipFile);
             File schemaCacheDir = new File(cacheDir, "etc");
-            if (isTestTsl) {
-                unzip(getClass().getClassLoader().getResourceAsStream("testtsl.zip"), schemaCacheDir);
-            }
             File schemaZipFile = new File(cacheDir, SCHEMA);
             ZipOutputStream schemaOutputStream = new ZipOutputStream(new FileOutputStream(schemaZipFile));
             for (File schemaFile : files(schemaCacheDir)) {
@@ -136,9 +123,7 @@ public class UpdateLibdigidocppTask extends DefaultTask {
                 schemaOutputStream.closeEntry();
             }
             schemaOutputStream.close();
-            File schemaDir = isTestTsl
-                    ? new File(getProject().getProjectDir(), "src/envtest/res/raw")
-                    : new File(getProject().getProjectDir(), "src/main/res/raw");
+            File schemaDir = new File(getProject().getProjectDir(), "src/main/res/raw");
             Files.copy(
                     schemaZipFile.toPath(),
                     new File(schemaDir, SCHEMA).toPath(),
@@ -147,38 +132,30 @@ public class UpdateLibdigidocppTask extends DefaultTask {
         }
 
         if (getProject().getName().equals("sign-lib")) {
-            if (isTestTsl) {
+            if (abi.equals("x86_64")) {
                 Files.copy(
-                        new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
-                        new File(getProject().getProjectDir(), "src/envtest/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
-                        StandardCopyOption.REPLACE_EXISTING
-                );
-            } else {
-                if (abi.equals("x86_64")) {
-                    Files.copy(
-                            new File(cacheDir, ABI_DIRS.get(abi) + "/lib64/libc++_shared.so").toPath(),
-                            new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
-                            StandardCopyOption.REPLACE_EXISTING
-                    );
-                }
-                if (!abi.equals("armeabi-v7a") && !abi.equals("x86_64")) {
-                    Files.copy(
-                            new File(cacheDir, ABI_DIRS.get(abi) + "/lib/libc++_shared.so").toPath(),
-                            new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
-                            StandardCopyOption.REPLACE_EXISTING
-                    );
-                }
-                Files.copy(
-                        new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
-                        new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
-                        StandardCopyOption.REPLACE_EXISTING
-                );
-                Files.copy(
-                        new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
-                        new File(getProject().getProjectDir(), "src/debug/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
+                        new File(cacheDir, ABI_DIRS.get(abi) + "/lib64/libc++_shared.so").toPath(),
+                        new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
                         StandardCopyOption.REPLACE_EXISTING
                 );
             }
+            if (!abi.equals("armeabi-v7a") && !abi.equals("x86_64")) {
+                Files.copy(
+                        new File(cacheDir, ABI_DIRS.get(abi) + "/lib/libc++_shared.so").toPath(),
+                        new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
+                        StandardCopyOption.REPLACE_EXISTING
+                );
+            }
+            Files.copy(
+                    new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
+                    new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+            Files.copy(
+                    new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
+                    new File(getProject().getProjectDir(), "src/debug/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
+                    StandardCopyOption.REPLACE_EXISTING
+            );
         }
     }
 

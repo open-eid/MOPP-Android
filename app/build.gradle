@@ -73,12 +73,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro'
         }
-        envtest {
-            debuggable true
-            applicationIdSuffix '.envtest'
-            signingConfig signingConfigs.debug
-            matchingFallbacks = ['envtest', 'debug']
-        }
         release {
             minifyEnabled true
             shrinkResources true
