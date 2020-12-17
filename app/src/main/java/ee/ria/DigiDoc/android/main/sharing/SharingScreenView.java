@@ -137,7 +137,8 @@ public final class SharingScreenView extends CoordinatorLayout {
     }
 
     private boolean isIntentWithExtraReferrer(Activity activity) {
-        return activity.getIntent().getExtras().get(Intent.EXTRA_REFERRER) != null &&
+        return activity.getIntent() != null && activity.getIntent().getExtras() != null &&
+                activity.getIntent().getExtras().get(Intent.EXTRA_REFERRER) != null &&
                 activity.getIntent().getExtras().get(Intent.EXTRA_REFERRER).equals(R.string.application_name);
     }
 
