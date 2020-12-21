@@ -23,6 +23,7 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.crypto.NoInternetConnectionException;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -85,6 +86,7 @@ final class CryptoCreateAdapter extends
 
     void dataForRecipients(@State String searchState,
                            @Nullable ImmutableList<Certificate> searchResults,
+                           Throwable searchError,
                            ImmutableList<Certificate> recipients) {
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (searchResults != null && searchResults.size() > 0) {
@@ -92,6 +94,8 @@ final class CryptoCreateAdapter extends
                 builder.add(RecipientItem.create(searchResult, false, true,
                         !recipients.contains(searchResult)));
             }
+        } else if (searchError instanceof NoInternetConnectionException) {
+            builder.add(EmptyTextItem.create(R.string.no_internet_connection));
         } else if (searchResults != null && !searchState.equals(State.ACTIVE)) {
             builder.add(EmptyTextItem.create(R.string.crypto_recipients_search_result_empty));
         }

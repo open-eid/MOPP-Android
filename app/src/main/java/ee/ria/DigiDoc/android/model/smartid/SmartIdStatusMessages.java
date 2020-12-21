@@ -61,7 +61,7 @@ public final class SmartIdStatusMessages {
                     .put(ProcessStatus.GENERAL_ERROR,
                             R.string.signature_update_mobile_id_error_general_client)
                     .put(ProcessStatus.NO_RESPONSE,
-                            R.string.signature_update_signature_error_no_response)
+                            R.string.no_internet_connection)
                     .put(ProcessStatus.INVALID_SSL_HANDSHAKE,
                             R.string.signature_update_signature_error_invalid_ssl_handshake)
                     .build();
