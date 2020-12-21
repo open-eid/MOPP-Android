@@ -20,6 +20,6 @@ jobs:
           COVERITY_SCAN_PROJECT_NAME: 'open-eid/MOPP-Android'
           COVERITY_SCAN_NOTIFICATION_EMAIL: 'eid-teenusehaldus@ria.ee'
           COVERITY_SCAN_BRANCH_PATTERN: 'coverity_scan'
-          COVERITY_SCAN_BUILD_COMMAND_PREPEND: 'gradle -S clean'
+          COVERITY_SCAN_BUILD_COMMAND_PREPEND: 'ls -la'
           COVERITY_SCAN_BUILD_COMMAND: 'gradle -S app:assembleDebug -x app:processDebugGoogleServices -x app:uploadCrashlyticsMappingFileDebug'
           COVERITY_SCAN_TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
