@@ -10,12 +10,8 @@ jobs:
       - uses: actions/checkout@v1
       - name: Install sdkman
         run: curl -s "https://get.sdkman.io" | bash
-      - name: Finish installation
-        run:  source "$HOME/.sdkman/bin/sdkman-init.sh"
-      - name: List gradle versions
-        run: sdk list gradle
       - name: Install gradle
-        run: sdk install gradle 5.5
+        run:  source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk list gradle && sdk install gradle 5.5
       - name: Build and send to Coverity
         run: |
           export TRAVIS_BRANCH=${GITHUB_REF##*/}
