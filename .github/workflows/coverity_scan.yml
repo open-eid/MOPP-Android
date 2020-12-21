@@ -8,11 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Install sdkman
-        run: curl -s "https://get.sdkman.io" | bash
-      - name: Install gradle
-        run:  source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk list gradle && sdk install gradle 5.5
       - name: Build and send to Coverity
+        continue-on-error: true
         run: |
           export TRAVIS_BRANCH=${GITHUB_REF##*/}
           wget -O - https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh | bash
@@ -20,6 +17,5 @@ jobs:
           COVERITY_SCAN_PROJECT_NAME: 'open-eid/MOPP-Android'
           COVERITY_SCAN_NOTIFICATION_EMAIL: 'eid-teenusehaldus@ria.ee'
           COVERITY_SCAN_BRANCH_PATTERN: 'coverity_scan'
-          COVERITY_SCAN_BUILD_COMMAND_PREPEND: 'gradle clean || true'
-          COVERITY_SCAN_BUILD_COMMAND: 'gradle app:assembleDebug -x app:processDebugGoogleServices -x app:uploadCrashlyticsMappingFileDebug || true'
+          COVERITY_SCAN_BUILD_COMMAND: './gradlew -Dorg.gradle.caching=false --no-daemon -S app:assembleDebug -x app:processDebugGoogleServices -x app:uploadCrashlyticsMappingFileDebug || true'
           COVERITY_SCAN_TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
