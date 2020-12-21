@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install dependencies
-        run: sudo apt-get update -qq && sudo apt-get install -y gradle
+        run: sudo apt-get update -qq && sudo apt-get install -y gradle=5.5
       - name: Build and send to Coverity
         run: |
           export TRAVIS_BRANCH=${GITHUB_REF##*/}
