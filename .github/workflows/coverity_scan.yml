@@ -1,0 +1,20 @@
+name: Coverity scan
+
+on: [push, pull_request]
+jobs:
+  coverity:
+    name: Run Coverity tests
+    if: contains(github.repository, 'open-eid/MOPP-Android') && contains(github.ref, 'coverity_scan')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build and send to Coverity
+        run: |
+          export TRAVIS_BRANCH=${GITHUB_REF##*/}
+          ./coverity_scan.sh
+        env:
+          COVERITY_SCAN_PROJECT_NAME: 'open-eid/MOPP-Android'
+          COVERITY_SCAN_NOTIFICATION_EMAIL: 'eid-teenusehaldus@ria.ee'
+          COVERITY_SCAN_BRANCH_PATTERN: 'coverity_scan'
+          COVERITY_SCAN_BUILD_COMMAND: './gradlew app:assembleDebug -x app:processDebugGoogleServices -x app:uploadCrashlyticsMappingFileDebug --no-daemon'
+          COVERITY_SCAN_TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
