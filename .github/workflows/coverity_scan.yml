@@ -9,9 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Build and send to Coverity
+        continue-on-error: true
         run: |
           export TRAVIS_BRANCH=${GITHUB_REF##*/}
-          ./coverity_scan.sh
+          bash coverity_scan.sh
         env:
           COVERITY_SCAN_PROJECT_NAME: 'open-eid/MOPP-Android'
           COVERITY_SCAN_NOTIFICATION_EMAIL: 'eid-teenusehaldus@ria.ee'
