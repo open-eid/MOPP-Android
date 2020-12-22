@@ -13,8 +13,8 @@ public class CentralConfigurationLoader extends ConfigurationLoader {
 
     private final CentralConfigurationClient configurationClient;
 
-    public CentralConfigurationLoader(String configurationServiceUrl, X509Certificate sslCert, String userAgent) {
-        this.configurationClient = new CentralConfigurationClient(configurationServiceUrl, sslCert, userAgent);
+    public CentralConfigurationLoader(String configurationServiceUrl, String userAgent) {
+        this.configurationClient = new CentralConfigurationClient(configurationServiceUrl, userAgent);
     }
 
     @Override

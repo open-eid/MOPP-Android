@@ -80,7 +80,7 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                 setMessage(getContext().getString(
                         R.string.signature_update_id_card_sign_pin2_locked));
             } else if (signatureAddError instanceof NoInternetConnectionException) {
-                setMessage(getContext().getString(R.string.signature_update_signature_error_no_response));
+                setMessage(getContext().getString(R.string.no_internet_connection));
             } else if (signatureAddError instanceof MobileIdMessageException ||
                     signatureAddError instanceof SmartIdMessageException) {
                 String link = ErrorMessageUtil.extractLink(signatureAddError.getMessage());

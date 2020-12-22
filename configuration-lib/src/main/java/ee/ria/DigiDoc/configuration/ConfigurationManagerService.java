@@ -5,14 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import androidx.annotation.NonNull;
-import androidx.core.app.JobIntentService;
+import androidx.core.app.PatchedJobIntentService;
 
 import java.util.Date;
 
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
 
-public class ConfigurationManagerService extends JobIntentService {
+public class ConfigurationManagerService extends PatchedJobIntentService {
 
     public static final int NEW_CONFIGURATION_LOADED = 1;
     public static final int CONFIGURATION_UP_TO_DATE = 2;

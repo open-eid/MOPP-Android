@@ -35,14 +35,10 @@ import ee.ria.DigiDoc.configuration.verify.ConfigurationSignatureVerifier;
  *
  * One can pass 2 arguments to this task: central configuration service url and configuration update interval
  * (example: gradle fetchAndPackageDefaultConfiguration --args="https://id.eesti.ee 7")
- *
- * Two separate configuration file sets will be created. One for 'envtest' build variant and one for all
- * other build variants. 'envtest' build variant is always hard-coded and ignores passed argument value.
  */
 public class FetchAndPackageDefaultConfigurationTask {
 
     private static final String CENTRAL_CONF_SERVICE_ULR_NAME = "central-configuration-service.url";
-    private static final String TEST_CENTRAL_CONF_SERVICE_ULR_NAME = "test.central-configuration-service.url";
     private static final String DEFAULT_CONFIGURATION_PROPERTIES_FILE_NAME = "default-configuration.properties";
     private static Properties properties = new Properties();
     private static String buildVariant;
@@ -50,20 +46,12 @@ public class FetchAndPackageDefaultConfigurationTask {
     public static void main(String[] args) {
         loadResourcesProperties();
         loadAndStoreDefaultConfiguration(args);
-        loadAndStoreEnvTestDefaultConfiguration(args);
     }
 
     private static void loadAndStoreDefaultConfiguration(String[] args) {
         FetchAndPackageDefaultConfigurationTask.buildVariant = "main";
         String configurationServiceUrl = determineCentralConfigurationServiceUrl(args);
-        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, null, "Jenkins");
-        loadAndAssertConfiguration(confLoader, configurationServiceUrl, args);
-    }
-
-    private static void loadAndStoreEnvTestDefaultConfiguration(String[] args) {
-        FetchAndPackageDefaultConfigurationTask.buildVariant = "envtest";
-        String configurationServiceUrl = properties.getProperty(TEST_CENTRAL_CONF_SERVICE_ULR_NAME);
-        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl, loadCentralConfServiceSSLCert(), "Jenkins");
+        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl,"Jenkins");
         loadAndAssertConfiguration(confLoader, configurationServiceUrl, args);
     }
 
@@ -144,16 +132,6 @@ public class FetchAndPackageDefaultConfigurationTask {
 
     private static String configFileDir(String filename) {
         return System.getProperty("user.dir") + "/src/" + buildVariant + "/assets/config/" + filename;
-    }
-
-    private static X509Certificate loadCentralConfServiceSSLCert() {
-        try {
-            FileInputStream is = new FileInputStream(System.getProperty("user.dir") + "/src/envtest/assets/certs/test-ca.cer");
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            return (X509Certificate)cf.generateCertificate(is);
-        } catch (CertificateException | FileNotFoundException e) {
-            throw new IllegalStateException("Failed to load SSL certificate", e);
-        }
     }
 
     private static void verifyConfigurationSignature(ConfigurationLoader configurationLoader) {

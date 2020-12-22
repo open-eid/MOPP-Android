@@ -33,7 +33,7 @@ public final class MobileIdStatusMessages {
                     .put(ProcessStatus.CERTIFICATE_REVOKED, R.string.signature_update_signature_error_message_certificate_revoked)
                     .put(ProcessStatus.GENERAL_ERROR,
                             R.string.signature_update_mobile_id_error_general_client)
-                    .put(ProcessStatus.NO_RESPONSE, R.string.signature_update_signature_error_no_response)
+                    .put(ProcessStatus.NO_RESPONSE, R.string.no_internet_connection)
                     .put(ProcessStatus.INVALID_COUNTRY_CODE, R.string.signature_update_mobile_id_status_no_country_code)
                     .put(ProcessStatus.INVALID_SSL_HANDSHAKE, R.string.signature_update_signature_error_invalid_ssl_handshake)
                     .build();

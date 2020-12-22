@@ -447,6 +447,8 @@
     <string name="crash_report_dialog_always_send_button">Saada Alati</string>
     <string name="crash_report_dialog_dont_send_button">Ära saada</string>
 
+    <string name="no_internet_connection">Palun kontrolli internetiühendust</string>
+
     <string name="rooted_device">Tuvastasime, et sinu nutiseade võib olla ruuditud. Turvalisuse kaalutlustel ei soovita me kasutada seda rakendust ruuditud seadmel.</string>
 
 </resources>

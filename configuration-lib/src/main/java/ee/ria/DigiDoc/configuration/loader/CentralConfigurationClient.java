@@ -21,12 +21,10 @@ class CentralConfigurationClient {
     private static final int DEFAULT_TIMEOUT = 5;
     private final OkHttpClient httpClient;
     private final String centralConfigurationServiceUrl;
-    private final X509Certificate explicitSSLCert;
     private final String userAgent;
 
-    CentralConfigurationClient(String centralConfigurationServiceUrl, X509Certificate explicitSSLCert, String userAgent) {
+    CentralConfigurationClient(String centralConfigurationServiceUrl, String userAgent) {
         this.centralConfigurationServiceUrl = centralConfigurationServiceUrl;
-        this.explicitSSLCert = explicitSSLCert;
         httpClient = constructHttpClient();
         this.userAgent = userAgent;
     }
@@ -70,9 +68,6 @@ class CentralConfigurationClient {
     private OkHttpClient constructHttpClient() {
         try {
             OkHttpClient.Builder builder = constructClientBuilder();
-            if (explicitSSLCert != null) {
-                builder.sslSocketFactory(constructTrustingSSLSocketFactory(explicitSSLCert));
-            }
             return builder.build();
         } catch (Exception e) {
             throw new IllegalStateException("Failed to construct HTTP client",e);

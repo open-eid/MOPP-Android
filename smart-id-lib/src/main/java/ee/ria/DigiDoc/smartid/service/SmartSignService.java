@@ -168,7 +168,7 @@ public class SmartSignService extends IntentService {
                     if (status.equals(SessionStatusResponse.ProcessStatus.OK)) {
                         return sessionStatusResponse;
                     }
-                    broadcastFault(status);
+                    broadcastSmartCreateSignatureStatusResponse(sessionStatusResponse);
                     Timber.d("Received Smart-ID session status response: %s", status);
                     return null;
                 }

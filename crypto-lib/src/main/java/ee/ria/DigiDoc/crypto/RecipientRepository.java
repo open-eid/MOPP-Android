@@ -7,6 +7,7 @@ import com.unboundid.asn1.ASN1OctetString;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldap.sdk.SearchRequest;
 import com.unboundid.ldap.sdk.SearchResult;
 import com.unboundid.ldap.sdk.SearchResultEntry;
@@ -62,6 +63,8 @@ public final class RecipientRepository {
         ImmutableList<Certificate> certs;
         try {
             certs = findPersonCertificate(query);
+        } catch (NoInternetConnectionException e) {
+            throw e;
         } catch (CryptoException e) {
             return findCorporationCertificate(query);
         }
@@ -81,6 +84,9 @@ public final class RecipientRepository {
             connection.connect(url, LDAP_PORT);
             return executeSearch(connection, ldapFilter);
         } catch (Exception e) {
+            if (e instanceof LDAPException && ((LDAPException) e).getResultCode().equals(ResultCode.CONNECT_ERROR)) {
+                throw new NoInternetConnectionException();
+            }
             throw new CryptoException("Finding recipients failed", e);
         }
     }

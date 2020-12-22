@@ -88,7 +88,7 @@ public abstract class SignedContainer {
         return SIGNATURE_PROFILE_TS;
     }
 
-    public final SignedContainer addDataFiles(ImmutableList<File> dataFiles) throws IOException {
+    public final SignedContainer addDataFiles(ImmutableList<File> dataFiles) throws Exception {
         Container container = container(file());
         for (File dataFile : dataFiles) {
             container.addDataFile(dataFile.getAbsolutePath(), mimeType(dataFile));
@@ -97,8 +97,7 @@ public abstract class SignedContainer {
         return open(file());
     }
 
-    public final SignedContainer removeDataFile(DataFile dataFile) throws
-            ContainerDataFilesEmptyException, IOException {
+    public final SignedContainer removeDataFile(DataFile dataFile) throws Exception {
         Container container = container(file());
         if (container.dataFiles().size() == 1) {
             throw new ContainerDataFilesEmptyException();
@@ -114,7 +113,7 @@ public abstract class SignedContainer {
         return open(file());
     }
 
-    public final File getDataFile(DataFile dataFile, File directory) throws IOException {
+    public final File getDataFile(DataFile dataFile, File directory) throws Exception {
         Container container = container(file());
         File file = new File(directory, dataFile.name());
         DataFiles dataFiles = container.dataFiles();
@@ -129,8 +128,7 @@ public abstract class SignedContainer {
                 " in container " + file());
     }
 
-    public final String calculateDataFileDigest(DataFile dataFile, String method) throws
-            IOException {
+    public final String calculateDataFileDigest(DataFile dataFile, String method) throws Exception {
         Container container = container(file());
         DataFiles dataFiles = container.dataFiles();
         for (int i = 0; i < dataFiles.size(); i++) {
@@ -143,8 +141,7 @@ public abstract class SignedContainer {
                 " in container " + file());
     }
 
-    public final SignedContainer addAdEsSignature(byte[] adEsSignature) throws
-            SignaturesLockedException, IOException {
+    public final SignedContainer addAdEsSignature(byte[] adEsSignature) throws Exception {
         Container container = container(file());
         try {
             container.addAdESSignature(adEsSignature);
@@ -191,7 +188,7 @@ public abstract class SignedContainer {
         }
     }
 
-    public final SignedContainer removeSignature(Signature signature) throws IOException {
+    public final SignedContainer removeSignature(Signature signature) throws Exception {
         Container container = container(file());
         Signatures signatures = container.signatures();
         for (int i = 0; i < signatures.size(); i++) {
@@ -213,8 +210,7 @@ public abstract class SignedContainer {
      * @throws IOException When given paths are inaccessible.
      * @throws ContainerDataFilesEmptyException When no data files are given.
      */
-    public static SignedContainer create(File file, ImmutableList<File> dataFiles) throws
-            IOException, ContainerDataFilesEmptyException {
+    public static SignedContainer create(File file, ImmutableList<File> dataFiles) throws Exception {
         if (dataFiles == null || dataFiles.size() == 0) {
             throw new ContainerDataFilesEmptyException();
         }
@@ -241,7 +237,7 @@ public abstract class SignedContainer {
      * @return Signed container with data files and signatures.
      * @throws IOException When file could not be found/opened.
      */
-    public static SignedContainer open(File file) throws IOException {
+    public static SignedContainer open(File file) throws Exception {
         Container container = container(file);
 
         ImmutableList.Builder<DataFile> dataFileBuilder = ImmutableList.builder();
@@ -344,11 +340,14 @@ public abstract class SignedContainer {
     }
 
     @NonNull
-    private static Container container(File file) throws IOException {
+    private static Container container(File file) throws Exception {
         Container container;
         try {
             container = Container.open(file.getAbsolutePath());
         } catch (Exception e) {
+            if (e.getMessage().startsWith("Failed to connect to host")) {
+                throw new NoInternetConnectionException();
+            }
             throw new IOException(e.getMessage());
         }
         if (container == null) {

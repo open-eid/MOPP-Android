@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Files;
 
 import java.io.File;
 
@@ -33,6 +35,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
 import ee.ria.DigiDoc.sign.DataFile;
+import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.Signature;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -46,6 +49,8 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
+
+    private static final ImmutableSet<String> UNSIGNABLE_CONTAINER_EXTENSIONS = ImmutableSet.<String>builder().add("asics", "scs", "ddoc").build();
 
     private static final String EMPTY_MOBILE_ID_CHALLENGE = "____";
 
@@ -161,8 +166,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @Override
     public void render(ViewState state) {
         if (state.containerLoadError() != null) {
-            Toast.makeText(getContext(), R.string.signature_update_container_load_error,
-                    Toast.LENGTH_LONG).show();
+            int messageId = state.containerLoadError() instanceof NoInternetConnectionException
+                    ? R.string.no_internet_connection : R.string.signature_update_container_load_error;
+            Toast.makeText(getContext(), messageId, Toast.LENGTH_LONG).show();
             navigator.execute(Transaction.pop());
             signatureUpdateProgressBar.stopProgressBar(progressBar, isTimerStarted);
             isTimerStarted = false;
@@ -185,7 +191,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         } else {
             sendButton.setVisibility(isExistingContainer ? VISIBLE : GONE);
             buttonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
-            signatureAddButton.setVisibility(VISIBLE);
+            if (containerFile != null && UNSIGNABLE_CONTAINER_EXTENSIONS.contains(Files.getFileExtension(containerFile.getName()))) {
+                signatureAddButton.setVisibility(GONE);
+            } else {
+                signatureAddButton.setVisibility(VISIBLE);
+            }
         }
 
         if (state.container() != null) {
