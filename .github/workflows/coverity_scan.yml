@@ -14,7 +14,7 @@ jobs:
           export TRAVIS_BRANCH=${GITHUB_REF##*/}
           wget https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh
           chmod +x travisci_build_coverity_scan.sh
-          ./travisci_build_coverity_scan.sh
+          bash travisci_build_coverity_scan.sh
         env:
           COVERITY_SCAN_PROJECT_NAME: 'open-eid/MOPP-Android'
           COVERITY_SCAN_NOTIFICATION_EMAIL: 'eid-teenusehaldus@ria.ee'
