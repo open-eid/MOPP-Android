@@ -127,7 +127,6 @@
     <string name="signature_update_signature_error_message_invalid_time_slot">Palun kontrollige oma nutiseadme kellaaega. https://www.id.ee/artikkel/ria-digidoc-viga-palun-kontrollige-oma-nutiseadme-kellaaega/</string>
     <string name="signature_update_signature_error_message_certificate_revoked">Sertifikaat on kehtetu</string>
 
-    <string name="signature_update_signature_error_no_response">Palun kontrolli internetiühendust</string>
     <string name="signature_update_signature_error_invalid_ssl_handshake">SSL ühenduskanali loomine ebaõnnestus. Kontrolli rakenduse seadeid või tarkvara uuendusi</string>
 
     <string name="signature_update_mobile_id_message">Sisesta oma telefoninumber ja isikukood mobiil-IDga allkirjastamiseks</string>
