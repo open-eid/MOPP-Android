@@ -18,6 +18,7 @@ import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
+import ee.ria.DigiDoc.sign.CertificateRevokedException;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.OcspInvalidTimeSlotException;
 import ee.ria.DigiDoc.sign.TooManyRequestsException;
@@ -105,6 +106,8 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                         R.string.signature_update_signature_error_message_invalid_time_slot,
                         R.string.signature_update_signature_error_message_additional_information
                 )));
+            } else if (signatureAddError instanceof CertificateRevokedException) {
+                setMessage(getContext().getString(R.string.signature_update_signature_error_message_certificate_revoked));
             } else {
                 setTitle(R.string.signature_update_signature_add_error);
                 setMessage(signatureAddError.getMessage());

@@ -130,6 +130,9 @@ public class SmartSignService extends IntentService {
             } else if (e.getMessage() != null && e.getMessage().contains("OCSP response not in valid time slot")) {
                 broadcastFault(SessionStatusResponse.ProcessStatus.OCSP_INVALID_TIME_SLOT);
                 Timber.e(e, "Failed to sign with Smart-ID - OCSP response not in valid time slot");
+            } else if (e.getMessage() != null && e.getMessage().contains("Certificate status: revoked")) {
+                broadcastFault(SessionStatusResponse.ProcessStatus.CERTIFICATE_REVOKED);
+                Timber.e(e, "Failed to sign with Smart-ID - Certificate status: revoked");
             } else {
                 broadcastFault();
                 Timber.e(e, "Failed to sign with Smart-ID");

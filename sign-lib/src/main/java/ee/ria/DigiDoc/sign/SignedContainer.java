@@ -175,6 +175,10 @@ public abstract class SignedContainer {
                 Timber.e(e, "Failed to sign with ID-card - OCSP response not in valid time slot");
                 throw new OcspInvalidTimeSlotException();
             }
+            if (e.getMessage() != null && e.getMessage().contains("Certificate status: revoked")) {
+                Timber.e(e, "Failed to sign with ID-card - Certificate status: revoked");
+                throw new CertificateRevokedException();
+            }
             if (e.getMessage() != null && e.getMessage().contains("Failed to connect")) {
                 Timber.e(e, "Failed to connect to Internet");
                 throw new NoInternetConnectionException();
