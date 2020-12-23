@@ -10,7 +10,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -23,6 +22,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -187,6 +187,9 @@ public class UpdateLibdigidocppTask extends DefaultTask {
                 File entryFile = new File(destination, entry.getName());
                 if (entry.isDirectory()) {
                     continue;
+                }
+                if (!entryFile.toPath().normalize().startsWith(destination.toPath())) {
+                    throw new ZipException("Bad zip entry: " + entry.getName());
                 }
                 Files.createDirectories(entryFile.getParentFile().toPath());
                 Files.copy(inputStream, entryFile.toPath());

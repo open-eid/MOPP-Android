@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
@@ -76,6 +77,9 @@ public final class SignLib {
             ZipEntry entry;
             while ((entry = inputStream.getNextEntry()) != null) {
                 File entryFile = new File(schemaDir, entry.getName());
+                if (!isChild(schemaDir, entryFile)) {
+                    throw new ZipException("Bad zip entry: " + entry.getName());
+                }
                 FileOutputStream outputStream = new FileOutputStream(entryFile);
                 ByteStreams.copy(inputStream, outputStream);
                 outputStream.close();
@@ -151,6 +155,16 @@ public final class SignLib {
         //noinspection ResultOfMethodCallIgnored
         schemaDir.mkdirs();
         return schemaDir;
+    }
+
+    private static boolean isChild(File parent, File potentialChild) {
+        try {
+            String destDirCanonicalPath = parent.getCanonicalPath();
+            String potentialChildCanonicalPath = potentialChild.getCanonicalPath();
+            return potentialChildCanonicalPath.startsWith(destDirCanonicalPath);
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     private SignLib() {
