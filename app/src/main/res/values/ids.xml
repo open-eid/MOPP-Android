@@ -114,7 +114,6 @@
     <item type="id" name="signatureUpdateListSignatureRemoveButton" />
     <item type="id" name="signatureUpdateListDocumentsAddButton" />
     <item type="id" name="signatureUpdateMobileIdContainer" />
-    <item type="id" name="signatureUpdateMobileIdStatus" />
     <item type="id" name="signatureUpdateMobileIdChallenge" />
     <item type="id" name="signatureUpdateSendButton" />
     <item type="id" name="signatureUpdateButtonSpace" />

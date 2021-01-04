@@ -44,15 +44,6 @@
             android:focusable="true"
             android:translationZ="@dimen/material_elevation_dialog" />
 
-        <ProgressBar
-            android:id="@id/activityIndicator"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_anchor="@id/appBar"
-            app:layout_anchorGravity="bottom"
-            android:indeterminate="false" />
-
         <androidx.cardview.widget.CardView
             android:id="@+id/signatureUpdateSmartIdContainer"
             android:layout_width="match_parent"
@@ -72,17 +63,21 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:text="@string/signature_update_mobile_id_status_request_sent" />
-
-                <TextView
                     android:id="@+id/signatureUpdateSmartIdChallenge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                    android:textColor="@color/accent"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+                <ProgressBar
+                    android:id="@id/activityIndicator"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_anchor="@id/appBar"
+                    app:layout_anchorGravity="bottom"
+                    android:indeterminate="false" />
 
                 <TextView
                     android:id="@+id/signatureUpdateSmartIdInfo"
@@ -113,18 +108,21 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@id/signatureUpdateMobileIdStatus"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:text="@string/signature_update_mobile_id_status_request_sent" />
-
-                <TextView
                     android:id="@id/signatureUpdateMobileIdChallenge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
+                    android:textColor="@color/accent"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+                <ProgressBar
+                    android:id="@id/activityIndicator"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_anchor="@id/appBar"
+                    app:layout_anchorGravity="bottom"
+                    android:indeterminate="false" />
 
                 <TextView
                     android:layout_width="match_parent"
