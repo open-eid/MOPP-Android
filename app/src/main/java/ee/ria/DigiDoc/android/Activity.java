@@ -72,7 +72,7 @@ public final class Activity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        if ((Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
+        if ((Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction(intent.getAction());
@@ -228,6 +228,8 @@ public final class Activity extends AppCompatActivity {
         public Screen call() {
             if ((intent.getAction() != null && Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
                 return chooseScreen(intent);
+            } else if (intent.getAction() != null && Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) && intent.getType() != null) {
+                return SignatureCreateScreen.create(intent);
             } else if (intent.getAction() != null && Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
                 return SharingScreen.create();
             }
@@ -236,10 +238,10 @@ public final class Activity extends AppCompatActivity {
 
         private Screen chooseScreen(Intent intent) {
             ImmutableList<FileStream> fileStreams = IntentUtils.parseGetContentIntent(getContext().get().getContentResolver(), intent);
-            if (!CollectionUtils.isEmpty(fileStreams)) {
+            if (!CollectionUtils.isEmpty(fileStreams) && fileStreams.size() == 1) {
                 String fileName = fileStreams.get(0).displayName();
                 String extension = fileName.substring(fileName.lastIndexOf("."));
-                if (".cdoc".equals(extension)) {
+                if (".cdoc".equalsIgnoreCase(extension)) {
                     return CryptoCreateScreen.open(intent);
                 }
             }
