@@ -52,7 +52,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private static final ImmutableSet<String> UNSIGNABLE_CONTAINER_EXTENSIONS = ImmutableSet.<String>builder().add("asics", "scs", "ddoc").build();
 
-    private static final String EMPTY_MOBILE_ID_CHALLENGE = "____";
+    private static final String EMPTY_CHALLENGE = "";
 
     private boolean isTimerStarted = false;
 
@@ -254,7 +254,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             if (mobileIdChallenge != null) {
                 mobileIdChallengeView.setText(mobileIdChallenge);
             } else {
-                mobileIdChallengeView.setText(EMPTY_MOBILE_ID_CHALLENGE);
+                mobileIdChallengeView.setText(EMPTY_CHALLENGE);
             }
         }
 
@@ -280,7 +280,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 signingInfoDelegated = true;
             }
 
-            if (!mobileIdChallengeView.getText().equals(EMPTY_MOBILE_ID_CHALLENGE)) {
+            if (!mobileIdChallengeView.getText().equals(EMPTY_CHALLENGE)) {
                 String mobileIdChallengeDescription = getResources().getString(R.string.mobile_id_challenge) + mobileIdChallengeView.getText();
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, mobileIdChallengeDescription);
             }
@@ -318,7 +318,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, smartIdChallengeDescription);
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_smart_id_info);
             } else {
-                smartIdChallengeView.setText(EMPTY_MOBILE_ID_CHALLENGE);
+                smartIdChallengeView.setText(EMPTY_CHALLENGE);
             }
         }
     }

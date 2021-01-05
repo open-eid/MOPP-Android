@@ -5,14 +5,15 @@ import android.widget.ProgressBar;
 
 class SignatureUpdateProgressBar {
 
-    private static final long PROGRESS_BAR_TIMEOUT_CANCEL = 125 * 1000;
+    private static final long PROGRESS_BAR_TIMEOUT_CANCEL = 120 * 1000;
     private static CountDownTimer timeoutTimer;
 
     void startProgressBar(ProgressBar progressBar) {
+        stopProgressBar(progressBar, true);
+        progressBar.setMax((int) (PROGRESS_BAR_TIMEOUT_CANCEL / 1000));
         timeoutTimer = new CountDownTimer(PROGRESS_BAR_TIMEOUT_CANCEL, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                progressBar.setMax((int) (PROGRESS_BAR_TIMEOUT_CANCEL / 1000));
                 progressBar.incrementProgressBy(1);
             }
 
