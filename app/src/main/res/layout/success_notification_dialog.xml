@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/successNotificationDialog"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp" >
+
+    <TextView
+        android:id="@id/successNotificationDialogText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/success_notification_dialog_text"
+        android:textSize="15sp" />
+
+    <CheckBox
+        android:id="@id/successNotificationDontShowAgain"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_margin="5dp"
+        android:checked="false"
+        android:text="@string/success_notification_dialog_dont_show_again" />
+
+    <Button
+        android:id="@id/okButton"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_gravity="center_horizontal"
+        android:text="OK" />
+
+</LinearLayout>

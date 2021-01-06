@@ -122,4 +122,14 @@ public final class SettingsDataStore {
         editor.apply();
     }
 
+    public Boolean getShowSuccessNotification() {
+        return preferences.getBoolean(resources.getString(R.string.show_success_notification_key), true);
+    }
+
+    public void setShowSuccessNotification(boolean showSuccessNotification) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(resources.getString(R.string.show_success_notification_key), showSuccessNotification);
+        editor.apply();
+    }
+
 }
