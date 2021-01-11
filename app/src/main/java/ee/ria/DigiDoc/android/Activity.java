@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 
-import android.view.WindowManager;
 import android.widget.Button;
 
 import com.google.android.gms.common.util.CollectionUtils;
@@ -29,7 +28,6 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.main.home.HomeScreen;
@@ -37,6 +35,7 @@ import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.main.sharing.SharingScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
+import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
@@ -58,17 +57,11 @@ public final class Activity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         handleRootedDevice();
-
         setTheme(R.style.Theme_Application);
         setTitle(""); // ACCESSIBILITY: prevents application name read during each activity launch
         super.onCreate(savedInstanceState);
 
         handleCrashOnPreviousExecution();
-
-        if (!BuildConfig.BUILD_TYPE.contentEquals("debug")) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                    WindowManager.LayoutParams.FLAG_SECURE);
-        }
 
         Intent intent = getIntent();
 
@@ -116,6 +109,7 @@ public final class Activity extends AppCompatActivity {
                 return;
             }
             Dialog crashReportDialog = new Dialog(this);
+            SecureUtil.markAsSecure(crashReportDialog.getWindow());
             crashReportDialog.setContentView(R.layout.crash_report_dialog);
 
             Button sendButton = crashReportDialog.findViewById(R.id.sendButton);

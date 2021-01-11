@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Constants;
+import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -23,6 +24,7 @@ public final class ConfirmationDialog extends AlertDialog implements
 
     public ConfirmationDialog(@NonNull Context context, @StringRes int message) {
         super(context);
+        SecureUtil.markAsSecure(getWindow());
         setMessage(context.getString(message));
         setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
         setButton(BUTTON_NEGATIVE, context.getString(android.R.string.cancel), this);
