@@ -182,6 +182,7 @@ public class Application extends android.app.Application {
     private void setupTimber() {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
+            Timber.plant(new FileLoggingTree(getApplicationContext()));
         }
         // TODO error reporting
     }

@@ -76,7 +76,6 @@ public class UpdateLibdigidocppTask extends DefaultTask {
 
         AtomicBoolean generateJar = new AtomicBoolean(true);
         AtomicBoolean generateSchema = new AtomicBoolean(true);
-        AtomicBoolean generateTestSchema = new AtomicBoolean(true);
 
         for (String abi : ABIS) {
             update(
@@ -218,7 +217,6 @@ public class UpdateLibdigidocppTask extends DefaultTask {
                 Files.copy(file.toPath(), outputStream);
                 outputStream.closeEntry();
             }
-            outputStream.close();
         }
     }
 
