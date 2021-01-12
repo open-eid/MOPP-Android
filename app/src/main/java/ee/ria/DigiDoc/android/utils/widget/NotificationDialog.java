@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.utils.widget;
 
 import android.app.Dialog;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 
@@ -13,6 +14,7 @@ public class NotificationDialog extends Dialog {
 
     public NotificationDialog(@NonNull Activity context) {
         super(context);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         setContentView(R.layout.success_notification_dialog);
         Button okButton = findViewById(R.id.okButton);
         okButton.setOnClickListener(v -> {
