@@ -440,6 +440,9 @@
     <string name="confirm_puk_change">Kinnita PUK muutmine</string>
     <string name="cancel_puk_change">Katkesta PUK muutmine</string>
 
+    <string name="success_notification_dialog_text">Ümbriku jagamiseks klõpsa \"JAGA\" nupul ning vali soovitud rakendus. Kõik ümbrikud on leitavad ka rakenduse seadetes asuvas \"Hiljutised dokumendid\" kaustast.</string>
+    <string name="success_notification_dialog_dont_show_again">Ära rohkem näita</string>
+
     <string name="crash_report_dialog_header">Kas saata vearaport?</string>
     <string name="crash_report_dialog_text">Rakenduses juhtus viga. Palun saada meile vearaport, et saaksime selle vea parandada.</string>
     <string name="crash_report_dialog_send_button">Saada</string>

@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Objects;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
@@ -31,6 +32,7 @@ import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
+import ee.ria.DigiDoc.android.utils.widget.NotificationDialog;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientsEmptyException;
@@ -246,6 +248,10 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 state.recipientsAddEnabled(), state.recipientsRemoveEnabled(),
                 state.encryptSuccessMessageVisible(), state.decryptSuccessMessageVisible());
 
+        if (state.encryptSuccessMessageVisible()) {
+            showSuccessNotification();
+        }
+
         dataFileRemoveConfirmation = state.dataFileRemoveConfirmation();
         if (dataFileRemoveConfirmation != null) {
             if (dataFiles.size() == 1) {
@@ -306,6 +312,14 @@ public final class CryptoCreateScreen extends Controller implements Screen,
             errorDialog.show();
         } else {
             errorDialog.dismiss();
+        }
+    }
+
+    private void showSuccessNotification() {
+        Boolean showNotification = ((Activity) view.getContext()).getSettingsDataStore().getShowSuccessNotification();
+        if (showNotification) {
+            NotificationDialog successNotificationDialog = new NotificationDialog((Activity) view.getContext());
+            successNotificationDialog.show();
         }
     }
 

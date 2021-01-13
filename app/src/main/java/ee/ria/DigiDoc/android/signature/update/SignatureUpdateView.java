@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.signature.update;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Parcelable;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +23,7 @@ import com.google.common.io.Files;
 import java.io.File;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
@@ -34,6 +36,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
+import ee.ria.DigiDoc.android.utils.widget.NotificationDialog;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.Signature;
@@ -210,6 +213,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         adapter.setData(state.signatureAddSuccessMessageVisible(), isExistingContainer,
                 isNestedContainer, state.container());
 
+        if (state.signatureAddSuccessMessageVisible()) {
+            showSuccessNotification();
+        }
+
         errorDialog.show(state.documentsAddError(), state.documentRemoveError(),
                 state.signatureAddError(), state.signatureRemoveError());
 
@@ -320,6 +327,14 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             } else {
                 smartIdChallengeView.setText(EMPTY_CHALLENGE);
             }
+        }
+    }
+
+    private void showSuccessNotification() {
+        Boolean showNotification = ((Activity) getContext()).getSettingsDataStore().getShowSuccessNotification();
+        if (showNotification) {
+            NotificationDialog successNotificationDialog = new NotificationDialog((Activity) getContext());
+            new Handler().postDelayed(successNotificationDialog::show, 1000);
         }
     }
 

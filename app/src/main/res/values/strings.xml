@@ -437,6 +437,9 @@
     <string name="confirm_puk_change">Confirm PUK change</string>
     <string name="cancel_puk_change">Cancel PUK changing process</string>
 
+    <string name="success_notification_dialog_text">To share the container click the \"SHARE\" button and choose your preferred application. All containers can also be found in the application settings \"Recent Documents\" folder.</string>
+    <string name="success_notification_dialog_dont_show_again">Don\'t show again</string>
+
     <string name="crash_report_dialog_header">Send crash report?</string>
     <string name="crash_report_dialog_text">Application crashed. Please send us crash report, so we can fix the problem.</string>
     <string name="crash_report_dialog_send_button">Send</string>
