@@ -12,7 +12,10 @@ import com.takisoft.fix.support.v7.preference.EditTextPreference;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
+
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 public class TsaUrlPreference extends EditTextPreference {
 
@@ -40,6 +43,11 @@ public class TsaUrlPreference extends EditTextPreference {
         checkBox.setText(R.string.main_settings_tsa_url_use_default);
         checkBox.setMinHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48f, context.getResources().getDisplayMetrics()));
         checkBox.setMinWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120f, context.getResources().getDisplayMetrics()));
+
+        setOnPreferenceChangeListener((preference, newValue) -> {
+            AccessibilityUtils.sendAccessibilityEvent(context, TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
+            return true;
+        });
     }
 
     public CheckBox getCheckBox() {

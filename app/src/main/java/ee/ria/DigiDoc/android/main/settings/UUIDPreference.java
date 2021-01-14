@@ -23,6 +23,7 @@ package ee.ria.DigiDoc.android.main.settings;
 import android.content.Context;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatCheckBox;
+
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -33,6 +34,9 @@ import com.takisoft.fix.support.v7.preference.EditTextPreference;
 import java.util.Arrays;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 public class UUIDPreference extends EditTextPreference {
 
@@ -61,6 +65,11 @@ public class UUIDPreference extends EditTextPreference {
                 48f, context.getResources().getDisplayMetrics()));
         checkBox.setMinWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 120f, context.getResources().getDisplayMetrics()));
+
+        setOnPreferenceChangeListener((preference, newValue) -> {
+            AccessibilityUtils.sendAccessibilityEvent(context, TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
+            return true;
+        });
     }
 
     public CheckBox getCheckBox() {

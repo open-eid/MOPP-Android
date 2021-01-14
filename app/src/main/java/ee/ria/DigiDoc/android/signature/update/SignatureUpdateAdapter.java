@@ -23,6 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
@@ -32,6 +33,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static androidx.core.content.res.ResourcesCompat.getColor;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.Constants.VOID;
@@ -165,6 +167,7 @@ final class SignatureUpdateAdapter extends
         static UpdateViewHolder create(int viewType, View itemView) {
             switch (viewType) {
                 case R.layout.signature_update_list_item_success:
+                    AccessibilityUtils.sendAccessibilityEvent(itemView.getContext(), TYPE_ANNOUNCEMENT, R.string.container_signature_added);
                     return new SuccessViewHolder(itemView);
                 case R.layout.signature_update_list_item_status:
                     return new StatusViewHolder(itemView);

@@ -45,10 +45,23 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update_signature_add, this);
         methodView = findViewById(R.id.signatureUpdateSignatureAddMethod);
+        setSignatureMethodsContentDescription();
         mobileIdView = findViewById(R.id.signatureUpdateMobileId);
         smartIdView = findViewById(R.id.signatureUpdateSmartId);
         idCardView = findViewById(R.id.signatureUpdateIdCard);
         methodChanges = checkedChanges(methodView).skipInitialValue().publish().autoConnect();
+    }
+
+    private void setSignatureMethodsContentDescription() {
+        methodView.findViewById(R.id.signatureUpdateSignatureAddMethodMobileId).setContentDescription(
+                getResources().getString(R.string.signature_update_signature_add_method) + " " + getResources().getString(R.string.signature_update_signature_add_method_mobile_id)
+        );
+        methodView.findViewById(R.id.signatureUpdateSignatureAddMethodSmartId).setContentDescription(
+                getResources().getString(R.string.signature_update_signature_add_method) + " " + getResources().getString(R.string.signature_update_signature_add_method_smart_id)
+        );
+        methodView.findViewById(R.id.signatureUpdateSignatureAddMethodIdCard).setContentDescription(
+                getResources().getString(R.string.signature_update_signature_add_method) + " " + getResources().getString(R.string.signature_update_signature_add_method_id_card)
+        );
     }
 
     public Observable<Integer> methodChanges() {

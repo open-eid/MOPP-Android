@@ -10,11 +10,15 @@ import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.takisoft.fix.support.v7.preference.EditTextPreference;
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers;
+import com.takisoft.fix.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
+import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 
-public final class SettingsFragment extends PreferenceFragmentCompatDividers {
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+
+public final class SettingsFragment extends PreferenceFragmentCompat {
 
     EditTextPreference phoneNoPreference;
 

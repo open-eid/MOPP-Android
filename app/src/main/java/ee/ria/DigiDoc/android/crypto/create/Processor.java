@@ -154,7 +154,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .fromCallable(() -> newName)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .map((renameTo) -> Result.NameUpdateResult.progress(assignName(name, renameTo)))
+                        .map((renameTo) -> {
+                            Result.NameUpdateResult result = Result.NameUpdateResult.progress(assignName(name, renameTo));
+                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.container_name_changed);
+                            return result;
+                        })
                         .onErrorReturn(throwable -> Result.NameUpdateResult.failure(newName, throwable))
                         .startWith(Result.NameUpdateResult.progress(name));
             } else if (name != null) {
@@ -191,9 +195,12 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                                 throw new IllegalArgumentException(
                                                         "File already exists in the container");
                                             }
-                                            AccessibilityUtils.sendAccessibilityEvent(
-                                                    application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.file_added);
                                             builder.add(dataFile);
+                                        }
+                                        if (fileStreams.size() > 1) {
+                                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.files_added);
+                                        } else {
+                                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.file_added);
                                         }
                                         return builder.build();
                                     })

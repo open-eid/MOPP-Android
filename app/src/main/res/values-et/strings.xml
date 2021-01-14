@@ -114,6 +114,8 @@
     <string name="signature_update_send_button">JAGA</string>
     <string name="signature_update_signature_add_button">ALLKIRJASTA</string>
 
+    <string name="signature_update_signature_add_method">Allkirjastamise meetod</string>
+    <string name="signature_update_signature_method_selected">allkirjastamise meetod valitud</string>
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>
     <string name="signature_update_signature_add_method_smart_id">Smart-ID</string>
     <string name="signature_update_signature_add_method_id_card">ID-kaart</string>
@@ -389,10 +391,14 @@
 
     <!--  TODO: tõlked  -->
     <string name="signature_removed">Allkiri eemaldatud</string>
+    <string name="signature_removal_cancelled">Allkirja eemaldamine katkestatud</string>
     <string name="file_removed">Fail eemaldatud</string>
+    <string name="file_removal_cancelled">Faili eemaldamine katkestatud</string>
     <string name="file_saved">Fail salvestatud</string>
     <string name="document_removed">Dokument eemaldatud</string>
+    <string name="document_removal_cancelled">Dokumendi eemaldamine katkestatud</string>
     <string name="file_added">Fail lisatud</string>
+    <string name="files_added">Failid lisatud</string>
     <string name="error_dialog">Vea dialoog</string>
     <string name="confirmation_dialog">Kinnitus dialoog</string>
     <string name="recipients_found">Adressaati leitud</string>
@@ -401,6 +407,7 @@
     <string name="recipient_removed">Adressaat eemaldatud</string>
     <string name="add_recipient">Lisa adressaat</string>
     <string name="container_name_changed">Ümbriku nimi muudetud</string>
+    <string name="container_name_change_cancelled">Ümbriku nime muutmine katkestatud</string>
     <string name="sign_container_button_description">Allkirjasta</string>
     <string name="container_signing_cancelled">Ümbriku allkirjastamine katkestatud</string>
     <string name="container_signature_added">Ümbrikule allkiri lisatud</string>
@@ -420,6 +427,8 @@
     <string name="configuration_is_already_up_to_date">konfiguratsioon on juba ajakohane</string>
     <string name="configuration_updated">Konfiguratsioon uuendatud</string>
     <string name="language_changed">Keel muudetud</string>
+    <string name="setting_value_changed">Seade väärtus muudetud</string>
+    <string name="setting_value_change_cancelled">Seade väärtuse muutmine katkestatud</string>
     <string name="close_menu">Sulge menüü</string>
 
 

@@ -72,9 +72,6 @@ public final class MobileIdView extends LinearLayout implements
 
     @Override
     public void response(@Nullable MobileIdResponse response) {
-        if (response != null && response.status() != null && response.status() == MobileCreateSignatureSessionStatusResponse.ProcessStatus.OK) {
-            AccessibilityUtils.sendAccessibilityEvent(this.getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.container_signature_added);
-        }
     }
 
     public void setDefaultPhoneNoPrefix(String phoneNoPrefix) {
