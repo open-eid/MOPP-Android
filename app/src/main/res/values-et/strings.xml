@@ -84,6 +84,8 @@
     <string name="signature_update_document_save_button">Salvesta fail ümbrikust</string>
     <string name="signature_update_remove_document_confirmation_message">Soovid eemaldada faili ümbrikust?</string>
     <string name="signature_update_remove_last_document_confirmation_message">Oled kustutamas viimast faili ümbrikus, koos sellega eemaldatakse ka ümbrik.</string>
+    <string name="signature_update_cancel_file_removal_button">Katkesta faili eemaldamine</string>
+    <string name="signature_update_confirm_file_removal_button">Kinnita faili eemaldamine</string>
     <string name="signature_update_document_remove_error">Faili ümbrikust eemaldamine ebaõnnestus</string>
     <string name="signature_update_signatures_title">Ümbriku allkirjad</string>
     <string name="signature_update_signatures_empty">Allkirjad puuduvad</string>
@@ -128,6 +130,14 @@
     <string name="signature_update_signature_error_message_certificate_revoked">Sertifikaat on kehtetu</string>
 
     <string name="signature_update_signature_error_invalid_ssl_handshake">SSL ühenduskanali loomine ebaõnnestus. Kontrolli rakenduse seadeid või tarkvara uuendusi</string>
+
+    <string name="signature_update_signature_selected_method_mobile_id">Valitud allkirjastamise viisiks on Mobiil-ID</string>
+    <string name="signature_update_signature_selected_method_smart_id">Valitud allkirjastamise viisiks on Smart-ID</string>
+    <string name="signature_update_signature_selected_method_id_card">Valitud allkirjastamise viisiks on ID-kaart</string>
+
+    <string name="signature_update_signature_chosen_method_mobile_id">Allkirjastamisviis Mobiil-ID on valitud</string>
+    <string name="signature_update_signature_chosen_method_smart_id">Smart-ID allkirjastamise vahend valitud</string>
+    <string name="signature_update_signature_chosen_method_id_card">ID-kaart allkirjastamise vahend valitud</string>
 
     <string name="signature_update_mobile_id_message">Sisesta oma telefoninumber ja isikukood mobiil-IDga allkirjastamiseks</string>
     <string name="signature_update_mobile_id_phone_no">Riigikood ja telefoninumber</string>

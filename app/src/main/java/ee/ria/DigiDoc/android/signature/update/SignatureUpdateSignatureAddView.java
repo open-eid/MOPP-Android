@@ -1,12 +1,15 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
+import androidx.annotation.Nullable;
+
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardView;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
@@ -75,10 +78,14 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         idCardView.setVisibility(method == R.id.signatureUpdateSignatureAddMethodIdCard ? VISIBLE : GONE);
         switch (method) {
             case R.id.signatureUpdateSignatureAddMethodMobileId:
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, getContext().getString(R.string.signature_update_signature_chosen_method_mobile_id));
                 mobileIdView.setDefaultPhoneNoPrefix("372");
                 break;
             case R.id.signatureUpdateSignatureAddMethodSmartId:
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, getContext().getString(R.string.signature_update_signature_chosen_method_smart_id));
+                break;
             case R.id.signatureUpdateSignatureAddMethodIdCard:
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, getContext().getString(R.string.signature_update_signature_chosen_method_id_card));
                 break;
             default:
                 throw new IllegalArgumentException("Unknown method " + method);

@@ -3,11 +3,12 @@ package ee.ria.DigiDoc.android.utils.widget;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.accessibility.AccessibilityEvent;
+import android.widget.Button;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
-import android.view.accessibility.AccessibilityEvent;
-import android.widget.Button;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Constants;
@@ -32,9 +33,9 @@ public final class ConfirmationDialog extends AlertDialog implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Button okButton = getButton(BUTTON_POSITIVE);
-        okButton.setContentDescription(okButton.getText());
+        okButton.setContentDescription(getContext().getString(R.string.signature_update_confirm_file_removal_button));
         Button cancelButton = getButton(BUTTON_NEGATIVE);
-        cancelButton.setContentDescription(cancelButton.getText());
+        cancelButton.setContentDescription(getContext().getString(R.string.signature_update_cancel_file_removal_button));
     }
 
     @Override

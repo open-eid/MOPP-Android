@@ -84,6 +84,8 @@
     <string name="signature_update_document_save_button">Save file</string>
     <string name="signature_update_remove_document_confirmation_message">Remove file from container?</string>
     <string name="signature_update_remove_last_document_confirmation_message">You are about to remove the last file in the container, it is removed along with the container.</string>
+    <string name="signature_update_cancel_file_removal_button">Cancel file removal</string>
+    <string name="signature_update_confirm_file_removal_button">Confirm file removal</string>
     <string name="signature_update_document_remove_error">Can\'t remove file from container</string>
     <string name="signature_update_signatures_title">Container signatures</string>
     <string name="signature_update_signatures_empty">Container is not signed</string>
@@ -128,6 +130,14 @@
     <string name="signature_update_signature_error_message_certificate_revoked">Certificate status revoked</string>
 
     <string name="signature_update_signature_error_invalid_ssl_handshake">SSL handshake failed. Check your application settings or software upgrades</string>
+
+    <string name="signature_update_signature_selected_method_mobile_id">Selected signing option Mobile-ID</string>
+    <string name="signature_update_signature_selected_method_smart_id">Selected signing option Smart-ID</string>
+    <string name="signature_update_signature_selected_method_id_card">Selected signing option ID-card</string>
+
+    <string name="signature_update_signature_chosen_method_mobile_id">Signing method Mobile-ID, selected</string>
+    <string name="signature_update_signature_chosen_method_smart_id">Signing method Smart-ID, selected</string>
+    <string name="signature_update_signature_chosen_method_id_card">Signing method ID-Card, selected</string>
 
     <string name="signature_update_mobile_id_message">Enter your mobile number and personal code to sign with mobile-ID</string>
     <string name="signature_update_mobile_id_phone_no">Country code and phone number</string>
