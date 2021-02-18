@@ -14,7 +14,6 @@
     <item
         android:id="@id/mainHomeNavigationEID"
         android:title="@string/main_home_navigation_eid"
-        android:icon="@drawable/ic_icon_eid"
-        android:contentDescription="@string/my_eid_content_description"/>
+        android:icon="@drawable/ic_icon_eid" />
 
 </menu>
