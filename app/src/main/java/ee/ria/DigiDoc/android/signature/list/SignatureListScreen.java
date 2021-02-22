@@ -131,7 +131,7 @@ public final class SignatureListScreen extends Controller implements Screen,
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
         removeConfirmationDialog = new ConfirmationDialog(container.getContext(),
-                R.string.signature_list_remove_confirmation_message);
+                R.string.signature_list_remove_confirmation_message, R.id.documentRemovalDialog);
         View view = inflater.inflate(R.layout.signature_list_screen, container, false);
         AccessibilityUtils.setAccessibilityPaneTitle(view, R.string.signature_list_title);
 

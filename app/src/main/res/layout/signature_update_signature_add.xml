@@ -40,8 +40,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/signature_update_signature_add_method_id_card"
-            android:contentDescription="@string/signature_update_signature_selected_method_id_card" />
+            android:text="@string/signature_update_signature_add_method_id_card" />
 
     </RadioGroup>
 
