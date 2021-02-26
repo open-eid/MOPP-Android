@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -144,9 +145,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         listView.setAdapter(adapter = new SignatureUpdateAdapter());
 
         documentRemoveConfirmationDialog = new ConfirmationDialog(context,
-                R.string.signature_update_remove_document_confirmation_message);
+                R.string.signature_update_remove_document_confirmation_message, R.id.documentRemovalDialog);
         signatureRemoveConfirmationDialog = new ConfirmationDialog(context,
-                R.string.signature_update_signature_remove_confirmation_message);
+                R.string.signature_update_signature_remove_confirmation_message, R.id.signatureRemovalDialog);
         signatureAddDialog = new SignatureUpdateSignatureAddDialog(context);
         signatureAddView = signatureAddDialog.view();
         resetSignatureAddDialog();
@@ -215,6 +216,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         if (state.signatureAddSuccessMessageVisible()) {
             showSuccessNotification();
+            AccessibilityUtils.sendAccessibilityEvent(getContext(),
+                    AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.signature_update_signature_add_success);
         }
 
         errorDialog.show(state.documentsAddError(), state.documentRemoveError(),

@@ -67,6 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/crypto_create_encrypt_button"
+            android:contentDescription="@string/crypto_create_encrypt_button_description"
             android:drawableTop="@drawable/ic_icon_crypto" />
 
         <Button
@@ -76,6 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/crypto_create_decrypt_button"
+            android:contentDescription="@string/crypto_create_decrypt_button_description"
             android:drawableTop="@drawable/ic_icon_crypto" />
 
         <androidx.legacy.widget.Space

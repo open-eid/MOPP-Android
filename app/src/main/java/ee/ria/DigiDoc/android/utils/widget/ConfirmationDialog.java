@@ -3,11 +3,12 @@ package ee.ria.DigiDoc.android.utils.widget;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.accessibility.AccessibilityEvent;
+import android.widget.Button;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
-import android.view.accessibility.AccessibilityEvent;
-import android.widget.Button;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Constants;
@@ -21,20 +22,24 @@ public final class ConfirmationDialog extends AlertDialog implements
 
     private final Subject<Integer> buttonClicksSubject = PublishSubject.create();
 
-    public ConfirmationDialog(@NonNull Context context, @StringRes int message) {
+    private final int action;
+
+    public ConfirmationDialog(@NonNull Context context, @StringRes int message, int action) {
         super(context);
         setMessage(context.getString(message));
         setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
         setButton(BUTTON_NEGATIVE, context.getString(android.R.string.cancel), this);
+
+        this.action = action;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Button okButton = getButton(BUTTON_POSITIVE);
-        okButton.setContentDescription(okButton.getText());
+        okButton.setContentDescription(getDialogActionConfirmationDescription(action));
         Button cancelButton = getButton(BUTTON_NEGATIVE);
-        cancelButton.setContentDescription(cancelButton.getText());
+        cancelButton.setContentDescription(getDialogActionCancelDescription(action));
     }
 
     @Override
@@ -61,5 +66,25 @@ public final class ConfirmationDialog extends AlertDialog implements
     public Observable<Object> cancels() {
         return RxDialog.cancels(this)
                 .mergeWith(buttonClicksSubject.filter(which -> which == BUTTON_NEGATIVE));
+    }
+
+    private String getDialogActionConfirmationDescription(int action) {
+        if (action == R.id.documentRemovalDialog) {
+            return getContext().getString(R.string.signature_update_confirm_file_removal_button);
+        } else if (action == R.id.signatureRemovalDialog) {
+            return getContext().getString(R.string.signature_update_confirm_signature_removal_button);
+        }
+
+        return null;
+    }
+
+    private String getDialogActionCancelDescription(int action) {
+        if (action == R.id.documentRemovalDialog) {
+            return getContext().getString(R.string.signature_update_cancel_file_removal_button);
+        } else if (action == R.id.signatureRemovalDialog) {
+            return getContext().getString(R.string.signature_update_cancel_signature_removal_button);
+        }
+
+        return null;
     }
 }
