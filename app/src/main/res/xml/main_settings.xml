@@ -25,6 +25,7 @@
         android:title="@string/main_settings_uuid_title"
         android:widgetLayout="@layout/widget_icon_layout"
         app:iconSpaceReserved="false"
+        android:minHeight="@dimen/material_baseline_grid_6x"
         android:inputType="textPassword" />
 
     <ee.ria.DigiDoc.android.main.settings.TsaUrlPreference
@@ -32,6 +33,7 @@
         android:key="@string/main_settings_tsa_url_key"
         android:title="@string/main_settings_tsa_url_title"
         android:widgetLayout="@layout/widget_icon_layout"
+        android:minHeight="@dimen/material_baseline_grid_6x"
         app:iconSpaceReserved="false" />
 
     <ee.ria.DigiDoc.android.main.settings.OpenAllFiletypesPreference

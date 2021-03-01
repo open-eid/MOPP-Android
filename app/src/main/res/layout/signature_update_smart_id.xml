@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:importantForAccessibility="1"
+            android:minHeight="@dimen/material_baseline_grid_6x"
             android:accessibilityTraversalAfter="@id/signatureUpdateSmartIdCountryText">
 
             <Spinner
@@ -40,6 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/smart_id_country"
+                android:minHeight="@dimen/material_baseline_grid_6x"
                 android:importantForAccessibility="1" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -62,6 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginTop="-10dp"
+            android:minHeight="@dimen/material_baseline_grid_6x"
             android:importantForAccessibility="1">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -70,6 +73,7 @@
                 android:layout_height="wrap_content"
                 android:importantForAccessibility="1"
                 android:inputType="number"
+                android:minHeight="@dimen/material_baseline_grid_6x"
                 android:maxLength="11" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -77,7 +81,7 @@
         <CheckBox
             android:id="@+id/signatureUpdateSmartIdRememberMe"
             android:layout_width="200dp"
-            android:layout_height="48dp"
+            android:layout_height="@dimen/material_baseline_grid_6x"
             android:checked="false"
             android:text="@string/signature_update_mobile_id_remember_me" />
 
