@@ -49,6 +49,7 @@ public final class SmartIdStatusMessages {
                             R.string.signature_update_mobile_id_error_general_client)
                     .put(ProcessStatus.TOO_MANY_REQUESTS,
                             R.string.signature_update_signature_error_message_too_many_requests)
+                    .put(ProcessStatus.EXCEEDED_UNSUCCESSFUL_REQUESTS, R.string.signature_update_signature_error_message_exceeded_unsuccessful_requests)
                     .put(ProcessStatus.OCSP_INVALID_TIME_SLOT, R.string.signature_update_signature_error_message_invalid_time_slot)
                     .put(ProcessStatus.CERTIFICATE_REVOKED, R.string.signature_update_signature_error_message_certificate_revoked)
                     .put(ProcessStatus.NOT_QUALIFIED,

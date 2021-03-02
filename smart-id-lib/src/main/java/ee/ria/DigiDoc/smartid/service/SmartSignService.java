@@ -259,6 +259,9 @@ public class SmartSignService extends IntentService {
                             SessionStatusResponse.ProcessStatus.ACCOUNT_NOT_FOUND);
                     Timber.d("Account/session not found");
                     break;
+                case 409:
+                    broadcastFault(SessionStatusResponse.ProcessStatus.EXCEEDED_UNSUCCESSFUL_REQUESTS);
+                    Timber.d("Exceeded unsuccessful requests");
                 case 429:
                     broadcastFault(SessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS);
                     Timber.d("Too many requests");
