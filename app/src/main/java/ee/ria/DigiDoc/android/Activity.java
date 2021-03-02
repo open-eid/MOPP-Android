@@ -10,11 +10,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.widget.Button;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
-
-import android.widget.Button;
 
 import com.google.android.gms.common.util.CollectionUtils;
 import com.google.android.gms.tasks.Task;
@@ -60,6 +60,9 @@ public final class Activity extends AppCompatActivity {
         setTheme(R.style.Theme_Application);
         setTitle(""); // ACCESSIBILITY: prevents application name read during each activity launch
         super.onCreate(savedInstanceState);
+
+        // Prevent screen recording
+        SecureUtil.markAsSecure(getWindow());
 
         handleCrashOnPreviousExecution();
 
