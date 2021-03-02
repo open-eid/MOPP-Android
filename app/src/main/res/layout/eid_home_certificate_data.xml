@@ -46,6 +46,8 @@
         style="@style/Widget.Application.EID.Error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/eid_home_certificate_data_error_auth" />
+        android:focusable="true"
+        android:text="@string/eid_home_certificate_data_error_auth"
+        android:contentDescription="@string/eid_home_certificate_data_error_auth" />
 
 </merge>

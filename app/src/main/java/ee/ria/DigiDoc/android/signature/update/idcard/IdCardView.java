@@ -1,12 +1,14 @@
 package ee.ria.DigiDoc.android.signature.update.idcard;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -117,11 +119,14 @@ public final class IdCardView extends LinearLayout implements
                     R.string.signature_update_id_card_sign_data, data.personalData().givenNames(),
                     data.personalData().surname(), data.personalData().personalCode()));
             signPin2ErrorView.setVisibility(VISIBLE);
+            signPin2ErrorView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
             if (pinRetryCount == 1) {
                 signPin2ErrorView.setText(
                         R.string.signature_update_id_card_sign_pin2_invalid_final);
             } else {
                 signPin2ErrorView.setText(getResources().getString(
+                        R.string.signature_update_id_card_sign_pin2_invalid, pinRetryCount));
+                signPin2ErrorView.setContentDescription(getResources().getString(
                         R.string.signature_update_id_card_sign_pin2_invalid, pinRetryCount));
             }
         } else if (dataResponse != null && data != null) {

@@ -115,6 +115,7 @@ final class DecryptDialog extends AlertDialog {
                             R.string.crypto_create_decrypt_pin1_invalid, pin1RetryCount));
                 }
                 pin1ErrorView.setVisibility(View.VISIBLE);
+                pin1ErrorView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
             } else {
                 pin1ErrorView.setVisibility(View.GONE);
             }
