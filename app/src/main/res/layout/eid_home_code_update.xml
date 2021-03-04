@@ -67,6 +67,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="numberPassword"
                     android:maxLength="12"
+                    android:minHeight="@dimen/material_baseline_grid_6x"
                     android:hint="@string/eid_home_code_update_current_pin1_edit" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -85,6 +86,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="numberPassword"
                     android:maxLength="12"
+                    android:minHeight="@dimen/material_baseline_grid_6x"
                     android:hint="@string/eid_home_code_update_new_pin1" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -103,6 +105,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="numberPassword"
                     android:maxLength="12"
+                    android:minHeight="@dimen/material_baseline_grid_6x"
                     android:hint="@string/eid_home_code_update_repeat_pin1" />
 
             </com.google.android.material.textfield.TextInputLayout>
