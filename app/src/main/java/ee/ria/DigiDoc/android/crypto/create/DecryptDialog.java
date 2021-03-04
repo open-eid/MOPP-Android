@@ -17,6 +17,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
+import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
@@ -46,6 +47,7 @@ final class DecryptDialog extends AlertDialog {
 
     DecryptDialog(@NonNull Context context) {
         super(context);
+        SecureUtil.markAsSecure(getWindow());
         TypedArray a = context.obtainStyledAttributes(new int[]{R.attr.dialogPreferredPadding});
         int padding = a.getDimensionPixelSize(0, 0);
         a.recycle();
