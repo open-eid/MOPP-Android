@@ -9,11 +9,13 @@ import androidx.annotation.NonNull;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
+import ee.ria.DigiDoc.android.utils.SecureUtil;
 
 public class NotificationDialog extends Dialog {
 
     public NotificationDialog(@NonNull Activity context) {
         super(context);
+        SecureUtil.markAsSecure(getWindow());
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         setContentView(R.layout.success_notification_dialog);
         Button okButton = findViewById(R.id.okButton);
