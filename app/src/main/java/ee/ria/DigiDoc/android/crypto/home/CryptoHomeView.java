@@ -1,10 +1,12 @@
 package ee.ria.DigiDoc.android.crypto.home;
 
 import android.content.Context;
+import android.util.AttributeSet;
+import android.view.accessibility.AccessibilityEvent;
+import android.widget.Button;
+
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import android.util.AttributeSet;
-import android.widget.Button;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -43,6 +45,11 @@ public final class CryptoHomeView extends CoordinatorLayout implements HomeView.
         createButton = findViewById(R.id.cryptoHomeCreateButton);
         navigator = Application.component(context).navigator();
         AccessibilityUtils.setAccessibilityPaneTitle(this, R.string.main_home_navigation_crypto);
+
+        createButton.postDelayed(() -> {
+            createButton.requestFocus();
+            createButton.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+        }, 2000);
     }
 
     @Override
