@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bluelinelabs.conductor.Controller;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
@@ -372,6 +373,9 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         tintCompoundDrawables(encryptButton, true);
         tintCompoundDrawables(decryptButton, true);
         tintCompoundDrawables(sendButton, true);
+
+        decryptButton.setContentDescription(getResources().getString(R.string.decrypt_content_description, 1, 2));
+        sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 2, 2));
 
         disposables.attach();
         disposables.add(viewModel.viewStates().subscribe(this::render));

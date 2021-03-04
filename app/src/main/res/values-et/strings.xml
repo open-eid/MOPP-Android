@@ -391,6 +391,10 @@
     <string name="signature_content_description">Allkiri, vahekaart %1$d / %2$d</string>
     <string name="crypto_content_description">Krüpto, vahekaart %1$d / %2$d</string>
     <string name="my_eid_content_description">Minu eID, vahekaart %1$d / %2$d</string>
+
+    <string name="decrypt_content_description">Dekrüpteeri, vahekaart %1$d / %2$d</string>
+    <string name="decrypt_send_content_description">Jaga, vahekaart %1$d / %2$d</string>
+
     <string name="document">Dokument</string>
     <string name="container_has">Ümbrikus on</string>
     <string name="file">Fail</string>
