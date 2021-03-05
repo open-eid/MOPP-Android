@@ -54,6 +54,10 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         idCardView = findViewById(R.id.signatureUpdateIdCard);
         methodChanges = checkedChanges(methodView).skipInitialValue().publish().autoConnect();
 
+        methodView.findViewById(R.id.signatureUpdateSignatureAddMethodMobileId).setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 3));
+        methodView.findViewById(R.id.signatureUpdateSignatureAddMethodSmartId).setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_smart_id, 2, 3));
+        methodView.findViewById(R.id.signatureUpdateSignatureAddMethodIdCard).setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 3));
+        
         setupContentDescriptions(findViewById(R.id.signatureUpdateSignatureAddMethodMobileId), getContext().getString(R.string.signature_update_signature_chosen_method_mobile_id));
         setupContentDescriptions(findViewById(R.id.signatureUpdateSignatureAddMethodSmartId), getContext().getString(R.string.signature_update_signature_chosen_method_smart_id));
         setupContentDescriptions(findViewById(R.id.signatureUpdateSignatureAddMethodIdCard), getContext().getString(R.string.signature_update_signature_chosen_method_id_card));

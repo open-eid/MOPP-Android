@@ -62,6 +62,13 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         navigationContainerView = findViewById(R.id.mainHomeNavigationContainer);
         navigationView = findViewById(R.id.mainHomeNavigation);
 
+        BottomNavigationItemView signatureItem = findViewById(R.id.mainHomeNavigationSignature);
+        BottomNavigationItemView cryptoItem = findViewById(R.id.mainHomeNavigationCrypto);
+        BottomNavigationItemView eidItem = findViewById(R.id.mainHomeNavigationEID);
+        signatureItem.setContentDescription(getResources().getString(R.string.signature_content_description, 1, 3));
+        cryptoItem.setContentDescription(getResources().getString(R.string.crypto_content_description, 2, 3));
+        eidItem.setContentDescription(getResources().getString(R.string.my_eid_content_description, 3, 3));
+
         menuDialog = new HomeMenuDialog(context);
         menuView = menuDialog.getMenuView();
         viewModel = Application.component(context).navigator().viewModel(screenId,

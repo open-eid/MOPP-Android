@@ -133,9 +133,9 @@
 
     <string name="signature_update_signature_error_invalid_ssl_handshake">SSL handshake failed. Check your application settings or software upgrades</string>
 
-    <string name="signature_update_signature_selected_method_mobile_id">Selected signing option Mobile-ID</string>
-    <string name="signature_update_signature_selected_method_smart_id">Selected signing option Smart-ID</string>
-    <string name="signature_update_signature_selected_method_id_card">Selected signing option ID-card</string>
+    <string name="signature_update_signature_selected_method_mobile_id">Selected signing option Mobile-ID, tab %1$d of %2$d</string>
+    <string name="signature_update_signature_selected_method_smart_id">Selected signing option Smart-ID, tab %1$d of %2$d</string>
+    <string name="signature_update_signature_selected_method_id_card">Selected signing option ID-card, tab %1$d of %2$d</string>
 
     <string name="signature_update_signature_chosen_method_mobile_id">Signing method Mobile-ID, selected</string>
     <string name="signature_update_signature_chosen_method_smart_id">Signing method Smart-ID, selected</string>
@@ -392,7 +392,12 @@
     <string name="eid_home_code_update_repeat_error_mismatch_puk">New PUK codes must match</string>
 
     <!--  General  -->
-    <string name="my_eid_content_description">My e-ID</string>
+    <string name="signature_content_description">Signature, tab %1$d of %2$d</string>
+    <string name="crypto_content_description">Crypto, tab %1$d of %2$d</string>
+    <string name="my_eid_content_description">My e-ID, tab %1$d of %2$d</string>
+
+    <string name="decrypt_content_description">Decrypt, tab %1$d of %2$d</string>
+    <string name="decrypt_send_content_description">Share, tab %1$d of %2$d</string>
 
     <!-- Sharing Screen -->
     <string name="sharing_screen_title">Choose file</string>
