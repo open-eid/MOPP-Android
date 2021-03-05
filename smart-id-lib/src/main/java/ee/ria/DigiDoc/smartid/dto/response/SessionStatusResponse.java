@@ -67,6 +67,7 @@ public class SessionStatusResponse {
         ACCOUNT_NOT_FOUND,
         SESSION_NOT_FOUND,
         MISSING_SESSIONID,
+        EXCEEDED_UNSUCCESSFUL_REQUESTS,
         TOO_MANY_REQUESTS,
         NOT_QUALIFIED,
         INVALID_ACCESS_RIGHTS,

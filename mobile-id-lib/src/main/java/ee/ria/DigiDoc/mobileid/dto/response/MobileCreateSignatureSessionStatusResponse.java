@@ -134,6 +134,7 @@ public class MobileCreateSignatureSessionStatusResponse {
         SIM_ERROR,
 
         TOO_MANY_REQUESTS,
+        EXCEEDED_UNSUCCESSFUL_REQUESTS,
         INVALID_ACCESS_RIGHTS,
         OCSP_INVALID_TIME_SLOT,
         CERTIFICATE_REVOKED,

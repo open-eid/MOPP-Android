@@ -76,6 +76,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final View activityOverlayView;
     private final View mobileIdContainerView;
     private final TextView mobileIdChallengeView;
+    private final TextView mobileIdChallengeTextView;
     private final View smartIdContainerView;
     private final TextView smartIdInfo;
     private final TextView smartIdChallengeView;
@@ -141,6 +142,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         sendButton.setContentDescription(getResources().getString(R.string.share_container));
         buttonSpace = findViewById(R.id.signatureUpdateButtonSpace);
         signatureAddButton = findViewById(R.id.signatureUpdateSignatureAddButton);
+        mobileIdChallengeTextView = findViewById(R.id.signatureUpdateMobileIdChallengeText);
 
         listView.setLayoutManager(new LinearLayoutManager(context));
         listView.setAdapter(adapter = new SignatureUpdateAdapter());
@@ -264,6 +266,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             String mobileIdChallenge = mobileIdResponse.challenge();
             if (mobileIdChallenge != null) {
                 mobileIdChallengeView.setText(mobileIdChallenge);
+                mobileIdChallengeTextView.setText(getResources().getString(R.string.signature_update_mobile_id_info));
             } else {
                 mobileIdChallengeView.setText(EMPTY_CHALLENGE);
             }

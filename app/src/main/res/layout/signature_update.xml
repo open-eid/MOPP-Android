@@ -134,10 +134,10 @@
                     android:indeterminate="false" />
 
                 <TextView
+                    android:id="@id/signatureUpdateMobileIdChallengeText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="@string/signature_update_mobile_id_info"
                     android:textColor="@color/title" />
 
             </LinearLayout>
