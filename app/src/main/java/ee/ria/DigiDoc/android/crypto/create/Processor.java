@@ -391,7 +391,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .decrypt(token, request.containerFile(), request.pin1())
                         .doOnSuccess(ignored ->
                                 AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(),
-                                        AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.crypto_create_decrypt_success_message)
+                                        AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.document_decrypted)
                         )
                         .flatMapObservable(dataFiles ->
                                 Observable

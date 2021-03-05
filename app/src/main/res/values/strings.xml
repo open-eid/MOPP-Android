@@ -403,6 +403,7 @@
     <string name="recipient_found">Recipient found</string>
     <string name="recipient_added">Recipient added</string>
     <string name="recipient_removed">Recipient removed</string>
+    <string name="recipient_addition_cancelled">Recipient addition cancelled</string>
     <string name="add_recipient">Add recipient</string>
     <string name="container_name_changed">Container name changed</string>
     <string name="container_name_change_cancelled">Container name change cancelled</string>
@@ -412,6 +413,7 @@
     <string name="files_encrypted">Files encrypted</string>
     <string name="file_decrypted">File decrypted</string>
     <string name="file_decryption_cancelled">File decryption cancelled</string>
+    <string name="document_decrypted">Document decrypted</string>
     <string name="share_container">Share container</string>
     <string name="pin1_change_cancelled">Pin1 change cancelled</string>
     <string name="pin1_unblock_cancelled">Pin1 unblock cancelled</string>

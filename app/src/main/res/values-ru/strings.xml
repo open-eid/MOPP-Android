@@ -406,6 +406,7 @@
     <string name="recipient_found">Получатель найден</string>
     <string name="recipient_added">Получатель добавлен</string>
     <string name="recipient_removed">Получатель удален</string>
+    <string name="recipient_addition_cancelled">Добавление получателя отменено</string>
     <string name="add_recipient">Добавить получателя</string>
     <string name="container_name_changed">Название контейнера изменено</string>
     <string name="container_name_change_cancelled">Изменение названия контейнера отменено</string>
@@ -415,6 +416,7 @@
     <string name="files_encrypted">Файлы зашифрованы</string>
     <string name="file_decrypted">Файл расшифрован</string>
     <string name="file_decryption_cancelled">Расшифровка файла прервана</string>
+    <string name="document_decrypted">Документ расшифрован</string>
     <string name="share_container">Поделиться контейнером</string>
     <string name="pin1_change_cancelled">Изменение Pin1 прервано</string>
     <string name="pin1_unblock_cancelled">Аннулирование блокировки Pin1 прервано</string>

@@ -405,6 +405,7 @@
     <string name="recipient_found">Adressaat leitud</string>
     <string name="recipient_added">Adressaat lisatud</string>
     <string name="recipient_removed">Adressaat eemaldatud</string>
+    <string name="recipient_addition_cancelled">Adressaadi lisamine katkestatud</string>
     <string name="add_recipient">Lisa adressaat</string>
     <string name="container_name_changed">Ümbriku nimi muudetud</string>
     <string name="container_name_change_cancelled">Ümbriku nime muutmine katkestatud</string>
@@ -413,6 +414,7 @@
     <string name="container_signature_added">Ümbrikule allkiri lisatud</string>
     <string name="files_encrypted">Failid krüpteeritud</string>
     <string name="file_decrypted">Fail dekrüpteeritud</string>
+    <string name="document_decrypted">Dokument dekrüpteeritud</string>
     <string name="file_decryption_cancelled">Faili dekrüpteerimine katkestatud</string>
     <string name="share_container">Jaga ümbrikut</string>
     <string name="pin1_change_cancelled">Pin1 muutmine katkestatud</string>
