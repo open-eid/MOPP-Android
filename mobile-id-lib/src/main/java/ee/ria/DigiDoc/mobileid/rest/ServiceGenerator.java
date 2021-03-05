@@ -21,17 +21,24 @@ package ee.ria.DigiDoc.mobileid.rest;
 
 import org.bouncycastle.util.encoders.Base64;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 import ee.ria.DigiDoc.common.CertificateUtil;
 import ee.ria.DigiDoc.mobileid.BuildConfig;
@@ -67,12 +74,63 @@ public class ServiceGenerator {
         addLoggingInterceptor(httpClientBuilder);
         if (sslContext != null) {
             try {
-                httpClientBuilder.sslSocketFactory(sslContext.getSocketFactory());
+                httpClientBuilder.sslSocketFactory(sslContext.getSocketFactory(), getTrustManager());
             } catch (Exception e) {
                 Timber.e(e, "Error building httpClient with sslContext");
             }
         }
         return httpClientBuilder.build();
+    }
+
+    private static X509TrustManager getTrustManager() throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        trustStore.load(null, null);
+
+        final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init((KeyStore) null);
+
+        final TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+
+        return new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+                checkTrustManagerCertificates(trustManagers, CERT_CHECK.CHECK_CLIENT, x509Certificates, s);
+
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+                checkTrustManagerCertificates(trustManagers, CERT_CHECK.CHECK_SERVER, x509Certificates, s);
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return getCertificateAcceptedIssuers(trustManagers);
+            }
+        };
+    }
+
+    private static X509Certificate[] getCertificateAcceptedIssuers(TrustManager[] trustManagers) {
+        for (TrustManager trustManager: trustManagers) {
+            if (trustManager instanceof X509TrustManager) {
+                return ((X509TrustManager) trustManager).getAcceptedIssuers();
+            }
+        }
+
+        return null;
+    }
+
+    private static void checkTrustManagerCertificates(TrustManager[] trustManagers, CERT_CHECK certCheck, X509Certificate[] x509Certificates, String s) throws CertificateException {
+        for (TrustManager trustManager: trustManagers) {
+            if (trustManager instanceof X509TrustManager) {
+                switch (certCheck) {
+                    case CHECK_CLIENT:
+                        ((X509TrustManager) trustManager).checkClientTrusted(x509Certificates, s);
+                    case CHECK_SERVER:
+                        ((X509TrustManager) trustManager).checkServerTrusted(x509Certificates, s);
+                }
+            }
+        }
     }
 
     private static void addLoggingInterceptor(OkHttpClient.Builder httpClientBuilder) {
@@ -110,6 +168,11 @@ public class ServiceGenerator {
         }
 
         return new CertificatePinner.Builder().build();
+    }
+
+    private enum CERT_CHECK {
+        CHECK_CLIENT,
+        CHECK_SERVER
     }
 
     private static URI toURI(String url) {

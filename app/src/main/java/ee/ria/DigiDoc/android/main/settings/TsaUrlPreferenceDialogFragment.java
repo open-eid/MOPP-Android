@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.main.settings;
 
+import android.app.Dialog;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +13,9 @@ import com.takisoft.fix.support.v7.preference.EditTextPreferenceDialogFragmentCo
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
-
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+
+import ee.ria.DigiDoc.android.utils.SecureUtil;
 
 public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
 
@@ -42,6 +45,13 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
             parent.addView(checkBox, ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
         }
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        SecureUtil.markAsSecure(dialog.getWindow());
+        return dialog;
     }
 
     private TsaUrlPreference getTsaUrlPreference() {

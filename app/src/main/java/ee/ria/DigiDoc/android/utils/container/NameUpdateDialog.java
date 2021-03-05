@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog;
 import android.widget.Button;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.files.FileAlreadyExistsException;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -23,6 +24,7 @@ public final class NameUpdateDialog extends AlertDialog {
 
     public NameUpdateDialog(@NonNull Context context) {
         super(context);
+        SecureUtil.markAsSecure(getWindow());
         TypedArray a = context.obtainStyledAttributes(new int[]{R.attr.dialogPreferredPadding});
         int padding = a.getDimensionPixelSize(0, 0);
         a.recycle();

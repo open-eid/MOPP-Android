@@ -61,8 +61,6 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         inflate(context, R.layout.main_home, this);
         navigationContainerView = findViewById(R.id.mainHomeNavigationContainer);
         navigationView = findViewById(R.id.mainHomeNavigation);
-        BottomNavigationItemView item = findViewById(R.id.mainHomeNavigationEID);
-        item.setContentDescription(getResources().getString(R.string.my_eid_content_description));
 
         menuDialog = new HomeMenuDialog(context);
         menuView = menuDialog.getMenuView();

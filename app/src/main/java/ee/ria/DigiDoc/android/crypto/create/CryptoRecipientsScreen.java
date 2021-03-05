@@ -2,14 +2,18 @@ package ee.ria.DigiDoc.android.crypto.create;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bluelinelabs.conductor.Controller;
 import com.google.common.collect.ImmutableList;
@@ -19,6 +23,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -55,6 +60,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
     private Toolbar toolbarView;
     private SearchView searchView;
+    private EditText searchViewInnerText;
     private CryptoCreateAdapter adapter;
     private View doneButton;
     private View activityOverlayView;
@@ -145,6 +151,19 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
         toolbarView = view.findViewById(R.id.toolbar);
         searchView = view.findViewById(R.id.cryptoRecipientsSearch);
+        searchViewInnerText = searchView.findViewById(R.id.search_src_text);
+        searchViewInnerText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+               searchViewInnerText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+               if (getResources() != null) {
+                   searchViewInnerText.setLayoutParams(
+                           new LinearLayout.LayoutParams(searchView.getWidth(), DisplayUtil.getDisplayMetricsDpToInt(getResources(), 48))
+                   );
+               }
+            }
+        });
+
         searchView.setSubmitButtonEnabled(true);
         RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));

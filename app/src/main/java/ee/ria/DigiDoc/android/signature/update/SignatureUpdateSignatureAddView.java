@@ -1,10 +1,14 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import androidx.annotation.Nullable;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
@@ -50,6 +54,10 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         smartIdView = findViewById(R.id.signatureUpdateSmartId);
         idCardView = findViewById(R.id.signatureUpdateIdCard);
         methodChanges = checkedChanges(methodView).skipInitialValue().publish().autoConnect();
+
+        setupContentDescriptions(findViewById(R.id.signatureUpdateSignatureAddMethodMobileId), getContext().getString(R.string.signature_update_signature_chosen_method_mobile_id));
+        setupContentDescriptions(findViewById(R.id.signatureUpdateSignatureAddMethodSmartId), getContext().getString(R.string.signature_update_signature_chosen_method_smart_id));
+        setupContentDescriptions(findViewById(R.id.signatureUpdateSignatureAddMethodIdCard), getContext().getString(R.string.signature_update_signature_chosen_method_id_card));
     }
 
     private void setSignatureMethodsContentDescription() {
@@ -135,4 +143,17 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
             throw new IllegalArgumentException("Unknown response " + response);
         }
     }
+
+    private void setupContentDescriptions(RadioButton radioButton, String contentDescription) {
+        radioButton.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setContentDescription(contentDescription);
+                info.setCheckable(false);
+                info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_SELECTION);
+            }
+        });
+    }
+
 }

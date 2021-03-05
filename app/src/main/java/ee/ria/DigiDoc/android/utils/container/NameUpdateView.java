@@ -1,14 +1,17 @@
 package ee.ria.DigiDoc.android.utils.container;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import android.text.InputType;
 import android.util.AttributeSet;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 
 public final class NameUpdateView extends TextInputLayout {
 
@@ -25,9 +28,12 @@ public final class NameUpdateView extends TextInputLayout {
     public NameUpdateView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setHint(context.getString(R.string.signature_update_name_update_name));
+        int minimumHeightDp = DisplayUtil.getDisplayMetricsDpToInt(context.getResources(), 48);
+        setMinimumHeight(minimumHeightDp);
         editText = new TextInputEditText(context);
         editText.setId(R.id.nameUpdateName);
         editText.setInputType(InputType.TYPE_CLASS_TEXT);
+        editText.setMinHeight(minimumHeightDp);
         addView(editText, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     }
 

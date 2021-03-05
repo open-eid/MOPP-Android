@@ -7,15 +7,13 @@ import androidx.appcompat.app.AlertDialog;
 import android.view.accessibility.AccessibilityEvent;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.utils.SecureUtil;
 
 public class ErrorDialog extends AlertDialog {
 
     public ErrorDialog(@NonNull Context context) {
         super(context);
-    }
-
-    public ErrorDialog(@NonNull Context context, boolean cancelable, @Nullable OnCancelListener cancelListener) {
-        super(context, cancelable, cancelListener);
+        SecureUtil.markAsSecure(getWindow());
     }
 
     @Override

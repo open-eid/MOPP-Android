@@ -21,7 +21,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:text="@string/signature_update_signature_add_method_mobile_id" />
+            android:text="@string/signature_update_signature_add_method_mobile_id"
+            android:contentDescription="@string/signature_update_signature_selected_method_mobile_id" />
 
         <RadioButton
             android:id="@+id/signatureUpdateSignatureAddMethodSmartId"
@@ -30,7 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:text="@string/signature_update_signature_add_method_smart_id" />
+            android:text="@string/signature_update_signature_add_method_smart_id"
+            android:contentDescription="@string/signature_update_signature_selected_method_smart_id" />
 
         <RadioButton
             android:id="@id/signatureUpdateSignatureAddMethodIdCard"

@@ -15,7 +15,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 
 import ee.ria.DigiDoc.BuildConfig;

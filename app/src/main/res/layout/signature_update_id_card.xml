@@ -57,6 +57,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/signature_update_id_card_sign_pin2"
+                android:minHeight="@dimen/material_baseline_grid_6x"
                 android:labelFor="@id/signatureUpdateIdCardSignPin2" />
         </LinearLayout>
 
@@ -66,6 +67,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:inputType="numberPassword"
+            android:minHeight="@dimen/material_baseline_grid_6x"
             android:maxLength="12" />
 
         <TextView
@@ -73,7 +75,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.Application.Error"
+            android:focusable="true"
             android:text="@string/signature_update_id_card_sign_pin2_invalid"
+            android:contentDescription="@string/signature_update_id_card_sign_pin2_invalid"
             android:visibility="gone" />
 
     </LinearLayout>

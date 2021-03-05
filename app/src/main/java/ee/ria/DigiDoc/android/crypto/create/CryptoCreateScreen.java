@@ -358,7 +358,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         toolbarView = view.findViewById(R.id.toolbar);
         nameUpdateDialog = new NameUpdateDialog(container.getContext());
         fileRemoveConfirmationDialog = new ConfirmationDialog(container.getContext(),
-                R.string.crypto_create_remove_data_file_confirmation_message);
+                R.string.crypto_create_remove_data_file_confirmation_message, R.id.documentRemovalDialog);
         RecyclerView listView = view.findViewById(R.id.cryptoCreateList);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);

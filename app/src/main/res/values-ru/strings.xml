@@ -84,6 +84,8 @@
     <string name="signature_update_document_save_button">Сохраните файл</string>
     <string name="signature_update_remove_document_confirmation_message">Удалить файл из контейнера?</string>
     <string name="signature_update_remove_last_document_confirmation_message">Вы собираетесь удалить последний файл в контейнере, он удаляется вместе с контейнером.</string>
+    <string name="signature_update_cancel_file_removal_button">Отменить удаление файла</string>
+    <string name="signature_update_confirm_file_removal_button">Подтвердите удаление файла</string>
     <string name="signature_update_document_remove_error">Файл не может быть удалён из контейнера</string>
     <string name="signature_update_signatures_title">Подписи контейнера</string>
     <string name="signature_update_signatures_empty">Контейнер не подписан</string>
@@ -108,6 +110,8 @@
     <string name="signature_update_signature_status_unknown">Подпись неизвестная</string>
     <string name="signature_update_signature_created_at">Подписано %1$s</string>
     <string name="signature_update_signature_remove_button">Удалить подпись</string>
+    <string name="signature_update_cancel_signature_removal_button">Отменить удаление подписи</string>
+    <string name="signature_update_confirm_signature_removal_button">Подтвердите удаление подписи</string>
     <string name="signature_update_signature_remove_confirmation_message">Удалить подпись из контейнера?</string>
     <string name="signature_update_signature_remove_error">Не удалось удалить подпись из контейнера</string>
     <string name="signature_update_container_load_error">Ошибка при открывании контейнера</string>
@@ -130,6 +134,14 @@
     <string name="signature_update_signature_error_message_certificate_revoked">Сертификат недействителен</string>
 
     <string name="signature_update_signature_error_invalid_ssl_handshake">Не удалось создать SSL канал передачи данных. Проверьте настройки вашего приложения или обновления программного обеспечения.</string>
+
+    <string name="signature_update_signature_selected_method_mobile_id">Выбранный метод подписи – Mobiil-ID</string>
+    <string name="signature_update_signature_selected_method_smart_id">Выбранный метод подписи – Smart-ID</string>
+    <string name="signature_update_signature_selected_method_id_card">Выбранный метод подписи – ID-карта</string>
+
+    <string name="signature_update_signature_chosen_method_mobile_id">Выбран метод подписи Mobiil-ID</string>
+    <string name="signature_update_signature_chosen_method_smart_id">Выбран метод подписи Smart-ID</string>
+    <string name="signature_update_signature_chosen_method_id_card">Выбран метод подписи ID-карта</string>
 
     <string name="signature_update_mobile_id_message">Введите свой телефонный номер и личный код для подписания с помощью mobiil-ID</string>
     <string name="signature_update_mobile_id_phone_no">Код страны и телефонный номер</string>
@@ -225,8 +237,10 @@
     <string name="crypto_create_recipients_add_button_description">ДОБАВИТЬ ПОЛУЧАТЕЛЯ</string>
     <string name="crypto_create_recipients_add_button">+ ДОБАВИТЬ ПОЛУЧАТЕЛЯ</string>
     <string name="crypto_create_encrypt_button">ЗАШИФРОВАТЬ</string>
+    <string name="crypto_create_encrypt_button_description">Зашифровать документ</string>
     <string name="crypto_create_encrypt_error_no_recipients">Не добавлено ни одного получателя</string>
     <string name="crypto_create_decrypt_button">ДЕШИФРОВАТЬ</string>
+    <string name="crypto_create_decrypt_button_description">Дешифрировать документ</string>
     <string name="crypto_create_decrypt_positive_button">Дешифровать</string>
     <string name="crypto_create_send_button">ПОДЕЛИТЬСЯ</string>
     <string name="crypto_create_error">Что-то пошло не так с шифрованием</string>

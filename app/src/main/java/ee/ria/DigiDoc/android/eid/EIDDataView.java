@@ -3,6 +3,11 @@ package ee.ria.DigiDoc.android.eid;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.util.AttributeSet;
+import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -10,10 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.core.view.AccessibilityDelegateCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
-import android.util.AttributeSet;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
@@ -130,6 +131,7 @@ public final class EIDDataView extends LinearLayout {
             pukButtonView.setVisibility(GONE);
             pukErrorView.setVisibility(VISIBLE);
             pukLinkView.setVisibility(VISIBLE);
+            pukErrorView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
         } else {
             pukButtonView.setVisibility(VISIBLE);
             pukErrorView.setVisibility(GONE);
