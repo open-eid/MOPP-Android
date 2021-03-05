@@ -110,6 +110,8 @@
     <string name="signature_update_signature_status_unknown">Подпись неизвестная</string>
     <string name="signature_update_signature_created_at">Подписано %1$s</string>
     <string name="signature_update_signature_remove_button">Удалить подпись</string>
+    <string name="signature_update_cancel_signature_removal_button">Отменить удаление подписи</string>
+    <string name="signature_update_confirm_signature_removal_button">Подтвердите удаление подписи</string>
     <string name="signature_update_signature_remove_confirmation_message">Удалить подпись из контейнера?</string>
     <string name="signature_update_signature_remove_error">Не удалось удалить подпись из контейнера</string>
     <string name="signature_update_container_load_error">Ошибка при открывании контейнера</string>
@@ -233,8 +235,10 @@
     <string name="crypto_create_recipients_add_button_description">ДОБАВИТЬ ПОЛУЧАТЕЛЯ</string>
     <string name="crypto_create_recipients_add_button">+ ДОБАВИТЬ ПОЛУЧАТЕЛЯ</string>
     <string name="crypto_create_encrypt_button">ЗАШИФРОВАТЬ</string>
+    <string name="crypto_create_encrypt_button_description">Зашифровать документ</string>
     <string name="crypto_create_encrypt_error_no_recipients">Не добавлено ни одного получателя</string>
     <string name="crypto_create_decrypt_button">ДЕШИФРОВАТЬ</string>
+    <string name="crypto_create_decrypt_button_description">Дешифрировать документ</string>
     <string name="crypto_create_decrypt_positive_button">Дешифровать</string>
     <string name="crypto_create_send_button">ПОДЕЛИТЬСЯ</string>
     <string name="crypto_create_error">Что-то пошло не так с шифрованием</string>

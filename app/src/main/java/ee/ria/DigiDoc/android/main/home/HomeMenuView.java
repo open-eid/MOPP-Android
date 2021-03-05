@@ -1,13 +1,15 @@
 package ee.ria.DigiDoc.android.main.home;
 
 import android.content.Context;
+import android.util.AttributeSet;
+import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.widget.NestedScrollView;
-import android.util.AttributeSet;
-import android.view.View;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import ee.ria.DigiDoc.R;
 import io.reactivex.Observable;
@@ -55,6 +57,11 @@ public final class HomeMenuView extends NestedScrollView {
         tintCompoundDrawables(settingsView);
         tintCompoundDrawables(aboutView);
         tintCompoundDrawables(diagnosticsView);
+
+        helpView.postDelayed(() -> {
+            helpView.requestFocus();
+            helpView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+        }, 2000);
     }
 
     public Observable<Object> closeButtonClicks() {

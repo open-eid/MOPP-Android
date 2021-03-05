@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@id/mainHomeNavigationSignature"
@@ -15,5 +15,4 @@
         android:id="@id/mainHomeNavigationEID"
         android:title="@string/main_home_navigation_eid"
         android:icon="@drawable/ic_icon_eid" />
-
 </menu>

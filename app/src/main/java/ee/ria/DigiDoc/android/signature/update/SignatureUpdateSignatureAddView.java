@@ -2,14 +2,15 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.accessibility.AccessibilityEvent;
+import android.view.View;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import androidx.annotation.Nullable;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardView;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
@@ -56,6 +57,10 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         methodView.findViewById(R.id.signatureUpdateSignatureAddMethodMobileId).setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 3));
         methodView.findViewById(R.id.signatureUpdateSignatureAddMethodSmartId).setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_smart_id, 2, 3));
         methodView.findViewById(R.id.signatureUpdateSignatureAddMethodIdCard).setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 3));
+        
+        setupContentDescriptions(findViewById(R.id.signatureUpdateSignatureAddMethodMobileId), getContext().getString(R.string.signature_update_signature_chosen_method_mobile_id));
+        setupContentDescriptions(findViewById(R.id.signatureUpdateSignatureAddMethodSmartId), getContext().getString(R.string.signature_update_signature_chosen_method_smart_id));
+        setupContentDescriptions(findViewById(R.id.signatureUpdateSignatureAddMethodIdCard), getContext().getString(R.string.signature_update_signature_chosen_method_id_card));
     }
 
     public Observable<Integer> methodChanges() {
@@ -82,14 +87,10 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         idCardView.setVisibility(method == R.id.signatureUpdateSignatureAddMethodIdCard ? VISIBLE : GONE);
         switch (method) {
             case R.id.signatureUpdateSignatureAddMethodMobileId:
-                AccessibilityUtils.sendAccessibilityEvent(getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, getContext().getString(R.string.signature_update_signature_chosen_method_mobile_id));
                 mobileIdView.setDefaultPhoneNoPrefix("372");
                 break;
             case R.id.signatureUpdateSignatureAddMethodSmartId:
-                AccessibilityUtils.sendAccessibilityEvent(getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, getContext().getString(R.string.signature_update_signature_chosen_method_smart_id));
-                break;
             case R.id.signatureUpdateSignatureAddMethodIdCard:
-                AccessibilityUtils.sendAccessibilityEvent(getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, getContext().getString(R.string.signature_update_signature_chosen_method_id_card));
                 break;
             default:
                 throw new IllegalArgumentException("Unknown method " + method);
@@ -133,4 +134,17 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
             throw new IllegalArgumentException("Unknown response " + response);
         }
     }
+
+    private void setupContentDescriptions(RadioButton radioButton, String contentDescription) {
+        radioButton.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setContentDescription(contentDescription);
+                info.setCheckable(false);
+                info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_SELECTION);
+            }
+        });
+    }
+
 }

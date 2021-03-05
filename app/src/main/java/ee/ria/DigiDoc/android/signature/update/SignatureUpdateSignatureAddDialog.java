@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.ObservableDialogClickListener;
 import io.reactivex.Observable;
@@ -26,6 +27,7 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
 
     SignatureUpdateSignatureAddDialog(@NonNull Context context) {
         super(context);
+        SecureUtil.markAsSecure(getWindow());
         TypedArray a = context.obtainStyledAttributes(new int[]{R.attr.dialogPreferredPadding});
         int padding = a.getDimensionPixelSize(0, 0);
         a.recycle();

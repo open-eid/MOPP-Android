@@ -110,6 +110,8 @@
     <string name="signature_update_signature_status_unknown">Allkiri on teadmata</string>
     <string name="signature_update_signature_created_at">Allkirjastatud %1$s</string>
     <string name="signature_update_signature_remove_button">Eemalda allkiri</string>
+    <string name="signature_update_cancel_signature_removal_button">Katkesta allkirja eemaldamine</string>
+    <string name="signature_update_confirm_signature_removal_button">Kinnita allkirja eemaldamine</string>
     <string name="signature_update_signature_remove_confirmation_message">Soovid eemaldada allkirja?</string>
     <string name="signature_update_signature_remove_error">Allkirja eemaldamine ebaõnnestus</string>
     <string name="signature_update_container_load_error">Ümbriku laadimine ebaõnnestus</string>
@@ -231,8 +233,10 @@
     <string name="crypto_create_recipients_add_button_description">LISA ADRESSAAT</string>
     <string name="crypto_create_recipients_add_button">+ LISA ADRESSAAT</string>
     <string name="crypto_create_encrypt_button">KRÜPTEERI</string>
+    <string name="crypto_create_encrypt_button_description">Krüpteeri dokument</string>
     <string name="crypto_create_encrypt_error_no_recipients">Ühtegi adressaati ei ole lisatud</string>
     <string name="crypto_create_decrypt_button">DEKRÜPTEERI</string>
+    <string name="crypto_create_decrypt_button_description">Dekrüpteeri dokument</string>
     <string name="crypto_create_decrypt_positive_button">Dekrüpteeri</string>
     <string name="crypto_create_send_button">JAGA</string>
     <string name="crypto_create_error">Midagi läks krüpteerimisel valesti</string>

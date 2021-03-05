@@ -1,11 +1,13 @@
 package ee.ria.DigiDoc.android.eid;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -77,6 +79,9 @@ public final class CertificateDataView extends LinearLayout {
         errorView.setText(type == CertificateType.AUTHENTICATION
                 ? R.string.eid_home_certificate_data_error_auth
                 : R.string.eid_home_certificate_data_error_sign);
+        errorView.setContentDescription(type == CertificateType.AUTHENTICATION
+                ? getContext().getString(R.string.eid_home_certificate_data_error_auth)
+                : getContext().getString(R.string.eid_home_certificate_data_error_sign));
 
         if (!pinBlocked && !pukBlocked) {
             buttonView.setVisibility(VISIBLE);
@@ -86,6 +91,7 @@ public final class CertificateDataView extends LinearLayout {
             buttonView.setVisibility(GONE);
             linkView.setVisibility(GONE);
             errorView.setVisibility(VISIBLE);
+            errorView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
         } else if (!pinBlocked) {
             buttonView.setVisibility(VISIBLE);
             linkView.setVisibility(GONE);
@@ -94,6 +100,7 @@ public final class CertificateDataView extends LinearLayout {
             buttonView.setVisibility(VISIBLE);
             linkView.setVisibility(GONE);
             errorView.setVisibility(VISIBLE);
+            errorView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
         }
     }
 

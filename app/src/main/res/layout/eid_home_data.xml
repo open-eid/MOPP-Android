@@ -277,7 +277,9 @@
                 style="@style/Widget.Application.EID.Error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/eid_home_data_certificates_puk_error" />
+                android:focusable="true"
+                android:text="@string/eid_home_data_certificates_puk_error"
+                android:contentDescription="@string/eid_home_data_certificates_puk_error" />
 
             <TextView
                 android:id="@id/eidHomeDataCertificatesPukLink"

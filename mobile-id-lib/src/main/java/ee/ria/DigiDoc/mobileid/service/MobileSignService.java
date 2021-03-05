@@ -139,6 +139,9 @@ public class MobileSignService extends IntentService {
                 broadcastMobileCreateSignatureResponse(base64Hash);
                 sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
                 String sessionId = getMobileIdSession(base64Hash, request);
+                if (sessionId == null) {
+                    return;
+                }
                 doCreateSignatureStatusRequestLoop(new GetMobileCreateSignatureSessionStatusRequest(sessionId));
             }
         } catch (UnknownHostException e) {
@@ -236,7 +239,7 @@ public class MobileSignService extends IntentService {
         return state.equals(MobileCreateSignatureSessionStatusResponse.ProcessState.COMPLETE);
     }
 
-    private String getMobileIdSession(String hash, MobileCreateSignatureRequest request) {
+    private String getMobileIdSession(String hash, MobileCreateSignatureRequest request) throws IOException {
         PostMobileCreateSignatureSessionRequest sessionRequest = getSessionRequest(request);
         sessionRequest.setHash(hash);
 
@@ -244,24 +247,14 @@ public class MobileSignService extends IntentService {
 
         MobileCreateSignatureSessionResponse sessionResponse = new MobileCreateSignatureSessionResponse();
 
-        try {
-            Response<MobileCreateSignatureSessionResponse> responseWrapper = call.execute();
-            if (!responseWrapper.isSuccessful()) {
-                if (isResponseError(responseWrapper, null, MobileCreateSignatureSessionResponse.class)) {
-                    return "";
-                }
-
+        Response<MobileCreateSignatureSessionResponse> responseWrapper = call.execute();
+        if (!responseWrapper.isSuccessful()) {
+            if (!isResponseError(responseWrapper, null, MobileCreateSignatureSessionResponse.class)) {
                 parseErrorAndBroadcast(responseWrapper);
-            } else {
-                sessionResponse = responseWrapper.body();
             }
-        } catch (UnknownHostException e) {
-            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE));
-            Timber.e(e, "REST API session request failed. Unknown host");
-        } catch (IOException e) {
-            broadcastFault(defaultError());
-            Timber.e(e, "REST API request failed");
-            return "";
+            return null;
+        } else {
+            sessionResponse = responseWrapper.body();
         }
 
         return sessionResponse.getSessionID();

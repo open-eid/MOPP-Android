@@ -1,16 +1,18 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
@@ -21,6 +23,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.NoInternetConnectionException;
@@ -301,6 +304,11 @@ final class CryptoCreateAdapter extends
             nameView = itemView.findViewById(R.id.cryptoCreateDataFileName);
             removeButton = itemView.findViewById(R.id.cryptoCreateDataFileRemoveButton);
             saveButton = itemView.findViewById(R.id.cryptoCreateDataFileSaveButton);
+
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            displayMetrics.setToDefaults();
+
+            removeButton.setMinimumHeight(DisplayUtil.getDisplayMetricsDpToInt(displayMetrics, 48));
         }
 
         @Override

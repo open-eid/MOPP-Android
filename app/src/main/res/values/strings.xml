@@ -110,6 +110,8 @@
     <string name="signature_update_signature_status_unknown">Signature is unknown</string>
     <string name="signature_update_signature_created_at">Signed %1$s</string>
     <string name="signature_update_signature_remove_button">Remove signature</string>
+    <string name="signature_update_cancel_signature_removal_button">Cancel signature removal</string>
+    <string name="signature_update_confirm_signature_removal_button">Confirm signature removal</string>
     <string name="signature_update_signature_remove_confirmation_message">Remove signature from container?</string>
     <string name="signature_update_signature_remove_error">Could not remove signature from the container</string>
     <string name="signature_update_container_load_error">Error opening container</string>
@@ -231,8 +233,10 @@
     <string name="crypto_create_recipients_add_button_description">ADD RECIPIENT</string>
     <string name="crypto_create_recipients_add_button">+ ADD RECIPIENT</string>
     <string name="crypto_create_encrypt_button">ENCRYPT</string>
+    <string name="crypto_create_encrypt_button_description">Encrypt document</string>
     <string name="crypto_create_encrypt_error_no_recipients">No recipients specified</string>
     <string name="crypto_create_decrypt_button">DECRYPT</string>
+    <string name="crypto_create_decrypt_button_description">Decrypt document</string>
     <string name="crypto_create_decrypt_positive_button">Decrypt</string>
     <string name="crypto_create_send_button">SHARE</string>
     <string name="crypto_create_error">Something went wrong with encryption</string>
@@ -439,8 +443,8 @@
     <string name="cancel_container_name_change">Cancel container name change</string>
     <string name="decrypt_button_description">Decrypt document(s)</string>
     <string name="cancel_decryption">Cancel decryption</string>
-    <string name="sign_container">Sign</string>
-    <string name="cancel_signing_process">Cancel</string>
+    <string name="sign_container">Confirm signing</string>
+    <string name="cancel_signing_process">Cancel signing</string>
     <string name="confirm_pin1_change">Confirm Pin1 change</string>
     <string name="cancel_pin1_change">Cancel Pin1 changing process</string>
     <string name="confirm_pin1_unblock">Confirm Pin1 unblock</string>

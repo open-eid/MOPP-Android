@@ -261,4 +261,8 @@
     <item type="id" name="alwaysSendButton" />
     <item type="id" name="dontSendButton" />
 
+    <!-- Confirmation Dialog -->
+    <item type="id" name="documentRemovalDialog" />
+    <item type="id" name="signatureRemovalDialog" />
+
 </resources>
