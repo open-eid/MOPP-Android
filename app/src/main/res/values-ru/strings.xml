@@ -118,6 +118,8 @@
     <string name="signature_update_send_button">ПОДЕЛИТЬСЯ</string>
     <string name="signature_update_signature_add_button">ПОДПИСАТЬ</string>
 
+    <string name="signature_update_signature_add_method">Метод подписи</string>
+    <string name="signature_update_signature_method_selected">выбран метод подписи</string>
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>
     <string name="signature_update_signature_add_method_smart_id">Smart-ID</string>
     <string name="signature_update_signature_add_method_id_card">ID-карта</string>
@@ -409,24 +411,31 @@
     <string name="container_has">Содержание контейнера</string>
     <string name="file">Файл</string>
     <string name="signature_removed">Подпись удалена</string>
+    <string name="signature_removal_cancelled">Удаление подписи отменено</string>
     <string name="file_removed">Файл удален</string>
+    <string name="file_removal_cancelled">Удаление файла отменено</string>
     <string name="file_saved">Файл сохранен</string>
     <string name="document_removed">Документ удален</string>
+    <string name="document_removal_cancelled">Удаление документа отменено</string>
     <string name="file_added">Файл добавлен</string>
+    <string name="files_added">Файлы добавлены</string>
     <string name="error_dialog">Диалоговое окно ошибки</string>
     <string name="confirmation_dialog">Диалоговое окно подтверждения</string>
     <string name="recipients_found">Получатели найдены</string>
     <string name="recipient_found">Получатель найден</string>
     <string name="recipient_added">Получатель добавлен</string>
     <string name="recipient_removed">Получатель удален</string>
+    <string name="recipient_addition_cancelled">Добавление получателя отменено</string>
     <string name="add_recipient">Добавить получателя</string>
     <string name="container_name_changed">Название контейнера изменено</string>
+    <string name="container_name_change_cancelled">Изменение названия контейнера отменено</string>
     <string name="sign_container_button_description">Подписать</string>
     <string name="container_signing_cancelled">Подписание контейнера прервано</string>
     <string name="container_signature_added">Контейнер подписан</string>
     <string name="files_encrypted">Файлы зашифрованы</string>
     <string name="file_decrypted">Файл расшифрован</string>
     <string name="file_decryption_cancelled">Расшифровка файла прервана</string>
+    <string name="document_decrypted">Документ расшифрован</string>
     <string name="share_container">Поделиться контейнером</string>
     <string name="pin1_change_cancelled">Изменение Pin1 прервано</string>
     <string name="pin1_unblock_cancelled">Аннулирование блокировки Pin1 прервано</string>
@@ -440,6 +449,8 @@
     <string name="configuration_is_already_up_to_date">У вас последняя версия конфигурации</string>
     <string name="configuration_updated">Конфигурация удачно обновлена</string>
     <string name="language_changed">Язык изменён</string>
+    <string name="setting_value_changed">Значение настройки изменено</string>
+    <string name="setting_value_change_cancelled">Изменение значения настройки отменено</string>
     <string name="close_menu">Закрыть меню</string>
 
     <string name="confirm_container_name_change">Подтвердить изменение названия контейнера</string>

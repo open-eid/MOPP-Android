@@ -41,6 +41,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
@@ -120,7 +121,10 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         return Observable.mergeArray(
                 adapter.nameUpdateClicks()
                         .map(ignored -> Intent.NameUpdateIntent.show(name)),
-                cancels(nameUpdateDialog).map(ignored -> Intent.NameUpdateIntent.clear()),
+                cancels(nameUpdateDialog).map(ignored -> {
+                    AccessibilityUtils.sendAccessibilityEvent(view.getContext(), TYPE_ANNOUNCEMENT, R.string.container_name_change_cancelled);
+                    return Intent.NameUpdateIntent.clear();
+                }),
                 nameUpdateDialog.updates()
                         .map(newName -> Intent.NameUpdateIntent.update(name, newName))
         );
@@ -140,7 +144,10 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         return Observable.mergeArray(
                 adapter.dataFileRemoveClicks()
                         .map(dataFile -> Intent.DataFileRemoveIntent.showConfirmation(dataFiles, dataFile)),
-                cancels(fileRemoveConfirmationDialog).map(ignored -> Intent.DataFileRemoveIntent.clear()),
+                fileRemoveConfirmationDialog.cancels().map(ignored -> {
+                    AccessibilityUtils.sendAccessibilityEvent(view.getContext(), TYPE_ANNOUNCEMENT, R.string.file_removal_cancelled);
+                    return Intent.DataFileRemoveIntent.clear();
+                }),
                 fileRemoveConfirmationDialog.positiveButtonClicks()
                         .map(ignored -> Intent.DataFileRemoveIntent.remove(containerFile, dataFiles, dataFileRemoveConfirmation))
         );

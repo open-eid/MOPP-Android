@@ -33,6 +33,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxSearchView.queryTextChangeEvents;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
@@ -124,6 +125,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     public boolean onBackButtonClick() {
         backButtonClicksSubject.onNext(VOID);
+        AccessibilityUtils.sendAccessibilityEvent(getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_addition_cancelled);
         return false;
     }
 

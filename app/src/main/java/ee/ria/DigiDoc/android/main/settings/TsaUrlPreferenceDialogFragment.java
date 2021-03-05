@@ -11,6 +11,10 @@ import android.widget.EditText;
 
 import com.takisoft.fix.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
 
+import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 
 public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
@@ -52,5 +56,13 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
 
     private TsaUrlPreference getTsaUrlPreference() {
         return (TsaUrlPreference) this.getPreference();
+    }
+
+    @Override
+    public void onDialogClosed(boolean positiveResult) {
+        super.onDialogClosed(positiveResult);
+        if (!positiveResult) {
+            AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.setting_value_change_cancelled);
+        }
     }
 }

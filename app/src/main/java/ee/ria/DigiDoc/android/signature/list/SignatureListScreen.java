@@ -25,6 +25,7 @@ import io.reactivex.Observable;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 
 public final class SignatureListScreen extends Controller implements Screen,
@@ -73,7 +74,10 @@ public final class SignatureListScreen extends Controller implements Screen,
                         .map(ignored -> Intent.ContainerRemoveIntent
                                 .remove(removeConfirmationContainerFile)),
                 removeConfirmationDialog.cancels()
-                        .map(ignored -> Intent.ContainerRemoveIntent.cancel()));
+                        .map(ignored -> {
+                            AccessibilityUtils.sendAccessibilityEvent(getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.document_removal_cancelled);
+                            return Intent.ContainerRemoveIntent.cancel();
+                        }));
     }
 
     private Observable<Intent.RefreshIntent> refreshIntent() {

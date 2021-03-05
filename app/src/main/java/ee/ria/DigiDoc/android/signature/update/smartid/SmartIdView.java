@@ -112,11 +112,6 @@ public final class SmartIdView extends LinearLayout implements
 
     @Override
     public void response(@Nullable SmartIdResponse response) {
-        if (response != null && response.status() != null &&
-                response.status().equals(SessionStatusResponse.ProcessStatus.OK)) {
-            AccessibilityUtils.sendAccessibilityEvent(this.getContext(),
-                    AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.container_signature_added);
-        }
     }
 
     public Observable<Object> positiveButtonState() {

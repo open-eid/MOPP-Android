@@ -46,6 +46,7 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
 import static com.jakewharton.rxbinding2.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
@@ -370,7 +371,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private Observable<Intent.NameUpdateIntent> nameUpdateIntent() {
         return Observable.mergeArray(
                 adapter.nameUpdateClicks().map(ignored -> Intent.NameUpdateIntent.show(containerFile)),
-                cancels(nameUpdateDialog).map(ignored -> Intent.NameUpdateIntent.clear()),
+                cancels(nameUpdateDialog).map(ignored -> {
+                    AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.container_name_change_cancelled);
+                    return Intent.NameUpdateIntent.clear();
+                }),
                 nameUpdateDialog.updates().map(name -> Intent.NameUpdateIntent.update(containerFile, name)));
     }
 
@@ -402,24 +406,47 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         return Observable.mergeArray(
                 clicks(signatureAddButton)
                         .doOnNext(ignored -> resetSignatureAddDialog())
-                        .map(ignored -> Intent.SignatureAddIntent
-                                .show(viewModel.signatureAddMethod(), isExistingContainer, containerFile)),
+                        .map(ignored -> {
+                            int method = viewModel.signatureAddMethod();
+                            sendMethodSelectionAccessibilityEvent(method);
+                            return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile);
+                        }),
                 cancels(signatureAddDialog)
                         .doOnNext(ignored -> resetSignatureAddDialog())
                         .map(ignored -> Intent.SignatureAddIntent.clear()),
                 signatureAddView.methodChanges().map(method -> {
                         viewModel.setSignatureAddMethod(method);
+                        sendMethodSelectionAccessibilityEvent(method);
                         return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile);
                 }),
-                signatureAddDialog.positiveButtonClicks().map(ignored ->
-                        Intent.SignatureAddIntent.sign(signatureAddView.method(),
-                                isExistingContainer, containerFile, signatureAddView.request())),
-                signatureAddIntentSubject);
+                signatureAddDialog.positiveButtonClicks().map(ignored -> Intent.SignatureAddIntent.sign(signatureAddView.method(),
+                        isExistingContainer, containerFile, signatureAddView.request())),
+                signatureAddIntentSubject
+        );
     }
 
     private Observable<Intent.SendIntent> sendIntent() {
         return clicks(sendButton)
                 .map(ignored -> Intent.SendIntent.create(containerFile));
+    }
+
+    private void sendMethodSelectionAccessibilityEvent(int method) {
+        String signatureMethod = getMethod(method);
+        if (signatureMethod != null) {
+            AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
+                    signatureMethod + " " + getResources().getString(R.string.signature_update_signature_method_selected));
+        }
+    }
+
+    private String getMethod(int method) {
+        if (method == R.id.signatureUpdateSignatureAddMethodMobileId) {
+            return getResources().getString(R.string.signature_update_signature_add_method_mobile_id);
+        } else if (method == R.id.signatureUpdateSignatureAddMethodSmartId) {
+            return getResources().getString(R.string.signature_update_signature_add_method_smart_id);
+        } else if (method == R.id.signatureUpdateSignatureAddMethodIdCard) {
+            return getResources().getString(R.string.signature_update_signature_add_method_id_card);
+        }
+        return null;
     }
 
     @Override
@@ -440,8 +467,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         disposables.add(documentRemoveConfirmationDialog.positiveButtonClicks().subscribe(ignored ->
                 documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent
                         .remove(containerFile, dataFiles, documentRemoveConfirmation))));
-        disposables.add(documentRemoveConfirmationDialog.cancels().subscribe(ignored ->
-                documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent.clear())));
+        disposables.add(documentRemoveConfirmationDialog.cancels().subscribe(ignored -> {
+                    AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.document_removal_cancelled);
+                    documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent.clear());
+                }));
         disposables.add(adapter.signatureRemoveClicks().subscribe(signature ->
                 signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent
                         .showConfirmation(containerFile, signature))));
@@ -449,8 +478,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 .subscribe(ignored -> signatureRemoveIntentSubject
                         .onNext(Intent.SignatureRemoveIntent
                                 .remove(containerFile, signatureRemoveConfirmation))));
-        disposables.add(signatureRemoveConfirmationDialog.cancels().subscribe(ignored ->
-                signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear())));
+        disposables.add(signatureRemoveConfirmationDialog.cancels().subscribe(ignored -> {
+                    AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_removal_cancelled);
+                    signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear());
+                }));
     }
 
     @Override

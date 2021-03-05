@@ -168,16 +168,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 .switchMap(activityResult -> {
                                     android.content.Intent data = activityResult.data();
                                     if (activityResult.resultCode() == RESULT_OK && data != null) {
+                                        ImmutableList<FileStream> addedData = parseGetContentIntent(application.getContentResolver(), data);
+                                        announceAccessibilityFilesAddedEvent(application.getApplicationContext(), addedData);
                                         return signatureContainerDataSource
                                                 .addDocuments(action.containerFile(),
                                                         parseGetContentIntent(
                                                                 application.getContentResolver(),
                                                                 data))
                                                 .toObservable()
-                                                .map(container -> {
-                                                    AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.file_added);
-                                                    return Result.DocumentsAddResult.success(container);
-                                                })
+                                                .map(Result.DocumentsAddResult::success)
                                                 .onErrorReturn(Result.DocumentsAddResult::failure)
                                                 .subscribeOn(Schedulers.io())
                                                 .observeOn(AndroidSchedulers.mainThread())
@@ -407,5 +406,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
         }
         AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, messageBuilder.toString());
+    }
+
+    private void announceAccessibilityFilesAddedEvent(Context context, ImmutableList<FileStream> addedDataList) {
+        if (addedDataList.size() > 1) {
+            AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.files_added);
+        } else {
+            AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.file_added);
+        }
     }
 }
