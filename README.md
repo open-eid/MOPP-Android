@@ -5,7 +5,7 @@
 
 # MOPP-Android
 
-Android application that allows signing containers with ID-card, Mobile-ID and Smart-ID.
+Android application that allows signing containers with ID-card, mobile-ID and Smart-ID.
 
 Check the wiki get an overview of the project.
 
