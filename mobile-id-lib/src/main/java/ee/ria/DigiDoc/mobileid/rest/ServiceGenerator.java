@@ -126,8 +126,10 @@ public class ServiceGenerator {
                 switch (certCheck) {
                     case CHECK_CLIENT:
                         ((X509TrustManager) trustManager).checkClientTrusted(x509Certificates, s);
+                        break;
                     case CHECK_SERVER:
                         ((X509TrustManager) trustManager).checkServerTrusted(x509Certificates, s);
+                        break;
                 }
             }
         }

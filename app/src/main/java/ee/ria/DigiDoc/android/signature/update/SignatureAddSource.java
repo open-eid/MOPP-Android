@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 import javax.inject.Inject;
 
@@ -163,7 +164,7 @@ final class SignatureAddSource {
     public Single<SignedContainer> sign(String signatureValue, byte[] dataToSign, SignedContainer container) {
         return Single
                 .fromCallable(() -> container.sign(ByteString.of(dataToSign),
-                        signData -> ByteString.of(signatureValue.getBytes())))
+                        signData -> ByteString.of(signatureValue.getBytes(StandardCharsets.UTF_8))))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

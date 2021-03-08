@@ -76,7 +76,6 @@ public class UpdateLibdigidocppTask extends DefaultTask {
 
         AtomicBoolean generateJar = new AtomicBoolean(true);
         AtomicBoolean generateSchema = new AtomicBoolean(true);
-        AtomicBoolean generateTestSchema = new AtomicBoolean(true);
 
         for (String abi : ABIS) {
             update(
@@ -114,15 +113,18 @@ public class UpdateLibdigidocppTask extends DefaultTask {
             log("Generating %s from %s", SCHEMA, zipFile);
             File schemaCacheDir = new File(cacheDir, "etc");
             File schemaZipFile = new File(cacheDir, SCHEMA);
-            ZipOutputStream schemaOutputStream = new ZipOutputStream(new FileOutputStream(schemaZipFile));
-            for (File schemaFile : files(schemaCacheDir)) {
-                ZipEntry entry = new ZipEntry(schemaFile.getName());
-                entry.setTime(schemaFile.lastModified());
-                schemaOutputStream.putNextEntry(entry);
-                Files.copy(schemaFile.toPath(), schemaOutputStream);
-                schemaOutputStream.closeEntry();
+
+            try (FileOutputStream fileOutputStream = new FileOutputStream(schemaZipFile);
+                 ZipOutputStream schemaOutputStream = new ZipOutputStream(fileOutputStream)) {
+
+                for (File schemaFile : files(schemaCacheDir)) {
+                    ZipEntry entry = new ZipEntry(schemaFile.getName());
+                    entry.setTime(schemaFile.lastModified());
+                    schemaOutputStream.putNextEntry(entry);
+                    Files.copy(schemaFile.toPath(), schemaOutputStream);
+                    schemaOutputStream.closeEntry();
+                }
             }
-            schemaOutputStream.close();
             File schemaDir = new File(getProject().getProjectDir(), "src/main/res/raw");
             Files.copy(
                     schemaZipFile.toPath(),

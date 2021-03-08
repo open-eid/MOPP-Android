@@ -40,6 +40,7 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
@@ -232,7 +233,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             ImmutableList<File> remainingDataFiles = without(intent.dataFiles(), intent.dataFile());
                             if (remainingDataFiles.isEmpty()) {
                                 if (intent.containerFile() != null) {
-                                    intent.containerFile().delete();
+                                    boolean isDeleteSuccessful = intent.containerFile().delete();
+                                    if (!isDeleteSuccessful) {
+                                        IOException exception = new IOException("Failed to delete container file!");
+                                        Timber.e(exception, "Deleting container file failed!");
+                                    }
                                 }
                                 navigator.execute(Transaction.pop());
                             }
@@ -354,8 +359,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 }
                                 return file;
                             } catch (Exception e) {
-                                //noinspection ResultOfMethodCallIgnored
-                                containerFile.delete();
+                                boolean isDeleteSuccessful = containerFile.delete();
+                                IOException exception = new IOException("Failed to delete container file!");
+                                if (!isDeleteSuccessful) {
+                                    Timber.e(exception, "Deleting container file failed!");
+                                }
                                 throw e;
                             }
                         })

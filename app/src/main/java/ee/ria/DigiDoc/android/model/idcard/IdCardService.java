@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.model.idcard;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -68,7 +69,7 @@ public final class IdCardService {
                 .fromCallable(() -> {
                     IdCardData data = data(token);
                     return container.sign(data.signCertificate().data(),
-                            signData -> ByteString.of(token.calculateSignature(pin2.getBytes(),
+                            signData -> ByteString.of(token.calculateSignature(pin2.getBytes(StandardCharsets.UTF_8),
                                     signData.toByteArray(),
                                     data.signCertificate().ellipticCurve())));
                 })
@@ -80,7 +81,7 @@ public final class IdCardService {
                                       String newPin) {
         return Single
                 .fromCallable(() -> {
-                    token.changeCode(pinType, currentPin.getBytes(), newPin.getBytes());
+                    token.changeCode(pinType, currentPin.getBytes(StandardCharsets.UTF_8), newPin.getBytes(StandardCharsets.UTF_8));
                     return data(token);
                 });
     }
@@ -88,7 +89,7 @@ public final class IdCardService {
     public Single<IdCardData> unblockPin(Token token, CodeType pinType, String puk, String newPin) {
         return Single
                 .fromCallable(() -> {
-                    token.unblockAndChangeCode(puk.getBytes(), pinType, newPin.getBytes());
+                    token.unblockAndChangeCode(puk.getBytes(StandardCharsets.UTF_8), pinType, newPin.getBytes(StandardCharsets.UTF_8));
                     return data(token);
                 });
     }
