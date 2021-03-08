@@ -5,7 +5,7 @@
 
 # MOPP-Android
 
-Android application that allows signing containers with ID card and Mobile ID
+Android application that allows signing containers with ID-card, mobile-ID and Smart-ID.
 
 Check the wiki get an overview of the project.
 
@@ -30,6 +30,6 @@ Or import project from Android Studio and run it from there.
 &nbsp;&nbsp; 4. Create a folder named "tslFiles" in "assets" and move TSL files there  
 
 ## Support
-Official builds are provided through official distribution point [installer.id.ee](https://installer.id.ee). If you want support, you need to be using official builds. Contact our support via [www.id.ee](http://www.id.ee) for assistance.
+Official builds are provided through official distribution point [https://www.id.ee/en/article/install-id-software/](https://www.id.ee/en/article/install-id-software/). If you want support, you need to be using official builds. Contact our support via [www.id.ee](http://www.id.ee) for assistance.
 
 Source code is provided on "as is" terms with no warranty (see license for more information). Do not file Github issues with generic support requests.
