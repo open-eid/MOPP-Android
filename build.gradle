@@ -54,6 +54,7 @@ ext {
     rxBindingVersion = '2.2.0'
     autoValueVersion = '1.6.2'
     autoValueParcelVersion = '0.2.6'
+    commonsioVersion = '2.8.0'
     threetenabpVersion = '1.1.0'
     expandablelayoutVersion = '2.9.2'
     ldapSdkVersion = '4.0.7'

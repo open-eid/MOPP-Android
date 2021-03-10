@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.common;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -31,11 +33,12 @@ public class FileUtil {
      */
     public static String getValidFilename(String name) {
         String allowedSymbols = ".,-_";
-        String validName = name.replaceAll("\\s", "_");
+        String validName = FilenameUtils.getName(name);
         for (char c = 0; c < validName.length(); c++) {
             if ((!Character.isLetterOrDigit(validName.charAt(c)) &&
                     !allowedSymbols.contains(Character.toString(validName.charAt(c))) &&
-                    !(validName.charAt(c) >= 0x2190 && (validName.charAt(c) >= 0xD83D && validName.charAt(c) <= 0xDEFF)))) {
+                    !(validName.charAt(c) >= 0x2190 && (validName.charAt(c) >= 0xD83D && validName.charAt(c) <= 0xDEFF))) ||
+                    Character.isWhitespace(validName.charAt(c))) {
                 validName = validName.replace(validName.charAt(c), '_');
             }
         }
