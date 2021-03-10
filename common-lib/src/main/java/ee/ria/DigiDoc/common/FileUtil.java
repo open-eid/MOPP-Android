@@ -27,16 +27,14 @@ public class FileUtil {
      */
     public static String getValidFilename(String name) {
         String allowedSymbols = ".,-_";
-        StringBuilder allowedFileName = new StringBuilder();
         for (char c = 0; c < name.length(); c++) {
-            if (Character.isLetterOrDigit(name.charAt(c)) ||
-                    allowedSymbols.contains(Character.toString(name.charAt(c))) ||
-                    (name.charAt(c) >= 0x2190 && (name.charAt(c) >= 0xD83D && name.charAt(c) <= 0xDEFF))) {
-                allowedFileName.append(name.charAt(c));
-            } else if (Character.isWhitespace(name.charAt(c))) {
-                allowedFileName.append("_");
+            if ((!Character.isLetterOrDigit(name.charAt(c)) &&
+                    !allowedSymbols.contains(Character.toString(name.charAt(c))) &&
+                    !(name.charAt(c) >= 0x2190 && (name.charAt(c) >= 0xD83D && name.charAt(c) <= 0xDEFF))) ||
+                    Character.isWhitespace(name.charAt(c))) {
+                name = name.replace(name.charAt(c), '_');
             }
         }
-        return allowedFileName.toString();
+        return name;
     }
 }
