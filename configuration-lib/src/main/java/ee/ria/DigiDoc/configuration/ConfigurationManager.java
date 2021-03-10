@@ -254,6 +254,7 @@ public class ConfigurationManager {
             // No explicit SSL certificate found in assets, using java default cacerts
             return null;
         } catch (IOException | CertificateException e) {
+            Timber.e(e, "Failed to load SSL certificate");
             throw new IllegalStateException("Failed to load SSL certificate", e);
         }
     }

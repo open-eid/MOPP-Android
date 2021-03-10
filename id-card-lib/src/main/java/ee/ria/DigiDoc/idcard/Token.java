@@ -129,6 +129,9 @@ public interface Token {
         ) {
             return new EstEIDv3d4(reader);
         }
-        throw new SmartCardReaderException("Unsupported card ATR: " + new String(Hex.encode(atr)));
+        if (atr != null) {
+            throw new SmartCardReaderException("Unsupported card ATR: " + new String(Hex.encode(atr)));
+        }
+        throw new SmartCardReaderException("Unsupported card");
     }
 }

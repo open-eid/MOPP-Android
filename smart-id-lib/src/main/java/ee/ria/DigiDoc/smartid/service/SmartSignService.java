@@ -72,8 +72,10 @@ public class SmartSignService extends IntentService {
                 (SmartIDSignatureRequest) intent.getSerializableExtra(SmartSignConstants.CREATE_SIGNATURE_REQUEST);
 
         try {
-            SIDRestServiceClient = ServiceGenerator.createService(SIDRestServiceClient.class,
-                    request.getUrl(), intent.getStringArrayListExtra(SmartSignConstants.CERTIFICATE_CERT_BUNDLE));
+            if (intent != null && request != null) {
+                SIDRestServiceClient = ServiceGenerator.createService(SIDRestServiceClient.class,
+                        request.getUrl(), intent.getStringArrayListExtra(SmartSignConstants.CERTIFICATE_CERT_BUNDLE));
+            }
         } catch (CertificateException | NoSuchAlgorithmException e) {
             broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE);
             Timber.e(e, "SSL handshake failed");

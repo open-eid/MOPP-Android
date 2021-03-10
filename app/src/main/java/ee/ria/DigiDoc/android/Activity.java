@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 
@@ -159,7 +160,8 @@ public final class Activity extends AppCompatActivity {
 
     private void handleIncomingFiles(Intent intent) {
         try {
-            intent.setDataAndType(intent.getData(), "*/*");
+            String encodedUri = Uri.encode(getIntent().getDataString(), ":/?#+&=@");
+            intent.setDataAndType(Uri.parse(Uri.decode(encodedUri)), "*/*");
             rootScreenFactory.intent(intent);
         } catch (ActivityNotFoundException e) {
             Timber.e(e, "Handling incoming file intent");

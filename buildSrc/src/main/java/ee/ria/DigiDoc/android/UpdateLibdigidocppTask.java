@@ -76,7 +76,6 @@ public class UpdateLibdigidocppTask extends DefaultTask {
 
         AtomicBoolean generateJar = new AtomicBoolean(true);
         AtomicBoolean generateSchema = new AtomicBoolean(true);
-        AtomicBoolean generateTestSchema = new AtomicBoolean(true);
 
         for (String abi : ABIS) {
             update(
@@ -114,15 +113,18 @@ public class UpdateLibdigidocppTask extends DefaultTask {
             log("Generating %s from %s", SCHEMA, zipFile);
             File schemaCacheDir = new File(cacheDir, "etc");
             File schemaZipFile = new File(cacheDir, SCHEMA);
-            ZipOutputStream schemaOutputStream = new ZipOutputStream(new FileOutputStream(schemaZipFile));
-            for (File schemaFile : files(schemaCacheDir)) {
-                ZipEntry entry = new ZipEntry(schemaFile.getName());
-                entry.setTime(schemaFile.lastModified());
-                schemaOutputStream.putNextEntry(entry);
-                Files.copy(schemaFile.toPath(), schemaOutputStream);
-                schemaOutputStream.closeEntry();
+
+            try (FileOutputStream fileOutputStream = new FileOutputStream(schemaZipFile);
+                 ZipOutputStream schemaOutputStream = new ZipOutputStream(fileOutputStream)) {
+
+                for (File schemaFile : files(schemaCacheDir)) {
+                    ZipEntry entry = new ZipEntry(schemaFile.getName());
+                    entry.setTime(schemaFile.lastModified());
+                    schemaOutputStream.putNextEntry(entry);
+                    Files.copy(schemaFile.toPath(), schemaOutputStream);
+                    schemaOutputStream.closeEntry();
+                }
             }
-            schemaOutputStream.close();
             File schemaDir = new File(getProject().getProjectDir(), "src/main/res/raw");
             Files.copy(
                     schemaZipFile.toPath(),
@@ -164,7 +166,7 @@ public class UpdateLibdigidocppTask extends DefaultTask {
     }
 
     private static void delete(File file) {
-        if (file.isDirectory()) {
+        if (file != null && file.isDirectory() && file.listFiles().length > 0) {
             for (File f : file.listFiles()) {
                 delete(f);
             }
@@ -218,19 +220,21 @@ public class UpdateLibdigidocppTask extends DefaultTask {
                 Files.copy(file.toPath(), outputStream);
                 outputStream.closeEntry();
             }
-            outputStream.close();
         }
     }
 
     private static List<File> files(File dir) {
         List<File> files = new ArrayList<>();
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                files.addAll(files(file));
-            } else {
-                files.add(file);
+        if (dir != null && dir.listFiles().length > 0) {
+            for (File file : dir.listFiles()) {
+                if (file.isDirectory()) {
+                    files.addAll(files(file));
+                } else {
+                    files.add(file);
+                }
             }
         }
+
         return files;
     }
 }

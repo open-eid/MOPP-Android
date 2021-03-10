@@ -16,6 +16,9 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import ee.ria.DigiDoc.common.FileUtil;
+import timber.log.Timber;
+
 import static ee.ria.DigiDoc.android.Constants.DIR_SIGNATURE_CONTAINERS;
 
 public final class FileSystem {
@@ -68,8 +71,9 @@ public final class FileSystem {
      * @throws IOException When something fails.
      */
     public File generateSignatureContainerFile(String name) throws IOException {
-        File file = increaseCounterIfExists(new File(signatureContainersDir(), name));
-        Files.createParentDirs(file);
+        File file = increaseCounterIfExists(new File(signatureContainersDir(), FileUtil.getValidFilename(name)));
+        File fileInDirectory = FileUtil.getFileInDirectory(file, signatureContainersDir());
+        Files.createParentDirs(fileInDirectory);
         return file;
     }
 
@@ -81,8 +85,13 @@ public final class FileSystem {
      * @return File objects for signature containers.
      */
     public ImmutableList<File> findSignatureContainerFiles() {
-        return ImmutableList.sortedCopyOf(FILE_MODIFIED_DATE_COMPARATOR,
-                ImmutableList.copyOf(signatureContainersDir().listFiles()));
+        File[] signatureContainerFileList = signatureContainersDir().listFiles();
+        if (signatureContainerFileList != null) {
+            return ImmutableList.sortedCopyOf(FILE_MODIFIED_DATE_COMPARATOR,
+                    ImmutableList.copyOf(signatureContainerFileList));
+        }
+
+        return ImmutableList.copyOf(new File[]{});
     }
 
     /**
@@ -123,8 +132,9 @@ public final class FileSystem {
      * @param name Name of the file
      * @return File with absolute path to file in cache directory.
      */
-    private File getCacheFile(String name) {
-        return new File(cacheDir(), name);
+    private File getCacheFile(String name) throws IOException {
+        File cacheFile = new File(cacheDir(), FileUtil.getValidFilename(name));
+        return FileUtil.getFileInDirectory(cacheFile, cacheDir());
     }
 
     private File signatureContainersDir() {

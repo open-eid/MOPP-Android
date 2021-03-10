@@ -161,11 +161,14 @@ public abstract class SignedContainer {
           
             ee.ria.libdigidocpp.Signature signature = container
                     .prepareWebSignature(certificate.toByteArray(), signatureProfile());
-            ByteString signatureData = signFunction.apply(ByteString.of(signature.dataToSign()));
-            signature.setSignatureValue(signatureData.toByteArray());
-            signature.extendSignatureProfile(signatureProfile());
-            container.save();
-            return open(file());
+            if (signature != null) {
+                ByteString signatureData = signFunction.apply(ByteString.of(signature.dataToSign()));
+                signature.setSignatureValue(signatureData.toByteArray());
+                signature.extendSignatureProfile(signatureProfile());
+                container.save();
+                return open(file());
+            }
+            throw new Exception("Empty signature value");
         } catch (Exception e) {
             if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
                 Timber.e(e, "Failed to sign with ID-card - Too Many Requests");

@@ -52,9 +52,11 @@ public final class SettingsFragment extends PreferenceFragmentCompat {
     private void bindSummary(@StringRes int key) {
         String preferenceKey = getString(key);
         Preference preference = findPreference(preferenceKey);
-        preference.setOnPreferenceChangeListener(summaryChangeListener);
-        preference.callChangeListener(PreferenceManager.getDefaultSharedPreferences(getContext())
-                .getString(preferenceKey, null));
+        if (preference != null) {
+            preference.setOnPreferenceChangeListener(summaryChangeListener);
+            preference.callChangeListener(PreferenceManager.getDefaultSharedPreferences(getContext())
+                    .getString(preferenceKey, null));
+        }
     }
 
     @Nullable

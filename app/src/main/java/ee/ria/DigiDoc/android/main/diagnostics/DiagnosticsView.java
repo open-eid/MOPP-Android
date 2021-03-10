@@ -192,18 +192,20 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
         File tslCacheDir = new File(getContext().getApplicationContext().getCacheDir().getAbsolutePath() + "/schema");
         File[] tslFiles = tslCacheDir.listFiles((directory, fileName) -> fileName.endsWith(".xml"));
-        Arrays.sort(tslFiles, (f1, f2) -> f1.getName().compareToIgnoreCase(f2.getName()));
-        for (File tslFile : tslFiles) {
-            try (InputStream tslInputStream = new FileInputStream(tslFile)) {
-                int version = TSLUtil.readSequenceNumber(tslInputStream);
-                TextView tslEntry = new TextView(tslCacheLayout.getContext());
-                tslEntry.setTextAppearance(R.style.MaterialTypography_Dense_Body1);
-                tslEntry.setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-                String tslEntryText = tslFile.getName() + " (" + version + ")";
-                tslEntry.setText(tslEntryText);
-                tslCacheLayout.addView(tslEntry);
-            } catch (Exception e) {
-                Timber.e(e, "Error displaying TSL version for: %s", tslFile.getAbsolutePath());
+        if (tslFiles != null) {
+            Arrays.sort(tslFiles, (f1, f2) -> f1.getName().compareToIgnoreCase(f2.getName()));
+            for (File tslFile : tslFiles) {
+                try (InputStream tslInputStream = new FileInputStream(tslFile)) {
+                    int version = TSLUtil.readSequenceNumber(tslInputStream);
+                    TextView tslEntry = new TextView(tslCacheLayout.getContext());
+                    tslEntry.setTextAppearance(R.style.MaterialTypography_Dense_Body1);
+                    tslEntry.setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+                    String tslEntryText = tslFile.getName() + " (" + version + ")";
+                    tslEntry.setText(tslEntryText);
+                    tslCacheLayout.addView(tslEntry);
+                } catch (Exception e) {
+                    Timber.e(e, "Error displaying TSL version for: %s", tslFile.getAbsolutePath());
+                }
             }
         }
 
