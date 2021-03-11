@@ -7,7 +7,7 @@ public enum CodeType {
     PUK((byte) 0x00, (byte) 0x03);
 
     public final byte value;
-    public byte retryValue;
+    public final byte retryValue;
 
     CodeType(byte value, byte retryValue) {
         this.value = value;

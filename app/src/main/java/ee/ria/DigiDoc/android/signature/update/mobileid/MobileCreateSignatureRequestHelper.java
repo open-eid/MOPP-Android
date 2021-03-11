@@ -54,7 +54,7 @@ final class MobileCreateSignatureRequestHelper {
 
     private static String trimDisplayMessageIfNotWithinSizeLimit(String displayMessage) {
         if (displayMessage.getBytes(StandardCharsets.UTF_8).length > MAX_DISPLAY_MESSAGE_BYTES) {
-            int bytesPerChar = displayMessage.getBytes().length / displayMessage.length();
+            int bytesPerChar = displayMessage.getBytes(StandardCharsets.UTF_8).length / displayMessage.length();
             return displayMessage.substring(0, 36 / bytesPerChar) + "...";
         }
         return displayMessage;

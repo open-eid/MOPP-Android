@@ -11,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.webkit.MimeTypeMap;
+import android.webkit.URLUtil;
 import android.widget.Button;
 
 import androidx.annotation.Nullable;
@@ -26,7 +28,9 @@ import com.google.firebase.crashlytics.internal.common.CommonUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.net.MalformedURLException;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -163,12 +167,23 @@ public final class Activity extends AppCompatActivity {
 
     private void handleIncomingFiles(Intent intent) {
         try {
-            String fileDataString = FilenameUtils.getFullPath(intent.getDataString()) + FilenameUtils.getName(intent.getDataString());
-            intent.setDataAndType(Uri.parse(fileDataString), "*/*");
-            rootScreenFactory.intent(intent);
-        } catch (ActivityNotFoundException e) {
+            if (intent.getDataString() != null && isSafeURL(Uri.parse(intent.getDataString()))) {
+                intent.setDataAndTypeAndNormalize(intent.getData(), "*/*");
+                rootScreenFactory.intent(intent);
+            } else if (intent.getDataString() == null) {
+                intent.setType("*/*");
+                rootScreenFactory.intent(intent);
+            }
+            else {
+                throw new MalformedURLException("Invalid URL");
+            }
+        } catch (ActivityNotFoundException | MalformedURLException e) {
             Timber.e(e, "Handling incoming file intent");
         }
+    }
+
+    private boolean isSafeURL(Uri uri) {
+        return uri != null && URLUtil.isValidUrl(uri.toString()) && ((URLUtil.isContentUrl(uri.toString()) || URLUtil.isFileUrl(uri.toString()) || URLUtil.isHttpUrl(uri.toString()) || URLUtil.isHttpsUrl(uri.toString())));
     }
 
     private void initializeApplicationFileTypesAssociation() {
