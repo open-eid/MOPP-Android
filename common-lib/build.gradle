@@ -28,8 +28,6 @@ dependencies {
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
-    implementation "commons-io:commons-io:${commonsioVersion}"
-
     api "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
 
     api "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"

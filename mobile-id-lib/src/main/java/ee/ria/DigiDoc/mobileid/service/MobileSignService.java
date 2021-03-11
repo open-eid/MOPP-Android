@@ -138,13 +138,15 @@ public class MobileSignService extends IntentService {
                     }
                     containerWrapper = new ContainerWrapper(request.getContainerPath());
                     String base64Hash = containerWrapper.prepareSignature(getCertificatePem(response.getCert()));
-                    broadcastMobileCreateSignatureResponse(base64Hash);
-                    sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
-                    String sessionId = getMobileIdSession(base64Hash, request);
-                    if (sessionId == null) {
-                        return;
+                    if (base64Hash != null && !base64Hash.isEmpty()) {
+                        broadcastMobileCreateSignatureResponse(base64Hash);
+                        sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
+                        String sessionId = getMobileIdSession(base64Hash, request);
+                        if (sessionId == null) {
+                            return;
+                        }
+                        doCreateSignatureStatusRequestLoop(new GetMobileCreateSignatureSessionStatusRequest(sessionId));
                     }
-                    doCreateSignatureStatusRequestLoop(new GetMobileCreateSignatureSessionStatusRequest(sessionId));
                 }
             } catch (UnknownHostException e) {
                 broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE));

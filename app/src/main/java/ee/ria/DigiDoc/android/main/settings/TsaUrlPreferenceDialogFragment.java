@@ -63,7 +63,7 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
     @Override
     public void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
-        if (!positiveResult) {
+        if (!positiveResult && getContext() != null) {
             AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.setting_value_change_cancelled);
         }
     }

@@ -165,14 +165,17 @@ public class UpdateLibdigidocppTask extends DefaultTask {
         getLogger().lifecycle(String.format(message, parameters));
     }
 
-    private static void delete(File file) {
-        if (file != null && file.isDirectory() && file.listFiles().length > 0) {
-            for (File f : file.listFiles()) {
-                delete(f);
+    private static void delete(File file) throws IOException {
+        if (file != null) {
+            if (file.isDirectory() && file.listFiles().length > 0) {
+                for (File f : file.listFiles()) {
+                    delete(f);
+                }
             }
-            file.delete();
-        } else {
-            file.delete();
+            boolean isFileDeleted = file.delete();
+            if (!isFileDeleted) {
+                throw new IOException("Failed to delete file " + file.getName());
+            }
         }
     }
 

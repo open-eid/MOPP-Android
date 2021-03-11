@@ -1,13 +1,7 @@
 package ee.ria.DigiDoc.common;
 
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.regex.Pattern;
 
 public class FileUtil {
 
@@ -33,15 +27,14 @@ public class FileUtil {
      */
     public static String getValidFilename(String name) {
         String allowedSymbols = ".,-_";
-        String validName = FilenameUtils.getName(name);
-        for (char c = 0; c < validName.length(); c++) {
-            if ((!Character.isLetterOrDigit(validName.charAt(c)) &&
-                    !allowedSymbols.contains(Character.toString(validName.charAt(c))) &&
-                    !(validName.charAt(c) >= 0x2190 && (validName.charAt(c) >= 0xD83D && validName.charAt(c) <= 0xDEFF))) ||
-                    Character.isWhitespace(validName.charAt(c))) {
-                validName = validName.replace(validName.charAt(c), '_');
+        for (char c = 0; c < name.length(); c++) {
+            if ((!Character.isLetterOrDigit(name.charAt(c)) &&
+                    !allowedSymbols.contains(Character.toString(name.charAt(c))) &&
+                    !(name.charAt(c) >= 0x2190 && (name.charAt(c) >= 0xD83D && name.charAt(c) <= 0xDEFF))) ||
+                    Character.isWhitespace(name.charAt(c))) {
+                name = name.replace(name.charAt(c), '_');
             }
         }
-        return validName;
+        return name;
     }
 }

@@ -125,7 +125,9 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     public boolean onBackButtonClick() {
         backButtonClicksSubject.onNext(VOID);
-        AccessibilityUtils.sendAccessibilityEvent(getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_addition_cancelled);
+        if (getApplicationContext() != null) {
+            AccessibilityUtils.sendAccessibilityEvent(getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_addition_cancelled);
+        }
         return false;
     }
 

@@ -20,8 +20,6 @@ import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 public final class SettingsFragment extends PreferenceFragmentCompat {
 
-    EditTextPreference phoneNoPreference;
-
     private final Preference.OnPreferenceChangeListener summaryChangeListener
             = (preference, newValue) -> {
                     CharSequence summary;

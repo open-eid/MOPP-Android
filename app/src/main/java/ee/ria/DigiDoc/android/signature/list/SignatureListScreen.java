@@ -75,7 +75,9 @@ public final class SignatureListScreen extends Controller implements Screen,
                                 .remove(removeConfirmationContainerFile)),
                 removeConfirmationDialog.cancels()
                         .map(ignored -> {
-                            AccessibilityUtils.sendAccessibilityEvent(getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.document_removal_cancelled);
+                            if (getApplicationContext() != null) {
+                                AccessibilityUtils.sendAccessibilityEvent(getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.document_removal_cancelled);
+                            }
                             return Intent.ContainerRemoveIntent.cancel();
                         }));
     }

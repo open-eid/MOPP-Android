@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.signature.update.mobileid;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -52,7 +53,7 @@ final class MobileCreateSignatureRequestHelper {
     }
 
     private static String trimDisplayMessageIfNotWithinSizeLimit(String displayMessage) {
-        if (displayMessage.getBytes().length > MAX_DISPLAY_MESSAGE_BYTES) {
+        if (displayMessage.getBytes(StandardCharsets.UTF_8).length > MAX_DISPLAY_MESSAGE_BYTES) {
             int bytesPerChar = displayMessage.getBytes().length / displayMessage.length();
             return displayMessage.substring(0, 36 / bytesPerChar) + "...";
         }

@@ -139,8 +139,10 @@ public final class FileSystem {
 
     private File signatureContainersDir() {
         File dir = new File(application.getFilesDir(), DIR_SIGNATURE_CONTAINERS);
-        //noinspection ResultOfMethodCallIgnored
-        dir.mkdirs();
+        boolean isDirsCreated = dir.mkdirs();
+        if (isDirsCreated) {
+            Timber.d("Directories created for %s", dir.getPath());
+        }
         return dir;
     }
 
@@ -172,8 +174,13 @@ public final class FileSystem {
             }
             i++;
         }
-        dir.mkdirs();
-        dir.mkdir();
+        boolean isDirsCreated = dir.mkdirs();
+        boolean isDirCreated = dir.mkdir();
+
+        if (isDirsCreated || isDirCreated) {
+            Timber.d("Directories created for %s", directory.getPath());
+        }
+
         return dir;
     }
 }

@@ -100,7 +100,7 @@ class CentralConfigurationClient {
         }
     }
 
-    class CentralConfigurationException extends RuntimeException {
+    static class CentralConfigurationException extends RuntimeException {
         CentralConfigurationException(String message) {
             super(message);
         }

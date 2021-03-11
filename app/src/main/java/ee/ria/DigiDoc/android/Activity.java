@@ -23,6 +23,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.crashlytics.internal.common.CommonUtils;
 
+import org.apache.commons.io.FilenameUtils;
+
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Callable;
 
@@ -160,8 +163,8 @@ public final class Activity extends AppCompatActivity {
 
     private void handleIncomingFiles(Intent intent) {
         try {
-            String encodedUri = Uri.encode(getIntent().getDataString(), ":/?#+&=@");
-            intent.setDataAndType(Uri.parse(Uri.decode(encodedUri)), "*/*");
+            String fileDataString = FilenameUtils.getFullPath(intent.getDataString()) + FilenameUtils.getName(intent.getDataString());
+            intent.setDataAndType(Uri.parse(fileDataString), "*/*");
             rootScreenFactory.intent(intent);
         } catch (ActivityNotFoundException e) {
             Timber.e(e, "Handling incoming file intent");

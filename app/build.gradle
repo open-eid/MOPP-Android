@@ -112,6 +112,8 @@ dependencies {
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "com.squareup.okio:okio:${okioVersion}"
 
+    implementation "commons-io:commons-io:${commonsioVersion}"
+
     implementation "com.jakewharton.timber:timber:${timberVersion}"
 
     implementation "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"

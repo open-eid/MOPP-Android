@@ -8,6 +8,8 @@ import android.provider.OpenableColumns;
 import com.google.auto.value.AutoValue;
 import com.google.common.io.ByteSource;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 
 import static com.google.common.io.Files.asByteSource;
@@ -23,7 +25,7 @@ public abstract class FileStream {
      * Create FileStream from {@link ContentResolver} and content {@link Uri}.
      */
     public static FileStream create(ContentResolver contentResolver, Uri uri) {
-        String displayName = uri.getLastPathSegment();
+        String displayName = FilenameUtils.getName(uri.getLastPathSegment());
         Cursor cursor = contentResolver.query(uri, new String[]{OpenableColumns.DISPLAY_NAME}, null,
                 null, null);
         if (cursor != null) {
