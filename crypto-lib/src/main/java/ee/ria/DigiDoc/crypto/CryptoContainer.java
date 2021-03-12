@@ -5,6 +5,7 @@ import androidx.annotation.WorkerThread;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
+import org.apache.commons.io.FilenameUtils;
 import org.openeid.cdoc4j.CDOCBuilder;
 import org.openeid.cdoc4j.CDOCDecrypter;
 import org.openeid.cdoc4j.CDOCParser;
@@ -169,7 +170,7 @@ public abstract class CryptoContainer {
      * @return True if valid container file name.
      */
     public static boolean isContainerFileName(String fileName) {
-        return getFileExtension(FileUtil.getValidFilename(fileName)).toLowerCase(Locale.US).equals(EXTENSION);
+        return getFileExtension(FilenameUtils.getName(fileName)).toLowerCase(Locale.US).equals(EXTENSION);
     }
 
     /**

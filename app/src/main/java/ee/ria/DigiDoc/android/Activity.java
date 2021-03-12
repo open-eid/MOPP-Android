@@ -11,8 +11,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.webkit.MimeTypeMap;
-import android.webkit.URLUtil;
 import android.widget.Button;
 
 import androidx.annotation.Nullable;
@@ -25,12 +23,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.crashlytics.internal.common.CommonUtils;
 
-import org.apache.commons.io.FilenameUtils;
-
-import java.io.File;
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
-import java.net.MalformedURLException;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -48,6 +41,7 @@ import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
+import ee.ria.DigiDoc.common.FileUtil;
 import timber.log.Timber;
 
 public final class Activity extends AppCompatActivity {
@@ -167,23 +161,12 @@ public final class Activity extends AppCompatActivity {
 
     private void handleIncomingFiles(Intent intent) {
         try {
-            if (intent.getDataString() != null && isSafeURL(Uri.parse(intent.getDataString()))) {
-                intent.setDataAndTypeAndNormalize(intent.getData(), "*/*");
-                rootScreenFactory.intent(intent);
-            } else if (intent.getDataString() == null) {
-                intent.setType("*/*");
-                rootScreenFactory.intent(intent);
-            }
-            else {
-                throw new MalformedURLException("Invalid URL");
-            }
-        } catch (ActivityNotFoundException | MalformedURLException e) {
+            intent.setData(Uri.parse(FileUtil.sanitizeString(intent.getDataString(), '_')));
+            intent.setDataAndType(intent.getData(), "*/*");
+            rootScreenFactory.intent(intent);
+        } catch (ActivityNotFoundException e) {
             Timber.e(e, "Handling incoming file intent");
         }
-    }
-
-    private boolean isSafeURL(Uri uri) {
-        return uri != null && URLUtil.isValidUrl(uri.toString()) && ((URLUtil.isContentUrl(uri.toString()) || URLUtil.isFileUrl(uri.toString()) || URLUtil.isHttpUrl(uri.toString()) || URLUtil.isHttpsUrl(uri.toString())));
     }
 
     private void initializeApplicationFileTypesAssociation() {

@@ -20,21 +20,28 @@ public class FileUtil {
     }
 
     /**
-     * Replace invalid filename characters
+     * Replace invalid string characters
      *
-     * @param name Filename to replace invalid characters
-     * @return String with replaced valid characters
+     * @param input Input to replace invalid characters
+     * @param replacement Replacement to replace invalid characters with
+     * @return String with valid characters
      */
-    public static String getValidFilename(String name) {
-        String allowedSymbols = ".,-_";
-        for (char c = 0; c < name.length(); c++) {
-            if ((!Character.isLetterOrDigit(name.charAt(c)) &&
-                    !allowedSymbols.contains(Character.toString(name.charAt(c))) &&
-                    !(name.charAt(c) >= 0x2190 && (name.charAt(c) >= 0xD83D && name.charAt(c) <= 0xDEFF))) ||
-                    Character.isWhitespace(name.charAt(c))) {
-                name = name.replace(name.charAt(c), '_');
+    public static String sanitizeString(String input, char replacement) {
+        String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=";
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int offset = 0; offset < input.length(); offset++) {
+            char c = input.charAt(offset);
+
+            if (allowedCharacters.indexOf(c) == -1) {
+                sb.append(replacement);
+            }
+            else {
+                sb.append(allowedCharacters.charAt(allowedCharacters.indexOf(c)));
             }
         }
-        return name;
+
+        return sb.toString();
     }
 }
