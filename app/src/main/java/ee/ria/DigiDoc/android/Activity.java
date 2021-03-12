@@ -161,12 +161,23 @@ public final class Activity extends AppCompatActivity {
 
     private void handleIncomingFiles(Intent intent) {
         try {
-            intent.setData(Uri.parse(FileUtil.sanitizeString(intent.getDataString(), '_')));
-            intent.setDataAndType(intent.getData(), "*/*");
+            if (intent.getDataString() != null) {
+                intent.setData(Uri.parse(FileUtil.sanitizeString(intent.getDataString(), '_')));
+            }
+            intent.setDataAndType(sanitizeIntent(intent).getData(), "*/*");
             rootScreenFactory.intent(intent);
         } catch (ActivityNotFoundException e) {
             Timber.e(e, "Handling incoming file intent");
         }
+    }
+
+    private Intent sanitizeIntent(Intent intent) {
+        if (intent.getExtras() != null) {
+            for (String key : intent.getExtras().keySet()) {
+                intent.removeExtra(key);
+            }
+        }
+        return intent;
     }
 
     private void initializeApplicationFileTypesAssociation() {
