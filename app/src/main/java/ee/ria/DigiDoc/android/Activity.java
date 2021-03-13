@@ -68,7 +68,7 @@ public final class Activity extends AppCompatActivity {
 
         handleCrashOnPreviousExecution();
 
-        Intent intent = getIntent();
+        Intent intent = sanitizeIntent(getIntent());
 
         if ((Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -161,10 +161,7 @@ public final class Activity extends AppCompatActivity {
 
     private void handleIncomingFiles(Intent intent) {
         try {
-            if (intent.getDataString() != null) {
-                intent.setData(Uri.parse(FileUtil.sanitizeString(intent.getDataString(), '_')));
-            }
-            intent.setDataAndType(sanitizeIntent(intent).getData(), "*/*");
+            intent.setDataAndType(intent.getData(), "*/*");
             rootScreenFactory.intent(intent);
         } catch (ActivityNotFoundException e) {
             Timber.e(e, "Handling incoming file intent");
@@ -172,6 +169,9 @@ public final class Activity extends AppCompatActivity {
     }
 
     private Intent sanitizeIntent(Intent intent) {
+        if (intent.getDataString() != null) {
+            intent.setData(Uri.parse(FileUtil.sanitizeString(intent.getDataString(), '_')));
+        }
         if (intent.getExtras() != null) {
             for (String key : intent.getExtras().keySet()) {
                 intent.removeExtra(key);
