@@ -115,7 +115,7 @@ interface Intent extends MviIntent {
         }
 
         static DocumentRemoveIntent clear() {
-            return new AutoValue_Intent_DocumentRemoveIntent(false, null, null, null);
+            return new AutoValue_Intent_DocumentRemoveIntent(false, null, ImmutableList.of(), null);
         }
     }
 

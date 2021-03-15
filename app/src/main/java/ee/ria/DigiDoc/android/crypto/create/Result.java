@@ -14,6 +14,7 @@ import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
+import ee.ria.DigiDoc.sign.DataFile;
 
 interface Result extends MviResult<ViewState> {
 
@@ -201,6 +202,10 @@ interface Result extends MviResult<ViewState> {
         }
 
         static DataFileRemoveResult success(ImmutableList<File> dataFiles) {
+            return new AutoValue_Result_DataFileRemoveResult(dataFiles, null);
+        }
+
+        static DataFileRemoveResult clear(ImmutableList<File> dataFiles) {
             return new AutoValue_Result_DataFileRemoveResult(dataFiles, null);
         }
     }

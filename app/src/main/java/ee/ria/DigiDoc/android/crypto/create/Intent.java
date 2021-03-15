@@ -85,7 +85,7 @@ interface Intent extends MviIntent, MviAction {
 
         abstract ImmutableList<File> dataFiles();
 
-        abstract File dataFile();
+        @Nullable abstract File dataFile();
 
         static DataFileRemoveIntent showConfirmation(ImmutableList<File> dataFiles, File dataFile) {
             return create(true, null,  dataFiles, dataFile);
@@ -95,8 +95,8 @@ interface Intent extends MviIntent, MviAction {
             return create(false, containerFile, dataFiles, dataFile);
         }
 
-        static DataFileRemoveIntent clear() {
-            return create(false, null,null, null);
+        static DataFileRemoveIntent clear(ImmutableList<File> dataFiles) {
+            return create(false, null, dataFiles, null);
         }
 
         private static DataFileRemoveIntent create(boolean showConfirmation, File containerFile, ImmutableList<File> dataFiles, File dataFile) {

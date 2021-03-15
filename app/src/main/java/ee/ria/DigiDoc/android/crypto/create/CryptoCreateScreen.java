@@ -146,7 +146,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                         .map(dataFile -> Intent.DataFileRemoveIntent.showConfirmation(dataFiles, dataFile)),
                 fileRemoveConfirmationDialog.cancels().map(ignored -> {
                     AccessibilityUtils.sendAccessibilityEvent(view.getContext(), TYPE_ANNOUNCEMENT, R.string.file_removal_cancelled);
-                    return Intent.DataFileRemoveIntent.clear();
+                    return Intent.DataFileRemoveIntent.clear(dataFiles);
                 }),
                 fileRemoveConfirmationDialog.positiveButtonClicks()
                         .map(ignored -> Intent.DataFileRemoveIntent.remove(containerFile, dataFiles, dataFileRemoveConfirmation))

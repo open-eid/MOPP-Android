@@ -216,6 +216,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         });
 
         dataFileRemove = upstream -> upstream.switchMap(intent -> {
+            if (!intent.showConfirmation() && intent.dataFile() == null) {
+                return Observable.just(Result.DataFileRemoveResult.clear(intent.dataFiles()));
+            }
             if (intent.showConfirmation()) {
                 return Observable.just(
                         Result.DataFileRemoveResult.confirmation(intent.dataFiles(), intent.dataFile())
