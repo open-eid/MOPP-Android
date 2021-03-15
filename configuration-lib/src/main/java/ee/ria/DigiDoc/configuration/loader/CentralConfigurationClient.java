@@ -15,6 +15,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.internal.tls.OkHostnameVerifier;
 
 class CentralConfigurationClient {
 
@@ -76,7 +77,7 @@ class CentralConfigurationClient {
 
     private OkHttpClient.Builder constructClientBuilder() {
         return new OkHttpClient.Builder()
-                .hostnameVerifier((hostname, session) -> true)
+                .hostnameVerifier(OkHostnameVerifier.INSTANCE)
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .callTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
@@ -99,7 +100,7 @@ class CentralConfigurationClient {
         }
     }
 
-    class CentralConfigurationException extends RuntimeException {
+    static class CentralConfigurationException extends RuntimeException {
         CentralConfigurationException(String message) {
             super(message);
         }

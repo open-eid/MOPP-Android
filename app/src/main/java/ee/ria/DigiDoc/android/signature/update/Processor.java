@@ -126,8 +126,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
                                 checkContainerName(newFile);
 
-                                boolean isDeleteSuccessful = newFile.delete();
-                                if (!containerFile.renameTo(newFile) || !isDeleteSuccessful) {
+                                boolean isFileDeleted = newFile.delete();
+                                if (!containerFile.renameTo(newFile) || !isFileDeleted) {
                                     throw new IOException();
                                 }
 
@@ -253,10 +253,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return Observable.just(Result.DocumentRemoveResult.confirmation(action.document()));
             } else {
                 if (action.documents().size() == 1) {
-                    boolean isDeleteSuccessful = action.containerFile().delete();
-                    if (!isDeleteSuccessful) {
-                        IOException exception = new IOException("Failed to delete container file!");
-                        Timber.e(exception, "Deleting container file failed!");
+                    boolean isFileDeleted = action.containerFile().delete();
+                    if (isFileDeleted) {
+                        Timber.d("File %s deleted", action.containerFile().getName());
                     }
                     navigator.execute(Transaction.pop());
                     return Observable.just(Result.DocumentRemoveResult.success(null));

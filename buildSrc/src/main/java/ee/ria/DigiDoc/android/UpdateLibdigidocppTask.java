@@ -165,14 +165,17 @@ public class UpdateLibdigidocppTask extends DefaultTask {
         getLogger().lifecycle(String.format(message, parameters));
     }
 
-    private static void delete(File file) {
-        if (file.isDirectory()) {
-            for (File f : file.listFiles()) {
-                delete(f);
+    private static void delete(File file) throws IOException {
+        if (file != null) {
+            if (file.isDirectory() && file.listFiles().length > 0) {
+                for (File f : file.listFiles()) {
+                    delete(f);
+                }
             }
-            file.delete();
-        } else {
-            file.delete();
+            boolean isFileDeleted = file.delete();
+            if (!isFileDeleted) {
+                throw new IOException("Failed to delete file " + file.getName());
+            }
         }
     }
 
@@ -220,19 +223,21 @@ public class UpdateLibdigidocppTask extends DefaultTask {
                 Files.copy(file.toPath(), outputStream);
                 outputStream.closeEntry();
             }
-            outputStream.close();
         }
     }
 
     private static List<File> files(File dir) {
         List<File> files = new ArrayList<>();
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                files.addAll(files(file));
-            } else {
-                files.add(file);
+        if (dir != null && dir.listFiles().length > 0) {
+            for (File file : dir.listFiles()) {
+                if (file.isDirectory()) {
+                    files.addAll(files(file));
+                } else {
+                    files.add(file);
+                }
             }
         }
+
         return files;
     }
 }

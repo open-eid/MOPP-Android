@@ -233,10 +233,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             ImmutableList<File> remainingDataFiles = without(intent.dataFiles(), intent.dataFile());
                             if (remainingDataFiles.isEmpty()) {
                                 if (intent.containerFile() != null) {
-                                    boolean isDeleteSuccessful = intent.containerFile().delete();
-                                    if (!isDeleteSuccessful) {
-                                        IOException exception = new IOException("Failed to delete container file!");
-                                        Timber.e(exception, "Deleting container file failed!");
+                                    boolean isFileDeleted = intent.containerFile().delete();
+                                    if (isFileDeleted) {
+                                        Timber.d("File %s deleted", intent.containerFile().getName());
                                     }
                                 }
                                 navigator.execute(Transaction.pop());
@@ -359,10 +358,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 }
                                 return file;
                             } catch (Exception e) {
-                                boolean isDeleteSuccessful = containerFile.delete();
-                                IOException exception = new IOException("Failed to delete container file!");
-                                if (!isDeleteSuccessful) {
-                                    Timber.e(exception, "Deleting container file failed!");
+                                boolean isFileDeleted = containerFile.delete();
+                                if (isFileDeleted) {
+                                    Timber.d("File %s deleted", containerFile.getName());
                                 }
                                 throw e;
                             }

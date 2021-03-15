@@ -21,6 +21,7 @@ package ee.ria.DigiDoc.idcard;
 
 import org.bouncycastle.util.encoders.Hex;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
@@ -129,6 +130,9 @@ public interface Token {
         ) {
             return new EstEIDv3d4(reader);
         }
-        throw new SmartCardReaderException("Unsupported card ATR: " + new String(Hex.encode(atr)));
+        if (atr != null) {
+            throw new SmartCardReaderException("Unsupported card ATR: " + new String(Hex.encode(atr), StandardCharsets.UTF_8));
+        }
+        throw new SmartCardReaderException("Unsupported card");
     }
 }

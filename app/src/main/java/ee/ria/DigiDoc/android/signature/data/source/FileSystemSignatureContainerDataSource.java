@@ -2,6 +2,8 @@ package ee.ria.DigiDoc.android.signature.data.source;
 
 import com.google.common.collect.ImmutableList;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -50,7 +52,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
                 containerFile = fileSystem.addSignatureContainer(fileStream);
             } else {
                 String containerName = String.format(Locale.US, "%s.%s",
-                        getNameWithoutExtension(fileStreams.get(0).displayName()),
+                        getNameWithoutExtension(FilenameUtils.getName(fileStreams.get(0).displayName())),
                         SIGNATURE_CONTAINER_EXT);
                 isExistingContainer = false;
                 containerFile = fileSystem.generateSignatureContainerFile(containerName);
