@@ -19,6 +19,8 @@
 
 package ee.ria.DigiDoc.idcard;
 
+import androidx.annotation.NonNull;
+
 import org.bouncycastle.util.encoders.Hex;
 
 import java.nio.charset.StandardCharsets;
@@ -117,7 +119,7 @@ public interface Token {
      * @throws SmartCardReaderException When card is not supported or reader is not connected.
      */
     static Token create(SmartCardReader reader) throws SmartCardReaderException {
-        byte[] atr = reader.atr();
+        @NonNull byte[] atr = reader.atr();
         if (Arrays.equals(Hex.decode("3bdb960080b1fe451f830012233f536549440f9000f1"), atr)) {
             return new ID1(reader);
         } else if (Arrays.equals(Hex.decode("3bfa1800008031fe45fe654944202f20504b4903"), atr) ||
@@ -130,9 +132,7 @@ public interface Token {
         ) {
             return new EstEIDv3d4(reader);
         }
-        if (atr != null) {
-            throw new SmartCardReaderException("Unsupported card ATR: " + new String(Hex.encode(atr), StandardCharsets.UTF_8));
-        }
-        throw new SmartCardReaderException("Unsupported card");
+
+        throw new SmartCardReaderException("Unsupported card ATR: " + new String(Hex.encode(atr), StandardCharsets.UTF_8));
     }
 }

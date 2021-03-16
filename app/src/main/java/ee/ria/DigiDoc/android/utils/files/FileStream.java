@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 
+import androidx.annotation.NonNull;
+
 import com.google.auto.value.AutoValue;
 import com.google.common.io.ByteSource;
 
@@ -27,14 +29,12 @@ public abstract class FileStream {
     public static FileStream create(ContentResolver contentResolver, Uri uri) {
         String displayName = FileUtil.sanitizeString(uri.getLastPathSegment(), '_');
         String sanitizedUri = FileUtil.sanitizeString(uri.toString(), '_');
-        Cursor cursor = contentResolver.query(Uri.parse(sanitizedUri), new String[]{OpenableColumns.DISPLAY_NAME}, null,
+        @NonNull Cursor cursor = contentResolver.query(Uri.parse(sanitizedUri), new String[]{OpenableColumns.DISPLAY_NAME}, null,
                 null, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst() && !cursor.isNull(0)) {
-                displayName = cursor.getString(0);
-            }
-            cursor.close();
+        if (cursor.moveToFirst() && !cursor.isNull(0)) {
+            displayName = cursor.getString(0);
         }
+        cursor.close();
 
         return new AutoValue_FileStream(displayName,
                 new ContentResolverUriSource(contentResolver, Uri.parse(sanitizedUri)));
