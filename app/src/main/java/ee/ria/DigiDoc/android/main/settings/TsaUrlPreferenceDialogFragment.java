@@ -9,8 +9,6 @@ import android.view.ViewParent;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
-
 import com.takisoft.fix.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
 
 import ee.ria.DigiDoc.R;
@@ -37,12 +35,15 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
             });
             checkBox.setChecked(TextUtils.isEmpty(tsaUrlPreference.getText()));
 
-            @NonNull View oldCheckBox = parent.findViewById(checkBox.getId());
-            parent.removeView(oldCheckBox);
-
-            @NonNull ViewParent oldParent = checkBox.getParent();
+            View oldCheckBox = parent.findViewById(checkBox.getId());
+            if (oldCheckBox != null) {
+                parent.removeView(oldCheckBox);
+            }
+            ViewParent oldParent = checkBox.getParent();
             if (parent != oldParent) {
-                ((ViewGroup) oldParent).removeView(checkBox);
+                if (oldParent != null) {
+                    ((ViewGroup) oldParent).removeView(checkBox);
+                }
                 parent.addView(checkBox, ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT);
             }

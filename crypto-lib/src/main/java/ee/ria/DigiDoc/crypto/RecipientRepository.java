@@ -114,8 +114,8 @@ public final class RecipientRepository {
             }
 
             LDAPTestUtils.assertHasControl(searchResult, SimplePagedResultsControl.PAGED_RESULTS_OID);
-            @NonNull SimplePagedResultsControl releaseControl = SimplePagedResultsControl.get(searchResult);
-            if (releaseControl.moreResultsToReturn() && searchResult.getEntryCount() < maximumNumberOfResults) {
+            SimplePagedResultsControl releaseControl = SimplePagedResultsControl.get(searchResult);
+            if (releaseControl != null && releaseControl.moreResultsToReturn() && searchResult.getEntryCount() < maximumNumberOfResults) {
                 extraResponseCookie = releaseControl.getCookie();
             } else {
                 break;

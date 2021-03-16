@@ -26,9 +26,12 @@ import timber.log.Timber;
 class SignatureVerifier {
 
     static boolean verify(byte[] signature, String publicKeyPEM, String signedContent) {
-        @NotNull SubjectPublicKeyInfo publicKeyInfo = parsePublicKeyInfo(publicKeyPEM);
-        PublicKey publicKey = convertPublicKeyInfoToPublicKey(publicKeyInfo);
-        return verifySignature(signature, publicKey, signedContent);
+        SubjectPublicKeyInfo publicKeyInfo = parsePublicKeyInfo(publicKeyPEM);
+        if (publicKeyInfo != null) {
+            PublicKey publicKey = convertPublicKeyInfoToPublicKey(publicKeyInfo);
+            return verifySignature(signature, publicKey, signedContent);
+        }
+        return false;
     }
 
     private static PublicKey convertPublicKeyInfoToPublicKey(SubjectPublicKeyInfo publicKeyInfo) {
