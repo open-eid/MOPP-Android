@@ -164,7 +164,7 @@ final class SignatureAddSource {
     public Single<SignedContainer> sign(String signatureValue, byte[] dataToSign, SignedContainer container) {
         return Single
                 .fromCallable(() -> container.sign(ByteString.of(dataToSign),
-                        signData -> ByteString.of(signatureValue.getBytes(StandardCharsets.UTF_8))))
+                        signData -> ByteString.encodeUtf8(signatureValue)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

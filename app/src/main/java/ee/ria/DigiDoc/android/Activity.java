@@ -161,8 +161,7 @@ public final class Activity extends AppCompatActivity {
 
     private void handleIncomingFiles(Intent intent) {
         try {
-            String encodedUri = Uri.encode(getIntent().getDataString(), ":/?#+&=@");
-            intent.setDataAndType(Uri.parse(Uri.decode(encodedUri)), "*/*");
+            intent.setDataAndType(intent.getData(), "*/*");
             rootScreenFactory.intent(intent);
         } catch (ActivityNotFoundException e) {
             Timber.e(e, "Handling incoming file intent");

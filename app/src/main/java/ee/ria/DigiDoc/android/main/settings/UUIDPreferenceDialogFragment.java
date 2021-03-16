@@ -33,27 +33,27 @@ import com.takisoft.fix.support.v7.preference.EditTextPreferenceDialogFragmentCo
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.utils.SecureUtil;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-
-import ee.ria.DigiDoc.android.utils.SecureUtil;
 
 public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
 
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        if (getUUIDPreference() != null) {
-            EditText editText = getUUIDPreference().getEditText();
+        UUIDPreference uuidPreference = getUUIDPreference();
+        if (uuidPreference != null) {
+            EditText editText = uuidPreference.getEditText();
             ViewGroup parent = (ViewGroup) editText.getParent();
-            CheckBox checkBox = getUUIDPreference().getCheckBox();
+            CheckBox checkBox = uuidPreference.getCheckBox();
             checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 editText.setEnabled(!isChecked);
                 if (isChecked) {
                     editText.setText(null);
                 }
             });
-            checkBox.setChecked(TextUtils.isEmpty(getUUIDPreference().getText()));
+            checkBox.setChecked(TextUtils.isEmpty(uuidPreference.getText()));
 
             View oldCheckBox = parent.findViewById(checkBox.getId());
             if (oldCheckBox != null) {

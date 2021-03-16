@@ -13,26 +13,27 @@ import com.takisoft.fix.support.v7.preference.EditTextPreferenceDialogFragmentCo
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-
 import ee.ria.DigiDoc.android.utils.SecureUtil;
+
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
 
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        if (getTsaUrlPreference() != null) {
-            EditText editText = getTsaUrlPreference().getEditText();
+        TsaUrlPreference tsaUrlPreference = getTsaUrlPreference();
+        if (tsaUrlPreference != null) {
+            EditText editText = tsaUrlPreference.getEditText();
             ViewGroup parent = (ViewGroup) editText.getParent();
-            CheckBox checkBox = getTsaUrlPreference().getCheckBox();
+            CheckBox checkBox = tsaUrlPreference.getCheckBox();
             checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 editText.setEnabled(!isChecked);
                 if (isChecked) {
                     editText.setText(null);
                 }
             });
-            checkBox.setChecked(TextUtils.isEmpty(getTsaUrlPreference().getText()));
+            checkBox.setChecked(TextUtils.isEmpty(tsaUrlPreference.getText()));
 
             View oldCheckBox = parent.findViewById(checkBox.getId());
             if (oldCheckBox != null) {

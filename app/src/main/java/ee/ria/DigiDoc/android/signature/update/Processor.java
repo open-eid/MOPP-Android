@@ -127,7 +127,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 checkContainerName(newFile);
 
                                 boolean isFileDeleted = newFile.delete();
-                                if (!containerFile.renameTo(newFile) || !isFileDeleted) {
+                                if (!isFileDeleted || !containerFile.renameTo(newFile)) {
                                     throw new IOException();
                                 }
 
