@@ -29,7 +29,7 @@ public class FileUtil {
     public static String sanitizeString(String input, char replacement) {
         String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=";
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(input.length());
 
         for (int offset = 0; offset < input.length(); offset++) {
             char c = input.charAt(offset);
@@ -38,6 +38,7 @@ public class FileUtil {
                 sb.append(replacement);
             }
             else {
+                // Coverity does not want to see usages of the original string
                 sb.append(allowedCharacters.charAt(allowedCharacters.indexOf(c)));
             }
         }

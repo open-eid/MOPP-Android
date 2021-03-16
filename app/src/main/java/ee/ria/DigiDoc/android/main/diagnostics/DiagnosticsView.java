@@ -192,7 +192,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
         File tslCacheDir = new File(getContext().getApplicationContext().getCacheDir().getAbsolutePath() + "/schema");
         File[] tslFiles = tslCacheDir.listFiles((directory, fileName) -> fileName.endsWith(".xml"));
-        if (tslFiles != null) {
+        if (tslFiles != null && tslFiles.length > 0) {
             Arrays.sort(tslFiles, (f1, f2) -> f1.getName().compareToIgnoreCase(f2.getName()));
             for (File tslFile : tslFiles) {
                 try (InputStream tslInputStream = new FileInputStream(tslFile)) {

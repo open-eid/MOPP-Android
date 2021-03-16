@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.crypto;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import com.google.common.collect.ImmutableList;
@@ -113,8 +114,8 @@ public final class RecipientRepository {
             }
 
             LDAPTestUtils.assertHasControl(searchResult, SimplePagedResultsControl.PAGED_RESULTS_OID);
-            SimplePagedResultsControl releaseControl = SimplePagedResultsControl.get(searchResult);
-            if (releaseControl != null && releaseControl.moreResultsToReturn() && searchResult.getEntryCount() < maximumNumberOfResults) {
+            @NonNull SimplePagedResultsControl releaseControl = SimplePagedResultsControl.get(searchResult);
+            if (releaseControl.moreResultsToReturn() && searchResult.getEntryCount() < maximumNumberOfResults) {
                 extraResponseCookie = releaseControl.getCookie();
             } else {
                 break;

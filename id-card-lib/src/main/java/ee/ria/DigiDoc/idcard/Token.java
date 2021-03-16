@@ -119,7 +119,10 @@ public interface Token {
      * @throws SmartCardReaderException When card is not supported or reader is not connected.
      */
     static Token create(SmartCardReader reader) throws SmartCardReaderException {
-        @NonNull byte[] atr = reader.atr();
+        byte[] atr = reader.atr();
+        if (atr == null) {
+            throw new SmartCardReaderException("ATR cannot be null");
+        }
         if (Arrays.equals(Hex.decode("3bdb960080b1fe451f830012233f536549440f9000f1"), atr)) {
             return new ID1(reader);
         } else if (Arrays.equals(Hex.decode("3bfa1800008031fe45fe654944202f20504b4903"), atr) ||

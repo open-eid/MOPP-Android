@@ -4,6 +4,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.openssl.PEMParser;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -25,12 +26,9 @@ import timber.log.Timber;
 class SignatureVerifier {
 
     static boolean verify(byte[] signature, String publicKeyPEM, String signedContent) {
-        SubjectPublicKeyInfo publicKeyInfo = parsePublicKeyInfo(publicKeyPEM);
-        if (publicKeyInfo != null) {
-            PublicKey publicKey = convertPublicKeyInfoToPublicKey(publicKeyInfo);
-            return verifySignature(signature, publicKey, signedContent);
-        }
-        return false;
+        @NotNull SubjectPublicKeyInfo publicKeyInfo = parsePublicKeyInfo(publicKeyPEM);
+        PublicKey publicKey = convertPublicKeyInfoToPublicKey(publicKeyInfo);
+        return verifySignature(signature, publicKey, signedContent);
     }
 
     private static PublicKey convertPublicKeyInfoToPublicKey(SubjectPublicKeyInfo publicKeyInfo) {

@@ -3,18 +3,14 @@ package ee.ria.DigiDoc.android.signature.update.mobileid;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import ee.ria.DigiDoc.common.MessageUtil;
 import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
-import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
-import ee.ria.DigiDoc.mobileid.dto.response.RESTServiceFault;
-import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignedContainer;
-import timber.log.Timber;
 
 final class MobileCreateSignatureRequestHelper {
 
@@ -47,17 +43,9 @@ final class MobileCreateSignatureRequestHelper {
         request.setContainerPath(container.file().getPath());
         request.setHashType(DIGEST_TYPE);
         request.setLanguage(getLanguage());
-        request.setDisplayText(trimDisplayMessageIfNotWithinSizeLimit(displayMessage));
+        request.setDisplayText(MessageUtil.trimDisplayMessageIfNotWithinSizeLimit(displayMessage, MAX_DISPLAY_MESSAGE_BYTES, 36));
         request.setDisplayTextFormat(DISPLAY_TEXT_FORMAT);
         return request;
-    }
-
-    private static String trimDisplayMessageIfNotWithinSizeLimit(String displayMessage) {
-        if (displayMessage.getBytes(StandardCharsets.UTF_8).length > MAX_DISPLAY_MESSAGE_BYTES) {
-            int bytesPerChar = displayMessage.getBytes(StandardCharsets.UTF_8).length / displayMessage.length();
-            return displayMessage.substring(0, 36 / bytesPerChar) + "...";
-        }
-        return displayMessage;
     }
 
     private static String getLanguage() {

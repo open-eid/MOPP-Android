@@ -99,8 +99,9 @@ public class FileUtils {
     }
 
     public static void removeFile(String filePath) {
-        if (fileExists(filePath)) {
-            boolean isFileDeleted = new File(filePath).delete();
+        File fileToDelete = new File(filePath);
+        if (fileToDelete.exists()) {
+            boolean isFileDeleted = fileToDelete.delete();
             if (isFileDeleted) {
                 Timber.d("File %s deleted", filePath);
             }

@@ -24,7 +24,7 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        @NonNull TsaUrlPreference tsaUrlPreference = getTsaUrlPreference();
+        TsaUrlPreference tsaUrlPreference = getTsaUrlPreference();
         if (tsaUrlPreference != null) {
             EditText editText = tsaUrlPreference.getEditText();
             ViewGroup parent = (ViewGroup) editText.getParent();
