@@ -168,7 +168,7 @@ public class UpdateLibdigidocppTask extends DefaultTask {
     private static void delete(File file) throws IOException {
         if (file != null) {
             File[] fileList = file.listFiles();
-            if (fileList != null && file.isDirectory() && fileList.length > 0) {
+            if (fileList != null && fileList.length > 0) {
                 for (File f : fileList) {
                     delete(f);
                 }

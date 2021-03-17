@@ -53,6 +53,7 @@ ext {
     rxJavaVersion = '2.1.16'
     rxAndroidVersion = '2.1.1'
     rxBindingVersion = '2.2.0'
+    telecomcharsetsVersion = '1.0.1'
     autoValueVersion = '1.6.2'
     autoValueParcelVersion = '0.2.6'
     threetenabpVersion = '1.1.0'

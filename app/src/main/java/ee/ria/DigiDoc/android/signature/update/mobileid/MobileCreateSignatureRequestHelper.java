@@ -43,7 +43,7 @@ final class MobileCreateSignatureRequestHelper {
         request.setContainerPath(container.file().getPath());
         request.setHashType(DIGEST_TYPE);
         request.setLanguage(getLanguage());
-        request.setDisplayText(MessageUtil.trimDisplayMessageIfNotWithinSizeLimit(displayMessage, MAX_DISPLAY_MESSAGE_BYTES, 36));
+        request.setDisplayText(MessageUtil.trimDisplayMessageIfNotWithinSizeLimit(displayMessage, MAX_DISPLAY_MESSAGE_BYTES, MessageUtil.getGSM7Charset()));
         request.setDisplayTextFormat(DISPLAY_TEXT_FORMAT);
         return request;
     }

@@ -203,6 +203,18 @@ final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     R.string.main_about_mit_license_title,
                     R.string.main_about_mid_rest_api_java_license_url
             ))
+            .add(Component.create(
+                    R.string.main_about_commons_io_title,
+                    BuildConfig.COMMONS_IO_VERSION,
+                    R.string.main_about_mit_license_title,
+                    R.string.main_about_commons_io_license_url
+            ))
+            .add(Component.create(
+                    R.string.main_about_telecom_charsets_title,
+                    BuildConfig.TELECOM_CHARSETS_VERSION,
+                    R.string.main_about_apache_2_0_license_title,
+                    R.string.main_about_telecom_charsets_license_url
+            ))
             .build();
 
     @NonNull

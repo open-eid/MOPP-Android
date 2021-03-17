@@ -25,6 +25,8 @@ dependencies {
     api "androidx.annotation:annotation:${androidxVersion}"
     api "com.squareup.okio:okio:${okioVersion}"
 
+    implementation "com.github.brake.threegpp:telecom-charsets:${telecomcharsetsVersion}"
+
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 

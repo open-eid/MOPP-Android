@@ -173,9 +173,7 @@ public final class Activity extends AppCompatActivity {
             intent.setData(Uri.parse(FileUtil.sanitizeString(intent.getDataString(), '_')));
         }
         if (intent.getExtras() != null) {
-            for (String key : intent.getExtras().keySet()) {
-                intent.removeExtra(key);
-            }
+            intent.replaceExtras(new Bundle());
         }
         return intent;
     }
