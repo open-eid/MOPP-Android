@@ -20,6 +20,9 @@
 
 package ee.ria.DigiDoc.android.signature.update.smartid;
 
+import java.nio.charset.StandardCharsets;
+
+import ee.ria.DigiDoc.common.MessageUtil;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
 
@@ -43,15 +46,7 @@ final class SmartCreateSignatureRequestHelper {
 
         request.setContainerPath(container.file().getPath());
         request.setHashType(DIGEST_TYPE);
-        request.setDisplayText(trimDisplayMessageIfNotWithinSizeLimit(displayMessage));
+        request.setDisplayText(MessageUtil.trimDisplayMessageIfNotWithinSizeLimit(displayMessage, MAX_DISPLAY_MESSAGE_BYTES, StandardCharsets.UTF_8));
         return request;
-    }
-
-    private static String trimDisplayMessageIfNotWithinSizeLimit(String displayMessage) {
-        if (displayMessage.getBytes().length > MAX_DISPLAY_MESSAGE_BYTES) {
-            int bytesPerChar = displayMessage.getBytes().length / displayMessage.length();
-            return displayMessage.substring(0, 56 / bytesPerChar) + "...";
-        }
-        return displayMessage;
     }
 }

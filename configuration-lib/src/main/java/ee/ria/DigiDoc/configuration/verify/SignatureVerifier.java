@@ -17,6 +17,8 @@ import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 
+import timber.log.Timber;
+
 /**
  * Helper class for verifying configuration signature.
  */
@@ -24,8 +26,11 @@ class SignatureVerifier {
 
     static boolean verify(byte[] signature, String publicKeyPEM, String signedContent) {
         SubjectPublicKeyInfo publicKeyInfo = parsePublicKeyInfo(publicKeyPEM);
-        PublicKey publicKey = convertPublicKeyInfoToPublicKey(publicKeyInfo);
-        return verifySignature(signature, publicKey, signedContent);
+        if (publicKeyInfo != null) {
+            PublicKey publicKey = convertPublicKeyInfoToPublicKey(publicKeyInfo);
+            return verifySignature(signature, publicKey, signedContent);
+        }
+        return false;
     }
 
     private static PublicKey convertPublicKeyInfoToPublicKey(SubjectPublicKeyInfo publicKeyInfo) {
@@ -35,6 +40,7 @@ class SignatureVerifier {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(publicKeySpec);
         } catch (InvalidKeySpecException | NoSuchAlgorithmException | IOException e) {
+            Timber.e(e, "PublicKey conversion failed");
             throw new IllegalStateException("Failed to convert org.bouncycastle.asn1.x509.SubjectPublicKeyInfo to java.security.PublicKey", e);
         }
     }
@@ -54,6 +60,7 @@ class SignatureVerifier {
             signature.update(signedContent.getBytes(StandardCharsets.UTF_8));
             return signature.verify(signatureBytes);
         } catch (NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
+            Timber.e(e, "Signature verification failed");
             throw new IllegalStateException("Failed to verify signature", e);
         }
     }

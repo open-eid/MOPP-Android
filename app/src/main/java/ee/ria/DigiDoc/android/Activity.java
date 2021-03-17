@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 
@@ -40,6 +41,7 @@ import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
+import ee.ria.DigiDoc.common.FileUtil;
 import timber.log.Timber;
 
 public final class Activity extends AppCompatActivity {
@@ -66,7 +68,7 @@ public final class Activity extends AppCompatActivity {
 
         handleCrashOnPreviousExecution();
 
-        Intent intent = getIntent();
+        Intent intent = sanitizeIntent(getIntent());
 
         if ((Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -164,6 +166,16 @@ public final class Activity extends AppCompatActivity {
         } catch (ActivityNotFoundException e) {
             Timber.e(e, "Handling incoming file intent");
         }
+    }
+
+    private Intent sanitizeIntent(Intent intent) {
+        if (intent.getDataString() != null) {
+            intent.setData(Uri.parse(FileUtil.sanitizeString(intent.getDataString(), '_')));
+        }
+        if (intent.getExtras() != null) {
+            intent.replaceExtras(new Bundle());
+        }
+        return intent;
     }
 
     private void initializeApplicationFileTypesAssociation() {

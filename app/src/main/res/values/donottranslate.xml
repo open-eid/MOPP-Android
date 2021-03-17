@@ -84,6 +84,10 @@
     <string name="main_about_apache_2_0_license_title">Apache License 2.0</string>
     <string name="main_about_mid_rest_api_java_title">mid-rest-java-client %1$s</string>
     <string name="main_about_mid_rest_api_java_license_url">https://github.com/SK-EID/mid-rest-java-client/blob/master/LICENSE</string>
+    <string name="main_about_commons_io_title">Apache Commons IO</string>
+    <string name="main_about_commons_io_license_url">https://github.com/apache/commons-io/blob/master/LICENSE.txt</string>
+    <string name="main_about_telecom_charsets_title">telecom-charsets</string>
+    <string name="main_about_telecom_charsets_license_url">https://github.com/brake/telecom-charsets/blob/master/LICENSE</string>
 
     <!-- EID Home -->
     <string name="eid_home_certificate_pin_auth">PIN1</string>

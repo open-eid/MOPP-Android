@@ -40,6 +40,7 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
@@ -235,7 +236,10 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             ImmutableList<File> remainingDataFiles = without(intent.dataFiles(), intent.dataFile());
                             if (remainingDataFiles.isEmpty()) {
                                 if (intent.containerFile() != null) {
-                                    intent.containerFile().delete();
+                                    boolean isFileDeleted = intent.containerFile().delete();
+                                    if (isFileDeleted) {
+                                        Timber.d("File %s deleted", intent.containerFile().getName());
+                                    }
                                 }
                                 navigator.execute(Transaction.pop());
                             }
@@ -357,8 +361,10 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 }
                                 return file;
                             } catch (Exception e) {
-                                //noinspection ResultOfMethodCallIgnored
-                                containerFile.delete();
+                                boolean isFileDeleted = containerFile.delete();
+                                if (isFileDeleted) {
+                                    Timber.d("File %s deleted", containerFile.getName());
+                                }
                                 throw e;
                             }
                         })

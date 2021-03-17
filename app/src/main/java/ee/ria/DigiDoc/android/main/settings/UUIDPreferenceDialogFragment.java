@@ -33,38 +33,40 @@ import com.takisoft.fix.support.v7.preference.EditTextPreferenceDialogFragmentCo
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.utils.SecureUtil;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-
-import ee.ria.DigiDoc.android.utils.SecureUtil;
 
 public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
 
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        EditText editText = getUUIDPreference().getEditText();
-        ViewGroup parent = (ViewGroup) editText.getParent();
-        CheckBox checkBox = getUUIDPreference().getCheckBox();
-        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            editText.setEnabled(!isChecked);
-            if (isChecked) {
-                editText.setText(null);
-            }
-        });
-        checkBox.setChecked(TextUtils.isEmpty(getUUIDPreference().getText()));
+        UUIDPreference uuidPreference = getUUIDPreference();
+        if (uuidPreference != null) {
+            EditText editText = uuidPreference.getEditText();
+            ViewGroup parent = (ViewGroup) editText.getParent();
+            CheckBox checkBox = uuidPreference.getCheckBox();
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                editText.setEnabled(!isChecked);
+                if (isChecked) {
+                    editText.setText(null);
+                }
+            });
+            checkBox.setChecked(TextUtils.isEmpty(uuidPreference.getText()));
 
-        View oldCheckBox = parent.findViewById(checkBox.getId());
-        if (oldCheckBox != null) {
-            parent.removeView(oldCheckBox);
-        }
-        ViewParent oldParent = checkBox.getParent();
-        if (parent != oldParent) {
-            if (oldParent != null) {
-                ((ViewGroup) oldParent).removeView(checkBox);
+            View oldCheckBox = parent.findViewById(checkBox.getId());
+            if (oldCheckBox != null) {
+                parent.removeView(oldCheckBox);
             }
-            parent.addView(checkBox, ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            ViewParent oldParent = checkBox.getParent();
+            if (parent != oldParent) {
+                if (oldParent != null) {
+                    ((ViewGroup) oldParent).removeView(checkBox);
+                }
+                parent.addView(checkBox, ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+            }
         }
     }
 
@@ -82,7 +84,7 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
     @Override
     public void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
-        if (!positiveResult) {
+        if (!positiveResult && getContext() != null) {
             AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.setting_value_change_cancelled);
         }
     }

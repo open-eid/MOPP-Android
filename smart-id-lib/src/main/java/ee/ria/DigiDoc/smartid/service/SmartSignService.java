@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 
@@ -68,74 +69,88 @@ public class SmartSignService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Timber.d("Handling smart sign intent");
-        SmartIDSignatureRequest request =
-                (SmartIDSignatureRequest) intent.getSerializableExtra(SmartSignConstants.CREATE_SIGNATURE_REQUEST);
 
-        try {
-            SIDRestServiceClient = ServiceGenerator.createService(SIDRestServiceClient.class,
-                    request.getUrl(), intent.getStringArrayListExtra(SmartSignConstants.CERTIFICATE_CERT_BUNDLE));
-        } catch (CertificateException | NoSuchAlgorithmException e) {
-            broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE);
-            Timber.e(e, "SSL handshake failed");
-            return;
-        }
+        if (intent != null) {
+            SmartIDSignatureRequest request =
+                    (SmartIDSignatureRequest) intent.getSerializableExtra(SmartSignConstants.CREATE_SIGNATURE_REQUEST);
 
-        if (!UUIDUtil.isValid(request.getRelyingPartyUUID())) {
-            broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS);
-            Timber.d("%s - Relying Party UUID not in valid format", request.getRelyingPartyUUID());
-            return;
-        }
+            ArrayList<String> certificateCertBundle = intent.getStringArrayListExtra(SmartSignConstants.CERTIFICATE_CERT_BUNDLE);
 
-        try {
-            SessionStatusResponse sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCertificate(
-                    request.getCountry(), request.getNationalIdentityNumber(), getCertificateRequest(request)), true);
-            if (sessionStatusResponse == null) {
-                return;
-            }
+            if (request != null) {
+                try {
+                    if (certificateCertBundle != null) {
+                        SIDRestServiceClient = ServiceGenerator.createService(SIDRestServiceClient.class,
+                                request.getUrl(), certificateCertBundle);
+                    }
+                } catch (CertificateException | NoSuchAlgorithmException e) {
+                    broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE);
+                    Timber.e(e, "SSL handshake failed");
+                    return;
+                }
 
-            ContainerWrapper containerWrapper = new ContainerWrapper(request.getContainerPath());
-            String base64Hash = containerWrapper.prepareSignature(getCertificatePem(sessionStatusResponse.getCert().getValue()));
-            broadcastSmartCreateSignatureChallengeResponse(base64Hash);
-            Thread.sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
 
-            sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCreateSignature(
-                    sessionStatusResponse.getResult().getDocumentNumber(), getSignatureRequest(request, base64Hash)), false);
-            if (sessionStatusResponse == null) {
-                return;
-            }
-            containerWrapper.finalizeSignature(sessionStatusResponse.getSignature().getValue());
-            broadcastSmartCreateSignatureStatusResponse(sessionStatusResponse);
-        } catch (UnknownHostException e) {
-            broadcastFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE);
-            Timber.e(e, "REST API certificate request failed. Unknown host");
-        } catch (SSLPeerUnverifiedException e) {
-            broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE);
-            Timber.e(e, "SSL handshake failed");
-        } catch (IOException e) {
-            broadcastFault();
-            Timber.e(e, "REST API certificate request failed");
-        } catch (CertificateException e) {
-            broadcastFault();
-            Timber.e(e, "Generating certificate failed");
-        } catch (InterruptedException e) {
-            Timber.e(e, "Waiting for next call to SID REST API interrupted");
-            Thread.currentThread().interrupt();
-        } catch (NoSuchAlgorithmException e) {
-            broadcastFault();
-            Timber.e(e, "Generating verification code failed");
-        } catch (Exception e) {
-            if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
-                broadcastFault(SessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS);
-                Timber.e(e, "Failed to sign with Smart-ID - Too Many Requests");
-            } else if (e.getMessage() != null && e.getMessage().contains("OCSP response not in valid time slot")) {
-                broadcastFault(SessionStatusResponse.ProcessStatus.OCSP_INVALID_TIME_SLOT);
-                Timber.e(e, "Failed to sign with Smart-ID - OCSP response not in valid time slot");
-            } else if (e.getMessage() != null && e.getMessage().contains("Certificate status: revoked")) {
-                broadcastFault(SessionStatusResponse.ProcessStatus.CERTIFICATE_REVOKED);
-                Timber.e(e, "Failed to sign with Smart-ID - Certificate status: revoked");
+                if (!UUIDUtil.isValid(request.getRelyingPartyUUID())) {
+                    broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS);
+                    Timber.d("%s - Relying Party UUID not in valid format", request.getRelyingPartyUUID());
+                    return;
+                }
+
+                try {
+                    SessionStatusResponse sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCertificate(
+                            request.getCountry(), request.getNationalIdentityNumber(), getCertificateRequest(request)), true);
+                    if (sessionStatusResponse == null) {
+                        return;
+                    }
+
+                    ContainerWrapper containerWrapper = new ContainerWrapper(request.getContainerPath());
+                    String base64Hash = containerWrapper.prepareSignature(getCertificatePem(sessionStatusResponse.getCert().getValue()));
+                    if (base64Hash != null && !base64Hash.isEmpty()) {
+                        broadcastSmartCreateSignatureChallengeResponse(base64Hash);
+                        Thread.sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
+
+                        sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCreateSignature(
+                                sessionStatusResponse.getResult().getDocumentNumber(), getSignatureRequest(request, base64Hash)), false);
+                        if (sessionStatusResponse == null) {
+                            return;
+                        }
+                        containerWrapper.finalizeSignature(sessionStatusResponse.getSignature().getValue());
+                        broadcastSmartCreateSignatureStatusResponse(sessionStatusResponse);
+                    }
+                } catch (UnknownHostException e) {
+                    broadcastFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE);
+                    Timber.e(e, "REST API certificate request failed. Unknown host");
+                } catch (SSLPeerUnverifiedException e) {
+                    broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE);
+                    Timber.e(e, "SSL handshake failed");
+                } catch (IOException e) {
+                    broadcastFault();
+                    Timber.e(e, "REST API certificate request failed");
+                } catch (CertificateException e) {
+                    broadcastFault();
+                    Timber.e(e, "Generating certificate failed");
+                } catch (InterruptedException e) {
+                    Timber.e(e, "Waiting for next call to SID REST API interrupted");
+                    Thread.currentThread().interrupt();
+                } catch (NoSuchAlgorithmException e) {
+                    broadcastFault();
+                    Timber.e(e, "Generating verification code failed");
+                } catch (Exception e) {
+                    if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
+                        broadcastFault(SessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS);
+                        Timber.e(e, "Failed to sign with Smart-ID - Too Many Requests");
+                    } else if (e.getMessage() != null && e.getMessage().contains("OCSP response not in valid time slot")) {
+                        broadcastFault(SessionStatusResponse.ProcessStatus.OCSP_INVALID_TIME_SLOT);
+                        Timber.e(e, "Failed to sign with Smart-ID - OCSP response not in valid time slot");
+                    } else if (e.getMessage() != null && e.getMessage().contains("Certificate status: revoked")) {
+                        broadcastFault(SessionStatusResponse.ProcessStatus.CERTIFICATE_REVOKED);
+                        Timber.e(e, "Failed to sign with Smart-ID - Certificate status: revoked");
+                    } else {
+                        broadcastFault();
+                        Timber.e(e, "Failed to sign with Smart-ID");
+                    }
+                }
             } else {
-                broadcastFault();
-                Timber.e(e, "Failed to sign with Smart-ID");
+                throw new IllegalStateException("Invalid request");
             }
         }
     }
@@ -262,6 +277,7 @@ public class SmartSignService extends IntentService {
                 case 409:
                     broadcastFault(SessionStatusResponse.ProcessStatus.EXCEEDED_UNSUCCESSFUL_REQUESTS);
                     Timber.d("Exceeded unsuccessful requests");
+                    break;
                 case 429:
                     broadcastFault(SessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS);
                     Timber.d("Too many requests");

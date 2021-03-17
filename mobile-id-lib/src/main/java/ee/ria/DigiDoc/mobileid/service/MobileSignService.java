@@ -96,66 +96,71 @@ public class MobileSignService extends IntentService {
         Timber.d("Handling mobile sign intent");
         timeout = 0;
         MobileCreateSignatureRequest request = getRequestFromIntent(intent);
-        PostMobileCreateSignatureCertificateRequest certificateRequest = getCertificateRequest(request);
-        SSLContext restSSLConfig;
-        try {
-            restSSLConfig = createSSLConfig(intent);
-        } catch (Exception e) {
-            Timber.e(e, "Can't create SSL config");
-            restSSLConfig = null;
-        }
-
-        try {
-            midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class, restSSLConfig, request.getUrl(), intent.getStringArrayListExtra(CERTIFICATE_CERT_BUNDLE));
-        } catch (CertificateException | NoSuchAlgorithmException e) {
-            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
-            return;
-        }
-
-        if (isCountryCodeError(request.getPhoneNumber())) {
-            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_COUNTRY_CODE));
-            Timber.d("Invalid country code");
-            return;
-        }
-
-        if (!UUIDUtil.isValid(request.getRelyingPartyUUID())) {
-            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS));
-            Timber.d("%s - Relying Party UUID not in valid format", request.getRelyingPartyUUID());
-            return;
-        }
-
-        Call<MobileCreateSignatureCertificateResponse> call = midRestServiceClient.getCertificate(certificateRequest);
-        try {
-            Response<MobileCreateSignatureCertificateResponse> responseWrapper = call.execute();
-            if (!responseWrapper.isSuccessful()) {
-                parseErrorAndBroadcast(responseWrapper);
-            } else {
-                MobileCreateSignatureCertificateResponse response = responseWrapper.body();
-                if (isResponseError(responseWrapper, response, MobileCreateSignatureCertificateResponse.class)) {
-                    return;
-                }
-                containerWrapper = new ContainerWrapper(request.getContainerPath());
-                String base64Hash = containerWrapper.prepareSignature(getCertificatePem(response.getCert()));
-                broadcastMobileCreateSignatureResponse(base64Hash);
-                sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
-                String sessionId = getMobileIdSession(base64Hash, request);
-                if (sessionId == null) {
-                    return;
-                }
-                doCreateSignatureStatusRequestLoop(new GetMobileCreateSignatureSessionStatusRequest(sessionId));
+        if (request != null) {
+            PostMobileCreateSignatureCertificateRequest certificateRequest = getCertificateRequest(request);
+            SSLContext restSSLConfig;
+            try {
+                restSSLConfig = createSSLConfig(intent);
+            } catch (Exception e) {
+                Timber.e(e, "Can't create SSL config");
+                restSSLConfig = null;
             }
-        } catch (UnknownHostException e) {
-            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE));
-            Timber.e(e, "REST API certificate request failed. Unknown host");
-        } catch (SSLPeerUnverifiedException e) {
-            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
-            Timber.e(e, "SSL handshake failed");
-        } catch (IOException e) {
-            broadcastFault(defaultError());
-            Timber.e(e, "REST API certificate request failed");
-        } catch (CertificateException e) {
-            broadcastFault(defaultError());
-            Timber.e(e, "Generating certificate failed");
+
+            try {
+                midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class, restSSLConfig, request.getUrl(), intent.getStringArrayListExtra(CERTIFICATE_CERT_BUNDLE));
+            } catch (CertificateException | NoSuchAlgorithmException e) {
+                Timber.e(e, "Invalid SSL handshake");
+                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
+                return;
+            }
+
+            if (isCountryCodeError(request.getPhoneNumber())) {
+                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_COUNTRY_CODE));
+                Timber.d("Invalid country code");
+                return;
+            }
+
+            if (!UUIDUtil.isValid(request.getRelyingPartyUUID())) {
+                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS));
+                Timber.d("%s - Relying Party UUID not in valid format", request.getRelyingPartyUUID());
+                return;
+            }
+
+            Call<MobileCreateSignatureCertificateResponse> call = midRestServiceClient.getCertificate(certificateRequest);
+            try {
+                Response<MobileCreateSignatureCertificateResponse> responseWrapper = call.execute();
+                if (!responseWrapper.isSuccessful()) {
+                    parseErrorAndBroadcast(responseWrapper);
+                } else {
+                    MobileCreateSignatureCertificateResponse response = responseWrapper.body();
+                    if (isResponseError(responseWrapper, response, MobileCreateSignatureCertificateResponse.class)) {
+                        return;
+                    }
+                    containerWrapper = new ContainerWrapper(request.getContainerPath());
+                    String base64Hash = containerWrapper.prepareSignature(getCertificatePem(response.getCert()));
+                    if (base64Hash != null && !base64Hash.isEmpty()) {
+                        broadcastMobileCreateSignatureResponse(base64Hash);
+                        sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
+                        String sessionId = getMobileIdSession(base64Hash, request);
+                        if (sessionId == null) {
+                            return;
+                        }
+                        doCreateSignatureStatusRequestLoop(new GetMobileCreateSignatureSessionStatusRequest(sessionId));
+                    }
+                }
+            } catch (UnknownHostException e) {
+                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE));
+                Timber.e(e, "REST API certificate request failed. Unknown host");
+            } catch (SSLPeerUnverifiedException e) {
+                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
+                Timber.e(e, "SSL handshake failed");
+            } catch (IOException e) {
+                broadcastFault(defaultError());
+                Timber.e(e, "REST API certificate request failed");
+            } catch (CertificateException e) {
+                broadcastFault(defaultError());
+                Timber.e(e, "Generating certificate failed");
+            }
         }
     }
 
