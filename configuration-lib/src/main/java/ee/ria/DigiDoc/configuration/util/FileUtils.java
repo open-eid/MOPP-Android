@@ -10,10 +10,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import ee.ria.DigiDoc.configuration.BuildConfig;
 import timber.log.Timber;
 
 public class FileUtils {
+
+    private static final Logger logger = Logger.getLogger(FileUtils.class.getName());
 
     public static String readFileContent(String filePath) {
         try (FileInputStream fileInputStream = new FileInputStream(filePath)) {
@@ -61,7 +66,7 @@ public class FileUtils {
         File file = new File(filePath);
         boolean isDirsCreated = file.getParentFile().mkdirs();
         if (isDirsCreated) {
-            Timber.d("Directories created for %s", filePath);
+            logMessage(Level.INFO, "Directories created for " + filePath);
         }
         try (FileOutputStream fileStream = new FileOutputStream(file.getAbsoluteFile());
              OutputStreamWriter writer = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8)) {
@@ -75,7 +80,7 @@ public class FileUtils {
         File file = new File(filePath);
         boolean isDirsCreated = file.getParentFile().mkdirs();
         if (isDirsCreated) {
-            Timber.d("Directories created for %s", filePath);
+            logMessage(Level.INFO, "Directories created for " + filePath);
         }
         try (FileOutputStream os = new FileOutputStream(file)) {
             os.write(content);
@@ -89,7 +94,7 @@ public class FileUtils {
         if (!destinationDirectory.exists()) {
             boolean isDirsCreated = destinationDirectory.mkdirs();
             if (isDirsCreated) {
-                Timber.d("Directories created for %s", directory);
+                logMessage(Level.INFO, "Directories created for " + directory);
             }
         }
     }
@@ -103,7 +108,7 @@ public class FileUtils {
         if (fileToDelete.exists()) {
             boolean isFileDeleted = fileToDelete.delete();
             if (isFileDeleted) {
-                Timber.d("File %s deleted", filePath);
+                logMessage(Level.INFO, "File deleted: " + filePath);
             }
         }
     }
@@ -118,6 +123,12 @@ public class FileUtils {
             }
         } catch (IOException e) {
             Timber.e(e, "Failed to open file: %s", fileName);
+        }
+    }
+
+    private static void logMessage(Level level, String message) {
+        if (BuildConfig.DEBUG && logger.isLoggable(level)) {
+            logger.log(level, message);
         }
     }
 }
