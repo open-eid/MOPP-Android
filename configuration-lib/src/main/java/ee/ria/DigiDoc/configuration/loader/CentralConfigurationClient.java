@@ -1,21 +1,21 @@
 package ee.ria.DigiDoc.configuration.loader;
 
 import java.io.IOException;
-import java.security.KeyStore;
 import java.security.SecureRandom;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import okhttp3.internal.tls.OkHostnameVerifier;
 
 class CentralConfigurationClient {
 
@@ -75,28 +75,46 @@ class CentralConfigurationClient {
         }
     }
 
-    private OkHttpClient.Builder constructClientBuilder() {
+    private OkHttpClient.Builder constructClientBuilder() throws IOException {
         return new OkHttpClient.Builder()
-                .hostnameVerifier(OkHostnameVerifier.INSTANCE)
+                .sslSocketFactory(constructSSLSocketFactory(), (X509TrustManager) getTrustManagers()[0])
+                .hostnameVerifier((hostname, session) -> true)
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .callTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
     }
 
-    private SSLSocketFactory constructTrustingSSLSocketFactory(X509Certificate sslCertificate) {
+    private SSLSocketFactory constructSSLSocketFactory() {
         try {
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(null);
-            keyStore.setCertificateEntry("caCert", sslCertificate);
-            trustManagerFactory.init(keyStore);
-
             SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustManagerFactory.getTrustManagers(), new SecureRandom());
+            sslContext.init(null, getTrustManagers(), new SecureRandom());
             return sslContext.getSocketFactory();
         } catch (Exception e) {
             throw new IllegalStateException("Failed to construct SSLSocketFactory", e);
+        }
+    }
+
+    private static TrustManager[] getTrustManagers() throws IOException {
+        try {
+            final TrustManager[] trustManagers = new TrustManager[] {
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {}
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {}
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[0];
+                        }
+                    }
+            };
+
+            return trustManagers;
+        } catch (Exception e) {
+            throw new IOException(e);
         }
     }
 
