@@ -27,7 +27,7 @@ public class FileUtil {
      * @return String with valid characters
      */
     public static String sanitizeString(String input, char replacement) {
-        String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=";
+        String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=@?&";
 
         StringBuilder sb = new StringBuilder(input.length());
 
