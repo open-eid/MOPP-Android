@@ -100,9 +100,10 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL,
                                     NOTIFICATION_CHANNEL + "_NAME", NotificationManager.IMPORTANCE_HIGH);
-                            navigator.activity()
-                                    .getSystemService(NotificationManager.class)
-                                    .createNotificationChannel(channel);
+                            NotificationManager systemService = navigator.activity().getSystemService(NotificationManager.class);
+                            if (systemService != null) {
+                                systemService.createNotificationChannel(channel);
+                            }
                         }
                         NotificationCompat.Builder notification = new NotificationCompat
                                 .Builder(navigator.activity(), NOTIFICATION_CHANNEL)

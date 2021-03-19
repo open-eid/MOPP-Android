@@ -40,6 +40,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -107,7 +108,10 @@ public class MobileSignService extends IntentService {
             }
 
             try {
-                midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class, restSSLConfig, request.getUrl(), intent.getStringArrayListExtra(CERTIFICATE_CERT_BUNDLE));
+                ArrayList<String> certificateCertBundle = intent.getStringArrayListExtra(CERTIFICATE_CERT_BUNDLE);
+                if (certificateCertBundle != null) {
+                    midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class, restSSLConfig, request.getUrl(), certificateCertBundle);
+                }
             } catch (CertificateException | NoSuchAlgorithmException e) {
                 Timber.e(e, "Invalid SSL handshake");
                 broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
@@ -250,11 +254,11 @@ public class MobileSignService extends IntentService {
 
         Call<MobileCreateSignatureSessionResponse> call = midRestServiceClient.getMobileCreateSession(sessionRequest);
 
-        MobileCreateSignatureSessionResponse sessionResponse = new MobileCreateSignatureSessionResponse();
+        MobileCreateSignatureSessionResponse sessionResponse;
 
         Response<MobileCreateSignatureSessionResponse> responseWrapper = call.execute();
         if (!responseWrapper.isSuccessful()) {
-            if (!isResponseError(responseWrapper, null, MobileCreateSignatureSessionResponse.class)) {
+            if (!isResponseError(responseWrapper, responseWrapper.body(), MobileCreateSignatureSessionResponse.class)) {
                 parseErrorAndBroadcast(responseWrapper);
             }
             return null;
@@ -262,7 +266,7 @@ public class MobileSignService extends IntentService {
             sessionResponse = responseWrapper.body();
         }
 
-        return sessionResponse.getSessionID();
+        return sessionResponse != null ? sessionResponse.getSessionID() : null;
     }
 
     private void parseErrorAndBroadcast(Response responseWrapper) {
