@@ -5,29 +5,22 @@
 
 # MOPP-Android
 
-Android application that allows signing containers with ID-card, mobile-ID and Smart-ID.
+Android application that allows signing containers with ID-card, Mobile-ID and Smart-ID.
 
-Check the wiki get an overview of the project.
+# Features
+* Creating ASiC-E containers
+* Signing containers with Mobile-ID, Smart-ID and ID-card
+* Validating ASiC-E, BDOC, ASIC-S and DDOC containers
+* Creating and validating detached XadES
+* Encrypting, decrypting and validating CDOC containers
 
-## Building and developing the project
+## Overview and how to use
+App requirements, container format overview, documentation links and how to use instructions
+[How to use](https://github.com/open-eid/MOPP-Android/wiki/How-to-use)
 
-You can build the project from the command line like any other Android project.
-See [Build your app from the command line](https://developer.android.com/studio/build/building-cmdline).
-
-```
-./gradle clean fetchAndPackageDefaultConfiguration app:assemble
-```
-
-Or import project from Android Studio and run it from there.
-
-> **NOTE**: In order for the build to succeed the Firebase Crashlytics plugin requires google-services.json
-> config file to be present inside "app" folder root
-
-* To validate signatures in offline mode, download latest TSL files:  
-&nbsp;&nbsp; 1. https://ec.europa.eu/tools/lotl/eu-lotl.xml -> Rename file to "eu-lotl.xml"  
-&nbsp;&nbsp; 2. https://sr.riik.ee/tsl/estonian-tsl.xml -> Rename file to "EE.xml"  
-&nbsp;&nbsp; 3. Create an "assets" folder in "app/src/main"  
-&nbsp;&nbsp; 4. Create a folder named "tslFiles" in "assets" and move TSL files there  
+## Building source code with Android Studio
+Installation instructions are available in Wiki: 
+[Building source code with Android Studio](https://github.com/open-eid/MOPP-Android/wiki/Building-source-code-with-Android-Studio)
 
 ## Support
 Official builds are provided through official distribution point [https://www.id.ee/en/article/install-id-software/](https://www.id.ee/en/article/install-id-software/). If you want support, you need to be using official builds. Contact our support via [www.id.ee](http://www.id.ee) for assistance.
