@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Button xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@id/signatureUpdateListDocumentsAddButton"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/material_list_normal_padding_vertical"
-    android:layout_marginEnd="@dimen/material_list_normal_padding_vertical"
-    android:text="@string/signature_update_documents_add_button" />

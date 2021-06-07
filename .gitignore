@@ -46,3 +46,10 @@ captures/
 
 ### Android Patch ###
 gen-external-apklibs
+configuration-lib/src/main/assets/config/
+src/main/assets/config/
+
+## macOS
+**/.DS_Store
+app/google-services.json
+app/src/main/assets/config/*
