@@ -15,8 +15,7 @@ Android application that allows signing containers with ID-card, Mobile-ID and S
 * Encrypting, decrypting and validating CDOC containers
 
 ## Overview and how to use
-App requirements, container format overview, documentation links and how to use instructions
-[How to use](https://github.com/open-eid/MOPP-Android/wiki/How-to-use)
+App requirements, container format overview, documentation links and how to use instructions are available in Wiki: [How to use](https://github.com/open-eid/MOPP-Android/wiki/How-to-use)
 
 ## Building source code with Android Studio
 Installation instructions are available in Wiki: 
