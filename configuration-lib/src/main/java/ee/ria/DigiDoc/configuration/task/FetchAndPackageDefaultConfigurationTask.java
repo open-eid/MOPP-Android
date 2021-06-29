@@ -34,7 +34,7 @@ import ee.ria.DigiDoc.configuration.verify.ConfigurationSignatureVerifier;
  * that can be overridden by arguments to this task.
  *
  * One can pass 2 arguments to this task: central configuration service url and configuration update interval
- * (example: gradle fetchAndPackageDefaultConfiguration --args="https://id.eesti.ee 7")
+ * (example: gradle fetchAndPackageDefaultConfiguration --args="https://id.eesti.ee 4")
  */
 public class FetchAndPackageDefaultConfigurationTask {
 
