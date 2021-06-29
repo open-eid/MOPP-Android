@@ -33,16 +33,14 @@ public final class SmartIdStatusMessages {
             ImmutableMap.<ProcessStatus, Integer>builder()
                     .put(ProcessStatus.OK,
                             R.string.signature_update_mobile_id_status_request_ok)
-                    .put(ProcessStatus.TIMEOUT,
-                            R.string.signature_update_smart_id_status_expired_transaction)
                     .put(ProcessStatus.USER_REFUSED,
                             R.string.signature_update_mobile_id_status_user_cancel)
                     .put(ProcessStatus.DOCUMENT_UNUSABLE,
                             R.string.signature_update_smart_id_status_document_unusable)
                     .put(ProcessStatus.WRONG_VC,
                             R.string.signature_update_smart_id_status_wrong_vc)
-                    .put(ProcessStatus.ACCOUNT_NOT_FOUND,
-                            R.string.signature_update_smart_id_error_message_account_not_found)
+                    .put(ProcessStatus.ACCOUNT_NOT_FOUND_OR_TIMEOUT,
+                            R.string.signature_update_smart_id_error_message_account_not_found_or_timeout)
                     .put(ProcessStatus.SESSION_NOT_FOUND,
                             R.string.signature_update_smart_id_error_message_session_not_found)
                     .put(ProcessStatus.MISSING_SESSIONID,
