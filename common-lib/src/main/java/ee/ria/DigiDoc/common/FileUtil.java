@@ -1,7 +1,12 @@
 package ee.ria.DigiDoc.common;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 public class FileUtil {
 
@@ -27,7 +32,11 @@ public class FileUtil {
      * @return String with valid characters
      */
     public static String sanitizeString(String input, char replacement) {
-        String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=@?&";
+        if (input == null) {
+            return null;
+        }
+
+        String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=@?&()";
 
         StringBuilder sb = new StringBuilder(input.length());
 

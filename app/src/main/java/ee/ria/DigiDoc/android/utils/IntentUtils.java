@@ -16,6 +16,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.SignedContainer;
 
@@ -97,7 +98,7 @@ public final class IntentUtils {
         return Intent
                 .createChooser(new Intent(Intent.ACTION_CREATE_DOCUMENT)
                         .addCategory(Intent.CATEGORY_OPENABLE)
-                        .putExtra(Intent.EXTRA_TITLE, dataFile.name())
+                        .putExtra(Intent.EXTRA_TITLE, FileUtil.sanitizeString(dataFile.name(), '_'))
                         .setType(dataFile.mimeType())
                         .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION), null);
     }
@@ -109,7 +110,7 @@ public final class IntentUtils {
         return Intent
                 .createChooser(new Intent(Intent.ACTION_CREATE_DOCUMENT)
                         .addCategory(Intent.CATEGORY_OPENABLE)
-                        .putExtra(Intent.EXTRA_TITLE, file.getName())
+                        .putExtra(Intent.EXTRA_TITLE, FileUtil.sanitizeString(file.getName(), '_'))
                         .setType(mimeType)
                         .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION), null);
     }

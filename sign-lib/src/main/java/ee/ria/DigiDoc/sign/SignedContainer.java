@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.sign.utils.Function;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
@@ -48,7 +49,7 @@ public abstract class SignedContainer {
     public abstract File file();
 
     public final String name() {
-        return file().getName();
+        return FileUtil.sanitizeString(file().getName(), '_');
     }
 
     public abstract ImmutableList<DataFile> dataFiles();
@@ -115,7 +116,7 @@ public abstract class SignedContainer {
 
     public final File getDataFile(DataFile dataFile, File directory) throws Exception {
         Container container = container(file());
-        File file = new File(directory, dataFile.name());
+        File file = new File(directory, FileUtil.sanitizeString(dataFile.name(), '_'));
         DataFiles dataFiles = container.dataFiles();
         for (int i = 0; i < dataFiles.size(); i++) {
             ee.ria.libdigidocpp.DataFile containerDataFile = dataFiles.get(i);

@@ -29,6 +29,7 @@ import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
@@ -148,8 +149,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         });
 
         nameUpdate = upstream -> upstream.switchMap(action -> {
-            String name = action.name();
-            String newName = action.newName();
+            String name = FileUtil.sanitizeString(action.name(), '_');
+            String newName = FileUtil.sanitizeString(action.newName(), '_');
             if (newName != null) {
                 return Observable
                         .fromCallable(() -> newName)
