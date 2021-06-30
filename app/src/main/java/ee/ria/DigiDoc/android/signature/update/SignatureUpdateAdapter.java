@@ -2,17 +2,18 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringDef;
-import androidx.annotation.StringRes;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.StringDef;
+import androidx.annotation.StringRes;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
@@ -22,6 +23,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.Formatter;
@@ -342,6 +344,8 @@ final class SignatureUpdateAdapter extends
         private final TextView createdAtView;
         private final ImageButton removeButton;
 
+        private final Activity activityContext = (Activity)Activity.getContext().get();
+
         SignatureViewHolder(View itemView) {
             super(itemView);
             formatter = Application.component(itemView.getContext()).formatter();
@@ -391,6 +395,12 @@ final class SignatureUpdateAdapter extends
                     statusCautionView.setVisibility(View.GONE);
                     break;
             }
+
+            if (!activityContext.getSettingsDataStore().getIsDdocParentContainerTimestamped()) {
+                statusCautionView.setVisibility(View.VISIBLE);
+                statusCautionView.setText(R.string.signature_update_signature_status_warning);
+            }
+
             createdAtView.setText(itemView.getResources().getString(
                     R.string.signature_update_signature_created_at,
                     formatter.instant(item.signature().createdAt())));

@@ -132,4 +132,14 @@ public final class SettingsDataStore {
         editor.apply();
     }
 
+    public Boolean getIsDdocParentContainerTimestamped() {
+        return preferences.getBoolean(resources.getString(R.string.is_ddoc_parent_container_timestamped_key), true);
+    }
+
+    public void setIsDdocParentContainerTimestamped(boolean isDdocParentContainerTimestamped) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(resources.getString(R.string.is_ddoc_parent_container_timestamped_key), isDdocParentContainerTimestamped);
+        editor.apply();
+    }
+
 }

@@ -97,4 +97,6 @@
 
     <string name="show_success_notification_key">show_success_notification</string>
 
+    <string name="is_ddoc_parent_container_timestamped_key">is_ddoc_parent_container_timestamped</string>
+
 </resources>
