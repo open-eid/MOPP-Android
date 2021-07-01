@@ -109,6 +109,7 @@ public final class SignLib {
         overrideTSLCert(configurationProvider.getTslCerts());
         overrideSignatureValidationServiceUrl(configurationProvider.getSivaUrl());
         overrideOCSPUrls(configurationProvider.getOCSPUrls());
+        overrideVerifyServiceCert(configurationProvider.getCertBundle());
         initTsaUrl(context, tsaUrlPreferenceKey, configurationProvider.getTsaUrl());
     }
 
@@ -124,6 +125,12 @@ public final class SignLib {
         DigiDocConf.instance().setTSLCert(new byte[0]); // Clear existing TSL certificates list
         for (String tslCert : tslCerts) {
             DigiDocConf.instance().addTSLCert(Base64.decode(tslCert));
+        }
+    }
+
+    private static void overrideVerifyServiceCert(List<String> certBundle) {
+        for (String cert : certBundle) {
+            DigiDocConf.instance().addVerifyServiceCert(Base64.decode(cert));
         }
     }
 
