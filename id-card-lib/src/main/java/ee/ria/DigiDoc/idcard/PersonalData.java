@@ -4,7 +4,7 @@ import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
-import org.threeten.bp.LocalDate;
+import java.time.LocalDate;
 
 /**
  * Personal data file contents.

@@ -32,7 +32,6 @@ import android.os.StrictMode;
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
-import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -101,7 +100,6 @@ public class Application extends android.app.Application {
         super.onCreate();
         setupBouncyCastle();
         setupTimber();
-        setupThreeTenAbp();
         setupConfiguration();
         setupRxJava();
         setupDagger();
@@ -185,12 +183,6 @@ public class Application extends android.app.Application {
             Timber.plant(new FileLoggingTree(getApplicationContext()));
         }
         // TODO error reporting
-    }
-
-    // ThreeTenAbp
-
-    private void setupThreeTenAbp() {
-        AndroidThreeTen.init(this);
     }
 
     // Container configuration

@@ -22,9 +22,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 
-import org.threeten.bp.Instant;
-
 import java.io.File;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneOffset;
@@ -179,11 +178,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     }
 
     private void checkIfDdocParentContainerIsTimestamped(ImmutableList<Signature> signatures) {
-        LocalDateTime localDateTime = LocalDateTime.of(2018, Month.JULY, 1, 0, 0, 0);
-        Instant dateTimeInstant = Instant.ofEpochSecond(localDateTime.toEpochSecond(ZoneOffset.UTC));
         if (!isNestedContainer && Files.getFileExtension(containerFile.getName()).equalsIgnoreCase("asics") &&
                 dataFiles.size() == 1 && signatures.size() == 1 &&
                 Files.getFileExtension(dataFiles.get(0).name()).equalsIgnoreCase("ddoc")) {
+            LocalDateTime localDateTime = LocalDateTime.of(2018, Month.JULY, 1, 0, 0, 0);
+            Instant dateTimeInstant = Instant.ofEpochSecond(localDateTime.toEpochSecond(ZoneOffset.UTC));
             activity.getSettingsDataStore().setIsDdocParentContainerTimestamped(
                     !signatures.get(0).createdAt().isAfter(dateTimeInstant));
             return;

@@ -32,8 +32,6 @@ dependencies {
 
     api "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
 
-    api "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
-
     api files('libs/libdigidocpp.jar')
 
     testImplementation "junit:junit:${junitVersion}"

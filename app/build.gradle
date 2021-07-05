@@ -37,7 +37,6 @@ android {
         buildConfigField 'String', 'TELECOM_CHARSETS_VERSION', "\"$telecomcharsetsVersion\""
         buildConfigField 'String', 'AUTO_VALUE_VERSION', "\"$autoValueVersion\""
         buildConfigField 'String', 'AUTO_VALUE_PARCEL_VERSION', "\"$autoValueParcelVersion\""
-        buildConfigField 'String', 'THREE_TEN_ABP_VERSION', "\"$threetenabpVersion\""
         buildConfigField 'String', 'EXPANDABLE_LAYOUT_VERSION', "\"$expandablelayoutVersion\""
         buildConfigField 'String', 'LDAP_SDK_VERSION', "\"$ldapSdkVersion\""
         buildConfigField 'String', 'CDOC4J_VERSION', "\"$cdoc4jVersion\""
@@ -140,8 +139,6 @@ dependencies {
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
     annotationProcessor "com.ryanharter.auto.value:auto-value-parcel:${autoValueParcelVersion}"
     implementation "com.ryanharter.auto.value:auto-value-parcel-adapter:${autoValueParcelVersion}"
-
-    implementation "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
 
     implementation "net.cachapa.expandablelayout:expandablelayout:${expandablelayoutVersion}"
 
