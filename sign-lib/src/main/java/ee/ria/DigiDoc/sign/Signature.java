@@ -2,7 +2,7 @@ package ee.ria.DigiDoc.sign;
 
 import com.google.auto.value.AutoValue;
 
-import org.threeten.bp.Instant;
+import java.time.Instant;
 
 @AutoValue
 public abstract class Signature {

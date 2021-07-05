@@ -5,10 +5,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Parcelable;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
@@ -17,11 +13,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 
 import java.io.File;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneOffset;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
@@ -31,12 +36,12 @@ import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
+import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
-import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
 import ee.ria.DigiDoc.android.utils.widget.NotificationDialog;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
@@ -92,6 +97,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final Navigator navigator;
     private final SignatureUpdateViewModel viewModel;
     private final ViewDisposables disposables = new ViewDisposables();
+
+    private final Activity activity = (Activity) getContext();
 
     private final Subject<Intent.DocumentsAddIntent> documentsAddIntentSubject =
             PublishSubject.create();
@@ -170,6 +177,21 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 signatureAddIntent(), sendIntent());
     }
 
+    private void checkIfDdocParentContainerIsTimestamped(ImmutableList<Signature> signatures) {
+        if (!isNestedContainer && Files.getFileExtension(containerFile.getName()).equalsIgnoreCase("asics") &&
+                dataFiles.size() == 1 && signatures.size() == 1 &&
+                Files.getFileExtension(dataFiles.get(0).name()).equalsIgnoreCase("ddoc")) {
+            LocalDateTime localDateTime = LocalDateTime.of(2018, Month.JULY, 1, 0, 0, 0);
+            Instant dateTimeInstant = Instant.ofEpochSecond(localDateTime.toEpochSecond(ZoneOffset.UTC));
+            activity.getSettingsDataStore().setIsDdocParentContainerTimestamped(
+                    !signatures.get(0).createdAt().isAfter(dateTimeInstant));
+            return;
+        }
+
+        activity.getSettingsDataStore().setIsDdocParentContainerTimestamped(
+                !Files.getFileExtension(containerFile.getName()).equalsIgnoreCase("ddoc") && !isNestedContainer);
+    }
+
     @Override
     public void render(ViewState state) {
         if (state.containerLoadError() != null) {
@@ -202,6 +224,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 signatureAddButton.setVisibility(GONE);
             } else {
                 signatureAddButton.setVisibility(VISIBLE);
+            }
+
+            if (state.container() != null) {
+                checkIfDdocParentContainerIsTimestamped(state.container().signatures());
             }
         }
 

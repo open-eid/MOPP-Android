@@ -136,11 +136,6 @@ final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     R.string.main_about_apache_2_license_title,
                     R.string.main_about_apache_2_license_url))
             .add(Component.create(
-                    R.string.main_about_threetenabp_title,
-                    BuildConfig.THREE_TEN_ABP_VERSION,
-                    R.string.main_about_apache_2_license_title,
-                    R.string.main_about_apache_2_license_url))
-            .add(Component.create(
                     R.string.main_about_expandable_layout_title,
                     BuildConfig.EXPANDABLE_LAYOUT_VERSION,
                     R.string.main_about_apache_2_license_title,
