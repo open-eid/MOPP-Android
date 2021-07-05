@@ -26,6 +26,7 @@ import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.NoInternetConnectionException;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
@@ -237,7 +238,7 @@ final class CryptoCreateAdapter extends
 
         @Override
         void bind(CryptoCreateAdapter adapter, NameItem item) {
-            nameView.setText(item.name());
+            nameView.setText(FileUtil.sanitizeString(item.name(), '_'));
             updateButton.setVisibility(item.updateButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
         }
@@ -317,7 +318,7 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((DataFileItem) adapter.items.get(getAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileClicksSubject);
-            nameView.setText(item.dataFile().getName());
+            nameView.setText(FileUtil.sanitizeString(item.dataFile().getName(), '_'));
             String fileNameDescription = nameView.getResources().getString(R.string.file);
             nameView.setContentDescription(fileNameDescription + " " + nameView.getText());
 

@@ -25,6 +25,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignatureStatus;
@@ -58,7 +59,7 @@ final class SignatureUpdateAdapter extends
     void setData(boolean isSuccess, boolean isExistingContainer, boolean isNestedContainer,
                  @Nullable SignedContainer container) {
         boolean signaturesValid = container == null || container.signaturesValid();
-        String name = container == null ? null : container.name();
+        String name = container == null ? null : FileUtil.sanitizeString(container.name(), '_');
 
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (isSuccess) {
@@ -247,9 +248,9 @@ final class SignatureUpdateAdapter extends
         @Override
         void bind(SignatureUpdateAdapter adapter, NameItem item) {
             if (item.name().startsWith(".")) {
-                nameView.setText("newFile" + item.name());
+                nameView.setText("newFile" + FileUtil.sanitizeString(item.name(), '_'));
             } else {
-                nameView.setText(item.name());
+                nameView.setText(FileUtil.sanitizeString(item.name(), '_'));
             }
             updateButton.setVisibility(item.updateButtonVisible() && !isContainerSigned(adapter) ? View.VISIBLE : View.GONE);
             clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
@@ -309,7 +310,7 @@ final class SignatureUpdateAdapter extends
             clicks(itemView).map(ignored ->
                     ((DocumentItem) adapter.getItem(getAdapterPosition())).document())
                     .subscribe(adapter.documentClicksSubject);
-            nameView.setText(item.document().name());
+            nameView.setText(FileUtil.sanitizeString(item.document().name(), '_'));
             String fileNameDescription = nameView.getResources().getString(R.string.file);
             nameView.setContentDescription(fileNameDescription + " " + nameView.getText());
 

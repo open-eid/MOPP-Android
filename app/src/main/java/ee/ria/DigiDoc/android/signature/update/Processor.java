@@ -28,6 +28,7 @@ import ee.ria.DigiDoc.android.utils.files.FileAlreadyExistsException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.sign.SignatureStatus;
 import ee.ria.DigiDoc.sign.SignedContainer;
@@ -380,7 +381,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
     }
 
     private String assignName(Intent.NameUpdateIntent action, File containerFile) {
-        String name = action.name();
+        String name = FileUtil.sanitizeString(action.name(), '_');
         if (name != null && !name.isEmpty()) {
             return addContainerExtension(containerFile, name);
         }

@@ -150,7 +150,7 @@ public final class FileSystem {
 
     private static File increaseCounterIfExists(File file) {
         File directory = file.getParentFile();
-        String fileName = file.getName();
+        String fileName = FileUtil.sanitizeString(file.getName(), '_');
         String name = Files.getNameWithoutExtension(fileName);
         String ext = Files.getFileExtension(fileName);
         int i = 1;

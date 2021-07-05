@@ -35,6 +35,7 @@ import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.android.utils.widget.NotificationDialog;
 import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientsEmptyException;
 import io.reactivex.Observable;
@@ -233,7 +234,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
             containerFile = state.containerFile();
         }
 
-        name = state.newName() != null ? state.newName() : state.name();
+        name = state.newName() != null ? FileUtil.sanitizeString(state.newName(), '_') : FileUtil.sanitizeString(state.name(), '_');
         dataFiles = state.dataFiles();
         recipients = state.recipients();
         dataFilesAddError = state.dataFilesAddError();
@@ -243,7 +244,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         setActivity(state.dataFilesAddState().equals(State.ACTIVE) ||
                 state.encryptState().equals(State.ACTIVE));
 
-        nameUpdateDialog.render(state.nameUpdateShowing(), state.name(), state.nameUpdateError());
+        nameUpdateDialog.render(state.nameUpdateShowing(), FileUtil.sanitizeString(state.name(), '_'), state.nameUpdateError());
 
         int titleResId = state.encryptButtonVisible() ? R.string.crypto_create_title_encrypt
                 : R.string.crypto_create_title_decrypt;
