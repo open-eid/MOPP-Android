@@ -335,8 +335,6 @@ public abstract class SignedContainer {
             return SignatureStatus.NON_QSCD;
         } else if (status == Validator.Status.Invalid.swigValue()) {
             return SignatureStatus.INVALID;
-        } else if (status == Validator.Status.Test.swigValue()) {
-            return SignatureStatus.TEST;
         } else {
             return SignatureStatus.UNKNOWN;
         }
