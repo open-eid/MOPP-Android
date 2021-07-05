@@ -59,12 +59,11 @@ public class SessionStatusResponse {
 
     public enum ProcessStatus {
         OK,
-        TIMEOUT,
         USER_REFUSED,
         DOCUMENT_UNUSABLE,
         WRONG_VC,
 
-        ACCOUNT_NOT_FOUND,
+        ACCOUNT_NOT_FOUND_OR_TIMEOUT,
         SESSION_NOT_FOUND,
         MISSING_SESSIONID,
         EXCEEDED_UNSUCCESSFUL_REQUESTS,

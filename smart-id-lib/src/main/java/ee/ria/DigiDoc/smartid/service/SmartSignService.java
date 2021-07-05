@@ -57,7 +57,7 @@ public class SmartSignService extends IntentService {
 
     private static final long INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 1000;
     private static final long SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 5 * 1000;
-    private static final long TIMEOUT_CANCEL = 120 * 1000;
+    private static final long TIMEOUT_CANCEL = 80 * 1000;
 
     private SIDRestServiceClient SIDRestServiceClient;
 
@@ -192,7 +192,7 @@ public class SmartSignService extends IntentService {
                 }
                 timeout += SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS;
             }
-            broadcastFault(SessionStatusResponse.ProcessStatus.TIMEOUT);
+            broadcastFault(SessionStatusResponse.ProcessStatus.ACCOUNT_NOT_FOUND_OR_TIMEOUT);
             Timber.d("Request timeout");
         } catch (UnknownHostException e) {
             broadcastFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE);
@@ -271,7 +271,7 @@ public class SmartSignService extends IntentService {
                 case 404:
                     broadcastFault(httpResponse.body() instanceof SessionResponse ?
                             SessionStatusResponse.ProcessStatus.SESSION_NOT_FOUND :
-                            SessionStatusResponse.ProcessStatus.ACCOUNT_NOT_FOUND);
+                            SessionStatusResponse.ProcessStatus.ACCOUNT_NOT_FOUND_OR_TIMEOUT);
                     Timber.d("Account/session not found");
                     break;
                 case 409:

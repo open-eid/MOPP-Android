@@ -193,13 +193,12 @@
     <string name="signature_update_smart_id_country">Страна</string>
     <string name="signature_update_smart_id_info">Убедитесь в правильности контрольного кодa и введите PIN2-код для Smart-ID</string>
     <string name="signature_update_smart_id_select_device">Для проставления подписи подтвердите устройство в приложении Smart-ID.</string>
-    <string name="signature_update_smart_id_status_expired_transaction">Срок действия вашей транзакции Smart-ID истек. Пожалуйста, попробуйте еще раз.</string>
     <string name="signature_update_smart_id_status_document_unusable">Не удалось выполнить операцию Smart-ID. Пожалуйста, проверьте приложение Smart-ID или свяжитесь со службой поддержки Smart-ID.</string>
     <string name="signature_update_smart_id_status_wrong_vc">Ошибка: выбран неправильный контрольный код</string>
     <string name="signature_update_smart_id_error_message_not_qualified">Для проставления подписи в мобильном приложении RIA DigiDoc, ваш Smart-ID должен соответствовать уровню "высокий".</string>
     <string name="signature_update_smart_id_error_message_old_api">Мобильное приложение RIA DigiDoc нуждается в обновлении. Пожалуйста, установите новую версию из магазина мобильных приложений. Дополнительную информацию можно получить по телефону (+372) 666 888</string>
     <string name="signature_update_smart_id_error_message_under_maintenance">Технический сбой услуги Smart-ID. Пожалуйста, попробуйте позже.</string>
-    <string name="signature_update_smart_id_error_message_account_not_found">Счет не найден</string>
+    <string name="signature_update_smart_id_error_message_account_not_found_or_timeout">Не удалось подписать контейнер. Срок действия вашей операции Smart-ID истек или учетная запись не найдена</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Сессия не найден</string>
     <string name="signature_update_smart_id_error_message_access_rights">Не удалось подписать контейнер. Проверьте настройки доступа услуги Smart-ID. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
 
