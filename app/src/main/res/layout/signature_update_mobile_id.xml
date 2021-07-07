@@ -23,8 +23,6 @@
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
             android:text="@string/signature_update_mobile_id_phone_no"
-            android:importantForAccessibility="1"
-            android:accessibilityTraversalBefore="@id/signatureUpdateMobileIdPhoneNoLabel"
             android:paddingTop="1px"/>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -33,9 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginTop="-10dp"
-            android:importantForAccessibility="1"
-            android:minHeight="@dimen/material_baseline_grid_6x"
-            android:accessibilityTraversalAfter="@id/signatureUpdateMobileIdPhoneNoText">
+            android:minHeight="@dimen/material_baseline_grid_6x">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@id/signatureUpdateMobileIdPhoneNo"
@@ -43,8 +39,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="phone"
                 android:digits="0123456789"
-                android:minHeight="@dimen/material_baseline_grid_6x"
-                android:importantForAccessibility="1" />
+                android:accessibilityTraversalAfter="@id/signatureUpdateMobileIdPhoneNoText"
+                android:minHeight="@dimen/material_baseline_grid_6x" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -55,11 +51,7 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
-
-            android:text="@string/signature_update_mobile_id_personal_code"
-            android:importantForAccessibility="1"
-            android:accessibilityTraversalAfter="@id/signatureUpdateMobileIdPhoneNoLabel"
-            android:accessibilityTraversalBefore="@id/signatureUpdateMobileIdPersonalCodeLabel" />
+            android:text="@string/signature_update_mobile_id_personal_code" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateMobileIdPersonalCodeLabel"
@@ -67,8 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginTop="-10dp"
-            android:minHeight="@dimen/material_baseline_grid_6x"
-            android:importantForAccessibility="1">
+            android:minHeight="@dimen/material_baseline_grid_6x">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@id/signatureUpdateMobileIdPersonalCode"
@@ -76,8 +67,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:maxLength="11"
-                android:minHeight="@dimen/material_baseline_grid_6x"
-                android:importantForAccessibility="1"/>
+                android:accessibilityTraversalAfter="@id/signatureUpdateMobileIdPersonalCodeText"
+                android:minHeight="@dimen/material_baseline_grid_6x" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

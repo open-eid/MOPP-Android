@@ -21,7 +21,6 @@
 package ee.ria.DigiDoc.android.signature.update.smartid;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 import android.text.InputFilter;
 import android.util.AttributeSet;
 import android.view.View;
@@ -31,7 +30,10 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
+
+import androidx.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +42,6 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
-import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -111,7 +112,7 @@ public final class SmartIdView extends LinearLayout implements
     }
 
     @Override
-    public void response(@Nullable SmartIdResponse response) {
+    public void response(@Nullable SmartIdResponse response, @Nullable RadioGroup methodView) {
     }
 
     public Observable<Object> positiveButtonState() {

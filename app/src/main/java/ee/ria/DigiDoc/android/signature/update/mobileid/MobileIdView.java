@@ -1,20 +1,19 @@
 package ee.ria.DigiDoc.android.signature.update.mobileid;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.accessibility.AccessibilityEvent;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
-import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -49,12 +48,6 @@ public final class MobileIdView extends LinearLayout implements
         phoneNoView = findViewById(R.id.signatureUpdateMobileIdPhoneNo);
         personalCodeView = findViewById(R.id.signatureUpdateMobileIdPersonalCode);
         rememberMeView = findViewById(R.id.signatureUpdateMobileIdRememberMe);
-
-        setOnSystemUiVisibilityChangeListener(visibility -> {
-            if (visibility == VISIBLE) {
-                AccessibilityUtils.sendAccessibilityEvent(getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.signature_update_mobile_id_message);
-            }
-        });
     }
 
     @Override
@@ -71,7 +64,7 @@ public final class MobileIdView extends LinearLayout implements
     }
 
     @Override
-    public void response(@Nullable MobileIdResponse response) {
+    public void response(@Nullable MobileIdResponse response, @Nullable RadioGroup methodView) {
     }
 
     public void setDefaultPhoneNoPrefix(String phoneNoPrefix) {

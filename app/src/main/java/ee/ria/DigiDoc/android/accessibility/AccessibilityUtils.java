@@ -2,22 +2,33 @@ package ee.ria.DigiDoc.android.accessibility;
 
 import android.content.Context;
 import android.os.Build;
-import androidx.annotation.StringRes;
-import androidx.core.view.AccessibilityDelegateCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 
+import androidx.annotation.StringRes;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+
+import ee.ria.DigiDoc.android.Activity;
+
+import static android.content.Context.ACCESSIBILITY_SERVICE;
+
 public class AccessibilityUtils {
+
+    public static boolean isAccessibilityEnabled() {
+        Activity activity = (Activity) Activity.getContext().get();
+        AccessibilityManager accessibilityManager = (AccessibilityManager) activity.getSystemService(ACCESSIBILITY_SERVICE);
+        return accessibilityManager.isEnabled();
+    }
 
     public static void sendAccessibilityEvent(Context context, int eventType, @StringRes int messageResId) {
         sendAccessibilityEvent(context, eventType, context.getString(messageResId));
     }
 
     public static void sendAccessibilityEvent(Context context, int eventType, CharSequence message) {
-        AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
+        AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(ACCESSIBILITY_SERVICE);
         if (accessibilityManager.isEnabled()) {
             AccessibilityEvent event = AccessibilityEvent.obtain();
             event.setEventType(eventType);
@@ -27,7 +38,7 @@ public class AccessibilityUtils {
     }
 
     public static void sendAccessibilityEvent(Context context, int eventType, CharSequence... messages) {
-        AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
+        AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(ACCESSIBILITY_SERVICE);
         if (accessibilityManager.isEnabled()) {
             AccessibilityEvent event = AccessibilityEvent.obtain();
             event.setEventType(eventType);
@@ -37,7 +48,7 @@ public class AccessibilityUtils {
     }
 
     public static void sendDelayedAccessibilityEvent(Context context, int eventType, CharSequence message) {
-        AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
+        AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(ACCESSIBILITY_SERVICE);
         if (accessibilityManager.isEnabled()) {
             AccessibilityEvent event = AccessibilityEvent.obtain();
             event.setEventType(eventType);

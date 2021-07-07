@@ -136,9 +136,9 @@
 
     <string name="signature_update_signature_error_invalid_ssl_handshake">Не удалось создать SSL канал передачи данных. Проверьте настройки вашего приложения или обновления программного обеспечения.</string>
 
-    <string name="signature_update_signature_selected_method_mobile_id">Выбранный метод подписи – Mobiil-ID, вкладка %1$d из %2$d</string>
-    <string name="signature_update_signature_selected_method_smart_id">Выбранный метод подписи – Smart-ID, вкладка %1$d из %2$d</string>
-    <string name="signature_update_signature_selected_method_id_card">Выбранный метод подписи – ID-карта, вкладка %1$d из %2$d</string>
+    <string name="signature_update_signature_selected_method_mobile_id">Метод подписи – Mobiil-ID, вкладка %1$d из %2$d</string>
+    <string name="signature_update_signature_selected_method_smart_id">Метод подписи – Smart-ID, вкладка %1$d из %2$d</string>
+    <string name="signature_update_signature_selected_method_id_card">Метод подписи – ID-карта, вкладка %1$d из %2$d</string>
 
     <string name="signature_update_signature_chosen_method_mobile_id">Выбран метод подписи Mobiil-ID</string>
     <string name="signature_update_signature_chosen_method_smart_id">Выбран метод подписи Smart-ID</string>
