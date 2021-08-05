@@ -33,6 +33,7 @@ public final class SignLib {
      * Sub-directory name in {@link Context#getCacheDir() cache dir} for schema.
      */
     private static final String SCHEMA_DIR = "schema";
+    private static final int LIBDIGIDOCPP_LOG_LEVEL = 4; // Debug messages
 
     private static SharedPreferences.OnSharedPreferenceChangeListener tsaUrlChangeListener;
 
@@ -107,7 +108,7 @@ public final class SignLib {
                 Timber.d("Directories created for %s", logDirectory.getPath());
             }
         }
-        DigiDocConf.instance().setLogLevel(4);
+        DigiDocConf.instance().setLogLevel(LIBDIGIDOCPP_LOG_LEVEL);
         DigiDocConf.instance().setLogFile(logDirectory.getAbsolutePath() + File.separator + "libdigidocpp.log");
     }
 
