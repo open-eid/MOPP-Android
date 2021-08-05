@@ -97,12 +97,26 @@ public final class SignLib {
 
         initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider);
         digidoc.initializeLib(userAgent, path);
+    }
 
+    private static void initLibDigiDocLogging(Context context) {
+        final File logDirectory = new File(context.getFilesDir() + "/logs");
+        if (!logDirectory.exists()) {
+            boolean isDirCreated = logDirectory.mkdir();
+            if (isDirCreated) {
+                Timber.d("Directories created for %s", logDirectory.getPath());
+            }
+        }
+        DigiDocConf.instance().setLogLevel(4);
+        DigiDocConf.instance().setLogFile(logDirectory.getAbsolutePath() + File.separator + "libdigidocpp.log");
     }
 
     private static void initLibDigiDocConfiguration(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider) {
         DigiDocConf conf = new DigiDocConf(getSchemaDir(context).getAbsolutePath());
         Conf.init(conf.transfer());
+        if (BuildConfig.BUILD_TYPE.contentEquals("debug")) {
+            initLibDigiDocLogging(context);
+        }
 
         forcePKCS12Certificate();
         overrideTSLUrl(configurationProvider.getTslUrl());
