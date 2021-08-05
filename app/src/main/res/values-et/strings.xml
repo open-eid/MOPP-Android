@@ -37,7 +37,7 @@
     <string name="main_about_title">Info</string>
     <string name="main_about_ria_digidoc_version_title">RIA DigiDoc versioon %1$s</string>
     <string name="main_about_software_developed_by_title">Eesti ID-tarkvara on välja antud Riigi Infosüsteemi Ameti poolt</string>
-    <string name="main_about_contact_information_title">Küsimuste korral pöörduge id.ee.</string>
+    <string name="main_about_contact_information_title">Küsimuste korral pöördu id.ee.</string>
     <string name="main_about_licenses_title">Täiendavad litsentsid ja komponendid</string>
     <string name="main_about_terms_and_conditions">Kasutustingimused:</string>
 
@@ -131,7 +131,7 @@
 
     <string name="signature_update_signature_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Päringu saatmine ebaõnnestus. Sellelt IP-aadressilt on ebaõnnestunud päringute arv ületatud. Palun proovige mõne aja pärast uuesti.</string>
-    <string name="signature_update_signature_error_message_invalid_time_slot">Palun kontrollige oma nutiseadme kellaaega. https://www.id.ee/artikkel/ria-digidoc-viga-palun-kontrollige-oma-nutiseadme-kellaaega/</string>
+    <string name="signature_update_signature_error_message_invalid_time_slot">Palun kontrolli oma nutiseadme kellaaega. https://www.id.ee/artikkel/ria-digidoc-viga-palun-kontrollige-oma-nutiseadme-kellaaega/</string>
     <string name="signature_update_signature_error_message_certificate_revoked">Sertifikaat on kehtetu</string>
 
     <string name="signature_update_signature_error_invalid_ssl_handshake">SSL ühenduskanali loomine ebaõnnestus. Kontrolli rakenduse seadeid või tarkvara uuendusi</string>
@@ -140,7 +140,7 @@
     <string name="signature_update_signature_selected_method_smart_id">Valitud allkirjastamise viisiks on Smart-ID, vahekaart %1$d / %2$d</string>
     <string name="signature_update_signature_selected_method_id_card">Valitud allkirjastamise viisiks on ID-kaart, vahekaart %1$d / %2$d</string>
 
-    <string name="signature_update_signature_chosen_method_mobile_id">Allkirjastamisviis Mobiil-ID on valitud</string>
+    <string name="signature_update_signature_chosen_method_mobile_id">Allkirjastamisviis mobiil-ID on valitud</string>
     <string name="signature_update_signature_chosen_method_smart_id">Smart-ID allkirjastamise vahend valitud</string>
     <string name="signature_update_signature_chosen_method_id_card">ID-kaart allkirjastamise vahend valitud</string>
 
@@ -251,7 +251,7 @@
 
     <string name="crypto_recipients_title">Adressaatide lisamine</string>
     <string name="crypto_recipients_search">Sisesta isikukood, asutus või registrikood</string>
-    <string name="crypto_recipients_search_result_empty">Isikul või asutusel puudub kehtiv sertifikaat. \nKrüpteerimiseks on vaja kehtivat sertikaati.\nKüsimuste korral pöörduge id.ee.</string>
+    <string name="crypto_recipients_search_result_empty">Isikul või asutusel puudub kehtiv sertifikaat. \nKrüpteerimiseks on vaja kehtivat sertikaati.\nKüsimuste korral pöördu id.ee.</string>
     <string name="crypto_recipients_selected_subhead">Lisatud adressaadid</string>
     <string name="crypto_recipients_done_button">KINNITA</string>
 
@@ -307,7 +307,7 @@
     <string name="eid_type_id_card">ID-KAART</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
     <string name="eid_type_mobile_id">MOBIIL-ID</string>
-    <string name="eid_type_e_seal">e-Tempel</string>
+    <string name="eid_type_e_seal">Krüpteerimissertifikaat</string>
     <string name="eid_type_unknown">TEADMATA</string>
 
     <string name="eid_home_code_update_title_pin1_edit">PIN1-koodi vahetus</string>
