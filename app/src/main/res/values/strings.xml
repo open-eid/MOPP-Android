@@ -306,7 +306,7 @@
     <string name="eid_type_id_card">ID-CARD</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
     <string name="eid_type_mobile_id">MOBILE-ID</string>
-    <string name="eid_type_e_seal">e-Seal</string>
+    <string name="eid_type_e_seal">Certificate for Encryption</string>
     <string name="eid_type_unknown">UNKNOWN</string>
 
     <string name="eid_home_code_update_title_pin1_edit">Change PIN1</string>

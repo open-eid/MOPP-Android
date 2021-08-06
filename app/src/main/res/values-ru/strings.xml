@@ -308,7 +308,7 @@
     <string name="eid_type_id_card">ID-КАРТА</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
     <string name="eid_type_mobile_id">MOBIIL-ID</string>
-    <string name="eid_type_e_seal">e-Печать</string>
+    <string name="eid_type_e_seal">Сертификат шифрования</string>
     <string name="eid_type_unknown">НЕИЗВЕСТНО</string>
 
     <string name="eid_home_code_update_title_pin1_edit">Изменить PIN1</string>
