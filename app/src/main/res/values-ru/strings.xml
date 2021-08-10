@@ -105,7 +105,6 @@
     <string name="signature_update_signature_status_valid">Подпись действительна</string>
     <string name="signature_update_signature_status_warning">(Предупреждения)</string>
     <string name="signature_update_signature_status_non_qscd">(Ограничения)</string>
-    <string name="signature_update_signature_status_test">(Пробная подпись)</string>
     <string name="signature_update_signature_status_invalid">Подпись недействительна</string>
     <string name="signature_update_signature_status_unknown">Подпись неизвестная</string>
     <string name="signature_update_signature_created_at">Подписано %1$s</string>
