@@ -1,8 +1,11 @@
 package ee.ria.DigiDoc.android.utils.files;
 
+import static ee.ria.DigiDoc.android.Constants.DIR_SIGNATURE_CONTAINERS;
+
 import android.app.Application;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
@@ -13,15 +16,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import timber.log.Timber;
-
-import static ee.ria.DigiDoc.android.Constants.DIR_SIGNATURE_CONTAINERS;
 
 public final class FileSystem {
 
@@ -122,6 +126,76 @@ public final class FileSystem {
             directory = createDataFileDirectory(containerFile.getParentFile(), containerFile);
         }
         return directory;
+    }
+
+    /**
+     * Check if byte stream has invalid size in list.
+     *
+     * @param fileStreams List of file streams.
+     * @return Boolean if file has invalid file size in list or not.
+     */
+    public static boolean isEmptyFileInList(ImmutableList<FileStream> fileStreams) {
+        List<ByteSource> byteSources = fileStreamListToByteSource(fileStreams);
+        for (ByteSource byteSource : byteSources) {
+            try {
+                if (byteSource.size() == 0) {
+                    return true;
+                }
+            } catch (IOException e) {
+                Timber.e(e, "Invalid file size");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Convert FileStream list to ByteSource list.
+     *
+     * @param fileStreams List of file streams.
+     * @return List of ByteSource's.
+     */
+    public static List<ByteSource> fileStreamListToByteSource(ImmutableList<FileStream> fileStreams) {
+        List<ByteSource> byteSourceList = new ArrayList<>();
+        fileStreams.forEach(fileStream -> byteSourceList.add(fileStream.source()));
+        return byteSourceList;
+    }
+
+    /**
+     * Check that file sizes are valid.
+     *
+     * @param fileStreams List of file streams.
+     * @throws IOException if unable to get file size.
+     */
+     public static ImmutableList<FileStream> getFilesWithValidSize(ImmutableList<FileStream> fileStreams) throws IOException {
+         List<FileStream> validFileStreams = new ArrayList<>();
+         for (FileStream fileStream : fileStreams) {
+             if (fileStream.source().size() > 0) {
+                 validFileStreams.add(fileStream);
+             }
+         }
+
+         return ImmutableList.copyOf(validFileStreams);
+     }
+
+    /**
+     * Check if container has empty files.
+     *
+     * @param containerFile Container file.
+     * @return Boolean if container has empty file or not.
+     */
+    public static boolean isEmptyDataFileInContainer(File containerFile) {
+         if (SignedContainer.isContainer(containerFile)) {
+             try {
+                 SignedContainer signedContainer = SignedContainer.open(containerFile);
+                 return signedContainer.hasEmptyFiles();
+             } catch (Exception e) {
+                 Timber.e(e, "Unable to check files in container");
+                 return false;
+             }
+         }
+         return false;
     }
 
     private File cacheDir() {

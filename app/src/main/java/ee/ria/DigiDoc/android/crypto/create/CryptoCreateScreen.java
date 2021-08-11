@@ -1,20 +1,29 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
+import static ee.ria.DigiDoc.android.utils.BundleUtils.putFile;
+import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
+import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
+import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bluelinelabs.conductor.Controller;
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
@@ -26,8 +35,9 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
-import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
+import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
@@ -41,15 +51,6 @@ import ee.ria.DigiDoc.crypto.RecipientsEmptyException;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
-
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
-import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
-import static ee.ria.DigiDoc.android.utils.BundleUtils.putFile;
-import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
-import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
-import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 public final class CryptoCreateScreen extends Controller implements Screen,
         MviView<Intent, ViewState> {
@@ -316,8 +317,13 @@ public final class CryptoCreateScreen extends Controller implements Screen,
             }
             errorDialog.show();
         } else if (dataFilesAddError != null) {
-            errorDialog.setMessage(errorDialog.getContext().getString(
-                    R.string.crypto_create_data_files_add_error_exists));
+            if (dataFilesAddError instanceof EmptyFileException) {
+                errorDialog.setMessage(errorDialog.getContext().getString(
+                        R.string.empty_file_error));
+            } else {
+                errorDialog.setMessage(errorDialog.getContext().getString(
+                        R.string.crypto_create_data_files_add_error_exists));
+            }
             errorDialog.show();
         } else {
             errorDialog.dismiss();

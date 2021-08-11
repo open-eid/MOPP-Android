@@ -61,6 +61,7 @@ final class SignatureUpdateAdapter extends
     void setData(boolean isSuccess, boolean isExistingContainer, boolean isNestedContainer,
                  @Nullable SignedContainer container) {
         boolean signaturesValid = container == null || container.signaturesValid();
+        boolean isEmptyFileInContainer = container != null && container.hasEmptyFiles();
         String name = container == null ? null : FileUtil.sanitizeString(container.name(), '_');
 
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
@@ -70,6 +71,11 @@ final class SignatureUpdateAdapter extends
         if (!signaturesValid) {
             builder.add(StatusItem.create(container.invalidSignatureCounts()));
         }
+
+        if (isEmptyFileInContainer) {
+            builder.add(EmptyItem.create());
+        }
+
         if (container != null) {
             builder.add(NameItem.create(name, !isNestedContainer))
                     .add(SubheadItem.create(DOCUMENT,
@@ -92,6 +98,7 @@ final class SignatureUpdateAdapter extends
 
         boolean shouldScrollToTop = !this.items.isEmpty() &&
                 ((isSuccess && !containsType(this.items, SuccessItem.class)) ||
+                (isEmptyFileInContainer && !containsType(this.items, EmptyItem.class)) ||
                 (!signaturesValid && !containsType(this.items, StatusItem.class)) ||
                 (name != null && !containsType(this.items, NameItem.class)));
 
@@ -174,6 +181,8 @@ final class SignatureUpdateAdapter extends
                     return new SuccessViewHolder(itemView);
                 case R.layout.signature_update_list_item_status:
                     return new StatusViewHolder(itemView);
+                case R.layout.signature_update_list_item_empty:
+                    return new EmptyViewHolder(itemView);
                 case R.layout.signature_update_list_item_name:
                     return new NameViewHolder(itemView);
                 case R.layout.signature_update_list_item_subhead:
@@ -200,6 +209,26 @@ final class SignatureUpdateAdapter extends
 
         @Override
         void bind(SignatureUpdateAdapter adapter, SuccessItem item) {
+        }
+    }
+
+    static final class EmptyViewHolder extends UpdateViewHolder<EmptyItem> {
+
+        private final Resources resources;
+
+        private final TextView emptyFileView;
+
+        EmptyViewHolder(View itemView) {
+            super(itemView);
+            resources = itemView.getResources();
+            emptyFileView = itemView.findViewById(R.id.signatureUpdateListStatusEmptyFile);
+        }
+
+        @Override
+        void bind(SignatureUpdateAdapter adapter, EmptyItem item) {
+            emptyFileView.setText(resources.getString(R.string.empty_file_message));
+            emptyFileView.setContentDescription(emptyFileView.getText());
+            emptyFileView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -471,6 +500,15 @@ final class SignatureUpdateAdapter extends
         static StatusItem create(ImmutableMap<SignatureStatus, Integer> counts) {
             return new AutoValue_SignatureUpdateAdapter_StatusItem(
                     R.layout.signature_update_list_item_status, counts);
+        }
+    }
+
+    @AutoValue
+    static abstract class EmptyItem extends Item {
+
+        static EmptyItem create() {
+            return new AutoValue_SignatureUpdateAdapter_EmptyItem(
+                    R.layout.signature_update_list_item_empty);
         }
     }
 
