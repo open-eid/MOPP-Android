@@ -18,14 +18,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.time.Instant;
+import java.time.Month;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.sign.DataFile;
@@ -82,7 +86,8 @@ final class SignatureUpdateAdapter extends
                 if (container.signatures().size() == 0) {
                     builder.add(SignaturesEmptyItem.create());
                 } else {
-                    builder.addAll(SignatureItem.of(container.signatures(), !isNestedContainer));
+                    builder.addAll(SignatureItem.of(container.signatures(), !isNestedContainer,
+                            Files.getFileExtension(container.file().getName()).equalsIgnoreCase("ddoc")));
                 }
             } else {
                 builder.add(DocumentsAddButtonItem.create());
@@ -393,9 +398,13 @@ final class SignatureUpdateAdapter extends
                     break;
             }
 
-            if (!activityContext.getSettingsDataStore().getIsDdocParentContainerTimestamped()) {
+            Instant dateTimeInstant = DateUtil.toEpochSecond(2018, Month.JULY, 1, 0, 0, 0);
+            if (item.isDdoc() && !activityContext.getSettingsDataStore().getIsDdocParentContainerTimestamped()) {
                 statusCautionView.setVisibility(View.VISIBLE);
                 statusCautionView.setText(R.string.signature_update_signature_status_warning);
+            } else if (item.isDdoc() && !item.removeButtonVisible() && item.signature().createdAt().isBefore(dateTimeInstant)) {
+                statusCautionView.setVisibility(View.GONE);
+                statusCautionView.setText("");
             }
 
             createdAtView.setText(itemView.getResources().getString(
@@ -539,16 +548,18 @@ final class SignatureUpdateAdapter extends
 
         abstract boolean removeButtonVisible();
 
-        static SignatureItem create(Signature signature, boolean removeButtonVisible) {
+        abstract boolean isDdoc();
+
+        static SignatureItem create(Signature signature, boolean removeButtonVisible, boolean isDdoc) {
             return new AutoValue_SignatureUpdateAdapter_SignatureItem(
-                    R.layout.signature_update_list_item_signature, signature, removeButtonVisible);
+                    R.layout.signature_update_list_item_signature, signature, removeButtonVisible, isDdoc);
         }
 
         static ImmutableList<SignatureItem> of(ImmutableList<Signature> signatures,
-                                               boolean removeButtonVisible) {
+                                               boolean removeButtonVisible, boolean isDdoc) {
             ImmutableList.Builder<SignatureItem> builder = ImmutableList.builder();
             for (Signature signature : signatures) {
-                builder.add(create(signature, removeButtonVisible));
+                builder.add(create(signature, removeButtonVisible, isDdoc));
             }
             return builder.build();
         }
