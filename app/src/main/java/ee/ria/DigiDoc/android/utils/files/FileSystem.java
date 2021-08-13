@@ -137,7 +137,7 @@ public final class FileSystem {
     public static boolean isEmptyFileInList(ImmutableList<FileStream> fileStreams) {
         for (FileStream fileStream : fileStreams) {
             try {
-                if (fileStreamToByteSource(fileStream).isEmpty()) {
+                if (fileStream.source().isEmpty()) {
                     return true;
                 }
             } catch (IOException e) {
@@ -150,16 +150,6 @@ public final class FileSystem {
     }
 
     /**
-     * Convert FileStream to ByteSource.
-     *
-     * @param fileStream File stream.
-     * @return ByteSource from FileStream.
-     */
-    public static ByteSource fileStreamToByteSource(FileStream fileStream) {
-        return fileStream.source();
-    }
-
-    /**
      * Check that file sizes are valid.
      *
      * @param fileStreams List of file streams.
@@ -168,7 +158,7 @@ public final class FileSystem {
      public static ImmutableList<FileStream> getFilesWithValidSize(ImmutableList<FileStream> fileStreams) throws IOException {
          List<FileStream> validFileStreams = new ArrayList<>();
          for (FileStream fileStream : fileStreams) {
-             if (!fileStreamToByteSource(fileStream).isEmpty()) {
+             if (!fileStream.source().isEmpty()) {
                  validFileStreams.add(fileStream);
              }
          }
