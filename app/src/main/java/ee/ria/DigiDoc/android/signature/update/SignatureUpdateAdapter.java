@@ -399,7 +399,8 @@ final class SignatureUpdateAdapter extends
             }
 
             Instant dateTimeInstant = DateUtil.toEpochSecond(2018, Month.JULY, 1, 0, 0, 0);
-            if (item.isDdoc() && !activityContext.getSettingsDataStore().getIsDdocParentContainerTimestamped()) {
+            if (item.isDdoc() && !activityContext.getSettingsDataStore().getIsDdocParentContainerTimestamped() &&
+                    item.signature().status() != SignatureStatus.INVALID) {
                 statusCautionView.setVisibility(View.VISIBLE);
                 statusCautionView.setText(R.string.signature_update_signature_status_warning);
             } else if (item.isDdoc() && !item.removeButtonVisible() && item.signature().createdAt().isBefore(dateTimeInstant)) {
