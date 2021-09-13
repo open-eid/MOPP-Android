@@ -403,8 +403,13 @@ final class SignatureUpdateAdapter extends
                 statusCautionView.setVisibility(View.VISIBLE);
                 statusCautionView.setText(R.string.signature_update_signature_status_warning);
             } else if (item.isDdoc() && !item.removeButtonVisible() && item.signature().createdAt().isBefore(dateTimeInstant)) {
-                statusCautionView.setVisibility(View.GONE);
-                statusCautionView.setText("");
+                removeCautionView();
+            }
+
+            if (item.signature().status() == SignatureStatus.INVALID && statusCautionView.getVisibility() == View.VISIBLE &&
+                    statusCautionView.getText().equals(statusCautionView.getResources()
+                            .getString(R.string.signature_update_signature_status_warning))) {
+                removeCautionView();
             }
 
             createdAtView.setText(itemView.getResources().getString(
@@ -417,6 +422,11 @@ final class SignatureUpdateAdapter extends
             clicks(removeButton).map(ignored ->
                     ((SignatureItem) adapter.getItem(getAdapterPosition())).signature())
                     .subscribe(adapter.signatureRemoveClicksSubject);
+        }
+
+        private void removeCautionView() {
+            statusCautionView.setVisibility(View.GONE);
+            statusCautionView.setText("");
         }
     }
 
