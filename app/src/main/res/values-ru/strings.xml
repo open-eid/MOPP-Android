@@ -406,8 +406,8 @@
     <!-- Sharing Screen -->
     <string name="sharing_screen_title">Выбрать файл</string>
 
-    <string name="empty_file_error">Пустой файл нельзя добавить в контейнер</string>
-    <string name="empty_file_message">В контейнер добавлен пустой файл. Для подписания удалите из контейнера пустой файл</string>
+    <string name="empty_file_error">Пустой файл нельзя добавить в контейнер.</string>
+    <string name="empty_file_message">В контейнер добавлен пустой файл. Для подписания удалите из контейнера пустой файл.</string>
 
     <!--  TODO: tõlked  -->
     <string name="document">Документ</string>

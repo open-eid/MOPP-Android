@@ -408,8 +408,8 @@
     <!-- Sharing Screen -->
     <string name="sharing_screen_title">Vali fail</string>
 
-    <string name="empty_file_error">Tühja faili ei saa lisada ümbrikusse</string>
-    <string name="empty_file_message">Ümbrikule on lisatud tühi fail. Allkirjastamiseks eemalda ümbrikust tühi fail</string>
+    <string name="empty_file_error">Tühja faili ei saa lisada ümbrikusse.</string>
+    <string name="empty_file_message">Ümbrikule on lisatud tühi fail. Allkirjastamiseks eemalda ümbrikust tühi fail.</string>
 
     <!--  TODO: tõlked  -->
     <string name="signature_removed">Allkiri eemaldatud</string>
