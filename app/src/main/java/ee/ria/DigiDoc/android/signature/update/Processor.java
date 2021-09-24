@@ -1,5 +1,12 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static android.app.Activity.RESULT_OK;
+import static com.google.common.io.Files.getFileExtension;
+import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
+
 import android.app.Application;
 import android.content.Context;
 import android.view.accessibility.AccessibilityEvent;
@@ -24,8 +31,10 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.files.FileAlreadyExistsException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
+import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.common.FileUtil;
@@ -38,13 +47,6 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
-
-import static android.app.Activity.RESULT_OK;
-import static com.google.common.io.Files.getFileExtension;
-import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
@@ -170,12 +172,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     android.content.Intent data = activityResult.data();
                                     if (activityResult.resultCode() == RESULT_OK && data != null) {
                                         ImmutableList<FileStream> addedData = parseGetContentIntent(application.getContentResolver(), data);
-                                        announceAccessibilityFilesAddedEvent(application.getApplicationContext(), addedData);
+                                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(addedData);
+                                        ToastUtil.handleEmptyFileError(addedData, validFiles, application);
+                                        announceAccessibilityFilesAddedEvent(application.getApplicationContext(), validFiles);
                                         return signatureContainerDataSource
-                                                .addDocuments(action.containerFile(),
-                                                        parseGetContentIntent(
-                                                                application.getContentResolver(),
-                                                                data))
+                                                .addDocuments(action.containerFile(), validFiles)
                                                 .toObservable()
                                                 .map(Result.DocumentsAddResult::success)
                                                 .onErrorReturn(Result.DocumentsAddResult::failure)
@@ -185,7 +186,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     } else {
                                         return Observable.just(Result.DocumentsAddResult.clear());
                                     }
-                                });
+                                })
+                                .onErrorReturn(Result.DocumentsAddResult::failure);
                     }
                 });
 

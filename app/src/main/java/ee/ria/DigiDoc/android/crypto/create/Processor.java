@@ -1,5 +1,21 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import static android.app.Activity.RESULT_OK;
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_DATA_FILE_ADD;
+import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_INITIAL;
+import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
+import static ee.ria.DigiDoc.android.utils.Immutables.with;
+import static ee.ria.DigiDoc.android.utils.Immutables.without;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
+import static ee.ria.DigiDoc.crypto.CryptoContainer.createContainerFileName;
+import static ee.ria.DigiDoc.crypto.CryptoContainer.isContainerFileName;
+import static ee.ria.DigiDoc.sign.SignedContainer.mimeType;
+
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -24,6 +40,7 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -42,22 +59,6 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
-
-import static android.app.Activity.RESULT_OK;
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_DATA_FILE_ADD;
-import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_INITIAL;
-import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
-import static ee.ria.DigiDoc.android.utils.Immutables.with;
-import static ee.ria.DigiDoc.android.utils.Immutables.without;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
-import static ee.ria.DigiDoc.crypto.CryptoContainer.createContainerFileName;
-import static ee.ria.DigiDoc.crypto.CryptoContainer.isContainerFileName;
-import static ee.ria.DigiDoc.sign.SignedContainer.mimeType;
 
 final class Processor implements ObservableTransformer<Intent, Result> {
 
@@ -124,7 +125,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .startWith(Result.InitialResult.activity());
             } else if (androidIntent != null) {
-                return parseIntent(androidIntent);
+                return parseIntent(androidIntent, application);
             } else {
                 navigator.execute(Transaction.activityForResult(RC_CRYPTO_CREATE_INITIAL,
                         createGetContentIntent(), null));
@@ -134,7 +135,12 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .switchMap(activityResult -> {
                             android.content.Intent data = activityResult.data();
                             if (activityResult.resultCode() == RESULT_OK && data != null) {
-                                return parseIntent(data);
+                                return parseIntent(data, application)
+                                        .onErrorReturn(throwable -> {
+                                            ToastUtil.showEmptyFileError(application);
+                                            navigator.execute(Transaction.pop());
+                                            return Result.InitialResult.failure(throwable);
+                                        });
                             } else {
                                 navigator.onBackPressed();
                                 return Observable.just(Result.InitialResult.clear());
@@ -191,11 +197,14 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                                 parseGetContentIntent(contentResolver, data);
                                         ImmutableList.Builder<File> builder =
                                                 ImmutableList.<File>builder().addAll(dataFiles);
-                                        for (FileStream fileStream : fileStreams) {
+                                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(fileStreams);
+                                        ToastUtil.handleEmptyFileError(fileStreams, validFiles, application);
+                                        for (FileStream fileStream : validFiles) {
                                             File dataFile = fileSystem.cache(fileStream);
                                             if (dataFiles.contains(dataFile)) {
                                                 throw new IllegalArgumentException(
-                                                        "File already exists in the container");
+                                                        Activity.getContext().get().getString(
+                                                                R.string.crypto_create_data_files_add_error_exists));
                                             }
                                             builder.add(dataFile);
                                         }
@@ -207,7 +216,10 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                         return builder.build();
                                     })
                                     .map(Result.DataFilesAddResult::success)
-                                    .onErrorReturn(Result.DataFilesAddResult::failure)
+                                    .onErrorReturn(throwable -> {
+                                        Timber.d(throwable, "No valid files in list");
+                                        return Result.DataFilesAddResult.failure(throwable);
+                                    })
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .startWith(Result.DataFilesAddResult.activity());
@@ -457,18 +469,20 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.SendIntent.class).compose(send)));
     }
 
-    private Observable<Result.InitialResult> parseIntent(android.content.Intent intent) {
+    private Observable<Result.InitialResult> parseIntent(android.content.Intent intent, Application application) {
         return Observable
                 .fromCallable(() -> {
                     ImmutableList<FileStream> fileStreams =
                             parseGetContentIntent(contentResolver, intent);
-                    if (fileStreams.size() == 1
-                            && isContainerFileName(fileStreams.get(0).displayName())) {
-                        File file = fileSystem.addSignatureContainer(fileStreams.get(0));
+                    ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(fileStreams);
+                    ToastUtil.handleEmptyFileError(fileStreams, validFiles, application);
+                    if (validFiles.size() == 1
+                            && isContainerFileName(validFiles.get(0).displayName())) {
+                        File file = fileSystem.addSignatureContainer(validFiles.get(0));
                         return Result.InitialResult.success(CryptoContainer.open(file));
                     } else {
                         ImmutableList.Builder<File> builder = ImmutableList.builder();
-                        for (FileStream fileStream : fileStreams) {
+                        for (FileStream fileStream : validFiles) {
                             builder.add(fileSystem.cache(fileStream));
                         }
                         ImmutableList<File> dataFiles = builder.build();
@@ -477,7 +491,6 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         return Result.InitialResult.success(file, dataFiles);
                     }
                 })
-                .onErrorReturn(Result.InitialResult::failure)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .startWith(Result.InitialResult.activity());

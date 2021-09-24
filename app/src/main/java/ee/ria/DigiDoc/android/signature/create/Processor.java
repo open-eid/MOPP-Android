@@ -1,7 +1,12 @@
 package ee.ria.DigiDoc.android.signature.create;
 
+import static android.app.Activity.RESULT_OK;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
+
 import android.app.Application;
 import android.widget.Toast;
+
+import com.google.common.collect.ImmutableList;
 
 import javax.inject.Inject;
 
@@ -9,6 +14,9 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
+import ee.ria.DigiDoc.android.utils.files.FileStream;
+import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.ActivityResult;
 import ee.ria.DigiDoc.android.utils.navigator.ActivityResultException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -19,9 +27,6 @@ import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
-
-import static android.app.Activity.RESULT_OK;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
@@ -54,10 +59,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     ActivityResult activityResult = ((ActivityResultException) throwable)
                             .activityResult;
                     if (activityResult.resultCode() == RESULT_OK) {
+                        ImmutableList<FileStream> addedData = parseGetContentIntent(application.getContentResolver(), activityResult.data());
+                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(addedData);
+                        ToastUtil.handleEmptyFileError(addedData, validFiles, application);
                         return signatureContainerDataSource
-                                .addContainer(parseGetContentIntent(
-                                        application.getContentResolver(), activityResult.data()),
-                                        false)
+                                .addContainer(validFiles, false)
                                 .toObservable()
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -69,8 +75,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 .doOnError(throwable1 -> {
                                     Timber.d(throwable1, "Add signed container failed");
                                     Toast.makeText(application, Activity.getContext().get().getString(R.string.signature_create_error),
-                                                    Toast.LENGTH_LONG)
+                                            Toast.LENGTH_LONG)
                                             .show();
+
                                     navigator.execute(Transaction.pop());
                                 })
                                 .map(containerAdd -> Result.ChooseFilesResult.create());
@@ -78,6 +85,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         navigator.execute(Transaction.pop());
                         return Observable.just(Result.ChooseFilesResult.create());
                     }
+                })
+                .onErrorResumeNext(throwable -> {
+                    ToastUtil.showEmptyFileError(application);
+                    navigator.execute(Transaction.pop());
                 });
     }
 

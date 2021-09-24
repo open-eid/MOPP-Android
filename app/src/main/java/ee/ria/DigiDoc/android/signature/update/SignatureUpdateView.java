@@ -43,6 +43,7 @@ import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
 import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
+import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -218,7 +219,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         } else {
             sendButton.setVisibility(isExistingContainer ? VISIBLE : GONE);
             buttonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
-            if (containerFile != null && UNSIGNABLE_CONTAINER_EXTENSIONS.contains(Files.getFileExtension(containerFile.getName()).toLowerCase())) {
+            if (containerFile != null && (UNSIGNABLE_CONTAINER_EXTENSIONS.contains(
+                    Files.getFileExtension(containerFile.getName()).toLowerCase()) ||
+                    FileSystem.isEmptyDataFileInContainer(containerFile))) {
                 signatureAddButton.setVisibility(GONE);
             } else {
                 signatureAddButton.setVisibility(VISIBLE);

@@ -406,6 +406,8 @@
     <string name="document">Document</string>
     <string name="container_has">Container has</string>
     <string name="file">File</string>
+    <string name="empty_file_error">Cannot add empty file to the container.</string>
+    <string name="empty_file_message">An empty file is attached to the envelope. Remove the empty file from the container to sign.</string>
     <string name="signature_removed">Signature removed</string>
     <string name="signature_removal_cancelled">Signature removal cancelled</string>
     <string name="file_removed">File removed</string>
