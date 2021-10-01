@@ -413,8 +413,9 @@ public abstract class SignedContainer {
             FileUtils.createDirectoryIfNotExist(pdfFilesDirectory);
 
             File file = new File(pdfFilesDirectory + File.separator + fileName);
-            OutputStream outStream = new FileOutputStream(file);
-            outStream.write(bytes);
+            try (OutputStream outStream = new FileOutputStream(file)) {
+                outStream.write(bytes);
+            }
 
             boolean isSignedContainer = SignedContainer.isContainer(file);
             FileUtils.removeFile(file.getPath());

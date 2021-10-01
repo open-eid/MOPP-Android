@@ -13,10 +13,9 @@ public class UrlMessage {
 
     public static String withURL(Context context, @StringRes int messageTranslation, @StringRes int urlMessageTranslation) {
         String message = getTextFromTranslation(context, messageTranslation);
-        String link = extractLink(message);
-        if (!link.isEmpty()) {
-            return "<span>" +
-                    removeLink(message) + "</span> <a href=" + link + ">" +
+        Matcher urlMatcher = Patterns.WEB_URL.matcher(message);
+        if (urlMatcher.find()) {
+            return message.replace(urlMatcher.group(),"") + "</span> <a href=" + urlMatcher.group() + ">" +
                     getTextFromTranslation(context, urlMessageTranslation) + "</a>";
         }
         return message;
@@ -26,10 +25,10 @@ public class UrlMessage {
                                             @StringRes  int urlMessageTranslation,
                                             @StringRes int continueQuestion) {
         String message = getTextFromTranslation(context, messageTranslation);
-        String link = extractLink(message);
-        if (!link.isEmpty()) {
+        Matcher urlMatcher = Patterns.WEB_URL.matcher(message);
+        if (urlMatcher.find()) {
             return "<span>" +
-                    removeLink(message) + "</span> <a href=" + link + ">" +
+                    message.replace(urlMatcher.group(),"") + "</span> <a href=" + urlMatcher.group() + ">" +
                     getTextFromTranslation(context, urlMessageTranslation) + "</a>. <br />" +
                     getTextFromTranslation(context, continueQuestion);
         }
