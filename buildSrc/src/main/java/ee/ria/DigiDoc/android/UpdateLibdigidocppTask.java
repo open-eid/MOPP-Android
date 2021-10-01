@@ -134,20 +134,6 @@ public class UpdateLibdigidocppTask extends DefaultTask {
         }
 
         if (getProject().getName().equals("sign-lib")) {
-            if (abi.equals("x86_64")) {
-                Files.copy(
-                        new File(cacheDir, ABI_DIRS.get(abi) + "/lib64/libc++_shared.so").toPath(),
-                        new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
-                        StandardCopyOption.REPLACE_EXISTING
-                );
-            }
-            if (!abi.equals("armeabi-v7a") && !abi.equals("x86_64")) {
-                Files.copy(
-                        new File(cacheDir, ABI_DIRS.get(abi) + "/lib/libc++_shared.so").toPath(),
-                        new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libc++_shared.so").toPath(),
-                        StandardCopyOption.REPLACE_EXISTING
-                );
-            }
             Files.copy(
                     new File(cacheDir, "lib/libdigidoc_java.so").toPath(),
                     new File(getProject().getProjectDir(), "src/main/jniLibs/" + abi + "/libdigidoc_java.so").toPath(),
