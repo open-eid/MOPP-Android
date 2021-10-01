@@ -76,11 +76,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         ToastUtil.handleEmptyFileError(addedData, validFiles, application);
                         boolean isConfirmationNeeded = validFiles.stream().anyMatch(fileStream -> {
                             String extension = getFileExtension(fileStream.displayName());
-                            boolean isSignedPDFFile = false;
-                            if (extension.equals("pdf")) {
-                                isSignedPDFFile = SignedContainer.isSignedPDFFile(fileStream.source(), Activity.getContext().get(), fileStream.displayName());
-                            }
-                            return SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension) || isSignedPDFFile;
+                            return "pdf".equals(extension) ?
+                                    SignedContainer.isSignedPDFFile(fileStream.source(), Activity.getContext().get(), fileStream.displayName()) :
+                                    SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension);
                         });
                         if (isConfirmationNeeded) {
                             sivaConfirmationDialog.show();
@@ -89,7 +87,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     .doOnNext(next -> navigator.execute(Transaction.pop()))
                                     .subscribe();
                             sivaConfirmationDialog.positiveButtonClicks()
-                                    .flatMap(next -> addFilesToContainer(navigator, signatureContainerDataSource, application, validFiles))
+                                    .flatMap(next -> {
+                                        sivaConfirmationDialog.dismiss();
+                                        return addFilesToContainer(navigator, signatureContainerDataSource, application, validFiles);
+                                    })
                                     .subscribe();
                             return Observable.just(Result.ChooseFilesResult.create());
                         } else {
@@ -117,7 +118,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                                      SignatureContainerDataSource signatureContainerDataSource,
                                                                      Application application,
                                                                      ImmutableList<FileStream> validFiles) {
-        sivaConfirmationDialog.dismiss();
         return signatureContainerDataSource
                 .addContainer(validFiles, false)
                 .toObservable()
