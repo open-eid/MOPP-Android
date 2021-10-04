@@ -39,7 +39,6 @@ public class UpdateLibdigidocppTask extends DefaultTask {
 
     private static final List<String> ABIS = new ArrayList<>();
     private static final Map<String, String> ABI_FILES = new HashMap<>();
-    private static final Map<String, String> ABI_DIRS = new HashMap<>();
     static {
         ABIS.add("arm64-v8a");
         ABIS.add("armeabi-v7a");
@@ -50,10 +49,6 @@ public class UpdateLibdigidocppTask extends DefaultTask {
         ABI_FILES.put("armeabi-v7a", "androidarm");
         ABI_FILES.put("x86", "androidx86");
         ABI_FILES.put("x86_64", "androidx86_64");
-
-        ABI_DIRS.put("arm64-v8a", "aarch64-linux-android");
-        ABI_DIRS.put("x86", "i686-linux-android");
-        ABI_DIRS.put("x86_64", "x86_64-linux-android");
     }
 
     private String dir = ".";
