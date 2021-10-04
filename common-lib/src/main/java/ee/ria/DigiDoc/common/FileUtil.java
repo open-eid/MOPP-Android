@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.common;
 
 import android.os.Build;
+import android.webkit.URLUtil;
 
 import androidx.annotation.RequiresApi;
 
@@ -36,19 +37,26 @@ public class FileUtil {
             return null;
         }
 
-        String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=@?&()";
+        String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:;&()";
+        String allowedUrlCharacters = allowedCharacters + "!+=@?%/";
+
+        String characterSet = allowedCharacters;
+
+        if (URLUtil.isValidUrl(input)) {
+            characterSet = allowedUrlCharacters;
+        }
 
         StringBuilder sb = new StringBuilder(input.length());
 
         for (int offset = 0; offset < input.length(); offset++) {
             char c = input.charAt(offset);
 
-            if (allowedCharacters.indexOf(c) == -1) {
+            if (characterSet.indexOf(c) == -1) {
                 sb.append(replacement);
             }
             else {
                 // Coverity does not want to see usages of the original string
-                sb.append(allowedCharacters.charAt(allowedCharacters.indexOf(c)));
+                sb.append(characterSet.charAt(characterSet.indexOf(c)));
             }
         }
 
