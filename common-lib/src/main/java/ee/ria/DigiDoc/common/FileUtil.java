@@ -1,15 +1,14 @@
 package ee.ria.DigiDoc.common;
 
-import android.os.Build;
 import android.webkit.URLUtil;
-
-import androidx.annotation.RequiresApi;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 
 public class FileUtil {
+
+    private static final String ALLOWED_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:;&()";
+    private static final String ALLOWED_URL_CHARACTERS = ALLOWED_CHARACTERS + "!+=@?%/";
 
     /**
      * Check if file path is in cache directory
@@ -37,13 +36,10 @@ public class FileUtil {
             return null;
         }
 
-        String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:;&()";
-        String allowedUrlCharacters = allowedCharacters + "!+=@?%/";
-
-        String characterSet = allowedCharacters;
+        String characterSet = ALLOWED_CHARACTERS;
 
         if (URLUtil.isValidUrl(input)) {
-            characterSet = allowedUrlCharacters;
+            characterSet = ALLOWED_URL_CHARACTERS;
         }
 
         StringBuilder sb = new StringBuilder(input.length());
