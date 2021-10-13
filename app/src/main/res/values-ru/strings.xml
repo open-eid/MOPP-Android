@@ -67,7 +67,7 @@
 
     <!-- Signature Create -->
     <string name="signature_create_error">Не удалось загрузить выбранные файлы</string>
-    <string name="siva_send_message_dialog">Для проверки действительности электронно-цифровых подписей в форматах PDF и DDOC файл пересылается в службу проверки цифровых подписей SiVa. Подробнее о данных, переданных для проверки действительности электронно-цифровых подписей, можно прочитать https://id.ee/public/DigiDoc_Andmekaitsetingimused_ENG.pdf</string>
+    <string name="siva_send_message_dialog">Для проверки действительности электронно-цифровых подписей в форматах PDF и DDOC файл пересылается в службу проверки цифровых подписей SiVa. Подробнее о данных, переданных для проверки действительности электронно-цифровых подписей, можно прочитать https://www.id.ee/ru/artikkel/usloviya-zashhity-dannyh-programmnogo-obespecheniya-id-karty-departamenta-gosudarstvennoj-infosistemy/</string>
     <string name="siva_read_here">здесь</string>
     <string name="siva_continue_question">Вы желаете продолжить?</string>
 

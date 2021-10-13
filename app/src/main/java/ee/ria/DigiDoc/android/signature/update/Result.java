@@ -144,23 +144,30 @@ interface Result extends MviResult<ViewState> {
 
         @State abstract String state();
 
+        @Nullable abstract DataFile confirmationContainerDataFile();
+
+        static DocumentViewResult confirmation(DataFile confirmationContainerFile) {
+            return create(State.IDLE, confirmationContainerFile);
+        }
+
         @Override
         public ViewState reduce(ViewState state) {
             return state.buildWith()
                     .documentViewState(state())
+                    .sivaConfirmation(confirmationContainerDataFile())
                     .build();
         }
 
         static DocumentViewResult activity() {
-            return create(State.ACTIVE);
+            return create(State.ACTIVE, null);
         }
 
         static DocumentViewResult idle() {
-            return create(State.IDLE);
+            return create(State.IDLE, null);
         }
 
-        private static DocumentViewResult create(@State String state) {
-            return new AutoValue_Result_DocumentViewResult(state);
+        private static DocumentViewResult create(@State String state, @Nullable DataFile dataFile) {
+            return new AutoValue_Result_DocumentViewResult(state, dataFile);
         }
     }
 
@@ -185,7 +192,7 @@ interface Result extends MviResult<ViewState> {
         }
 
         private static DocumentViewResult create(@State String state) {
-            return new AutoValue_Result_DocumentViewResult(state);
+            return new AutoValue_Result_DocumentViewResult(state, null);
         }
     }
 

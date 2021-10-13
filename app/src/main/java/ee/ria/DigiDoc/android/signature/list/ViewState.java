@@ -20,6 +20,8 @@ abstract class ViewState implements MviViewState {
 
     @Nullable abstract File removeConfirmationContainerFile();
 
+    @Nullable abstract File sivaConfirmationContainerFile();
+
     abstract boolean containerRemoveProgress();
 
     abstract Builder buildWith();
@@ -29,6 +31,7 @@ abstract class ViewState implements MviViewState {
                 .indicateActivity(true)
                 .containerLoadProgress(false)
                 .containerFiles(ImmutableList.of())
+                .sivaConfirmationContainerFile(null)
                 .containerRemoveProgress(false)
                 .build();
     }
@@ -39,6 +42,7 @@ abstract class ViewState implements MviViewState {
         Builder containerLoadProgress(boolean containerLoadProgress);
         Builder containerFiles(ImmutableList<File> containerFiles);
         Builder removeConfirmationContainerFile(@Nullable File removeConfirmationContainerFile);
+        Builder sivaConfirmationContainerFile(@Nullable File sivaConfirmationContainerFile);
         Builder containerRemoveProgress(boolean containerRemoveProgress);
         ViewState build();
     }

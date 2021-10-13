@@ -32,6 +32,18 @@ interface Action extends MviAction {
     }
 
     @AutoValue
+    abstract class ContainerOpenAction implements Action {
+
+        @Nullable abstract File containerFile();
+
+        abstract boolean confirmation();
+
+        static ContainerOpenAction create(@Nullable File containerFile, boolean confirmation) {
+            return new AutoValue_Action_ContainerOpenAction(containerFile, confirmation);
+        }
+    }
+
+    @AutoValue
     abstract class ContainerRemoveAction implements Action {
 
         @Nullable abstract File containerFile();

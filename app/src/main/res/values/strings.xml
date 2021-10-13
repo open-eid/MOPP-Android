@@ -67,7 +67,7 @@
 
     <!-- Signature Create -->
     <string name="signature_create_error">Could not load selected files</string>
-    <string name="siva_send_message_dialog">Signed document in PDF and DDOC format will be transmitted to the Digital Signature Validation Service SiVa to verify the validity of the digital signature. Read more information about transmitted data to Digital Signature Validation service from https://id.ee/public/DigiDoc_Andmekaitsetingimused_ENG.pdf</string>
+    <string name="siva_send_message_dialog">Signed document in PDF and DDOC format will be transmitted to the Digital Signature Validation Service SiVa to verify the validity of the digital signature. Read more information about transmitted data to Digital Signature Validation service from https://www.id.ee/en/article/data-protection-conditions-for-the-id-software-of-the-national-information-system-authority/</string>
     <string name="siva_read_here">here</string>
     <string name="siva_continue_question">Do you want to continue?</string>
 

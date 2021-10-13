@@ -67,7 +67,7 @@
 
     <!-- Signature Create -->
     <string name="signature_create_error">Failide laadimine ebaõnnestus</string>
-    <string name="siva_send_message_dialog">PDF ja DDOC formaadis digitaalallkirjade kehtivuse kontrollimiseks edastatakse fail valideerimisteenusele SiVa. Digitaalallkirjade kehtivuse kontrollimisel edastatud andmete kohta loe lähemalt siit https://id.ee/public/DigiDoc_Andmekaitsetingimused_EST.pdf</string>
+    <string name="siva_send_message_dialog">PDF ja DDOC formaadis digitaalallkirjade kehtivuse kontrollimiseks edastatakse fail valideerimisteenusele SiVa. Digitaalallkirjade kehtivuse kontrollimisel edastatud andmete kohta loe lähemalt https://www.id.ee/artikkel/riigi-infosusteemi-ameti-id-tarkvara-andmekaitsetingimused/</string>
     <string name="siva_read_here">siit</string>
     <string name="siva_continue_question">Kas soovid jätkata?</string>
 
