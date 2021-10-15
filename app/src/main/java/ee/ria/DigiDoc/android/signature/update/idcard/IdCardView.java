@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -38,7 +39,6 @@ public final class IdCardView extends LinearLayout implements
     private final TextView signDataView;
     private final EditText signPin2View;
     private final TextView signPin2ErrorView;
-    private RadioGroup methodView;
 
     @Nullable private Token token;
 
@@ -82,9 +82,6 @@ public final class IdCardView extends LinearLayout implements
     public void reset(@Nullable SignatureUpdateViewModel viewModel) {
         signPin2View.setText(null);
         progressMessageView.setContentDescription(null);
-        if (methodView != null) {
-            methodView.setVisibility(VISIBLE);
-        }
     }
 
     @Override
@@ -107,7 +104,15 @@ public final class IdCardView extends LinearLayout implements
         }
 
         if (methodView != null) {
-            this.methodView = methodView;
+            RadioButton mobileIdRadioButton = methodView.findViewById(R.id.signatureUpdateSignatureAddMethodMobileId);
+            mobileIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            mobileIdRadioButton.setContentDescription("");
+            setupContentDescriptions(mobileIdRadioButton);
+
+            RadioButton smartIdRadioButton = methodView.findViewById(R.id.signatureUpdateSignatureAddMethodSmartId);
+            smartIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            smartIdRadioButton.setContentDescription("");
+            setupContentDescriptions(smartIdRadioButton);
         }
 
         token = dataResponse == null ? null : dataResponse.token();
@@ -155,9 +160,6 @@ public final class IdCardView extends LinearLayout implements
             signPin2ErrorView.setVisibility(GONE);
         } else if (dataResponse != null
                 && dataResponse.status().equals(SmartCardReaderStatus.CARD_DETECTED)) {
-            if (AccessibilityUtils.isAccessibilityEnabled()) {
-                hideSigningChoices(methodView);
-            }
 
             progressMessageView.setText(R.string.signature_update_id_card_progress_message_card_detected);
 
@@ -170,9 +172,6 @@ public final class IdCardView extends LinearLayout implements
 
         } else if (dataResponse != null
                 && dataResponse.status().equals(SmartCardReaderStatus.READER_DETECTED)) {
-            if (AccessibilityUtils.isAccessibilityEnabled()) {
-                hideSigningChoices(methodView);
-            }
 
             progressMessageView.setText(R.string.signature_update_id_card_progress_message_reader_detected);
 
@@ -182,7 +181,6 @@ public final class IdCardView extends LinearLayout implements
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), R.string.signature_update_id_card_progress_message_reader_detected);
             }, 700);
         } else {
-            showSigningChoices(methodView);
             progressContainerView.setVisibility(VISIBLE);
             progressMessageView.setText(R.string.signature_update_id_card_progress_message_initial);
             progressMessageView.setContentDescription(
@@ -211,15 +209,18 @@ public final class IdCardView extends LinearLayout implements
         }
     }
 
-    private void hideSigningChoices(RadioGroup methodView) {
-        if (methodView != null) {
-            methodView.setVisibility(GONE);
-        }
-    }
-
-    private void showSigningChoices(RadioGroup methodView) {
-        if (methodView != null) {
-            methodView.setVisibility(VISIBLE);
-        }
+    private void setupContentDescriptions(RadioButton radioButton) {
+        radioButton.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override
+            public void onPopulateAccessibilityEvent(View host, AccessibilityEvent event) {
+                if (!event.getText().isEmpty() &&
+                        (event.getText().get(0).toString().equals(
+                                getResources().getString(R.string.signature_update_signature_add_method_mobile_id)) ||
+                        event.getText().get(0).toString().equals(
+                                getResources().getString(R.string.signature_update_signature_add_method_smart_id)))) {
+                   event.getText().add(getContentDescription());
+                }
+            }
+        });
     }
 }
