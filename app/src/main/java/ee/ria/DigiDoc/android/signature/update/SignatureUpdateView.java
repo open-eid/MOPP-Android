@@ -1,5 +1,12 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
+import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
+import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
@@ -24,9 +31,7 @@ import com.google.common.io.Files;
 
 import java.io.File;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.ZoneOffset;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
@@ -34,9 +39,11 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
+import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
 import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
+import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -49,13 +56,6 @@ import ee.ria.DigiDoc.sign.Signature;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
-
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
-import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
-import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
-import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
@@ -181,8 +181,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         if (!isNestedContainer && Files.getFileExtension(containerFile.getName()).equalsIgnoreCase("asics") &&
                 dataFiles.size() == 1 && signatures.size() == 1 &&
                 Files.getFileExtension(dataFiles.get(0).name()).equalsIgnoreCase("ddoc")) {
-            LocalDateTime localDateTime = LocalDateTime.of(2018, Month.JULY, 1, 0, 0, 0);
-            Instant dateTimeInstant = Instant.ofEpochSecond(localDateTime.toEpochSecond(ZoneOffset.UTC));
+            Instant dateTimeInstant = DateUtil.toEpochSecond(2018, Month.JULY, 1, 0, 0, 0);
             activity.getSettingsDataStore().setIsDdocParentContainerTimestamped(
                     !signatures.get(0).createdAt().isAfter(dateTimeInstant));
             return;
@@ -220,7 +219,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         } else {
             sendButton.setVisibility(isExistingContainer ? VISIBLE : GONE);
             buttonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
-            if (containerFile != null && UNSIGNABLE_CONTAINER_EXTENSIONS.contains(Files.getFileExtension(containerFile.getName()).toLowerCase())) {
+            if (containerFile != null && (UNSIGNABLE_CONTAINER_EXTENSIONS.contains(
+                    Files.getFileExtension(containerFile.getName()).toLowerCase()) ||
+                    FileSystem.isEmptyDataFileInContainer(containerFile))) {
                 signatureAddButton.setVisibility(GONE);
             } else {
                 signatureAddButton.setVisibility(VISIBLE);

@@ -105,7 +105,6 @@
     <string name="signature_update_signature_status_valid">Подпись действительна</string>
     <string name="signature_update_signature_status_warning">(Предупреждения)</string>
     <string name="signature_update_signature_status_non_qscd">(Ограничения)</string>
-    <string name="signature_update_signature_status_test">(Пробная подпись)</string>
     <string name="signature_update_signature_status_invalid">Подпись недействительна</string>
     <string name="signature_update_signature_status_unknown">Подпись неизвестная</string>
     <string name="signature_update_signature_created_at">Подписано %1$s</string>
@@ -309,7 +308,7 @@
     <string name="eid_type_id_card">ID-КАРТА</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
     <string name="eid_type_mobile_id">MOBIIL-ID</string>
-    <string name="eid_type_e_seal">e-Печать</string>
+    <string name="eid_type_e_seal">Сертификат шифрования</string>
     <string name="eid_type_unknown">НЕИЗВЕСТНО</string>
 
     <string name="eid_home_code_update_title_pin1_edit">Изменить PIN1</string>
@@ -405,6 +404,9 @@
 
     <!-- Sharing Screen -->
     <string name="sharing_screen_title">Выбрать файл</string>
+
+    <string name="empty_file_error">Пустой файл нельзя добавить в контейнер.</string>
+    <string name="empty_file_message">В контейнер добавлен пустой файл. Для подписания удалите из контейнера пустой файл.</string>
 
     <!--  TODO: tõlked  -->
     <string name="document">Документ</string>

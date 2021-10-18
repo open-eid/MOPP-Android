@@ -1,8 +1,12 @@
 package ee.ria.DigiDoc.sign;
 
-import androidx.annotation.NonNull;
+import static com.google.common.collect.ImmutableList.sortedCopyOf;
+import static com.google.common.io.Files.getFileExtension;
+
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
+
+import androidx.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
@@ -25,9 +29,6 @@ import ee.ria.libdigidocpp.Signature.Validator;
 import ee.ria.libdigidocpp.Signatures;
 import okio.ByteString;
 import timber.log.Timber;
-
-import static com.google.common.collect.ImmutableList.sortedCopyOf;
-import static com.google.common.io.Files.getFileExtension;
 
 @AutoValue
 public abstract class SignedContainer {
@@ -103,7 +104,7 @@ public abstract class SignedContainer {
             throw new ContainerDataFilesEmptyException();
         }
         DataFiles dataFiles = container.dataFiles();
-        for (int i = 0; i < dataFile.size(); i++) {
+        for (int i = 0; i < dataFiles.size(); i++) {
             if (dataFile.id().equals(dataFiles.get(i).id())) {
                 container.removeDataFile(i);
                 break;
@@ -202,6 +203,16 @@ public abstract class SignedContainer {
         }
         container.save();
         return open(file());
+    }
+
+    public boolean hasEmptyFiles() {
+        for (DataFile dataFile : dataFiles()) {
+            if (dataFile.size() == 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -335,8 +346,6 @@ public abstract class SignedContainer {
             return SignatureStatus.NON_QSCD;
         } else if (status == Validator.Status.Invalid.swigValue()) {
             return SignatureStatus.INVALID;
-        } else if (status == Validator.Status.Test.swigValue()) {
-            return SignatureStatus.TEST;
         } else {
             return SignatureStatus.UNKNOWN;
         }

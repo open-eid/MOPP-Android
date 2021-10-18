@@ -16,6 +16,7 @@ import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
 import ee.ria.DigiDoc.android.model.smartid.SmartIdMessageException;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
+import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.sign.CertificateRevokedException;
@@ -69,8 +70,12 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
               @Nullable Throwable signatureAddError, @Nullable Throwable signatureRemoveError) {
         if (documentsAddError != null) {
             type = DOCUMENTS_ADD;
-            setMessage(getContext().getString(
-                    R.string.signature_update_documents_add_error_exists));
+            if (documentsAddError instanceof EmptyFileException) {
+                setMessage(getContext().getString(R.string.empty_file_error));
+            } else {
+                setMessage(getContext().getString(
+                        R.string.signature_update_documents_add_error_exists));
+            }
         } else if (documentRemoveError != null) {
             type = DOCUMENT_REMOVE;
             setMessage(getContext().getString(R.string.signature_update_document_remove_error));
