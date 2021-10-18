@@ -7,6 +7,8 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
+import ee.ria.DigiDoc.android.utils.SivaUtil;
+import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 import ee.ria.DigiDoc.common.Certificate;
@@ -117,10 +119,26 @@ interface Intent extends MviIntent, MviAction {
     @AutoValue
     abstract class DataFileViewIntent implements Intent {
 
-        abstract File dataFile();
+        @Nullable abstract File dataFile();
 
-        static DataFileViewIntent create(File dataFile) {
-            return new AutoValue_Intent_DataFileViewIntent(dataFile);
+        abstract boolean confirmation();
+
+        static DataFileViewIntent confirmation(File containerFile) {
+            boolean isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(
+                    ImmutableList.of(FileStream.create(containerFile)));
+            return create(containerFile, isConfirmationNeeded);
+        }
+
+        static DataFileViewIntent open(File dataFile) {
+            return new AutoValue_Intent_DataFileViewIntent(dataFile, false);
+        }
+
+        static DataFileViewIntent cancel() {
+            return new AutoValue_Intent_DataFileViewIntent(null, false);
+        }
+
+        static DataFileViewIntent create(File dataFile, boolean isConfirmationNeeded) {
+            return new AutoValue_Intent_DataFileViewIntent(dataFile, isConfirmationNeeded);
         }
     }
 

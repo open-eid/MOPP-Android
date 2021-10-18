@@ -10,6 +10,8 @@ import android.widget.Toast;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import java.util.Locale;
+
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
@@ -18,6 +20,7 @@ import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
+import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.ActivityResult;
@@ -75,7 +78,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(addedData);
                         ToastUtil.handleEmptyFileError(addedData, validFiles, application);
                         boolean isConfirmationNeeded = validFiles.stream().anyMatch(fileStream -> {
-                            String extension = getFileExtension(fileStream.displayName());
+                            String extension = getFileExtension(fileStream.displayName()).toLowerCase(Locale.US);
                             return "pdf".equals(extension) ?
                                     SignedContainer.isSignedPDFFile(fileStream.source(), Activity.getContext().get(), fileStream.displayName()) :
                                     SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension);
