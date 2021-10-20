@@ -23,7 +23,6 @@ import ee.ria.DigiDoc.sign.CertificateRevokedException;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.OcspInvalidTimeSlotException;
 import ee.ria.DigiDoc.sign.TooManyRequestsException;
-import ee.ria.DigiDoc.sign.utils.ErrorMessage;
 import ee.ria.DigiDoc.sign.utils.UrlMessage;
 
 import io.reactivex.rxjava3.subjects.Subject;
