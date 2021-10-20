@@ -3,13 +3,14 @@ package ee.ria.DigiDoc.smartcardreader;
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
 /**
  * Manage smart card readers on Android platform.

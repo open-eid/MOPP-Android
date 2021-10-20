@@ -31,11 +31,11 @@ import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.sign.SignatureStatus;
 import ee.ria.DigiDoc.sign.SignedContainer;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableSource;
+import io.reactivex.rxjava3.core.ObservableTransformer;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
@@ -85,7 +85,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         .map(ignored ->
                                                 Result.ContainerLoadResult.success(container, null,
                                                         false))
-                                        .startWith(Result.ContainerLoadResult.success(container,
+                                        .startWithItem(Result.ContainerLoadResult.success(container,
                                                 null, true));
                             } else {
                                 final Observable<Result.ContainerLoadResult> just = Observable
@@ -99,7 +99,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .onErrorReturn(Result.ContainerLoadResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.ContainerLoadResult.progress()));
+                        .startWithItem(Result.ContainerLoadResult.progress()));
 
         nameUpdate = upstream -> upstream.switchMap(action -> {
             File containerFile = action.containerFile();
@@ -151,7 +151,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         })
                         .onErrorReturn(throwable ->
                                 Result.NameUpdateResult.failure(containerFile, throwable))
-                        .startWith(Result.NameUpdateResult.progress(containerFile));
+                        .startWithItem(Result.NameUpdateResult.progress(containerFile));
             }
         });
 
@@ -180,7 +180,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                 .onErrorReturn(Result.DocumentsAddResult::failure)
                                                 .subscribeOn(Schedulers.io())
                                                 .observeOn(AndroidSchedulers.mainThread())
-                                                .startWith(Result.DocumentsAddResult.adding());
+                                                .startWithItem(Result.DocumentsAddResult.adding());
                                     } else {
                                         return Observable.just(Result.DocumentsAddResult.clear());
                                     }
@@ -215,7 +215,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         return Result.DocumentViewResult.idle();
                     })
                     .onErrorReturn(ignored -> Result.DocumentViewResult.idle())
-                    .startWith(Result.DocumentViewResult.activity());
+                    .startWithItem(Result.DocumentViewResult.activity());
         });
 
         documentSave = upstream -> upstream.switchMap(action -> {
@@ -242,7 +242,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     return Result.DocumentSaveResult.idle();
                                 })
                                 .onErrorReturn(ignored -> Result.DocumentSaveResult.idle())
-                                .startWith(Result.DocumentSaveResult.activity());
+                                .startWithItem(Result.DocumentSaveResult.activity());
                     });
         });
 
@@ -270,7 +270,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             .onErrorReturn(Result.DocumentRemoveResult::failure)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .startWith(Result.DocumentRemoveResult.progress());
+                            .startWithItem(Result.DocumentRemoveResult.progress());
                 }
             }
         });
@@ -292,7 +292,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .onErrorReturn(Result.SignatureRemoveResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.SignatureRemoveResult.progress());
+                        .startWithItem(Result.SignatureRemoveResult.progress());
             }
         });
 
@@ -316,7 +316,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                             containerAdd.containerFile(), true, false))))
                             .map(containerAdd -> Result.SignatureAddResult.clear())
                             .onErrorReturn(Result.SignatureAddResult::failure)
-                            .startWith(Result.SignatureAddResult.activity());
+                            .startWithItem(Result.SignatureAddResult.activity());
                 } else {
                     return signatureAddSource.show(method);
                 }
@@ -337,7 +337,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .onErrorReturn(Result.SignatureAddResult::failure)
-                        .startWith(Result.SignatureAddResult.activity(method));
+                        .startWithItem(Result.SignatureAddResult.activity(method));
             } else {
                 throw new IllegalArgumentException("Can't handle action " + action);
             }

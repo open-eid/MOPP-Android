@@ -20,6 +20,8 @@
 
 package ee.ria.DigiDoc.android.main.settings;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+
 import android.app.Dialog;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -27,15 +29,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.CheckBox;
-import android.widget.EditText;
 
-import com.takisoft.fix.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.preference.EditTextPreferenceDialogFragmentCompat;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
-
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import ee.ria.DigiDoc.android.utils.TextUtil;
 
 public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
 
@@ -44,30 +45,50 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
         super.onBindDialogView(view);
         UUIDPreference uuidPreference = getUUIDPreference();
         if (uuidPreference != null) {
-            EditText editText = uuidPreference.getEditText();
-            ViewGroup parent = (ViewGroup) editText.getParent();
             CheckBox checkBox = uuidPreference.getCheckBox();
-            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                editText.setEnabled(!isChecked);
-                if (isChecked) {
-                    editText.setText(null);
-                }
-            });
-            checkBox.setChecked(TextUtils.isEmpty(uuidPreference.getText()));
 
-            View oldCheckBox = parent.findViewById(checkBox.getId());
-            if (oldCheckBox != null) {
-                parent.removeView(oldCheckBox);
-            }
-            ViewParent oldParent = checkBox.getParent();
-            if (parent != oldParent) {
-                if (oldParent != null) {
-                    ((ViewGroup) oldParent).removeView(checkBox);
+            AppCompatEditText appCompatEditText = TextUtil.getTextView(view);
+
+            uuidPreference.setOnBindEditTextListener(editText -> {
+                checkBox.setChecked(false);
+                editText.setText(uuidPreference.getText());
+            });
+
+            if (appCompatEditText != null) {
+                if (checkBox.isChecked()) {
+                    disableTextViewOnChecked(appCompatEditText);
                 }
-                parent.addView(checkBox, ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    appCompatEditText.setEnabled(!isChecked);
+                    if (isChecked) {
+                        disableTextViewOnChecked(appCompatEditText);
+                    }
+                });
+
+                checkBox.setChecked(TextUtils.isEmpty(uuidPreference.getText()));
+
+                ViewGroup parent = ((ViewGroup) appCompatEditText.getParent());
+                View oldCheckBox = appCompatEditText.findViewById(checkBox.getId());
+                if (oldCheckBox != null) {
+                    parent.removeView(oldCheckBox);
+                }
+                ViewParent oldParent = checkBox.getParent();
+                if (parent != oldParent) {
+                    if (oldParent != null) {
+                        ((ViewGroup) oldParent).removeView(checkBox);
+                    }
+                    parent.addView(checkBox, ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+                }
             }
         }
+    }
+
+    private void disableTextViewOnChecked(AppCompatEditText appCompatEditText) {
+        appCompatEditText.setText(null);
+        appCompatEditText.setHint("00000000-0000-0000-0000-000000000000");
+        appCompatEditText.clearFocus();
     }
 
     @Override

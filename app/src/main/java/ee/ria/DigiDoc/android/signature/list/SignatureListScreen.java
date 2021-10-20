@@ -5,10 +5,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
+
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toolbar;
 
 import com.bluelinelabs.conductor.Controller;
 
@@ -21,12 +23,12 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
 public final class SignatureListScreen extends Controller implements Screen,
         MviView<Intent, ViewState> {
@@ -135,13 +137,16 @@ public final class SignatureListScreen extends Controller implements Screen,
 
     @NonNull
     @Override
-    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
+    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
         removeConfirmationDialog = new ConfirmationDialog(container.getContext(),
                 R.string.signature_list_remove_confirmation_message, R.id.documentRemovalDialog);
         View view = inflater.inflate(R.layout.signature_list_screen, container, false);
         AccessibilityUtils.setAccessibilityPaneTitle(view, R.string.signature_list_title);
 
         toolbarView = view.findViewById(R.id.toolbar);
+        toolbarView.setTitle(R.string.signature_list_title);
+        toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
+        toolbarView.setNavigationContentDescription(R.string.back);
         listView = view.findViewById(R.id.signatureList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         listView.setAdapter(adapter = new SignatureListAdapter());

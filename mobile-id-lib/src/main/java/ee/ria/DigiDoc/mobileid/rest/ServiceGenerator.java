@@ -19,6 +19,8 @@
 
 package ee.ria.DigiDoc.mobileid.rest;
 
+import com.unboundid.util.ssl.SSLUtil;
+
 import org.bouncycastle.util.encoders.Base64;
 
 import java.io.IOException;
@@ -31,7 +33,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -41,6 +42,7 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import ee.ria.DigiDoc.common.CertificateUtil;
+import ee.ria.DigiDoc.common.TrustManagerUtil;
 import ee.ria.DigiDoc.mobileid.BuildConfig;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
@@ -74,7 +76,8 @@ public class ServiceGenerator {
         addLoggingInterceptor(httpClientBuilder);
         if (sslContext != null) {
             try {
-                httpClientBuilder.sslSocketFactory(sslContext.getSocketFactory(), getTrustManager());
+                httpClientBuilder.sslSocketFactory(sslContext.getSocketFactory(), getX509TrustManager(
+                        TrustManagerUtil.createDefaultKeystoreSSLUtil()));
             } catch (Exception e) {
                 Timber.e(e, "Error building httpClient with sslContext");
             }
@@ -82,57 +85,15 @@ public class ServiceGenerator {
         return httpClientBuilder.build();
     }
 
-    private static X509TrustManager getTrustManager() throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
-        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        trustStore.load(null, null);
-
-        final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        trustManagerFactory.init((KeyStore) null);
-
-        final TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-
-        return new X509TrustManager() {
-            @Override
-            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-                checkTrustManagerCertificates(trustManagers, CERT_CHECK.CHECK_CLIENT, x509Certificates, s);
-
-            }
-
-            @Override
-            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-                checkTrustManagerCertificates(trustManagers, CERT_CHECK.CHECK_SERVER, x509Certificates, s);
-            }
-
-            @Override
-            public X509Certificate[] getAcceptedIssuers() {
-                return getCertificateAcceptedIssuers(trustManagers);
-            }
-        };
-    }
-
-    private static X509Certificate[] getCertificateAcceptedIssuers(TrustManager[] trustManagers) {
-        for (TrustManager trustManager: trustManagers) {
+    private static X509TrustManager getX509TrustManager(SSLUtil sslUtil) throws CertificateException {
+        for (TrustManager trustManager : sslUtil.getTrustManagers()) {
             if (trustManager instanceof X509TrustManager) {
-                return ((X509TrustManager) trustManager).getAcceptedIssuers();
+                return (X509TrustManager) trustManager;
             }
         }
 
-        return null;
-    }
-
-    private static void checkTrustManagerCertificates(TrustManager[] trustManagers, CERT_CHECK certCheck, X509Certificate[] x509Certificates, String s) throws CertificateException {
-        for (TrustManager trustManager: trustManagers) {
-            if (trustManager instanceof X509TrustManager) {
-                switch (certCheck) {
-                    case CHECK_CLIENT:
-                        ((X509TrustManager) trustManager).checkClientTrusted(x509Certificates, s);
-                        break;
-                    case CHECK_SERVER:
-                        ((X509TrustManager) trustManager).checkServerTrusted(x509Certificates, s);
-                        break;
-                }
-            }
-        }
+        Timber.e("Unable to get instance of algorithm");
+        throw new CertificateException("Unable to get X509TrustManager");
     }
 
     private static void addLoggingInterceptor(OkHttpClient.Builder httpClientBuilder) {

@@ -39,7 +39,7 @@
     <string name="main_about_z_lib_title">zlib - A Massively Spiffy Yet Delicately Unobtrusive Compression Library %1$s</string>
     <string name="main_about_z_lib_license_title">zlib License</string>
     <string name="main_about_z_lib_license_url">https://zlib.net/zlib_license.html</string>
-    <string name="main_about_support_preference_v7_fix_title">Android Support Preference v7 Fix %1$s</string>
+    <string name="main_about_support_preference_v7_fix_title">Android Support Preference X %1$s</string>
     <string name="main_about_guava_title">Google Guava %1$s</string>
     <string name="main_about_square_okio_title">Square Okio %1$s</string>
     <string name="main_about_timber_title">Timber %1$s</string>

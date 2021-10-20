@@ -27,12 +27,12 @@ import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.idcard.CodeType;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.idcard.Token;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableSource;
+import io.reactivex.rxjava3.core.ObservableTransformer;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createBrowserIntent;
 
@@ -59,7 +59,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     .onErrorReturn(Result.LoadResult::failure);
             if (action.clear()) {
                 return resultObservable
-                        .startWith(Result.LoadResult.clear());
+                        .startWithItem(Result.LoadResult.clear());
             }
             return resultObservable;
         });
@@ -140,7 +140,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.CodeUpdateResult.progress(updateAction));
+                        .startWithItem(Result.CodeUpdateResult.progress(updateAction));
             }
         });
     }

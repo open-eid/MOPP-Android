@@ -20,7 +20,7 @@ android {
 
 dependencies {
     api "androidx.annotation:annotation:${androidxVersion}"
-    implementation "androidx.appcompat:appcompat:${androidxVersion}"
+    implementation "androidx.appcompat:appcompat:${androidxAppCompatVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
 

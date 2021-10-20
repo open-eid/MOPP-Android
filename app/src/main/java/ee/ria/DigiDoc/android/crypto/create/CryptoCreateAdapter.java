@@ -27,11 +27,11 @@ import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.NoInternetConnectionException;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.Constants.VOID;
 
 final class CryptoCreateAdapter extends
@@ -273,7 +273,7 @@ final class CryptoCreateAdapter extends
             buttonView.setContentDescription(buttonView.getResources().getString(item.contentDescription()));
             clicks(buttonView)
                     .map(ignored ->
-                            ((AddButtonItem) adapter.items.get(getAdapterPosition())).text())
+                            ((AddButtonItem) adapter.items.get(getBindingAdapterPosition())).text())
                     .subscribe(adapter.addButtonClicksSubject);
         }
     }
@@ -315,7 +315,7 @@ final class CryptoCreateAdapter extends
         void bind(CryptoCreateAdapter adapter, DataFileItem item) {
             clicks(itemView)
                     .map(ignored ->
-                            ((DataFileItem) adapter.items.get(getAdapterPosition())).dataFile())
+                            ((DataFileItem) adapter.items.get(getBindingAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileClicksSubject);
             nameView.setText(item.dataFile().getName());
             String fileNameDescription = nameView.getResources().getString(R.string.file);
@@ -326,7 +326,7 @@ final class CryptoCreateAdapter extends
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton)
                     .map(ignored ->
-                            ((DataFileItem) adapter.items.get(getAdapterPosition())).dataFile())
+                            ((DataFileItem) adapter.items.get(getBindingAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileRemoveClicksSubject);
 
             String saveButtonText = saveButton.getResources().getString(R.string.crypto_create_data_file_save_button);
@@ -334,7 +334,7 @@ final class CryptoCreateAdapter extends
             saveButton.setVisibility(item.saveButtonVisible() ? View.VISIBLE: View.GONE);
             clicks(saveButton)
                     .map(ignored ->
-                            ((DataFileItem) adapter.items.get(getAdapterPosition())).dataFile())
+                            ((DataFileItem) adapter.items.get(getBindingAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileSaveClicksSubject);
         }
     }
@@ -362,7 +362,7 @@ final class CryptoCreateAdapter extends
         void bind(CryptoCreateAdapter adapter, RecipientItem item) {
             clicks(itemView)
                     .map(ignored ->
-                            ((RecipientItem) adapter.items.get(getAdapterPosition())).recipient())
+                            ((RecipientItem) adapter.items.get(getBindingAdapterPosition())).recipient())
                     .subscribe(adapter.recipientClicksSubject);
             nameView.setText(item.recipient().commonName());
             infoView.setText(itemView.getResources().getString(
@@ -374,7 +374,7 @@ final class CryptoCreateAdapter extends
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton)
                     .map(ignored ->
-                            ((RecipientItem) adapter.items.get(getAdapterPosition())).recipient())
+                            ((RecipientItem) adapter.items.get(getBindingAdapterPosition())).recipient())
                     .subscribe(adapter.recipientRemoveClicksSubject);
             addButton.setVisibility(item.addButtonVisible() ? View.VISIBLE : View.GONE);
             addButton.setEnabled(item.addButtonEnabled());
@@ -387,7 +387,7 @@ final class CryptoCreateAdapter extends
             }
             clicks(addButton)
                     .map(ignored ->
-                            ((RecipientItem) adapter.items.get(getAdapterPosition())).recipient())
+                            ((RecipientItem) adapter.items.get(getBindingAdapterPosition())).recipient())
                     .subscribe(adapter.recipientAddClicksSubject);
         }
     }

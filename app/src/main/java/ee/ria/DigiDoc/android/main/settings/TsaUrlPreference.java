@@ -1,25 +1,30 @@
 package ee.ria.DigiDoc.android.main.settings;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+
 import android.content.Context;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatCheckBox;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 
-import com.takisoft.fix.support.v7.preference.EditTextPreference;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatCheckBox;
+
+import com.takisoft.preferencex.EditTextPreference;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-
 public class TsaUrlPreference extends EditTextPreference {
 
     private final CheckBox checkBox;
+    private final ConfigurationProvider configurationProvider;
 
     public TsaUrlPreference(Context context) {
         this(context, null);
@@ -36,13 +41,13 @@ public class TsaUrlPreference extends EditTextPreference {
     public TsaUrlPreference(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                             int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        ConfigurationProvider configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
-        getEditText().setHint(configurationProvider.getTsaUrl());
+        configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
         checkBox = new AppCompatCheckBox(context);
         checkBox.setId(android.R.id.checkbox);
         checkBox.setText(R.string.main_settings_tsa_url_use_default);
         checkBox.setMinHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48f, context.getResources().getDisplayMetrics()));
         checkBox.setMinWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120f, context.getResources().getDisplayMetrics()));
+        checkBox.setX(48f);
 
         setOnPreferenceChangeListener((preference, newValue) -> {
             AccessibilityUtils.sendAccessibilityEvent(context, TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
@@ -57,6 +62,6 @@ public class TsaUrlPreference extends EditTextPreference {
     @Override
     public CharSequence getSummary() {
         String text = getText();
-        return TextUtils.isEmpty(text) ? getEditText().getHint() : text;
+        return TextUtils.isEmpty(text) ? configurationProvider.getTsaUrl() : text;
     }
 }

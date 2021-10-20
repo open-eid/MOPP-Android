@@ -15,11 +15,11 @@ import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableSource;
+import io.reactivex.rxjava3.core.ObservableTransformer;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
@@ -43,7 +43,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .onErrorReturn(Result.ContainersLoadResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.ContainersLoadResult
+                        .startWithItem(Result.ContainersLoadResult
                                 .progress(action.indicateActivity())));
 
         navigateUp = upstream -> upstream
@@ -78,7 +78,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .onErrorReturn(Result.ContainerRemoveResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.ContainerRemoveResult.progress());
+                        .startWithItem(Result.ContainerRemoveResult.progress());
             }
         });
     }

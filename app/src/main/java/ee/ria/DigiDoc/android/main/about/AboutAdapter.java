@@ -62,7 +62,7 @@ final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     R.string.main_about_z_lib_license_url))
             .add(Component.create(
                     R.string.main_about_support_preference_v7_fix_title,
-                    BuildConfig.PREFERENCE_V7_FIX_VERSION,
+                    BuildConfig.PREFERENCEX_VERSION,
                     R.string.main_about_apache_2_license_title,
                     R.string.main_about_apache_2_license_url))
             .add(Component.create(

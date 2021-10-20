@@ -40,10 +40,10 @@ dependencies {
 
     implementation project(':common-lib')
 
-    androidTestUtil "androidx.test:orchestrator:${androidxTestVersion}"
+    androidTestUtil "androidx.test:orchestrator:${androidxTestOrchestratorVersion}"
     androidTestAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
     androidTestImplementation "androidx.test.ext:junit:${androidxTestVersion}"
-    androidTestImplementation "androidx.test:rules:${androidxTestVersion}"
+    androidTestImplementation "androidx.test:rules:${androidxTestRulesVersion}"
     androidTestImplementation "androidx.test.espresso:espresso-core:${androidxTestEspressoVersion}"
     androidTestImplementation "com.google.truth:truth:${truthVersion}"
 

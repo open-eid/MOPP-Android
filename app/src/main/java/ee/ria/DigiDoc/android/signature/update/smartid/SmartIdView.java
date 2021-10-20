@@ -41,11 +41,11 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
-import static com.jakewharton.rxbinding2.widget.RxTextView.afterTextChangeEvents;
+import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
 
 public final class SmartIdView extends LinearLayout implements
         SignatureAddView<SmartIdRequest, SmartIdResponse> {

@@ -14,18 +14,25 @@ import com.unboundid.ldap.sdk.SearchResultEntry;
 import com.unboundid.ldap.sdk.controls.SimplePagedResultsControl;
 import com.unboundid.util.LDAPTestUtils;
 import com.unboundid.util.ssl.SSLUtil;
-import com.unboundid.util.ssl.TrustAllTrustManager;
+import com.unboundid.util.ssl.TLSCipherSuiteSelector;
 
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.EIDType;
+import ee.ria.DigiDoc.common.TrustManagerUtil;
 import okio.ByteString;
 
 import static com.unboundid.ldap.sdk.SearchScope.SUB;
@@ -80,7 +87,7 @@ public final class RecipientRepository {
     }
 
     private ImmutableList<Certificate> search(String url, LdapFilter ldapFilter) throws CryptoException {
-        try (LDAPConnection connection = new LDAPConnection(getSslSocketFactory())) {
+        try (LDAPConnection connection = new LDAPConnection(getDefaultKeystoreSslSocketFactory())) {
             connection.connect(url, LDAP_PORT);
             return executeSearch(connection, ldapFilter);
         } catch (Exception e) {
@@ -124,9 +131,10 @@ public final class RecipientRepository {
         return builder.build();
     }
 
-    private SSLSocketFactory getSslSocketFactory() throws GeneralSecurityException {
-        SSLUtil sslUtil = new SSLUtil(new TrustAllTrustManager());
-        return sslUtil.createSSLSocketFactory();
+    private SSLSocketFactory getDefaultKeystoreSslSocketFactory() throws GeneralSecurityException, IOException {
+        TLSCipherSuiteSelector.setAllowSHA1(true);
+        TLSCipherSuiteSelector.setAllowRSAKeyExchange(true);
+        return TrustManagerUtil.createDefaultKeystoreSSLUtil().createSSLSocketFactory();
     }
 
     private boolean isSuitableKeyAndNotMobileId(Certificate certificate) {

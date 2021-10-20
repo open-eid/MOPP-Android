@@ -14,9 +14,9 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.idcard.CertificateType;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
 
 public final class CertificateDataView extends LinearLayout {
 

@@ -2,7 +2,7 @@ package ee.ria.DigiDoc.android.utils.rxbinding.app;
 
 import android.app.Dialog;
 
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
 public final class RxDialog {
 

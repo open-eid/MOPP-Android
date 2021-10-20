@@ -5,14 +5,14 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
+import android.widget.Toolbar;
 import android.util.AttributeSet;
 import android.widget.ImageButton;
 
 import ee.ria.DigiDoc.R;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
 
 public final class HomeToolbar extends Toolbar {
 
@@ -36,7 +36,7 @@ public final class HomeToolbar extends Toolbar {
         a.recycle();
     }
 
-    public Observable<Object> overflowButtonClicks() {
+    public Observable overflowButtonClicks() {
         return clicks(overflowButton);
     }
 }
