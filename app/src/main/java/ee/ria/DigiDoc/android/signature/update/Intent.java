@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
+import ee.ria.DigiDoc.android.utils.SivaUtil;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
@@ -74,12 +75,27 @@ interface Intent extends MviIntent {
     @AutoValue
     abstract class DocumentViewIntent implements Intent, Action {
 
-        abstract File containerFile();
+        @Nullable abstract File containerFile();
 
-        abstract DataFile document();
+        @Nullable abstract DataFile document();
 
-        static DocumentViewIntent create(File containerFile, DataFile document) {
-            return new AutoValue_Intent_DocumentViewIntent(containerFile, document);
+        abstract boolean confirmation();
+
+        static DocumentViewIntent confirmation(File containerFile, DataFile document) {
+            boolean isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(document);
+            return create(containerFile, document, isConfirmationNeeded);
+        }
+
+        static DocumentViewIntent cancel() {
+            return create(null, null, false);
+        }
+
+        static DocumentViewIntent open(File containerFile, DataFile document) {
+            return create(containerFile, document, false);
+        }
+
+        static DocumentViewIntent create(@Nullable File containerFile, @Nullable DataFile document, boolean confirmation) {
+            return new AutoValue_Intent_DocumentViewIntent(containerFile, document, confirmation);
         }
     }
 

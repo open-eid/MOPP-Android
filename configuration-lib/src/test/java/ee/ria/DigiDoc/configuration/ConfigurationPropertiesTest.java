@@ -25,6 +25,6 @@ public class ConfigurationPropertiesTest {
         when(assetManager.open(anyString())).thenReturn(getClass().getClassLoader().getResourceAsStream(ConfigurationProperties.PROPERTIES_FILE_NAME));
         ConfigurationProperties configurationProperties = new ConfigurationProperties(assetManager);
         assertEquals("https://id.eesti.ee/", configurationProperties.getCentralConfigurationServiceUrl());
-        assertSame(7, configurationProperties.getConfigurationUpdateInterval());
+        assertSame(4, configurationProperties.getConfigurationUpdateInterval());
     }
 }

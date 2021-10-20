@@ -17,13 +17,13 @@ import android.widget.TextView;
 
 import com.google.common.collect.ImmutableMap;
 
-import org.threeten.bp.Instant;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.ZoneId;
-import org.threeten.bp.ZonedDateTime;
 import org.xml.sax.XMLReader;
 
 import java.text.DateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;

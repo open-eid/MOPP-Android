@@ -37,7 +37,7 @@
     <string name="main_about_title">Info</string>
     <string name="main_about_ria_digidoc_version_title">RIA DigiDoc versioon %1$s</string>
     <string name="main_about_software_developed_by_title">Eesti ID-tarkvara on välja antud Riigi Infosüsteemi Ameti poolt</string>
-    <string name="main_about_contact_information_title">Küsimuste korral pöörduge id.ee.</string>
+    <string name="main_about_contact_information_title">Küsimuste korral pöördu id.ee.</string>
     <string name="main_about_licenses_title">Täiendavad litsentsid ja komponendid</string>
     <string name="main_about_terms_and_conditions">Kasutustingimused:</string>
 
@@ -67,6 +67,9 @@
 
     <!-- Signature Create -->
     <string name="signature_create_error">Failide laadimine ebaõnnestus</string>
+    <string name="siva_send_message_dialog">PDF ja DDOC formaadis digitaalallkirjade kehtivuse kontrollimiseks edastatakse fail valideerimisteenusele SiVa. Digitaalallkirjade kehtivuse kontrollimisel edastatud andmete kohta loe lähemalt https://www.id.ee/artikkel/riigi-infosusteemi-ameti-id-tarkvara-andmekaitsetingimused/</string>
+    <string name="siva_read_here">siit</string>
+    <string name="siva_continue_question">Kas soovid jätkata?</string>
 
     <!-- Signature Update -->
     <string name="signature_update_title_created">Allkirjastamine</string>
@@ -105,7 +108,6 @@
     <string name="signature_update_signature_status_valid">Allkiri on kehtiv</string>
     <string name="signature_update_signature_status_warning">(Hoiatused)</string>
     <string name="signature_update_signature_status_non_qscd">(Piirangud)</string>
-    <string name="signature_update_signature_status_test">(Testallkiri)</string>
     <string name="signature_update_signature_status_invalid">Allkiri ei ole kehtiv</string>
     <string name="signature_update_signature_status_unknown">Allkiri on teadmata</string>
     <string name="signature_update_signature_created_at">Allkirjastatud %1$s</string>
@@ -131,7 +133,7 @@
 
     <string name="signature_update_signature_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Päringu saatmine ebaõnnestus. Sellelt IP-aadressilt on ebaõnnestunud päringute arv ületatud. Palun proovige mõne aja pärast uuesti.</string>
-    <string name="signature_update_signature_error_message_invalid_time_slot">Palun kontrollige oma nutiseadme kellaaega. https://www.id.ee/artikkel/ria-digidoc-viga-palun-kontrollige-oma-nutiseadme-kellaaega/</string>
+    <string name="signature_update_signature_error_message_invalid_time_slot">Palun kontrolli oma nutiseadme kellaaega. https://www.id.ee/artikkel/ria-digidoc-viga-palun-kontrollige-oma-nutiseadme-kellaaega/</string>
     <string name="signature_update_signature_error_message_certificate_revoked">Sertifikaat on kehtetu</string>
 
     <string name="signature_update_signature_error_invalid_ssl_handshake">SSL ühenduskanali loomine ebaõnnestus. Kontrolli rakenduse seadeid või tarkvara uuendusi</string>
@@ -140,7 +142,7 @@
     <string name="signature_update_signature_selected_method_smart_id">Valitud allkirjastamise viisiks on Smart-ID, vahekaart %1$d / %2$d</string>
     <string name="signature_update_signature_selected_method_id_card">Valitud allkirjastamise viisiks on ID-kaart, vahekaart %1$d / %2$d</string>
 
-    <string name="signature_update_signature_chosen_method_mobile_id">Allkirjastamisviis Mobiil-ID on valitud</string>
+    <string name="signature_update_signature_chosen_method_mobile_id">Allkirjastamisviis mobiil-ID on valitud</string>
     <string name="signature_update_signature_chosen_method_smart_id">Smart-ID allkirjastamise vahend valitud</string>
     <string name="signature_update_signature_chosen_method_id_card">ID-kaart allkirjastamise vahend valitud</string>
 
@@ -191,13 +193,12 @@
     <string name="signature_update_smart_id_country">Riik</string>
     <string name="signature_update_smart_id_info">Veendu kontrollkoodi õigsuses ja sisesta nutiseadmes Smart-ID PIN2-kood</string>
     <string name="signature_update_smart_id_select_device">Allkirjastamiseks kinnita seade Smart-ID rakenduses.</string>
-    <string name="signature_update_smart_id_status_expired_transaction">Sinu Smart-ID toiming aegus. Palun proovi uuesti.</string>
     <string name="signature_update_smart_id_status_document_unusable">Sinu Smart-ID toiming ebaõnnestus. Palun kontrolli Smart-ID rakendust või võta ühendust Smart-ID klienditoega.</string>
     <string name="signature_update_smart_id_status_wrong_vc">Viga: valiti vale kontrollkood</string>
     <string name="signature_update_smart_id_error_message_not_qualified">RIA DigiDoc mobiilirakenduses allkirjastamiseks peab sinu Smart-ID vastama tasemele kõrge.</string>
     <string name="signature_update_smart_id_error_message_old_api">RIA DigiDoc mobiilirakendus vajab uuendamist. Paigalda uus versioon mobiilirakenduse poest. Lisainfo ID-abiliini telefonil (+372) 666 8888.</string>
     <string name="signature_update_smart_id_error_message_under_maintenance">Smart-ID teenuses esinevad tehnilised tõrked. Palun proovi mõne aja pärast uuesti.</string>
-    <string name="signature_update_smart_id_error_message_account_not_found">Kontot ei leitud</string>
+    <string name="signature_update_smart_id_error_message_account_not_found_or_timeout">Ümbriku allkirjastamine ebaõnnestus. Sinu Smart-ID toiming aegus või kontot ei leitud</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Sessiooni ei leitud</string>
     <string name="signature_update_smart_id_error_message_access_rights">Ümbriku allkirjastamine ebaõnnestus. Kontrolli Smart-ID teenuse ligipääsu seadeid. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
 
@@ -252,7 +253,7 @@
 
     <string name="crypto_recipients_title">Adressaatide lisamine</string>
     <string name="crypto_recipients_search">Sisesta isikukood, asutus või registrikood</string>
-    <string name="crypto_recipients_search_result_empty">Isikul või asutusel puudub kehtiv sertifikaat. \nKrüpteerimiseks on vaja kehtivat sertikaati.\nKüsimuste korral pöörduge id.ee.</string>
+    <string name="crypto_recipients_search_result_empty">Isikul või asutusel puudub kehtiv sertifikaat. \nKrüpteerimiseks on vaja kehtivat sertikaati.\nKüsimuste korral pöördu id.ee.</string>
     <string name="crypto_recipients_selected_subhead">Lisatud adressaadid</string>
     <string name="crypto_recipients_done_button">KINNITA</string>
 
@@ -308,7 +309,7 @@
     <string name="eid_type_id_card">ID-KAART</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
     <string name="eid_type_mobile_id">MOBIIL-ID</string>
-    <string name="eid_type_e_seal">e-Tempel</string>
+    <string name="eid_type_e_seal">Krüpteerimissertifikaat</string>
     <string name="eid_type_unknown">TEADMATA</string>
 
     <string name="eid_home_code_update_title_pin1_edit">PIN1-koodi vahetus</string>
@@ -406,9 +407,14 @@
     <string name="container_has">Ümbrikus on</string>
     <string name="file">Fail</string>
 
+    <string name="yes_button">JAH</string>
+    <string name="cancel_button">KATKESTA</string>
+
     <!-- Sharing Screen -->
     <string name="sharing_screen_title">Vali fail</string>
 
+    <string name="empty_file_error">Tühja faili ei saa lisada ümbrikusse.</string>
+    <string name="empty_file_message">Ümbrikule on lisatud tühi fail. Allkirjastamiseks eemalda ümbrikust tühi fail.</string>
 
     <!--  TODO: tõlked  -->
     <string name="signature_removed">Allkiri eemaldatud</string>

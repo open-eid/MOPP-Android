@@ -29,7 +29,5 @@ dependencies {
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
-    api "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
-
     api project(':smart-card-reader-lib')
 }

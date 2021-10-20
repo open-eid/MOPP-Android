@@ -1,6 +1,6 @@
 /*
  * smart-id-lib
- * Copyright 2020 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2021 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -59,12 +59,11 @@ public class SessionStatusResponse {
 
     public enum ProcessStatus {
         OK,
-        TIMEOUT,
         USER_REFUSED,
         DOCUMENT_UNUSABLE,
         WRONG_VC,
 
-        ACCOUNT_NOT_FOUND,
+        ACCOUNT_NOT_FOUND_OR_TIMEOUT,
         SESSION_NOT_FOUND,
         MISSING_SESSIONID,
         EXCEEDED_UNSUCCESSFUL_REQUESTS,

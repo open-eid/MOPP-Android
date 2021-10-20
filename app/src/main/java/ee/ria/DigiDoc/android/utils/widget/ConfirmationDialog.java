@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.utils.widget;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 
@@ -14,6 +15,8 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Constants;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog;
+import ee.ria.DigiDoc.sign.utils.UrlMessage;
+
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
@@ -28,9 +31,22 @@ public final class ConfirmationDialog extends AlertDialog implements
     public ConfirmationDialog(@NonNull Context context, @StringRes int message, int action) {
         super(context);
         SecureUtil.markAsSecure(getWindow());
-        setMessage(context.getString(message));
-        setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
-        setButton(BUTTON_NEGATIVE, context.getString(android.R.string.cancel), this);
+
+        if (action == R.id.sivaConfirmationDialog) {
+            setButton(BUTTON_POSITIVE, context.getString(R.string.yes_button), this);
+            setButton(BUTTON_NEGATIVE, context.getString(R.string.cancel_button), this);
+            setMessage(Html.fromHtml(UrlMessage.withURLAndQuestion(
+                    getContext(),
+                    message,
+                    R.string.siva_read_here,
+                    R.string.siva_continue_question
+            ), Html.FROM_HTML_MODE_LEGACY));
+
+        } else {
+            setMessage(context.getString(message));
+            setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
+            setButton(BUTTON_NEGATIVE, context.getString(android.R.string.cancel), this);
+        }
 
         this.action = action;
     }

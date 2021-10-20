@@ -67,6 +67,9 @@
 
     <!-- Signature Create -->
     <string name="signature_create_error">Could not load selected files</string>
+    <string name="siva_send_message_dialog">Signed document in PDF and DDOC format will be transmitted to the Digital Signature Validation Service SiVa to verify the validity of the digital signature. Read more information about transmitted data to Digital Signature Validation service from https://www.id.ee/en/article/data-protection-conditions-for-the-id-software-of-the-national-information-system-authority/</string>
+    <string name="siva_read_here">here</string>
+    <string name="siva_continue_question">Do you want to continue?</string>
 
     <!-- Signature Update -->
     <string name="signature_update_title_created">Signing</string>
@@ -105,7 +108,6 @@
     <string name="signature_update_signature_status_valid">Signature is valid</string>
     <string name="signature_update_signature_status_warning">(Warnings)</string>
     <string name="signature_update_signature_status_non_qscd">(Restrictions)</string>
-    <string name="signature_update_signature_status_test">(Test signature)</string>
     <string name="signature_update_signature_status_invalid">Signature is invalid</string>
     <string name="signature_update_signature_status_unknown">Signature is unknown</string>
     <string name="signature_update_signature_created_at">Signed %1$s</string>
@@ -191,13 +193,12 @@
     <string name="signature_update_smart_id_country">Country</string>
     <string name="signature_update_smart_id_info">Make sure control code matches with one in phone screen and enter Smart-ID PIN2 code</string>
     <string name="signature_update_smart_id_select_device">Confirm device for signing in Smart-ID application.</string>
-    <string name="signature_update_smart_id_status_expired_transaction">Your Smart-ID transaction has expired. Please try again</string>
     <string name="signature_update_smart_id_status_document_unusable">Your Smart-ID transaction has failed. Please check your Smart-ID application or contact Smart-ID customer support.</string>
     <string name="signature_update_smart_id_status_wrong_vc">Error: an incorrect control code was chosen</string>
     <string name="signature_update_smart_id_error_message_not_qualified">Your Smart-ID certificate level must be qualified to sign documents in RIA DigiDoc mobile application.</string>
     <string name="signature_update_smart_id_error_message_old_api">RIA DigiDoc mobile application needs an upgrade. Please install new version from the mobile app store. Additional info is available ID-helpline (+372) 666 8888.</string>
     <string name="signature_update_smart_id_error_message_under_maintenance">Smart-ID service has encountered technical errors. Please try again later.</string>
-    <string name="signature_update_smart_id_error_message_account_not_found">Account not found</string>
+    <string name="signature_update_smart_id_error_message_account_not_found_or_timeout">Failed to sign container. Your Smart-ID transaction has expired or user account not found</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Session not found</string>
     <string name="signature_update_smart_id_error_message_access_rights">Failed to sign container. Check your Smart-ID service access settings. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
 
@@ -308,7 +309,7 @@
     <string name="eid_type_id_card">ID-CARD</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
     <string name="eid_type_mobile_id">MOBILE-ID</string>
-    <string name="eid_type_e_seal">e-Seal</string>
+    <string name="eid_type_e_seal">Certificate for Encryption</string>
     <string name="eid_type_unknown">UNKNOWN</string>
 
     <string name="eid_home_code_update_title_pin1_edit">Change PIN1</string>
@@ -402,12 +403,17 @@
     <string name="decrypt_content_description">Decrypt, tab %1$d of %2$d</string>
     <string name="decrypt_send_content_description">Share, tab %1$d of %2$d</string>
 
+    <string name="yes_button">YES</string>
+    <string name="cancel_button">CANCEL</string>
+
     <!-- Sharing Screen -->
     <string name="sharing_screen_title">Choose file</string>
 
     <string name="document">Document</string>
     <string name="container_has">Container has</string>
     <string name="file">File</string>
+    <string name="empty_file_error">Cannot add empty file to the container.</string>
+    <string name="empty_file_message">An empty file is attached to the envelope. Remove the empty file from the container to sign.</string>
     <string name="signature_removed">Signature removed</string>
     <string name="signature_removal_cancelled">Signature removal cancelled</string>
     <string name="file_removed">File removed</string>

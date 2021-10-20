@@ -31,7 +31,6 @@ dependencies {
 
     api "com.google.guava:guava:${guavaVersion}"
     api "com.squareup.okio:okio:${okioVersion}"
-    api "com.jakewharton.threetenabp:threetenabp:${threetenabpVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
 

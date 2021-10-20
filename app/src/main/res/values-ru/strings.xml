@@ -67,6 +67,9 @@
 
     <!-- Signature Create -->
     <string name="signature_create_error">Не удалось загрузить выбранные файлы</string>
+    <string name="siva_send_message_dialog">Для проверки действительности электронно-цифровых подписей в форматах PDF и DDOC файл пересылается в службу проверки цифровых подписей SiVa. Подробнее о данных, переданных для проверки действительности электронно-цифровых подписей, можно прочитать https://www.id.ee/ru/artikkel/usloviya-zashhity-dannyh-programmnogo-obespecheniya-id-karty-departamenta-gosudarstvennoj-infosistemy/</string>
+    <string name="siva_read_here">здесь</string>
+    <string name="siva_continue_question">Вы желаете продолжить?</string>
 
     <!-- Signature Update -->
     <string name="signature_update_title_created">Подписание</string>
@@ -105,7 +108,6 @@
     <string name="signature_update_signature_status_valid">Подпись действительна</string>
     <string name="signature_update_signature_status_warning">(Предупреждения)</string>
     <string name="signature_update_signature_status_non_qscd">(Ограничения)</string>
-    <string name="signature_update_signature_status_test">(Пробная подпись)</string>
     <string name="signature_update_signature_status_invalid">Подпись недействительна</string>
     <string name="signature_update_signature_status_unknown">Подпись неизвестная</string>
     <string name="signature_update_signature_created_at">Подписано %1$s</string>
@@ -193,13 +195,12 @@
     <string name="signature_update_smart_id_country">Страна</string>
     <string name="signature_update_smart_id_info">Убедитесь в правильности контрольного кодa и введите PIN2-код для Smart-ID</string>
     <string name="signature_update_smart_id_select_device">Для проставления подписи подтвердите устройство в приложении Smart-ID.</string>
-    <string name="signature_update_smart_id_status_expired_transaction">Срок действия вашей транзакции Smart-ID истек. Пожалуйста, попробуйте еще раз.</string>
     <string name="signature_update_smart_id_status_document_unusable">Не удалось выполнить операцию Smart-ID. Пожалуйста, проверьте приложение Smart-ID или свяжитесь со службой поддержки Smart-ID.</string>
     <string name="signature_update_smart_id_status_wrong_vc">Ошибка: выбран неправильный контрольный код</string>
     <string name="signature_update_smart_id_error_message_not_qualified">Для проставления подписи в мобильном приложении RIA DigiDoc, ваш Smart-ID должен соответствовать уровню "высокий".</string>
     <string name="signature_update_smart_id_error_message_old_api">Мобильное приложение RIA DigiDoc нуждается в обновлении. Пожалуйста, установите новую версию из магазина мобильных приложений. Дополнительную информацию можно получить по телефону (+372) 666 888</string>
     <string name="signature_update_smart_id_error_message_under_maintenance">Технический сбой услуги Smart-ID. Пожалуйста, попробуйте позже.</string>
-    <string name="signature_update_smart_id_error_message_account_not_found">Счет не найден</string>
+    <string name="signature_update_smart_id_error_message_account_not_found_or_timeout">Не удалось подписать контейнер. Срок действия вашей операции Smart-ID истек или учетная запись не найдена</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Сессия не найден</string>
     <string name="signature_update_smart_id_error_message_access_rights">Не удалось подписать контейнер. Проверьте настройки доступа услуги Smart-ID. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
 
@@ -310,7 +311,7 @@
     <string name="eid_type_id_card">ID-КАРТА</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
     <string name="eid_type_mobile_id">MOBIIL-ID</string>
-    <string name="eid_type_e_seal">e-Печать</string>
+    <string name="eid_type_e_seal">Сертификат шифрования</string>
     <string name="eid_type_unknown">НЕИЗВЕСТНО</string>
 
     <string name="eid_home_code_update_title_pin1_edit">Изменить PIN1</string>
@@ -404,8 +405,14 @@
     <string name="decrypt_content_description">Дешифровать, вкладка %1$d из %2$d</string>
     <string name="decrypt_send_content_description">Поделиться, вкладка %1$d из %2$d</string>
 
+    <string name="yes_button">ДА</string>
+    <string name="cancel_button">ОТМЕНИТЬ</string>
+
     <!-- Sharing Screen -->
     <string name="sharing_screen_title">Выбрать файл</string>
+
+    <string name="empty_file_error">Пустой файл нельзя добавить в контейнер.</string>
+    <string name="empty_file_message">В контейнер добавлен пустой файл. Для подписания удалите из контейнера пустой файл.</string>
 
     <!--  TODO: tõlked  -->
     <string name="document">Документ</string>

@@ -54,7 +54,6 @@
     <string name="main_about_rxbinding_title">RxBinding %1$s</string>
     <string name="main_about_autovalue_title">Google AutoValue %1$s</string>
     <string name="main_about_autovalue_parcel_title">AutoValue Parcel %1$s</string>
-    <string name="main_about_threetenabp_title">ThreeTenAbp %1$s</string>
     <string name="main_about_expandable_layout_title">ExpandableLayout %1$s</string>
     <string name="main_about_ldap_sdk_title">UnboundID LDAP SDK for Java %1$s</string>
     <string name="main_about_cdoc4j_title">cdoc4j %1$s</string>
@@ -96,5 +95,7 @@
     <string name="main_settings_crash_report_setting_key">crash_seport_setting</string>
 
     <string name="show_success_notification_key">show_success_notification</string>
+
+    <string name="is_ddoc_parent_container_timestamped_key">is_ddoc_parent_container_timestamped</string>
 
 </resources>

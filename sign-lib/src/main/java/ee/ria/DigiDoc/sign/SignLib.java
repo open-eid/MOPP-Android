@@ -33,6 +33,7 @@ public final class SignLib {
      * Sub-directory name in {@link Context#getCacheDir() cache dir} for schema.
      */
     private static final String SCHEMA_DIR = "schema";
+    private static final int LIBDIGIDOCPP_LOG_LEVEL = 4; // Debug messages
 
     private static SharedPreferences.OnSharedPreferenceChangeListener tsaUrlChangeListener;
 
@@ -97,18 +98,33 @@ public final class SignLib {
 
         initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider);
         digidoc.initializeLib(userAgent, path);
+    }
 
+    private static void initLibDigiDocLogging(Context context) {
+        final File logDirectory = new File(context.getFilesDir() + "/logs");
+        if (!logDirectory.exists()) {
+            boolean isDirCreated = logDirectory.mkdir();
+            if (isDirCreated) {
+                Timber.d("Directories created for %s", logDirectory.getPath());
+            }
+        }
+        DigiDocConf.instance().setLogLevel(LIBDIGIDOCPP_LOG_LEVEL);
+        DigiDocConf.instance().setLogFile(logDirectory.getAbsolutePath() + File.separator + "libdigidocpp.log");
     }
 
     private static void initLibDigiDocConfiguration(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider) {
         DigiDocConf conf = new DigiDocConf(getSchemaDir(context).getAbsolutePath());
         Conf.init(conf.transfer());
+        if (BuildConfig.BUILD_TYPE.contentEquals("debug")) {
+            initLibDigiDocLogging(context);
+        }
 
         forcePKCS12Certificate();
         overrideTSLUrl(configurationProvider.getTslUrl());
         overrideTSLCert(configurationProvider.getTslCerts());
         overrideSignatureValidationServiceUrl(configurationProvider.getSivaUrl());
         overrideOCSPUrls(configurationProvider.getOCSPUrls());
+        overrideVerifyServiceCert(configurationProvider.getCertBundle());
         initTsaUrl(context, tsaUrlPreferenceKey, configurationProvider.getTsaUrl());
     }
 
@@ -124,6 +140,12 @@ public final class SignLib {
         DigiDocConf.instance().setTSLCert(new byte[0]); // Clear existing TSL certificates list
         for (String tslCert : tslCerts) {
             DigiDocConf.instance().addTSLCert(Base64.decode(tslCert));
+        }
+    }
+
+    private static void overrideVerifyServiceCert(List<String> certBundle) {
+        for (String cert : certBundle) {
+            DigiDocConf.instance().addVerifyServiceCert(Base64.decode(cert));
         }
     }
 

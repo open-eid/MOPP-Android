@@ -97,6 +97,7 @@
     <item type="id" name="signatureUpdateListSuccessMessage" />
     <item type="id" name="signatureUpdateListStatusUnknown" />
     <item type="id" name="signatureUpdateListStatusInvalid" />
+    <item type="id" name="signatureUpdateListStatusEmptyFile" />
     <item type="id" name="signatureUpdateListName" />
     <item type="id" name="signatureUpdateListNameUpdateButton" />
     <item type="id" name="signatureUpdateListSubheadTitle" />
@@ -265,5 +266,8 @@
     <!-- Confirmation Dialog -->
     <item type="id" name="documentRemovalDialog" />
     <item type="id" name="signatureRemovalDialog" />
+
+    <!-- SiVa Confirmation Dialog -->
+    <item type="id" name="sivaConfirmationDialog" />
 
 </resources>

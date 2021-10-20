@@ -1,5 +1,14 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
+import static ee.ria.DigiDoc.android.utils.BundleUtils.putFile;
+import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
+import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
+import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -11,6 +20,12 @@ import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +43,7 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
+import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
@@ -35,6 +51,7 @@ import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.android.utils.widget.NotificationDialog;
 import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientsEmptyException;
 import io.reactivex.rxjava3.core.Observable;
@@ -49,6 +66,11 @@ import static ee.ria.DigiDoc.android.utils.BundleUtils.putFile;
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
+
+import ee.ria.DigiDoc.sign.DataFile;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 public final class CryptoCreateScreen extends Controller implements Screen,
         MviView<Intent, ViewState> {
@@ -83,6 +105,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private View view;
     private Toolbar toolbarView;
     private NameUpdateDialog nameUpdateDialog;
+    private ConfirmationDialog sivaConfirmationDialog;
     private ConfirmationDialog fileRemoveConfirmationDialog;
     private CryptoCreateAdapter adapter;
     private View activityOverlayView;
@@ -102,6 +125,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     @Nullable private Throwable encryptError;
     @Nullable private Throwable decryptError;
     @Nullable private File dataFileRemoveConfirmation;
+    @Nullable private File sivaConfirmation;
 
     @SuppressWarnings("WeakerAccess")
     public CryptoCreateScreen(Bundle args) {
@@ -158,9 +182,17 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 .map(Intent.DataFileSaveIntent::create);
     }
 
+    @SuppressWarnings("unchecked")
     private Observable<Intent.DataFileViewIntent> dataFileViewIntent() {
-        return adapter.dataFileClicks()
-                .map(Intent.DataFileViewIntent::create);
+        return Observable.mergeArray(adapter.dataFileClicks()
+                        .map(Intent.DataFileViewIntent::confirmation),
+                sivaConfirmationDialog.positiveButtonClicks()
+                        .map(ignored -> {
+                            Intent.DataFileViewIntent.cancel();
+                            return Intent.DataFileViewIntent.open(sivaConfirmation);
+                        }),
+                sivaConfirmationDialog.cancels()
+                        .map(ignored -> Intent.DataFileViewIntent.cancel()));
     }
 
     private Observable<Intent.RecipientsAddButtonClickIntent> recipientsAddButtonClickIntent() {
@@ -233,7 +265,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
             containerFile = state.containerFile();
         }
 
-        name = state.newName() != null ? state.newName() : state.name();
+        name = state.newName() != null ? FileUtil.sanitizeString(state.newName(), '_') : FileUtil.sanitizeString(state.name(), '_');
         dataFiles = state.dataFiles();
         recipients = state.recipients();
         dataFilesAddError = state.dataFilesAddError();
@@ -243,7 +275,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         setActivity(state.dataFilesAddState().equals(State.ACTIVE) ||
                 state.encryptState().equals(State.ACTIVE));
 
-        nameUpdateDialog.render(state.nameUpdateShowing(), state.name(), state.nameUpdateError());
+        nameUpdateDialog.render(state.nameUpdateShowing(), FileUtil.sanitizeString(state.name(), '_'), state.nameUpdateError());
 
         int titleResId = state.encryptButtonVisible() ? R.string.crypto_create_title_encrypt
                 : R.string.crypto_create_title_decrypt;
@@ -272,6 +304,13 @@ public final class CryptoCreateScreen extends Controller implements Screen,
             fileRemoveConfirmationDialog.show();
         } else {
             fileRemoveConfirmationDialog.dismiss();
+        }
+
+        sivaConfirmation = state.sivaDataFile();
+        if (sivaConfirmation != null) {
+            sivaConfirmationDialog.show();
+        } else {
+            sivaConfirmationDialog.dismiss();
         }
 
         encryptButton.setVisibility(state.encryptButtonVisible() ? View.VISIBLE : View.GONE);
@@ -317,8 +356,13 @@ public final class CryptoCreateScreen extends Controller implements Screen,
             }
             errorDialog.show();
         } else if (dataFilesAddError != null) {
-            errorDialog.setMessage(errorDialog.getContext().getString(
-                    R.string.crypto_create_data_files_add_error_exists));
+            if (dataFilesAddError instanceof EmptyFileException) {
+                errorDialog.setMessage(errorDialog.getContext().getString(
+                        R.string.empty_file_error));
+            } else {
+                errorDialog.setMessage(errorDialog.getContext().getString(
+                        R.string.crypto_create_data_files_add_error_exists));
+            }
             errorDialog.show();
         } else {
             errorDialog.dismiss();
@@ -362,6 +406,8 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         nameUpdateDialog = new NameUpdateDialog(container.getContext());
         fileRemoveConfirmationDialog = new ConfirmationDialog(container.getContext(),
                 R.string.crypto_create_remove_data_file_confirmation_message, R.id.documentRemovalDialog);
+        sivaConfirmationDialog = new ConfirmationDialog(Activity.getContext().get(),
+                R.string.siva_send_message_dialog, R.id.sivaConfirmationDialog);
         RecyclerView listView = view.findViewById(R.id.cryptoCreateList);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
@@ -397,6 +443,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     protected void onDestroyView(@NonNull View view) {
         decryptDialog.dismiss();
         errorDialog.dismiss();
+        sivaConfirmationDialog.dismiss();
         disposables.detach();
         super.onDestroyView(view);
     }

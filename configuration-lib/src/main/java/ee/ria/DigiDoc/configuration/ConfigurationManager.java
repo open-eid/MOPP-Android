@@ -39,10 +39,10 @@ import timber.log.Timber;
  *      * central-configuration-service.url: Central configuration service url from where the configuration
  *      is download throughout the application. Defaults to "https://id.eesti.ee".
  *      * configuration.update-interval: Interval in days for how often configuration is updated against central
- *      configuration service. Defaults to 7.
+ *      configuration service. Defaults to 4.
  * Default values are in resources/default-configuration.properties file.
  * These values can be overridden during building APK, for example:
- *      gradle clean fetchAndPackageDefaultConfiguration --args="https://id.eesti.ee 7" app:assemble
+ *      gradle clean fetchAndPackageDefaultConfiguration --args="https://id.eesti.ee 4" app:assemble
  *
  * After each load, configuration's signature is verified against the default configuration signature public key
  * that is packaged with the APK.

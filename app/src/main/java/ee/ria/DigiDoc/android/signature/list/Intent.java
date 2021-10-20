@@ -3,9 +3,12 @@ package ee.ria.DigiDoc.android.signature.list;
 import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
+import ee.ria.DigiDoc.android.utils.SivaUtil;
+import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 
 interface Intent extends MviIntent {
@@ -29,10 +32,26 @@ interface Intent extends MviIntent {
     @AutoValue
     abstract class ContainerOpenIntent implements Intent, Action {
 
-        abstract File containerFile();
+        @Nullable abstract File containerFile();
 
-        static ContainerOpenIntent create(File containerFile) {
-            return new AutoValue_Intent_ContainerOpenIntent(containerFile);
+        abstract boolean confirmation();
+
+        static ContainerOpenIntent confirmation(File containerFile) {
+            boolean isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(
+                    ImmutableList.of(FileStream.create(containerFile)));
+            return create(containerFile, isConfirmationNeeded);
+        }
+
+        static ContainerOpenIntent open(File containerFile) {
+            return create(containerFile, false);
+        }
+
+        static ContainerOpenIntent cancel() {
+            return create(null, false);
+        }
+
+        private static ContainerOpenIntent create(@Nullable File containerFile, boolean confirmation) {
+            return new AutoValue_Intent_ContainerOpenIntent(containerFile, confirmation);
         }
     }
 

@@ -16,6 +16,7 @@ import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
 import ee.ria.DigiDoc.android.model.smartid.SmartIdMessageException;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
+import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.sign.CertificateRevokedException;
@@ -23,6 +24,8 @@ import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.OcspInvalidTimeSlotException;
 import ee.ria.DigiDoc.sign.TooManyRequestsException;
 import ee.ria.DigiDoc.sign.utils.ErrorMessage;
+import ee.ria.DigiDoc.sign.utils.UrlMessage;
+
 import io.reactivex.rxjava3.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
@@ -69,8 +72,12 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
               @Nullable Throwable signatureAddError, @Nullable Throwable signatureRemoveError) {
         if (documentsAddError != null) {
             type = DOCUMENTS_ADD;
-            setMessage(getContext().getString(
-                    R.string.signature_update_documents_add_error_exists));
+            if (documentsAddError instanceof EmptyFileException) {
+                setMessage(getContext().getString(R.string.empty_file_error));
+            } else {
+                setMessage(getContext().getString(
+                        R.string.signature_update_documents_add_error_exists));
+            }
         } else if (documentRemoveError != null) {
             type = DOCUMENT_REMOVE;
             setMessage(getContext().getString(R.string.signature_update_document_remove_error));
@@ -88,24 +95,24 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                     setMessage(
                             Html.fromHtml("<span>" +
                                     ErrorMessageUtil.removeLink(signatureAddError.getMessage()) + "</span><a href=" + link + ">" +
-                                    getTextFromTranslation(R.string.signature_update_signature_error_message_additional_information) + "</a>"
-                            )
+                                    getTextFromTranslation(R.string.signature_update_signature_error_message_additional_information) + "</a>",
+                                    Html.FROM_HTML_MODE_LEGACY)
                     );
                 } else {
                     setMessage(signatureAddError.getMessage());
                 }
             } else if (signatureAddError instanceof TooManyRequestsException) {
-                setMessage(Html.fromHtml(ErrorMessage.withURL(
+                setMessage(Html.fromHtml(UrlMessage.withURL(
                         getContext(),
                         R.string.signature_update_signature_error_message_too_many_requests,
                         R.string.signature_update_signature_error_message_additional_information
-                )));
+                ), Html.FROM_HTML_MODE_LEGACY));
             } else if (signatureAddError instanceof OcspInvalidTimeSlotException) {
-                setMessage(Html.fromHtml(ErrorMessage.withURL(
+                setMessage(Html.fromHtml(UrlMessage.withURL(
                         getContext(),
                         R.string.signature_update_signature_error_message_invalid_time_slot,
                         R.string.signature_update_signature_error_message_additional_information
-                )));
+                ), Html.FROM_HTML_MODE_LEGACY));
             } else if (signatureAddError instanceof CertificateRevokedException) {
                 setMessage(getContext().getString(R.string.signature_update_signature_error_message_certificate_revoked));
             } else {
