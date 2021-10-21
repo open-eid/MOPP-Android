@@ -176,7 +176,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         ImmutableList<FileStream> addedData = parseGetContentIntent(application.getContentResolver(), data);
                                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(addedData);
                                         ToastUtil.handleEmptyFileError(addedData, validFiles, application);
-                                        announceAccessibilityFilesAddedEvent(application.getApplicationContext(), validFiles);
+                                        announceAccessibilityFilesAddedEvent(application.getApplicationContext(), validFiles.size());
                                         return signatureContainerDataSource
                                                 .addDocuments(action.containerFile(), validFiles)
                                                 .toObservable()
