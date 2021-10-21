@@ -15,6 +15,7 @@ import com.bluelinelabs.conductor.Controller;
 import java.io.File;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -39,6 +40,7 @@ public final class SignatureListScreen extends Controller implements Screen,
     private SignatureListViewModel viewModel;
 
     private ConfirmationDialog removeConfirmationDialog;
+    private ConfirmationDialog sivaConfirmationDialog;
     private Toolbar toolbarView;
     private RecyclerView listView;
     private SignatureListAdapter adapter;
@@ -47,6 +49,7 @@ public final class SignatureListScreen extends Controller implements Screen,
     private View activityOverlayView;
 
     @Nullable private File removeConfirmationContainerFile;
+    @Nullable private File sivaConfirmationContainerFile;
 
     @SuppressWarnings("WeakerAccess")
     public SignatureListScreen() {
@@ -62,8 +65,15 @@ public final class SignatureListScreen extends Controller implements Screen,
     }
 
     private Observable<Intent.ContainerOpenIntent> containerOpenIntent() {
-        return adapter.itemClicks()
-                .map(Intent.ContainerOpenIntent::create);
+        return Observable.merge(adapter.itemClicks()
+                .map(Intent.ContainerOpenIntent::confirmation),
+                sivaConfirmationDialog.positiveButtonClicks()
+                    .map(ignored -> {
+                        Intent.ContainerOpenIntent.cancel();
+                        return Intent.ContainerOpenIntent.open(sivaConfirmationContainerFile);
+                    }),
+                sivaConfirmationDialog.cancels()
+                    .map(ignored -> Intent.ContainerOpenIntent.cancel()));
     }
 
     private Observable<Intent.ContainerRemoveIntent> containerRemoveIntent() {
@@ -96,6 +106,7 @@ public final class SignatureListScreen extends Controller implements Screen,
     @Override
     public void render(ViewState state) {
         removeConfirmationContainerFile = state.removeConfirmationContainerFile();
+        sivaConfirmationContainerFile = state.sivaConfirmationContainerFile();
 
         setActivity(state.indicateActivity()
                 && (state.containerLoadProgress() || state.containerRemoveProgress()));
@@ -105,6 +116,13 @@ public final class SignatureListScreen extends Controller implements Screen,
             removeConfirmationDialog.show();
         } else {
             removeConfirmationDialog.dismiss();
+        }
+
+        if (sivaConfirmationContainerFile != null) {
+            sivaConfirmationDialog.show();
+        } else {
+            sivaConfirmationDialog.dismiss();
+            sivaConfirmationDialog.cancel();
         }
 
         setEmpty(!state.containerLoadProgress() && state.containerFiles().size() == 0);
@@ -138,6 +156,8 @@ public final class SignatureListScreen extends Controller implements Screen,
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
         removeConfirmationDialog = new ConfirmationDialog(container.getContext(),
                 R.string.signature_list_remove_confirmation_message, R.id.documentRemovalDialog);
+        sivaConfirmationDialog = new ConfirmationDialog(Activity.getContext().get(),
+                R.string.siva_send_message_dialog, R.id.sivaConfirmationDialog);
         View view = inflater.inflate(R.layout.signature_list_screen, container, false);
         AccessibilityUtils.setAccessibilityPaneTitle(view, R.string.signature_list_title);
 
@@ -154,6 +174,7 @@ public final class SignatureListScreen extends Controller implements Screen,
     @Override
     protected void onDestroyView(@NonNull View view) {
         removeConfirmationDialog.dismiss();
+        sivaConfirmationDialog.dismiss();
         super.onDestroyView(view);
     }
 

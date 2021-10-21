@@ -40,9 +40,11 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.utils.DateUtil;
+import ee.ria.DigiDoc.android.utils.SivaUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
 import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
+import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -89,6 +91,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final View buttonSpace;
     private final Button signatureAddButton;
     private final SignatureUpdateErrorDialog errorDialog;
+    private final ConfirmationDialog sivaConfirmationDialog;
     private final ConfirmationDialog documentRemoveConfirmationDialog;
     private final ConfirmationDialog signatureRemoveConfirmationDialog;
     private final SignatureUpdateSignatureAddDialog signatureAddDialog;
@@ -111,6 +114,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final Subject<Intent.SignatureAddIntent> signatureAddIntentSubject =
             PublishSubject.create();
 
+    @Nullable private DataFile sivaConfirmation;
     @Nullable private DataFile documentRemoveConfirmation;
     @Nullable private Signature signatureRemoveConfirmation;
 
@@ -158,6 +162,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 R.string.signature_update_remove_document_confirmation_message, R.id.documentRemovalDialog);
         signatureRemoveConfirmationDialog = new ConfirmationDialog(context,
                 R.string.signature_update_signature_remove_confirmation_message, R.id.signatureRemovalDialog);
+        sivaConfirmationDialog = new ConfirmationDialog(Activity.getContext().get(),
+                R.string.siva_send_message_dialog, R.id.sivaConfirmationDialog);
         signatureAddDialog = new SignatureUpdateSignatureAddDialog(context);
         signatureAddView = signatureAddDialog.view();
         resetSignatureAddDialog();
@@ -299,6 +305,14 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             }
         }
 
+        sivaConfirmation = state.sivaConfirmation();
+
+        if (sivaConfirmation != null) {
+            sivaConfirmationDialog.show();
+        } else {
+            sivaConfirmationDialog.dismiss();
+        }
+
         tintCompoundDrawables(sendButton);
         tintCompoundDrawables(signatureAddButton);
 
@@ -415,8 +429,12 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     }
 
     private Observable<Intent.DocumentViewIntent> documentViewIntent() {
-        return adapter.documentClicks()
-                .map(document -> Intent.DocumentViewIntent.create(containerFile, document));
+        return Observable.mergeArray(adapter.documentClicks()
+                .map(document -> Intent.DocumentViewIntent.confirmation(containerFile, document)),
+                        sivaConfirmationDialog.positiveButtonClicks()
+                                .map(ignored -> Intent.DocumentViewIntent.open(containerFile, sivaConfirmation)),
+                        sivaConfirmationDialog.cancels()
+                                .map(ignored -> Intent.DocumentViewIntent.cancel()));
     }
 
     private Observable<Intent.DocumentSaveIntent> documentSaveIntent() {
@@ -525,6 +543,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     public void onDetachedFromWindow() {
         disposables.detach();
         signatureAddDialog.dismiss();
+        sivaConfirmationDialog.dismiss();
         signatureRemoveConfirmationDialog.dismiss();
         documentRemoveConfirmationDialog.dismiss();
         errorDialog.setOnDismissListener(null);

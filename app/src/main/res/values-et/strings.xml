@@ -67,6 +67,9 @@
 
     <!-- Signature Create -->
     <string name="signature_create_error">Failide laadimine ebaõnnestus</string>
+    <string name="siva_send_message_dialog">PDF ja DDOC formaadis digitaalallkirjade kehtivuse kontrollimiseks edastatakse fail valideerimisteenusele SiVa. Digitaalallkirjade kehtivuse kontrollimisel edastatud andmete kohta loe lähemalt https://www.id.ee/artikkel/riigi-infosusteemi-ameti-id-tarkvara-andmekaitsetingimused/</string>
+    <string name="siva_read_here">siit</string>
+    <string name="siva_continue_question">Kas soovid jätkata?</string>
 
     <!-- Signature Update -->
     <string name="signature_update_title_created">Allkirjastamine</string>
@@ -403,6 +406,9 @@
     <string name="document">Dokument</string>
     <string name="container_has">Ümbrikus on</string>
     <string name="file">Fail</string>
+
+    <string name="yes_button">JAH</string>
+    <string name="cancel_button">KATKESTA</string>
 
     <!-- Sharing Screen -->
     <string name="sharing_screen_title">Vali fail</string>

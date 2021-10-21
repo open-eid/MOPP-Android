@@ -23,7 +23,7 @@ import ee.ria.DigiDoc.sign.CertificateRevokedException;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.OcspInvalidTimeSlotException;
 import ee.ria.DigiDoc.sign.TooManyRequestsException;
-import ee.ria.DigiDoc.sign.utils.ErrorMessage;
+import ee.ria.DigiDoc.sign.utils.UrlMessage;
 import io.reactivex.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
@@ -93,24 +93,24 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                     setMessage(
                             Html.fromHtml("<span>" +
                                     ErrorMessageUtil.removeLink(signatureAddError.getMessage()) + "</span><a href=" + link + ">" +
-                                    getTextFromTranslation(R.string.signature_update_signature_error_message_additional_information) + "</a>"
-                            )
+                                    getTextFromTranslation(R.string.signature_update_signature_error_message_additional_information) + "</a>",
+                                    Html.FROM_HTML_MODE_LEGACY)
                     );
                 } else {
                     setMessage(signatureAddError.getMessage());
                 }
             } else if (signatureAddError instanceof TooManyRequestsException) {
-                setMessage(Html.fromHtml(ErrorMessage.withURL(
+                setMessage(Html.fromHtml(UrlMessage.withURL(
                         getContext(),
                         R.string.signature_update_signature_error_message_too_many_requests,
                         R.string.signature_update_signature_error_message_additional_information
-                )));
+                ), Html.FROM_HTML_MODE_LEGACY));
             } else if (signatureAddError instanceof OcspInvalidTimeSlotException) {
-                setMessage(Html.fromHtml(ErrorMessage.withURL(
+                setMessage(Html.fromHtml(UrlMessage.withURL(
                         getContext(),
                         R.string.signature_update_signature_error_message_invalid_time_slot,
                         R.string.signature_update_signature_error_message_additional_information
-                )));
+                ), Html.FROM_HTML_MODE_LEGACY));
             } else if (signatureAddError instanceof CertificateRevokedException) {
                 setMessage(getContext().getString(R.string.signature_update_signature_error_message_certificate_revoked));
             } else {

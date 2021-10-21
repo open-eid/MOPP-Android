@@ -27,6 +27,11 @@ public final class SignatureListViewModel extends
                     (Intent.ContainerRemoveIntent) intent;
             return Action.ContainerRemoveAction.create(containerRemoveIntent.containerFile(),
                     containerRemoveIntent.confirmation());
+        } else if (intent instanceof Intent.ContainerOpenIntent) {
+            Intent.ContainerOpenIntent containerOpenIntent =
+                    (Intent.ContainerOpenIntent) intent;
+            return Action.ContainerOpenAction.create(containerOpenIntent.containerFile(),
+                    containerOpenIntent.confirmation());
         } else if (intent instanceof Intent.RefreshIntent) {
             return Action.ContainersLoadAction.create(false);
         } else if (intent instanceof Action) {

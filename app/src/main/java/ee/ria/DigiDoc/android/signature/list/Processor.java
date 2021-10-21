@@ -31,7 +31,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Action.NavigateUpAction, Result.VoidResult> navigateUp;
 
-    private final ObservableTransformer<Intent.ContainerOpenIntent, Result.VoidResult>
+    private final ObservableTransformer<Action.ContainerOpenAction, Result.VoidResult>
             containerOpen;
 
     private final ObservableTransformer<Action.ContainerRemoveAction, Result.ContainerRemoveResult>
@@ -51,19 +51,26 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         navigateUp = upstream -> upstream
                 .doOnNext(action -> navigator.execute(action.transaction()))
-                .map(action -> Result.VoidResult.create());
+                .map(action -> Result.VoidResult.cancel());
 
         containerOpen = upstream -> upstream.switchMap(action -> {
-            File containerFile = action.containerFile();
-            if (CryptoContainer.isContainerFileName(containerFile.getName())) {
-                navigator.execute(Transaction.push(CryptoCreateScreen.open(containerFile)));
+            if (action.containerFile() == null) {
+                return Observable.just(Result.VoidResult.cancel());
+            } else if (action.confirmation()) {
+                return Observable
+                        .just(Result.VoidResult.confirmation(action.containerFile()));
             } else {
-                navigator.execute(Transaction.push(SignatureUpdateScreen
-                        .create(true, false, containerFile, false, false)));
-                SignedContainer signedContainer = SignedContainer.open(containerFile);
-                sendContainerStatusAccessibilityMessage(signedContainer, application.getApplicationContext());
+                File containerFile = action.containerFile();
+                if (CryptoContainer.isContainerFileName(containerFile.getName())) {
+                    navigator.execute(Transaction.push(CryptoCreateScreen.open(containerFile)));
+                } else {
+                    navigator.execute(Transaction.push(SignatureUpdateScreen
+                            .create(true, false, containerFile, false, false)));
+                    SignedContainer signedContainer = SignedContainer.open(containerFile);
+                    sendContainerStatusAccessibilityMessage(signedContainer, application.getApplicationContext());
+                }
+                return Observable.just(Result.VoidResult.success());
             }
-            return Observable.empty();
         });
 
         containerRemove = upstream -> upstream.flatMap(action -> {
@@ -94,8 +101,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
         return upstream.publish(shared -> Observable.mergeArray(
                 shared.ofType(Action.ContainersLoadAction.class).compose(containersLoad),
                 shared.ofType(Action.NavigateUpAction.class).compose(navigateUp),
-                shared.ofType(Intent.ContainerOpenIntent.class).compose(containerOpen),
-                shared.ofType(Action.ContainerRemoveAction.class).compose(containerRemove)));
+                shared.ofType(Action.ContainerRemoveAction.class).compose(containerRemove),
+                shared.ofType(Action.ContainerOpenAction.class).compose(containerOpen)));
     }
 
     private void sendContainerStatusAccessibilityMessage(SignedContainer container, Context context) {

@@ -67,6 +67,9 @@
 
     <!-- Signature Create -->
     <string name="signature_create_error">Не удалось загрузить выбранные файлы</string>
+    <string name="siva_send_message_dialog">Для проверки действительности электронно-цифровых подписей в форматах PDF и DDOC файл пересылается в службу проверки цифровых подписей SiVa. Подробнее о данных, переданных для проверки действительности электронно-цифровых подписей, можно прочитать https://www.id.ee/ru/artikkel/usloviya-zashhity-dannyh-programmnogo-obespecheniya-id-karty-departamenta-gosudarstvennoj-infosistemy/</string>
+    <string name="siva_read_here">здесь</string>
+    <string name="siva_continue_question">Вы желаете продолжить?</string>
 
     <!-- Signature Update -->
     <string name="signature_update_title_created">Подписание</string>
@@ -401,6 +404,9 @@
 
     <string name="decrypt_content_description">Дешифровать, вкладка %1$d из %2$d</string>
     <string name="decrypt_send_content_description">Поделиться, вкладка %1$d из %2$d</string>
+
+    <string name="yes_button">ДА</string>
+    <string name="cancel_button">ОТМЕНИТЬ</string>
 
     <!-- Sharing Screen -->
     <string name="sharing_screen_title">Выбрать файл</string>

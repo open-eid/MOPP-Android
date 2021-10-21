@@ -3,6 +3,8 @@ package ee.ria.DigiDoc.sign;
 import static com.google.common.collect.ImmutableList.sortedCopyOf;
 import static com.google.common.io.Files.getFileExtension;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
 
@@ -12,9 +14,12 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.ByteSource;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -22,6 +27,7 @@ import java.util.Map;
 
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.configuration.util.FileUtils;
 import ee.ria.DigiDoc.sign.utils.Function;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
@@ -391,4 +397,34 @@ public abstract class SignedContainer {
         }
         return v1 < v2 ? -1 : 1;
     };
+
+    /**
+     * Check if file is signed PDF file.
+     *
+     * @param byteSource ByteSource of the file.
+     * @return boolean true if file is signed PDF file. False otherwise.
+     */
+    public static boolean isSignedPDFFile(ByteSource byteSource, Context context, String fileName) {
+        try {
+            byte[] bytes = byteSource.read();
+
+            String pdfFilesDirectory = context.getFilesDir() + File.separator + "tempPdfFiles";
+
+            FileUtils.createDirectoryIfNotExist(pdfFilesDirectory);
+
+            File file = new File(pdfFilesDirectory + File.separator + fileName);
+            try (OutputStream outStream = new FileOutputStream(file)) {
+                outStream.write(bytes);
+            }
+
+            boolean isSignedContainer = SignedContainer.isContainer(file);
+            FileUtils.removeFile(file.getPath());
+            FileUtils.removeFile(pdfFilesDirectory);
+
+            return isSignedContainer;
+        } catch (IOException e) {
+            Timber.e(e, "Unable to check if PDF file is signed");
+            return false;
+        }
+    }
 }
