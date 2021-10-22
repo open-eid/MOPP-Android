@@ -21,11 +21,13 @@
 package ee.ria.DigiDoc.android.model.smartid;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.common.collect.ImmutableMap;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse.ProcessStatus;
+import timber.log.Timber;
 
 public final class SmartIdStatusMessages {
 
@@ -67,6 +69,7 @@ public final class SmartIdStatusMessages {
                     .build();
 
     public static String message(Context context, ProcessStatus status) {
+        Timber.log(Log.DEBUG, context.getString(MESSAGES.get(status)));
         return context.getString(MESSAGES.get(status));
     }
 }
