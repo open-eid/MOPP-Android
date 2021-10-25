@@ -23,7 +23,6 @@ android {
         buildConfigField 'String', 'ANDROIDX_VERSION', "\"$androidxVersion\""
         buildConfigField 'String', 'ANDROIDX_APP_COMPAT_VERSION', "\"$androidxAppCompatVersion\""
         buildConfigField 'String', 'ANDROIDX_LIFECYCLE_VERSION', "\"$androidxLifecycleVersion\""
-        buildConfigField 'String', 'ANDROIDX_LEGACY_SUPPORT_V4_VERSION', "\"$androidxLegacySupportv4Version\""
         buildConfigField 'String', 'ANDROIDX_MATERIAL_VERSION', "\"$androidMaterialVersion\""
         buildConfigField 'String', 'ANDROIDX_RECYCLER_VIEW_VERSION', "\"$androidxRecyclerviewVersion\""
         buildConfigField 'String', 'ANDROIDX_CARD_VIEW_VERSION', "\"$androidxCardviewVersion\""
@@ -116,7 +115,6 @@ configurations {
 
 dependencies {
     implementation "androidx.annotation:annotation:${androidxVersion}"
-    implementation "androidx.legacy:legacy-support-v4:${androidxLegacySupportv4Version}"
     implementation "androidx.appcompat:appcompat:${androidxAppCompatVersion}"
     implementation "com.google.android.material:material:${androidMaterialVersion}"
     implementation "androidx.recyclerview:recyclerview:${androidxRecyclerviewVersion}"
