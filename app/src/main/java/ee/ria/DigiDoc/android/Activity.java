@@ -172,8 +172,8 @@ public final class Activity extends AppCompatActivity {
         if (intent.getDataString() != null) {
             intent.setData(Uri.parse(FileUtil.sanitizeString(intent.getDataString(), '_')));
         }
-        if (intent.getExtras() != null && !intent.getExtras().containsKey(Intent.EXTRA_REFERRER) &&
-                !intent.getExtras().get(Intent.EXTRA_REFERRER).equals(R.string.application_name)) {
+        if (intent.getExtras() != null && !(intent.getExtras().containsKey(Intent.EXTRA_REFERRER) &&
+                intent.getExtras().get(Intent.EXTRA_REFERRER).equals(R.string.application_name))) {
             intent.replaceExtras(new Bundle());
         }
         return intent;
