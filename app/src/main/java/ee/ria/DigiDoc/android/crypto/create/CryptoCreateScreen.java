@@ -246,7 +246,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
             containerFile = state.containerFile();
         }
 
-        name = state.newName() != null ? FileUtil.sanitizeString(state.newName(), '_') : FileUtil.sanitizeString(state.name(), '_');
+        name = state.newName() != null ? FileUtil.sanitizeString(state.newName(), "") : FileUtil.sanitizeString(state.name(), "");
         dataFiles = state.dataFiles();
         recipients = state.recipients();
         dataFilesAddError = state.dataFilesAddError();
@@ -256,7 +256,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         setActivity(state.dataFilesAddState().equals(State.ACTIVE) ||
                 state.encryptState().equals(State.ACTIVE));
 
-        nameUpdateDialog.render(state.nameUpdateShowing(), FileUtil.sanitizeString(state.name(), '_'), state.nameUpdateError());
+        nameUpdateDialog.render(state.nameUpdateShowing(), FileUtil.sanitizeString(state.name(), ""), state.nameUpdateError());
 
         int titleResId = state.encryptButtonVisible() ? R.string.crypto_create_title_encrypt
                 : R.string.crypto_create_title_decrypt;

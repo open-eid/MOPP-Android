@@ -55,7 +55,7 @@ public abstract class SignedContainer {
     public abstract File file();
 
     public final String name() {
-        return FileUtil.sanitizeString(file().getName(), '_');
+        return FileUtil.sanitizeString(file().getName(), "");
     }
 
     public abstract ImmutableList<DataFile> dataFiles();
@@ -122,7 +122,7 @@ public abstract class SignedContainer {
 
     public final File getDataFile(DataFile dataFile, File directory) throws Exception {
         Container container = container(file());
-        File file = new File(directory, FileUtil.sanitizeString(dataFile.name(), '_'));
+        File file = new File(directory, FileUtil.sanitizeString(dataFile.name(), ""));
         DataFiles dataFiles = container.dataFiles();
         for (int i = 0; i < dataFiles.size(); i++) {
             ee.ria.libdigidocpp.DataFile containerDataFile = dataFiles.get(i);
