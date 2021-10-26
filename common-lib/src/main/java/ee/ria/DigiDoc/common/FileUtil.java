@@ -1,14 +1,11 @@
 package ee.ria.DigiDoc.common;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
+import android.webkit.URLUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
 
 public class FileUtil {
 
@@ -38,21 +35,33 @@ public class FileUtil {
             return null;
         }
 
+        String restrictedCharacters = "@%:^?[]\\'\"”’{}#&`\\\\~«»/´";
+
         ArrayList<String> rtlChars = new ArrayList<>(
                 Arrays.asList("\u200E", "\u200F", "\u202E", "\u202A", "\u202B"));
 
         StringBuilder sb = new StringBuilder(input.length());
 
-        for (int offset = 0; offset < input.length(); offset++) {
-            char c = input.charAt(offset);
+        if (!URLUtil.isValidUrl(input) && !isRawUrl(input)) {
+            for (int offset = 0; offset < input.length(); offset++) {
+                char c = input.charAt(offset);
 
-            if (rtlChars.contains(Character.toString(c))) {
-                sb.append(replacement);
-            } else {
-                sb.append(c);
+                if (rtlChars.contains(Character.toString(c)) || restrictedCharacters.indexOf(c) != -1) {
+                    sb.append(replacement);
+                } else {
+                    sb.append(c);
+                }
             }
         }
 
-        return sb.toString();
+        return !sb.toString().equals("") ? sb.toString() : input;
+    }
+
+    private static boolean isRawUrl(String url) {
+        if (url == null || url.length() == 0) {
+            return false;
+        }
+
+        return url.startsWith("raw:");
     }
 }
