@@ -56,13 +56,29 @@ interface Result extends MviResult<ViewState> {
     @AutoValue
     abstract class VoidResult implements Result {
 
+        @Nullable abstract File confirmationContainerFile();
+
         @Override
         public ViewState reduce(ViewState state) {
-            return state;
+            ViewState.Builder builder = state.buildWith()
+                    .sivaConfirmationContainerFile(confirmationContainerFile());
+            return builder.build();
         }
 
-        static VoidResult create() {
-            return new AutoValue_Result_VoidResult();
+        static VoidResult confirmation(File confirmationContainerFile) {
+            return create(confirmationContainerFile);
+        }
+
+        static VoidResult success() {
+            return create(null);
+        }
+
+        static VoidResult cancel() {
+            return create(null);
+        }
+
+        static VoidResult create(@Nullable File confirmationContainerFile) {
+            return new AutoValue_Result_VoidResult(confirmationContainerFile);
         }
     }
 

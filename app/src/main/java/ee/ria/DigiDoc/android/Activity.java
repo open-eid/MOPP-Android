@@ -170,7 +170,7 @@ public final class Activity extends AppCompatActivity {
 
     private Intent sanitizeIntent(Intent intent) {
         if (intent.getDataString() != null) {
-            intent.setData(Uri.parse(FileUtil.sanitizeString(intent.getDataString(), '_')));
+            intent.setData(Uri.parse(FileUtil.sanitizeString(intent.getDataString(), "")));
         }
         if (intent.getExtras() != null) {
             intent.replaceExtras(new Bundle());

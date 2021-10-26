@@ -4,6 +4,9 @@ import android.webkit.URLUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
 
 public class FileUtil {
 
@@ -31,28 +34,23 @@ public class FileUtil {
      * @param replacement Replacement to replace invalid characters with
      * @return String with valid characters
      */
-    public static String sanitizeString(String input, char replacement) {
+    public static String sanitizeString(String input, String replacement) {
         if (input == null) {
             return null;
         }
 
-        String characterSet = ALLOWED_CHARACTERS;
-
-        if (URLUtil.isValidUrl(input)) {
-            characterSet = ALLOWED_URL_CHARACTERS;
-        }
+        ArrayList<String> rtlChars = new ArrayList<>(
+                Arrays.asList("\u200E", "\u200F", "\u202E", "\u202A", "\u202B"));
 
         StringBuilder sb = new StringBuilder(input.length());
 
         for (int offset = 0; offset < input.length(); offset++) {
             char c = input.charAt(offset);
 
-            if (characterSet.indexOf(c) == -1) {
+            if (rtlChars.contains(Character.toString(c))) {
                 sb.append(replacement);
-            }
-            else {
-                // Coverity does not want to see usages of the original string
-                sb.append(characterSet.charAt(characterSet.indexOf(c)));
+            } else {
+                sb.append(c);
             }
         }
 

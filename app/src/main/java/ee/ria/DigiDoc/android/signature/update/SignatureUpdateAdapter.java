@@ -66,7 +66,7 @@ final class SignatureUpdateAdapter extends
                  @Nullable SignedContainer container) {
         boolean signaturesValid = container == null || container.signaturesValid();
         boolean isEmptyFileInContainer = container != null && container.hasEmptyFiles();
-        String name = container == null ? null : FileUtil.sanitizeString(container.name(), '_');
+        String name = container == null ? null : FileUtil.sanitizeString(container.name(), "");
 
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (isSuccess) {
@@ -284,9 +284,9 @@ final class SignatureUpdateAdapter extends
         @Override
         void bind(SignatureUpdateAdapter adapter, NameItem item) {
             if (item.name().startsWith(".")) {
-                nameView.setText("newFile" + FileUtil.sanitizeString(item.name(), '_'));
+                nameView.setText("newFile" + FileUtil.sanitizeString(item.name(), ""));
             } else {
-                nameView.setText(FileUtil.sanitizeString(item.name(), '_'));
+                nameView.setText(FileUtil.sanitizeString(item.name(), ""));
             }
             updateButton.setVisibility(item.updateButtonVisible() && !isContainerSigned(adapter) ? View.VISIBLE : View.GONE);
             clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
@@ -346,7 +346,7 @@ final class SignatureUpdateAdapter extends
             clicks(itemView).map(ignored ->
                     ((DocumentItem) adapter.getItem(getAdapterPosition())).document())
                     .subscribe(adapter.documentClicksSubject);
-            nameView.setText(FileUtil.sanitizeString(item.document().name(), '_'));
+            nameView.setText(FileUtil.sanitizeString(item.document().name(), ""));
             String fileNameDescription = nameView.getResources().getString(R.string.file);
             nameView.setContentDescription(fileNameDescription + " " + nameView.getText());
 

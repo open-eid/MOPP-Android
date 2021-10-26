@@ -41,6 +41,7 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
+import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -137,7 +138,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             if (activityResult.resultCode() == RESULT_OK && data != null) {
                                 return parseIntent(data, application)
                                         .onErrorReturn(throwable -> {
-                                            ToastUtil.showEmptyFileError(application);
+                                            if (throwable instanceof EmptyFileException) {
+                                                ToastUtil.showEmptyFileError(application);
+                                            }
                                             navigator.execute(Transaction.pop());
                                             return Result.InitialResult.failure(throwable);
                                         });
@@ -155,8 +158,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         });
 
         nameUpdate = upstream -> upstream.switchMap(action -> {
-            String name = FileUtil.sanitizeString(action.name(), '_');
-            String newName = FileUtil.sanitizeString(action.newName(), '_');
+            String name = FileUtil.sanitizeString(action.name(), "");
+            String newName = FileUtil.sanitizeString(action.newName(), "");
             if (newName != null) {
                 return Observable
                         .fromCallable(() -> newName)
@@ -285,25 +288,32 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         });
 
         dataFileView = upstream -> upstream.switchMap(intent -> {
-            return Observable
-                    .fromCallable(() -> {
-                        File file = intent.dataFile();
-                        if (CryptoContainer.isContainerFileName(file.getName())) {
-                            return Transaction.push(CryptoCreateScreen.open(file));
-                        } else if (SignedContainer.isContainer(file)) {
-                            return Transaction.push(
-                                    SignatureUpdateScreen.create(true, true, file, false, false));
-                        } else {
-                            return Transaction.activity(
-                                    createViewIntent(application, file, mimeType(file)), null);
-                        }
-                    })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .flatMap(transaction -> {
-                        navigator.execute(transaction);
-                        return Observable.empty();
-                    });
+            if (intent.dataFile() == null) {
+                return Observable.just(Result.OpenDataFileResult.clear());
+            } else if (intent.confirmation()) {
+                return Observable
+                        .just(Result.OpenDataFileResult.confirmation(intent.dataFile()));
+            } else {
+                return Observable
+                        .fromCallable(() -> {
+                            File file = intent.dataFile();
+                            if (CryptoContainer.isContainerFileName(file.getName())) {
+                                return Transaction.push(CryptoCreateScreen.open(file));
+                            } else if (SignedContainer.isContainer(file)) {
+                                return Transaction.push(
+                                        SignatureUpdateScreen.create(true, true, file, false, false));
+                            } else {
+                                return Transaction.activity(
+                                        createViewIntent(application, file, mimeType(file)), null);
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .flatMap(transaction -> {
+                            navigator.execute(transaction);
+                            return Observable.just(Result.OpenDataFileResult.success());
+                        });
+            }
         });
 
         recipientsAddButtonClick = upstream -> upstream.switchMap(intent -> {

@@ -192,33 +192,40 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 });
 
         documentView = upstream -> upstream.switchMap(action -> {
-            File containerFile = action.containerFile();
-            return signatureContainerDataSource
-                    .getDocumentFile(containerFile, action.document())
-                    .toObservable()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .map(documentFile -> {
-                        Transaction transaction;
-                        boolean isSignedPdfDataFile =
-                                getFileExtension(containerFile.getName()).toLowerCase(Locale.US)
-                                                .equals("pdf")
-                                        && containerFile.getName().equals(documentFile.getName());
-                        if (!isSignedPdfDataFile && SignedContainer.isContainer(documentFile)) {
-                            transaction = Transaction.push(SignatureUpdateScreen
-                                    .create(true, true, documentFile, false, false));
-                        } else if (CryptoContainer.isContainerFileName(documentFile.getName())) {
-                            transaction = Transaction.push(CryptoCreateScreen.open(documentFile));
-                        } else {
-                            transaction = Transaction.activity(IntentUtils
-                                    .createViewIntent(application, documentFile,
-                                            SignedContainer.mimeType(documentFile)), null);
-                        }
-                        navigator.execute(transaction);
-                        return Result.DocumentViewResult.idle();
-                    })
-                    .onErrorReturn(ignored -> Result.DocumentViewResult.idle())
-                    .startWith(Result.DocumentViewResult.activity());
+            if (action.containerFile() == null) {
+                return Observable.just(Result.DocumentViewResult.idle());
+            } else if (action.confirmation()) {
+                return Observable
+                        .just(Result.DocumentViewResult.confirmation(action.document()));
+            } else {
+                File containerFile = action.containerFile();
+                return signatureContainerDataSource
+                        .getDocumentFile(containerFile, action.document())
+                        .toObservable()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .map(documentFile -> {
+                            Transaction transaction;
+                            boolean isSignedPdfDataFile =
+                                    getFileExtension(containerFile.getName()).toLowerCase(Locale.US)
+                                            .equals("pdf")
+                                            && containerFile.getName().equals(documentFile.getName());
+                            if (!isSignedPdfDataFile && SignedContainer.isContainer(documentFile)) {
+                                transaction = Transaction.push(SignatureUpdateScreen
+                                        .create(true, true, documentFile, false, false));
+                            } else if (CryptoContainer.isContainerFileName(documentFile.getName())) {
+                                transaction = Transaction.push(CryptoCreateScreen.open(documentFile));
+                            } else {
+                                transaction = Transaction.activity(IntentUtils
+                                        .createViewIntent(application, documentFile,
+                                                SignedContainer.mimeType(documentFile)), null);
+                            }
+                            navigator.execute(transaction);
+                            return Result.DocumentViewResult.idle();
+                        })
+                        .onErrorReturn(ignored -> Result.DocumentViewResult.idle())
+                        .startWith(Result.DocumentViewResult.activity());
+            }
         });
 
         documentSave = upstream -> upstream.switchMap(action -> {
@@ -383,7 +390,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
     }
 
     private String assignName(Intent.NameUpdateIntent action, File containerFile) {
-        String name = FileUtil.sanitizeString(action.name(), '_');
+        String name = FileUtil.sanitizeString(action.name(), "");
         if (name != null && !name.isEmpty()) {
             return addContainerExtension(containerFile, name);
         }

@@ -41,6 +41,8 @@ abstract class ViewState implements MviViewState {
     @Nullable abstract Throwable signatureAddError();
     @Nullable abstract SignatureAddResponse signatureAddResponse();
 
+    @Nullable abstract DataFile sivaConfirmation();
+
     abstract Builder buildWith();
 
     static ViewState initial() {
@@ -80,6 +82,7 @@ abstract class ViewState implements MviViewState {
         Builder signatureAddSuccessMessageVisible(boolean signatureAddSuccessMessageVisible);
         Builder signatureAddError(@Nullable Throwable signatureAddError);
         Builder signatureAddResponse(@Nullable SignatureAddResponse signatureAddResponse);
+        Builder sivaConfirmation(@Nullable DataFile dataFile);
         ViewState build();
     }
 }

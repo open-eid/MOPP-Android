@@ -456,4 +456,30 @@ interface Result extends MviResult<ViewState> {
                     error, idCardDataResponse);
         }
     }
+
+    @AutoValue
+    abstract class OpenDataFileResult implements Result {
+        @Nullable abstract File dataFile();
+
+        abstract boolean showConfirmation();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .sivaDataFile(dataFile())
+                    .build();
+        }
+
+        static OpenDataFileResult confirmation(File dataFile) {
+            return new AutoValue_Result_OpenDataFileResult(dataFile, true);
+        }
+
+        static OpenDataFileResult success() {
+            return new AutoValue_Result_OpenDataFileResult(null, false);
+        }
+
+        static OpenDataFileResult clear() {
+            return new AutoValue_Result_OpenDataFileResult(null, false);
+        }
+    }
 }
