@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -28,11 +29,14 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.sign.SignedContainer;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.core.ObservableTransformer;
+import io.reactivex.rxjava3.exceptions.CompositeException;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+
 import timber.log.Timber;
 
 final class Processor implements ObservableTransformer<Action, Result> {
@@ -103,10 +107,19 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         return Observable.just(Result.ChooseFilesResult.create());
                     }
                 })
-                .onErrorResumeNext(throwable -> {
-                    ToastUtil.showEmptyFileError(application);
+                .onErrorReturn(throwable -> {
+                    List<Throwable> exceptions = ((CompositeException) throwable).getExceptions();
+                    if (!exceptions.isEmpty()) {
+                        boolean isEmptyFileException = exceptions.stream().anyMatch(exception ->
+                                (exception instanceof EmptyFileException));
+                        if (isEmptyFileException) {
+                            ToastUtil.showEmptyFileError(Activity.getContext().get());
+                        } else {
+                            ToastUtil.showGeneralError(Activity.getContext().get());
+                        }
+                    }
                     navigator.execute(Transaction.pop());
-                    return Observable.empty();
+                    return Result.ChooseFilesResult.create();
                 });
     }
 
@@ -133,9 +146,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         false))))
                 .doOnError(throwable1 -> {
                     Timber.d(throwable1, "Add signed container failed");
-                    Toast.makeText(application, Activity.getContext().get().getString(R.string.signature_create_error),
-                            Toast.LENGTH_LONG)
-                            .show();
+                    ToastUtil.showGeneralError(application);
 
                     navigator.execute(Transaction.pop());
                 })

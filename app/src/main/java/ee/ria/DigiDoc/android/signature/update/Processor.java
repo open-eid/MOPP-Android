@@ -390,7 +390,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
     }
 
     private String assignName(Intent.NameUpdateIntent action, File containerFile) {
-        String name = FileUtil.sanitizeString(action.name(), '_');
+        String name = FileUtil.sanitizeString(action.name(), "");
         if (name != null && !name.isEmpty()) {
             return addContainerExtension(containerFile, name);
         }

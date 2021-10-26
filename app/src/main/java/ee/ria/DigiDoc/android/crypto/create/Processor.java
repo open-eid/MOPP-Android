@@ -158,8 +158,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         });
 
         nameUpdate = upstream -> upstream.switchMap(action -> {
-            String name = FileUtil.sanitizeString(action.name(), '_');
-            String newName = FileUtil.sanitizeString(action.newName(), '_');
+            String name = FileUtil.sanitizeString(action.name(), "");
+            String newName = FileUtil.sanitizeString(action.newName(), "");
             if (newName != null) {
                 return Observable
                         .fromCallable(() -> newName)

@@ -238,7 +238,7 @@ final class CryptoCreateAdapter extends
 
         @Override
         void bind(CryptoCreateAdapter adapter, NameItem item) {
-            nameView.setText(FileUtil.sanitizeString(item.name(), '_'));
+            nameView.setText(FileUtil.sanitizeString(item.name(), ""));
             updateButton.setVisibility(item.updateButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
         }
@@ -318,7 +318,7 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((DataFileItem) adapter.items.get(getBindingAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileClicksSubject);
-            nameView.setText(FileUtil.sanitizeString(item.dataFile().getName(), '_'));
+            nameView.setText(FileUtil.sanitizeString(item.dataFile().getName(), ""));
             String fileNameDescription = nameView.getResources().getString(R.string.file);
             nameView.setContentDescription(fileNameDescription + " " + nameView.getText());
 

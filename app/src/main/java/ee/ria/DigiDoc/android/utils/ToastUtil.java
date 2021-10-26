@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.utils;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
@@ -27,12 +28,18 @@ public final class ToastUtil {
         }
     }
 
-    public static void showEmptyFileError(Application application) {
+    public static void showEmptyFileError(Context context) {
         Timber.d("Excluded empty files in list");
         new Handler(Looper.getMainLooper()).post(() ->
-                Toast.makeText(application, Activity.getContext().get().getString(R.string.empty_file_error),
+                Toast.makeText(context, Activity.getContext().get().getString(R.string.empty_file_error),
                 Toast.LENGTH_LONG)
                 .show());
 
+    }
+
+    public static void showGeneralError(Context context) {
+        Toast.makeText(context, Activity.getContext().get().getString(R.string.signature_create_error),
+                Toast.LENGTH_LONG)
+                .show();
     }
 }
