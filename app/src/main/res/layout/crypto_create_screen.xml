@@ -80,7 +80,7 @@
             android:contentDescription="@string/crypto_create_decrypt_button_description"
             android:drawableTop="@drawable/ic_icon_crypto" />
 
-        <androidx.legacy.widget.Space
+        <Space
             android:id="@id/cryptoCreateButtonSpace"
             android:layout_width="1px"
             android:layout_height="wrap_content" />
