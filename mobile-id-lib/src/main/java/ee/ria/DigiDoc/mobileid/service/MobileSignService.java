@@ -45,8 +45,10 @@ import java.util.ArrayList;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.TrustManager;
 
 import ee.ria.DigiDoc.common.ContainerWrapper;
+import ee.ria.DigiDoc.common.TrustManagerUtil;
 import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
 import ee.ria.DigiDoc.mobileid.dto.MobileCertificateResultType;
@@ -92,6 +94,10 @@ public class MobileSignService extends IntentService {
         Timber.tag(TAG);
     }
 
+    public static TrustManager[] getTrustManagers() throws KeyStoreException, NoSuchAlgorithmException {
+        return TrustManagerUtil.getTrustManagers();
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         Timber.d("Handling mobile sign intent");
@@ -110,9 +116,10 @@ public class MobileSignService extends IntentService {
             try {
                 ArrayList<String> certificateCertBundle = intent.getStringArrayListExtra(CERTIFICATE_CERT_BUNDLE);
                 if (certificateCertBundle != null) {
-                    midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class, restSSLConfig, request.getUrl(), certificateCertBundle);
+                    midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class,
+                            restSSLConfig, request.getUrl(), certificateCertBundle, getTrustManagers());
                 }
-            } catch (CertificateException | NoSuchAlgorithmException e) {
+            } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException e) {
                 Timber.e(e, "Invalid SSL handshake");
                 broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
                 return;
@@ -185,7 +192,7 @@ public class MobileSignService extends IntentService {
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
             kmf.init(keyStore, null);
             SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(kmf.getKeyManagers(), null, null);
+            sslContext.init(kmf.getKeyManagers(), getTrustManagers(), null);
             return sslContext;
         }
     }

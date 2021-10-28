@@ -1,16 +1,8 @@
 package ee.ria.DigiDoc.configuration.loader;
 
 import java.io.IOException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import ee.ria.DigiDoc.common.TrustManagerUtil;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -76,24 +68,13 @@ class CentralConfigurationClient {
         }
     }
 
-    private OkHttpClient.Builder constructClientBuilder() throws KeyStoreException, NoSuchAlgorithmException {
+    private OkHttpClient.Builder constructClientBuilder() {
         return new OkHttpClient.Builder()
-                .sslSocketFactory(constructSSLSocketFactory(), (X509TrustManager) TrustManagerUtil.getTrustManagers()[0])
                 .hostnameVerifier(OkHostnameVerifier.INSTANCE)
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .callTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
-    }
-
-    private SSLSocketFactory constructSSLSocketFactory() {
-        try {
-            SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, new TrustManager[] { TrustManagerUtil.getTrustManagers()[0] }, null);
-            return sslContext.getSocketFactory();
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to construct SSLSocketFactory", e);
-        }
     }
 
     static class CentralConfigurationException extends RuntimeException {

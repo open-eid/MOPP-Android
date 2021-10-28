@@ -32,10 +32,10 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import ee.ria.DigiDoc.common.CertificateUtil;
-import ee.ria.DigiDoc.common.TrustManagerUtil;
 import ee.ria.DigiDoc.mobileid.BuildConfig;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
@@ -51,17 +51,17 @@ public class ServiceGenerator {
 
     private static HttpLoggingInterceptor loggingInterceptor;
 
-    public static <S> S createService(Class<S> serviceClass, SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle) throws CertificateException, NoSuchAlgorithmException {
+    public static <S> S createService(Class<S> serviceClass, SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle, TrustManager[] trustManagers) throws CertificateException, NoSuchAlgorithmException {
         Timber.d("Creating new retrofit instance");
         return new Retrofit.Builder()
                 .baseUrl(midSignServiceUrl + "/")
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(buildHttpClient(sslContext, midSignServiceUrl, certBundle))
+                .client(buildHttpClient(sslContext, midSignServiceUrl, certBundle, trustManagers))
                 .build()
                 .create(serviceClass);
     }
 
-    private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle) throws CertificateException, NoSuchAlgorithmException {
+    private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle, TrustManager[] trustManagers) throws CertificateException, NoSuchAlgorithmException {
         Timber.d("Building new httpClient");
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
@@ -69,8 +69,7 @@ public class ServiceGenerator {
         addLoggingInterceptor(httpClientBuilder);
         if (sslContext != null) {
             try {
-                httpClientBuilder.sslSocketFactory(sslContext.getSocketFactory(),
-                        (X509TrustManager) TrustManagerUtil.getTrustManagers()[0]);
+                httpClientBuilder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0]);
             } catch (Exception e) {
                 Timber.e(e, "Error building httpClient with sslContext");
             }
