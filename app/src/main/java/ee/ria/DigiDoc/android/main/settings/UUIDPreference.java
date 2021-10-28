@@ -20,28 +20,23 @@
 
 package ee.ria.DigiDoc.android.main.settings;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+
 import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatCheckBox;
-
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.CheckBox;
-import android.widget.EditText;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatCheckBox;
 
 import com.takisoft.preferencex.EditTextPreference;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
-
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 public class UUIDPreference extends EditTextPreference {
 

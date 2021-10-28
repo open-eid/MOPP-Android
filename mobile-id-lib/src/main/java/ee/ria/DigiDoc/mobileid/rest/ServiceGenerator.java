@@ -19,16 +19,11 @@
 
 package ee.ria.DigiDoc.mobileid.rest;
 
-import com.unboundid.util.ssl.SSLUtil;
-
 import org.bouncycastle.util.encoders.Base64;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
@@ -37,8 +32,6 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import ee.ria.DigiDoc.common.CertificateUtil;
@@ -76,24 +69,13 @@ public class ServiceGenerator {
         addLoggingInterceptor(httpClientBuilder);
         if (sslContext != null) {
             try {
-                httpClientBuilder.sslSocketFactory(sslContext.getSocketFactory(), getX509TrustManager(
-                        TrustManagerUtil.createDefaultKeystoreSSLUtil()));
+                httpClientBuilder.sslSocketFactory(sslContext.getSocketFactory(),
+                        (X509TrustManager) TrustManagerUtil.getTrustManagers()[0]);
             } catch (Exception e) {
                 Timber.e(e, "Error building httpClient with sslContext");
             }
         }
         return httpClientBuilder.build();
-    }
-
-    private static X509TrustManager getX509TrustManager(SSLUtil sslUtil) throws CertificateException {
-        for (TrustManager trustManager : sslUtil.getTrustManagers()) {
-            if (trustManager instanceof X509TrustManager) {
-                return (X509TrustManager) trustManager;
-            }
-        }
-
-        Timber.e("Unable to get instance of algorithm");
-        throw new CertificateException("Unable to get X509TrustManager");
     }
 
     private static void addLoggingInterceptor(OkHttpClient.Builder httpClientBuilder) {

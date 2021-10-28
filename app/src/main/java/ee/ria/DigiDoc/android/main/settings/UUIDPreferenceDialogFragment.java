@@ -55,10 +55,6 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
             });
 
             if (appCompatEditText != null) {
-                if (checkBox.isChecked()) {
-                    disableTextViewOnChecked(appCompatEditText);
-                }
-
                 checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     appCompatEditText.setEnabled(!isChecked);
                     if (isChecked) {

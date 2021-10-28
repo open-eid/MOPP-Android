@@ -3,23 +3,15 @@ package ee.ria.DigiDoc.android.main.settings;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.CheckBox;
-import android.widget.RelativeLayout;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.preference.EditTextPreferenceDialogFragmentCompat;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceGroup;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -46,10 +38,6 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
             });
 
             if (appCompatEditText != null) {
-                if (checkBox.isChecked()) {
-                    disableTextViewOnChecked(appCompatEditText, configurationProvider);
-                }
-
                 checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     appCompatEditText.setEnabled(!isChecked);
                     if (isChecked) {
