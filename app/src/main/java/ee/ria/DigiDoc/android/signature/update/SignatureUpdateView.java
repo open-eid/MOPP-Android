@@ -52,6 +52,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.android.utils.widget.NotificationDialog;
+import ee.ria.DigiDoc.common.ActivityUtil;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.Signature;
@@ -503,8 +504,13 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         disposables.attach();
         disposables.add(viewModel.viewStates().subscribe(this::render));
         viewModel.process(intents());
-        disposables.add(navigationClicks(toolbarView).subscribe(o ->
-                navigator.execute(Transaction.pop())));
+        disposables.add(navigationClicks(toolbarView).subscribe(o -> {
+            if (ActivityUtil.isExternalFileOpened(activity)) {
+                ActivityUtil.restartActivity(getContext(), activity);
+            } else {
+                navigator.execute(Transaction.pop());
+            }
+        }));
         disposables.add(adapter.scrollToTop().subscribe(ignored -> listView.scrollToPosition(0)));
         disposables.add(adapter.documentSaveClicks().subscribe(document ->
                 documentSaveIntentSubject.onNext(Intent.DocumentSaveIntent

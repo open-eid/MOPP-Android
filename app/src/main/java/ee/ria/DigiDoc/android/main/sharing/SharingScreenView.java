@@ -22,6 +22,7 @@ import ee.ria.DigiDoc.android.Constants;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.DigiDoc.common.ActivityUtil;
 import timber.log.Timber;
 
 import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
@@ -50,8 +51,13 @@ public final class SharingScreenView extends CoordinatorLayout {
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         disposables.attach();
-        disposables.add(navigationClicks(toolbarView).subscribe(o ->
-                navigator.execute(Transaction.pop())));
+        disposables.add(navigationClicks(toolbarView).subscribe(o -> {
+            if (ActivityUtil.isExternalFileOpened(navigator.activity())) {
+                ActivityUtil.restartActivity(getContext(), navigator.activity());
+            } else {
+                navigator.execute(Transaction.pop());
+            }
+        }));
     }
 
     @Override
