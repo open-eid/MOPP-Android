@@ -2,16 +2,14 @@ package ee.ria.DigiDoc.configuration;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Helper class for parsing values from configuration json.
@@ -41,17 +39,11 @@ public class ConfigurationParser {
     }
 
     Map<String, String> parseStringValuesToMap(String... parameterNames) {
-        JsonObject jsonObject = (JsonObject) parseValue(parameterNames);
-        Map<String, String> parsedValues = new HashMap<>();
-        Set<String> keys = jsonObject.keySet();
-        for(String key : keys) {
-            parsedValues.put(key, jsonObject.get(key).getAsString());
-        }
-        return parsedValues;
+        return (Map<String, String>) parseValue(parameterNames);
     }
 
     public int parseIntValue(String... parameterNames) {
-        return (int) parseValue(parameterNames);
+        return Integer.parseInt((String) parseValue(parameterNames));
     }
 
     private Object parseValue(String... parameterNames) {
@@ -59,6 +51,17 @@ public class ConfigurationParser {
         for (int i = 0; i < parameterNames.length - 1; i++) {
             jsonObject = jsonObject.getAsJsonObject(parameterNames[i]);
         }
-        return jsonObject.get(parameterNames[parameterNames.length - 1]).getAsString();
+        JsonElement element = jsonObject.get(parameterNames[parameterNames.length - 1]);
+
+        if (element == null) {
+            throw new RuntimeException("Failed to parse parameter 'MISSING-VALUE' from configuration json");
+        }
+
+        if (element instanceof JsonArray) {
+            return element.getAsJsonArray();
+        } else if (element instanceof JsonObject) {
+            return new Gson().fromJson(element, Map.class);
+        }
+        return element.getAsString();
     }
 }

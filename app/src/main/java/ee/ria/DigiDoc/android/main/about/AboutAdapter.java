@@ -213,6 +213,11 @@ final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     R.string.main_about_apache_2_0_license_title,
                     R.string.main_about_apache_2_license_txt_url
             ))
+            .add(Component.create(
+                    R.string.main_about_gson_title,
+                    R.string.main_about_apache_2_0_license_title,
+                    R.string.main_about_apache_2_license_txt_url
+            ))
             .build();
 
     @NonNull

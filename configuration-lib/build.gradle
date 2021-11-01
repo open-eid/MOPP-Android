@@ -28,7 +28,7 @@ android {
 dependencies {
     api "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
     api "com.squareup.okhttp3:okhttp:${okhttpVersion}"
-    api "com.google.code.gson:gson:2.8.9"
+    api "com.google.code.gson:gson:${gsonVersion}"
 
     implementation 'androidx.core:core:1.0.0'
     implementation "com.jakewharton.timber:timber:${timberVersion}"
@@ -39,7 +39,7 @@ dependencies {
     testImplementation "junit:junit:${junitVersion}"
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
 
-    testImplementation "com.google.code.gson:gson:2.8.9"
+    testImplementation "com.google.code.gson:gson:${gsonVersion}"
 
     androidTestUtil "androidx.test:orchestrator:${androidxTestVersion}"
     androidTestAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
