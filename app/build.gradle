@@ -19,32 +19,6 @@ android {
             abiFilters = []
             abiFilters.addAll(appAbiFilters.split(';').collect{it as String})
         }
-
-        buildConfigField 'String', 'PREFERENCE_V7_FIX_VERSION', "\"$preferenceV7FixVersion\""
-        buildConfigField 'String', 'GUAVA_VERSION', "\"$guavaVersion\""
-        buildConfigField 'String', 'OKIO_VERSION', "\"$okioVersion\""
-        buildConfigField 'String', 'COMMONS_IO_VERSION', "\"$commonsioVersion\""
-        buildConfigField 'String', 'TIMBER_VERSION', "\"$timberVersion\""
-        buildConfigField 'String', 'OK_HTTP_VERSION', "\"$okhttpVersion\""
-        buildConfigField 'String', 'RETROFIT_VERSION', "\"$retrofitVersion\""
-        buildConfigField 'String', 'BOUNCY_CASTLE_VERSION', "\"$bouncycastleVersion\""
-        buildConfigField 'String', 'MATERIAL_VALUES_VERSION', "\"$materialValuesVersion\""
-        buildConfigField 'String', 'DAGGER_VERSION', "\"$daggerVersion\""
-        buildConfigField 'String', 'CONDUCTOR_VERSION', "\"$conductorVersion\""
-        buildConfigField 'String', 'RX_JAVA_VERSION', "\"$rxJavaVersion\""
-        buildConfigField 'String', 'RX_ANDROID_VERSION', "\"$rxAndroidVersion\""
-        buildConfigField 'String', 'RX_BINDING_VERSION', "\"$rxBindingVersion\""
-        buildConfigField 'String', 'TELECOM_CHARSETS_VERSION', "\"$telecomcharsetsVersion\""
-        buildConfigField 'String', 'AUTO_VALUE_VERSION', "\"$autoValueVersion\""
-        buildConfigField 'String', 'AUTO_VALUE_PARCEL_VERSION', "\"$autoValueParcelVersion\""
-        buildConfigField 'String', 'EXPANDABLE_LAYOUT_VERSION', "\"$expandablelayoutVersion\""
-        buildConfigField 'String', 'LDAP_SDK_VERSION', "\"$ldapSdkVersion\""
-        buildConfigField 'String', 'CDOC4J_VERSION', "\"$cdoc4jVersion\""
-        buildConfigField 'String', 'SLF4J_VERSION', "\"$slf4jVersion\""
-        buildConfigField 'String', 'JUNIT_VERSION', "\"$junitVersion\""
-        buildConfigField 'String', 'TRUTH_VERSION', "\"$truthVersion\""
-        buildConfigField 'String', 'MOCKITO_VERSION', "\"$mockitoVersion\""
-        buildConfigField 'String', 'JACKSON_VERSION', "\"$jacksonVersion\""
     }
 
     signingConfigs {
@@ -89,12 +63,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
-
-configurations {
-    all {
-        exclude group: 'org.json', module: 'json'
     }
 }
 
