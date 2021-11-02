@@ -1,22 +1,17 @@
 package ee.ria.DigiDoc.android.main.settings;
 
 import android.os.Bundle;
+import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
-import android.text.TextUtils;
-
-import com.takisoft.fix.support.v7.preference.EditTextPreference;
-import com.takisoft.fix.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
+import com.takisoft.preferencex.PreferenceFragmentCompat;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
-
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 public final class SettingsFragment extends PreferenceFragmentCompat {
 

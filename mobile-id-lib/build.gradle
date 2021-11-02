@@ -15,11 +15,14 @@ android {
 
 dependencies {
     implementation "androidx.annotation:annotation:${androidxVersion}"
-    implementation "androidx.appcompat:appcompat:${androidxVersion}"
+    implementation "androidx.appcompat:appcompat:${androidxAppCompatVersion}"
+    implementation  "androidx.localbroadcastmanager:localbroadcastmanager:${androidxLocalBroadcastManagerVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
 
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+
+    implementation "com.unboundid:unboundid-ldapsdk:${ldapSdkVersion}"
 
     implementation project(':common-lib')
 

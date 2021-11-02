@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.Toolbar
+            <android.widget.Toolbar
                 android:id="@id/toolbar"
                 android:theme="@style/ThemeOverlay.Application.ActionBar"
                 android:layout_width="match_parent"
@@ -80,7 +80,7 @@
             android:contentDescription="@string/crypto_create_decrypt_button_description"
             android:drawableTop="@drawable/ic_icon_crypto" />
 
-        <androidx.legacy.widget.Space
+        <Space
             android:id="@id/cryptoCreateButtonSpace"
             android:layout_width="1px"
             android:layout_height="wrap_content" />

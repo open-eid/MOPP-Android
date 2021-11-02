@@ -2,9 +2,9 @@ package ee.ria.DigiDoc.configuration;
 
 import android.os.Parcelable;
 
-import com.google.auto.value.AutoValue;
+import androidx.annotation.Nullable;
 
-import org.jetbrains.annotations.Nullable;
+import com.google.auto.value.AutoValue;
 
 import java.util.Date;
 import java.util.List;

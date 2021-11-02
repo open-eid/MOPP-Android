@@ -20,23 +20,23 @@
 
 package ee.ria.DigiDoc.android.main.settings;
 
-import android.content.Context;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatCheckBox;
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.CheckBox;
 
-import com.takisoft.fix.support.v7.preference.EditTextPreference;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatCheckBox;
+
+import com.takisoft.preferencex.EditTextPreference;
 
 import java.util.Arrays;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
-
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 public class UUIDPreference extends EditTextPreference {
 
@@ -57,7 +57,6 @@ public class UUIDPreference extends EditTextPreference {
     public UUIDPreference(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                             int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        getEditText().setHint("00000000-0000-0000-0000-000000000000");
         checkBox = new AppCompatCheckBox(context);
         checkBox.setId(android.R.id.checkbox);
         checkBox.setText(R.string.main_settings_tsa_url_use_default);
@@ -65,6 +64,7 @@ public class UUIDPreference extends EditTextPreference {
                 48f, context.getResources().getDisplayMetrics()));
         checkBox.setMinWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 120f, context.getResources().getDisplayMetrics()));
+        checkBox.setX(48f);
 
         setOnPreferenceChangeListener((preference, newValue) -> {
             AccessibilityUtils.sendAccessibilityEvent(context, TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
@@ -80,7 +80,7 @@ public class UUIDPreference extends EditTextPreference {
     public CharSequence getSummary() {
         String text = getText();
         if (TextUtils.isEmpty(text)) {
-            return getEditText().getHint();
+            return "00000000-0000-0000-0000-000000000000";
         }
         char[] password = new char[text.length()];
         Arrays.fill(password, '·');

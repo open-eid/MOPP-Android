@@ -7,10 +7,10 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.FileProvider;
-import androidx.appcompat.widget.Toolbar;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toolbar;
 import android.widget.Toast;
 
 import java.io.File;
@@ -25,7 +25,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import timber.log.Timber;
 
-import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
 public final class SharingScreenView extends CoordinatorLayout {
 
@@ -43,6 +43,9 @@ public final class SharingScreenView extends CoordinatorLayout {
 
         disposables = new ViewDisposables();
 
+        toolbarView.setTitle(R.string.sharing_screen_title);
+        toolbarView.setNavigationIcon(R.drawable.ic_clear);
+        toolbarView.setNavigationContentDescription(R.string.close);
 
         showFiles(getContainerFiles(new File(getContext().getFilesDir(), Constants.DIR_SIGNATURE_CONTAINERS)));
     }

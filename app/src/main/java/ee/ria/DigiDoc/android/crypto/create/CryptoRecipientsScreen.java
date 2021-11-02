@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,16 +9,17 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bluelinelabs.conductor.Controller;
 import com.google.common.collect.ImmutableList;
-import com.jakewharton.rxbinding2.support.v7.widget.SearchViewQueryTextEvent;
+import com.jakewharton.rxbinding4.widget.SearchViewQueryTextEvent;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -29,14 +31,14 @@ import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.common.Certificate;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static com.jakewharton.rxbinding2.support.v7.widget.RxSearchView.queryTextChangeEvents;
-import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.Constants.VOID;
 
 public final class CryptoRecipientsScreen extends Controller implements Screen,
@@ -89,7 +91,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                         .filter(SearchViewQueryTextEvent::isSubmitted)
                         .doOnNext(ignored -> searchView.clearFocus())
                         .map(event ->
-                                Intent.RecipientsSearchIntent.search(event.queryText().toString())),
+                                Intent.RecipientsSearchIntent.search(event.getQueryText().toString())),
                 backButtonClicksSubject.map(ignored -> Intent.RecipientsSearchIntent.clear()));
     }
 
@@ -147,24 +149,33 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
     @NonNull
     @Override
-    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
+    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
         View view = inflater.inflate(R.layout.crypto_recipients_screen, container, false);
+
         AccessibilityUtils.setAccessibilityPaneTitle(view, R.string.crypto_recipients_title);
 
         toolbarView = view.findViewById(R.id.toolbar);
+        toolbarView.setTitle(R.string.crypto_recipients_title);
+        toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
+        toolbarView.setNavigationContentDescription(R.string.back);
+
         searchView = view.findViewById(R.id.cryptoRecipientsSearch);
-        searchViewInnerText = searchView.findViewById(R.id.search_src_text);
-        searchViewInnerText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-               searchViewInnerText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-               if (getResources() != null) {
-                   searchViewInnerText.setLayoutParams(
-                           new LinearLayout.LayoutParams(searchView.getWidth(), DisplayUtil.getDisplayMetricsDpToInt(getResources(), 48))
-                   );
-               }
-            }
-        });
+        if (getResources() != null) {
+            searchView.setQueryHint(getResources().getString(R.string.crypto_recipients_search));
+            searchView.setIconifiedByDefault(false);
+            searchViewInnerText = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
+            searchViewInnerText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    searchViewInnerText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    if (getResources() != null) {
+                        searchViewInnerText.setLayoutParams(
+                                new LinearLayout.LayoutParams(searchView.getWidth(), DisplayUtil.getDisplayMetricsDpToInt(getResources(), 48))
+                        );
+                    }
+                }
+            });
+        }
 
         searchView.setSubmitButtonEnabled(true);
         RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);

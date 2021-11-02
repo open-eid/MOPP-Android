@@ -3,12 +3,12 @@ package ee.ria.DigiDoc.android.utils.rxbinding.app;
 import android.app.Dialog;
 import android.content.DialogInterface;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.MainThreadDisposable;
+import io.reactivex.rxjava3.android.MainThreadDisposable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
 
 import static ee.ria.DigiDoc.android.Constants.VOID;
-import static io.reactivex.android.MainThreadDisposable.verifyMainThread;
+import static io.reactivex.rxjava3.android.MainThreadDisposable.verifyMainThread;
 
 final class DialogDismissObservable extends Observable<Object> {
 

@@ -2,8 +2,8 @@ package ee.ria.DigiDoc.android.utils;
 
 import androidx.annotation.Nullable;
 
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 public final class ViewDisposables {
 

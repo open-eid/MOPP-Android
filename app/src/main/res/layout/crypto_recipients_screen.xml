@@ -12,14 +12,11 @@
         android:layout_height="wrap_content"
         app:layout_insetEdge="top">
 
-        <androidx.appcompat.widget.Toolbar
+        <android.widget.Toolbar
             android:id="@id/toolbar"
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationContentDescription="@string/back"
-            app:title="@string/crypto_recipients_title" />
+            android:layout_height="wrap_content" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -29,14 +26,12 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.SearchView
+        <android.widget.SearchView
             android:id="@id/cryptoRecipientsSearch"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:inputType="textFilter"
-            android:minHeight="@dimen/material_baseline_grid_6x"
-            app:queryHint="@string/crypto_recipients_search"
-            app:iconifiedByDefault="false" />
+            android:minHeight="@dimen/material_baseline_grid_6x" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@id/cryptoRecipientsList"

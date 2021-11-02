@@ -2,10 +2,10 @@ package ee.ria.DigiDoc.android.utils.rxbinding.app;
 
 import android.content.DialogInterface;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
 public final class ObservableDialogClickListener extends Observable<Integer>
         implements DialogInterface.OnClickListener {

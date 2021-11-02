@@ -16,8 +16,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 }
 
@@ -26,6 +26,8 @@ dependencies {
     api "com.squareup.okio:okio:${okioVersion}"
 
     implementation "com.github.brake.threegpp:telecom-charsets:${telecomcharsetsVersion}"
+
+    implementation "com.unboundid:unboundid-ldapsdk:${ldapSdkVersion}"
 
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
