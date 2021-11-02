@@ -11,6 +11,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toolbar;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -124,9 +125,11 @@ public final class SharingScreenView extends CoordinatorLayout {
                     returnIntent.setDataAndType(null, "");
                     activity.setResult(Activity.RESULT_CANCELED, returnIntent);
                     activity.finish();
+                    restartToMainApp();
                 }
             } catch (IllegalArgumentException e) {
                 Timber.e(e, "File selecting failed");
+                restartToMainApp();
             }
         });
     }
@@ -135,7 +138,8 @@ public final class SharingScreenView extends CoordinatorLayout {
         if (isIntentWithExtraReferrer(activity)) {
           restartAppWithIntent(intent);
         } else {
-            activity.finish();
+            Timber.e("File selecting failed");
+            restartToMainApp();
         }
     }
 
@@ -162,5 +166,11 @@ public final class SharingScreenView extends CoordinatorLayout {
         restartIntent.setAction(intent.getAction());
         restartIntent.setDataAndType(intent.getData(), intent.getType());
         getContext().startActivity(restartIntent);
+    }
+
+    private void restartToMainApp() {
+        Toast.makeText(getContext(), R.string.signature_update_container_load_error, Toast.LENGTH_LONG).show();
+        Intent mainIntent = new Intent(Intent.ACTION_MAIN);
+        restartAppWithIntent(mainIntent);
     }
 }
