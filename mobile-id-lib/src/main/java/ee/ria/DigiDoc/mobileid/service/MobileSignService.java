@@ -21,6 +21,7 @@ package ee.ria.DigiDoc.mobileid.service;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -94,20 +95,24 @@ public class MobileSignService extends IntentService {
         Timber.tag(TAG);
     }
 
-    public static TrustManager[] getTrustManagers() throws KeyStoreException, NoSuchAlgorithmException {
-        return TrustManagerUtil.getTrustManagers();
-    }
-
     @Override
     protected void onHandleIntent(Intent intent) {
         Timber.d("Handling mobile sign intent");
+
+        TrustManager[] trustManagers = new TrustManager[0];
+        try {
+            trustManagers = TrustManagerUtil.getTrustManagers();
+        } catch (NoSuchAlgorithmException | KeyStoreException e) {
+            Timber.log(Log.DEBUG, "Unable to get Trust Managers", e);
+        }
+
         timeout = 0;
         MobileCreateSignatureRequest request = getRequestFromIntent(intent);
         if (request != null) {
             PostMobileCreateSignatureCertificateRequest certificateRequest = getCertificateRequest(request);
             SSLContext restSSLConfig;
             try {
-                restSSLConfig = createSSLConfig(intent);
+                restSSLConfig = createSSLConfig(intent, trustManagers);
             } catch (Exception e) {
                 Timber.e(e, "Can't create SSL config");
                 restSSLConfig = null;
@@ -117,9 +122,9 @@ public class MobileSignService extends IntentService {
                 ArrayList<String> certificateCertBundle = intent.getStringArrayListExtra(CERTIFICATE_CERT_BUNDLE);
                 if (certificateCertBundle != null) {
                     midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class,
-                            restSSLConfig, request.getUrl(), certificateCertBundle, getTrustManagers());
+                            restSSLConfig, request.getUrl(), certificateCertBundle, trustManagers);
                 }
-            } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException e) {
+            } catch (CertificateException | NoSuchAlgorithmException e) {
                 Timber.e(e, "Invalid SSL handshake");
                 broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
                 return;
@@ -179,7 +184,7 @@ public class MobileSignService extends IntentService {
         return PEM_BEGIN_CERT + "\n" + cert + "\n" + PEM_END_CERT;
     }
 
-    private static SSLContext createSSLConfig(Intent intent) throws CertificateException, IOException,
+    private static SSLContext createSSLConfig(Intent intent, TrustManager[] trustManagers) throws CertificateException, IOException,
             KeyStoreException, NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException {
 
         String keystorePath = intent.getStringExtra(ACCESS_TOKEN_PATH);
@@ -191,8 +196,8 @@ public class MobileSignService extends IntentService {
             keyStore.load(key, keystorePass.toCharArray());
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
             kmf.init(keyStore, null);
-            SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(kmf.getKeyManagers(), getTrustManagers(), null);
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+            sslContext.init(kmf.getKeyManagers(), trustManagers, null);
             return sslContext;
         }
     }
