@@ -19,7 +19,6 @@
             android:gravity="center_horizontal"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:focusedByDefault="true"
             android:text="@string/signature_update_id_card_progress_message_initial"
             android:contentDescription="@string/signature_update_id_card_progress_message_initial" />
 

@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static com.jakewharton.rxbinding2.widget.RxRadioGroup.checkedChanges;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -18,8 +20,6 @@ import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdView;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdView;
 import io.reactivex.Observable;
-
-import static com.jakewharton.rxbinding2.widget.RxRadioGroup.checkedChanges;
 
 public final class SignatureUpdateSignatureAddView extends LinearLayout {
 
@@ -120,9 +120,9 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         if (response == null && mobileIdView.getVisibility() == VISIBLE) {
             mobileIdView.response(null, null);
         } else if (response == null && smartIdView.getVisibility() == VISIBLE) {
-            smartIdView.response(null, null);
+            smartIdView.response(null, methodView);
         } else if (response == null && idCardView.getVisibility() == VISIBLE) {
-            idCardView.response(null, null);
+            idCardView.response(null, methodView);
         } else if (response instanceof MobileIdResponse) {
             mobileIdView.response((MobileIdResponse) response, null);
         } else if (response instanceof SmartIdResponse) {

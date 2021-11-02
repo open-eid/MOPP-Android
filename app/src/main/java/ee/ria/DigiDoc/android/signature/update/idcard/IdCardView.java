@@ -3,11 +3,14 @@ package ee.ria.DigiDoc.android.signature.update.idcard;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -104,15 +107,7 @@ public final class IdCardView extends LinearLayout implements
         }
 
         if (methodView != null) {
-            RadioButton mobileIdRadioButton = methodView.findViewById(R.id.signatureUpdateSignatureAddMethodMobileId);
-            mobileIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-            mobileIdRadioButton.setContentDescription("");
-            setupContentDescriptions(mobileIdRadioButton);
-
-            RadioButton smartIdRadioButton = methodView.findViewById(R.id.signatureUpdateSignatureAddMethodSmartId);
-            smartIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-            smartIdRadioButton.setContentDescription("");
-            setupContentDescriptions(smartIdRadioButton);
+            handleAccessibility(methodView);
         }
 
         token = dataResponse == null ? null : dataResponse.token();
@@ -209,7 +204,7 @@ public final class IdCardView extends LinearLayout implements
         }
     }
 
-    private void setupContentDescriptions(RadioButton radioButton) {
+    private void setupContentDescriptions(RadioButton radioButton, CharSequence contentDescription) {
         radioButton.setAccessibilityDelegate(new View.AccessibilityDelegate() {
             @Override
             public void onPopulateAccessibilityEvent(View host, AccessibilityEvent event) {
@@ -221,6 +216,42 @@ public final class IdCardView extends LinearLayout implements
                    event.getText().add(getContentDescription());
                 }
             }
+
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setContentDescription(contentDescription);
+                info.setCheckable(false);
+                info.setClickable(false);
+                info.setClassName("");
+                info.setPackageName("");
+                info.setText(contentDescription);
+                info.setViewIdResourceName("");
+                info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_SELECTION);
+            }
         });
+    }
+
+    private void handleAccessibility(RadioGroup methodView) {
+        RadioButton mobileIdRadioButton = methodView.findViewById(R.id.signatureUpdateSignatureAddMethodMobileId);
+        CharSequence mobileIdContentDescription = mobileIdRadioButton.getContentDescription();
+        mobileIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        mobileIdRadioButton.setContentDescription("");
+        setupContentDescriptions(mobileIdRadioButton, mobileIdContentDescription);
+
+        RadioButton smartIdRadioButton = methodView.findViewById(R.id.signatureUpdateSignatureAddMethodSmartId);
+        CharSequence smartIdContentDescription = smartIdRadioButton.getContentDescription();
+        smartIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        smartIdRadioButton.setContentDescription("");
+        setupContentDescriptions(smartIdRadioButton, smartIdContentDescription);
+
+        postDelayed(() -> {
+            mobileIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            mobileIdRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 3));
+
+            smartIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            smartIdRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_smart_id, 2, 3));
+        }, 3500);
     }
 }
