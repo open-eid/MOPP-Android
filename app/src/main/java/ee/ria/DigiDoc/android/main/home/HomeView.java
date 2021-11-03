@@ -18,11 +18,11 @@ import ee.ria.DigiDoc.android.eid.EIDHomeView;
 import ee.ria.DigiDoc.android.signature.home.SignatureHomeView;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
-import static com.jakewharton.rxbinding2.support.design.widget.RxBottomNavigationView.itemSelections;
+import static com.jakewharton.rxbinding4.material.RxBottomNavigationView.itemSelections;
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 

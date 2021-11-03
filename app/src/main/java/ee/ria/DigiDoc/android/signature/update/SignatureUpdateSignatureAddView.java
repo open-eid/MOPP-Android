@@ -17,9 +17,9 @@ import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdView;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdView;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
-import static com.jakewharton.rxbinding2.widget.RxRadioGroup.checkedChanges;
+import static com.jakewharton.rxbinding4.widget.RxRadioGroup.checkedChanges;
 
 public final class SignatureUpdateSignatureAddView extends LinearLayout {
 

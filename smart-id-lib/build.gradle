@@ -15,7 +15,8 @@ android {
 
 dependencies {
     implementation "androidx.annotation:annotation:${androidxVersion}"
-    implementation "androidx.appcompat:appcompat:${androidxVersion}"
+    implementation "androidx.appcompat:appcompat:${androidxAppCompatVersion}"
+    implementation  "androidx.localbroadcastmanager:localbroadcastmanager:${androidxLocalBroadcastManagerVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
 
@@ -28,6 +29,6 @@ dependencies {
         exclude group: 'xpp3', module: 'xpp3'
     }
 
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }

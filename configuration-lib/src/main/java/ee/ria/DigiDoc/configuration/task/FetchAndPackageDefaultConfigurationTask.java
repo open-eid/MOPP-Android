@@ -1,26 +1,18 @@
 package ee.ria.DigiDoc.configuration.task;
 
-import android.app.Activity;
-
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Properties;
 
 import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
-import ee.ria.DigiDoc.configuration.ConfigurationManager;
 import ee.ria.DigiDoc.configuration.ConfigurationParser;
 import ee.ria.DigiDoc.configuration.ConfigurationProperties;
 import ee.ria.DigiDoc.configuration.loader.CentralConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.ConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.DefaultConfigurationLoader;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
-import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
 import ee.ria.DigiDoc.configuration.verify.ConfigurationSignatureVerifier;
 
 /**

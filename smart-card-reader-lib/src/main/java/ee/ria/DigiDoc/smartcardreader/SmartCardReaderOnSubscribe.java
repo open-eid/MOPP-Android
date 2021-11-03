@@ -11,13 +11,13 @@ import androidx.annotation.Nullable;
 
 import com.google.common.base.Optional;
 
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.rxjava3.core.ObservableEmitter;
+import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import timber.log.Timber;
 
 final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional<SmartCardReader>> {
 
-    private static final String ACTION_USB_DEVICE_PERMISSION = BuildConfig.APPLICATION_ID +
+    private static final String ACTION_USB_DEVICE_PERMISSION = BuildConfig.LIBRARY_PACKAGE_NAME +
             ".USB_DEVICE_PERMISSION";
 
     private final Context context;

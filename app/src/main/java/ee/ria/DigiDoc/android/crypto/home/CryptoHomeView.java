@@ -17,9 +17,9 @@ import ee.ria.DigiDoc.android.main.home.HomeView;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
 
 public final class CryptoHomeView extends CoordinatorLayout implements HomeView.HomeViewChild {
 

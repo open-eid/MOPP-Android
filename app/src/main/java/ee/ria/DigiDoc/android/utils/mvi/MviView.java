@@ -1,6 +1,6 @@
 package ee.ria.DigiDoc.android.utils.mvi;
 
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
 public interface MviView<I extends MviIntent, S extends MviViewState> {
 
