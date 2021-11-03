@@ -21,23 +21,26 @@
 package ee.ria.DigiDoc.android.signature.update.smartid;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 import android.text.InputFilter;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
+
+import androidx.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
@@ -87,13 +90,6 @@ public final class SmartIdView extends LinearLayout implements
                 setPersonalCodeViewFilters(0);
             }
         });
-
-        setOnSystemUiVisibilityChangeListener(visibility -> {
-            if (visibility == VISIBLE) {
-                AccessibilityUtils.sendAccessibilityEvent(getContext(),
-                        AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.signature_update_smart_id_message);
-            }
-        });
     }
 
     @Override
@@ -111,7 +107,10 @@ public final class SmartIdView extends LinearLayout implements
     }
 
     @Override
-    public void response(@Nullable SmartIdResponse response) {
+    public void response(@Nullable SmartIdResponse response, @Nullable RadioGroup methodView) {
+        if (methodView != null) {
+            handleAccessibility(methodView);
+        }
     }
 
     public Observable<Object> positiveButtonState() {
@@ -150,5 +149,56 @@ public final class SmartIdView extends LinearLayout implements
             }
         }
         personalCodeView.setFilters(inputFilters);
+    }
+
+    private void setupContentDescriptions(RadioButton radioButton, CharSequence contentDescription) {
+        radioButton.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override
+            public void onPopulateAccessibilityEvent(View host, AccessibilityEvent event) {
+                if (!event.getText().isEmpty() &&
+                        (event.getText().get(0).toString().equals(
+                                getResources().getString(R.string.signature_update_signature_add_method_mobile_id)) ||
+                                event.getText().get(0).toString().equals(
+                                        getResources().getString(R.string.signature_update_signature_add_method_id_card)))) {
+                    event.getText().add(getContentDescription());
+                }
+            }
+
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setContentDescription(contentDescription);
+                info.setCheckable(false);
+                info.setClickable(false);
+                info.setClassName("");
+                info.setPackageName("");
+                info.setText(contentDescription);
+                info.setViewIdResourceName("");
+                info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_SELECTION);
+            }
+        });
+    }
+
+    private void handleAccessibility(RadioGroup methodView) {
+        RadioButton mobileIdRadioButton = methodView.findViewById(R.id.signatureUpdateSignatureAddMethodMobileId);
+        CharSequence mobileIdContentDescription = mobileIdRadioButton.getContentDescription();
+        mobileIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        mobileIdRadioButton.setContentDescription("");
+        setupContentDescriptions(mobileIdRadioButton, mobileIdContentDescription);
+
+        RadioButton idCardRadioButton = methodView.findViewById(R.id.signatureUpdateSignatureAddMethodIdCard);
+        CharSequence idCardContentDescription = idCardRadioButton.getContentDescription();
+        idCardRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        idCardRadioButton.setContentDescription("");
+        setupContentDescriptions(idCardRadioButton, idCardContentDescription);
+
+        postDelayed(() -> {
+            mobileIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            mobileIdRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 3));
+
+            idCardRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            idCardRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 3));
+        }, 3500);
     }
 }

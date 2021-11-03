@@ -464,7 +464,6 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                         .doOnNext(ignored -> resetSignatureAddDialog())
                         .map(ignored -> {
                             int method = viewModel.signatureAddMethod();
-                            sendMethodSelectionAccessibilityEvent(method);
                             return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile);
                         }),
                 cancels(signatureAddDialog)
@@ -489,8 +488,16 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private void sendMethodSelectionAccessibilityEvent(int method) {
         String signatureMethod = getMethod(method);
         if (signatureMethod != null) {
-            AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
-                    signatureMethod + " " + getResources().getString(R.string.signature_update_signature_method_selected));
+            if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_mobile_id))) {
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
+                        getResources().getString(R.string.signature_update_signature_chosen_method_mobile_id));
+            } else if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_smart_id))) {
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
+                        getResources().getString(R.string.signature_update_signature_chosen_method_smart_id));
+            } else if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_id_card))) {
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
+                        getResources().getString(R.string.signature_update_signature_chosen_method_id_card));
+            }
         }
     }
 

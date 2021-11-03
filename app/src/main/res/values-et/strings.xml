@@ -138,9 +138,9 @@
 
     <string name="signature_update_signature_error_invalid_ssl_handshake">SSL ühenduskanali loomine ebaõnnestus. Kontrolli rakenduse seadeid või tarkvara uuendusi</string>
 
-    <string name="signature_update_signature_selected_method_mobile_id">Valitud allkirjastamise viisiks on Mobiil-ID, vahekaart %1$d / %2$d</string>
-    <string name="signature_update_signature_selected_method_smart_id">Valitud allkirjastamise viisiks on Smart-ID, vahekaart %1$d / %2$d</string>
-    <string name="signature_update_signature_selected_method_id_card">Valitud allkirjastamise viisiks on ID-kaart, vahekaart %1$d / %2$d</string>
+    <string name="signature_update_signature_selected_method_mobile_id">Allkirjastamise viisiks on Mobiil-ID, vahekaart %1$d / %2$d</string>
+    <string name="signature_update_signature_selected_method_smart_id">Allkirjastamise viisiks on Smart-ID, vahekaart %1$d / %2$d</string>
+    <string name="signature_update_signature_selected_method_id_card">Allkirjastamise viisiks on ID-kaart, vahekaart %1$d / %2$d</string>
 
     <string name="signature_update_signature_chosen_method_mobile_id">Allkirjastamisviis mobiil-ID on valitud</string>
     <string name="signature_update_signature_chosen_method_smart_id">Smart-ID allkirjastamise vahend valitud</string>

@@ -148,6 +148,7 @@
     <item type="id" name="signatureUpdateIdCardProgressContainer" />
     <item type="id" name="signatureUpdateIdCardProgressMessage" />
     <item type="id" name="signatureUpdateIdCardSignContainer" />
+    <item type="id" name="signatureUpdateIdCardSignMessage" />
     <item type="id" name="signatureUpdateIdCardSignData" />
     <item type="id" name="signatureUpdateIdCardSignPin2" />
     <item type="id" name="signatureUpdateIdCardSignPin2Error" />

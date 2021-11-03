@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import android.widget.RadioGroup;
+
 import androidx.annotation.Nullable;
 
 public interface SignatureAddView<T extends SignatureAddRequest, U extends SignatureAddResponse> {
@@ -8,5 +10,5 @@ public interface SignatureAddView<T extends SignatureAddRequest, U extends Signa
 
     T request();
 
-    void response(@Nullable U response);
+    void response(@Nullable U response, @Nullable RadioGroup methodView);
 }
