@@ -201,7 +201,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                         ImmutableList.Builder<File> builder =
                                                 ImmutableList.<File>builder().addAll(dataFiles);
                                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(fileStreams);
-                                        ToastUtil.handleEmptyFileError(fileStreams, validFiles, application);
+                                        ToastUtil.handleEmptyFileError(validFiles, application);
                                         for (FileStream fileStream : validFiles) {
                                             File dataFile = fileSystem.cache(fileStream);
                                             if (dataFiles.contains(dataFile)) {
@@ -482,10 +482,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     private Observable<Result.InitialResult> parseIntent(android.content.Intent intent, Application application) {
         return Observable
                 .fromCallable(() -> {
-                    ImmutableList<FileStream> fileStreams =
-                            parseGetContentIntent(contentResolver, intent);
-                    ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(fileStreams);
-                    ToastUtil.handleEmptyFileError(fileStreams, validFiles, application);
+                    ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(parseGetContentIntent(contentResolver, intent));
+                    ToastUtil.handleEmptyFileError(validFiles, application);
                     if (validFiles.size() == 1
                             && isContainerFileName(validFiles.get(0).displayName())) {
                         File file = fileSystem.addSignatureContainer(validFiles.get(0));

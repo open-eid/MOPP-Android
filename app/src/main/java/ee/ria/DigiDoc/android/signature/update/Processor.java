@@ -173,9 +173,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 .switchMap(activityResult -> {
                                     android.content.Intent data = activityResult.data();
                                     if (activityResult.resultCode() == RESULT_OK && data != null) {
-                                        ImmutableList<FileStream> addedData = parseGetContentIntent(application.getContentResolver(), data);
-                                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(addedData);
-                                        ToastUtil.handleEmptyFileError(addedData, validFiles, application);
+                                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(parseGetContentIntent(application.getContentResolver(), data));
+                                        ToastUtil.handleEmptyFileError(validFiles, application);
                                         announceAccessibilityFilesAddedEvent(application.getApplicationContext(), validFiles.size());
                                         return signatureContainerDataSource
                                                 .addDocuments(action.containerFile(), validFiles)

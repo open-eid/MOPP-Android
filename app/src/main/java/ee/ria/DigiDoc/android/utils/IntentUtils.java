@@ -4,7 +4,9 @@ import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.OpenableColumns;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.Nullable;
@@ -56,10 +58,10 @@ public final class IntentUtils {
         if (clipData != null) {
             for (int i = 0; i < clipData.getItemCount(); i++) {
                 Uri uri = clipData.getItemAt(i).getUri();
-                builder.add(FileStream.create(contentResolver, uri));
+                builder.add(FileStream.create(contentResolver, uri, getFileSize(contentResolver, uri)));
             }
         } else if (data != null) {
-            builder.add(FileStream.create(contentResolver, data));
+            builder.add(FileStream.create(contentResolver, data, getFileSize(contentResolver, data)));
         }
 
         return builder.build();
@@ -118,6 +120,22 @@ public final class IntentUtils {
     public static Intent createBrowserIntent(Context context, int stringRes){
         String url = context.getResources().getString(stringRes);
         return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+    }
+
+    private static long getFileSize(ContentResolver contentResolver, Uri uri) {
+        Cursor cursor = contentResolver.
+                query(Uri.parse(FileUtil.sanitizeString(uri.toString(), "")),
+                        null, null, null, null);
+        long fileSize = 0;
+        if (cursor != null) {
+            int columnIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+            if (cursor.moveToFirst() && !cursor.isNull(columnIndex)) {
+                fileSize = cursor.getLong(columnIndex);
+            }
+            cursor.close();
+            return fileSize;
+        }
+        return fileSize;
     }
 
     private IntentUtils() {}

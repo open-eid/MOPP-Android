@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.utils.files;
 
+import static com.google.common.io.Files.asByteSource;
+
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,8 +14,6 @@ import java.io.File;
 
 import ee.ria.DigiDoc.common.FileUtil;
 
-import static com.google.common.io.Files.asByteSource;
-
 @AutoValue
 public abstract class FileStream {
 
@@ -21,10 +21,12 @@ public abstract class FileStream {
 
     public abstract ByteSource source();
 
+    public abstract long fileSize();
+
     /**
      * Create FileStream from {@link ContentResolver} and content {@link Uri}.
      */
-    public static FileStream create(ContentResolver contentResolver, Uri uri) {
+    public static FileStream create(ContentResolver contentResolver, Uri uri, long fileSize) {
         String displayName = FileUtil.sanitizeString(uri.getLastPathSegment(), "");
         String sanitizedUri = FileUtil.sanitizeString(uri.toString(), "");
         Cursor cursor = contentResolver.query(Uri.parse(sanitizedUri), new String[]{OpenableColumns.DISPLAY_NAME}, null,
@@ -37,13 +39,13 @@ public abstract class FileStream {
         }
 
         return new AutoValue_FileStream(displayName,
-                new ContentResolverUriSource(contentResolver, Uri.parse(sanitizedUri)));
+                new ContentResolverUriSource(contentResolver, Uri.parse(sanitizedUri)), fileSize);
     }
 
     /**
      * Create FileStream from {@link File}.
      */
     public static FileStream create(File file) {
-        return new AutoValue_FileStream(file.getName(), asByteSource(file));
+        return new AutoValue_FileStream(file.getName(), asByteSource(file), file.length());
     }
 }
