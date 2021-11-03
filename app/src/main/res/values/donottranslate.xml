@@ -102,6 +102,9 @@
     <string name="main_about_firebase_crashlytics_gradle_title">Firebase Crashlytics Gradle</string>
     <string name="main_about_gson_title">Gson</string>
 
+    <!-- Diagnostics -->
+    <string name="main_diagnostics_libdigidocpp_title">libdigidocpp %1$s</string>
+
     <!-- EID Home -->
     <string name="eid_home_certificate_pin_auth">PIN1</string>
     <string name="eid_home_certificate_pin_sign">PIN2</string>

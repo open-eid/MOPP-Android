@@ -126,7 +126,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
         applicationVersion.setText(getAppVersion());
         androidVersion.setText(getAndroidVersion());
-        libDocVersion.setText(getResources().getString(R.string.main_about_libdigidocpp_title));
+        libDocVersion.setText(getResources().getString(R.string.main_diagnostics_libdigidocpp_title, getLibDigiDocVersion()));
 
         configUrl.setText(configurationProvider.getConfigUrl());
         tslUrl.setText(configurationProvider.getTslUrl());
