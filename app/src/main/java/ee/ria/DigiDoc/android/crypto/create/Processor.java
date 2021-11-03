@@ -53,12 +53,12 @@ import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.idcard.Token;
 import ee.ria.DigiDoc.sign.SignedContainer;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableSource;
+import io.reactivex.rxjava3.core.ObservableTransformer;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import timber.log.Timber;
 
 final class Processor implements ObservableTransformer<Intent, Result> {
@@ -124,7 +124,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .onErrorReturn(Result.InitialResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.InitialResult.activity());
+                        .startWithItem(Result.InitialResult.activity());
             } else if (androidIntent != null) {
                 return parseIntent(androidIntent, application);
             } else {
@@ -158,8 +158,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         });
 
         nameUpdate = upstream -> upstream.switchMap(action -> {
-            String name = FileUtil.sanitizeString(action.name(), '_');
-            String newName = FileUtil.sanitizeString(action.newName(), '_');
+            String name = FileUtil.sanitizeString(action.name(), "");
+            String newName = FileUtil.sanitizeString(action.newName(), "");
             if (newName != null) {
                 return Observable
                         .fromCallable(() -> newName)
@@ -171,7 +171,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             return result;
                         })
                         .onErrorReturn(throwable -> Result.NameUpdateResult.failure(newName, throwable))
-                        .startWith(Result.NameUpdateResult.progress(name));
+                        .startWithItem(Result.NameUpdateResult.progress(name));
             } else if (name != null) {
                 return Observable.just(Result.NameUpdateResult.show(name));
             } else {
@@ -225,7 +225,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                     })
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .startWith(Result.DataFilesAddResult.activity());
+                                    .startWithItem(Result.DataFilesAddResult.activity());
                         } else {
                             return Observable.just(Result.DataFilesAddResult.clear());
                         }
@@ -351,7 +351,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .onErrorReturn(Result.RecipientsSearchResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.RecipientsSearchResult.activity());
+                        .startWithItem(Result.RecipientsSearchResult.activity());
             }
         });
 
@@ -395,11 +395,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 Observable
                                         .timer(3, TimeUnit.SECONDS)
                                         .map(ignored -> Result.EncryptResult.success(file))
-                                        .startWith(Result.EncryptResult.successMessage(file)))
+                                        .startWithItem(Result.EncryptResult.successMessage(file)))
                         .onErrorReturn(Result.EncryptResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.EncryptResult.activity());
+                        .startWithItem(Result.EncryptResult.activity());
             } else {
                 return Observable.just(Result.EncryptResult.clear());
             }
@@ -409,7 +409,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             if (intent.visible()) {
                 return idCardService.data()
                         .map(Result.DecryptionResult::show)
-                        .startWith(Result.DecryptionResult.show(IdCardDataResponse.initial()));
+                        .startWithItem(Result.DecryptionResult.show(IdCardDataResponse.initial()));
             } else {
                 return Observable.just(Result.DecryptionResult.hide());
             }
@@ -429,7 +429,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 Observable
                                         .timer(3, TimeUnit.SECONDS)
                                         .map(ignored -> Result.DecryptResult.success(dataFiles))
-                                        .startWith(Result.DecryptResult.successMessage(dataFiles)))
+                                        .startWithItem(Result.DecryptResult.successMessage(dataFiles)))
                         .onErrorReturn(throwable -> {
                             IdCardDataResponse idCardDataResponse = null;
                             if (throwable instanceof Pin1InvalidException) {
@@ -442,7 +442,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.DecryptResult.activity());
+                        .startWithItem(Result.DecryptResult.activity());
             } else {
                 return Observable.just(Result.DecryptResult.clear(), Result.DecryptResult.idle());
             }
@@ -503,7 +503,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .startWith(Result.InitialResult.activity());
+                .startWithItem(Result.InitialResult.activity());
     }
 
     private String assignName(String oldName, String newName) {

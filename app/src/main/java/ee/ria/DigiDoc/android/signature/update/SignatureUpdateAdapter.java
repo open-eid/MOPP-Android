@@ -36,13 +36,13 @@ import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignatureStatus;
 import ee.ria.DigiDoc.sign.SignedContainer;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static androidx.core.content.res.ResourcesCompat.getColor;
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.Constants.VOID;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.DOCUMENT;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.SIGNATURE;
@@ -66,7 +66,7 @@ final class SignatureUpdateAdapter extends
                  @Nullable SignedContainer container) {
         boolean signaturesValid = container == null || container.signaturesValid();
         boolean isEmptyFileInContainer = container != null && container.hasEmptyFiles();
-        String name = container == null ? null : FileUtil.sanitizeString(container.name(), '_');
+        String name = container == null ? null : FileUtil.sanitizeString(container.name(), "");
 
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (isSuccess) {
@@ -284,9 +284,9 @@ final class SignatureUpdateAdapter extends
         @Override
         void bind(SignatureUpdateAdapter adapter, NameItem item) {
             if (item.name().startsWith(".")) {
-                nameView.setText("newFile" + FileUtil.sanitizeString(item.name(), '_'));
+                nameView.setText("newFile" + FileUtil.sanitizeString(item.name(), ""));
             } else {
-                nameView.setText(FileUtil.sanitizeString(item.name(), '_'));
+                nameView.setText(FileUtil.sanitizeString(item.name(), ""));
             }
             updateButton.setVisibility(item.updateButtonVisible() && !isContainerSigned(adapter) ? View.VISIBLE : View.GONE);
             clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
@@ -344,9 +344,9 @@ final class SignatureUpdateAdapter extends
         @Override
         void bind(SignatureUpdateAdapter adapter, DocumentItem item) {
             clicks(itemView).map(ignored ->
-                    ((DocumentItem) adapter.getItem(getAdapterPosition())).document())
+                    ((DocumentItem) adapter.getItem(getBindingAdapterPosition())).document())
                     .subscribe(adapter.documentClicksSubject);
-            nameView.setText(FileUtil.sanitizeString(item.document().name(), '_'));
+            nameView.setText(FileUtil.sanitizeString(item.document().name(), ""));
             String fileNameDescription = nameView.getResources().getString(R.string.file);
             nameView.setContentDescription(fileNameDescription + " " + nameView.getText());
 
@@ -354,14 +354,14 @@ final class SignatureUpdateAdapter extends
             saveButton.setContentDescription(saveButtonText + " " + nameView.getText());
             saveButton.setVisibility(View.VISIBLE);
             clicks(saveButton).map(ignored ->
-                    ((DocumentItem) adapter.getItem(getAdapterPosition())).document())
+                    ((DocumentItem) adapter.getItem(getBindingAdapterPosition())).document())
                     .subscribe(adapter.documentSaveClicksSubject);
 
             String removeButtonText = removeButton.getResources().getString(R.string.signature_update_document_remove_button);
             removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton).map(ignored ->
-                    ((DocumentItem) adapter.getItem(getAdapterPosition())).document())
+                    ((DocumentItem) adapter.getItem(getBindingAdapterPosition())).document())
                     .subscribe(adapter.documentRemoveClicksSubject);
         }
     }
@@ -398,7 +398,7 @@ final class SignatureUpdateAdapter extends
         @Override
         void bind(SignatureUpdateAdapter adapter, SignatureItem item) {
             clicks(itemView).map(ignored ->
-                    ((SignatureItem) adapter.getItem(getAdapterPosition())).signature())
+                    ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
             nameView.setText(item.signature().name());
             switch (item.signature().status()) {
@@ -449,7 +449,7 @@ final class SignatureUpdateAdapter extends
             removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton).map(ignored ->
-                    ((SignatureItem) adapter.getItem(getAdapterPosition())).signature())
+                    ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureRemoveClicksSubject);
         }
 

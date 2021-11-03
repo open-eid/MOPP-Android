@@ -98,7 +98,7 @@ public final class IntentUtils {
         return Intent
                 .createChooser(new Intent(Intent.ACTION_CREATE_DOCUMENT)
                         .addCategory(Intent.CATEGORY_OPENABLE)
-                        .putExtra(Intent.EXTRA_TITLE, FileUtil.sanitizeString(dataFile.name(), '_'))
+                        .putExtra(Intent.EXTRA_TITLE, FileUtil.sanitizeString(dataFile.name(), ""))
                         .setType(dataFile.mimeType())
                         .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION), null);
     }
@@ -110,7 +110,7 @@ public final class IntentUtils {
         return Intent
                 .createChooser(new Intent(Intent.ACTION_CREATE_DOCUMENT)
                         .addCategory(Intent.CATEGORY_OPENABLE)
-                        .putExtra(Intent.EXTRA_TITLE, FileUtil.sanitizeString(file.getName(), '_'))
+                        .putExtra(Intent.EXTRA_TITLE, FileUtil.sanitizeString(file.getName(), ""))
                         .setType(mimeType)
                         .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION), null);
     }

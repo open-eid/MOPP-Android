@@ -13,11 +13,11 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 
 import ee.ria.DigiDoc.R;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
 
 final class SignatureListAdapter extends
         RecyclerView.Adapter<SignatureListAdapter.SignatureViewHolder> {
@@ -55,10 +55,10 @@ final class SignatureListAdapter extends
         String removeDocumentButtonText = holder.nameView.getResources().getString(R.string.signature_list_remove_button);
         holder.removeButton.setContentDescription(removeDocumentButtonText + " " + holder.nameView.getText());
         clicks(holder.itemView)
-                .map(ignored -> data.get(holder.getAdapterPosition()))
+                .map(ignored -> data.get(holder.getBindingAdapterPosition()))
                 .subscribe(itemClickSubject);
         clicks(holder.removeButton)
-                .map(ignored -> data.get(holder.getAdapterPosition()))
+                .map(ignored -> data.get(holder.getBindingAdapterPosition()))
                 .subscribe(removeButtonClickSubject);
     }
 

@@ -11,8 +11,7 @@
         <item name="android:windowBackground">@color/windowBackground</item>
         <item name="android:imeOptions">flagNoExtractUi</item>
         <item name="toolbarStyle">@style/Widget.Application.Toolbar</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material.Fix</item>
-        <item name="preferenceDialog_messageAppearance">@style/PreferenceFixTheme.TextAppearanceDialogMessage</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="colorButtonNormal">@color/accent</item>
         <item name="buttonStyle">@style/Widget.Application.Button</item>
         <item name="buttonBarButtonStyle">@style/Widget.Application.Button.ButtonBar</item>

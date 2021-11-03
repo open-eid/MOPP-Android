@@ -30,7 +30,7 @@ public abstract class ConductorScreen extends Controller implements Screen {
 
     @NonNull
     @Override
-    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
+    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
         View view = view(container.getContext());
         view.setId(id);
         return view;

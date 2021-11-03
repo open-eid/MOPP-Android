@@ -25,11 +25,12 @@ import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.idcard.Token;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
-import static com.jakewharton.rxbinding2.widget.RxTextView.afterTextChangeEvents;
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
 import static ee.ria.DigiDoc.android.Constants.VOID;
 
 public final class IdCardView extends LinearLayout implements

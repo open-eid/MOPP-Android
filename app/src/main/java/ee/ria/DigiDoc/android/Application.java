@@ -86,7 +86,7 @@ import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
 import ee.ria.DigiDoc.smartcardreader.acs.AcsSmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.identiv.IdentivSmartCardReader;
-import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.rxjava3.plugins.RxJavaPlugins;
 import timber.log.Timber;
 
 public class Application extends android.app.Application {

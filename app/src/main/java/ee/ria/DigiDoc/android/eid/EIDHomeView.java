@@ -24,9 +24,9 @@ import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.idcard.Token;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.utils.InputMethodUtils.hideSoftKeyboard;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;

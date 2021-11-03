@@ -14,7 +14,7 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.ObservableDialogClickListener;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
 import static ee.ria.DigiDoc.android.Constants.VOID;
 

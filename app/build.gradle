@@ -20,7 +20,22 @@ android {
             abiFilters.addAll(appAbiFilters.split(';').collect{it as String})
         }
 
-        buildConfigField 'String', 'PREFERENCE_V7_FIX_VERSION', "\"$preferenceV7FixVersion\""
+        buildConfigField 'String', 'ANDROIDX_VERSION', "\"$androidxVersion\""
+        buildConfigField 'String', 'ANDROIDX_APP_COMPAT_VERSION', "\"$androidxAppCompatVersion\""
+        buildConfigField 'String', 'ANDROIDX_LIFECYCLE_VERSION', "\"$androidxLifecycleVersion\""
+        buildConfigField 'String', 'ANDROIDX_MATERIAL_VERSION', "\"$androidMaterialVersion\""
+        buildConfigField 'String', 'ANDROIDX_RECYCLER_VIEW_VERSION', "\"$androidxRecyclerviewVersion\""
+        buildConfigField 'String', 'ANDROIDX_CARD_VIEW_VERSION', "\"$androidxCardviewVersion\""
+        buildConfigField 'String', 'ANDROIDX_LOCAL_BROADCAST_MANAGER_VERSION', "\"$androidxLocalBroadcastManagerVersion\""
+        buildConfigField 'String', 'ANDROIDX_TEST_VERSION', "\"$androidxTestVersion\""
+        buildConfigField 'String', 'ANDROIDX_TEST_ORCHESTRATOR_VERSION', "\"$androidxTestOrchestratorVersion\""
+        buildConfigField 'String', 'ANDROIDX_TEST_RULES_VERSION', "\"$androidxTestRulesVersion\""
+        buildConfigField 'String', 'ANDROIDX_TEST_ESPRESSO_VERSION', "\"$androidxTestEspressoVersion\""
+        buildConfigField 'String', 'ANDROIDX_CONSTRAINT_LAYOUT_VERSION', "\"$androidxConstraintlayoutVersion\""
+        buildConfigField 'String', 'ANDROIDX_CORE_VERSION', "\"$androidxCoreVersion\""
+        buildConfigField 'String', 'LOMBOK_VERSION', "\"$lombokVersion\""
+        buildConfigField 'String', 'SLF4J_API_VERSION', "\"$slf4jVersion\""
+        buildConfigField 'String', 'PREFERENCEX_VERSION', "\"$preferencexVersion\""
         buildConfigField 'String', 'GUAVA_VERSION', "\"$guavaVersion\""
         buildConfigField 'String', 'OKIO_VERSION', "\"$okioVersion\""
         buildConfigField 'String', 'COMMONS_IO_VERSION', "\"$commonsioVersion\""
@@ -87,8 +102,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 }
 
@@ -100,15 +115,13 @@ configurations {
 
 dependencies {
     implementation "androidx.annotation:annotation:${androidxVersion}"
-    implementation "androidx.legacy:legacy-support-v4:${androidxVersion}"
-    implementation "androidx.appcompat:appcompat:${androidxVersion}"
+    implementation "androidx.appcompat:appcompat:${androidxAppCompatVersion}"
     implementation "com.google.android.material:material:${androidMaterialVersion}"
-    implementation "androidx.recyclerview:recyclerview:${androidxVersion}"
-    implementation "androidx.cardview:cardview:${androidxVersion}"
-
+    implementation "androidx.recyclerview:recyclerview:${androidxRecyclerviewVersion}"
+    implementation "androidx.cardview:cardview:${androidxCardviewVersion}"
     implementation "androidx.lifecycle:lifecycle-viewmodel:${androidxLifecycleVersion}"
 
-    implementation "com.takisoft.fix:preference-v7:${preferenceV7FixVersion}"
+    implementation "com.takisoft.preferencex:preferencex:${preferencexVersion}"
 
     implementation "com.google.guava:guava:${guavaVersion}"
     implementation "com.squareup.okio:okio:${okioVersion}"
@@ -116,8 +129,8 @@ dependencies {
     implementation "commons-io:commons-io:${commonsioVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
-    implementation 'org.slf4j:slf4j-api:1.7.25'
-    implementation "com.github.tony19:logback-android:2.0.0"
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "com.github.tony19:logback-android:${logbackAndroidVersion}"
 
     implementation "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
 
@@ -129,11 +142,10 @@ dependencies {
 
     implementation "com.bluelinelabs:conductor:${conductorVersion}"
 
-    implementation "io.reactivex.rxjava2:rxjava:${rxJavaVersion}"
-    implementation "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}"
-    implementation "com.jakewharton.rxbinding2:rxbinding:${rxBindingVersion}"
-    implementation "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:${rxBindingVersion}"
-    implementation "com.jakewharton.rxbinding2:rxbinding-design:${rxBindingVersion}"
+    implementation "io.reactivex.rxjava3:rxjava:${rxJavaVersion}"
+    implementation "io.reactivex.rxjava3:rxandroid:${rxAndroidVersion}"
+    implementation "com.jakewharton.rxbinding4:rxbinding:${rxBindingVersion}"
+    implementation "com.jakewharton.rxbinding4:rxbinding-material:${rxBindingVersion}"
 
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
@@ -144,7 +156,6 @@ dependencies {
 
     implementation platform("com.google.firebase:firebase-bom:${firebaseCrashlyticsVersion}")
     implementation "com.google.firebase:firebase-crashlytics"
-
 
     implementation project(':common-lib')
     implementation project(':sign-lib')

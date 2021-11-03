@@ -2,7 +2,7 @@ package ee.ria.DigiDoc.android.utils;
 
 import androidx.annotation.Nullable;
 
-import io.reactivex.functions.Predicate;
+import io.reactivex.rxjava3.functions.Predicate;
 
 public final class Predicates {
 

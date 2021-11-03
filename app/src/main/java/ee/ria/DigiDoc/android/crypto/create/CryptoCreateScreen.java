@@ -1,8 +1,8 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.putFile;
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
@@ -16,10 +16,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,10 +48,9 @@ import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientsEmptyException;
-import ee.ria.DigiDoc.sign.DataFile;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
 public final class CryptoCreateScreen extends Controller implements Screen,
         MviView<Intent, ViewState> {
@@ -246,7 +245,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
             containerFile = state.containerFile();
         }
 
-        name = state.newName() != null ? FileUtil.sanitizeString(state.newName(), '_') : FileUtil.sanitizeString(state.name(), '_');
+        name = state.newName() != null ? FileUtil.sanitizeString(state.newName(), "") : FileUtil.sanitizeString(state.name(), "");
         dataFiles = state.dataFiles();
         recipients = state.recipients();
         dataFilesAddError = state.dataFilesAddError();
@@ -256,11 +255,13 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         setActivity(state.dataFilesAddState().equals(State.ACTIVE) ||
                 state.encryptState().equals(State.ACTIVE));
 
-        nameUpdateDialog.render(state.nameUpdateShowing(), FileUtil.sanitizeString(state.name(), '_'), state.nameUpdateError());
+        nameUpdateDialog.render(state.nameUpdateShowing(), FileUtil.sanitizeString(state.name(), ""), state.nameUpdateError());
 
         int titleResId = state.encryptButtonVisible() ? R.string.crypto_create_title_encrypt
                 : R.string.crypto_create_title_decrypt;
         toolbarView.setTitle(titleResId);
+        toolbarView.setNavigationIcon(R.drawable.ic_clear);
+        toolbarView.setNavigationContentDescription(R.string.close);
 
         AccessibilityUtils.setAccessibilityPaneTitle(view, "File " + Objects.requireNonNull(getResources()).getString(titleResId));
 
@@ -379,7 +380,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
     @NonNull
     @Override
-    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
+    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
         view = inflater.inflate(R.layout.crypto_create_screen, container, false);
         toolbarView = view.findViewById(R.id.toolbar);
         nameUpdateDialog = new NameUpdateDialog(container.getContext());

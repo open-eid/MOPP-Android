@@ -5,8 +5,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
-import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import ee.ria.DigiDoc.R;
@@ -15,7 +15,7 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 
-import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
 public final class SettingsView extends CoordinatorLayout {
 
@@ -41,6 +41,10 @@ public final class SettingsView extends CoordinatorLayout {
         toolbarTitleView = getToolbarViewTitle();
         navigator = Application.component(context).navigator();
         disposables = new ViewDisposables();
+
+        toolbarView.setTitle(R.string.main_settings_title);
+        toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
+        toolbarView.setNavigationContentDescription(R.string.back);
 
         if (toolbarTitleView != null) {
             toolbarTitleView.setContentDescription("\u202F");

@@ -23,10 +23,10 @@ import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import okio.ByteString;
 
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
@@ -58,7 +58,7 @@ public final class IdCardService {
                                 return IdCardDataResponse.success(data(token), token);
                             })
                             .subscribeOn(Schedulers.io())
-                            .startWith(IdCardDataResponse.cardDetected());
+                            .startWithItem(IdCardDataResponse.cardDetected());
                 })
                 .onErrorReturn(IdCardDataResponse::failure)
                 .observeOn(AndroidSchedulers.mainThread());
