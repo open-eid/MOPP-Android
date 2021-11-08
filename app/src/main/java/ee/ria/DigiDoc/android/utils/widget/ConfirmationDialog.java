@@ -16,9 +16,10 @@ import ee.ria.DigiDoc.android.Constants;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog;
 import ee.ria.DigiDoc.sign.utils.UrlMessage;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
 public final class ConfirmationDialog extends AlertDialog implements
         DialogInterface.OnClickListener {

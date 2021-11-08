@@ -21,8 +21,8 @@ import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignedContainer;
-import io.reactivex.Completable;
-import io.reactivex.Single;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 
 import static com.google.common.io.Files.getNameWithoutExtension;
 import static ee.ria.DigiDoc.android.Constants.SIGNATURE_CONTAINER_EXT;
@@ -53,7 +53,8 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
                 containerFile = fileSystem.addSignatureContainer(fileStream);
             } else {
                 String containerName = FileUtil.sanitizeString(String.format(Locale.US, "%s.%s",
-                        getNameWithoutExtension(FilenameUtils.getName(fileStreams.get(0).displayName())),
+                        FileUtil.sanitizeString(getNameWithoutExtension(
+                                FilenameUtils.removeExtension(fileStreams.get(0).displayName())), ""),
                         SIGNATURE_CONTAINER_EXT), "");
                 isExistingContainer = false;
                 containerFile = fileSystem.generateSignatureContainerFile(containerName);

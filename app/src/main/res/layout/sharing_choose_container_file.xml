@@ -11,14 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
+        <android.widget.Toolbar
             android:id="@id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.Application.ActionBar"
-            app:navigationContentDescription="@string/close"
-            app:navigationIcon="@drawable/ic_clear"
-            app:title="@string/sharing_screen_title" />
+            android:theme="@style/ThemeOverlay.Application.ActionBar" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

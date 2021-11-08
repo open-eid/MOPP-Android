@@ -23,8 +23,6 @@
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
             android:text="@string/signature_update_smart_id_country"
-            android:importantForAccessibility="1"
-            android:accessibilityTraversalBefore="@id/signatureUpdateSmartIdCountryLabel"
             android:paddingTop="1px"/>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -32,17 +30,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:importantForAccessibility="1"
-            android:minHeight="@dimen/material_baseline_grid_6x"
-            android:accessibilityTraversalAfter="@id/signatureUpdateSmartIdCountryText">
+            android:minHeight="@dimen/material_baseline_grid_6x">
 
             <Spinner
                 android:id="@+id/signatureUpdateSmartIdCountry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/smart_id_country"
-                android:minHeight="@dimen/material_baseline_grid_6x"
-                android:importantForAccessibility="1" />
+                android:minHeight="@dimen/material_baseline_grid_6x" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -53,10 +48,7 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
-            android:text="@string/signature_update_mobile_id_personal_code"
-            android:importantForAccessibility="1"
-            android:accessibilityTraversalAfter="@id/signatureUpdateSmartIdCountryLabel"
-            android:accessibilityTraversalBefore="@id/signatureUpdateSmartIdPersonalCodeLabel" />
+            android:text="@string/signature_update_mobile_id_personal_code" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/signatureUpdateSmartIdPersonalCodeLabel"
@@ -64,16 +56,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginTop="-10dp"
-            android:minHeight="@dimen/material_baseline_grid_6x"
-            android:importantForAccessibility="1">
+            android:minHeight="@dimen/material_baseline_grid_6x">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/signatureUpdateSmartIdPersonalCode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:importantForAccessibility="1"
                 android:inputType="number"
                 android:minHeight="@dimen/material_baseline_grid_6x"
+                android:accessibilityTraversalAfter="@id/signatureUpdateSmartIdPersonalCodeText"
                 android:maxLength="11" />
 
         </com.google.android.material.textfield.TextInputLayout>

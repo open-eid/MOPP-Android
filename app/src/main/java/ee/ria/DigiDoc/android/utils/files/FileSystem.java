@@ -77,7 +77,9 @@ public final class FileSystem {
      * @throws IOException When something fails.
      */
     public File generateSignatureContainerFile(String name) throws IOException {
-        File file = increaseCounterIfExists(new File(signatureContainersDir(), FilenameUtils.getName(name)));
+        File file = increaseCounterIfExists(new File(signatureContainersDir(),
+                FileUtil.sanitizeString(FilenameUtils.removeExtension(name) + "." +
+                        FilenameUtils.getExtension(name), "")));
         File fileInDirectory = FileUtil.getFileInDirectory(file, signatureContainersDir());
         Files.createParentDirs(fileInDirectory);
         return file;
@@ -196,7 +198,9 @@ public final class FileSystem {
      * @return File with absolute path to file in cache directory.
      */
     private File getCacheFile(String name) throws IOException {
-        File cacheFile = new File(cacheDir(), FilenameUtils.getName(name));
+        File cacheFile = new File(cacheDir(),
+                FileUtil.sanitizeString(FilenameUtils.removeExtension(name) + "." +
+                        FilenameUtils.getExtension(name), ""));
         return FileUtil.getFileInDirectory(cacheFile, cacheDir());
     }
 

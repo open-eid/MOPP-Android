@@ -24,7 +24,8 @@ import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.OcspInvalidTimeSlotException;
 import ee.ria.DigiDoc.sign.TooManyRequestsException;
 import ee.ria.DigiDoc.sign.utils.UrlMessage;
-import io.reactivex.subjects.Subject;
+
+import io.reactivex.rxjava3.subjects.Subject;
 
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENT_REMOVE;

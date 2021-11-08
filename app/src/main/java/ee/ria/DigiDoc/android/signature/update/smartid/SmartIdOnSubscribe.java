@@ -45,8 +45,10 @@ import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SmartIDServiceResponse;
 import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import ee.ria.DigiDoc.sign.SignedContainer;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
+
+import io.reactivex.rxjava3.core.ObservableEmitter;
+import io.reactivex.rxjava3.core.ObservableOnSubscribe;
+
 import timber.log.Timber;
 
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CERTIFICATE_CERT_BUNDLE;

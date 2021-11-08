@@ -46,7 +46,7 @@ public final class SignatureUpdateViewModel extends
             Intent.InitialIntent initialIntent = (Intent.InitialIntent) intent;
             return Action.ContainerLoadAction
                     .create(initialIntent.containerFile(), initialIntent.signatureAddMethod(),
-                            initialIntent.signatureAddSuccessMessageVisible());
+                            initialIntent.signatureAddSuccessMessageVisible(), initialIntent.isExistingContainer());
         } else if (intent instanceof Intent.DocumentsAddIntent) {
             return Action.DocumentsAddAction
                     .create(((Intent.DocumentsAddIntent) intent).containerFile());

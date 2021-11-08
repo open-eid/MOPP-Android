@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.signature.list;
 
 import android.app.Application;
+import android.content.Context;
 import android.view.accessibility.AccessibilityEvent;
 
 import java.io.File;
@@ -15,11 +16,14 @@ import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import ee.ria.DigiDoc.sign.SignatureStatus;
+import ee.ria.DigiDoc.sign.SignedContainer;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableSource;
+import io.reactivex.rxjava3.core.ObservableTransformer;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
@@ -43,7 +47,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .onErrorReturn(Result.ContainersLoadResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.ContainersLoadResult
+                        .startWithItem(Result.ContainersLoadResult
                                 .progress(action.indicateActivity())));
 
         navigateUp = upstream -> upstream
@@ -63,6 +67,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 } else {
                     navigator.execute(Transaction.push(SignatureUpdateScreen
                             .create(true, false, containerFile, false, false)));
+                    SignedContainer signedContainer = SignedContainer.open(containerFile);
+                    sendContainerStatusAccessibilityMessage(signedContainer, application.getApplicationContext());
                 }
                 return Observable.just(Result.VoidResult.success());
             }
@@ -85,7 +91,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .onErrorReturn(Result.ContainerRemoveResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .startWith(Result.ContainerRemoveResult.progress());
+                        .startWithItem(Result.ContainerRemoveResult.progress());
             }
         });
     }
@@ -98,5 +104,27 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.NavigateUpAction.class).compose(navigateUp),
                 shared.ofType(Action.ContainerRemoveAction.class).compose(containerRemove),
                 shared.ofType(Action.ContainerOpenAction.class).compose(containerOpen)));
+    }
+
+    private void sendContainerStatusAccessibilityMessage(SignedContainer container, Context context) {
+        StringBuilder messageBuilder = new StringBuilder();
+        if (container.signaturesValid()) {
+            messageBuilder.append("Container has ");
+            messageBuilder.append(container.signatures().size());
+            messageBuilder.append(" valid signatures");
+        } else {
+            int unknownSignaturesCount = container.invalidSignatureCounts().get(SignatureStatus.UNKNOWN);
+            int invalidSignatureCount = container.invalidSignatureCounts().get(SignatureStatus.INVALID);
+            messageBuilder.append("Container is invalid, contains");
+            if (unknownSignaturesCount > 0) {
+                messageBuilder.append(" ").append(context.getResources().getQuantityString(
+                        R.plurals.signature_update_signatures_unknown, unknownSignaturesCount, unknownSignaturesCount));
+            }
+            if (invalidSignatureCount > 0) {
+                messageBuilder.append(" ").append(context.getResources().getQuantityString(
+                        R.plurals.signature_update_signatures_invalid, invalidSignatureCount, invalidSignatureCount));
+            }
+        }
+        AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, messageBuilder.toString());
     }
 }

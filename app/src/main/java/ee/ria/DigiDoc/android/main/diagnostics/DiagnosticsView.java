@@ -3,12 +3,12 @@ package ee.ria.DigiDoc.android.main.diagnostics;
 import android.content.Context;
 import android.os.Build;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.appcompat.widget.Toolbar;
 
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,16 +31,16 @@ import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.sign.SignLib;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import timber.log.Timber;
 
-import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
 public final class DiagnosticsView extends CoordinatorLayout {
 
@@ -63,6 +63,10 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
         ConfigurationProvider configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
         disposables = new ViewDisposables();
+
+        toolbarView.setTitle(R.string.main_diagnostics_title);
+        toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
+        toolbarView.setNavigationContentDescription(R.string.back);
 
         findViewById(R.id.configurationUpdateButton).setOnClickListener(view -> updateConfiguration());
         setData(configurationProvider);
@@ -126,7 +130,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
         applicationVersion.setText(getAppVersion());
         androidVersion.setText(getAndroidVersion());
-        libDocVersion.setText(getResources().getString(R.string.main_about_libdigidocpp_title, getLibDigiDocVersion()));
+        libDocVersion.setText(getResources().getString(R.string.main_diagnostics_libdigidocpp_title, getLibDigiDocVersion()));
 
         configUrl.setText(configurationProvider.getConfigUrl());
         tslUrl.setText(configurationProvider.getTslUrl());

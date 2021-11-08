@@ -25,9 +25,9 @@ import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.idcard.CertificateType;
 import ee.ria.DigiDoc.idcard.CodeType;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 
 public final class EIDDataView extends LinearLayout {

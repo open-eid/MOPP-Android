@@ -2,8 +2,7 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
-import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
+
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
@@ -12,6 +11,9 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Parcelable;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
@@ -19,12 +21,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
@@ -56,9 +55,16 @@ import ee.ria.DigiDoc.common.ActivityUtil;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.Signature;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
+
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
+import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
@@ -216,6 +222,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         int titleResId = isExistingContainer ? R.string.signature_update_title_existing
                 : R.string.signature_update_title_created;
         toolbarView.setTitle(titleResId);
+        toolbarView.setNavigationIcon(R.drawable.ic_clear);
+        toolbarView.setNavigationContentDescription(R.string.close);
 
         AccessibilityUtils.setAccessibilityPaneTitle(this, isExistingContainer ? getResources().getString(titleResId) : "Container signing");
 
@@ -457,7 +465,6 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                         .doOnNext(ignored -> resetSignatureAddDialog())
                         .map(ignored -> {
                             int method = viewModel.signatureAddMethod();
-                            sendMethodSelectionAccessibilityEvent(method);
                             return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile);
                         }),
                 cancels(signatureAddDialog)
@@ -482,8 +489,16 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private void sendMethodSelectionAccessibilityEvent(int method) {
         String signatureMethod = getMethod(method);
         if (signatureMethod != null) {
-            AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
-                    signatureMethod + " " + getResources().getString(R.string.signature_update_signature_method_selected));
+            if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_mobile_id))) {
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
+                        getResources().getString(R.string.signature_update_signature_chosen_method_mobile_id));
+            } else if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_smart_id))) {
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
+                        getResources().getString(R.string.signature_update_signature_chosen_method_smart_id));
+            } else if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_id_card))) {
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
+                        getResources().getString(R.string.signature_update_signature_chosen_method_id_card));
+            }
         }
     }
 

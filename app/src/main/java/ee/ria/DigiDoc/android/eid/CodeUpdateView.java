@@ -4,7 +4,7 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import com.google.android.material.textfield.TextInputLayout;
-import androidx.appcompat.widget.Toolbar;
+import android.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -22,10 +22,10 @@ import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeRepeatMismatchError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeSameAsCurrentError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeTooEasyError;
 import ee.ria.DigiDoc.android.utils.mvi.State;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
-import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.utils.InputMethodUtils.hideSoftKeyboard;
 
 public final class CodeUpdateView extends CoordinatorLayout {
@@ -73,6 +73,8 @@ public final class CodeUpdateView extends CoordinatorLayout {
     public void render(@State String state, CodeUpdateAction action,
                        @Nullable CodeUpdateResponse response, boolean successMessageVisible) {
         toolbarView.setTitle(action.titleRes());
+        toolbarView.setNavigationIcon(R.drawable.ic_clear);
+        toolbarView.setNavigationContentDescription(R.string.close);
         successMessageView.setText(action.successMessageRes());
         textView.itemsRes(action.textRowsRes());
         currentLabelView.setHint(getResources().getString(action.currentRes()));
@@ -187,11 +189,11 @@ public final class CodeUpdateView extends CoordinatorLayout {
         hideSoftKeyboard(this);
     }
 
-    public Observable<Object> closeButtonClick() {
+    public Observable closeButtonClick() {
         return clicks(negativeButton);
     }
 
-    public Observable<Object> backButtonClick() {
+    public Observable backButtonClick() {
         return navigationClicks(toolbarView);
     }
 

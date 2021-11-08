@@ -12,10 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.core.widget.NestedScrollView;
 
 import ee.ria.DigiDoc.R;
-import io.reactivex.Observable;
+import io.reactivex.rxjava3.core.Observable;
 
-import static com.jakewharton.rxbinding2.view.RxView.clicks;
-import static com.jakewharton.rxbinding2.widget.RxRadioGroup.checkedChanges;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxRadioGroup.checkedChanges;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 
 public final class HomeMenuView extends NestedScrollView {
@@ -64,7 +64,7 @@ public final class HomeMenuView extends NestedScrollView {
         }, 2000);
     }
 
-    public Observable<Object> closeButtonClicks() {
+    public Observable closeButtonClicks() {
         return clicks(closeButton);
     }
 

@@ -1,12 +1,15 @@
 package ee.ria.DigiDoc.android.main.about;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bluelinelabs.conductor.Controller;
 
@@ -16,7 +19,7 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 
-import static com.jakewharton.rxbinding2.support.v7.widget.RxToolbar.navigationClicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
 public final class AboutScreen extends Controller implements Screen {
 
@@ -33,11 +36,14 @@ public final class AboutScreen extends Controller implements Screen {
 
     @NonNull
     @Override
-    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
+    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
         View view = inflater.inflate(R.layout.main_about_screen, container, false);
         AccessibilityUtils.setAccessibilityPaneTitle(view, R.string.main_about_title);
 
         Toolbar toolbarView = view.findViewById(R.id.toolbar);
+        toolbarView.setTitle(R.string.main_about_title);
+        toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
+        toolbarView.setNavigationContentDescription(R.string.back);
         RecyclerView listView = view.findViewById(R.id.mainAboutList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         listView.setAdapter(new AboutAdapter());

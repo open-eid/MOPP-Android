@@ -17,7 +17,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="@string/signature_update_id_card_progress_message_initial" />
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:text="@string/signature_update_id_card_progress_message_initial"
+            android:contentDescription="@string/signature_update_id_card_progress_message_initial" />
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -34,6 +37,7 @@
         android:visibility="gone">
 
         <LinearLayout
+            android:id="@id/signatureUpdateIdCardSignMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="true"
@@ -44,12 +48,14 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/signature_update_id_card_sign_message"
+                android:importantForAccessibility="no"
                 android:contentDescription="@string/signature_update_id_card_sign_message" />
 
             <TextView
                 android:id="@id/signatureUpdateIdCardSignData"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
                 android:gravity="center_horizontal" />
 
             <TextView
@@ -58,6 +64,7 @@
                 android:gravity="center_horizontal"
                 android:text="@string/signature_update_id_card_sign_pin2"
                 android:minHeight="@dimen/material_baseline_grid_6x"
+                android:importantForAccessibility="no"
                 android:labelFor="@id/signatureUpdateIdCardSignPin2" />
         </LinearLayout>
 

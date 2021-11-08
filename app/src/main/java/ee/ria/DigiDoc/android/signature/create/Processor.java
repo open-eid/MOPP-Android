@@ -5,7 +5,6 @@ import static com.google.common.io.Files.getFileExtension;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 import android.app.Application;
-import android.widget.Toast;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -31,12 +30,12 @@ import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.common.ActivityUtil;
 import ee.ria.DigiDoc.sign.SignedContainer;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.exceptions.CompositeException;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableSource;
+import io.reactivex.rxjava3.core.ObservableTransformer;
+import io.reactivex.rxjava3.exceptions.CompositeException;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import timber.log.Timber;
 
 final class Processor implements ObservableTransformer<Action, Result> {

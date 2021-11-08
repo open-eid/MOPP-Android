@@ -4,3 +4,4 @@ extraction:
       build_command:
       - "./gradlew -Dorg.gradle.caching=false --no-daemon -S clean"
       - "./gradlew -Dorg.gradle.caching=false --no-daemon -S app:assembleDebug -x app:processDebugGoogleServices -x app:uploadCrashlyticsMappingFileDebug"
+      java_version: 11

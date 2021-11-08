@@ -24,10 +24,10 @@ import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.sign.SignedContainer;
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import okio.ByteString;
 
 final class SignatureAddSource {
@@ -63,7 +63,7 @@ final class SignatureAddSource {
                             return Result.SignatureAddResult.failure(dataResponse.error());
                         }
                     })
-                    .startWith(Result.SignatureAddResult.method(method, IdCardResponse.initial()));
+                    .startWithItem(Result.SignatureAddResult.method(method, IdCardResponse.initial()));
         } else {
             throw new IllegalArgumentException("Unknown method " + method);
         }
@@ -95,12 +95,12 @@ final class SignatureAddSource {
                                     .map(MobileIdResponse::success)
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .startWith(response);
+                                    .startWithItem(response);
                         } else {
                             return Observable.just(response);
                         }
                     })
-                    .startWith(MobileIdResponse
+                    .startWithItem(MobileIdResponse
                             .status(MobileCreateSignatureSessionStatusResponse.ProcessStatus.OK));
         } else if (request instanceof SmartIdRequest) {
             SmartIdRequest smartIdRequest = (SmartIdRequest) request;
@@ -120,7 +120,7 @@ final class SignatureAddSource {
                     .switchMap(response ->
                             Observable.just(response)
                     )
-                    .startWith(SmartIdResponse
+                    .startWithItem(SmartIdResponse
                             .status(SessionStatusResponse.ProcessStatus.OK));
         } else if (request instanceof IdCardRequest) {
             IdCardRequest idCardRequest = (IdCardRequest) request;
@@ -155,7 +155,7 @@ final class SignatureAddSource {
                     })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .startWith(IdCardResponse.sign(IdCardSignResponse.activity()));
+                    .startWithItem(IdCardResponse.sign(IdCardSignResponse.activity()));
         } else {
             throw new IllegalArgumentException("Unknown request " + request);
         }
