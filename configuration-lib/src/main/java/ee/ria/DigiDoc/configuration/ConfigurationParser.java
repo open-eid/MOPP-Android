@@ -1,12 +1,13 @@
 package ee.ria.DigiDoc.configuration;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonReader;
 
+import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,14 +16,13 @@ import java.util.Map;
  */
 public class ConfigurationParser {
 
-    private final JSONObject configurationJson;
+    private final JsonObject configurationJson;
 
     public ConfigurationParser(String configuration) {
-        try {
-            configurationJson = new JSONObject(configuration);
-        } catch (JSONException e) {
-            throw new RuntimeException("Failed to parse JSON object from configuration string", e);
-        }
+        Gson gson = new Gson();
+        JsonReader reader = new JsonReader(new StringReader(configuration));
+        reader.setLenient(true);
+        configurationJson = gson.fromJson(reader, JsonObject.class);
     }
 
     String parseStringValue(String... parameterNames) {
@@ -30,50 +30,38 @@ public class ConfigurationParser {
     }
 
     List<String> parseStringValues(String... parameterNames) {
-        JSONArray jsonValues = (JSONArray) parseValue(parameterNames);
+        JsonArray jsonValues = (JsonArray) parseValue(parameterNames);
         List<String> values = new ArrayList<>();
-        for (int i = 0; i < jsonValues.length(); i++) {
-            try {
-                values.add((String) jsonValues.get(i));
-            } catch (JSONException e) {
-                throw new RuntimeException("Failed to parse parameter number " + i  + " from parsed list of values (" + jsonValues.toString() + ")", e);
-            }
+        for (int i = 0; i < jsonValues.size(); i++) {
+            values.add(jsonValues.get(i).getAsString());
         }
         return values;
     }
 
     Map<String, String> parseStringValuesToMap(String... parameterNames) {
-        JSONObject jsonObject = (JSONObject) parseValue(parameterNames);
-        Map<String, String> parsedValues = new HashMap<>();
-        Iterator<String> keys = jsonObject.keys();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            try {
-                parsedValues.put(key, jsonObject.getString(key));
-            } catch (JSONException e) {
-                throw new IllegalStateException("Failed to parse value by '" + key + "' from json", e);
-            }
-        }
-        return parsedValues;
+        return (Map<String, String>) parseValue(parameterNames);
     }
 
     public int parseIntValue(String... parameterNames) {
-        return (int) parseValue(parameterNames);
+        return Integer.parseInt((String) parseValue(parameterNames));
     }
 
     private Object parseValue(String... parameterNames) {
-        try {
-            JSONObject jsonObject = configurationJson;
-            for (int i = 0; i < parameterNames.length - 1; i++) {
-                jsonObject = jsonObject.getJSONObject(parameterNames[i]);
-            }
-            return jsonObject.get(parameterNames[parameterNames.length - 1]);
-        } catch (JSONException e) {
-            StringBuilder combinedValue = new StringBuilder();
-            for (String parameterName : parameterNames) {
-                combinedValue.append(parameterName);
-            }
-            throw new RuntimeException("Failed to parse parameter '" + combinedValue + "' from configuration json", e);
+        JsonObject jsonObject = configurationJson;
+        for (int i = 0; i < parameterNames.length - 1; i++) {
+            jsonObject = jsonObject.getAsJsonObject(parameterNames[i]);
         }
+        JsonElement element = jsonObject.get(parameterNames[parameterNames.length - 1]);
+
+        if (element == null) {
+            throw new RuntimeException("Failed to parse parameter 'MISSING-VALUE' from configuration json");
+        }
+
+        if (element instanceof JsonArray) {
+            return element.getAsJsonArray();
+        } else if (element instanceof JsonObject) {
+            return new Gson().fromJson(element, Map.class);
+        }
+        return element.getAsString();
     }
 }

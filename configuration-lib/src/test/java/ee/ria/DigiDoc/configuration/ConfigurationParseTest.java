@@ -31,7 +31,7 @@ public class ConfigurationParseTest {
             "  \"OCSP-URL-ISSUER\": {" +
             "    \"KLASS3-SK 2010\": \"http://ocsp.sk.ee\"," +
             "    \"KLASS3-SK 2016\": \"http://ocsp.sk.ee\"," +
-            "    \"TEST of KLASS3-SK 2010\": \"http://demo.sk.ee/ocsp\"," +
+            "    \"TEST of KLASS3-SK 2010\": \"http://demo.sk.ee/ocsp\"" +
             "  }" +
             "}";
 

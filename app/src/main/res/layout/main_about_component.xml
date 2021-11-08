@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/material_baseline_grid_1x"
         android:gravity="center"
-        android:textAppearance="@style/TextAppearance.Application.Value"
+        android:textAppearance="@style/TextAppearance.Application.ListItem"
         tools:text="GNU Lesser General Public License Version 2.1" />
 
     <TextView
@@ -32,7 +32,7 @@
         android:layout_marginBottom="@dimen/material_baseline_grid_1x"
         android:autoLink="web"
         android:gravity="center"
-        android:textAppearance="@style/TextAppearance.Application.Value"
+        android:textAppearance="@style/TextAppearance.Application.ListItemSecondary"
         tools:text="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html" />
 
 </LinearLayout>
