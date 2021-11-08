@@ -28,6 +28,7 @@ import ee.ria.DigiDoc.android.utils.navigator.ActivityResultException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
+import ee.ria.DigiDoc.common.ActivityUtil;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -101,7 +102,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             return addFilesToContainer(navigator, signatureContainerDataSource, application, validFiles);
                         }
                     } else {
-                        navigator.execute(Transaction.pop());
+                        if (ActivityUtil.isExternalFileOpened(navigator.activity())) {
+                            ActivityUtil.restartActivity(application.getApplicationContext(), navigator.activity());
+                        } else {
+                            navigator.execute(Transaction.pop());
+                        }
                         return Observable.just(Result.ChooseFilesResult.create());
                     }
                 })
