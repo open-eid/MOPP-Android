@@ -20,12 +20,14 @@ public class SivaUtil {
             .build();
 
     public static boolean isSivaConfirmationNeeded(ImmutableList<FileStream> files) {
-        return files.stream().anyMatch(fileStream -> {
-            String extension = getFileExtension(fileStream.displayName()).toLowerCase(Locale.US);
-            return "pdf".equals(extension) ?
-                    SignedContainer.isSignedPDFFile(fileStream.source(), Activity.getContext().get(), fileStream.displayName()) :
-                    SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension);
-        });
+        for (FileStream file : files) {
+            String extension = getFileExtension(file.displayName()).toLowerCase(Locale.US);
+            if (SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension) || ("pdf".equals(extension) &&
+                    SignedContainer.isSignedPDFFile(file.source(), Activity.getContext().get(), file.displayName()))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isSivaConfirmationNeeded(DataFile dataFile) {

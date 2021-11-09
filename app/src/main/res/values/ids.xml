@@ -92,6 +92,7 @@
     <item type="id" name="signatureCreateProgress" />
 
     <!-- Signature Update -->
+    <item type="id" name="signatureAddDocumentProgress" />
     <item type="id" name="signatureUpdateScreen" />
     <item type="id" name="signatureUpdateList" />
     <item type="id" name="signatureUpdateListSuccessMessage" />
