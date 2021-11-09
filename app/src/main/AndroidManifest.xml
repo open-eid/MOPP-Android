@@ -20,8 +20,7 @@
         <activity
             android:name=".android.Activity"
             android:exported="true"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-            android:launchMode="singleInstance" >
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -36,6 +35,7 @@
 
         <activity-alias
             android:name="LauncherActivity"
+            android:exported="true"
             android:targetActivity=".android.Activity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleInstance" >
@@ -60,6 +60,7 @@
 
         <activity-alias
             android:name=".android.Activity.OPEN_CUSTOM_TYPES"
+            android:exported="true"
             android:label="@string/application_name"
             android:targetActivity=".android.Activity"
             tools:ignore="AppLinkUrlError"
@@ -93,6 +94,7 @@
 
         <activity-alias
             android:name=".android.Activity.OPEN_ALL_FILE_TYPES"
+            android:exported="true"
             android:label="@string/application_name"
             android:targetActivity=".android.Activity"
             tools:ignore="AppLinkUrlError"

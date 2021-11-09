@@ -27,7 +27,7 @@ public abstract class FileStream {
      * Create FileStream from {@link ContentResolver} and content {@link Uri}.
      */
     public static FileStream create(ContentResolver contentResolver, Uri uri, long fileSize) {
-        String displayName = FileUtil.sanitizeString(uri.getLastPathSegment(), "");
+        String displayName = uri.getLastPathSegment() == null ? "newFile" : FileUtil.sanitizeString(uri.getLastPathSegment(), "");
         String sanitizedUri = FileUtil.sanitizeString(uri.toString(), "");
         Cursor cursor = contentResolver.query(Uri.parse(sanitizedUri), new String[]{OpenableColumns.DISPLAY_NAME}, null,
                 null, null);
