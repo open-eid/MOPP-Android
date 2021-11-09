@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.configuration.BuildConfig;
 import timber.log.Timber;
 
@@ -104,7 +105,7 @@ public class FileUtils {
     }
 
     public static void removeFile(String filePath) {
-        File fileToDelete = new File(filePath);
+        File fileToDelete = new File(FileUtil.normalizePath(filePath));
         if (fileToDelete.exists()) {
             boolean isFileDeleted = fileToDelete.delete();
             if (isFileDeleted) {

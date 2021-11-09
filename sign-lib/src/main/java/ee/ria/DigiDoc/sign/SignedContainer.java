@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -412,7 +413,7 @@ public abstract class SignedContainer {
 
             FileUtils.createDirectoryIfNotExist(pdfFilesDirectory);
 
-            File file = new File(pdfFilesDirectory + File.separator + fileName);
+            File file = new File(FileUtil.normalizePath(pdfFilesDirectory + File.separator + fileName));
             try (OutputStream outStream = new FileOutputStream(file)) {
                 outStream.write(bytes);
             }

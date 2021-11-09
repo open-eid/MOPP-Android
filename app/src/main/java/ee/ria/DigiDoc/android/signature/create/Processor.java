@@ -28,6 +28,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.common.ActivityUtil;
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -75,10 +76,17 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     ActivityResult activityResult = ((ActivityResultException) throwable)
                             .activityResult;
                     if (activityResult.resultCode() == RESULT_OK) {
-                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
-                                parseGetContentIntent(application.getContentResolver(), activityResult.data()));
-                        ToastUtil.handleEmptyFileError(validFiles, application);
-                        if (SivaUtil.isSivaConfirmationNeeded(validFiles)) {
+                        ImmutableList<FileStream> addedData = parseGetContentIntent(application.getContentResolver(), activityResult.data());
+                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(addedData);
+                        ToastUtil.handleEmptyFileError(addedData, validFiles, application);
+                        boolean isConfirmationNeeded = validFiles.stream().anyMatch(fileStream -> {
+                            String normalizedDisplayName = FileUtil.sanitizeString(FileUtil.normalizePath(fileStream.displayName()).getPath(), "");
+                            String extension = getFileExtension(normalizedDisplayName).toLowerCase(Locale.US);
+                            return "pdf".equals(extension) ?
+                                    SignedContainer.isSignedPDFFile(fileStream.source(), Activity.getContext().get(), fileStream.displayName()) :
+                                    SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension);
+                        });
+                        if (isConfirmationNeeded) {
                             sivaConfirmationDialog.show();
                             ClickableDialogUtil.makeLinksInDialogClickable(sivaConfirmationDialog);
                             sivaConfirmationDialog.cancels()
