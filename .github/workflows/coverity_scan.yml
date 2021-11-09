@@ -4,7 +4,7 @@ on: [push, pull_request]
 jobs:
   coverity:
     name: Run Coverity tests
-    if: contains(github.repository, 'open-eid/MOPP-Android') && contains(github.ref, 'coverity_scan')
+    if: contains(github.repository, 'open-eid/MOPP-Android') && contains(github.ref, 'coverity_test')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -17,7 +17,7 @@ jobs:
           bash travisci_build_coverity_scan.sh
         env:
           COVERITY_SCAN_PROJECT_NAME: 'open-eid/MOPP-Android'
-          COVERITY_SCAN_NOTIFICATION_EMAIL: 'eid-teenusehaldus@ria.ee'
+          COVERITY_SCAN_NOTIFICATION_EMAIL: 'marten.rebane@nortal.com'
           COVERITY_SCAN_BRANCH_PATTERN: 'coverity_scan'
           COVERITY_SCAN_BUILD_COMMAND: './gradlew app:assembleDebug -x app:processDebugGoogleServices -x app:uploadCrashlyticsMappingFileDebug --no-daemon'
           COVERITY_SCAN_TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
