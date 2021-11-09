@@ -167,10 +167,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         return Observable.mergeArray(adapter.dataFileClicks()
                         .map(Intent.DataFileViewIntent::confirmation),
                 sivaConfirmationDialog.positiveButtonClicks()
-                        .map(ignored -> {
-                            Intent.DataFileViewIntent.cancel();
-                            return Intent.DataFileViewIntent.open(sivaConfirmation);
-                        }),
+                        .map(ignored -> Intent.DataFileViewIntent.open(sivaConfirmation)),
                 sivaConfirmationDialog.cancels()
                         .map(ignored -> Intent.DataFileViewIntent.cancel()));
     }
