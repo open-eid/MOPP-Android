@@ -39,7 +39,7 @@ public abstract class FileStream {
         }
 
         return new AutoValue_FileStream(displayName,
-                new ContentResolverUriSource(contentResolver, sanitizedUri, fileSize));
+                new ContentResolverUriSource(contentResolver, sanitizedUri), fileSize);
     }
 
     /**

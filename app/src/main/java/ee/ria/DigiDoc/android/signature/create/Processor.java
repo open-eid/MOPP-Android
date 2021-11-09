@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.signature.create;
 
 import static android.app.Activity.RESULT_OK;
+import static com.google.common.io.Files.getFileExtension;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 import android.app.Application;
@@ -9,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -78,7 +80,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     if (activityResult.resultCode() == RESULT_OK) {
                         ImmutableList<FileStream> addedData = parseGetContentIntent(application.getContentResolver(), activityResult.data());
                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(addedData);
-                        ToastUtil.handleEmptyFileError(addedData, validFiles, application);
+                        ToastUtil.handleEmptyFileError(validFiles, application);
                         boolean isConfirmationNeeded = validFiles.stream().anyMatch(fileStream -> {
                             String normalizedDisplayName = FileUtil.sanitizeString(FileUtil.normalizePath(fileStream.displayName()).getPath(), "");
                             String extension = getFileExtension(normalizedDisplayName).toLowerCase(Locale.US);
