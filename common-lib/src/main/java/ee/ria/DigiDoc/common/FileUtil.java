@@ -3,6 +3,8 @@ package ee.ria.DigiDoc.common;
 import android.net.Uri;
 import android.webkit.URLUtil;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -58,21 +60,19 @@ public class FileUtil {
         return !sb.toString().equals("") ? sb.toString() : input;
     }
 
-    public static Uri normalizeUri(String uriString) {
+    public static Uri normalizeUri(Uri uriString) {
         if (uriString == null) {
             return null;
         }
 
-        try {
-            return Uri.parse(FileUtil.sanitizeString((
-                    new URI(uriString).normalize()).toString(), ""));
-        } catch (URISyntaxException e) {
-            return null;
-        }
+        return Uri.parse(URI.create(uriString.toString()).normalize().toString());
     }
 
-    public static URI normalizePath(String filePath) {
-        return Paths.get(filePath).normalize().toUri();
+    public static Uri normalizePath(String filePath) {
+        if (URLUtil.isFileUrl(filePath)) {
+            return Uri.parse(Paths.get(FilenameUtils.normalize(filePath)).normalize().toString());
+        }
+        return Uri.parse(FilenameUtils.normalize(filePath));
     }
 
     private static boolean isRawUrl(String url) {

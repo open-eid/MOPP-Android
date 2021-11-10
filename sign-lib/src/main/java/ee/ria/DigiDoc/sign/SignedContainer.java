@@ -413,7 +413,8 @@ public abstract class SignedContainer {
 
             FileUtils.createDirectoryIfNotExist(pdfFilesDirectory);
 
-            File file = new File(FileUtil.normalizePath(pdfFilesDirectory + File.separator + fileName));
+            File file = new File(FileUtil.normalizePath(
+                    pdfFilesDirectory + File.separator + fileName).toString());
             try (OutputStream outStream = new FileOutputStream(file)) {
                 outStream.write(bytes);
             }

@@ -76,7 +76,7 @@ public final class FileSystem {
     public File generateSignatureContainerFile(String name) throws IOException {
         File file = increaseCounterIfExists(new File(signatureContainersDir(),
                 FileUtil.sanitizeString(
-                        FileUtil.normalizePath(name).getPath(), "")));
+                        FileUtil.normalizePath(name).toString(), "")));
         File fileInDirectory = FileUtil.getFileInDirectory(file, signatureContainersDir());
         Files.createParentDirs(fileInDirectory);
         return file;
@@ -191,7 +191,7 @@ public final class FileSystem {
      */
     private File getCacheFile(String name) throws IOException {
         File cacheFile = new File(cacheDir(), FileUtil.sanitizeString(
-                FileUtil.normalizePath(name).getPath(), ""));
+                FileUtil.normalizePath(name).toString(), ""));
         return FileUtil.getFileInDirectory(cacheFile, cacheDir());
     }
 

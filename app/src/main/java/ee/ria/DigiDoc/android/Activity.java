@@ -170,8 +170,10 @@ public final class Activity extends AppCompatActivity {
 
     private Intent sanitizeIntent(Intent intent) {
         if (intent.getDataString() != null) {
-            Uri normalizedUri = FileUtil.normalizeUri(intent.getDataString());
-            intent.setDataAndNormalize(normalizedUri);
+            Uri normalizedUri = Uri.parse(FileUtil.sanitizeString(intent.getDataString(), ""));
+            if (normalizedUri != null) {
+                intent.setDataAndNormalize(normalizedUri);
+            }
         }
         if (intent.getExtras() != null && !(intent.getExtras().containsKey(Intent.EXTRA_REFERRER) &&
                 intent.getExtras().get(Intent.EXTRA_REFERRER).equals(R.string.application_name))) {
