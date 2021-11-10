@@ -135,12 +135,7 @@ public final class FileSystem {
      */
     public static boolean isEmptyFileInList(ImmutableList<FileStream> fileStreams) {
         for (FileStream fileStream : fileStreams) {
-            try {
-                if (fileStream.source().isEmpty()) {
-                    return true;
-                }
-            } catch (IOException e) {
-                Timber.e(e, "Invalid file size");
+            if (fileStream.fileSize() == 0) {
                 return true;
             }
         }
@@ -157,7 +152,7 @@ public final class FileSystem {
      public static ImmutableList<FileStream> getFilesWithValidSize(ImmutableList<FileStream> fileStreams) throws IOException {
          List<FileStream> validFileStreams = new ArrayList<>();
          for (FileStream fileStream : fileStreams) {
-             if (!fileStream.source().isEmpty()) {
+             if (fileStream.fileSize() != 0) {
                  validFileStreams.add(fileStream);
              }
          }

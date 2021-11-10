@@ -126,6 +126,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @Nullable private Signature signatureRemoveConfirmation;
 
     private boolean signingInfoDelegated = false;
+    private ProgressBar documentAddProgressBar;
     ProgressBar progressBar;
     SignatureUpdateProgressBar signatureUpdateProgressBar = new SignatureUpdateProgressBar();
 
@@ -161,6 +162,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         buttonSpace = findViewById(R.id.signatureUpdateButtonSpace);
         signatureAddButton = findViewById(R.id.signatureUpdateSignatureAddButton);
         mobileIdChallengeTextView = findViewById(R.id.signatureUpdateMobileIdChallengeText);
+        documentAddProgressBar = findViewById(R.id.signatureAddDocumentProgress);
 
         listView.setLayoutManager(new LinearLayoutManager(context));
         listView.setAdapter(adapter = new SignatureUpdateAdapter());
@@ -180,6 +182,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 signatureRemoveIntentSubject, signatureAddDialog);
 
         progressBar = (ProgressBar) activityIndicatorView;
+        documentAddProgressBar.setVisibility(GONE);
     }
 
     @SuppressWarnings("unchecked")
@@ -251,6 +254,13 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             dataFiles = state.container().dataFiles();
         }
         signatureAddButton.setContentDescription(getResources().getString(R.string.sign_container_button_description));
+
+        if (state.containerLoadInProgress() || state.documentsAddInProgress() ||
+                state.documentRemoveInProgress() || state.signatureRemoveInProgress()) {
+            documentAddProgressBar.setVisibility(VISIBLE);
+        } else {
+            documentAddProgressBar.setVisibility(GONE);
+        }
 
         setActivity(state.containerLoadInProgress() || state.documentsAddInProgress()
                 || state.documentViewState().equals(State.ACTIVE)

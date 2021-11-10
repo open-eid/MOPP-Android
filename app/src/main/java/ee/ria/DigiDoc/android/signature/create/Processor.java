@@ -1,7 +1,6 @@
 package ee.ria.DigiDoc.android.signature.create;
 
 import static android.app.Activity.RESULT_OK;
-import static com.google.common.io.Files.getFileExtension;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 import android.app.Application;
@@ -10,7 +9,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -19,6 +17,7 @@ import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
+import ee.ria.DigiDoc.android.utils.SivaUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
@@ -77,17 +76,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     ActivityResult activityResult = ((ActivityResultException) throwable)
                             .activityResult;
                     if (activityResult.resultCode() == RESULT_OK) {
-                        ImmutableList<FileStream> addedData = parseGetContentIntent(application.getContentResolver(), activityResult.data());
-                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(addedData);
-                        ToastUtil.handleEmptyFileError(addedData, validFiles, application);
-                        boolean isConfirmationNeeded = validFiles.stream().anyMatch(fileStream -> {
-                            String normalizedDisplayName = FileUtil.sanitizeString(FileUtil.normalizePath(fileStream.displayName()).getPath(), "");
-                            String extension = getFileExtension(normalizedDisplayName).toLowerCase(Locale.US);
-                            return "pdf".equals(extension) ?
-                                    SignedContainer.isSignedPDFFile(fileStream.source(), Activity.getContext().get(), fileStream.displayName()) :
-                                    SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension);
-                        });
-                        if (isConfirmationNeeded) {
+                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
+                                parseGetContentIntent(application.getContentResolver(), activityResult.data()));
+                        ToastUtil.handleEmptyFileError(validFiles, application);
+                        if (SivaUtil.isSivaConfirmationNeeded(validFiles)) {
                             sivaConfirmationDialog.show();
                             ClickableDialogUtil.makeLinksInDialogClickable(sivaConfirmationDialog);
                             sivaConfirmationDialog.cancels()

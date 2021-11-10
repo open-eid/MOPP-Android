@@ -17,13 +17,13 @@ import timber.log.Timber;
 
 public final class ToastUtil {
 
-    public static void handleEmptyFileError(ImmutableList<FileStream> fileStreams, ImmutableList<FileStream> validFiles,
+    public static void handleEmptyFileError(ImmutableList<FileStream> validFiles,
                                             Application application) throws EmptyFileException {
         if (validFiles.isEmpty()) {
             Timber.e("Add file to container failed");
             throw new EmptyFileException();
         }
-        if (FileSystem.isEmptyFileInList(fileStreams)) {
+        if (FileSystem.isEmptyFileInList(validFiles)) {
             showEmptyFileError(application);
         }
     }
