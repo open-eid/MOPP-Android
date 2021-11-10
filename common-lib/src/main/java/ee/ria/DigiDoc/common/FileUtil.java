@@ -73,9 +73,6 @@ public class FileUtil {
     }
 
     public static Uri normalizePath(String filePath) {
-        if (URLUtil.isFileUrl(filePath)) {
-            return Uri.parse(Paths.get(FilenameUtils.normalize(filePath)).normalize().toString());
-        }
         return Uri.parse(FilenameUtils.normalize(filePath));
     }
 

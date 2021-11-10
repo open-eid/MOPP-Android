@@ -8,6 +8,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -76,7 +79,7 @@ public final class FileSystem {
     public File generateSignatureContainerFile(String name) throws IOException {
         File file = increaseCounterIfExists(new File(signatureContainersDir(),
                 FileUtil.sanitizeString(
-                        FileUtil.normalizePath(name).toString(), "")));
+                        FilenameUtils.getName(name), "")));
         File fileInDirectory = FileUtil.getFileInDirectory(file, signatureContainersDir());
         Files.createParentDirs(fileInDirectory);
         return file;
@@ -191,7 +194,7 @@ public final class FileSystem {
      */
     private File getCacheFile(String name) throws IOException {
         File cacheFile = new File(cacheDir(), FileUtil.sanitizeString(
-                FileUtil.normalizePath(name).toString(), ""));
+                FilenameUtils.getName(name), ""));
         return FileUtil.getFileInDirectory(cacheFile, cacheDir());
     }
 
