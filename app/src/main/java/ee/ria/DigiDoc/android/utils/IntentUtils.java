@@ -14,6 +14,7 @@ import androidx.core.content.FileProvider;
 
 import com.google.common.collect.ImmutableList;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -128,7 +129,7 @@ public final class IntentUtils {
 
     private static long getFileSize(ContentResolver contentResolver, Uri uri) {
         Cursor cursor = contentResolver.
-                query(Uri.parse(FileUtil.sanitizeString(uri.toString(), "")),
+                query(Uri.parse(FilenameUtils.getFullPath(uri.toString()) + FilenameUtils.getName(uri.toString())),
                         null, null, null, null);
         long fileSize = 0;
         if (cursor != null) {

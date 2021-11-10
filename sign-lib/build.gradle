@@ -37,6 +37,8 @@ dependencies {
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
+    implementation "commons-io:commons-io:${commonsioVersion}"
+
     implementation project(':common-lib')
 
     androidTestUtil "androidx.test:orchestrator:${androidxTestOrchestratorVersion}"

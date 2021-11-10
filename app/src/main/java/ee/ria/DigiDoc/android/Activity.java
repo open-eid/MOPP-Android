@@ -23,6 +23,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.crashlytics.internal.common.CommonUtils;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Callable;
 
@@ -170,7 +172,7 @@ public final class Activity extends AppCompatActivity {
 
     private Intent sanitizeIntent(Intent intent) {
         if (intent.getDataString() != null) {
-            Uri normalizedUri = Uri.parse(FileUtil.sanitizeString(intent.getDataString(), ""));
+            Uri normalizedUri = Uri.parse(FilenameUtils.getFullPath(intent.getDataString()) + FilenameUtils.getName(intent.getDataString()));
             if (normalizedUri != null) {
                 intent.setDataAndNormalize(normalizedUri);
             }

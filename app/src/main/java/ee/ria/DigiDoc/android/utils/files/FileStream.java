@@ -10,6 +10,8 @@ import android.provider.OpenableColumns;
 import com.google.auto.value.AutoValue;
 import com.google.common.io.ByteSource;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 
 import ee.ria.DigiDoc.common.FileUtil;
@@ -28,12 +30,12 @@ public abstract class FileStream {
      */
     public static FileStream create(ContentResolver contentResolver, Uri uri, long fileSize) {
         String displayName = uri.getLastPathSegment() == null ? "newFile" : FileUtil.sanitizeString(uri.getLastPathSegment(), "");
-        Uri sanitizedUri = Uri.parse(FileUtil.sanitizeString(uri.toString(), ""));
+        Uri sanitizedUri = Uri.parse(FilenameUtils.getPath(uri.toString()) + FilenameUtils.getName(uri.toString()));
         Cursor cursor = contentResolver.query(sanitizedUri, new String[]{OpenableColumns.DISPLAY_NAME}, null,
                 null, null);
         if (cursor != null) {
             if (cursor.moveToFirst() && !cursor.isNull(0)) {
-                displayName = cursor.getString(0);
+                displayName = FilenameUtils.getName(FileUtil.sanitizeString(cursor.getString(0), ""));
             }
             cursor.close();
         }

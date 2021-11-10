@@ -5,6 +5,8 @@ import static com.google.common.io.Files.getFileExtension;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.util.Locale;
 
 import ee.ria.DigiDoc.android.Activity;
@@ -21,7 +23,7 @@ public class SivaUtil {
 
     public static boolean isSivaConfirmationNeeded(ImmutableList<FileStream> files) {
         for (FileStream file : files) {
-            String extension = getFileExtension(file.displayName()).toLowerCase(Locale.US);
+            String extension = getFileExtension(FilenameUtils.getName(file.displayName())).toLowerCase(Locale.US);
             if (SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension) || ("pdf".equals(extension) &&
                     SignedContainer.isSignedPDFFile(file.source(), Activity.getContext().get(), file.displayName()))) {
                 return true;
