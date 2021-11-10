@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
+import android.webkit.URLUtil;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.io.ByteSource;
@@ -29,7 +30,7 @@ public abstract class FileStream {
      * Create FileStream from {@link ContentResolver} and content {@link Uri}.
      */
     public static FileStream create(ContentResolver contentResolver, Uri uri, long fileSize) {
-        String displayName = uri.getLastPathSegment() == null ? "newFile" : FileUtil.sanitizeString(uri.getLastPathSegment(), "");
+        String displayName = uri.getLastPathSegment() == null ? "newFile" : FilenameUtils.getName(uri.getLastPathSegment());
         Uri sanitizedUri = Uri.parse(FilenameUtils.getPath(uri.toString()) + FilenameUtils.getName(uri.toString()));
         Cursor cursor = contentResolver.query(sanitizedUri, new String[]{OpenableColumns.DISPLAY_NAME}, null,
                 null, null);
