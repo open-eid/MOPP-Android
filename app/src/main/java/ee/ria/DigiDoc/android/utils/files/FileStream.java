@@ -28,7 +28,7 @@ public abstract class FileStream {
      */
     public static FileStream create(ContentResolver contentResolver, Uri uri, long fileSize) {
         String displayName = uri.getLastPathSegment() == null ? "newFile" : FileUtil.sanitizeString(uri.getLastPathSegment(), "");
-        Uri sanitizedUri = FileUtil.normalizeUri(uri.toString());
+        Uri sanitizedUri = FileUtil.normalizeUri(uri);
         Cursor cursor = contentResolver.query(sanitizedUri, new String[]{OpenableColumns.DISPLAY_NAME}, null,
                 null, null);
         if (cursor != null) {
@@ -39,7 +39,7 @@ public abstract class FileStream {
         }
 
         return new AutoValue_FileStream(displayName,
-                new ContentResolverUriSource(contentResolver, Uri.parse(sanitizedUri)), fileSize);
+                new ContentResolverUriSource(contentResolver, sanitizedUri), fileSize);
     }
 
     /**

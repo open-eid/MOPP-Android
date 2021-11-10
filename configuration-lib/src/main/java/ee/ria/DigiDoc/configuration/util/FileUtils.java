@@ -105,7 +105,7 @@ public class FileUtils {
     }
 
     public static void removeFile(String filePath) {
-        File fileToDelete = new File(FileUtil.normalizePath(filePath));
+        File fileToDelete = new File(FileUtil.normalizePath(filePath).toString());
         if (fileToDelete.exists()) {
             boolean isFileDeleted = fileToDelete.delete();
             if (isFileDeleted) {

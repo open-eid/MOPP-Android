@@ -29,6 +29,8 @@ dependencies {
 
     implementation "com.unboundid:unboundid-ldapsdk:${ldapSdkVersion}"
 
+    implementation "commons-io:commons-io:${commonsioVersion}"
+
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
