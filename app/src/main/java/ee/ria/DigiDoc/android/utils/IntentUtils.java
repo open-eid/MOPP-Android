@@ -128,7 +128,7 @@ public final class IntentUtils {
 
     private static long getFileSize(ContentResolver contentResolver, Uri uri) {
         Cursor cursor = contentResolver.
-                query((FileUtil.normalizeUri(uri)),
+                query(Uri.parse(FileUtil.sanitizeString(uri.toString(), "")),
                         null, null, null, null);
         long fileSize = 0;
         if (cursor != null) {

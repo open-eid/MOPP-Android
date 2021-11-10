@@ -55,9 +55,11 @@ public class FileUtil {
                     sb.append(c);
                 }
             }
+        } else if (!isRawUrl(input)) {
+            return normalizeUri(Uri.parse(input)).toString();
         }
 
-        return !sb.toString().equals("") ? sb.toString() : input;
+        return !sb.toString().equals("") ? FilenameUtils.normalize(sb.toString()) : FilenameUtils.normalize(input);
     }
 
     public static Uri normalizeUri(Uri uriString) {
@@ -65,7 +67,9 @@ public class FileUtil {
             return null;
         }
 
-        return Uri.parse(URI.create(uriString.toString()).normalize().toString());
+        String scheme = FilenameUtils.normalize(uriString.normalizeScheme().getScheme()) + "://";
+        String uriWithoutScheme = FilenameUtils.normalize(uriString.toString().replaceFirst(scheme, ""));
+        return Uri.parse(scheme + uriWithoutScheme);
     }
 
     public static Uri normalizePath(String filePath) {
