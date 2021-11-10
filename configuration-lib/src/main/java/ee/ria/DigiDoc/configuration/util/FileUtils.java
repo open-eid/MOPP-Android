@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.configuration.util;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -105,7 +107,7 @@ public class FileUtils {
     }
 
     public static void removeFile(String filePath) {
-        File fileToDelete = new File(FileUtil.normalizePath(filePath));
+        File fileToDelete = new File(FilenameUtils.normalize(filePath));
         if (fileToDelete.exists()) {
             boolean isFileDeleted = fileToDelete.delete();
             if (isFileDeleted) {

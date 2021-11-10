@@ -14,6 +14,9 @@ import androidx.core.content.FileProvider;
 
 import com.google.common.collect.ImmutableList;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 
 import ee.ria.DigiDoc.R;
@@ -58,10 +61,12 @@ public final class IntentUtils {
         if (clipData != null) {
             for (int i = 0; i < clipData.getItemCount(); i++) {
                 Uri uri = clipData.getItemAt(i).getUri();
-                builder.add(FileStream.create(contentResolver, uri, getFileSize(contentResolver, uri)));
+                builder.add(FileStream.create(contentResolver, uri, getFileSize(contentResolver,
+                        FileUtil.normalizeUri(uri))));
             }
         } else if (data != null) {
-            builder.add(FileStream.create(contentResolver, data, getFileSize(contentResolver, data)));
+            builder.add(FileStream.create(contentResolver, data, getFileSize(contentResolver,
+                    FileUtil.normalizeUri(data))));
         }
 
         return builder.build();
@@ -124,7 +129,7 @@ public final class IntentUtils {
 
     private static long getFileSize(ContentResolver contentResolver, Uri uri) {
         Cursor cursor = contentResolver.
-                query(Uri.parse(FileUtil.sanitizeString(uri.toString(), "")),
+                query(FileUtil.normalizeUri(uri),
                         null, null, null, null);
         long fileSize = 0;
         if (cursor != null) {

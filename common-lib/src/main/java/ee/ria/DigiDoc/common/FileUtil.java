@@ -3,11 +3,10 @@ package ee.ria.DigiDoc.common;
 import android.net.Uri;
 import android.webkit.URLUtil;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
 
 public class FileUtil {
 
@@ -53,26 +52,42 @@ public class FileUtil {
                     sb.append(c);
                 }
             }
+        } else if (!isRawUrl(input)) {
+            return normalizeUri(Uri.parse(input)).toString();
         }
 
-        return !sb.toString().equals("") ? sb.toString() : input;
+        return !sb.toString().equals("") ?
+                FilenameUtils.getName(FilenameUtils.normalize(sb.toString())) :
+                FilenameUtils.normalize(input);
     }
 
-    public static Uri normalizeUri(String uriString) {
-        if (uriString == null) {
+    public static Uri normalizeUri(Uri uri) {
+        if (uri == null) {
             return null;
         }
 
-        try {
-            return Uri.parse(FileUtil.sanitizeString((
-                    new URI(uriString).normalize()).toString(), ""));
-        } catch (URISyntaxException e) {
-            return null;
+        String uriString = uri.toString();
+        String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=@?&!()";
+
+        StringBuilder sb = new StringBuilder(uriString.length());
+
+        for (int offset = 0; offset < uriString.length(); offset++) {
+            char c = uriString.charAt(offset);
+
+            if (allowedCharacters.indexOf(c) == -1) {
+                sb.append("");
+            }
+            else {
+                // Coverity does not want to see usages of the original string
+                sb.append(allowedCharacters.charAt(allowedCharacters.indexOf(c)));
+            }
         }
+
+        return Uri.parse(sb.toString());
     }
 
-    public static URI normalizePath(String filePath) {
-        return Paths.get(filePath).normalize().toUri();
+    public static Uri normalizePath(String filePath) {
+        return Uri.parse(FilenameUtils.normalize(filePath));
     }
 
     private static boolean isRawUrl(String url) {
