@@ -80,9 +80,6 @@ public final class FileSystem {
         File file = increaseCounterIfExists(new File(signatureContainersDir(),
                 FilenameUtils.getName(
                         FileUtil.sanitizeString(name, ""))));
-        if (FileUtils.directoryContains(signatureContainersDir(), file)) {
-            FileUtils.delete(file);
-        }
         File fileInDirectory = FileUtil.getFileInDirectory(file, signatureContainersDir());
         Files.createParentDirs(fileInDirectory);
         return file;
@@ -198,9 +195,6 @@ public final class FileSystem {
     private File getCacheFile(String name) throws IOException {
         String fileName = FileUtil.sanitizeString(FilenameUtils.getName(name), "");
         File cacheFile = new File(cacheDir(), fileName);
-        if (!FileUtils.directoryContains(cacheDir(), cacheFile)) {
-            throw new IOException("No file found");
-        }
         return FileUtil.getFileInDirectory(cacheFile, cacheDir());
     }
 
