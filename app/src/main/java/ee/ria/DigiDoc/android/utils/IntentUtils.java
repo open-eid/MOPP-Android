@@ -62,11 +62,11 @@ public final class IntentUtils {
             for (int i = 0; i < clipData.getItemCount(); i++) {
                 Uri uri = clipData.getItemAt(i).getUri();
                 builder.add(FileStream.create(contentResolver, uri, getFileSize(contentResolver,
-                        Uri.parse(FileUtil.sanitizeString(uri.toString(), "")))));
+                        FileUtil.normalizeUri(uri))));
             }
         } else if (data != null) {
             builder.add(FileStream.create(contentResolver, data, getFileSize(contentResolver,
-                    Uri.parse(FileUtil.sanitizeString(data.toString(), "")))));
+                    FileUtil.normalizeUri(data))));
         }
 
         return builder.build();
@@ -129,7 +129,7 @@ public final class IntentUtils {
 
     private static long getFileSize(ContentResolver contentResolver, Uri uri) {
         Cursor cursor = contentResolver.
-                query(Uri.parse(FilenameUtils.getFullPath(uri.toString()) + FilenameUtils.getName(uri.toString())),
+                query(FileUtil.normalizeUri(uri),
                         null, null, null, null);
         long fileSize = 0;
         if (cursor != null) {

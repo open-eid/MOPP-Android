@@ -78,8 +78,11 @@ public final class FileSystem {
      */
     public File generateSignatureContainerFile(String name) throws IOException {
         File file = increaseCounterIfExists(new File(signatureContainersDir(),
-                FileUtil.sanitizeString(
-                        FilenameUtils.getName(name), "")));
+                FilenameUtils.getName(
+                        FileUtil.sanitizeString(name, ""))));
+        if (FileUtils.directoryContains(signatureContainersDir(), file)) {
+            FileUtils.delete(file);
+        }
         File fileInDirectory = FileUtil.getFileInDirectory(file, signatureContainersDir());
         Files.createParentDirs(fileInDirectory);
         return file;
@@ -193,8 +196,11 @@ public final class FileSystem {
      * @return File with absolute path to file in cache directory.
      */
     private File getCacheFile(String name) throws IOException {
-        File cacheFile = new File(cacheDir(), FileUtil.sanitizeString(
-                FilenameUtils.getName(name), ""));
+        String fileName = FileUtil.sanitizeString(FilenameUtils.getName(name), "");
+        File cacheFile = new File(cacheDir(), fileName);
+        if (!FileUtils.directoryContains(cacheDir(), cacheFile)) {
+            throw new IOException("No file found");
+        }
         return FileUtil.getFileInDirectory(cacheFile, cacheDir());
     }
 
