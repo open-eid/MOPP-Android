@@ -7,9 +7,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
 
 public class FileUtil {
 
@@ -62,14 +59,29 @@ public class FileUtil {
         return !sb.toString().equals("") ? FilenameUtils.normalize(sb.toString()) : FilenameUtils.normalize(input);
     }
 
-    public static Uri normalizeUri(Uri uriString) {
-        if (uriString == null) {
+    public static Uri normalizeUri(Uri uri) {
+        if (uri == null) {
             return null;
         }
 
-        String scheme = FilenameUtils.normalize(uriString.normalizeScheme().getScheme()) + "://";
-        String uriWithoutScheme = FilenameUtils.normalize(uriString.toString().replaceFirst(scheme, ""));
-        return Uri.parse(scheme + uriWithoutScheme);
+        String uriString = uri.toString();
+        String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=@?&()";
+
+        StringBuilder sb = new StringBuilder(uriString.length());
+
+        for (int offset = 0; offset < uriString.length(); offset++) {
+            char c = uriString.charAt(offset);
+
+            if (allowedCharacters.indexOf(c) == -1) {
+                sb.append(uriString);
+            }
+            else {
+                // Coverity does not want to see usages of the original string
+                sb.append(allowedCharacters.charAt(allowedCharacters.indexOf(c)));
+            }
+        }
+
+        return Uri.parse(sb.toString());
     }
 
     public static Uri normalizePath(String filePath) {

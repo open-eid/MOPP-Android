@@ -24,8 +24,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.crashlytics.internal.common.CommonUtils;
 
-import org.apache.commons.io.FilenameUtils;
-
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Callable;
 
@@ -173,11 +171,9 @@ public final class Activity extends AppCompatActivity {
 
     private Intent sanitizeIntent(Intent intent) {
         if (intent.getDataString() != null) {
-            Uri normalizedUri = Uri.parse(FilenameUtils.getFullPath(intent.getDataString()) + FilenameUtils.getName(intent.getDataString()));
-            Uri sanUri = new Uri.Builder().appendPath(normalizedUri.toString()).build();
+            Uri normalizedUri = FileUtil.normalizeUri(Uri.parse(intent.getDataString()));
             if (URLUtil.isValidUrl(normalizedUri.toString())) {
                 intent.setDataAndNormalize(normalizedUri);
-                intent.putExtra("sanUri", sanUri);
             }
         }
         if (intent.getExtras() != null && !(intent.getExtras().containsKey(Intent.EXTRA_REFERRER) &&
