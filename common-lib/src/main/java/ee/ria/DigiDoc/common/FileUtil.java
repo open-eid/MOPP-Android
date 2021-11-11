@@ -67,7 +67,7 @@ public class FileUtil {
         }
 
         String uriString = uri.toString();
-        String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=@?&()";
+        String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=@?&!()";
 
         StringBuilder sb = new StringBuilder(uriString.length());
 
