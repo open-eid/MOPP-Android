@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import ee.ria.DigiDoc.common.Certificate;
@@ -411,12 +412,12 @@ public abstract class SignedContainer {
         try {
             byte[] bytes = byteSource.read();
 
-            File pdfFilesDirectory = new File(context.getFilesDir() + File.separator + "tempPdfFiles");
+            File pdfFilesDirectory = new File(context.getFilesDir(), "tempPdfFiles");
 
             FileUtils.createDirectoryIfNotExist(pdfFilesDirectory.toString());
 
-            File file = new File(FileUtil.normalizePath(
-                    pdfFilesDirectory + File.separator + FilenameUtils.getName(fileName)).toString());
+            File file = new File(pdfFilesDirectory, String.format(Locale.US, "%s",
+                    FilenameUtils.getName(FileUtil.sanitizeString(fileName, ""))));
 
             if (!org.apache.commons.io.FileUtils.directoryContains(pdfFilesDirectory, file)) {
                 try (OutputStream outStream = new FileOutputStream(file.getCanonicalPath())) {

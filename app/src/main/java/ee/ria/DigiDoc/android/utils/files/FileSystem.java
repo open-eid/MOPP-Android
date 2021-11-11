@@ -193,8 +193,8 @@ public final class FileSystem {
      * @return File with absolute path to file in cache directory.
      */
     private File getCacheFile(String name) throws IOException {
-        String fileName = FileUtil.sanitizeString(FilenameUtils.getName(name), "");
-        File cacheFile = new File(cacheDir(), fileName);
+        File cacheFile = new File(cacheDir(), String.format(Locale.US, "%s",
+                FilenameUtils.getName(FileUtil.sanitizeString(name, ""))));
         return FileUtil.getFileInDirectory(cacheFile, cacheDir());
     }
 
