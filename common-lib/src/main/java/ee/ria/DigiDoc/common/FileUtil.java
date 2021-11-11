@@ -56,7 +56,9 @@ public class FileUtil {
             return normalizeUri(Uri.parse(input)).toString();
         }
 
-        return !sb.toString().equals("") ? FilenameUtils.normalize(sb.toString()) : FilenameUtils.normalize(input);
+        return !sb.toString().equals("") ?
+                FilenameUtils.getName(FilenameUtils.normalize(sb.toString())) :
+                FilenameUtils.normalize(input);
     }
 
     public static Uri normalizeUri(Uri uri) {
@@ -73,7 +75,7 @@ public class FileUtil {
             char c = uriString.charAt(offset);
 
             if (allowedCharacters.indexOf(c) == -1) {
-                sb.append(uriString);
+                sb.append("");
             }
             else {
                 // Coverity does not want to see usages of the original string
