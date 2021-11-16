@@ -13,6 +13,7 @@ public class FileUtil {
     public static final String RESTRICTED_FILENAME_CHARACTERS_AS_STRING = "@%:^?[]\\'\"”’{}#&`\\\\~«»/´";
     public static final String RTL_CHARACTERS_AS_STRING = "" + '\u200E' + '\u200F' + '\u202E' + '\u202A' + '\u202B';
     public static final String RESTRICTED_FILENAME_CHARACTERS_AND_RTL_CHARACTERS_AS_STRING = RESTRICTED_FILENAME_CHARACTERS_AS_STRING + RTL_CHARACTERS_AS_STRING;
+    private static final String ALLOWED_URL_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=@?&!()";
 
     /**
      * Check if file path is in cache directory
@@ -67,19 +68,18 @@ public class FileUtil {
         }
 
         String uriString = uri.toString();
-        String allowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=@?&!()";
 
         StringBuilder sb = new StringBuilder(uriString.length());
 
         for (int offset = 0; offset < uriString.length(); offset++) {
-            char c = uriString.charAt(offset);
+            int i = ALLOWED_URL_CHARACTERS.indexOf(uriString.charAt(offset));
 
-            if (allowedCharacters.indexOf(c) == -1) {
+            if (i == -1) {
                 sb.append("");
             }
             else {
                 // Coverity does not want to see usages of the original string
-                sb.append(allowedCharacters.charAt(allowedCharacters.indexOf(c)));
+                sb.append(ALLOWED_URL_CHARACTERS.charAt(i));
             }
         }
 
