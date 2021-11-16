@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.webkit.URLUtil;
 import android.widget.Button;
 
 import androidx.annotation.Nullable;
@@ -170,7 +171,8 @@ public final class Activity extends AppCompatActivity {
 
     private Intent sanitizeIntent(Intent intent) {
         if (intent.getDataString() != null) {
-            intent.setData(Uri.parse(FileUtil.sanitizeString(intent.getDataString(), "")));
+            Uri normalizedUri = FileUtil.normalizeUri(Uri.parse(intent.getDataString()));
+            intent.setDataAndNormalize(normalizedUri);
         }
         if (intent.getExtras() != null && !(intent.getExtras().containsKey(Intent.EXTRA_REFERRER) &&
                 intent.getExtras().get(Intent.EXTRA_REFERRER).equals(R.string.application_name))) {

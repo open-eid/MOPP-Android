@@ -16,13 +16,17 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import ee.ria.DigiDoc.common.Certificate;
@@ -408,18 +412,22 @@ public abstract class SignedContainer {
         try {
             byte[] bytes = byteSource.read();
 
-            String pdfFilesDirectory = context.getFilesDir() + File.separator + "tempPdfFiles";
+            File pdfFilesDirectory = new File(context.getFilesDir(), "tempPdfFiles");
 
-            FileUtils.createDirectoryIfNotExist(pdfFilesDirectory);
+            FileUtils.createDirectoryIfNotExist(pdfFilesDirectory.toString());
 
-            File file = new File(pdfFilesDirectory + File.separator + fileName);
-            try (OutputStream outStream = new FileOutputStream(file)) {
-                outStream.write(bytes);
+            File file = new File(pdfFilesDirectory, String.format(Locale.US, "%s",
+                    FilenameUtils.getName(FileUtil.sanitizeString(fileName, ""))));
+
+            if (!org.apache.commons.io.FileUtils.directoryContains(pdfFilesDirectory, file)) {
+                try (OutputStream outStream = new FileOutputStream(file.getCanonicalPath())) {
+                    outStream.write(bytes);
+                }
             }
 
             boolean isSignedContainer = SignedContainer.isContainer(file);
-            FileUtils.removeFile(file.getPath());
-            FileUtils.removeFile(pdfFilesDirectory);
+            FileUtils.removeFile(file.getCanonicalPath());
+            FileUtils.removeFile(pdfFilesDirectory.getCanonicalPath());
 
             return isSignedContainer;
         } catch (IOException e) {

@@ -1,6 +1,9 @@
 package ee.ria.DigiDoc.common;
 
+import android.net.Uri;
 import android.webkit.URLUtil;
+
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +13,7 @@ public class FileUtil {
     public static final String RESTRICTED_FILENAME_CHARACTERS_AS_STRING = "@%:^?[]\\'\"”’{}#&`\\\\~«»/´";
     public static final String RTL_CHARACTERS_AS_STRING = "" + '\u200E' + '\u200F' + '\u202E' + '\u202A' + '\u202B';
     public static final String RESTRICTED_FILENAME_CHARACTERS_AND_RTL_CHARACTERS_AS_STRING = RESTRICTED_FILENAME_CHARACTERS_AS_STRING + RTL_CHARACTERS_AS_STRING;
+    private static final String ALLOWED_URL_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=@?&!()";
 
     /**
      * Check if file path is in cache directory
@@ -49,9 +53,41 @@ public class FileUtil {
                     sb.append(c);
                 }
             }
+        } else if (!isRawUrl(input)) {
+            return normalizeUri(Uri.parse(input)).toString();
         }
 
-        return !sb.toString().equals("") ? sb.toString() : input;
+        return !sb.toString().equals("") ?
+                FilenameUtils.getName(FilenameUtils.normalize(sb.toString())) :
+                FilenameUtils.normalize(input);
+    }
+
+    public static Uri normalizeUri(Uri uri) {
+        if (uri == null) {
+            return null;
+        }
+
+        String uriString = uri.toString();
+
+        StringBuilder sb = new StringBuilder(uriString.length());
+
+        for (int offset = 0; offset < uriString.length(); offset++) {
+            int i = ALLOWED_URL_CHARACTERS.indexOf(uriString.charAt(offset));
+
+            if (i == -1) {
+                sb.append("");
+            }
+            else {
+                // Coverity does not want to see usages of the original string
+                sb.append(ALLOWED_URL_CHARACTERS.charAt(i));
+            }
+        }
+
+        return Uri.parse(sb.toString());
+    }
+
+    public static Uri normalizePath(String filePath) {
+        return Uri.parse(FilenameUtils.normalize(filePath));
     }
 
     private static boolean isRawUrl(String url) {

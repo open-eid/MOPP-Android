@@ -237,9 +237,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         } else {
             sendButton.setVisibility(isExistingContainer ? VISIBLE : GONE);
             buttonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
-            if (containerFile != null && (UNSIGNABLE_CONTAINER_EXTENSIONS.contains(
+            if (UNSIGNABLE_CONTAINER_EXTENSIONS.contains(
                     Files.getFileExtension(containerFile.getName()).toLowerCase()) ||
-                    FileSystem.isEmptyDataFileInContainer(containerFile))) {
+                    FileSystem.isEmptyDataFileInContainer(containerFile)) {
                 signatureAddButton.setVisibility(GONE);
             } else {
                 signatureAddButton.setVisibility(VISIBLE);

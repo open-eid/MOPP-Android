@@ -52,10 +52,11 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
                 isExistingContainer = true;
                 containerFile = fileSystem.addSignatureContainer(fileStream);
             } else {
-                String containerName = FileUtil.sanitizeString(String.format(Locale.US, "%s.%s",
-                        FileUtil.sanitizeString(getNameWithoutExtension(
-                                FilenameUtils.removeExtension(fileStreams.get(0).displayName())), ""),
-                        SIGNATURE_CONTAINER_EXT), "");
+                String normalizedDisplayName = FilenameUtils.getName(FileUtil.sanitizeString(FileUtil.normalizePath(
+                        fileStreams.get(0).displayName()).getPath(), ""));
+                String containerName = String.format(Locale.US, "%s.%s",
+                        getNameWithoutExtension(FilenameUtils.removeExtension(normalizedDisplayName)),
+                        SIGNATURE_CONTAINER_EXT);
                 isExistingContainer = false;
                 containerFile = fileSystem.generateSignatureContainerFile(containerName);
                 SignedContainer.create(containerFile, cacheFileStreams(fileStreams));
