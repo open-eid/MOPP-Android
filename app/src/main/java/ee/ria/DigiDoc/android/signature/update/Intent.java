@@ -82,7 +82,7 @@ interface Intent extends MviIntent {
         abstract boolean confirmation();
 
         static DocumentViewIntent confirmation(File containerFile, DataFile document) {
-            boolean isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(document);
+            boolean isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(containerFile, document);
             return create(containerFile, document, isConfirmationNeeded);
         }
 

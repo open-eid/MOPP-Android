@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 
 import org.apache.commons.io.FilenameUtils;
 
+import java.io.File;
 import java.util.Locale;
 
 import ee.ria.DigiDoc.android.Activity;
@@ -32,12 +33,12 @@ public class SivaUtil {
         return false;
     }
 
-    public static boolean isSivaConfirmationNeeded(DataFile dataFile) {
+    public static boolean isSivaConfirmationNeeded(File containerFile, DataFile dataFile) {
         String extension = getFileExtension(dataFile.name()).toLowerCase(Locale.US);
         boolean isSignedPdfDataFile =
                 getFileExtension(dataFile.name()).toLowerCase(Locale.US)
                         .equals("pdf")
-                        && dataFile.name().equals(dataFile.name());
+                        && dataFile.name().equals(containerFile.getName());
         return isSignedPdfDataFile || SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension);
     }
 
