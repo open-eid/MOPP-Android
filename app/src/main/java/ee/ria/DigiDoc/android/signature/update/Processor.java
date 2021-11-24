@@ -1,7 +1,6 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import static android.app.Activity.RESULT_OK;
-import static com.google.common.io.Files.getFileExtension;
 import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
@@ -20,7 +19,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -31,6 +29,7 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
+import ee.ria.DigiDoc.android.utils.SivaUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.files.FileAlreadyExistsException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
@@ -208,10 +207,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .map(documentFile -> {
                             Transaction transaction;
                             boolean isSignedPdfDataFile =
-                                    getFileExtension(containerFile.getName()).toLowerCase(Locale.US)
-                                            .equals("pdf")
-                                            && containerFile.getName().equals(documentFile.getName());
-                            if (!isSignedPdfDataFile && SignedContainer.isContainer(documentFile)) {
+                                    SivaUtil.isSivaConfirmationNeeded(ImmutableList.of(FileStream.create(documentFile)));
+                            if (isSignedPdfDataFile && SignedContainer.isContainer(documentFile)) {
                                 transaction = Transaction.push(SignatureUpdateScreen
                                         .create(true, true, documentFile, false, false));
                             } else if (CryptoContainer.isContainerFileName(documentFile.getName())) {
