@@ -36,9 +36,7 @@ public class SivaUtil {
     public static boolean isSivaConfirmationNeeded(File containerFile, DataFile dataFile) {
         String extension = getFileExtension(dataFile.name()).toLowerCase(Locale.US);
         boolean isSignedPdfDataFile =
-                getFileExtension(dataFile.name()).toLowerCase(Locale.US)
-                        .equals("pdf")
-                        && dataFile.name().equals(containerFile.getName());
+                extension.equals("pdf") && dataFile.name().equals(containerFile.getName());
         return isSignedPdfDataFile || SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension);
     }
 
