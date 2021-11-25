@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import static android.app.Activity.RESULT_OK;
+import static com.google.common.io.Files.getFileExtension;
 import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
@@ -19,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -206,9 +208,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .map(documentFile -> {
                             Transaction transaction;
+                            String documentFileExtension = getFileExtension(documentFile.getName()).toLowerCase(Locale.US);
                             boolean isSignedPdfDataFile =
-                                    SivaUtil.isSivaConfirmationNeeded(ImmutableList.of(FileStream.create(documentFile)));
-                            if (isSignedPdfDataFile && SignedContainer.isContainer(documentFile)) {
+                                    (SivaUtil.isSivaConfirmationNeeded(ImmutableList.of(FileStream.create(documentFile))) && documentFileExtension.equals("pdf"));
+                            if (!isSignedPdfDataFile && SignedContainer.isContainer(documentFile)) {
                                 transaction = Transaction.push(SignatureUpdateScreen
                                         .create(true, true, documentFile, false, false));
                             } else if (CryptoContainer.isContainerFileName(documentFile.getName())) {

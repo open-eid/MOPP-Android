@@ -90,7 +90,9 @@ interface Intent extends MviIntent {
         abstract boolean confirmation();
 
         static DocumentViewIntent confirmation(File containerFile, DataFile document) {
-            if (SignedContainer.isContainer(containerFile)) {
+            String containerFileExtension = getFileExtension(containerFile.getName()).toLowerCase(Locale.US);
+            String documentFileExtension = getFileExtension(document.name()).toLowerCase(Locale.US);
+            if (!containerFileExtension.equals("pdf") && !documentFileExtension.equals("pdf") && SignedContainer.isContainer(containerFile)) {
                 boolean isConfirmationNeeded;
                 try {
                     SignedContainer signedContainer = SignedContainer.open(containerFile);
@@ -106,6 +108,8 @@ interface Intent extends MviIntent {
                     Timber.log(Log.ERROR, e, "Unable to get data file from container");
                     return create(containerFile, document, false);
                 }
+            } else if (containerFileExtension.equals("pdf") && documentFileExtension.equals("pdf")) {
+                return create(containerFile, document, false);
             } else {
                 boolean isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(containerFile, document);
                 return create(containerFile, document, isConfirmationNeeded);
