@@ -208,10 +208,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .map(documentFile -> {
                             Transaction transaction;
+                            String containerFileExtension = getFileExtension(containerFile.getName()).toLowerCase(Locale.US);
                             String documentFileExtension = getFileExtension(documentFile.getName()).toLowerCase(Locale.US);
-                            boolean isSignedPdfDataFile =
+                            boolean isPdfInSignedPdfContainer = containerFileExtension.equals("pdf") &&
                                     (SivaUtil.isSivaConfirmationNeeded(ImmutableList.of(FileStream.create(documentFile))) && documentFileExtension.equals("pdf"));
-                            if (!isSignedPdfDataFile && SignedContainer.isContainer(documentFile)) {
+                            if (!isPdfInSignedPdfContainer && SignedContainer.isContainer(documentFile)) {
                                 transaction = Transaction.push(SignatureUpdateScreen
                                         .create(true, true, documentFile, false, false));
                             } else if (CryptoContainer.isContainerFileName(documentFile.getName())) {

@@ -92,7 +92,7 @@ interface Intent extends MviIntent {
         static DocumentViewIntent confirmation(File containerFile, DataFile document) {
             String containerFileExtension = getFileExtension(containerFile.getName()).toLowerCase(Locale.US);
             String documentFileExtension = getFileExtension(document.name()).toLowerCase(Locale.US);
-            if (!containerFileExtension.equals("pdf") && !documentFileExtension.equals("pdf") && SignedContainer.isContainer(containerFile)) {
+            if (!containerFileExtension.equals("pdf") && SignedContainer.isContainer(containerFile)) {
                 boolean isConfirmationNeeded;
                 try {
                     SignedContainer signedContainer = SignedContainer.open(containerFile);
