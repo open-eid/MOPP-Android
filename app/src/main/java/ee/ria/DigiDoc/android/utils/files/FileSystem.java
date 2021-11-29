@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -180,6 +180,18 @@ public final class FileSystem {
              }
          }
          return false;
+    }
+
+    /**
+     * Filter out container files
+     *
+     * @param files List of files.
+     * @return ImmutableList<File> of containers only.
+     */
+    public static ImmutableList<File> filterContainers(ImmutableList<File> files) {
+        return ImmutableList.copyOf(files.stream()
+                .filter(SignedContainer::isContainer)
+                .collect(Collectors.toList()));
     }
 
     private File cacheDir() {

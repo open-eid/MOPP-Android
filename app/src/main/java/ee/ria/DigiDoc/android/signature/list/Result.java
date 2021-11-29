@@ -6,11 +6,9 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
-import java.util.List;
-import java.util.stream.Collectors;
 
+import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
-import ee.ria.DigiDoc.sign.SignedContainer;
 
 interface Result extends MviResult<ViewState> {
 
@@ -41,10 +39,7 @@ interface Result extends MviResult<ViewState> {
         }
 
         static ContainersLoadResult success(ImmutableList<File> containerFiles) {
-            List<File> containers = containerFiles.stream()
-                    .filter(SignedContainer::isContainer)
-                    .collect(Collectors.toList());
-            return create(true, false, ImmutableList.copyOf(containers), null);
+            return create(true, false, FileSystem.filterContainers(containerFiles), null);
         }
 
         static ContainersLoadResult failure(Throwable error) {
@@ -119,7 +114,7 @@ interface Result extends MviResult<ViewState> {
         }
 
         static ContainerRemoveResult success(ImmutableList<File> containerFiles) {
-            return create(null, false, containerFiles, null);
+            return create(null, false, FileSystem.filterContainers(containerFiles), null);
         }
 
         static ContainerRemoveResult failure(Throwable error) {
