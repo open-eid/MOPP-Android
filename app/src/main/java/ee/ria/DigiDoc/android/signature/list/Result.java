@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
+import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.mvi.MviResult;
 
 interface Result extends MviResult<ViewState> {
@@ -38,7 +39,7 @@ interface Result extends MviResult<ViewState> {
         }
 
         static ContainersLoadResult success(ImmutableList<File> containerFiles) {
-            return create(true, false, containerFiles, null);
+            return create(true, false, FileSystem.filterContainers(containerFiles), null);
         }
 
         static ContainersLoadResult failure(Throwable error) {
@@ -113,7 +114,7 @@ interface Result extends MviResult<ViewState> {
         }
 
         static ContainerRemoveResult success(ImmutableList<File> containerFiles) {
-            return create(null, false, containerFiles, null);
+            return create(null, false, FileSystem.filterContainers(containerFiles), null);
         }
 
         static ContainerRemoveResult failure(Throwable error) {
