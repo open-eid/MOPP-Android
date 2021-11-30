@@ -17,12 +17,10 @@ import org.openeid.cdoc4j.exception.RecipientMissingException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.file.FileSystem;
 import java.util.List;
 import java.util.Locale;
 
 import ee.ria.DigiDoc.common.Certificate;
-import ee.ria.DigiDoc.common.FileUtil;
 import okio.ByteString;
 
 import static com.google.common.io.Files.getFileExtension;
@@ -187,5 +185,17 @@ public abstract class CryptoContainer {
                                           ImmutableList<Certificate> recipients,
                                           boolean decrypted) {
         return new AutoValue_CryptoContainer(file, dataFiles, recipients, decrypted);
+    }
+
+    /**
+     * Check whether this is a crypto container file which should be opened as such
+     * or a regular file which should be added to the container.
+     *
+     * @param file File to check.
+     * @return True if it is a crypto container, false otherwise.
+     */
+    public static boolean isCryptoContainer(File file) {
+        String extension = getFileExtension(file.getName()).toLowerCase();
+        return "cdoc".equals(extension);
     }
 }

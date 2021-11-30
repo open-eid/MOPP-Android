@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import timber.log.Timber;
 
@@ -190,7 +191,8 @@ public final class FileSystem {
      */
     public static ImmutableList<File> filterContainers(ImmutableList<File> files) {
         return ImmutableList.copyOf(files.stream()
-                .filter(SignedContainer::isContainer)
+                .filter(file -> SignedContainer.isContainer(file) ||
+                        CryptoContainer.isCryptoContainer(file))
                 .collect(Collectors.toList()));
     }
 
