@@ -113,7 +113,6 @@ public final class DiagnosticsView extends CoordinatorLayout {
         TextView tslUrl = findViewById(R.id.mainDiagnosticsTslUrl);
         TextView sivaUrl = findViewById(R.id.mainDiagnosticsSivaUrl);
         TextView tsaUrl = findViewById(R.id.mainDiagnosticsTsaUrl);
-        TextView midSignUrl = findViewById(R.id.mainDiagnosticsMidSignUrl);
         TextView ldapPersonUrl = findViewById(R.id.mainDiagnosticsLdapPersonUrl);
         TextView ldapCorpUrl = findViewById(R.id.mainDiagnosticsLdapCorpUrl);
         TextView mobileIDUrl = findViewById(R.id.mainDiagnosticsMobileIDUrl);
@@ -137,7 +136,6 @@ public final class DiagnosticsView extends CoordinatorLayout {
         appendTslVersion(tslUrl, configurationProvider.getTslUrl());
         sivaUrl.setText(configurationProvider.getSivaUrl());
         tsaUrl.setText(configurationProvider.getTsaUrl());
-        midSignUrl.setText(configurationProvider.getMidSignUrl());
         ldapPersonUrl.setText(configurationProvider.getLdapPersonUrl());
         ldapCorpUrl.setText(configurationProvider.getLdapCorpUrl());
         mobileIDUrl.setText(configurationProvider.getMidRestUrl());
