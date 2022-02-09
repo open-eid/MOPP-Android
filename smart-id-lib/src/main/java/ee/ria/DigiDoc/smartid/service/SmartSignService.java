@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
 import ee.ria.DigiDoc.common.ContainerWrapper;
+import ee.ria.DigiDoc.common.MessageUtil;
 import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
 import ee.ria.DigiDoc.smartid.dto.request.PostCertificateRequest;
@@ -113,8 +114,10 @@ public class SmartSignService extends IntentService {
                         broadcastSmartCreateSignatureChallengeResponse(base64Hash);
                         Thread.sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
 
+                        String requestString = MessageUtil.toJsonString(getSignatureRequest(request, base64Hash));
+
                         sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCreateSignature(
-                                sessionStatusResponse.getResult().getDocumentNumber(), getSignatureRequest(request, base64Hash)), false);
+                                sessionStatusResponse.getResult().getDocumentNumber(), requestString), false);
                         if (sessionStatusResponse == null) {
                             Timber.log(Log.ERROR, "Unable to get session status response");
                             return;

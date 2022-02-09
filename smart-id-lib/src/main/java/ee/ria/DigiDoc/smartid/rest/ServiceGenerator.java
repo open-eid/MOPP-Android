@@ -39,6 +39,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 import timber.log.Timber;
 
 public class ServiceGenerator {
@@ -50,6 +51,7 @@ public class ServiceGenerator {
         Timber.d("Creating new retrofit instance");
         return new Retrofit.Builder()
                 .baseUrl(sidSignServiceUrl + "/")
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(buildHttpClient(sidSignServiceUrl, certBundle))
                 .build()

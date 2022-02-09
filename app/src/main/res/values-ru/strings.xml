@@ -152,8 +152,7 @@
     <string name="signature_update_mobile_id_remember_me">Запомни меня</string>
     <string name="signature_update_mobile_id_info">Убедитесь в правильности контрольного кодa и введите PIN2-код для mobiil-ID</string>
 
-    <!-- Currently must be in English -->
-    <string name="signature_update_mobile_id_display_message">Sign document</string>
+    <string name="signature_update_mobile_id_display_message">Подписать документ</string>
 
     <string name="signature_update_mobile_id_status_request_sent">Запрос на подпись отправлен</string>
     <string name="signature_update_mobile_id_status_request_ok">Запрос принят</string>
