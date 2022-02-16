@@ -9,8 +9,10 @@ import java.nio.charset.Charset;
 import threegpp.charset.gsm.GSMCharset;
 import threegpp.charset.ucs2.UCS2Charset80;
 
-
 public class MessageUtil {
+
+    public static final Charset GSM_CHARSET = new GSMCharset();
+    public static final Charset UCS2_CHARSET = new UCS2Charset80();
 
     public static String trimDisplayMessageIfNotWithinSizeLimit(String displayMessage, int maxDisplayMessageBytes, Charset charset) {
         byte[] displayMessagesBytes = displayMessage.getBytes(charset);
@@ -19,14 +21,6 @@ public class MessageUtil {
             return displayMessage.substring(0, (int) ((maxDisplayMessageBytes - 4) / bytesPerChar)) + "...";
         }
         return displayMessage;
-    }
-
-    public static Charset getGSM7Charset() {
-        return new GSMCharset();
-    }
-
-    public static Charset getUSC2Charset() {
-        return new UCS2Charset80();
     }
 
     public static String escape(String text) {

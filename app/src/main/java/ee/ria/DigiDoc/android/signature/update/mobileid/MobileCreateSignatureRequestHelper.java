@@ -48,7 +48,7 @@ final class MobileCreateSignatureRequestHelper {
         request.setDisplayText(MessageUtil.escape(
                 MessageUtil.trimDisplayMessageIfNotWithinSizeLimit(
                         displayMessage, MAX_DISPLAY_MESSAGE_BYTES,
-                        language.equals("RUS") ? MessageUtil.getUSC2Charset() : MessageUtil.getGSM7Charset()
+                        language.equals("RUS") ? MessageUtil.UCS2_CHARSET : MessageUtil.GSM_CHARSET
                 )));
         request.setDisplayTextFormat(language.equals("RUS") ? ALTERNATIVE_DISPLAY_TEXT_FORMAT : DISPLAY_TEXT_FORMAT);
         return request;
