@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 
+import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.time.Instant;
@@ -39,6 +41,7 @@ import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
+import timber.log.Timber;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static androidx.core.content.res.ResourcesCompat.getColor;
@@ -46,6 +49,7 @@ import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.Constants.VOID;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.DOCUMENT;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.SIGNATURE;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.TIMESTAMP;
 import static ee.ria.DigiDoc.android.utils.Immutables.containsType;
 
 final class SignatureUpdateAdapter extends
@@ -63,7 +67,8 @@ final class SignatureUpdateAdapter extends
     private ImmutableList<Item> items = ImmutableList.of();
 
     void setData(boolean isSuccess, boolean isExistingContainer, boolean isNestedContainer,
-                 @Nullable SignedContainer container) {
+                 @Nullable SignedContainer container, @Nullable File nestedFile,
+                 boolean isSivaConfirmed) {
         boolean signaturesValid = container == null || container.signaturesValid();
         boolean isEmptyFileInContainer = container != null && container.hasEmptyFiles();
         String name = container == null ? null : FileUtil.sanitizeString(container.name(), "");
@@ -81,19 +86,30 @@ final class SignatureUpdateAdapter extends
         }
 
         if (container != null) {
-            builder.add(NameItem.create(name, !isNestedContainer))
-                    .add(SubheadItem.create(DOCUMENT,
-                            isExistingContainer && !isNestedContainer
-                                    && container.dataFileAddEnabled()))
-                    .addAll(DocumentItem.of(container.dataFiles(),
-                            !isNestedContainer && container.dataFileRemoveEnabled()));
+            if (nestedFile == null || !isSivaConfirmed) {
+                createRegularDataFilesView(builder, name, container, isNestedContainer, isExistingContainer);
+            }
+
             if (isExistingContainer) {
-                builder.add(SubheadItem.create(SIGNATURE, true));
-                if (container.signatures().size() == 0) {
-                    builder.add(SignaturesEmptyItem.create());
+                if (nestedFile != null && isSivaConfirmed) {
+                    try {
+                        SignedContainer signedContainerNested = SignedContainer.open(nestedFile);
+                        if (!container.dataFiles().isEmpty() && container.dataFiles().size() == 1 &&
+                                Files.getFileExtension(nestedFile.getName()).equalsIgnoreCase("ddoc")) {
+                            createAsicsDataFilesView(builder, name, container, signedContainerNested, isNestedContainer);
+                            createAsicsTimestampView(builder, container);
+                        }
+
+                        if (SignedContainer.isContainer(nestedFile) && !signedContainerNested.dataFiles().isEmpty()) {
+                            createAsicsSignatureView(builder, signedContainerNested);
+                        }
+                    } catch (Exception e) {
+                        Timber.log(Log.ERROR, e, "Unable to get nested container file to show timestamp signature");
+                        createRegularDataFilesView(builder, name, container, isNestedContainer, isExistingContainer);
+                        createRegularSignatureView(builder, container, isNestedContainer);
+                    }
                 } else {
-                    builder.addAll(SignatureItem.of(container.signatures(), !isNestedContainer,
-                            Files.getFileExtension(container.file().getName()).equalsIgnoreCase("ddoc")));
+                    createRegularSignatureView(builder, container, isNestedContainer);
                 }
             } else {
                 builder.add(DocumentsAddButtonItem.create());
@@ -115,6 +131,47 @@ final class SignatureUpdateAdapter extends
         if (shouldScrollToTop) {
             scrollToTopSubject.onNext(VOID);
         }
+    }
+
+    private void createRegularDataFilesView(ImmutableList.Builder<Item> builder, String name, SignedContainer container,
+                                     boolean isNestedContainer, boolean isExistingContainer) {
+        builder.add(NameItem.create(name, !isNestedContainer))
+                .add(SubheadItem.create(DOCUMENT,
+                        isExistingContainer && !isNestedContainer
+                                && container.dataFileAddEnabled()))
+                .addAll(DocumentItem.of(container.dataFiles(),
+                        !isNestedContainer && container.dataFileRemoveEnabled()));
+    }
+
+    private void createRegularSignatureView(ImmutableList.Builder<Item> builder, SignedContainer container, boolean isNestedContainer) {
+        builder.add(SubheadItem.create(SIGNATURE, true));
+        if (container.signatures().isEmpty()) {
+            builder.add(SignaturesEmptyItem.create());
+        } else {
+            builder.addAll(SignatureItem.of(container.signatures(), !isNestedContainer,
+                    Files.getFileExtension(container.file().getName()).equalsIgnoreCase("ddoc")));
+        }
+    }
+
+    private void createAsicsDataFilesView(ImmutableList.Builder<Item> builder, String name,
+                                          SignedContainer container, SignedContainer signedContainerNested,
+                                          boolean isNestedContainer) {
+        builder.add(NameItem.create(name, false))
+                .add(SubheadItem.create(DOCUMENT,
+                        !isNestedContainer
+                                && container.dataFileAddEnabled()))
+                .addAll(DocumentItem.of(signedContainerNested.dataFiles(), false));
+    }
+
+    private void createAsicsTimestampView(ImmutableList.Builder<Item> builder, SignedContainer container) {
+        builder.add(SubheadItem.create(TIMESTAMP, false));
+        builder.addAll(TimestampItem.of(container.signatures()));
+    }
+
+    private void createAsicsSignatureView(ImmutableList.Builder<Item> builder, SignedContainer signedContainerNested) {
+        builder.add(SubheadItem.create(SIGNATURE, true));
+        builder.addAll(SignatureItem.of(signedContainerNested.signatures(), false,
+                Files.getFileExtension(signedContainerNested.file().getName()).equalsIgnoreCase("ddoc")));
     }
 
     Observable<Object> scrollToTop() {
@@ -200,6 +257,8 @@ final class SignatureUpdateAdapter extends
                     return new SignaturesEmptyViewHolder(itemView);
                 case R.layout.signature_update_list_item_documents_add_button:
                     return new DocumentsAddButtonViewHolder(itemView);
+                case R.layout.signature_update_list_item_timestamp:
+                        return new TimestampViewHolder(itemView);
                 default:
                     throw new IllegalArgumentException("Unknown view type " + viewType);
             }
@@ -470,6 +529,71 @@ final class SignatureUpdateAdapter extends
         }
     }
 
+    static final class TimestampViewHolder extends UpdateViewHolder<TimestampItem> {
+
+        private final Formatter formatter;
+
+        private final ColorStateList colorValid;
+        private final ColorStateList colorInvalid;
+
+        private final TextView nameView;
+        private final TextView statusView;
+        private final TextView statusCautionView;
+        private final TextView createdAtView;
+
+        private final Activity activityContext = (Activity)Activity.getContext().get();
+
+        TimestampViewHolder(View itemView) {
+            super(itemView);
+            formatter = Application.component(itemView.getContext()).formatter();
+            Resources resources = itemView.getResources();
+            colorValid = ColorStateList.valueOf(getColor(resources, R.color.success, null));
+            colorInvalid = ColorStateList.valueOf(getColor(resources, R.color.error, null));
+            nameView = itemView.findViewById(R.id.signatureUpdateListSignatureName);
+            statusView = itemView.findViewById(R.id.signatureUpdateListSignatureStatus);
+            statusCautionView = itemView
+                    .findViewById(R.id.signatureUpdateListSignatureStatusCaution);
+            createdAtView = itemView.findViewById(R.id.signatureUpdateListSignatureCreatedAt);
+        }
+
+        @Override
+        void bind(SignatureUpdateAdapter adapter, TimestampItem item) {
+            clicks(itemView).map(ignored ->
+                    ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
+                    .subscribe(adapter.signatureClicksSubject);
+            nameView.setText(item.signature().name());
+            switch (item.signature().status()) {
+                case INVALID:
+                    statusView.setText(R.string.signature_update_timestamp_status_invalid);
+                    break;
+                case UNKNOWN:
+                    statusView.setText(R.string.signature_update_timestamp_status_unknown);
+                    break;
+                default:
+                    statusView.setText(R.string.signature_update_timestamp_status_valid);
+                    break;
+            }
+            statusView.setTextColor(item.signature().valid() ? colorValid : colorInvalid);
+            switch (item.signature().status()) {
+                case WARNING:
+                    statusCautionView.setVisibility(View.VISIBLE);
+                    statusCautionView.setText(R.string.signature_update_signature_status_warning);
+                    break;
+                case NON_QSCD:
+                    statusCautionView.setVisibility(View.VISIBLE);
+                    statusCautionView.setText(R.string.signature_update_signature_status_non_qscd);
+                    break;
+                default:
+                    statusCautionView.setVisibility(View.GONE);
+                    break;
+            }
+
+            createdAtView.setText(itemView.getResources().getString(
+                    R.string.signature_update_signature_created_at,
+                    formatter.instant(item.signature().createdAt())));
+        }
+    }
+
     static final class DocumentsAddButtonViewHolder extends
             UpdateViewHolder<DocumentsAddButtonItem> {
 
@@ -486,11 +610,12 @@ final class SignatureUpdateAdapter extends
         }
     }
 
-    @StringDef({DOCUMENT, SIGNATURE})
+    @StringDef({DOCUMENT, SIGNATURE, TIMESTAMP})
     @Retention(RetentionPolicy.SOURCE)
     @interface SubheadItemType {
         String DOCUMENT = "DOCUMENT";
         String SIGNATURE = "SIGNATURE";
+        String TIMESTAMP = "TIMESTAMP";
     }
 
     static abstract class Item {
@@ -557,6 +682,9 @@ final class SignatureUpdateAdapter extends
             if (subheadItemType.equals(DOCUMENT)) {
                 titleRes = R.string.signature_update_documents_title;
                 buttonRes = R.string.signature_update_documents_add_button_description;
+            } else if (subheadItemType.equals(TIMESTAMP)) {
+                titleRes = R.string.signature_update_signature_type_timestamp;
+                buttonRes = 0;
             } else {
                 titleRes = R.string.signature_update_signatures_title;
                 buttonRes = 0;
@@ -619,6 +747,25 @@ final class SignatureUpdateAdapter extends
         static SignaturesEmptyItem create() {
             return new AutoValue_SignatureUpdateAdapter_SignaturesEmptyItem(
                     R.layout.signature_update_list_item_signatures_empty);
+        }
+    }
+
+    @AutoValue
+    static abstract class TimestampItem extends Item {
+
+        abstract Signature signature();
+
+        static TimestampItem create(Signature signature) {
+            return new AutoValue_SignatureUpdateAdapter_TimestampItem(
+                    R.layout.signature_update_list_item_timestamp, signature);
+        }
+
+        static ImmutableList<TimestampItem> of(ImmutableList<Signature> signatures) {
+            ImmutableList.Builder<TimestampItem> builder = ImmutableList.builder();
+            for (Signature signature : signatures) {
+                builder.add(create(signature));
+            }
+            return builder.build();
         }
     }
 

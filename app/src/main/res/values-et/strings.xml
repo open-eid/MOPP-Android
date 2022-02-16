@@ -120,6 +120,11 @@
     <string name="signature_update_send_button">JAGA</string>
     <string name="signature_update_signature_add_button">ALLKIRJASTA</string>
 
+    <string name="signature_update_signature_type_timestamp">Ümbriku ajatemplid</string>
+    <string name="signature_update_timestamp_status_valid">Ajatempel on kehtiv</string>
+    <string name="signature_update_timestamp_status_invalid">Ajatempel ei ole kehtiv</string>
+    <string name="signature_update_timestamp_status_unknown">Ajatempel on teadmata</string>
+
     <string name="signature_update_signature_add_method">Allkirjastamise meetod</string>
     <string name="signature_update_signature_method_selected">allkirjastamise meetod valitud</string>
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toolbar;
 
 import com.bluelinelabs.conductor.Controller;
+import com.google.common.io.Files;
 
 import java.io.File;
 
@@ -24,6 +25,7 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.core.Observable;
 
 import static android.view.View.GONE;
@@ -70,9 +72,20 @@ public final class SignatureListScreen extends Controller implements Screen,
         return Observable.merge(adapter.itemClicks()
                 .map(Intent.ContainerOpenIntent::confirmation),
                 sivaConfirmationDialog.positiveButtonClicks()
-                    .map(ignored -> Intent.ContainerOpenIntent.open(sivaConfirmationContainerFile)),
+                    .map(ignored -> Intent.ContainerOpenIntent.open(sivaConfirmationContainerFile, true)),
                 sivaConfirmationDialog.cancels()
-                    .map(ignored -> Intent.ContainerOpenIntent.cancel()));
+                        .map(ignored -> {
+                            if (sivaConfirmationContainerFile != null &&
+                                    SignedContainer.isContainer(sivaConfirmationContainerFile) &&
+                                    SignedContainer.isAsicsFile(sivaConfirmationContainerFile.getName())) {
+                                SignedContainer signedContainer = SignedContainer.open(sivaConfirmationContainerFile);
+                                if (signedContainer.dataFiles().size() == 1 &&
+                                        Files.getFileExtension(signedContainer.dataFiles().get(0).name()).equalsIgnoreCase("ddoc")) {
+                                    return Intent.ContainerOpenIntent.open(sivaConfirmationContainerFile, false);
+                                }
+                            }
+                            return Intent.ContainerOpenIntent.cancel();
+                        }));
     }
 
     private Observable<Intent.ContainerRemoveIntent> containerRemoveIntent() {

@@ -120,6 +120,11 @@
     <string name="signature_update_send_button">ПОДЕЛИТЬСЯ</string>
     <string name="signature_update_signature_add_button">ПОДПИСАТЬ</string>
 
+    <string name="signature_update_signature_type_timestamp">Временные штампы контейнерa</string>
+    <string name="signature_update_timestamp_status_valid">Временной штамп действителен</string>
+    <string name="signature_update_timestamp_status_invalid">Временной штамп недействителен</string>
+    <string name="signature_update_timestamp_status_unknown">Временной штамп неизвестный</string>
+
     <string name="signature_update_signature_add_method">Метод подписи</string>
     <string name="signature_update_signature_method_selected">выбран метод подписи</string>
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>

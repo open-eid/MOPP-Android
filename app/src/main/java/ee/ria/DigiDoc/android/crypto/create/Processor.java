@@ -306,7 +306,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 return Transaction.push(CryptoCreateScreen.open(file));
                             } else if (SignedContainer.isContainer(file)) {
                                 return Transaction.push(
-                                        SignatureUpdateScreen.create(true, true, file, false, false));
+                                        SignatureUpdateScreen.create(true, true, file, false, false, null, true));
                             } else {
                                 return Transaction.activity(
                                         createViewIntent(application, file, mimeType(file)), null);

@@ -120,6 +120,11 @@
     <string name="signature_update_send_button">SHARE</string>
     <string name="signature_update_signature_add_button">SIGN</string>
 
+    <string name="signature_update_signature_type_timestamp">Container timestamps</string>
+    <string name="signature_update_timestamp_status_valid">Timestamp is valid</string>
+    <string name="signature_update_timestamp_status_invalid">Timestamp is not valid</string>
+    <string name="signature_update_timestamp_status_unknown">Timestamp is unknown</string>
+
     <string name="signature_update_signature_add_method">Signing method</string>
     <string name="signature_update_signature_method_selected">signing method selected</string>
     <string name="signature_update_signature_add_method_mobile_id">Mobile-ID</string>

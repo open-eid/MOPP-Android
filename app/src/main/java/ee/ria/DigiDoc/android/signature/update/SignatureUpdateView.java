@@ -81,6 +81,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private ImmutableList<DataFile> dataFiles = ImmutableList.of();
     private final boolean signatureAddVisible;
     private final boolean signatureAddSuccessMessageVisible;
+    @Nullable private final File nestedFile;
+    private final boolean isSivaConfirmed;
 
     private final Toolbar toolbarView;
     private final NameUpdateDialog nameUpdateDialog;
@@ -133,7 +135,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     public SignatureUpdateView(Context context, String screenId, boolean isExistingContainer,
                                boolean isNestedContainer, File containerFile,
                                boolean signatureAddVisible,
-                               boolean signatureAddSuccessMessageVisible) {
+                               boolean signatureAddSuccessMessageVisible,
+                               @Nullable File nestedFile,
+                               boolean isSivaConfirmed) {
         super(context);
 
         this.isExistingContainer = isExistingContainer;
@@ -141,6 +145,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         this.containerFile = containerFile;
         this.signatureAddVisible = signatureAddVisible;
         this.signatureAddSuccessMessageVisible = signatureAddSuccessMessageVisible;
+        this.nestedFile = nestedFile;
+        this.isSivaConfirmed = isSivaConfirmed;
 
         navigator = Application.component(context).navigator();
         viewModel = navigator.viewModel(screenId, SignatureUpdateViewModel.class);
@@ -267,7 +273,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 || state.documentRemoveInProgress() || state.signatureRemoveInProgress()
                 || state.signatureAddActivity());
         adapter.setData(state.signatureAddSuccessMessageVisible(), isExistingContainer,
-                isNestedContainer, state.container());
+                isNestedContainer, state.container(), nestedFile, isSivaConfirmed);
 
         if (state.signatureAddSuccessMessageVisible()) {
             showSuccessNotification();
@@ -449,9 +455,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private Observable<Intent.DocumentViewIntent> documentViewIntent() {
         return Observable.mergeArray(adapter.documentClicks()
-                .map(document -> Intent.DocumentViewIntent.confirmation(containerFile, document)),
+                .map(document -> Intent.DocumentViewIntent.confirmation((nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, document)),
                         sivaConfirmationDialog.positiveButtonClicks()
-                                .map(ignored -> Intent.DocumentViewIntent.open(containerFile, sivaConfirmation)),
+                                .map(ignored -> Intent.DocumentViewIntent.open((nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, sivaConfirmation)),
                         sivaConfirmationDialog.cancels()
                                 .map(ignored -> Intent.DocumentViewIntent.cancel()));
     }
