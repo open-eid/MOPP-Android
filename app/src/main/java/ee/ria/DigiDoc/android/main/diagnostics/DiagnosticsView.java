@@ -1,19 +1,28 @@
 package ee.ria.DigiDoc.android.main.diagnostics;
 
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileSaveClicksSubject;
+
 import android.content.Context;
 import android.os.Build;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
+import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -21,8 +30,8 @@ import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.utils.TSLException;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.utils.TSLException;
 import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -40,8 +49,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import timber.log.Timber;
 
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-
 public final class DiagnosticsView extends CoordinatorLayout {
 
     private final SimpleDateFormat dateFormat;
@@ -53,12 +60,19 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
     private Disposable tslVersionDisposable;
 
+    private final ArrayList<TextView> textViews = new ArrayList<>();
+
+    private final String DIAGNOSTICS_FILE_NAME = "ria_digidoc_" + getAppVersion() + "_diagnostics.txt";
+    private final String DIAGNOSTICS_FILE_PATH = getContext().getFilesDir().getPath()
+            + File.separator + "diagnostics" + File.separator;
+
     public DiagnosticsView(Context context) {
         super(context);
         dateFormat = ConfigurationDateUtil.getDateFormat();
         inflate(context, R.layout.main_diagnostics, this);
         AccessibilityUtils.setAccessibilityPaneTitle(this, R.string.main_diagnostics_title);
         toolbarView = findViewById(R.id.toolbar);
+        View saveDiagnosticsButton = findViewById(R.id.configurationSaveButton);
         navigator = Application.component(context).navigator();
 
         ConfigurationProvider configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
@@ -69,6 +83,11 @@ public final class DiagnosticsView extends CoordinatorLayout {
         toolbarView.setNavigationContentDescription(R.string.back);
 
         findViewById(R.id.configurationUpdateButton).setOnClickListener(view -> updateConfiguration());
+
+        clicks(saveDiagnosticsButton).map(ignored ->
+                (saveDiagnostics()))
+                .subscribe(diagnosticsFileSaveClicksSubject);
+
         setData(configurationProvider);
     }
 
@@ -98,6 +117,93 @@ public final class DiagnosticsView extends CoordinatorLayout {
             messageResId = R.string.configuration_is_already_up_to_date;
         }
         AccessibilityUtils.sendAccessibilityEvent(getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, messageResId);
+    }
+
+    private File saveDiagnostics() throws IOException {
+        getAllTextViews(this);
+
+        File root = new File(DIAGNOSTICS_FILE_PATH);
+        if (!root.exists()) {
+            boolean isDirectoryCreated = root.mkdirs();
+            if (!isDirectoryCreated) {
+                Timber.log(Log.ERROR, "Unable to create directory for diagnostics files");
+            }
+        }
+
+        File diagnosticsFileLocation = new File(DIAGNOSTICS_FILE_PATH + DIAGNOSTICS_FILE_NAME);
+        try (FileWriter fileWriter = new FileWriter(diagnosticsFileLocation)) {
+            fileWriter.append(formatDiagnosticsText(textViews));
+            fileWriter.flush();
+            return diagnosticsFileLocation;
+        } catch (IOException ex) {
+            Timber.log(Log.ERROR, ex, "Unable to get diagnostics file location");
+            throw ex;
+        } finally {
+            textViews.clear();
+        }
+
+    }
+
+    private void getAllTextViews(View view) {
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                final View child = ((ViewGroup) view).getChildAt(i);
+                if (child instanceof TextView) {
+                    textViews.add((TextView) child);
+                } else {
+                    getAllTextViews(child);
+                }
+            }
+        }
+    }
+
+    private String formatDiagnosticsText(ArrayList<TextView> textViews) {
+        StringBuilder diagnosticsText = new StringBuilder();
+
+        for (int i = 0; i < textViews.size(); i++) {
+            TextView textView = textViews.get(i);
+            String text = textView.getText().toString();
+            if (!isTitleOrButtonText(text)) {
+                if (isCategoryLabel(text)) {
+                    diagnosticsText.append("\n\n").append(text).append("\n");
+                } else {
+                    if (!isTSLFile(text) && textView.getId() == -1) {
+                        diagnosticsText.append(text);
+                    } else {
+                        diagnosticsText.append(text).append("\n");
+                    }
+                }
+            }
+        }
+
+        return diagnosticsText.toString();
+    }
+
+    private boolean isTitleOrButtonText(String text) {
+        return text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_title)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_configuration_check_for_update_button)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_configuration_save_diagnostics_button));
+    }
+
+    private boolean isCategoryLabel(String text) {
+        return text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_libraries_title)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_urls_title)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_central_configuration_title)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_tsl_cache_title));
+    }
+
+    private boolean isTSLFile(String text) {
+        String diagnosticFileName = text.split(" ")[0];
+        if (diagnosticFileName.contains(".xml")) {
+            File tslCacheDir = new File(getContext().getApplicationContext().getCacheDir().getAbsolutePath() + "/schema");
+            File[] tslFiles = tslCacheDir.listFiles((directory, fileName) -> fileName.endsWith(".xml"));
+            if (tslFiles != null) {
+                Object[] fileNames = Arrays.stream(Arrays.stream(tslFiles)
+                        .filter(File::isFile).map(File::getName).toArray(String[]::new)).toArray();
+                return Arrays.asList(fileNames).contains(diagnosticFileName);
+            }
+        }
+         return false;
     }
 
     private void updateConfiguration() {

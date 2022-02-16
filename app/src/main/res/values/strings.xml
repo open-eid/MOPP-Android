@@ -52,6 +52,7 @@
     <string name="main_diagnostics_configuration_update_date">UPDATE DATE:\u0020</string>
     <string name="main_diagnostics_configuration_last_check_date">LAST CHECK:\u0020</string>
     <string name="main_diagnostics_configuration_check_for_update_button">REFRESH CONFIGURATION</string>
+    <string name="main_diagnostics_configuration_save_diagnostics_button">SAVE DIAGNOSTICS</string>
     <string name="main_diagnostics_rpuuid_default">is set by default</string>
     <string name="main_diagnostics_rpuuid_custom">is set manually</string>
 
@@ -419,6 +420,7 @@
     <string name="file_removed">File removed</string>
     <string name="file_removal_cancelled">File removal cancelled</string>
     <string name="file_saved">File saved</string>
+    <string name="file_saved_error">Failed to save file</string>
     <string name="document_removed">Document removed</string>
     <string name="document_removal_cancelled">Document removal cancelled</string>
     <string name="file_added">File added</string>
