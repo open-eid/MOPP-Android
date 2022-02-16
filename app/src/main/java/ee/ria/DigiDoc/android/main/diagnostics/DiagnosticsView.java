@@ -2,18 +2,20 @@ package ee.ria.DigiDoc.android.main.diagnostics;
 
 import android.content.Context;
 import android.os.Build;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -21,8 +23,8 @@ import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.utils.TSLException;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.utils.TSLException;
 import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -196,6 +198,9 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
         File tslCacheDir = new File(getContext().getApplicationContext().getCacheDir().getAbsolutePath() + "/schema");
         File[] tslFiles = tslCacheDir.listFiles((directory, fileName) -> fileName.endsWith(".xml"));
+
+        getDisplayedNonExistentTSLCacheFiles(tslCacheLayout).forEach(tslCacheLayout::removeViewInLayout);
+
         if (tslFiles != null && tslFiles.length > 0) {
             Arrays.sort(tslFiles, (f1, f2) -> f1.getName().compareToIgnoreCase(f2.getName()));
             for (File tslFile : tslFiles) {
@@ -212,7 +217,19 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 }
             }
         }
+    }
 
+    private ArrayList<View> getDisplayedNonExistentTSLCacheFiles(LinearLayout tslCacheLayout) {
+        ArrayList<View> removeViews = new ArrayList<>();
+        for (int i = 0; i < tslCacheLayout.getChildCount(); i++) {
+            View tslCacheLayoutChild = tslCacheLayout.getChildAt(i);
+            String fileName = ((TextView)tslCacheLayoutChild).getText().toString();
+            String tslCacheTitle = getResources().getString(R.string.main_diagnostics_tsl_cache_title);
+            if (!fileName.equals(tslCacheTitle)) {
+                removeViews.add(tslCacheLayoutChild);
+            }
+        }
+        return removeViews;
     }
 
     private String displayDate(Date date) {
