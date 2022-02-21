@@ -90,6 +90,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private CryptoCreateAdapter adapter;
     private View activityOverlayView;
     private View activityIndicatorView;
+    private RecyclerView listView;
     private TextView encryptButton;
     private TextView decryptButton;
     private TextView sendButton;
@@ -265,7 +266,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         adapter.dataForContainer(name, containerFile, dataFiles, state.dataFilesViewEnabled(),
                 state.dataFilesAddEnabled(), state.dataFilesRemoveEnabled(), recipients,
                 state.recipientsAddEnabled(), state.recipientsRemoveEnabled(),
-                state.encryptSuccessMessageVisible(), state.decryptSuccessMessageVisible());
+                state.encryptSuccessMessageVisible(), state.decryptSuccessMessageVisible(), listView);
 
         if (state.encryptSuccessMessageVisible()) {
             showSuccessNotification();
@@ -385,7 +386,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 R.string.crypto_create_remove_data_file_confirmation_message, R.id.documentRemovalDialog);
         sivaConfirmationDialog = new ConfirmationDialog(Activity.getContext().get(),
                 R.string.siva_send_message_dialog, R.id.sivaConfirmationDialog);
-        RecyclerView listView = view.findViewById(R.id.cryptoCreateList);
+        listView = view.findViewById(R.id.cryptoCreateList);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         encryptButton = view.findViewById(R.id.cryptoCreateEncryptButton);
