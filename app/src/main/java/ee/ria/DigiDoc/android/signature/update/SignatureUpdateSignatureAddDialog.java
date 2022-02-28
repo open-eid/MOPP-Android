@@ -28,6 +28,7 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
 
     private final SignatureUpdateSignatureAddView view;
     private final ObservableDialogClickListener positiveButtonClicks;
+    private double windowWidth;
 
     private final ViewDisposables disposables = new ViewDisposables();
 
@@ -69,10 +70,17 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                     WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
+            // Prevent Dialog width change with every click / screen orientation
             view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    window.setLayout(view.getMeasuredWidth(), WRAP_CONTENT);
+                    boolean isPortraitOrientation = view.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+                    if (windowWidth == 0 && isPortraitOrientation) {
+                        windowWidth = view.getMeasuredWidth() * 1.2;
+                    } else if (windowWidth == 0) {
+                        windowWidth = view.getMeasuredWidth();
+                    }
+                    window.setLayout((int) windowWidth, WRAP_CONTENT);
                     view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
             });
