@@ -1,12 +1,9 @@
 package ee.ria.DigiDoc.android.signature.update;
 
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
-import android.view.ViewTreeObserver;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
@@ -22,13 +19,15 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.ObservableDialogClickListener;
 import io.reactivex.rxjava3.core.Observable;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static ee.ria.DigiDoc.android.Constants.VOID;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceWidth;
 
 public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
 
     private final SignatureUpdateSignatureAddView view;
     private final ObservableDialogClickListener positiveButtonClicks;
-    private double windowWidth;
+    private View.OnLayoutChangeListener layoutChangeListener;
 
     private final ViewDisposables disposables = new ViewDisposables();
 
@@ -69,21 +68,8 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
             // https://stackoverflow.com/questions/9102074/android-edittext-in-dialog-doesnt-pull-up-soft-keyboard
             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                     WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-
-            // Prevent Dialog width change with every click / screen orientation
-            view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    boolean isPortraitOrientation = view.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-                    if (windowWidth == 0 && isPortraitOrientation) {
-                        windowWidth = view.getMeasuredWidth() * 1.2;
-                    } else if (windowWidth == 0) {
-                        windowWidth = view.getMeasuredWidth();
-                    }
-                    window.setLayout((int) windowWidth, WRAP_CONTENT);
-                    view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
-            });
+            setCustomLayoutChangeListener(window);
+            view.addOnLayoutChangeListener(getCustomLayoutChangeListener());
         }
     }
 
@@ -102,6 +88,29 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
     @Override
     public void onDetachedFromWindow() {
         disposables.detach();
+        removeListeners();
         super.onDetachedFromWindow();
+    }
+
+    // Prevent Dialog width change when rotating screen
+    private void setCustomLayoutChangeListener(Window window) {
+        layoutChangeListener = (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            int orientation = getContext().getResources().getConfiguration().orientation;
+            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                window.setLayout((int) (getDeviceWidth() * 0.9), WRAP_CONTENT);
+            } else {
+                window.setLayout((int) (getDeviceWidth() * 0.8), WRAP_CONTENT);
+            }
+        };
+    }
+
+    private View.OnLayoutChangeListener getCustomLayoutChangeListener() {
+        return layoutChangeListener;
+    }
+
+    private void removeListeners() {
+        if (layoutChangeListener == null) { return; }
+        view.removeOnLayoutChangeListener(layoutChangeListener);
+        layoutChangeListener = null;
     }
 }

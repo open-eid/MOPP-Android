@@ -13,4 +13,8 @@ public class DisplayUtil {
     public static int getDisplayMetricsDpToInt(DisplayMetrics displayMetrics, int px) {
         return (int) (px * displayMetrics.density + 0.5f);
     }
+
+    public static int getDeviceWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
 }
