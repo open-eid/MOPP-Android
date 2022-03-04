@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
@@ -60,8 +61,6 @@ public final class DiagnosticsView extends CoordinatorLayout {
     private final ViewDisposables disposables;
 
     private Disposable tslVersionDisposable;
-
-    private final ArrayList<TextView> textViews = new ArrayList<>();
 
     private final String DIAGNOSTICS_FILE_NAME = "ria_digidoc_" + getAppVersion() + "_diagnostics.txt";
     private final String DIAGNOSTICS_FILE_PATH = getContext().getFilesDir().getPath()
@@ -121,7 +120,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
     }
 
     private File saveDiagnostics() throws IOException {
-        getAllTextViews(this);
+        List<TextView> textViews = new ArrayList<>();
+        findAllTextViews(this, textViews);
 
         File root = new File(DIAGNOSTICS_FILE_PATH);
         if (!root.exists()) {
@@ -147,21 +147,21 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
     }
 
-    private void getAllTextViews(View view) {
+    private static void findAllTextViews(View view, List<TextView> textViews) {
         if (view instanceof ViewGroup) {
-            ViewGroup viewGroup = (ViewGroup) view;
+            final ViewGroup viewGroup = (ViewGroup) view;
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 final View child = viewGroup.getChildAt(i);
                 if (child instanceof TextView) {
                     textViews.add((TextView) child);
                 } else {
-                    getAllTextViews(child);
+                    findAllTextViews(child, textViews);
                 }
             }
         }
     }
 
-    private String formatDiagnosticsText(ArrayList<TextView> textViews) {
+    private String formatDiagnosticsText(List<TextView> textViews) {
         StringBuilder diagnosticsText = new StringBuilder();
 
         for (int i = 0; i < textViews.size(); i++) {
