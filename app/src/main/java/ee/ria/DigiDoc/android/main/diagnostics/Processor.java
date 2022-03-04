@@ -83,7 +83,6 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         });
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public @NonNull ObservableSource<Result> apply(@NonNull Observable<Intent> upstream) {
         return upstream.publish(shared -> Observable.mergeArray(

@@ -74,7 +74,6 @@ public final class DiagnosticsScreen extends ConductorScreen implements Screen, 
                 .map(Intent.DiagnosticsSaveIntent::create);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), diagnosticsFileSaveIntent());

@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.NoSuchFileException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -127,6 +128,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
             boolean isDirectoryCreated = root.mkdirs();
             if (!isDirectoryCreated) {
                 Timber.log(Log.ERROR, "Unable to create directory for diagnostics files");
+                throw new NoSuchFileException(root.getAbsolutePath(), null,
+                        "Unable to create directory for diagnostics files");
             }
         }
 
@@ -146,8 +149,9 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
     private void getAllTextViews(View view) {
         if (view instanceof ViewGroup) {
-            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-                final View child = ((ViewGroup) view).getChildAt(i);
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                final View child = viewGroup.getChildAt(i);
                 if (child instanceof TextView) {
                     textViews.add((TextView) child);
                 } else {
