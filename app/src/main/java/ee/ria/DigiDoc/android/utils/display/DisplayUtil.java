@@ -1,11 +1,15 @@
 package ee.ria.DigiDoc.android.utils.display;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 public class DisplayUtil {
 
@@ -38,10 +42,16 @@ public class DisplayUtil {
     }
 
     public static int getDeviceLayoutWidth(Context context) {
-        if (getDeviceOrientation(context) == Configuration.ORIENTATION_PORTRAIT) {
-            return getDialogPortraitWidth();
-        } else {
-            return getDialogLandscapeWidth();
-        }
+        return getDeviceOrientation(context) == Configuration.ORIENTATION_PORTRAIT ?
+                getDialogPortraitWidth() : getDialogLandscapeWidth();
+    }
+
+    public static Dialog setCustomDialogSettings(Dialog dialog) {
+        WindowManager.LayoutParams layoutAttributes = dialog.getWindow().getAttributes();
+        dialog.getWindow().setSoftInputMode(SOFT_INPUT_ADJUST_PAN);
+        dialog.getWindow().setAttributes(layoutAttributes);
+        dialog.getWindow().setLayout(WRAP_CONTENT, MATCH_PARENT);
+        return dialog;
+
     }
 }

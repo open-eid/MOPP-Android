@@ -37,6 +37,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.TextUtil;
+import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 
 public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
 
@@ -89,7 +90,7 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        Dialog dialog = DisplayUtil.setCustomDialogSettings(super.onCreateDialog(savedInstanceState));
         SecureUtil.markAsSecure(dialog.getWindow());
         return dialog;
     }
