@@ -77,6 +77,7 @@
     <item type="id" name="mainDiagnosticsCentralConfigurationLastCheck" />
     <item type="id" name="mainDiagnosticsCentralConfigurationUpdateDate" />
     <item type="id" name="configurationUpdateButton" />
+    <item type="id" name="configurationSaveButton" />
 
     <!-- Signature Home -->
     <item type="id" name="signatureHomeCreateButton" />
