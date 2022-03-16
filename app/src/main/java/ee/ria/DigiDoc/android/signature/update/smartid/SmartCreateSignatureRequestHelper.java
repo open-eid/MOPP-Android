@@ -46,7 +46,10 @@ final class SmartCreateSignatureRequestHelper {
 
         request.setContainerPath(container.file().getPath());
         request.setHashType(DIGEST_TYPE);
-        request.setDisplayText(MessageUtil.trimDisplayMessageIfNotWithinSizeLimit(displayMessage, MAX_DISPLAY_MESSAGE_BYTES, StandardCharsets.UTF_8));
+        request.setDisplayText(MessageUtil.escape(
+                MessageUtil.trimDisplayMessageIfNotWithinSizeLimit(
+                        displayMessage, MAX_DISPLAY_MESSAGE_BYTES, StandardCharsets.UTF_8
+                )));
         return request;
     }
 }

@@ -49,6 +49,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.TrustManager;
 
 import ee.ria.DigiDoc.common.ContainerWrapper;
+import ee.ria.DigiDoc.common.MessageUtil;
 import ee.ria.DigiDoc.common.TrustManagerUtil;
 import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
@@ -265,7 +266,9 @@ public class MobileSignService extends IntentService {
         PostMobileCreateSignatureSessionRequest sessionRequest = getSessionRequest(request);
         sessionRequest.setHash(hash);
 
-        Call<MobileCreateSignatureSessionResponse> call = midRestServiceClient.getMobileCreateSession(sessionRequest);
+        String requestString = MessageUtil.toJsonString(sessionRequest);
+
+        Call<MobileCreateSignatureSessionResponse> call = midRestServiceClient.getMobileCreateSession(requestString);
 
         MobileCreateSignatureSessionResponse sessionResponse;
 

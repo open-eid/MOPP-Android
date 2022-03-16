@@ -29,6 +29,7 @@ final class MobileCreateSignatureRequestHelper {
     private static final String RELYING_PARTY_NAME = "RIA DigiDoc";
     private static final String RELYING_PARTY_UUID = "00000000-0000-0000-0000-000000000000";
     private static final String DISPLAY_TEXT_FORMAT = "GSM-7";
+    private static final String ALTERNATIVE_DISPLAY_TEXT_FORMAT = "UCS-2";
 
     static MobileCreateSignatureRequest create(SignedContainer container, String uuid, String proxyUrl,
                                                String skUrl, String personalCode,
@@ -42,9 +43,14 @@ final class MobileCreateSignatureRequestHelper {
 
         request.setContainerPath(container.file().getPath());
         request.setHashType(DIGEST_TYPE);
-        request.setLanguage(getLanguage());
-        request.setDisplayText(MessageUtil.trimDisplayMessageIfNotWithinSizeLimit(displayMessage, MAX_DISPLAY_MESSAGE_BYTES, MessageUtil.getGSM7Charset()));
-        request.setDisplayTextFormat(DISPLAY_TEXT_FORMAT);
+        String language = getLanguage();
+        request.setLanguage(language);
+        request.setDisplayText(MessageUtil.escape(
+                MessageUtil.trimDisplayMessageIfNotWithinSizeLimit(
+                        displayMessage, MAX_DISPLAY_MESSAGE_BYTES,
+                        language.equals("RUS") ? MessageUtil.UCS2_CHARSET : MessageUtil.GSM_CHARSET
+                )));
+        request.setDisplayTextFormat(language.equals("RUS") ? ALTERNATIVE_DISPLAY_TEXT_FORMAT : DISPLAY_TEXT_FORMAT);
         return request;
     }
 
