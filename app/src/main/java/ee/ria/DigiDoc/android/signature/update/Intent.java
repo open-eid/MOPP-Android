@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.util.Locale;
 
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.android.utils.SivaUtil;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 import ee.ria.DigiDoc.sign.DataFile;
@@ -193,6 +194,16 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
+    abstract class SignatureRoleViewIntent implements Intent {
+
+        abstract Signature signature();
+
+        static SignatureRoleViewIntent create(Signature signature) {
+            return new AutoValue_Intent_SignatureRoleViewIntent(signature);
+        }
+    }
+
+    @AutoValue
     abstract class SignatureAddIntent implements Intent {
 
         @Nullable abstract Integer method();
@@ -205,26 +216,32 @@ interface Intent extends MviIntent {
 
         abstract boolean isCancelled();
 
-        static SignatureAddIntent show(int method, boolean existingContainer, File containerFile) {
-            return create(method, existingContainer, containerFile, null, false);
+        @Nullable abstract Boolean showRoleAddingView();
+
+        @Nullable abstract RoleData roleData();
+
+        static SignatureAddIntent show(int method, boolean existingContainer, File containerFile, boolean showRoleAddingView) {
+            return create(method, existingContainer, containerFile, null, false, showRoleAddingView, null);
         }
 
         static SignatureAddIntent sign(int method, boolean existingContainer, File containerFile,
-                                       SignatureAddRequest request) {
-            return create(method, existingContainer, containerFile, request, false);
+                                       SignatureAddRequest request, RoleData roleData) {
+            return create(method, existingContainer, containerFile, request, false, null, roleData);
         }
 
         static SignatureAddIntent clear() {
-            return create(null, null, null, null, true);
+            return create(null, null, null, null, true, null, null);
         }
 
         private static SignatureAddIntent create(@Nullable Integer method,
                                                  @Nullable Boolean existingContainer,
                                                  @Nullable File containerFile,
                                                  @Nullable SignatureAddRequest request,
-                                                 boolean isCancelled) {
+                                                 boolean isCancelled,
+                                                 @Nullable Boolean showRoleAddingView,
+                                                 @Nullable RoleData roleData) {
             return new AutoValue_Intent_SignatureAddIntent(method, existingContainer, containerFile,
-                    request, isCancelled);
+                    request, isCancelled, showRoleAddingView, roleData);
         }
     }
 

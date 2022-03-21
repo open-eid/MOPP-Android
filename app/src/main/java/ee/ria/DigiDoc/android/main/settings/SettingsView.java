@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.main.settings;
 
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -18,8 +20,6 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
-
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
 public final class SettingsView extends CoordinatorLayout {
 
@@ -54,7 +54,16 @@ public final class SettingsView extends CoordinatorLayout {
             toolbarTitleView.setContentDescription("\u202F");
         }
 
-        Activity activityContext = (Activity) this.getContext();
+        Activity activityContext = (Activity) navigator.activity();
+
+        SwitchCompat askRoleAndAddressSwitch = findViewById(R.id.mainSettingsAskRoleAndAddress);
+        if (askRoleAndAddressSwitch != null && activityContext != null) {
+            askRoleAndAddressSwitch.setChecked(activityContext.getSettingsDataStore().getIsRoleAskingEnabled());
+
+            askRoleAndAddressSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
+                    activityContext.getSettingsDataStore().setIsRoleAskingEnabled(isChecked));
+        }
+
         SwitchCompat openAllFileTypesSwitch = findViewById(R.id.mainSettingsOpenAllFileTypes);
         if (openAllFileTypesSwitch != null && activityContext != null) {
             openAllFileTypesSwitch.setChecked(activityContext.getSettingsDataStore().getIsOpenAllFileTypesEnabled());

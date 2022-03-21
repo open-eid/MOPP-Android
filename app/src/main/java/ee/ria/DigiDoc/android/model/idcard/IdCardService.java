@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.crypto.CryptoException;
 import ee.ria.DigiDoc.crypto.DecryptToken;
@@ -30,6 +31,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import okio.ByteString;
 
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
+
+import androidx.annotation.Nullable;
 
 @Singleton
 public final class IdCardService {
@@ -64,14 +67,15 @@ public final class IdCardService {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Single<SignedContainer> sign(Token token, SignedContainer container, String pin2) {
+    public Single<SignedContainer> sign(Token token, SignedContainer container,
+                                        String pin2, @Nullable RoleData roleData) {
         return Single
                 .fromCallable(() -> {
                     IdCardData data = data(token);
                     return container.sign(data.signCertificate().data(),
                             signData -> ByteString.of(token.calculateSignature(pin2.getBytes(StandardCharsets.US_ASCII),
                                     signData.toByteArray(),
-                                    data.signCertificate().ellipticCurve())));
+                                    data.signCertificate().ellipticCurve())), roleData);
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

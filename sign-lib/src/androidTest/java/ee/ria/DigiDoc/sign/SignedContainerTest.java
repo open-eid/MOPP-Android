@@ -1,7 +1,12 @@
 package ee.ria.DigiDoc.sign;
 
+import static com.google.common.io.Files.getFileExtension;
+import static com.google.common.io.Files.getNameWithoutExtension;
+import static ee.ria.DigiDoc.sign.SignedContainerSubject.assertThat;
+
 import android.content.Context;
 import android.content.res.AssetManager;
+
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.google.common.collect.ImmutableList;
@@ -22,14 +27,10 @@ import ee.ria.DigiDoc.configuration.ConfigurationManager;
 import ee.ria.DigiDoc.configuration.ConfigurationProperties;
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 
-import static com.google.common.io.Files.getFileExtension;
-import static com.google.common.io.Files.getNameWithoutExtension;
-import static ee.ria.DigiDoc.sign.SignedContainerSubject.assertThat;
-
 public final class SignedContainerTest {
 
     static {
-        Context targetContext = InstrumentationRegistry.getTargetContext();
+        Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         ConfigurationProperties configurationProperties = new ConfigurationProperties(targetContext.getAssets());
         CachedConfigurationHandler cachedConfigurationHandler = new CachedConfigurationHandler(targetContext.getCacheDir());
         ConfigurationManager configurationManager = new ConfigurationManager(targetContext, configurationProperties, cachedConfigurationHandler, "SignedContainerTest-User-Agent");
@@ -41,10 +42,10 @@ public final class SignedContainerTest {
 
     @Rule public final ExpectedException exception = ExpectedException.none();
     @Rule public final TemporaryFolder folder =
-            new TemporaryFolder(InstrumentationRegistry.getContext().getCacheDir());
+            new TemporaryFolder(InstrumentationRegistry.getInstrumentation().getContext().getCacheDir());
 
     @Test public void open_matchesMetadata() throws Exception {
-        AssetManager assetManager = InstrumentationRegistry.getTargetContext().getAssets();
+        AssetManager assetManager = InstrumentationRegistry.getInstrumentation().getTargetContext().getAssets();
         for (String metadataFileName : assetManager.list(DIR)) {
             if (!getFileExtension(metadataFileName).equals(METADATA_EXTENSION)) {
                 continue;

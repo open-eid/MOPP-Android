@@ -3,6 +3,8 @@ package ee.ria.DigiDoc.android.signature.update;
 import static android.util.TypedValue.COMPLEX_UNIT_SP;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
 import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
@@ -64,9 +66,6 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
 
@@ -107,10 +106,13 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final ConfirmationDialog documentRemoveConfirmationDialog;
     private final ConfirmationDialog signatureRemoveConfirmationDialog;
     private final SignatureUpdateSignatureAddDialog signatureAddDialog;
+    private final RoleAddDialog roleAddDialog;
     private final SignatureUpdateSignatureAddView signatureAddView;
+    private final RoleAddView roleAddView;
 
     private final Navigator navigator;
     private final SignatureUpdateViewModel viewModel;
+    private final RoleViewModel roleViewModel;
     private final ViewDisposables disposables = new ViewDisposables();
 
     private final Activity activity = (Activity) getContext();
@@ -125,6 +127,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             PublishSubject.create();
     private final Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject =
             PublishSubject.create();
+    private final Subject<Intent.SignatureRoleViewIntent> signatureRoleDetailsIntentSubject =
+            PublishSubject.create();
     private final Subject<Intent.SignatureAddIntent> signatureAddIntentSubject =
             PublishSubject.create();
 
@@ -132,6 +136,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @Nullable private DataFile documentRemoveConfirmation;
     @Nullable private Signature signatureRemoveConfirmation;
 
+    private boolean isRoleViewShown = false;
     private boolean signingInfoDelegated = false;
     private final ProgressBar documentAddProgressBar;
     private final ProgressBar mobileIdProgressBar;
@@ -156,6 +161,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         navigator = Application.component(context).navigator();
         viewModel = navigator.viewModel(screenId, SignatureUpdateViewModel.class);
+        roleViewModel = navigator.viewModel(screenId, RoleViewModel.class);
 
         setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update, this);
@@ -194,9 +200,14 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         signatureAddView = signatureAddDialog.view();
         resetSignatureAddDialog();
 
+        roleAddDialog = new RoleAddDialog(context);
+        roleAddView = roleAddDialog.view();
+        resetRoleAddDialog();
+
         errorDialog = new SignatureUpdateErrorDialog(context, documentsAddIntentSubject,
                 documentRemoveIntentSubject, signatureAddIntentSubject,
-                signatureRemoveIntentSubject, signatureAddDialog, this);
+                signatureRoleDetailsIntentSubject, signatureRemoveIntentSubject,
+                signatureAddDialog, this);
 
         mobileIdProgressBar = (ProgressBar) mobileIdActivityIndicatorView;
         smartIdProgressBar = (ProgressBar) smartIdActivityIndicatorView;
@@ -259,7 +270,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), addDocumentsIntent(),
-                documentViewIntent(), documentSaveIntent(), documentRemoveIntent(), signatureRemoveIntent(),
+                documentViewIntent(), documentSaveIntent(), documentRemoveIntent(), 
+                signatureRoleViewIntent(), signatureRemoveIntent(),
                 signatureAddIntent(), signatureViewIntent(), sendIntent());
     }
 
@@ -385,7 +397,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         }
 
         Integer signatureAddMethod = state.signatureAddMethod();
-        if (signatureAddMethod == null) {
+        if (signatureAddMethod == null || isRoleViewShown) {
             signatureAddDialog.dismiss();
         } else {
             signatureAddDialog.show();
@@ -519,6 +531,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
         SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
         signatureAddView.reset(viewModel);
+        isRoleViewShown = false;
+    }
+
+    private void resetRoleAddDialog() {
+        roleAddView.reset(roleViewModel);
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
@@ -573,6 +590,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         return signatureRemoveIntentSubject;
     }
 
+    private Observable<Intent.SignatureRoleViewIntent> signatureRoleViewIntent() {
+        return signatureRoleDetailsIntentSubject;
+    }
+
     @SuppressWarnings("unchecked")
     private Observable<Intent.SignatureAddIntent> signatureAddIntent() {
         return Observable.mergeArray(
@@ -580,7 +601,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                         .doOnNext(ignored -> resetSignatureAddDialog())
                         .map(ignored -> {
                             int method = viewModel.signatureAddMethod();
-                            return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile);
+                            return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile,
+                                    activity.getSettingsDataStore().getIsRoleAskingEnabled() && !isRoleViewShown);
                         }),
                 cancels(signatureAddDialog)
                         .doOnNext(ignored -> resetSignatureAddDialog())
@@ -588,13 +610,32 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 signatureAddView.methodChanges().map(method -> {
                         viewModel.setSignatureAddMethod(method);
                         sendMethodSelectionAccessibilityEvent(method);
-                        return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile);
+                        return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile,
+                                activity.getSettingsDataStore().getIsRoleAskingEnabled() && !isRoleViewShown);
                 }),
                 signatureAddDialog.positiveButtonClicks().map(ignored -> {
                     SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
                     SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
+                    boolean isRoleAskingEnabled = activity.getSettingsDataStore().getIsRoleAskingEnabled();
+                    if (isRoleAskingEnabled) {
+                        roleAddDialog.show();
+                        return Intent.SignatureAddIntent.show(signatureAddView.method(),
+                                isExistingContainer, containerFile, true);
+                    }
                     return Intent.SignatureAddIntent.sign(signatureAddView.method(),
-                            isExistingContainer, containerFile, signatureAddView.request());
+                            isExistingContainer, containerFile, signatureAddView.request(),
+                            activity.getSettingsDataStore().getIsRoleAskingEnabled() ? roleAddView.request() : null);
+                }),
+                cancels(roleAddDialog)
+                    .doOnNext(ignored -> resetSignatureAddDialog())
+                    .map(ignored -> Intent.SignatureAddIntent.clear()),
+                roleAddDialog.positiveButtonClicks().map(ignored -> {
+                    isRoleViewShown = true;
+                    roleViewModel.setRoleData(roleAddView.request());
+                    roleAddDialog.dismiss();
+                    return Intent.SignatureAddIntent.sign(signatureAddView.method(),
+                            isExistingContainer, containerFile, signatureAddView.request(),
+                            activity.getSettingsDataStore().getIsRoleAskingEnabled() ? roleAddView.request() : null);
                 }),
                 signatureAddIntentSubject
         );
@@ -674,6 +715,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         disposables.add(adapter.signatureRemoveClicks().subscribe(signature ->
                 signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent
                         .showConfirmation(containerFile, signature))));
+        disposables.add(adapter.signatureRoleDetailsClicks().subscribe(signature ->
+                signatureRoleDetailsIntentSubject.onNext(Intent.SignatureRoleViewIntent
+                        .create(signature))));
         disposables.add(signatureRemoveConfirmationDialog.positiveButtonClicks()
                 .subscribe(ignored -> signatureRemoveIntentSubject
                         .onNext(Intent.SignatureRemoveIntent
@@ -698,6 +742,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         disposables.detach();
         signatureAddDialog.dismiss();
         sivaConfirmationDialog.dismiss();
+        roleAddDialog.dismiss();
         signatureRemoveConfirmationDialog.dismiss();
         documentRemoveConfirmationDialog.dismiss();
         errorDialog.setOnDismissListener(null);
@@ -706,6 +751,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         isTitleViewFocused = false;
         SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
         SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
+        isRoleViewShown = false;
         super.onDetachedFromWindow();
     }
 
@@ -714,6 +760,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         return ViewSavedState.onSaveInstanceState(super.onSaveInstanceState(), parcel -> {
             parcel.writeBundle(signatureAddDialog.onSaveInstanceState());
             parcel.writeBundle(nameUpdateDialog.onSaveInstanceState());
+            parcel.writeBundle(roleAddDialog.onSaveInstanceState());
         });
     }
 
@@ -723,6 +770,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             signatureAddDialog.onRestoreInstanceState(
                     parcel.readBundle(getClass().getClassLoader()));
             nameUpdateDialog.onRestoreInstanceState(parcel.readBundle(getClass().getClassLoader()));
+            roleAddDialog.onRestoreInstanceState(parcel.readBundle(getClass().getClassLoader()));
         }));
     }
 

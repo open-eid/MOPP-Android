@@ -18,6 +18,8 @@
  */
 package ee.ria.DigiDoc.common;
 
+import androidx.annotation.Nullable;
+
 import org.bouncycastle.util.encoders.Base64;
 
 import java.nio.charset.StandardCharsets;
@@ -25,6 +27,7 @@ import java.security.cert.CertificateException;
 
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.Signature;
+import ee.ria.libdigidocpp.StringVector;
 
 public class ContainerWrapper {
 
@@ -41,8 +44,14 @@ public class ContainerWrapper {
         return container;
     }
 
-    public String prepareSignature(String cert) throws CertificateException {
-        signature = container.prepareWebSignature(CertificateUtil.x509Certificate(cert).getEncoded(), SIGNATURE_PROFILE_TS);
+    public String prepareSignature(String cert, @Nullable RoleData roleData) throws CertificateException {
+        if (roleData != null) {
+            signature = container.prepareWebSignature(CertificateUtil.x509Certificate(cert).getEncoded(), SIGNATURE_PROFILE_TS,
+                    new StringVector(TextUtil.removeEmptyStrings(roleData.roles())), roleData.city(),
+                    roleData.state(), roleData.zip(), roleData.country());
+        } else {
+            signature = container.prepareWebSignature(CertificateUtil.x509Certificate(cert).getEncoded(), SIGNATURE_PROFILE_TS);
+        }
         if (signature != null) {
             byte[] dataToSignBytes = Base64.encode(signature.dataToSign());
             String dataToSign = new String(dataToSignBytes, StandardCharsets.UTF_8);

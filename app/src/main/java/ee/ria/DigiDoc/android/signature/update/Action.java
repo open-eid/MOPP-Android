@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.navigator.TransactionAction;
@@ -47,6 +48,16 @@ interface Action extends MviAction {
                     Transaction.activityForResult(RC_SIGNATURE_UPDATE_DOCUMENTS_ADD,
                             createGetContentIntent(), null),
                     containerFile);
+        }
+    }
+
+    @AutoValue
+    abstract class RoleDetailsAction implements Action {
+
+        abstract Signature signature();
+
+        static RoleDetailsAction create(Signature signature) {
+            return new AutoValue_Action_RoleDetailsAction(signature);
         }
     }
 
@@ -110,13 +121,19 @@ interface Action extends MviAction {
 
         abstract boolean isCancelled();
 
+        @Nullable abstract Boolean showRoleAddingView();
+
+        @Nullable abstract RoleData roleData();
+
         static SignatureAddAction create(@Nullable Integer method,
                                          @Nullable Boolean existingContainer,
                                          @Nullable File containerFile,
                                          @Nullable SignatureAddRequest request,
-                                         boolean isCancelled) {
+                                         boolean isCancelled,
+                                         @Nullable Boolean showRoleAddingView,
+                                         @Nullable RoleData roleData) {
             return new AutoValue_Action_SignatureAddAction(method, existingContainer, containerFile,
-                    request, isCancelled);
+                    request, isCancelled, showRoleAddingView, roleData);
         }
     }
 

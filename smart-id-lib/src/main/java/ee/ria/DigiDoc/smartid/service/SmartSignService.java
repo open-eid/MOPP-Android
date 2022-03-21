@@ -23,6 +23,7 @@ package ee.ria.DigiDoc.smartid.service;
 import static ee.ria.DigiDoc.common.SigningUtil.checkSigningCancelled;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_CHANNEL;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_PERMISSION_CODE;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SIGNING_ROLE_DATA;
 
 import android.Manifest;
 import android.app.IntentService;
@@ -52,6 +53,7 @@ import ee.ria.DigiDoc.common.ContainerWrapper;
 import ee.ria.DigiDoc.common.MessageUtil;
 import ee.ria.DigiDoc.common.NotificationUtil;
 import ee.ria.DigiDoc.common.PowerUtil;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
 import ee.ria.DigiDoc.common.exception.SigningCancelledException;
@@ -162,7 +164,8 @@ public class SmartSignService extends IntentService {
                     Timber.log(Log.DEBUG, "Session status response: %s", sessionStatusResponse.toString());
 
                     ContainerWrapper containerWrapper = new ContainerWrapper(request.getContainerPath());
-                    String base64Hash = containerWrapper.prepareSignature(getCertificatePem(sessionStatusResponse.getCert().getValue()));
+                    RoleData roleData = (RoleData) intent.getSerializableExtra(SIGNING_ROLE_DATA);
+                    String base64Hash = containerWrapper.prepareSignature(getCertificatePem(sessionStatusResponse.getCert().getValue()), roleData);
                     if (base64Hash != null && !base64Hash.isEmpty()) {
                         Timber.log(Log.DEBUG, "Broadcasting signature challenge response");
                         broadcastSmartCreateSignatureChallengeResponse(base64Hash);

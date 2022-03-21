@@ -1,30 +1,5 @@
 package ee.ria.DigiDoc.android.signature.update.mobileid;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.util.Log;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import java.util.ArrayList;
-import java.util.Locale;
-
-import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
-import ee.ria.DigiDoc.android.utils.navigator.Navigator;
-import ee.ria.DigiDoc.configuration.ConfigurationProvider;
-import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
-import ee.ria.DigiDoc.mobileid.dto.response.MobileIdServiceResponse;
-import ee.ria.DigiDoc.mobileid.dto.response.RESTServiceFault;
-import ee.ria.DigiDoc.sign.SignLib;
-import ee.ria.DigiDoc.sign.SignedContainer;
-import io.reactivex.rxjava3.core.ObservableEmitter;
-import io.reactivex.rxjava3.core.ObservableOnSubscribe;
-import timber.log.Timber;
-
 import static ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest.toJson;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
@@ -35,6 +10,34 @@ import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATU
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MID_BROADCAST_ACTION;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MID_BROADCAST_TYPE_KEY;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SERVICE_FAULT;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SIGNING_ROLE_DATA;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import java.util.ArrayList;
+import java.util.Locale;
+
+import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.common.RoleData;
+import ee.ria.DigiDoc.configuration.ConfigurationProvider;
+import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
+import ee.ria.DigiDoc.mobileid.dto.response.MobileIdServiceResponse;
+import ee.ria.DigiDoc.mobileid.dto.response.RESTServiceFault;
+import ee.ria.DigiDoc.sign.SignLib;
+import ee.ria.DigiDoc.sign.SignedContainer;
+import io.reactivex.rxjava3.core.ObservableEmitter;
+import io.reactivex.rxjava3.core.ObservableOnSubscribe;
+import timber.log.Timber;
 
 public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileIdResponse> {
 
@@ -45,11 +48,12 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
     private final String uuid;
     private final String personalCode;
     private final String phoneNo;
+    @Nullable private final RoleData roleData;
 
     private final Intent intent;
 
     public MobileIdOnSubscribe(Navigator navigator, Intent intent, SignedContainer container, Locale locale,
-                               String uuid, String personalCode, String phoneNo) {
+                               String uuid, String personalCode, String phoneNo, @Nullable RoleData roleData) {
         this.navigator = navigator;
         this.intent = intent;
         this.container = container;
@@ -58,6 +62,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         this.uuid = uuid;
         this.personalCode = personalCode;
         this.phoneNo = phoneNo;
+        this.roleData = roleData;
     }
 
     @Override
@@ -126,6 +131,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         intent.putExtra(ACCESS_TOKEN_PATH, SignLib.accessTokenPath());
         intent.putStringArrayListExtra(CERTIFICATE_CERT_BUNDLE,
                 new ArrayList<>(configurationProvider.getCertBundle()));
+        intent.putExtra(SIGNING_ROLE_DATA, roleData);
         navigator.activity().startService(intent);
     }
 }

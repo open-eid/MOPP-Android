@@ -29,6 +29,7 @@ import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SERVICE_FAULT;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SID_BROADCAST_ACTION;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SID_BROADCAST_TYPE_KEY;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SIGNING_ROLE_DATA;
 
 import android.Manifest;
 import android.app.Notification;
@@ -40,6 +41,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -53,6 +55,7 @@ import ee.ria.DigiDoc.android.model.smartid.SmartIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.common.NotificationUtil;
 import ee.ria.DigiDoc.common.PowerUtil;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
@@ -72,11 +75,12 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
     private final String uuid;
     private final String personalCode;
     private final String country;
+    @Nullable RoleData roleData;
 
     Intent intent;
 
     public SmartIdOnSubscribe(Navigator navigator, Intent intent, SignedContainer container, String uuid,
-                              String personalCode, String country) {
+                              String personalCode, String country, @Nullable RoleData roleData) {
         this.navigator = navigator;
         this.container = container;
         this.broadcastManager = LocalBroadcastManager.getInstance(navigator.activity());
@@ -85,6 +89,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         this.country = country;
 
         this.intent = intent;
+        this.roleData = roleData;
     }
 
     @Override
@@ -173,6 +178,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         intent.putExtra(CREATE_SIGNATURE_REQUEST, request);
         intent.putStringArrayListExtra(CERTIFICATE_CERT_BUNDLE,
                 new ArrayList<>(configurationProvider.getCertBundle()));
+        intent.putExtra(SIGNING_ROLE_DATA, roleData);
         navigator.activity().startService(intent);
     }
 

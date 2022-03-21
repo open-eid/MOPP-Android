@@ -2,6 +2,8 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.view.View;
 
+import androidx.annotation.Nullable;
+
 import java.io.File;
 
 import javax.inject.Inject;
@@ -22,6 +24,7 @@ import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdRequest;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
 import ee.ria.DigiDoc.sign.SignedContainer;
@@ -74,10 +77,15 @@ final class SignatureAddSource {
         }
     }
 
+    Observable<Result.SignatureAddResult> showRoleView(int method) {
+        return Observable.just(Result.SignatureAddResult.showRoleView(method));
+    }
+
     Observable<? extends SignatureAddResponse> sign(File containerFile,
                                                     SignatureAddRequest request,
                                                     Navigator navigator,
-                                                    android.content.Intent intent) {
+                                                    android.content.Intent intent,
+                                                    @Nullable RoleData roleData) {
         if (request instanceof MobileIdRequest) {
             MobileIdRequest mobileIdRequest = (MobileIdRequest) request;
             if (mobileIdRequest.rememberMe()) {
@@ -93,7 +101,7 @@ final class SignatureAddSource {
                             Observable.create(new MobileIdOnSubscribe(navigator, intent, container,
                                             localeService.applicationLocale(),
                                     settingsDataStore.getUuid(), mobileIdRequest.personalCode(),
-                                    mobileIdRequest.phoneNo())))
+                                    mobileIdRequest.phoneNo(), roleData)))
                     .switchMap(response -> {
                         String signature = response.signature();
                         if (signature != null) {
@@ -128,7 +136,7 @@ final class SignatureAddSource {
                     .flatMapObservable(container ->
                             Observable.create(new SmartIdOnSubscribe(navigator, intent, container,
                                     settingsDataStore.getUuid(), smartIdRequest.personalCode(),
-                                    smartIdRequest.country())))
+                                    smartIdRequest.country(), roleData)))
                     .switchMap(response -> {
                         SessionStatusResponse.ProcessStatus processStatus = response.status();
                         if (SessionStatusResponse.ProcessStatus.OK.equals(processStatus)) {
@@ -150,7 +158,7 @@ final class SignatureAddSource {
                                     .filter(dataResponse -> dataResponse.token() != null)
                                     .switchMapSingle(dataResponse ->
                                             idCardService.sign(dataResponse.token(), container,
-                                                    idCardRequest.pin2())).firstOrError())
+                                                    idCardRequest.pin2(), roleData)).firstOrError())
                     .map(IdCardResponse::success)
                     .toObservable()
                     .onErrorResumeNext(error -> {
@@ -180,10 +188,12 @@ final class SignatureAddSource {
         }
     }
 
-    public Single<SignedContainer> sign(String signatureValue, byte[] dataToSign, SignedContainer container) {
+    public Single<SignedContainer> sign(String signatureValue, byte[] dataToSign,
+                                        SignedContainer container,
+                                        @Nullable RoleData roleData) {
         return Single
                 .fromCallable(() -> container.sign(ByteString.of(dataToSign),
-                        signData -> ByteString.encodeUtf8(signatureValue)))
+                        signData -> ByteString.encodeUtf8(signatureValue), roleData))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

@@ -106,6 +106,7 @@ public final class Activity extends AppCompatActivity {
         mContext = new WeakReference<>(this);
 
         initializeApplicationFileTypesAssociation();
+        initializeRoleAndAddressAsking();
 
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
     }
@@ -210,6 +211,14 @@ public final class Activity extends AppCompatActivity {
         } else {
             pm.setComponentEnabledSetting(openCustomTypesComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
             pm.setComponentEnabledSetting(openAllTypesComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        }
+    }
+
+    private void initializeRoleAndAddressAsking() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (!sharedPreferences.contains(getString(R.string.main_settings_ask_role_and_address_key))) {
+            sharedPreferences.edit().putBoolean(getString(R.string.main_settings_ask_role_and_address_key), false)
+                    .apply();
         }
     }
 

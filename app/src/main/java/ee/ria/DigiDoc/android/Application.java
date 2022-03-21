@@ -76,6 +76,7 @@ import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.data.source.FileSystemSignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.list.SignatureListViewModel;
+import ee.ria.DigiDoc.android.signature.update.RoleViewModel;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.LocaleService;
@@ -409,6 +410,10 @@ public class Application extends android.app.Application {
         @SuppressWarnings("unused")
         @Binds @IntoMap @ClassKey(SignatureUpdateViewModel.class)
         abstract ViewModel signatureUpdateModel(SignatureUpdateViewModel viewModel);
+
+        @SuppressWarnings("unused")
+        @Binds @IntoMap @ClassKey(RoleViewModel.class)
+        abstract ViewModel roleViewModel(RoleViewModel viewModel);
 
         @SuppressWarnings("unused")
         @Binds @IntoMap @ClassKey(CryptoCreateViewModel.class)

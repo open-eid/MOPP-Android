@@ -54,6 +54,7 @@ import javax.net.ssl.TrustManager;
 
 import ee.ria.DigiDoc.common.ContainerWrapper;
 import ee.ria.DigiDoc.common.MessageUtil;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.common.TrustManagerUtil;
 import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
@@ -81,6 +82,7 @@ import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_P
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CERTIFICATE_CERT_BUNDLE;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SIGNING_ROLE_DATA;
 
 public class MobileSignService extends IntentService {
 
@@ -176,7 +178,8 @@ public class MobileSignService extends IntentService {
                         return;
                     }
                     containerWrapper = new ContainerWrapper(request.getContainerPath());
-                    String base64Hash = containerWrapper.prepareSignature(getCertificatePem(response.getCert()));
+                    RoleData roleData = (RoleData) intent.getSerializableExtra(SIGNING_ROLE_DATA);
+                    String base64Hash = containerWrapper.prepareSignature(getCertificatePem(response.getCert()), roleData);
                     if (base64Hash != null && !base64Hash.isEmpty()) {
                         Timber.log(Log.DEBUG, "Broadcasting create signature response");
                         broadcastMobileCreateSignatureResponse(base64Hash);

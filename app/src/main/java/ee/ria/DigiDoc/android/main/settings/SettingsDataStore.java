@@ -3,10 +3,12 @@ package ee.ria.DigiDoc.android.main.settings;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -93,6 +95,80 @@ public final class SettingsDataStore {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(resources.getString(R.string.main_settings_smartid_country_key),
                 country);
+        editor.apply();
+    }
+
+    public boolean getIsRoleAskingEnabled() {
+        return preferences.getBoolean(resources.getString(R.string.main_settings_ask_role_and_address_key),
+                false);
+    }
+
+    public void setIsRoleAskingEnabled(boolean isRoleAskingEnabled) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(resources.getString(R.string.main_settings_ask_role_and_address_key),
+                isRoleAskingEnabled);
+        editor.apply();
+    }
+
+    public List<String> getRoles() {
+        String rolesList = preferences.getString(resources.getString(R.string.main_settings_role_key),
+                    "");
+        return Arrays.asList(rolesList.split(","));
+    }
+
+    public void setRoles(List<String> roles) {
+        SharedPreferences.Editor editor = preferences.edit();
+        String rolesList = String.join(",", roles);
+        editor.putString(resources.getString(R.string.main_settings_role_key),
+                rolesList);
+        editor.apply();
+    }
+
+    public String getRoleCity() {
+        return preferences.getString(resources.getString(R.string.main_settings_city_key),
+                "");
+    }
+
+    public void setRoleCity(String city) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_city_key),
+                city);
+        editor.apply();
+    }
+
+    public String getRoleState() {
+        return preferences.getString(resources.getString(R.string.main_settings_county_key),
+                "");
+    }
+
+    public void setRoleState(String state) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_county_key),
+                state);
+        editor.apply();
+    }
+
+    public String getRoleCountry() {
+        return preferences.getString(resources.getString(R.string.main_settings_country_key),
+                "");
+    }
+
+    public void setRoleCountry(String country) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_country_key),
+                country);
+        editor.apply();
+    }
+
+    public String getRoleZip() {
+        return preferences.getString(resources.getString(R.string.main_settings_postal_code_key),
+                "");
+    }
+
+    public void setRoleZip(String zip) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_postal_code_key),
+                zip);
         editor.apply();
     }
 

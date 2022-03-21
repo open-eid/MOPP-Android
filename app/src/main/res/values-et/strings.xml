@@ -48,7 +48,8 @@
     <string name="main_settings_tsa_url_title">Ligipääs ajatempliteenusele</string>
     <string name="main_settings_uuid_title">Ligipääs mobiil-ID ja Smart-ID teenusele</string>
     <string name="main_settings_tsa_url_use_default">Kasuta vaikeväärtust</string>
-    <string name="main_settings_role_title">Roll</string>
+    <string name="main_settings_ask_role_and_address_title">Küsi rolli ja aadressi igal allkirjastamisel</string>
+    <string name="main_settings_role_title">Roll / resolutsioon</string>
     <string name="main_settings_city_title">Linn</string>
     <string name="main_settings_county_title">Maakond</string>
     <string name="main_settings_country_title">Riik</string>
@@ -168,6 +169,9 @@
     <string name="signature_update_signature_add_success">ALLKIRI LISATUD</string>
     <string name="signature_update_signature_add_error">Midagi läks valesti</string>
     <string name="signature_update_signature_add_error_title">Ümbriku allkirjastamine ebaõnnestus</string>
+
+    <string name="signature_update_signature_role_and_address_title">ROLL JA AADRESS</string>
+    <string name="signature_update_signature_role_and_address_info_title">Sisesta oma roll ja aadress</string>
 
     <string name="signature_update_signature_error_message_additional_information">Loe täpsemalt siit</string>
     <string name="signature_update_signature_error_message_details">Detailid</string>

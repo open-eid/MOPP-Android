@@ -53,6 +53,7 @@ import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
+import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -79,6 +80,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Intent.DocumentSaveIntent,
             Result> documentSave;
+
+    private final ObservableTransformer<Action.RoleDetailsAction,
+            Result.RoleDetailsResult> roleDetailsView;
 
     private final ObservableTransformer<Action.DocumentRemoveAction,
                                         Result.DocumentRemoveResult> documentRemove;
@@ -326,6 +330,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
         });
 
+        roleDetailsView = upstream -> upstream.flatMap(action -> {
+            Signature signature = action.signature();
+
+            Transaction transaction = Transaction.push(SignatureRoleScreen
+                    .create(signature));
+            navigator.execute(transaction);
+            return Observable.empty();
+        });
+
         signatureRemove = upstream -> upstream.flatMap(action -> {
             if (action.containerFile() == null || action.signature() == null) {
                 return Observable.just(Result.SignatureRemoveResult.clear());
@@ -395,12 +408,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             .map(containerAdd -> Result.SignatureAddResult.clear())
                             .onErrorReturn(Result.SignatureAddResult::failure)
                             .startWithItem(Result.SignatureAddResult.activity());
+
+                } else if (action.showRoleAddingView() != null && action.showRoleAddingView()) {
+                    return signatureAddSource.showRoleView(method);
                 } else {
                     return signatureAddSource.show(method);
                 }
             } else if (existingContainer != null && containerFile != null) {
                 return askNotificationPermission(navigator, method)
-                        .flatMap(ign -> signatureAddSource.sign(containerFile, request, navigator, intent)
+                        .flatMap(ign -> signatureAddSource.sign(containerFile, request, navigator, intent, action.roleData())
                                 .switchMap(response -> {
                                     if (response.container() != null) {
                                         return Observable.fromCallable(() -> {
@@ -443,6 +459,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.DocumentRemoveAction.class).compose(documentRemove),
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
                 shared.ofType(Action.SignatureViewAction.class).compose(signatureView),
+                shared.ofType(Action.RoleDetailsAction.class).compose(roleDetailsView),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd),
                 shared.ofType(Action.SendAction.class).compose(send)));
     }

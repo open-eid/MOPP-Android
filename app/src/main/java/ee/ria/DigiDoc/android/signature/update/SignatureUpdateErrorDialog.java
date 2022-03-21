@@ -57,6 +57,7 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
     private final Subject<Intent.DocumentRemoveIntent> documentRemoveIntentSubject;
     private final Subject<Intent.SignatureAddIntent> signatureAddIntentSubject;
     private final Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject;
+    private final Subject<Intent.SignatureRoleViewIntent> signatureRoleViewIntentSubject;
     private final SignatureUpdateSignatureAddDialog signatureAddDialog;
 
     private String type;
@@ -68,6 +69,7 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                                Subject<Intent.DocumentsAddIntent> documentsAddIntentSubject,
                                Subject<Intent.DocumentRemoveIntent> documentRemoveIntentSubject,
                                Subject<Intent.SignatureAddIntent> signatureAddIntentSubject,
+                               Subject<Intent.SignatureRoleViewIntent> signatureRoleViewIntentSubject,
                                Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject,
                                SignatureUpdateSignatureAddDialog signatureAddDialog,
                                View view) {
@@ -75,6 +77,7 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
         this.documentsAddIntentSubject = documentsAddIntentSubject;
         this.documentRemoveIntentSubject = documentRemoveIntentSubject;
         this.signatureAddIntentSubject = signatureAddIntentSubject;
+        this.signatureRoleViewIntentSubject = signatureRoleViewIntentSubject;
         this.signatureRemoveIntentSubject = signatureRemoveIntentSubject;
         this.signatureAddDialog = signatureAddDialog;
         this.view = view;
