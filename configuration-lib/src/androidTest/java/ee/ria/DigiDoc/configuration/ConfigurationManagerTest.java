@@ -195,7 +195,6 @@ public final class ConfigurationManagerTest {
         assertEquals(configurationProperties.getCentralConfigurationServiceUrl(), configuration.getConfigUrl());
         assertNotNull(configuration.getLdapCorpUrl());
         assertNotNull(configuration.getLdapPersonUrl());
-        assertNotNull(configuration.getMidSignUrl());
         assertNotNull(configuration.getSivaUrl());
         assertNotNull(configuration.getTsaUrl());
         assertNotNull(configuration.getTslUrl());
@@ -212,7 +211,6 @@ public final class ConfigurationManagerTest {
         assertEquals(configurationProperties.getCentralConfigurationServiceUrl(), configuration.getConfigUrl());
         assertEquals("ldaps://k3.ldap.sk.ee", configuration.getLdapCorpUrl());
         assertEquals("ldaps://esteid.ldap.sk.ee", configuration.getLdapPersonUrl());
-        assertEquals("https://digidocservice.sk.ee", configuration.getMidSignUrl());
         assertEquals("https://siva.eesti.ee/V2/validate", configuration.getSivaUrl());
         assertEquals("http://dd-at.ria.ee/tsa", configuration.getTsaUrl());
         assertEquals("https://ec.europa.eu/tools/lotl/eu-lotl.xml", configuration.getTslUrl());

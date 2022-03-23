@@ -1,7 +1,12 @@
 package ee.ria.DigiDoc.android.main.diagnostics;
 
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileSaveClicksSubject;
+
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
@@ -13,11 +18,15 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.NoSuchFileException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
@@ -42,8 +51,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import timber.log.Timber;
 
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-
 public final class DiagnosticsView extends CoordinatorLayout {
 
     private final SimpleDateFormat dateFormat;
@@ -55,12 +62,17 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
     private Disposable tslVersionDisposable;
 
+    private final String DIAGNOSTICS_FILE_NAME = "ria_digidoc_" + getAppVersion() + "_diagnostics.txt";
+    private final String DIAGNOSTICS_FILE_PATH = getContext().getFilesDir().getPath()
+            + File.separator + "diagnostics" + File.separator;
+
     public DiagnosticsView(Context context) {
         super(context);
         dateFormat = ConfigurationDateUtil.getDateFormat();
         inflate(context, R.layout.main_diagnostics, this);
         AccessibilityUtils.setAccessibilityPaneTitle(this, R.string.main_diagnostics_title);
         toolbarView = findViewById(R.id.toolbar);
+        View saveDiagnosticsButton = findViewById(R.id.configurationSaveButton);
         navigator = Application.component(context).navigator();
 
         ConfigurationProvider configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
@@ -71,6 +83,11 @@ public final class DiagnosticsView extends CoordinatorLayout {
         toolbarView.setNavigationContentDescription(R.string.back);
 
         findViewById(R.id.configurationUpdateButton).setOnClickListener(view -> updateConfiguration());
+
+        clicks(saveDiagnosticsButton).map(ignored ->
+                (saveDiagnostics()))
+                .subscribe(diagnosticsFileSaveClicksSubject);
+
         setData(configurationProvider);
     }
 
@@ -102,6 +119,97 @@ public final class DiagnosticsView extends CoordinatorLayout {
         AccessibilityUtils.sendAccessibilityEvent(getContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, messageResId);
     }
 
+    private File saveDiagnostics() throws IOException {
+        List<TextView> textViews = new ArrayList<>();
+        findAllTextViews(this, textViews);
+
+        File root = new File(DIAGNOSTICS_FILE_PATH);
+        if (!root.exists()) {
+            boolean isDirectoryCreated = root.mkdirs();
+            if (!isDirectoryCreated) {
+                Timber.log(Log.ERROR, "Unable to create directory for diagnostics files");
+                throw new NoSuchFileException(root.getAbsolutePath(), null,
+                        "Unable to create directory for diagnostics files");
+            }
+        }
+
+        File diagnosticsFileLocation = new File(DIAGNOSTICS_FILE_PATH + DIAGNOSTICS_FILE_NAME);
+        try (FileWriter fileWriter = new FileWriter(diagnosticsFileLocation)) {
+            fileWriter.append(formatDiagnosticsText(textViews));
+            fileWriter.flush();
+            return diagnosticsFileLocation;
+        } catch (IOException ex) {
+            Timber.log(Log.ERROR, ex, "Unable to get diagnostics file location");
+            throw ex;
+        } finally {
+            textViews.clear();
+        }
+
+    }
+
+    private static void findAllTextViews(View view, List<TextView> textViews) {
+        if (view instanceof ViewGroup) {
+            final ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                final View child = viewGroup.getChildAt(i);
+                if (child instanceof TextView) {
+                    textViews.add((TextView) child);
+                } else {
+                    findAllTextViews(child, textViews);
+                }
+            }
+        }
+    }
+
+    private String formatDiagnosticsText(List<TextView> textViews) {
+        StringBuilder diagnosticsText = new StringBuilder();
+
+        for (int i = 0; i < textViews.size(); i++) {
+            TextView textView = textViews.get(i);
+            String text = textView.getText().toString();
+            if (!isTitleOrButtonText(text)) {
+                if (isCategoryLabel(text)) {
+                    diagnosticsText.append("\n\n").append(text).append("\n");
+                } else {
+                    if (!isTSLFile(text) && textView.getId() == -1) {
+                        diagnosticsText.append(text);
+                    } else {
+                        diagnosticsText.append(text).append("\n");
+                    }
+                }
+            }
+        }
+
+        return diagnosticsText.toString();
+    }
+
+    private boolean isTitleOrButtonText(String text) {
+        return text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_title)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_configuration_check_for_update_button)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_configuration_save_diagnostics_button));
+    }
+
+    private boolean isCategoryLabel(String text) {
+        return text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_libraries_title)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_urls_title)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_central_configuration_title)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_tsl_cache_title));
+    }
+
+    private boolean isTSLFile(String text) {
+        String diagnosticFileName = text.split(" ")[0];
+        if (diagnosticFileName.contains(".xml")) {
+            File tslCacheDir = new File(getContext().getApplicationContext().getCacheDir().getAbsolutePath() + "/schema");
+            File[] tslFiles = tslCacheDir.listFiles((directory, fileName) -> fileName.endsWith(".xml"));
+            if (tslFiles != null) {
+                Object[] fileNames = Arrays.stream(Arrays.stream(tslFiles)
+                        .filter(File::isFile).map(File::getName).toArray(String[]::new)).toArray();
+                return Arrays.asList(fileNames).contains(diagnosticFileName);
+            }
+        }
+         return false;
+    }
+
     private void updateConfiguration() {
         Application application = (Application) getContext().getApplicationContext();
         application.updateConfiguration(this);
@@ -115,7 +223,6 @@ public final class DiagnosticsView extends CoordinatorLayout {
         TextView tslUrl = findViewById(R.id.mainDiagnosticsTslUrl);
         TextView sivaUrl = findViewById(R.id.mainDiagnosticsSivaUrl);
         TextView tsaUrl = findViewById(R.id.mainDiagnosticsTsaUrl);
-        TextView midSignUrl = findViewById(R.id.mainDiagnosticsMidSignUrl);
         TextView ldapPersonUrl = findViewById(R.id.mainDiagnosticsLdapPersonUrl);
         TextView ldapCorpUrl = findViewById(R.id.mainDiagnosticsLdapCorpUrl);
         TextView mobileIDUrl = findViewById(R.id.mainDiagnosticsMobileIDUrl);
@@ -139,7 +246,6 @@ public final class DiagnosticsView extends CoordinatorLayout {
         appendTslVersion(tslUrl, configurationProvider.getTslUrl());
         sivaUrl.setText(configurationProvider.getSivaUrl());
         tsaUrl.setText(configurationProvider.getTsaUrl());
-        midSignUrl.setText(configurationProvider.getMidSignUrl());
         ldapPersonUrl.setText(configurationProvider.getLdapPersonUrl());
         ldapCorpUrl.setText(configurationProvider.getLdapCorpUrl());
         mobileIDUrl.setText(configurationProvider.getMidRestUrl());

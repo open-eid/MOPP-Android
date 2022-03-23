@@ -31,6 +31,9 @@ dependencies {
 
     implementation "commons-io:commons-io:${commonsioVersion}"
 
+    implementation "org.apache.commons:commons-text:${commonsTextVersion}"
+    implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 

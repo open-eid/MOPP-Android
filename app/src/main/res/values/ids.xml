@@ -61,7 +61,6 @@
     <item type="id" name="mainDiagnosticsTslUrl" />
     <item type="id" name="mainDiagnosticsSivaUrl" />
     <item type="id" name="mainDiagnosticsTsaUrl" />
-    <item type="id" name="mainDiagnosticsMidSignUrl" />
     <item type="id" name="mainDiagnosticsLdapPersonUrl" />
     <item type="id" name="mainDiagnosticsLdapCorpUrl" />
     <item type="id" name="mainDiagnosticsMobileIDUrl" />
@@ -77,6 +76,7 @@
     <item type="id" name="mainDiagnosticsCentralConfigurationLastCheck" />
     <item type="id" name="mainDiagnosticsCentralConfigurationUpdateDate" />
     <item type="id" name="configurationUpdateButton" />
+    <item type="id" name="configurationSaveButton" />
 
     <!-- Signature Home -->
     <item type="id" name="signatureHomeCreateButton" />
