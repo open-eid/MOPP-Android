@@ -304,6 +304,9 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
         File tslCacheDir = new File(getContext().getApplicationContext().getCacheDir().getAbsolutePath() + "/schema");
         File[] tslFiles = tslCacheDir.listFiles((directory, fileName) -> fileName.endsWith(".xml"));
+
+        getDisplayedNonExistentTSLCacheFiles(tslCacheLayout).forEach(tslCacheLayout::removeViewInLayout);
+
         if (tslFiles != null && tslFiles.length > 0) {
             Arrays.sort(tslFiles, (f1, f2) -> f1.getName().compareToIgnoreCase(f2.getName()));
             for (File tslFile : tslFiles) {
@@ -320,7 +323,19 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 }
             }
         }
+    }
 
+    private ArrayList<View> getDisplayedNonExistentTSLCacheFiles(LinearLayout tslCacheLayout) {
+        ArrayList<View> removeViews = new ArrayList<>();
+        for (int i = 0; i < tslCacheLayout.getChildCount(); i++) {
+            View tslCacheLayoutChild = tslCacheLayout.getChildAt(i);
+            String fileName = ((TextView)tslCacheLayoutChild).getText().toString();
+            String tslCacheTitle = getResources().getString(R.string.main_diagnostics_tsl_cache_title);
+            if (!fileName.equals(tslCacheTitle)) {
+                removeViews.add(tslCacheLayoutChild);
+            }
+        }
+        return removeViews;
     }
 
     private String displayDate(Date date) {
