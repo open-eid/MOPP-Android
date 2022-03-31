@@ -49,7 +49,7 @@ ext {
     androidSupportTestVersion = '1.0.2'
     preferencexVersion = '1.1.0'
     guavaVersion = '31.0.1-android'
-    gsonVersion = '2.8.9'
+    gsonVersion = '2.9.0'
     okioVersion = '2.10.0'
     commonsioVersion = '2.11.0'
     commonsTextVersion = '1.9'
