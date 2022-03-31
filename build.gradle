@@ -61,7 +61,7 @@ ext {
     lombokVersion = '1.18.22'
     daggerVersion = '2.39.1'
     conductorVersion = '3.1.1'
-    rxJavaVersion = '3.1.2'
+    rxJavaVersion = '3.1.4'
     rxAndroidVersion = '3.0.0'
     rxBindingVersion = '4.0.0'
     telecomcharsetsVersion = '1.0.1'
