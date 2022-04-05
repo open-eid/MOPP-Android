@@ -208,8 +208,8 @@ public class SmartSignService extends IntentService {
                 }
                 timeout += SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS;
             }
-            broadcastFault(SessionStatusResponse.ProcessStatus.ACCOUNT_NOT_FOUND_OR_TIMEOUT);
-            Timber.log(Log.DEBUG, "Request timeout (ACCOUNT_NOT_FOUND_OR_TIMEOUT)");
+            broadcastFault(SessionStatusResponse.ProcessStatus.TIMEOUT);
+            Timber.log(Log.DEBUG, "Request timeout (TIMEOUT)");
         } catch (UnknownHostException e) {
             broadcastFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE);
             Timber.log(Log.ERROR, "REST API session status request failed. Unknown host. Exception message: %s.", e.getMessage());
@@ -295,7 +295,7 @@ public class SmartSignService extends IntentService {
                 case 404:
                     broadcastFault(httpResponse.body() instanceof SessionResponse ?
                             SessionStatusResponse.ProcessStatus.SESSION_NOT_FOUND :
-                            SessionStatusResponse.ProcessStatus.ACCOUNT_NOT_FOUND_OR_TIMEOUT);
+                            SessionStatusResponse.ProcessStatus.ACCOUNT_NOT_FOUND);
                     Timber.log(Log.DEBUG, "Account/session not found - HTTP status code: %s " + httpResponse.code());
                     break;
                 case 409:
