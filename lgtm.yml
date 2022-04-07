@@ -1,5 +1,15 @@
 extraction:
   java:
+    after_prepare:
+      - "export ANDROID_SDK_ROOT=/opt/work/lgtm-workspace/lgtm/android"
+      - "export ANDROID_HOME=$ANDROID_SDK_ROOT"
+      - "export ANDROID_COMMAND_LINE_TOOLS=/opt/extra/android/versions/30/cmdline-tools"
+      - "export ANDROID_SDK_LICENSES=$ANDROID_SDK_ROOT/licenses"
+      - "mkdir $ANDROID_SDK_ROOT"
+      - "mkdir $ANDROID_SDK_LICENSES"
+      - "echo -e '\n24333f8a63b6825ea9c5514f83c2829b004d1fee' > $ANDROID_SDK_LICENSES/android-sdk-license"
+      - "echo -e '\n84831b9409646a918e30573bab4c9c91346d8abd' > $ANDROID_SDK_LICENSES/android-sdk-preview-license"
+      - "(cd $ANDROID_COMMAND_LINE_TOOLS/bin/ && yes | ./sdkmanager --update --sdk_root=$ANDROID_COMMAND_LINE_TOOLS)"
     index:
       build_command:
       - "./gradlew -Dorg.gradle.caching=false --no-daemon -S clean"
