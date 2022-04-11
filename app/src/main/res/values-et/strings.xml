@@ -189,7 +189,7 @@
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Liiga palju faile ühes konteineris</string>
     <string name="signature_update_mobile_id_error_message_access_rights">Ümbriku allkirjastamine ebaõnnestus. Kontrolli mobiil-ID teenuse ligipääsu seadeid. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Samaaegsete pöördumiste limiit ületatud</string>
-    <string name="signature_update_mobile_id_error_technical_error">Päringu saatmine ebaõnnestus. Mobiil-ID/Smart-ID teenuses esinevad tehnilised tõrked. Palun proovige mõne aja pärast uuesti.</string>
+    <string name="signature_update_mobile_id_error_technical_error">Päringu saatmine ebaõnnestus. Mobiil-ID teenuses esinevad tehnilised tõrked. Palun proovige mõne aja pärast uuesti.</string>
 
     <string name="signature_update_smart_id_message">Sisesta oma isikukood Smart-IDga allkirjastamiseks</string>
     <string name="signature_update_smart_id_country">Riik</string>
@@ -203,6 +203,7 @@
     <string name="signature_update_smart_id_error_message_account_not_found_or_timeout">Ümbriku allkirjastamine ebaõnnestus. Sinu Smart-ID toiming aegus või kontot ei leitud</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Sessiooni ei leitud</string>
     <string name="signature_update_smart_id_error_message_access_rights">Ümbriku allkirjastamine ebaõnnestus. Kontrolli Smart-ID teenuse ligipääsu seadeid. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
+    <string name="signature_update_smart_id_error_technical_error">Päringu saatmine ebaõnnestus. Smart-ID teenuses esinevad tehnilised tõrked. Palun proovige mõne aja pärast uuesti.</string>
 
     <string name="signature_update_id_card_progress_message_initial">Ühenda kaardilugeja nutiseadmega ja sisesta ID-kaart lugejasse</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>
