@@ -129,8 +129,10 @@
     <string name="signature_update_signature_add_positive_button">ПОДПИСАТЬ</string>
     <string name="signature_update_signature_add_success">ПОДПИСЬ ДОБАВЛЕНА</string>
     <string name="signature_update_signature_add_error">Что-то пошло не так</string>
+    <string name="signature_update_signature_add_error_title">Не удалось подписать контейнер</string>
 
     <string name="signature_update_signature_error_message_additional_information">Дополнительная информация</string>
+    <string name="signature_update_signature_error_message_details">Детали:</string>
 
     <string name="signature_update_signature_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Не удалось отправить запрос. Превышено количество неудачных запросов с этого IP-адреса. Пожалуйста, попробуйте позже.</string>

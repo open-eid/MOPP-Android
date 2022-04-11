@@ -23,6 +23,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -172,10 +173,10 @@ public class MobileSignService extends IntentService {
                 broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
                 Timber.e(e, "SSL handshake failed");
             } catch (IOException e) {
-                broadcastFault(defaultError());
+                broadcastFault(defaultError(null));
                 Timber.e(e, "REST API certificate request failed");
             } catch (CertificateException e) {
-                broadcastFault(defaultError());
+                broadcastFault(defaultError(null));
                 Timber.e(e, "Generating certificate failed");
             }
         }
@@ -237,7 +238,7 @@ public class MobileSignService extends IntentService {
                         broadcastFault(fault);
                         Timber.e(e, "Failed to sign with Mobile-ID - Certificate status: revoked");
                     } else {
-                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.GENERAL_ERROR);
+                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.GENERAL_ERROR, e.getMessage());
                         broadcastFault(fault);
                         Timber.e(e, "Failed to sign with Mobile-ID");
                     }
@@ -294,7 +295,7 @@ public class MobileSignService extends IntentService {
         } else if (responseWrapper.code() == 409) {
             broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.EXCEEDED_UNSUCCESSFUL_REQUESTS));
         } else {
-            broadcastFault(defaultError());
+            broadcastFault(defaultError(null));
             Timber.d("Request unsuccessful, HTTP status code: %s", responseWrapper.code());
         }
     }
@@ -337,7 +338,7 @@ public class MobileSignService extends IntentService {
         try {
             return objectMapper.readValue(intent.getStringExtra(CREATE_SIGNATURE_REQUEST), MobileCreateSignatureRequest.class);
         } catch (JsonProcessingException e) {
-            broadcastFault(defaultError());
+            broadcastFault(defaultError(null));
             Timber.e(e, "Failed to process signature request JSON");
         }
 
@@ -389,7 +390,7 @@ public class MobileSignService extends IntentService {
                 }
             }
         } catch (ClassCastException e) {
-            broadcastFault(defaultError());
+            broadcastFault(defaultError(null));
             Timber.e(e, "Unable to get correct response type");
             return true;
         }
@@ -397,8 +398,8 @@ public class MobileSignService extends IntentService {
         return false;
     }
 
-    private RESTServiceFault defaultError() {
-        return new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.GENERAL_ERROR);
+    private RESTServiceFault defaultError(@Nullable String detailMessage) {
+        return new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.GENERAL_ERROR, detailMessage);
     }
 
     private void sleep(long millis) {

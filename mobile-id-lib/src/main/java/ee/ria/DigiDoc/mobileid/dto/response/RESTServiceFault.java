@@ -19,6 +19,8 @@
 
 package ee.ria.DigiDoc.mobileid.dto.response;
 
+import androidx.annotation.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.Gson;
 
@@ -35,11 +37,18 @@ public class RESTServiceFault {
     private String traceId;
     private String error;
 
+    @Nullable private String detailMessage;
+
     public RESTServiceFault() {
     }
 
     public RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus status) {
         this.status = status;
+    }
+
+    public RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus status, @Nullable String detailMessage) {
+        this.status = status;
+        this.detailMessage = detailMessage;
     }
 
     public RESTServiceFault(int httpStatus, MobileCreateSignatureSessionStatusResponse.ProcessState state, MobileCreateSignatureSessionStatusResponse.ProcessStatus status, String time, String traceId, String error) {
@@ -121,6 +130,10 @@ public class RESTServiceFault {
 
     public void setError(String error) {
         this.error = error;
+    }
+
+    @Nullable public String getDetailMessage() {
+        return detailMessage;
     }
 
     @Override

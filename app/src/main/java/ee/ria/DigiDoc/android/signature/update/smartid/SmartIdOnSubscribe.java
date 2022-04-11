@@ -41,6 +41,7 @@ import ee.ria.DigiDoc.android.model.smartid.SmartIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
+import ee.ria.DigiDoc.smartid.dto.response.ServiceFault;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SmartIDServiceResponse;
 import ee.ria.DigiDoc.smartid.service.SmartSignService;
@@ -88,11 +89,11 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                 switch (intent.getStringExtra(SID_BROADCAST_TYPE_KEY)) {
                     case SERVICE_FAULT: {
                         NotificationManagerCompat.from(navigator.activity()).cancelAll();
-                        SessionStatusResponse.ProcessStatus status =
-                                (SessionStatusResponse.ProcessStatus) intent.getSerializableExtra(SERVICE_FAULT);
-                        Timber.log(Log.DEBUG, "Got status: %s", status);
+                        ServiceFault serviceFault =
+                                (ServiceFault) ServiceFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
+                        Timber.log(Log.DEBUG, "Got status: %s", serviceFault.getStatus());
                         emitter.onError(SmartIdMessageException
-                                .create(navigator.activity(), status));
+                                .create(navigator.activity(), serviceFault.getStatus(), serviceFault.getDetailMessage()));
                         break;
                     }
                     case CREATE_SIGNATURE_DEVICE:

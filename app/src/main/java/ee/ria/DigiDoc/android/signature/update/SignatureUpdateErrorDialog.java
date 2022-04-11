@@ -98,7 +98,27 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                                     Html.FROM_HTML_MODE_LEGACY)
                     );
                 } else {
-                    setMessage(signatureAddError.getMessage());
+                    if (signatureAddError instanceof MobileIdMessageException &&
+                            (((MobileIdMessageException) signatureAddError).getDetailMessage() != null &&
+                                    !((MobileIdMessageException) signatureAddError).getDetailMessage().isEmpty())) {
+                        setTitle(R.string.signature_update_signature_add_error_title);
+                        String errorMessage = getContext().getString(R.string.signature_update_signature_error_message_details) +
+                                ":\n" +
+                                ((MobileIdMessageException) signatureAddError).getDetailMessage();
+                        setMessage(errorMessage);
+                    } else if (signatureAddError instanceof SmartIdMessageException &&
+                            (((SmartIdMessageException) signatureAddError).getDetailMessage() != null &&
+                                    !((SmartIdMessageException) signatureAddError).getDetailMessage().isEmpty())) {
+                        setTitle(R.string.signature_update_signature_add_error_title);
+                        String errorMessage = getContext().getString(R.string.signature_update_signature_error_message_details) +
+                                ":\n" +
+                                ((SmartIdMessageException) signatureAddError).getDetailMessage();
+                        setMessage(errorMessage);
+                    } else {
+                        setTitle(R.string.signature_update_signature_add_error_title);
+                        setMessage(signatureAddError.getMessage());
+                    }
+
                 }
             } else if (signatureAddError instanceof TooManyRequestsException) {
                 setMessage(Html.fromHtml(UrlMessage.withURL(
