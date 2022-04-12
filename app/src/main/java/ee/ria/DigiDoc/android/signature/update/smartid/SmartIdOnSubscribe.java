@@ -90,7 +90,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                     case SERVICE_FAULT: {
                         NotificationManagerCompat.from(navigator.activity()).cancelAll();
                         ServiceFault serviceFault =
-                                (ServiceFault) ServiceFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
+                                ServiceFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
                         Timber.log(Log.DEBUG, "Got status: %s", serviceFault.getStatus());
                         emitter.onError(SmartIdMessageException
                                 .create(navigator.activity(), serviceFault.getStatus(), serviceFault.getDetailMessage()));

@@ -42,10 +42,6 @@ public class RESTServiceFault {
     public RESTServiceFault() {
     }
 
-    public RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus status) {
-        this.status = status;
-    }
-
     public RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus status, @Nullable String detailMessage) {
         this.status = status;
         this.detailMessage = detailMessage;

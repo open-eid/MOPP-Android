@@ -9,11 +9,6 @@ public class ServiceFault {
     private final SessionStatusResponse.ProcessStatus status;
     @Nullable private final String detailMessage;
 
-    public ServiceFault(SessionStatusResponse.ProcessStatus status) {
-        this.status = status;
-        this.detailMessage = null;
-    }
-
     public ServiceFault(SessionStatusResponse.ProcessStatus status, @Nullable String detailMessage) {
         this.status = status;
         this.detailMessage = detailMessage;
