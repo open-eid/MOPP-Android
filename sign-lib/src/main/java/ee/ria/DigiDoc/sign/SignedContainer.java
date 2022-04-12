@@ -6,6 +6,7 @@ import static com.google.common.io.Files.getFileExtension;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Base64;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
@@ -182,19 +183,19 @@ public abstract class SignedContainer {
             throw new Exception("Empty signature value");
         } catch (Exception e) {
             if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
-                Timber.e(e, "Failed to sign with ID-card - Too Many Requests");
+                Timber.log(Log.ERROR, e, "Failed to sign with ID-card - Too Many Requests");
                 throw new TooManyRequestsException();
             }
             if (e.getMessage() != null && e.getMessage().contains("OCSP response not in valid time slot")) {
-                Timber.e(e, "Failed to sign with ID-card - OCSP response not in valid time slot");
+                Timber.log(Log.ERROR, e, "Failed to sign with ID-card - OCSP response not in valid time slot");
                 throw new OcspInvalidTimeSlotException();
             }
             if (e.getMessage() != null && e.getMessage().contains("Certificate status: revoked")) {
-                Timber.e(e, "Failed to sign with ID-card - Certificate status: revoked");
+                Timber.log(Log.ERROR, e, "Failed to sign with ID-card - Certificate status: revoked");
                 throw new CertificateRevokedException();
             }
             if (e.getMessage() != null && e.getMessage().contains("Failed to connect")) {
-                Timber.e(e, "Failed to connect to Internet");
+                Timber.log(Log.ERROR, e, "Failed to connect to Internet");
                 throw new NoInternetConnectionException();
             }
 
@@ -298,7 +299,7 @@ public abstract class SignedContainer {
                     return true;
                 }
             } catch (Exception e) {
-                Timber.d("Could not open PDF as signature container %s", file);
+                Timber.log(Log.DEBUG, "Could not open PDF as signature container %s", file);
             }
         }
         return false;
@@ -336,7 +337,7 @@ public abstract class SignedContainer {
             commonName = Certificate.create(ByteString.of(signature.signingCertificateDer()))
                     .friendlyName();
         } catch (IOException e) {
-            Timber.e(e, "Can't parse certificate to get CN");
+            Timber.log(Log.ERROR, e, "Can't parse certificate to get CN");
             commonName = null;
         }
         return commonName == null ? signature.signedBy() : commonName;
@@ -431,7 +432,7 @@ public abstract class SignedContainer {
 
             return isSignedContainer;
         } catch (IOException e) {
-            Timber.e(e, "Unable to check if PDF file is signed");
+            Timber.log(Log.ERROR, e, "Unable to check if PDF file is signed");
             return false;
         }
     }

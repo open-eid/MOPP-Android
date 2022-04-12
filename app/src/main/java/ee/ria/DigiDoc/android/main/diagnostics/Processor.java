@@ -65,7 +65,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                         ByteStreams.copy(inputStream, outputStream);
                                         boolean isTempFileDeleted = Files.deleteIfExists(action.diagnosticsFile().toPath());
                                         if (!isTempFileDeleted) {
-                                            Timber.e("Unable to delete temporary diagnostics file or does not exist");
+                                            Timber.log(Log.ERROR, "Unable to delete temporary diagnostics file or does not exist");
                                         }
 
                                         Toast.makeText(Activity.getContext().get(), Activity.getContext().get().getString(R.string.file_saved),

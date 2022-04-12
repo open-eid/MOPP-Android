@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.idcard;
 
+import android.util.Log;
 import android.util.SparseArray;
 
 import java.time.LocalDate;
@@ -43,14 +44,14 @@ class ID1PersonalDataParser {
         try {
             return LocalDate.parse(expiryDateString, DATE_FORMAT);
         } catch (Exception e) {
-            Timber.e(e, "Could not parse expiry date %s", expiryDateString);
+            Timber.log(Log.ERROR, e, "Could not parse expiry date %s", expiryDateString);
             return null;
         }
     }
 
     private static LocalDate parseDateOfBirth(String dateAndPlaceOfBirthString) {
         if (dateAndPlaceOfBirthString == null) {
-            Timber.e("Could not parse date of birth: no data");
+            Timber.log(Log.ERROR, "Could not parse date of birth: no data");
             return null;
         }
         try {
@@ -59,7 +60,7 @@ class ID1PersonalDataParser {
 
             return LocalDate.parse(dateOfBirthString, DATE_FORMAT);
         } catch (Exception e) {
-            Timber.e(e, "Could not parse date of birth %s", dateAndPlaceOfBirthString);
+            Timber.log(Log.ERROR, e, "Could not parse date of birth %s", dateAndPlaceOfBirthString);
             return null;
         }
     }

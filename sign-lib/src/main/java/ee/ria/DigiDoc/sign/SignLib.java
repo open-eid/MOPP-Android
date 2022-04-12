@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.common.io.ByteStreams;
 
@@ -47,7 +48,7 @@ public final class SignLib {
         try {
             initSchema(context);
         } catch (IOException e) {
-            Timber.e(e, "Init schema failed");
+            Timber.log(Log.ERROR, e, "Init schema failed");
         }
 
         initLibDigiDocpp(context, tsaUrlPreferenceKey, configurationProvider, userAgent);
@@ -93,7 +94,7 @@ public final class SignLib {
         try {
             Os.setenv("HOME", path, true);
         } catch (ErrnoException e) {
-            Timber.e(e, "Setting HOME environment variable failed");
+            Timber.log(Log.ERROR, e, "Setting HOME environment variable failed");
         }
 
         initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider);
@@ -105,7 +106,7 @@ public final class SignLib {
         if (!logDirectory.exists()) {
             boolean isDirCreated = logDirectory.mkdir();
             if (isDirCreated) {
-                Timber.d("Directories created for %s", logDirectory.getPath());
+                Timber.log(Log.DEBUG, "Directories created for %s", logDirectory.getPath());
             }
         }
         DigiDocConf.instance().setLogLevel(LIBDIGIDOCPP_LOG_LEVEL);
@@ -176,7 +177,7 @@ public final class SignLib {
         File schemaDir = new File(context.getCacheDir(), SCHEMA_DIR);
         boolean isDirsCreated = schemaDir.mkdirs();
         if (isDirsCreated) {
-            Timber.d("Directories created for %s", schemaDir.getPath());
+            Timber.log(Log.DEBUG, "Directories created for %s", schemaDir.getPath());
         }
         return schemaDir;
     }
