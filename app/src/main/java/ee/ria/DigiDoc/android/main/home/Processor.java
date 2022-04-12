@@ -5,6 +5,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
+
+import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.util.SparseIntArray;
 import android.view.View;
@@ -122,7 +124,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return Observable.just(Result.MenuResult.create(isOpen));
             } else if (item != null) {
                 clearEidViewModel();
-                navigator.execute(menuItemToTransaction(application, item));
+                navigator.execute(menuItemToTransaction(application, item,
+                        localeService.applicationConfigurationWithLocale(application.getApplicationContext(),
+                                localeService.applicationLocale())));
                 return Observable.just(Result.MenuResult.create(false));
             }
             throw new IllegalStateException("Action is in invalid state: " + action);
@@ -131,15 +135,13 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         navigationVisibility = upstream -> upstream.map(action ->
                 Result.NavigationVisibilityResult.create(action.visible()));
 
-        localeChange = upstream -> upstream.switchMap(intent -> {
-            return Observable
-                    .fromCallable(() -> {
-                        localeService.applicationLocale(new Locale(LOCALES.get(intent.item())));
-                        return Result.LocaleChangeResult.create(LOCALES.inverse().get(
-                                localeService.applicationLocale().getLanguage()));
-                    })
-                    .doFinally(() -> AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.language_changed));
-        });
+        localeChange = upstream -> upstream.switchMap(intent -> Observable
+                .fromCallable(() -> {
+                    localeService.applicationLocale(new Locale(LOCALES.get(intent.item())));
+                    return Result.LocaleChangeResult.create(LOCALES.inverse().get(
+                            localeService.applicationLocale().getLanguage()));
+                })
+                .doFinally(() -> AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.language_changed)));
     }
 
     @SuppressWarnings("unchecked")
@@ -163,11 +165,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         }
     }
 
-    private static Transaction menuItemToTransaction(Context context, @IdRes int item) {
+    private static Transaction menuItemToTransaction(Context context, @IdRes int item, Configuration configuration) {
         switch (item) {
             case R.id.mainHomeMenuHelp:
                 return Transaction
-                        .activity(createBrowserIntent(context, R.string.main_home_menu_help_url),
+                        .activity(createBrowserIntent(context, R.string.main_home_menu_help_url, configuration),
                                 null);
             case R.id.mainHomeMenuRecent:
                 return Transaction.push(SignatureListScreen.create());

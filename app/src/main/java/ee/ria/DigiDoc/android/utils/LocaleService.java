@@ -30,9 +30,19 @@ public final class LocaleService {
             return context;
         }
         Locale.setDefault(locale);
+        Configuration configuration = applicationConfigurationWithLocale(context, locale);
+        return context.createConfigurationContext(configuration);
+    }
+
+    /**
+     * Return application-wide configuration with overridden locale
+     *
+     * @return Application-wide configuration with overridden locale
+     */
+    public Configuration applicationConfigurationWithLocale(Context context, Locale locale) {
         Configuration configuration = context.getResources().getConfiguration();
         configuration.setLocale(locale);
-        return context.createConfigurationContext(configuration);
+        return configuration;
     }
 
     /**

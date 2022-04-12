@@ -64,6 +64,8 @@ final class SignatureUpdateAdapter extends
     final Subject<Signature> signatureClicksSubject = PublishSubject.create();
     final Subject<Signature> signatureRemoveClicksSubject = PublishSubject.create();
 
+    private final ImmutableList<String> NO_REMOVE_SIGNATURE_BUTTON_FILE_EXTENSIONS = ImmutableList.of("ddoc", "asics", "scs", "pdf");
+
     private ImmutableList<Item> items = ImmutableList.of();
 
     void setData(boolean isSuccess, boolean isExistingContainer, boolean isNestedContainer,
@@ -110,6 +112,11 @@ final class SignatureUpdateAdapter extends
                     }
                 } else {
                     createRegularSignatureView(builder, container, isNestedContainer);
+                    boolean showRemoveSignatureButton = !isNestedContainer &&
+                            !NO_REMOVE_SIGNATURE_BUTTON_FILE_EXTENSIONS.contains(
+                                    Files.getFileExtension(container.name()).toLowerCase());
+                    builder.addAll(SignatureItem.of(container.signatures(), showRemoveSignatureButton,
+                            Files.getFileExtension(container.file().getName()).equalsIgnoreCase("ddoc")));
                 }
             } else {
                 builder.add(DocumentsAddButtonItem.create());

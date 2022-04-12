@@ -20,7 +20,6 @@
 package ee.ria.DigiDoc.mobileid.rest;
 
 import ee.ria.DigiDoc.mobileid.dto.request.PostMobileCreateSignatureCertificateRequest;
-import ee.ria.DigiDoc.mobileid.dto.request.PostMobileCreateSignatureSessionRequest;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureCertificateResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
@@ -34,7 +33,7 @@ import retrofit2.http.Query;
 
 public interface MIDRestServiceClient {
 
-    String CONTENT_TYPE_HEADER = "Content-Type: application/json";
+    String CONTENT_TYPE_HEADER = "Content-Type: application/json; charset=utf-8";
     String CONTENT_TYPE_ACCEPT = "Accept: application/json";
 
     @Headers({ CONTENT_TYPE_HEADER, CONTENT_TYPE_ACCEPT })
@@ -43,7 +42,7 @@ public interface MIDRestServiceClient {
 
     @Headers({ CONTENT_TYPE_HEADER, CONTENT_TYPE_ACCEPT })
     @POST("signature")
-    Call<MobileCreateSignatureSessionResponse> getMobileCreateSession(@Body PostMobileCreateSignatureSessionRequest body);
+    Call<MobileCreateSignatureSessionResponse> getMobileCreateSession(@Body String body);
 
     @Headers({ CONTENT_TYPE_HEADER, CONTENT_TYPE_ACCEPT })
     @GET("signature/session/{session_id}")

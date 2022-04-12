@@ -231,7 +231,6 @@ public class ConfigurationManager {
                 .setTslUrl(configurationParser.parseStringValue("TSL-URL"))
                 .setTslCerts(configurationParser.parseStringValues("TSL-CERTS"))
                 .setTsaUrl(configurationParser.parseStringValue("TSA-URL"))
-                .setMidSignUrl(configurationParser.parseStringValue("MID-SIGN-URL"))
                 .setLdapPersonUrl(configurationParser.parseStringValue("LDAP-PERSON-URL"))
                 .setLdapCorpUrl(configurationParser.parseStringValue("LDAP-CORP-URL"))
                 .setMidRestUrl(configurationParser.parseStringValue("MID-PROXY-URL"))

@@ -31,7 +31,7 @@ public final class NameUpdateDialog extends AlertDialog {
 
         view = new NameUpdateView(getContext());
         view.setId(R.id.nameUpdateNameLabel);
-        setView(view, padding, padding, padding, padding);
+        setView(view, padding, (int)(padding / 1.2), padding, padding / 2);
 
         setButton(BUTTON_POSITIVE, getContext().getString(android.R.string.ok),
                 (OnClickListener) null);
