@@ -69,6 +69,7 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
 
+    private final ImmutableList<String> ASICS_TIMESTAMP_CONTAINERS = ImmutableList.of("asics", "scs");
     private static final ImmutableSet<String> UNSIGNABLE_CONTAINER_EXTENSIONS = ImmutableSet.<String>builder().add("asics", "scs", "ddoc").build();
 
     private static final String EMPTY_CHALLENGE = "";
@@ -199,8 +200,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 signatureAddIntent(), sendIntent());
     }
 
-    private void checkIfDdocParentContainerIsTimestamped(ImmutableList<Signature> signatures) {
-        if (!isNestedContainer && Files.getFileExtension(containerFile.getName()).equalsIgnoreCase("asics") &&
+    private void checkIfDdocParentContainerIsTimestamped(ImmutableList<Signature> signatures, ImmutableList<DataFile> dataFiles) {
+        if (!isNestedContainer && ASICS_TIMESTAMP_CONTAINERS.contains(Files.getFileExtension(containerFile.getName()).toLowerCase()) &&
                 dataFiles.size() == 1 && signatures.size() == 1 &&
                 Files.getFileExtension(dataFiles.get(0).name()).equalsIgnoreCase("ddoc")) {
             Instant dateTimeInstant = DateUtil.toEpochSecond(2018, Month.JULY, 1, 0, 0, 0);
@@ -252,7 +253,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             }
 
             if (state.container() != null) {
-                checkIfDdocParentContainerIsTimestamped(state.container().signatures());
+                checkIfDdocParentContainerIsTimestamped(state.container().signatures(), state.container().dataFiles());
             }
         }
 
@@ -545,7 +546,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         disposables.add(adapter.scrollToTop().subscribe(ignored -> listView.scrollToPosition(0)));
         disposables.add(adapter.documentSaveClicks().subscribe(document ->
                 documentSaveIntentSubject.onNext(Intent.DocumentSaveIntent
-                        .create(containerFile, document))));
+                        .create((nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, document))));
         disposables.add(adapter.documentRemoveClicks().subscribe(document ->
                 documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent
                         .showConfirmation(containerFile, dataFiles, document))));

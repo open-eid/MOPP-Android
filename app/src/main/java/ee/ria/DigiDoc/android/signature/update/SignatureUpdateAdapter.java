@@ -64,6 +64,7 @@ final class SignatureUpdateAdapter extends
     final Subject<Signature> signatureClicksSubject = PublishSubject.create();
     final Subject<Signature> signatureRemoveClicksSubject = PublishSubject.create();
 
+    private final ImmutableList<String> ASICS_TIMESTAMP_CONTAINERS = ImmutableList.of("asics", "scs");
     private final ImmutableList<String> NO_REMOVE_SIGNATURE_BUTTON_FILE_EXTENSIONS = ImmutableList.of("ddoc", "asics", "scs", "pdf");
 
     private ImmutableList<Item> items = ImmutableList.of();
@@ -111,12 +112,11 @@ final class SignatureUpdateAdapter extends
                         createRegularSignatureView(builder, container, isNestedContainer);
                     }
                 } else {
-                    createRegularSignatureView(builder, container, isNestedContainer);
-                    boolean showRemoveSignatureButton = !isNestedContainer &&
-                            !NO_REMOVE_SIGNATURE_BUTTON_FILE_EXTENSIONS.contains(
-                                    Files.getFileExtension(container.name()).toLowerCase());
-                    builder.addAll(SignatureItem.of(container.signatures(), showRemoveSignatureButton,
-                            Files.getFileExtension(container.file().getName()).equalsIgnoreCase("ddoc")));
+                    if (ASICS_TIMESTAMP_CONTAINERS.contains(Files.getFileExtension(container.name()).toLowerCase())) {
+                        createAsicsTimestampView(builder, container);
+                    } else {
+                        createAsicsSignatureView(builder, container);
+                    }
                 }
             } else {
                 builder.add(DocumentsAddButtonItem.create());
@@ -155,7 +155,10 @@ final class SignatureUpdateAdapter extends
         if (container.signatures().isEmpty()) {
             builder.add(SignaturesEmptyItem.create());
         } else {
-            builder.addAll(SignatureItem.of(container.signatures(), !isNestedContainer,
+            boolean showRemoveSignatureButton = !isNestedContainer &&
+                    !NO_REMOVE_SIGNATURE_BUTTON_FILE_EXTENSIONS.contains(
+                            Files.getFileExtension(container.name()).toLowerCase());
+            builder.addAll(SignatureItem.of(container.signatures(), showRemoveSignatureButton,
                     Files.getFileExtension(container.file().getName()).equalsIgnoreCase("ddoc")));
         }
     }

@@ -40,6 +40,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
+import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -225,7 +226,14 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             navigator.execute(transaction);
                             return Result.DocumentViewResult.idle();
                         })
-                        .onErrorReturn(ignored -> Result.DocumentViewResult.idle())
+                        .onErrorReturn(throwable -> {
+                            if (throwable instanceof NoInternetConnectionException) {
+                                Toast.makeText(application.getApplicationContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(application.getApplicationContext(), R.string.signature_update_container_load_error, Toast.LENGTH_LONG).show();
+                            }
+                            return Result.DocumentViewResult.idle();
+                        })
                         .startWithItem(Result.DocumentViewResult.activity());
             }
         });
