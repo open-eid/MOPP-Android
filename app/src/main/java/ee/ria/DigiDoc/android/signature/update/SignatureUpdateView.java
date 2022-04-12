@@ -179,7 +179,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         errorDialog = new SignatureUpdateErrorDialog(context, documentsAddIntentSubject,
                 documentRemoveIntentSubject, signatureAddIntentSubject,
-                signatureRemoveIntentSubject, signatureAddDialog);
+                signatureRemoveIntentSubject, signatureAddDialog, this);
 
         progressBar = (ProgressBar) activityIndicatorView;
         documentAddProgressBar.setVisibility(GONE);

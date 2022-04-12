@@ -21,7 +21,11 @@ import io.reactivex.rxjava3.core.Observable;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static ee.ria.DigiDoc.android.Constants.VOID;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceLayoutWidth;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceOrientation;
 import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceWidth;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDialogLandscapeWidth;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDialogPortraitWidth;
 
 public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
 
@@ -94,14 +98,8 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
 
     // Prevent Dialog width change when rotating screen
     private void setCustomLayoutChangeListener(Window window) {
-        layoutChangeListener = (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-            int orientation = getContext().getResources().getConfiguration().orientation;
-            if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                window.setLayout((int) (getDeviceWidth() * 0.9), WRAP_CONTENT);
-            } else {
-                window.setLayout((int) (getDeviceWidth() * 0.8), WRAP_CONTENT);
-            }
-        };
+        layoutChangeListener = (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
+                window.setLayout(getDeviceLayoutWidth(getContext()), WRAP_CONTENT);
     }
 
     private View.OnLayoutChangeListener getCustomLayoutChangeListener() {
