@@ -76,7 +76,8 @@ public class SessionStatusResponse {
         UNDER_MAINTENANCE,
         GENERAL_ERROR,
         NO_RESPONSE,
-        INVALID_SSL_HANDSHAKE
+        INVALID_SSL_HANDSHAKE,
+        TECHNICAL_ERROR
     }
 }
 

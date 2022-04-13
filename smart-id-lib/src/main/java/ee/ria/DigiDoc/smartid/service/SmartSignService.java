@@ -319,8 +319,8 @@ public class SmartSignService extends IntentService {
                     Timber.log(Log.DEBUG, "Under maintenance - HTTP status code: %s " + httpResponse.code());
                     break;
                 default:
-                    broadcastFault();
-                    Timber.log(Log.DEBUG, "Request unsuccessful, HTTP status code: %s " + httpResponse.code());
+                    broadcastFault(SessionStatusResponse.ProcessStatus.TECHNICAL_ERROR);
+                    Timber.log(Log.DEBUG, "Request unsuccessful, technical or general error, HTTP status code: %s " + httpResponse.code());
                     break;
             }
             return null;

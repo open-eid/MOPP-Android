@@ -237,9 +237,9 @@ public class MobileSignService extends IntentService {
                         broadcastFault(fault);
                         Timber.e(e, "Failed to sign with Mobile-ID - Certificate status: revoked");
                     } else {
-                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.GENERAL_ERROR);
+                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TECHNICAL_ERROR);
                         broadcastFault(fault);
-                        Timber.e(e, "Failed to sign with Mobile-ID");
+                        Timber.e(e, "Failed to sign with Mobile-ID. Technical or general error %s", responseWrapper.code());
                     }
                     return;
                 }
@@ -288,14 +288,16 @@ public class MobileSignService extends IntentService {
     private void parseErrorAndBroadcast(Response responseWrapper) {
         if (responseWrapper.code() == 429) {
             broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS));
-            Timber.d("Too many requests");
+            Timber.log(Log.DEBUG, "Too many requests, HTTP status code: %s", responseWrapper.code());
         } else if (responseWrapper.code() == 401) {
             broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS));
+            Timber.log(Log.DEBUG, "Too many requests, HTTP status code: %s", responseWrapper.code());
         } else if (responseWrapper.code() == 409) {
             broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.EXCEEDED_UNSUCCESSFUL_REQUESTS));
+            Timber.log(Log.DEBUG, "Exceeded unsuccessful requests, HTTP status code: %s", responseWrapper.code());
         } else {
-            broadcastFault(defaultError());
-            Timber.d("Request unsuccessful, HTTP status code: %s", responseWrapper.code());
+            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TECHNICAL_ERROR));
+            Timber.log(Log.DEBUG, "Request unsuccessful, technical or general error, HTTP status code: %s", responseWrapper.code());
         }
     }
 

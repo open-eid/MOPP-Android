@@ -66,6 +66,7 @@ public final class SmartIdStatusMessages {
                             R.string.no_internet_connection)
                     .put(ProcessStatus.INVALID_SSL_HANDSHAKE,
                             R.string.signature_update_signature_error_invalid_ssl_handshake)
+                    .put(ProcessStatus.TECHNICAL_ERROR, R.string.signature_update_smart_id_error_technical_error)
                     .build();
 
     public static String message(Context context, ProcessStatus status) {
