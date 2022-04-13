@@ -128,18 +128,18 @@ public class MobileSignService extends IntentService {
                 }
             } catch (CertificateException | NoSuchAlgorithmException e) {
                 Timber.log(Log.ERROR, e, "Invalid SSL handshake");
-                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE, null));
+                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
                 return;
             }
 
             if (isCountryCodeError(request.getPhoneNumber())) {
-                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_COUNTRY_CODE, null));
+                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_COUNTRY_CODE));
                 Timber.log(Log.DEBUG, "Invalid country code");
                 return;
             }
 
             if (!UUIDUtil.isValid(request.getRelyingPartyUUID())) {
-                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS, null));
+                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS));
                 Timber.log(Log.DEBUG, "%s - Relying Party UUID not in valid format", request.getRelyingPartyUUID());
                 return;
             }
@@ -167,10 +167,10 @@ public class MobileSignService extends IntentService {
                     }
                 }
             } catch (UnknownHostException e) {
-                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE, null));
+                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE));
                 Timber.log(Log.ERROR, e, "REST API certificate request failed. Unknown host");
             } catch (SSLPeerUnverifiedException e) {
-                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE, null));
+                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
                 Timber.log(Log.ERROR, e, "SSL handshake failed");
             } catch (IOException e) {
                 broadcastFault(defaultError(e.getMessage()));
@@ -229,15 +229,15 @@ public class MobileSignService extends IntentService {
                     return;
                 } catch (Exception e) {
                     if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
-                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS, null);
+                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS);
                         broadcastFault(fault);
                         Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID - Too Many Requests");
                     } else if (e.getMessage() != null && e.getMessage().contains("OCSP response not in valid time slot")) {
-                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.OCSP_INVALID_TIME_SLOT, null);
+                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.OCSP_INVALID_TIME_SLOT);
                         broadcastFault(fault);
                         Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID - OCSP response not in valid time slot");
                     } else if (e.getMessage() != null && e.getMessage().contains("Certificate status: revoked")) {
-                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.CERTIFICATE_REVOKED, null);
+                        RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.CERTIFICATE_REVOKED);
                         broadcastFault(fault);
                         Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID - Certificate status: revoked");
                     } else {
@@ -250,14 +250,14 @@ public class MobileSignService extends IntentService {
             }
 
             if (timeout > TIMEOUT_CANCEL) {
-                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TIMEOUT, null));
+                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TIMEOUT));
                 Timber.log(Log.DEBUG, "Request timeout");
                 return;
             }
             sleep(SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
             doCreateSignatureStatusRequestLoop(request);
         } catch (UnknownHostException e) {
-            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE, null));
+            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE));
             Timber.log(Log.ERROR, e, "REST API session status request failed. Unknown host");
         }
     }
@@ -291,12 +291,12 @@ public class MobileSignService extends IntentService {
 
     private void parseErrorAndBroadcast(Response responseWrapper) {
         if (responseWrapper.code() == 429) {
-            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS, null));
+            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS));
             Timber.log(Log.DEBUG, "Too many requests");
         } else if (responseWrapper.code() == 401) {
-            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS, null));
+            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS));
         } else if (responseWrapper.code() == 409) {
-            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.EXCEEDED_UNSUCCESSFUL_REQUESTS, null));
+            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.EXCEEDED_UNSUCCESSFUL_REQUESTS));
         } else {
             broadcastFault(defaultError("Request unsuccessful, HTTP status code: " + responseWrapper.code()));
             Timber.log(Log.DEBUG, "Request unsuccessful, HTTP status code: %s", responseWrapper.code());

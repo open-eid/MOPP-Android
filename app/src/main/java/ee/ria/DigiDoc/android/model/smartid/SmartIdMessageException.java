@@ -24,12 +24,13 @@ import android.content.Context;
 
 import androidx.annotation.Nullable;
 
+import ee.ria.DigiDoc.common.DetailMessageSource;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse.ProcessStatus;
 
 /**
  * Exception thrown by Smart-ID service that contains message suitable for showing to the user.
  */
-public final class SmartIdMessageException extends Exception {
+public final class SmartIdMessageException extends Exception implements DetailMessageSource {
 
     @Nullable private final String detailMessage;
 
@@ -51,6 +52,7 @@ public final class SmartIdMessageException extends Exception {
         this.detailMessage = detailMessage;
     }
 
+    @Override
     @Nullable
     public String getDetailMessage() {
         return detailMessage;

@@ -4,10 +4,17 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 
-public class ServiceFault {
+import ee.ria.DigiDoc.common.DetailMessageSource;
+
+public class ServiceFault implements DetailMessageSource {
 
     private final SessionStatusResponse.ProcessStatus status;
     @Nullable private final String detailMessage;
+
+    public ServiceFault(SessionStatusResponse.ProcessStatus status) {
+        this.status = status;
+        this.detailMessage = null;
+    }
 
     public ServiceFault(SessionStatusResponse.ProcessStatus status, @Nullable String detailMessage) {
         this.status = status;
@@ -26,6 +33,7 @@ public class ServiceFault {
         return status;
     }
 
+    @Override
     @Nullable public String getDetailMessage() {
         return detailMessage;
     }

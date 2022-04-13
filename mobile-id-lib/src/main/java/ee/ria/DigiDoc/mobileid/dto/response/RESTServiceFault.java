@@ -24,10 +24,11 @@ import androidx.annotation.Nullable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.Gson;
 
+import ee.ria.DigiDoc.common.DetailMessageSource;
 import ee.ria.DigiDoc.mobileid.dto.MobileCertificateResultType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RESTServiceFault {
+public class RESTServiceFault implements DetailMessageSource {
 
     private int httpStatus;
     private MobileCreateSignatureSessionStatusResponse.ProcessState state;
@@ -40,6 +41,10 @@ public class RESTServiceFault {
     @Nullable private String detailMessage;
 
     public RESTServiceFault() {
+    }
+
+    public RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus status) {
+        this.status = status;
     }
 
     public RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus status, @Nullable String detailMessage) {
@@ -128,6 +133,7 @@ public class RESTServiceFault {
         this.error = error;
     }
 
+    @Override
     @Nullable public String getDetailMessage() {
         return detailMessage;
     }

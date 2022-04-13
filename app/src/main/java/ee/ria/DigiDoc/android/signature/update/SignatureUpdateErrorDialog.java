@@ -18,6 +18,7 @@ import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
+import ee.ria.DigiDoc.common.DetailMessageSource;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.sign.CertificateRevokedException;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
@@ -87,8 +88,7 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                         R.string.signature_update_id_card_sign_pin2_locked));
             } else if (signatureAddError instanceof NoInternetConnectionException) {
                 setMessage(getContext().getString(R.string.no_internet_connection));
-            } else if (signatureAddError instanceof MobileIdMessageException ||
-                    signatureAddError instanceof SmartIdMessageException) {
+            } else if (signatureAddError instanceof DetailMessageSource) {
                 String link = ErrorMessageUtil.extractLink(signatureAddError.getMessage());
                 if (!link.isEmpty()) {
                     setMessage(
@@ -98,27 +98,16 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                                     Html.FROM_HTML_MODE_LEGACY)
                     );
                 } else {
-                    if (signatureAddError instanceof MobileIdMessageException &&
-                            (((MobileIdMessageException) signatureAddError).getDetailMessage() != null &&
-                                    !((MobileIdMessageException) signatureAddError).getDetailMessage().isEmpty())) {
-                        setTitle(R.string.signature_update_signature_add_error_title);
+                    setTitle(R.string.signature_update_signature_add_error_title);
+                    if (((DetailMessageSource) signatureAddError).getDetailMessage() != null &&
+                                    !((DetailMessageSource) signatureAddError).getDetailMessage().isEmpty()) {
                         String errorMessage = getContext().getString(R.string.signature_update_signature_error_message_details) +
                                 ":\n" +
-                                ((MobileIdMessageException) signatureAddError).getDetailMessage();
-                        setMessage(errorMessage);
-                    } else if (signatureAddError instanceof SmartIdMessageException &&
-                            (((SmartIdMessageException) signatureAddError).getDetailMessage() != null &&
-                                    !((SmartIdMessageException) signatureAddError).getDetailMessage().isEmpty())) {
-                        setTitle(R.string.signature_update_signature_add_error_title);
-                        String errorMessage = getContext().getString(R.string.signature_update_signature_error_message_details) +
-                                ":\n" +
-                                ((SmartIdMessageException) signatureAddError).getDetailMessage();
+                                ((DetailMessageSource) signatureAddError).getDetailMessage();
                         setMessage(errorMessage);
                     } else {
-                        setTitle(R.string.signature_update_signature_add_error_title);
                         setMessage(signatureAddError.getMessage());
                     }
-
                 }
             } else if (signatureAddError instanceof TooManyRequestsException) {
                 setMessage(Html.fromHtml(UrlMessage.withURL(

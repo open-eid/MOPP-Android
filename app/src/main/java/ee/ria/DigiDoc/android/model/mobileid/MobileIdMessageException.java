@@ -10,13 +10,14 @@ import androidx.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.common.DetailMessageSource;
 import ee.ria.DigiDoc.mobileid.dto.MobileCertificateResultType;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse.ProcessStatus;
 
 /**
  * Exception thrown by Mobile-ID service that contains message suitable for showing to the user.
  */
-public final class MobileIdMessageException extends Exception {
+public final class MobileIdMessageException extends Exception implements DetailMessageSource {
 
     @Nullable private final String detailMessage;
 
@@ -45,7 +46,8 @@ public final class MobileIdMessageException extends Exception {
         this.detailMessage = detailMessage;
     }
 
-    public String getDetailMessage() {
+    @Override
+    @Nullable public String getDetailMessage() {
         return detailMessage;
     }
 }
