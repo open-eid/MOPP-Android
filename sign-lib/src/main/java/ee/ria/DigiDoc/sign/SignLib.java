@@ -42,7 +42,7 @@ public final class SignLib {
      * <p>
      * Unzips the schema, access certificate and initializes libdigidocpp.
      */
-    public static void init(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent) {
+    public static void init(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent, boolean isLoggingEnabled) {
         initNativeLibs();
         try {
             initSchema(context);
@@ -50,7 +50,7 @@ public final class SignLib {
             Timber.e(e, "Init schema failed");
         }
 
-        initLibDigiDocpp(context, tsaUrlPreferenceKey, configurationProvider, userAgent);
+        initLibDigiDocpp(context, tsaUrlPreferenceKey, configurationProvider, userAgent, isLoggingEnabled);
 
     }
 
@@ -88,7 +88,7 @@ public final class SignLib {
         }
     }
 
-    private static void initLibDigiDocpp(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent) {
+    private static void initLibDigiDocpp(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent, boolean isLoggingEnabled) {
         String path = getSchemaDir(context).getAbsolutePath();
         try {
             Os.setenv("HOME", path, true);
@@ -96,7 +96,7 @@ public final class SignLib {
             Timber.e(e, "Setting HOME environment variable failed");
         }
 
-        initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider);
+        initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider, isLoggingEnabled);
         digidoc.initializeLib(userAgent, path);
     }
 
@@ -112,10 +112,10 @@ public final class SignLib {
         DigiDocConf.instance().setLogFile(logDirectory.getAbsolutePath() + File.separator + "libdigidocpp.log");
     }
 
-    private static void initLibDigiDocConfiguration(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider) {
+    private static void initLibDigiDocConfiguration(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, boolean isLoggingEnabled) {
         DigiDocConf conf = new DigiDocConf(getSchemaDir(context).getAbsolutePath());
         Conf.init(conf.transfer());
-        if (BuildConfig.BUILD_TYPE.contentEquals("debug")) {
+        if (isLoggingEnabled || BuildConfig.BUILD_TYPE.contentEquals("debug")) {
             initLibDigiDocLogging(context);
         }
 

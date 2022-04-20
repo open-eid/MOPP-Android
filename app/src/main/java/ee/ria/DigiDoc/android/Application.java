@@ -22,6 +22,7 @@ package ee.ria.DigiDoc.android;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +32,7 @@ import android.os.StrictMode;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.google.common.collect.ImmutableList;
 
@@ -99,6 +101,7 @@ public class Application extends android.app.Application {
 
     @Override
     public void onCreate() {
+        setupAppLogging();
         setupTSLFiles();
         setupStrictMode();
         super.onCreate();
@@ -182,7 +185,7 @@ public class Application extends android.app.Application {
     // Timber
 
     private void setupTimber() {
-        if (BuildConfig.DEBUG) {
+        if (isLoggingEnabled() || BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
             Timber.plant(new FileLoggingTree(getApplicationContext()));
         }
@@ -192,7 +195,7 @@ public class Application extends android.app.Application {
     // Container configuration
 
     private void setupSignLib() {
-        SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider(), UserAgentUtil.getUserAgent(getApplicationContext()));
+        SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider(), UserAgentUtil.getUserAgent(getApplicationContext()), isLoggingEnabled());
     }
 
     private void setupRxJava() {
@@ -250,6 +253,47 @@ public class Application extends android.app.Application {
 
     public ConfigurationProvider getConfigurationProvider() {
         return configurationProvider;
+    }
+
+    private void setupAppLogging() {
+        setupDefaultValues(R.string.main_diagnostics_logging_key, false);
+        setupDefaultValues(R.string.main_diagnostics_logging_running_key, false);
+
+        boolean isDiagnosticsLoggingEnabled = getStoredValue(R.string.main_diagnostics_logging_key, false);
+        boolean isDiagnosticsLoggingRunning = getStoredValue(R.string.main_diagnostics_logging_running_key, false);
+
+        if ((isDiagnosticsLoggingEnabled && isDiagnosticsLoggingRunning) || (!isDiagnosticsLoggingEnabled && isDiagnosticsLoggingRunning)) {
+            storeValue(R.string.main_diagnostics_logging_key, false);
+            storeValue(R.string.main_diagnostics_logging_running_key, false);
+        } else if (isDiagnosticsLoggingEnabled) {
+            storeValue(R.string.main_diagnostics_logging_running_key, true);
+        }
+    }
+
+    private boolean getStoredValue(int id, boolean defaultValue) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        return sharedPreferences.getBoolean(getString(id), defaultValue);
+    }
+
+    private void storeValue(int id, boolean value) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        sharedPreferences.edit().putBoolean(getString(id), value)
+                .commit();
+    }
+
+    private void setupDefaultValues(int id, boolean defaultValue) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (!sharedPreferences.contains(getString(id))) {
+            storeValue(id, defaultValue);
+        }
+    }
+
+    private boolean isLoggingEnabled() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean isDiagnosticsLoggingEnabled = sharedPreferences.getBoolean(getString(R.string.main_diagnostics_logging_key), false);
+        boolean isDiagnosticsLoggingRunning = sharedPreferences.getBoolean(getString(R.string.main_diagnostics_logging_running_key), false);
+
+        return isDiagnosticsLoggingEnabled && isDiagnosticsLoggingRunning;
     }
 
     public class ConfigurationProviderReceiver extends ResultReceiver {

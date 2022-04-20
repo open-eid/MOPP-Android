@@ -55,6 +55,11 @@
     <string name="main_diagnostics_configuration_save_diagnostics_button">SALVESTA DIAGNOSTIKA</string>
     <string name="main_diagnostics_rpuuid_default">vaikimisi määratud</string>
     <string name="main_diagnostics_rpuuid_custom">käsitsi määratud</string>
+    <string name="main_diagnostics_logging_switch">Aktiveeri ühekordne logifaili genereerimine</string>
+    <string name="main_diagnostics_save_log">Salvesta logifail</string>
+    <string name="main_diagnostics_restart_message">Logimise aktiveerimiseks taaskäivitada RIA DigiDoc. https://www.id.ee/artikkel/logifaili-genereerimine-digidoc4-kliendis/</string>
+    <string name="main_diagnostics_restart_message_read_more">Loe täpsemalt siit.</string>
+    <string name="main_diagnostics_restart_message_restart_now">Taaskäivita rakendus?</string>
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Allkirjastamiseks või kontrollimiseks vali fail</string>

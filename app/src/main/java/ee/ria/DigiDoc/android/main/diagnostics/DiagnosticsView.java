@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.main.diagnostics;
 
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileLogsSaveClicksSubject;
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileSaveClicksSubject;
 
 import android.content.Context;
@@ -10,17 +11,23 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.file.NoSuchFileException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,11 +40,13 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.TSLException;
 import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
@@ -55,6 +64,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
     private final SimpleDateFormat dateFormat;
     private final Toolbar toolbarView;
+    private final ConfirmationDialog diagnosticsRestartConfirmationDialog = new ConfirmationDialog(Activity.getContext().get(),
+            R.string.main_diagnostics_restart_message, R.id.mainDiagnosticsRestartConfirmationDialog);
 
     private final Navigator navigator;
 
@@ -65,6 +76,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
     private final String DIAGNOSTICS_FILE_NAME = "ria_digidoc_" + getAppVersion() + "_diagnostics.txt";
     private final String DIAGNOSTICS_FILE_PATH = getContext().getFilesDir().getPath()
             + File.separator + "diagnostics" + File.separator;
+    private final String DIAGNOSTICS_LOGS_FILE_NAME = "ria_digidoc_" + getAppVersion() + "_logs.txt";
+    private final File logsDirectory = new File(getContext().getFilesDir() + "/logs");
 
     public DiagnosticsView(Context context) {
         super(context);
@@ -75,6 +88,11 @@ public final class DiagnosticsView extends CoordinatorLayout {
         View saveDiagnosticsButton = findViewById(R.id.configurationSaveButton);
         navigator = Application.component(context).navigator();
 
+        SwitchCompat activateLogFileGenerating = findViewById(R.id.mainDiagnosticsLogging);
+        activateLogFileGenerating.setChecked(((Activity) this.getContext()).getSettingsDataStore().getIsLogFileGeneratingEnabled());
+        Button saveLogFileButton = findViewById(R.id.mainDiagnosticsSaveLoggingButton);
+        saveLogFileButton.setVisibility(logsExist() ? VISIBLE : GONE);
+
         ConfigurationProvider configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
         disposables = new ViewDisposables();
 
@@ -84,11 +102,44 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
         findViewById(R.id.configurationUpdateButton).setOnClickListener(view -> updateConfiguration());
 
+        fileLogToggleListener(activateLogFileGenerating);
+
         clicks(saveDiagnosticsButton).map(ignored ->
                 (saveDiagnostics()))
                 .subscribe(diagnosticsFileSaveClicksSubject);
 
+        clicks(saveLogFileButton).map(ignored ->
+                (saveLogFile()))
+                .subscribe(diagnosticsFileLogsSaveClicksSubject);
+
         setData(configurationProvider);
+    }
+
+    private void fileLogToggleListener(SwitchCompat activateLogFileGenerating) {
+        activateLogFileGenerating.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Activity activityContext = ((Activity) this.getContext());
+            if (isChecked) {
+                diagnosticsRestartConfirmationDialog.show();
+                ClickableDialogUtil.makeLinksInDialogClickable(diagnosticsRestartConfirmationDialog);
+                diagnosticsRestartConfirmationDialog.positiveButtonClicks()
+                        .doOnNext(next -> {
+                            diagnosticsRestartConfirmationDialog.dismiss();
+                            activityContext.getSettingsDataStore().setIsLogFileGeneratingEnabled(true);
+                            activityContext.restartAppWithIntent(activityContext.getIntent());
+                        })
+                        .subscribe();
+                diagnosticsRestartConfirmationDialog.cancels()
+                        .doOnNext(next -> {
+                            diagnosticsRestartConfirmationDialog.dismiss();
+                            activateLogFileGenerating.setChecked(false);
+                            activityContext.getSettingsDataStore().setIsLogFileGeneratingEnabled(false);
+                            activityContext.restartAppWithIntent(activityContext.getIntent());
+                        })
+                        .subscribe();
+            } else {
+                activityContext.getSettingsDataStore().setIsLogFileGeneratingEnabled(false);
+            }
+        });
     }
 
     @Override
@@ -144,7 +195,6 @@ public final class DiagnosticsView extends CoordinatorLayout {
         } finally {
             textViews.clear();
         }
-
     }
 
     private static void findAllTextViews(View view, List<TextView> textViews) {
@@ -181,6 +231,13 @@ public final class DiagnosticsView extends CoordinatorLayout {
         }
 
         return diagnosticsText.toString();
+    }
+
+    private File saveLogFile() throws IOException {
+        if (logsExist()) {
+            return combineLogFiles();
+        }
+        throw new FileNotFoundException("Unable to get directory with logs");
     }
 
     private boolean isTitleOrButtonText(String text) {
@@ -356,5 +413,27 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
     private static String getLibDigiDocVersion() {
         return SignLib.libdigidocppVersion();
+    }
+
+    private boolean logsExist() {
+        if (logsDirectory.exists()) {
+            File[] files = logsDirectory.listFiles();
+            return files != null && files.length > 0;
+        }
+        return false;
+    }
+
+    private File combineLogFiles() throws IOException {
+        if (logsExist()) {
+            File[] files = logsDirectory.listFiles() != null ? logsDirectory.listFiles() : new File[]{};
+            File combinedLogFile = new File(logsDirectory + File.separator + DIAGNOSTICS_LOGS_FILE_NAME);
+            for (File file : files) {
+                String header = "\n\n" + "===== File: " + file.getName() + " =====" + "\n\n";
+                String fileString = header + FileUtils.readFileToString(file, Charset.defaultCharset());
+                FileUtils.write(combinedLogFile, fileString, Charset.defaultCharset(), true);
+            }
+            return combinedLogFile;
+        }
+        throw new FileNotFoundException("Could not combine log files. Cannot find logs.");
     }
 }

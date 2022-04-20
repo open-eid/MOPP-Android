@@ -142,4 +142,14 @@ public final class SettingsDataStore {
         editor.apply();
     }
 
+    public Boolean getIsLogFileGeneratingEnabled() {
+        return preferences.getBoolean(resources.getString(R.string.main_diagnostics_logging_key), false);
+    }
+
+    public void setIsLogFileGeneratingEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(resources.getString(R.string.main_diagnostics_logging_key), isEnabled);
+        editor.commit();
+    }
+
 }

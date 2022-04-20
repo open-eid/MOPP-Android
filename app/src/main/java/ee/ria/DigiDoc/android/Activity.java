@@ -158,6 +158,7 @@ public final class Activity extends AppCompatActivity {
         finish();
         startActivity(intent);
         overridePendingTransition (0, 0);
+        System.exit(0);
     }
 
     private void handleIncomingFiles(Intent intent) {
