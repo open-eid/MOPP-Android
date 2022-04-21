@@ -78,11 +78,14 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
     private Observable<Intent.RecipientsScreenUpButtonClickIntent>
             recipientsScreenUpButtonClickIntent() {
-        return Observable.merge(
-                navigationClicks(toolbarView)
-                        .map(ignored -> Intent.RecipientsScreenUpButtonClickIntent.create()),
-                clicks(doneButton)
-                        .map(ignored -> Intent.RecipientsScreenUpButtonClickIntent.create()));
+        return navigationClicks(toolbarView)
+                .map(ignored -> Intent.RecipientsScreenUpButtonClickIntent.create());
+    }
+
+    private Observable<Intent.RecipientsScreenDoneButtonClickIntent>
+            recipientsScreenDoneButtonClickIntent() {
+        return clicks(doneButton)
+                .map(ignored -> Intent.RecipientsScreenDoneButtonClickIntent.create());
     }
 
     private Observable<Intent.RecipientsSearchIntent> recipientsSearchIntent() {
@@ -107,8 +110,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
     @Override
     public Observable<Intent> intents() {
-        return Observable.merge(recipientsScreenUpButtonClickIntent(), recipientsSearchIntent(),
-                recipientAddIntent(), recipientRemoveIntent());
+        return Observable.mergeArray(recipientsScreenUpButtonClickIntent(), recipientsScreenDoneButtonClickIntent(),
+                recipientsSearchIntent(), recipientAddIntent(), recipientRemoveIntent());
     }
 
     private void setActivity(boolean activity) {
@@ -127,9 +130,6 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     public boolean onBackButtonClick() {
         backButtonClicksSubject.onNext(VOID);
-        if (getApplicationContext() != null) {
-            AccessibilityUtils.sendAccessibilityEvent(getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_addition_cancelled);
-        }
         return false;
     }
 
