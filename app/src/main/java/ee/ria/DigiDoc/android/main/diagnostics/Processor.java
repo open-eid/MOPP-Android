@@ -96,13 +96,13 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         });
     }
 
-    private Result.DiagnosticsSaveResult saveFile(File documentFile, Uri data, Path filePath) {
+    private Result.DiagnosticsSaveResult saveFile(File documentFile, Uri data, Path logFilePath) {
         try (
                 InputStream inputStream = new FileInputStream(documentFile);
                 OutputStream outputStream = Activity.getContext().get().getContentResolver().openOutputStream(data)
         ) {
             ByteStreams.copy(inputStream, outputStream);
-            boolean isTempFileDeleted = Files.deleteIfExists(filePath);
+            boolean isTempFileDeleted = Files.deleteIfExists(logFilePath);
             if (!isTempFileDeleted) {
                 Timber.log(Log.ERROR, "Unable to delete temporary diagnostics or logs file or file does not exist");
             }

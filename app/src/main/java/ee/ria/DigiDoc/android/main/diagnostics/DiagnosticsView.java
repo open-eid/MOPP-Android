@@ -28,6 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,7 +90,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
         navigator = Application.component(context).navigator();
 
         SwitchCompat activateLogFileGenerating = findViewById(R.id.mainDiagnosticsLogging);
-        activateLogFileGenerating.setChecked(((Activity) this.getContext()).getSettingsDataStore().getIsLogFileGeneratingEnabled());
+        activateLogFileGenerating.setChecked(((Activity) this.getContext()).getSettingsDataStore().getIsLogFileGenerationEnabled());
         Button saveLogFileButton = findViewById(R.id.mainDiagnosticsSaveLoggingButton);
         saveLogFileButton.setVisibility(logsExist() ? VISIBLE : GONE);
 
@@ -124,7 +125,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 diagnosticsRestartConfirmationDialog.positiveButtonClicks()
                         .doOnNext(next -> {
                             diagnosticsRestartConfirmationDialog.dismiss();
-                            activityContext.getSettingsDataStore().setIsLogFileGeneratingEnabled(true);
+                            activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(true);
                             activityContext.restartAppWithIntent(activityContext.getIntent());
                         })
                         .subscribe();
@@ -132,12 +133,13 @@ public final class DiagnosticsView extends CoordinatorLayout {
                         .doOnNext(next -> {
                             diagnosticsRestartConfirmationDialog.dismiss();
                             activateLogFileGenerating.setChecked(false);
-                            activityContext.getSettingsDataStore().setIsLogFileGeneratingEnabled(false);
-                            activityContext.restartAppWithIntent(activityContext.getIntent());
+                            activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(false);
                         })
                         .subscribe();
             } else {
-                activityContext.getSettingsDataStore().setIsLogFileGeneratingEnabled(false);
+                activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(false);
+                activityContext.getSettingsDataStore().setIsLogFileGenerationRunning(false);
+                activityContext.restartAppWithIntent(activityContext.getIntent());
             }
         });
     }
@@ -427,6 +429,9 @@ public final class DiagnosticsView extends CoordinatorLayout {
         if (logsExist()) {
             File[] files = logsDirectory.listFiles() != null ? logsDirectory.listFiles() : new File[]{};
             File combinedLogFile = new File(logsDirectory + File.separator + DIAGNOSTICS_LOGS_FILE_NAME);
+            if (combinedLogFile.exists()) {
+                Files.delete(combinedLogFile.toPath());
+            }
             for (File file : files) {
                 String header = "\n\n" + "===== File: " + file.getName() + " =====" + "\n\n";
                 String fileString = header + FileUtils.readFileToString(file, Charset.defaultCharset());

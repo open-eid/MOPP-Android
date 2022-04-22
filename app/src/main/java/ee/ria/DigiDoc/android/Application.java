@@ -256,35 +256,29 @@ public class Application extends android.app.Application {
     }
 
     private void setupAppLogging() {
-        setupDefaultValues(R.string.main_diagnostics_logging_key, false);
-        setupDefaultValues(R.string.main_diagnostics_logging_running_key, false);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        boolean isDiagnosticsLoggingEnabled = getStoredValue(R.string.main_diagnostics_logging_key, false);
-        boolean isDiagnosticsLoggingRunning = getStoredValue(R.string.main_diagnostics_logging_running_key, false);
-
-        if ((isDiagnosticsLoggingEnabled && isDiagnosticsLoggingRunning) || (!isDiagnosticsLoggingEnabled && isDiagnosticsLoggingRunning)) {
-            storeValue(R.string.main_diagnostics_logging_key, false);
-            storeValue(R.string.main_diagnostics_logging_running_key, false);
-        } else if (isDiagnosticsLoggingEnabled) {
-            storeValue(R.string.main_diagnostics_logging_running_key, true);
+        if (!sharedPreferences.contains(getString(R.string.main_diagnostics_logging_key))) {
+            sharedPreferences.edit().putBoolean(getString(R.string.main_diagnostics_logging_key), false)
+                    .commit();
         }
-    }
 
-    private boolean getStoredValue(int id, boolean defaultValue) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        return sharedPreferences.getBoolean(getString(id), defaultValue);
-    }
+        if (!sharedPreferences.contains(getString(R.string.main_diagnostics_logging_running_key))) {
+            sharedPreferences.edit().putBoolean(getString(R.string.main_diagnostics_logging_running_key), false)
+                    .commit();
+        }
 
-    private void storeValue(int id, boolean value) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        sharedPreferences.edit().putBoolean(getString(id), value)
-                .commit();
-    }
+        boolean isDiagnosticsLoggingEnabled = sharedPreferences.getBoolean(getString(R.string.main_diagnostics_logging_key), false);
+        boolean isDiagnosticsLoggingRunning = sharedPreferences.getBoolean(getString(R.string.main_diagnostics_logging_running_key), false);
 
-    private void setupDefaultValues(int id, boolean defaultValue) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (!sharedPreferences.contains(getString(id))) {
-            storeValue(id, defaultValue);
+        if ((isDiagnosticsLoggingEnabled && isDiagnosticsLoggingRunning)) {
+            sharedPreferences.edit().putBoolean(getString(R.string.main_diagnostics_logging_key), false)
+                    .commit();
+            sharedPreferences.edit().putBoolean(getString(R.string.main_diagnostics_logging_running_key), false)
+                    .commit();
+        } else if (isDiagnosticsLoggingEnabled) {
+            sharedPreferences.edit().putBoolean(getString(R.string.main_diagnostics_logging_running_key), true)
+                    .commit();
         }
     }
 
