@@ -271,15 +271,17 @@ public class Application extends android.app.Application {
         boolean isDiagnosticsLoggingEnabled = sharedPreferences.getBoolean(getString(R.string.main_diagnostics_logging_key), false);
         boolean isDiagnosticsLoggingRunning = sharedPreferences.getBoolean(getString(R.string.main_diagnostics_logging_running_key), false);
 
-        if ((isDiagnosticsLoggingEnabled && isDiagnosticsLoggingRunning)) {
-            sharedPreferences.edit().putBoolean(getString(R.string.main_diagnostics_logging_key), false)
-                    .commit();
-            sharedPreferences.edit().putBoolean(getString(R.string.main_diagnostics_logging_running_key), false)
-                    .commit();
+        if (isDiagnosticsLoggingEnabled && isDiagnosticsLoggingRunning) {
+            isDiagnosticsLoggingEnabled = false;
+            isDiagnosticsLoggingRunning = false;
         } else if (isDiagnosticsLoggingEnabled) {
-            sharedPreferences.edit().putBoolean(getString(R.string.main_diagnostics_logging_running_key), true)
-                    .commit();
+            isDiagnosticsLoggingRunning = true;
         }
+
+        sharedPreferences.edit()
+                .putBoolean(getString(R.string.main_diagnostics_logging_key), isDiagnosticsLoggingEnabled)
+                .putBoolean(getString(R.string.main_diagnostics_logging_running_key), isDiagnosticsLoggingRunning)
+                .commit();
     }
 
     private boolean isLoggingEnabled() {
