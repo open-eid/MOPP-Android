@@ -24,6 +24,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.time.Instant;
 import java.time.Month;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
@@ -405,7 +408,10 @@ final class SignatureUpdateAdapter extends
             clicks(itemView).map(ignored ->
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
-            nameView.setText(item.signature().name());
+            List<String> nameComponents = Stream.of(item.signature().name().split(",", -1))
+                    .collect(Collectors.toList());
+            String name = String.join(", ", nameComponents);
+            nameView.setText(name);
             switch (item.signature().status()) {
                 case INVALID:
                     statusView.setText(R.string.signature_update_signature_status_invalid);

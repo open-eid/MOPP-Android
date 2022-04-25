@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:singleLine="true"
+            android:singleLine="false"
             android:ellipsize="end"
             android:textStyle="bold"
             tools:text="Mari Maasikas, 48405050123" />
