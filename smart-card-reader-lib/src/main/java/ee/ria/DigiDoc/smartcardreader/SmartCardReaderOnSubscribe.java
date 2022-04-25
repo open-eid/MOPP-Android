@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import com.google.common.base.Optional;
@@ -39,7 +41,7 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
             @Override
             public void onReceive(Context context, Intent intent) {
                 UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                Timber.d("Smart card device attached: %s", device);
+                Timber.log(Log.DEBUG, "Smart card device attached: %s", device);
                 if (smartCardReaderManager.supports(device)) {
                     requestPermission(device);
                 }
@@ -49,7 +51,7 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
             @Override
             public void onReceive(Context context, Intent intent) {
                 UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                Timber.d("Smart card device detached: %s", device);
+                Timber.log(Log.DEBUG, "Smart card device detached: %s", device);
                 if (currentDevice != null && currentDevice.getDeviceId() == device.getDeviceId()) {
                     clearCurrent();
                     emitter.onNext(Optional.absent());
@@ -62,7 +64,7 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
                 boolean permissionGranted = intent.getBooleanExtra(
                         UsbManager.EXTRA_PERMISSION_GRANTED, false);
                 UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                Timber.d("Smart card device permission: granted: %s; device: %s", permissionGranted,
+                Timber.log(Log.DEBUG, "Smart card device permission: granted: %s; device: %s", permissionGranted,
                         device);
                 if (permissionGranted && smartCardReaderManager.supports(device)) {
                     clearCurrent();
@@ -107,7 +109,7 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
             try {
                 currentReader.close();
             } catch (Exception e) {
-                Timber.e(e, "Closing current reader %s", currentReader);
+                Timber.log(Log.ERROR, e, "Closing current reader %s", currentReader);
             }
             currentReader = null;
         }

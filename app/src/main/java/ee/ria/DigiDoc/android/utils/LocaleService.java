@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.utils;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.util.Log;
 
 import java.util.Locale;
 
@@ -61,7 +62,7 @@ public final class LocaleService {
      * @param locale Application-wide locale.
      */
     public void applicationLocale(Locale locale) {
-        Timber.e("applicationLocale: %s", locale);
+        Timber.log(Log.ERROR, "applicationLocale: %s", locale);
         settingsDataStore.setLocale(locale);
         navigator.activity().recreate();
     }
