@@ -245,7 +245,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
         tslUrl.setText(configurationProvider.getTslUrl());
         appendTslVersion(tslUrl, configurationProvider.getTslUrl());
         sivaUrl.setText(configurationProvider.getSivaUrl());
-        tsaUrl.setText(configurationProvider.getTsaUrl());
+        tsaUrl.setText((getTsaUrlText() != null && !getTsaUrlText().isEmpty()) ?
+                getTsaUrlText() : configurationProvider.getTsaUrl());
         ldapPersonUrl.setText(configurationProvider.getLdapPersonUrl());
         ldapCorpUrl.setText(configurationProvider.getLdapCorpUrl());
         mobileIDUrl.setText(configurationProvider.getMidRestUrl());
@@ -297,6 +298,10 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 ? R.string.main_diagnostics_rpuuid_default
                 : R.string.main_diagnostics_rpuuid_custom;
         return getResources().getString(uuid);
+    }
+
+    private String getTsaUrlText() {
+        return ((Activity) this.getContext()).getSettingsDataStore().getTsaUrl();
     }
 
     private void setTslCacheData() {
