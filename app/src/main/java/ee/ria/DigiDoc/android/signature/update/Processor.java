@@ -236,26 +236,24 @@ final class Processor implements ObservableTransformer<Action, Result> {
             return navigator.activityResults()
                     .filter(activityResult ->
                             activityResult.requestCode() == SAVE_FILE)
-                    .switchMap(activityResult -> {
-                        return signatureContainerDataSource
-                                .getDocumentFile(action.containerFile(), action.document())
-                                .toObservable()
-                                .map(documentFile -> {
-                                    if (activityResult.resultCode() == RESULT_OK) {
-                                        try (
-                                                InputStream inputStream = new FileInputStream(documentFile);
-                                                OutputStream outputStream = application.getContentResolver().openOutputStream(activityResult.data().getData())
-                                        ) {
-                                            ByteStreams.copy(inputStream, outputStream);
-                                        }
-                                        Toast.makeText(application, Activity.getContext().get().getString(R.string.file_saved),
-                                                Toast.LENGTH_LONG).show();
+                    .switchMap(activityResult -> signatureContainerDataSource
+                            .getDocumentFile(action.containerFile(), action.document())
+                            .toObservable()
+                            .map(documentFile -> {
+                                if (activityResult.resultCode() == RESULT_OK) {
+                                    try (
+                                            InputStream inputStream = new FileInputStream(documentFile);
+                                            OutputStream outputStream = application.getContentResolver().openOutputStream(activityResult.data().getData())
+                                    ) {
+                                        ByteStreams.copy(inputStream, outputStream);
                                     }
-                                    return Result.DocumentSaveResult.idle();
-                                })
-                                .onErrorReturn(ignored -> Result.DocumentSaveResult.idle())
-                                .startWithItem(Result.DocumentSaveResult.activity());
-                    });
+                                    Toast.makeText(application, Activity.getContext().get().getString(R.string.file_saved),
+                                            Toast.LENGTH_LONG).show();
+                                }
+                                return Result.DocumentSaveResult.idle();
+                            })
+                            .onErrorReturn(ignored -> Result.DocumentSaveResult.idle())
+                            .startWithItem(Result.DocumentSaveResult.activity()));
         });
 
         documentRemove = upstream -> upstream.flatMap(action -> {
@@ -398,6 +396,12 @@ final class Processor implements ObservableTransformer<Action, Result> {
         }
 
         return name;
+    }
+
+    private static File renameInvalidFileName(File file) {
+        String fileExtension = getFileExtension(file.getName()).toLowerCase(Locale.US);
+        fileExtension.split(" ");
+        return file;
     }
 
     private void announceAccessibilityFilesAddedEvent(Context context, int addedDataList) {
