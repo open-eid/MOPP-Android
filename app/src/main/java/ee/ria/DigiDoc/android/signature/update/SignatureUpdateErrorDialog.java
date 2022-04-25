@@ -2,11 +2,15 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
+import android.text.Html;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.Window;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
-import android.text.Html;
-import android.text.TextUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -28,10 +32,15 @@ import ee.ria.DigiDoc.sign.utils.UrlMessage;
 
 import io.reactivex.rxjava3.subjects.Subject;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENT_REMOVE;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_ADD;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_REMOVE;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceLayoutWidth;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceOrientation;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDialogLandscapeWidth;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDialogPortraitWidth;
 
 public final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInterface.OnDismissListener {
 
@@ -52,24 +61,35 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
 
     private String type;
 
+    private View view;
+    private View.OnLayoutChangeListener layoutChangeListener;
+
     SignatureUpdateErrorDialog(@NonNull Context context,
                                Subject<Intent.DocumentsAddIntent> documentsAddIntentSubject,
                                Subject<Intent.DocumentRemoveIntent> documentRemoveIntentSubject,
                                Subject<Intent.SignatureAddIntent> signatureAddIntentSubject,
                                Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject,
-                               SignatureUpdateSignatureAddDialog signatureAddDialog) {
+                               SignatureUpdateSignatureAddDialog signatureAddDialog,
+                               View view) {
         super(context);
         this.documentsAddIntentSubject = documentsAddIntentSubject;
         this.documentRemoveIntentSubject = documentRemoveIntentSubject;
         this.signatureAddIntentSubject = signatureAddIntentSubject;
         this.signatureRemoveIntentSubject = signatureRemoveIntentSubject;
         this.signatureAddDialog = signatureAddDialog;
+        this.view = view;
         setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), (dialog, which) -> {});
         setOnDismissListener(this);
     }
 
     void show(@Nullable Throwable documentsAddError, @Nullable Throwable documentRemoveError,
               @Nullable Throwable signatureAddError, @Nullable Throwable signatureRemoveError) {
+
+        Window window = getWindow();
+
+        setCustomLayoutChangeListener(window);
+        view.addOnLayoutChangeListener(getCustomLayoutChangeListener());
+
         if (documentsAddError != null) {
             type = DOCUMENTS_ADD;
             if (documentsAddError instanceof EmptyFileException) {
@@ -143,11 +163,10 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
         return getContext().getResources().getString(textId);
     }
 
-
-
     @Override
     public void onDismiss(DialogInterface dialog) {
         setTitle(null);
+        removeListeners();
         if (TextUtils.equals(type, DOCUMENTS_ADD)) {
             documentsAddIntentSubject.onNext(Intent.DocumentsAddIntent.clear());
         } else if (TextUtils.equals(type, DOCUMENT_REMOVE)) {
@@ -157,5 +176,21 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
         } else if (TextUtils.equals(type, SIGNATURE_REMOVE)) {
             signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear());
         }
+    }
+
+    // Prevent Dialog width change when rotating screen
+    private void setCustomLayoutChangeListener(Window window) {
+        layoutChangeListener = (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
+                window.setLayout(getDeviceLayoutWidth(getContext()), WRAP_CONTENT);
+    }
+
+    private View.OnLayoutChangeListener getCustomLayoutChangeListener() {
+        return layoutChangeListener;
+    }
+
+    private void removeListeners() {
+        if (layoutChangeListener == null) { return; }
+        view.removeOnLayoutChangeListener(layoutChangeListener);
+        layoutChangeListener = null;
     }
 }

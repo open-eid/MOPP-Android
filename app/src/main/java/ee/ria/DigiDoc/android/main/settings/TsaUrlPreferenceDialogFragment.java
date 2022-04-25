@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.main.settings;
 
+
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 import android.app.Dialog;
@@ -18,6 +20,7 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.TextUtil;
+import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 
 public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
@@ -58,9 +61,8 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
                         ((ViewGroup) oldParent).removeView(checkBox);
                     }
                     parent.addView(checkBox, ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT);
+                            WRAP_CONTENT);
                 }
-
             }
         }
     }
@@ -74,7 +76,7 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        Dialog dialog = DisplayUtil.setCustomDialogSettings(super.onCreateDialog(savedInstanceState));
         SecureUtil.markAsSecure(dialog.getWindow());
         return dialog;
     }

@@ -210,8 +210,8 @@ public class SmartSignService extends IntentService {
                 }
                 timeout += SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS;
             }
-            broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.ACCOUNT_NOT_FOUND_OR_TIMEOUT));
-            Timber.log(Log.DEBUG, "Request timeout (ACCOUNT_NOT_FOUND_OR_TIMEOUT)");
+            broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.TIMEOUT));
+            Timber.log(Log.DEBUG, "Request timeout (TIMEOUT)");
         } catch (UnknownHostException e) {
             broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE, e.getMessage()));
             Timber.log(Log.ERROR, "REST API session status request failed. Unknown host. Exception message: %s.", e.getMessage());
@@ -292,8 +292,8 @@ public class SmartSignService extends IntentService {
                 case 404:
                     broadcastFault(new ServiceFault(httpResponse.body() instanceof SessionResponse ?
                             SessionStatusResponse.ProcessStatus.SESSION_NOT_FOUND :
-                            SessionStatusResponse.ProcessStatus.ACCOUNT_NOT_FOUND_OR_TIMEOUT));
-                    Timber.log(Log.DEBUG, "Account/session not found - HTTP status code: %s", httpResponse.code());
+                            SessionStatusResponse.ProcessStatus.ACCOUNT_NOT_FOUND));
+                    Timber.log(Log.DEBUG, "Account/session not found - HTTP status code: %s " + httpResponse.code());
                     break;
                 case 409:
                     broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.EXCEEDED_UNSUCCESSFUL_REQUESTS));
@@ -316,9 +316,8 @@ public class SmartSignService extends IntentService {
                     Timber.log(Log.DEBUG, "Under maintenance - HTTP status code: %s", httpResponse.code());
                     break;
                 default:
-                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR,
-                            "Request unsuccessful, HTTP status code: " + httpResponse.code()));
-                    Timber.log(Log.DEBUG, "Request unsuccessful, HTTP status code: %s", httpResponse.code());
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.TECHNICAL_ERROR));
+                    Timber.log(Log.DEBUG, "Request unsuccessful, technical or general error, HTTP status code: %s " + httpResponse.code());
                     break;
             }
             return null;
