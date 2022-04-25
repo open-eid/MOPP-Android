@@ -441,7 +441,7 @@
     <string name="container_name_changed">Ümbriku nimi muudetud</string>
     <string name="container_name_change_cancelled">Ümbriku nime muutmine katkestatud</string>
     <string name="sign_container_button_description">Allkirjasta</string>
-    <string name="container_signing_cancelled">Ümbriku allkirjastamine katkestatud</string>
+    <string name="igning_cancelled">Allkirjastamine katkestatud</string>
     <string name="container_signature_added">Ümbrikule allkiri lisatud</string>
     <string name="files_encrypted">Failid krüpteeritud</string>
     <string name="file_decrypted">Fail dekrüpteeritud</string>
