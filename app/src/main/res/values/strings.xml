@@ -403,6 +403,7 @@
     <string name="crypto_content_description">Crypto, tab %1$d of %2$d</string>
     <string name="my_eid_content_description">My e-ID, tab %1$d of %2$d</string>
 
+    <string name="sign_send_content_description">Sign, tab %1$d of %2$d</string>
     <string name="decrypt_content_description">Decrypt, tab %1$d of %2$d</string>
     <string name="decrypt_send_content_description">Share, tab %1$d of %2$d</string>
 

@@ -183,6 +183,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         progressBar = (ProgressBar) activityIndicatorView;
         documentAddProgressBar.setVisibility(GONE);
+
+        setupAccessibilityTabs();
     }
 
     @SuppressWarnings("unchecked")
@@ -395,6 +397,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 smartIdChallengeView.setText(EMPTY_CHALLENGE);
             }
         }
+
+        setupAccessibilityTabs();
     }
 
     private void showSuccessNotification() {
@@ -591,5 +595,15 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                     parcel.readBundle(getClass().getClassLoader()));
             nameUpdateDialog.onRestoreInstanceState(parcel.readBundle(getClass().getClassLoader()));
         }));
+    }
+
+    private void setupAccessibilityTabs() {
+        if (sendButton.getVisibility() == VISIBLE && signatureAddButton.getVisibility() == VISIBLE) {
+            sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 1, 2));
+            signatureAddButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 2, 2));
+        } else {
+            sendButton.setContentDescription(getResources().getString(R.string.signature_update_send_button));
+            signatureAddButton.setContentDescription(getResources().getString(R.string.signature_update_signature_add_button));
+        }
     }
 }

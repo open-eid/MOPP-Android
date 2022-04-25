@@ -404,6 +404,7 @@
     <string name="crypto_content_description">Крипто, вкладка %1$d из %2$d</string>
     <string name="my_eid_content_description">Мой e-ID, вкладка %1$d из %2$d</string>
 
+    <string name="sign_send_content_description">Подписать, вкладка %1$d из %2$d</string>
     <string name="decrypt_content_description">Дешифровать, вкладка %1$d из %2$d</string>
     <string name="decrypt_send_content_description">Поделиться, вкладка %1$d из %2$d</string>
 
