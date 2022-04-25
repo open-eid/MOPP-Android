@@ -75,14 +75,11 @@
     <!-- Signature Update -->
     <string name="signature_update_title_created">Allkirjastamine</string>
     <string name="signature_update_title_existing">Ümbriku valideerimine</string>
-    <string name="signature_update_name">ÜMBRIK:</string>
     <string name="signature_update_name_update_button">Muuda ümbriku nime</string>
     <string name="signature_update_name_update_name">Ümbriku nimi</string>
     <string name="signature_update_name_update_error_exists">Sellise nimega ümbrik on juba olemas</string>
     <string name="signature_update_name_update_error_invalid">Ümbriku nimi on vigane</string>
     <string name="signature_update_documents_title">Ümbriku sisu</string>
-    <string name="signature_update_documents_add_button">+ LISA VEEL FAILE</string>
-    <string name="signature_update_documents_add_button_description">LISA VEEL FAILE</string>
     <string name="signature_update_documents_add_error_exists">Fail on juba ümbrikus olemas</string>
     <string name="signature_update_document_remove_button">Eemalda fail ümbrikust</string>
     <string name="signature_update_document_save_button">Salvesta fail ümbrikust</string>
@@ -225,11 +222,8 @@
     <string name="crypto_create_title_decrypt">Dekrüpteerimine</string>
     <string name="crypto_create_encrypt_success_message">KRÜPTEERIMINE ÕNNESTUS</string>
     <string name="crypto_create_decrypt_success_message">DEKRÜPTEERIMINE ÕNNESTUS</string>
-    <string name="crypto_create_name">ÜMBRIK:</string>
     <string name="crypto_create_name_update_button">Muuda ümbriku nime</string>
     <string name="crypto_create_data_files_title">Krüpteeritud failid</string>
-    <string name="crypto_create_data_files_add_button_description">LISA VEEL FAILE</string>
-    <string name="crypto_create_data_files_add_button">+ LISA VEEL FAILE</string>
     <string name="crypto_create_data_files_add_error_exists">Fail on juba ümbrikus olemas</string>
     <string name="crypto_create_data_file_remove_button">Eemalda fail</string>
     <string name="crypto_create_remove_data_file_confirmation_message">Soovid eemaldada faili ümbrikust?</string>
@@ -237,7 +231,6 @@
     <string name="crypto_create_data_file_save_button">Salvesta fail ümbrikust</string>
     <string name="crypto_create_recipients_title">Adressaadid</string>
     <string name="crypto_create_recipients_empty">Adressaadid puuduvad</string>
-    <string name="crypto_create_recipients_add_button_description">LISA ADRESSAAT</string>
     <string name="crypto_create_recipients_add_button">+ LISA ADRESSAAT</string>
     <string name="crypto_create_encrypt_button">KRÜPTEERI</string>
     <string name="crypto_create_encrypt_button_description">Krüpteeri dokument</string>
@@ -410,6 +403,9 @@
     <string name="container_has">Ümbrikus on</string>
     <string name="file">Fail</string>
 
+    <string name="container_title">ÜMBRIK:</string>
+    <string name="documents_add_button">+ LISA VEEL FAILE</string>
+
     <string name="yes_button">JAH</string>
     <string name="cancel_button">KATKESTA</string>
 
@@ -495,4 +491,47 @@
 
     <string name="rooted_device">Tuvastasime, et sinu nutiseade võib olla ruuditud. Turvalisuse kaalutlustel ei soovita me kasutada seda rakendust ruuditud seadmel.</string>
 
+    <!-- Accessibility -->
+
+    <!-- General -->
+    <string name="cancel_button_accessibility">Katkesta</string>
+    <string name="container_title_accessibility">Ümbrik</string>
+    <string name="documents_add_button_accessibility">Lisa veel faile</string>
+
+    <!-- Home -->
+    <string name="main_home_navigation_signature_accessibility">Allkiri</string>
+    <string name="main_home_navigation_crypto_accessibility">Krüpto</string>
+
+    <!-- Menu -->
+    <string name="main_home_menu_help_accessibility">Abi</string>
+    <string name="main_home_menu_recent_accessibility">Hiljutised dokumendid</string>
+    <string name="main_home_menu_settings_accessibility">Seaded</string>
+    <string name="main_home_menu_about_accessibility">Info</string>
+    <string name="main_home_menu_diagnostics_accessibility">Diagnostika</string>
+
+    <!-- Signature -->
+    <string name="signature_home_create_button_accessibility">Vali fail</string>
+
+    <!-- Crypto -->
+    <string name="crypto_create_recipients_add_button_accessibility">Lisa adressaat</string>
+    <string name="crypto_recipient_add_button_added_accessibility">Lisatud</string>
+    <string name="crypto_recipients_done_button_accessibility">Kinnita</string>
+
+    <!-- eID -->
+    <string name="eid_type_id_card_accessibility">ID kaart</string>
+    <string name="eid_type_digi_id_accessibility">Digi ID</string>
+    <string name="eid_type_mobile_id_accessibility">Mobiil ID</string>
+
+    <string name="eid_type_unknown_accessibility">Teadmata</string>
+    <string name="eid_home_data_given_names_accessibility">Eesnimi</string>
+    <string name="eid_home_data_surname_accessibility">Perekonnanimi</string>
+    <string name="eid_home_data_citizenship_accessibility">Kodakondsus</string>
+    <string name="eid_home_data_document_number_accessibility">Dokument</string>
+    <string name="eid_home_data_expiry_date_accessibility">Kehtiv kuni</string>
+    <string name="eid_home_data_certificates_title_accessibility">PIN, PUK koodid ja sertifikaatide kontroll</string>
+    <string name="eid_home_certificate_data_button_change_auth_accessibility">Muuda PIN1</string>
+    <string name="eid_home_certificate_data_button_change_sign_accessibility">Muuda PIN2</string>
+    <string name="eid_home_certificate_data_button_unblock_auth_accessibility">Tühista blokeering</string>
+    <string name="eid_home_certificate_data_button_unblock_sign_accessibility">Tühista blokeering</string>
+    <string name="eid_home_data_certificates_puk_button_accessibility">Muuda PUK</string>
 </resources>

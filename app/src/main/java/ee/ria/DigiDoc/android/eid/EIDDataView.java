@@ -23,6 +23,7 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import ee.ria.DigiDoc.common.TextUtil;
 import ee.ria.DigiDoc.idcard.CertificateType;
 import ee.ria.DigiDoc.idcard.CodeType;
 import io.reactivex.rxjava3.core.Observable;
@@ -102,10 +103,15 @@ public final class EIDDataView extends LinearLayout {
 
     public void render(@NonNull IdCardData data, boolean certificateContainerExpanded) {
         typeView.setText(formatter.eidType(data.type()));
+        typeView.setContentDescription(formatter.eidType(data.type()).toString().toLowerCase());
         givenNamesView.setText(data.personalData().givenNames());
+        givenNamesView.setContentDescription(data.personalData().givenNames().toLowerCase());
         surnameView.setText(data.personalData().surname());
+        surnameView.setContentDescription(data.personalData().surname().toLowerCase());
         personalCodeView.setText(data.personalData().personalCode());
+        personalCodeView.setContentDescription(TextUtil.splitTextAndJoin(data.personalData().personalCode().toLowerCase(), " "));
         citizenshipView.setText(data.personalData().citizenship());
+        citizenshipView.setContentDescription(TextUtil.splitTextAndJoin(data.personalData().citizenship().toLowerCase(), " "));
 
         certificatesTitleView.setTextColor(certificateContainerExpanded
                 ? expandedTitleColor
@@ -138,6 +144,7 @@ public final class EIDDataView extends LinearLayout {
             pukLinkView.setVisibility(GONE);
         }
         documentNumberView.setText(data.personalData().documentNumber());
+        documentNumberView.setContentDescription(TextUtil.splitTextAndJoin(data.personalData().documentNumber(), " "));
         expiryDateView.setText(formatter.idCardExpiryDate(data.personalData().expiryDate()));
         documentNumberLabelView.setVisibility(VISIBLE);
         documentNumberView.setVisibility(VISIBLE);

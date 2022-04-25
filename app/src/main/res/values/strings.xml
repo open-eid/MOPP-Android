@@ -75,14 +75,11 @@
     <!-- Signature Update -->
     <string name="signature_update_title_created">Signing</string>
     <string name="signature_update_title_existing">Container verification</string>
-    <string name="signature_update_name">CONTAINER:</string>
     <string name="signature_update_name_update_button">Edit container name</string>
     <string name="signature_update_name_update_name">Container name</string>
     <string name="signature_update_name_update_error_exists">Container with this name already exists</string>
     <string name="signature_update_name_update_error_invalid">Container name invalid</string>
     <string name="signature_update_documents_title">Container files</string>
-    <string name="signature_update_documents_add_button">+ ADD MORE FILES</string>
-    <string name="signature_update_documents_add_button_description">ADD MORE FILES</string>
     <string name="signature_update_documents_add_error_exists">File already exists in the container</string>
     <string name="signature_update_document_remove_button">Remove file</string>
     <string name="signature_update_document_save_button">Save file</string>
@@ -225,11 +222,8 @@
     <string name="crypto_create_title_decrypt">Decryption</string>
     <string name="crypto_create_encrypt_success_message">ENCRYPTION SUCCEEDED</string>
     <string name="crypto_create_decrypt_success_message">DECRYPTION SUCCESSFUL</string>
-    <string name="crypto_create_name">CONTAINER:</string>
     <string name="crypto_create_name_update_button">Edit container name</string>
     <string name="crypto_create_data_files_title">Encrypted files</string>
-    <string name="crypto_create_data_files_add_button_description">ADD MORE FILES</string>
-    <string name="crypto_create_data_files_add_button">+ ADD MORE FILES</string>
     <string name="crypto_create_data_files_add_error_exists">File already exists in the container</string>
     <string name="crypto_create_data_file_remove_button">Remove file</string>
     <string name="crypto_create_remove_data_file_confirmation_message">Remove file from container?</string>
@@ -237,7 +231,6 @@
     <string name="crypto_create_data_file_save_button">Save file</string>
     <string name="crypto_create_recipients_title">Recipients</string>
     <string name="crypto_create_recipients_empty">Recipients are missing</string>
-    <string name="crypto_create_recipients_add_button_description">ADD RECIPIENT</string>
     <string name="crypto_create_recipients_add_button">+ ADD RECIPIENT</string>
     <string name="crypto_create_encrypt_button">ENCRYPT</string>
     <string name="crypto_create_encrypt_button_description">Encrypt document</string>
@@ -415,6 +408,8 @@
     <string name="document">Document</string>
     <string name="container_has">Container has</string>
     <string name="file">File</string>
+    <string name="container_title">CONTAINER:</string>
+    <string name="documents_add_button">+ ADD MORE FILES</string>
     <string name="empty_file_error">Cannot add empty file to the container.</string>
     <string name="empty_file_message">An empty file is attached to the envelope. Remove the empty file from the container to sign.</string>
     <string name="signature_removed">Signature removed</string>
@@ -491,4 +486,47 @@
 
     <string name="rooted_device">We\'ve detected that your device may be rooted. For security reasons we don\'t recommend using this app on a rooted device.</string>
 
+    <!-- Accessibility -->
+
+    <!-- General -->
+    <string name="cancel_button_accessibility">Cancel</string>
+    <string name="container_title_accessibility">Container</string>
+    <string name="documents_add_button_accessibility">Add more files</string>
+
+    <!-- Home -->
+    <string name="main_home_navigation_signature_accessibility">Signature</string>
+    <string name="main_home_navigation_crypto_accessibility">Crypto</string>
+
+    <!-- Menu -->
+    <string name="main_home_menu_help_accessibility">Help</string>
+    <string name="main_home_menu_recent_accessibility">Recent documents</string>
+    <string name="main_home_menu_settings_accessibility">Settings</string>
+    <string name="main_home_menu_about_accessibility">Info</string>
+    <string name="main_home_menu_diagnostics_accessibility">Diagnostics</string>
+
+    <!-- Signature -->
+    <string name="signature_home_create_button_accessibility">Choose file</string>
+
+    <!-- Crypto -->
+    <string name="crypto_create_recipients_add_button_accessibility">Add recipient</string>
+    <string name="crypto_recipient_add_button_added_accessibility">Added</string>
+    <string name="crypto_recipients_done_button_accessibility">Confirm</string>
+
+    <!-- eID -->
+    <string name="eid_type_id_card_accessibility">ID card</string>
+    <string name="eid_type_digi_id_accessibility">Digi ID</string>
+    <string name="eid_type_mobile_id_accessibility">Mobile ID</string>
+
+    <string name="eid_type_unknown_accessibility">Unknown</string>
+    <string name="eid_home_data_given_names_accessibility">Given names</string>
+    <string name="eid_home_data_surname_accessibility">Surname</string>
+    <string name="eid_home_data_citizenship_accessibility">Citizenship</string>
+    <string name="eid_home_data_document_number_accessibility">Document number</string>
+    <string name="eid_home_data_expiry_date_accessibility">Date of expiry</string>
+    <string name="eid_home_data_certificates_title_accessibility">PIN, PUK codes and certificates</string>
+    <string name="eid_home_certificate_data_button_change_auth_accessibility">Change PIN1</string>
+    <string name="eid_home_certificate_data_button_change_sign_accessibility">Change PIN2</string>
+    <string name="eid_home_certificate_data_button_unblock_auth_accessibility">Unblock</string>
+    <string name="eid_home_certificate_data_button_unblock_sign_accessibility">Unblock</string>
+    <string name="eid_home_data_certificates_puk_button_accessibility">Change PUK</string>
 </resources>

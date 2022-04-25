@@ -46,6 +46,7 @@ public final class OrderedListView extends LinearLayout {
 
         TextView textView = new TextView(getContext());
         textView.setText(spannableString);
+        textView.setContentDescription(spannableString.toString().toLowerCase());
         return textView;
     }
 }

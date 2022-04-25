@@ -76,11 +76,16 @@ public final class CodeUpdateView extends CoordinatorLayout {
         toolbarView.setNavigationIcon(R.drawable.ic_clear);
         toolbarView.setNavigationContentDescription(R.string.close);
         successMessageView.setText(action.successMessageRes());
+        successMessageView.setContentDescription(getResources().getString(action.successMessageRes()).toLowerCase());
         textView.itemsRes(action.textRowsRes());
         currentLabelView.setHint(getResources().getString(action.currentRes()));
+        currentLabelView.setContentDescription(getResources().getString(action.currentRes()).toLowerCase());
         newLabelView.setHint(getResources().getString(action.newRes(), action.newMinLength()));
+        newLabelView.setContentDescription(getResources().getString(action.newRes(), action.newMinLength()).toLowerCase());
         repeatLabelView.setHint(getResources().getString(action.repeatRes()));
+        repeatLabelView.setContentDescription(getResources().getString(action.repeatRes()).toLowerCase());
         positiveButton.setText(action.positiveButtonRes());
+        positiveButton.setContentDescription(getResources().getString(action.positiveButtonRes()).toLowerCase());
         activityOverlayView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);
         activityIndicatorView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);
 

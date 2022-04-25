@@ -21,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/main_home_menu_help"
+        android:contentDescription="@string/main_home_menu_help_accessibility"
         android:drawableStart="@drawable/ic_help_outline" />
 
     <TextView
@@ -29,6 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/main_home_menu_recent"
+        android:contentDescription="@string/main_home_menu_recent_accessibility"
         android:drawableStart="@drawable/ic_folder_open" />
 
     <TextView
@@ -37,6 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/main_home_menu_settings"
+        android:contentDescription="@string/main_home_menu_settings_accessibility"
         android:drawableStart="@drawable/ic_settings" />
 
     <TextView
@@ -45,6 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/main_home_menu_about"
+        android:contentDescription="@string/main_home_menu_about_accessibility"
         android:drawableStart="@drawable/ic_info_outline" />
 
     <TextView
@@ -53,6 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/main_home_menu_diagnostics"
+        android:contentDescription="@string/main_home_menu_diagnostics_accessibility"
         android:drawableStart="@drawable/ic_icon_diagnostics" />
 
     <View

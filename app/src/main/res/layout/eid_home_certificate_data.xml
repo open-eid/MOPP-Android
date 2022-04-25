@@ -32,7 +32,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/material_baseline_grid_1x"
-        android:text="@string/eid_home_certificate_data_button_change_auth" />
+        android:text="@string/eid_home_certificate_data_button_change_auth"
+        android:contentDescription="@string/eid_home_certificate_data_button_change_auth_accessibility" />
 
     <TextView
         android:id="@id/eidHomeCertificateDataLink"

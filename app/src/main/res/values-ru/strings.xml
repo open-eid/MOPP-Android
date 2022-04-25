@@ -75,14 +75,11 @@
     <!-- Signature Update -->
     <string name="signature_update_title_created">Подписание</string>
     <string name="signature_update_title_existing">Проверка контейнера</string>
-    <string name="signature_update_name">КОНТЕЙНЕР:</string>
     <string name="signature_update_name_update_button">Изменить название контейнера</string>
     <string name="signature_update_name_update_name">Название контейнера</string>
     <string name="signature_update_name_update_error_exists">Контейнер с таким названием уже существует</string>
     <string name="signature_update_name_update_error_invalid">Неверное название контейнера</string>
     <string name="signature_update_documents_title">Файлы контейнера</string>
-    <string name="signature_update_documents_add_button_description">ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
-    <string name="signature_update_documents_add_button">+ ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
     <string name="signature_update_documents_add_error_exists">Файл уже существует в контейнере</string>
     <string name="signature_update_document_remove_button">Удалить файл</string>
     <string name="signature_update_document_save_button">Сохраните файл</string>
@@ -226,11 +223,8 @@
     <string name="crypto_create_title_decrypt">Дешифрование</string>
     <string name="crypto_create_encrypt_success_message">ШИФРОВАНИЕ УДАЛОСЬ</string>
     <string name="crypto_create_decrypt_success_message">ДЕШИФРОВАНИЕ УДАЛОСЬ</string>
-    <string name="crypto_create_name">КОНТЕЙНЕР:</string>
     <string name="crypto_create_name_update_button">Изменить название контейнера</string>
     <string name="crypto_create_data_files_title">Зашифрованные файлы</string>
-    <string name="crypto_create_data_files_add_button_description">ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
-    <string name="crypto_create_data_files_add_button">+ ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
     <string name="crypto_create_data_files_add_error_exists">Файл уже существует в контейнере</string>
     <string name="crypto_create_data_file_remove_button">Удалить файл</string>
     <string name="crypto_create_remove_data_file_confirmation_message">Удалить файл из контейнера?</string>
@@ -238,7 +232,6 @@
     <string name="crypto_create_data_file_save_button">Сохраните файл</string>
     <string name="crypto_create_recipients_title">Получатели</string>
     <string name="crypto_create_recipients_empty">Получатели отсутствуют</string>
-    <string name="crypto_create_recipients_add_button_description">ДОБАВИТЬ ПОЛУЧАТЕЛЯ</string>
     <string name="crypto_create_recipients_add_button">+ ДОБАВИТЬ ПОЛУЧАТЕЛЯ</string>
     <string name="crypto_create_encrypt_button">ЗАШИФРОВАТЬ</string>
     <string name="crypto_create_encrypt_button_description">Зашифровать документ</string>
@@ -420,6 +413,8 @@
     <string name="document">Документ</string>
     <string name="container_has">Содержание контейнера</string>
     <string name="file">Файл</string>
+    <string name="container_title">КОНТЕЙНЕР:</string>
+    <string name="documents_add_button">+ ДОБАВИТЬ БОЛЬШЕ ФАЙЛОВ</string>
     <string name="signature_removed">Подпись удалена</string>
     <string name="signature_removal_cancelled">Удаление подписи отменено</string>
     <string name="file_removed">Файл удален</string>
@@ -494,4 +489,47 @@
 
     <string name="rooted_device">Мы обнаружили, что ваше интеллектуальное устройство может быть рутировано. По соображениям безопасности мы не рекомендуем использовать это приложение на рутированом устройстве.</string>
 
+    <!-- Accessibility -->
+
+    <!-- General -->
+    <string name="cancel_button_accessibility">Отменить</string>
+    <string name="container_title_accessibility">Контейнер</string>
+    <string name="documents_add_button_accessibility">Добавить больше файлов</string>
+
+    <!-- Home -->
+    <string name="main_home_navigation_signature_accessibility">Подпись</string>
+    <string name="main_home_navigation_crypto_accessibility">Крипто</string>
+
+    <!-- Menu -->
+    <string name="main_home_menu_help_accessibility">Помощь</string>
+    <string name="main_home_menu_recent_accessibility">Недавние документы</string>
+    <string name="main_home_menu_settings_accessibility">Настройки</string>
+    <string name="main_home_menu_about_accessibility">Информация</string>
+    <string name="main_home_menu_diagnostics_accessibility">Диагностика</string>
+
+    <!-- Signature -->
+    <string name="signature_home_create_button_accessibility">Выбрать файл</string>
+
+    <!-- Crypto -->
+    <string name="crypto_create_recipients_add_button_accessibility">Добавить получателя</string>
+    <string name="crypto_recipient_add_button_added_accessibility">Добавлен</string>
+    <string name="crypto_recipients_done_button_accessibility">Подтвердить</string>
+
+    <!-- eID -->
+    <string name="eid_type_id_card_accessibility">ID карта</string>
+    <string name="eid_type_digi_id_accessibility">Digi ID</string>
+    <string name="eid_type_mobile_id_accessibility">Mobiil ID</string>
+
+    <string name="eid_type_unknown_accessibility">Неизвестно</string>
+    <string name="eid_home_data_given_names_accessibility">Имя</string>
+    <string name="eid_home_data_surname_accessibility">Фамилия</string>
+    <string name="eid_home_data_citizenship_accessibility">Гражданство</string>
+    <string name="eid_home_data_document_number_accessibility">Номер документа</string>
+    <string name="eid_home_data_expiry_date_accessibility">Годен до</string>
+    <string name="eid_home_data_certificates_title_accessibility">PIN, PUK и сертификаты</string>
+    <string name="eid_home_certificate_data_button_change_auth_accessibility">Поменять PIN1</string>
+    <string name="eid_home_certificate_data_button_change_sign_accessibility">Поменять PIN2</string>
+    <string name="eid_home_certificate_data_button_unblock_auth_accessibility">Разблокировать</string>
+    <string name="eid_home_certificate_data_button_unblock_sign_accessibility">Разблокировать</string>
+    <string name="eid_home_data_certificates_puk_button_accessibility">Поменять PUK</string>
 </resources>

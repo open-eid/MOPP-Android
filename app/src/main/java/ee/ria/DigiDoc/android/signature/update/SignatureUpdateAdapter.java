@@ -406,6 +406,7 @@ final class SignatureUpdateAdapter extends
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
             nameView.setText(item.signature().name());
+            nameView.setContentDescription(item.signature().name().toLowerCase());
             switch (item.signature().status()) {
                 case INVALID:
                     statusView.setText(R.string.signature_update_signature_status_invalid);
@@ -561,7 +562,7 @@ final class SignatureUpdateAdapter extends
             int buttonRes;
             if (subheadItemType.equals(DOCUMENT)) {
                 titleRes = R.string.signature_update_documents_title;
-                buttonRes = R.string.signature_update_documents_add_button_description;
+                buttonRes = R.string.documents_add_button_accessibility;
             } else {
                 titleRes = R.string.signature_update_signatures_title;
                 buttonRes = 0;
