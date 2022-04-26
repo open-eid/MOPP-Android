@@ -398,12 +398,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
         return name;
     }
 
-    private static File renameInvalidFileName(File file) {
-        String fileExtension = getFileExtension(file.getName()).toLowerCase(Locale.US);
-        fileExtension.split(" ");
-        return file;
-    }
-
     private void announceAccessibilityFilesAddedEvent(Context context, int addedDataList) {
         if (addedDataList > 1) {
             AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.files_added);
