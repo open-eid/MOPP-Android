@@ -408,9 +408,7 @@ final class SignatureUpdateAdapter extends
             clicks(itemView).map(ignored ->
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
-            List<String> nameComponents = Stream.of(item.signature().name().split(",", -1))
-                    .collect(Collectors.toList());
-            String name = String.join(", ", nameComponents);
+            String name = item.signature().name().replace(",", ", ");
             nameView.setText(name);
             switch (item.signature().status()) {
                 case INVALID:
