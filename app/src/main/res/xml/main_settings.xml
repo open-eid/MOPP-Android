@@ -21,6 +21,7 @@
     -->
 
     <ee.ria.DigiDoc.android.main.settings.UUIDPreference
+        android:id="@+id/mainSettingsAccessToSigningService"
         android:key="@string/main_settings_uuid_key"
         android:title="@string/main_settings_uuid_title"
         android:widgetLayout="@layout/widget_icon_layout"
@@ -29,6 +30,7 @@
         android:inputType="textPassword" />
 
     <ee.ria.DigiDoc.android.main.settings.TsaUrlPreference
+        android:id="@+id/mainSettingsAccessToTimeStampingService"
         android:inputType="textUri"
         android:key="@string/main_settings_tsa_url_key"
         android:title="@string/main_settings_tsa_url_title"

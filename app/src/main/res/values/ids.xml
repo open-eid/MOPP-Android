@@ -44,6 +44,8 @@
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsFragment" />
     <item type="id" name="mainSettingsOpenAllFileTypes" />
+    <item type="id" name="mainSettingsAccessToSigningService" />
+    <item type="id" name="mainSettingsAccessToTimeStampingService" />
 
     <!-- Main About -->
     <item type="id" name="mainAboutList" />

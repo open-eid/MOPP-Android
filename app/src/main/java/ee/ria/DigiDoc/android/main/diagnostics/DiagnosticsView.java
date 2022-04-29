@@ -38,6 +38,7 @@ import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.DigiDoc.common.TextUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
@@ -238,8 +239,10 @@ public final class DiagnosticsView extends CoordinatorLayout {
         TextView centralConfigurationUpdateDate = findViewById(R.id.mainDiagnosticsCentralConfigurationUpdateDate);
 
         applicationVersion.setText(getAppVersion());
+        applicationVersion.setContentDescription(TextUtil.splitTextAndJoin(getAppVersion(), " "));
         androidVersion.setText(getAndroidVersion());
         libDocVersion.setText(getResources().getString(R.string.main_diagnostics_libdigidocpp_title, getLibDigiDocVersion()));
+        libDocVersion.setContentDescription(getResources().getString(R.string.main_diagnostics_libdigidocpp_title, TextUtil.splitTextAndJoin(getLibDigiDocVersion(), " ")));
 
         configUrl.setText(configurationProvider.getConfigUrl());
         tslUrl.setText(configurationProvider.getTslUrl());
