@@ -35,25 +35,23 @@ public final class SettingsFragment extends PreferenceFragmentCompat {
             preferenceRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (preferenceRecyclerView.getChildCount() > 0) {
-                        for (int i = 0; i < preferenceRecyclerView.getChildCount(); i++) {
-                            View settingView = preferenceRecyclerView.getChildAt(i);
-                            ViewCompat.setAccessibilityDelegate(settingView, new AccessibilityDelegateCompat() {
-                                @Override
-                                public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
-                                    super.onInitializeAccessibilityNodeInfo(host, info);
-                                    if (host.getId() == R.id.mainSettingsAccessToSigningService) {
-                                        info.setContentDescription(
-                                                getAccessibilityDescription(R.string.main_settings_uuid_title, R.string.main_settings_uuid_key)
-                                        );
-                                    } else if (host.getId() == R.id.mainSettingsAccessToTimeStampingService) {
-                                        info.setContentDescription(
-                                                getAccessibilityDescription(R.string.main_settings_tsa_url_title, R.string.main_settings_tsa_url_key)
-                                        );
-                                    }
+                    for (int i = 0; i < preferenceRecyclerView.getChildCount(); i++) {
+                        View settingView = preferenceRecyclerView.getChildAt(i);
+                        ViewCompat.setAccessibilityDelegate(settingView, new AccessibilityDelegateCompat() {
+                            @Override
+                            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+                                super.onInitializeAccessibilityNodeInfo(host, info);
+                                if (host.getId() == R.id.mainSettingsAccessToSigningService) {
+                                    info.setContentDescription(
+                                            getAccessibilityDescription(R.string.main_settings_uuid_title, R.string.main_settings_uuid_key)
+                                    );
+                                } else if (host.getId() == R.id.mainSettingsAccessToTimeStampingService) {
+                                    info.setContentDescription(
+                                            getAccessibilityDescription(R.string.main_settings_tsa_url_title, R.string.main_settings_tsa_url_key)
+                                    );
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
                 }
             });
