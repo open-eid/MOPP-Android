@@ -219,6 +219,28 @@
     <string name="signature_update_id_card_sign_pin2_invalid_final">Неверный PIN2. У Вас осталась 1 попытка до блокировки Вашего PIN2.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 заблокирован. Зайдите в Мой eID, чтобы разблокировать его.</string>
 
+    <!-- Signature Details -->
+    <string name="signature_details_title">Детали подписи</string>
+    <string name="signer_certificate_issuer_label">Организация, выдавшая сертификат подписавшего</string>
+    <string name="signers_certificate_label">Сертификат пользователя</string>
+    <string name="signature_method_label">Метод подписи</string>
+    <string name="container_format_label">Формат контейнера</string>
+    <string name="signature_format_label">Формат подписи</string>
+    <string name="signed_file_count_label">Количество подписанных файлов</string>
+    <string name="signature_timestamp_label">Временной штамп подписи</string>
+    <string name="signature_timestamp_utc_label">Временной штамп подписи (UTC)</string>
+    <string name="hash_value_of_signature_label">Хэш значение подтверждения подлинности подписи</string>
+    <string name="ts_certificate_issuer_label">Издатель сертификата временного штампа</string>
+    <string name="ts_certificate_label">Сертификат временного штампа</string>
+    <string name="ocsp_certificate_issuer_label">Организация, выдавшая сертификат OCSP</string>
+    <string name="ocsp_certificate_label">Сертификат OCSP</string>
+    <string name="ocsp_time_label">Время подтверждения подлинности подписи</string>
+    <string name="ocsp_time_utc_label">Время подтверждения подлинности подписи (UTC)</string>
+    <string name="signers_mobile_time_label">Время на мобильном телефоне подписывающего (UTC)</string>
+
+    <!-- Certificate Details -->
+    <string name="certificate_details_title">Детали сертификата</string>
+
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Выберите файл для шифрования или расшифровки</string>
     <string name="crypto_home_create_button">ВЫБРАТЬ ФАЙЛ</string>

@@ -3,7 +3,6 @@ package ee.ria.DigiDoc.sign;
 import static com.google.common.collect.ImmutableList.sortedCopyOf;
 import static com.google.common.io.Files.getFileExtension;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
@@ -18,17 +17,30 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 
 import org.apache.commons.io.FilenameUtils;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.bouncycastle.util.encoders.Hex;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Paths;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
@@ -170,7 +182,7 @@ public abstract class SignedContainer {
 
         try {
             Container container = container(file());
-          
+
             ee.ria.libdigidocpp.Signature signature = container
                     .prepareWebSignature(certificate.toByteArray(), signatureProfile());
             if (signature != null) {
@@ -322,13 +334,87 @@ public abstract class SignedContainer {
                 dataFile.fileSize(), dataFile.mediaType());
     }
 
+    private static X509Certificate x509Certificate(byte[] bytes) {
+        try {
+            return (X509Certificate) CertificateFactory.getInstance("X.509")
+                    .generateCertificate(new ByteArrayInputStream(bytes));
+        } catch (CertificateException e) {
+            Timber.log(Log.ERROR, "Can't parse certificate", e);
+            return null;
+        }
+    }
+
+    private static String getX509CertificateIssuer(X509Certificate x509Certificate) {
+        try {
+            X500Name x500name = new JcaX509CertificateHolder(x509Certificate).getIssuer();
+            RDN cn = x500name.getRDNs(BCStyle.CN)[0];
+            return IETFUtils.valueToString(cn.getFirst().getValue());
+        } catch (CertificateEncodingException e) {
+            Timber.log(Log.ERROR, "Unable to get certificate issuer", e);
+            return "";
+        }
+    }
+
+    private static String toHexString(byte[] bytes) {
+        return Hex.toHexString(bytes).replaceAll("..", "$0 ").trim();
+    }
+
     private static Signature signature(ee.ria.libdigidocpp.Signature signature) {
         String id = signature.id();
         String name = signatureName(signature);
         Instant createdAt = Instant.parse(signature.trustedSigningTime());
         SignatureStatus status = signatureStatus(signature);
         String profile = signature.profile();
-        return Signature.create(id, name, createdAt, status, profile);
+
+        String signersCertificateIssuer = "";
+        X509Certificate signingCertificate = null;
+
+        if (x509Certificate(signature.signingCertificateDer()) != null) {
+            signersCertificateIssuer = getX509CertificateIssuer(x509Certificate(signature.signingCertificateDer()));
+            signingCertificate = x509Certificate(signature.signingCertificateDer());
+        }
+        String signatureMethod = signature.signatureMethod();
+        String signatureFormat = signature.profile();
+        String signatureTimestamp = getFormattedDateTime(signature.trustedSigningTime(), false);
+        String signatureTimestampUTC = getFormattedDateTime(signature.trustedSigningTime(), true);
+        String hashValueOfSignature = toHexString(signature.messageImprint());
+
+        String tsCertificateIssuer = "";
+        X509Certificate tsCertificate = null;
+        if (x509Certificate(signature.TimeStampCertificateDer()) != null) {
+            tsCertificateIssuer = getX509CertificateIssuer(x509Certificate(signature.TimeStampCertificateDer()));
+            tsCertificate = x509Certificate(signature.TimeStampCertificateDer());
+        }
+
+        String ocspCertificateIssuer = "";
+        X509Certificate ocspCertificate = null;
+        if (x509Certificate(signature.OCSPCertificateDer()) != null) {
+            ocspCertificateIssuer = getX509CertificateIssuer(x509Certificate(signature.OCSPCertificateDer()));
+            ocspCertificate = x509Certificate(signature.OCSPCertificateDer());
+        }
+
+        String ocspTime = getFormattedDateTime(signature.OCSPProducedAt(), false);
+        String ocspTimeUTC = getFormattedDateTime(signature.OCSPProducedAt(), true);
+        String signersMobileTimeUTC = getFormattedDateTime(signature.claimedSigningTime(), true);
+
+        return Signature.create(id, name, createdAt, status, profile, signersCertificateIssuer,
+                signingCertificate, signatureMethod, signatureFormat, signatureTimestamp,
+                signatureTimestampUTC, hashValueOfSignature, tsCertificateIssuer, tsCertificate,
+                ocspCertificateIssuer, ocspCertificate, ocspTime, ocspTimeUTC, signersMobileTimeUTC);
+    }
+
+    private static String getFormattedDateTime(String dateTimeString, boolean isUTC) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            if (isUTC) {
+                return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(dateFormat.parse(dateTimeString)) + " +0000";
+            }
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return new SimpleDateFormat("dd.MM.yyyy HH:mm:ssZ").format(dateFormat.parse(dateTimeString));
+        } catch (ParseException | IllegalStateException e) {
+            Timber.log(Log.ERROR, e, "Unable to parse date");
+        }
+        return "";
     }
 
     private static String signatureName(ee.ria.libdigidocpp.Signature signature) {
