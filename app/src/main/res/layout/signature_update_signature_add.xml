@@ -34,6 +34,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
+                    android:maxLines="1"
                     android:text="@string/signature_update_signature_add_method_mobile_id" />
 
                 <RadioButton
@@ -43,6 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
+                    android:maxLines="1"
                     android:text="@string/signature_update_signature_add_method_smart_id" />
 
                 <RadioButton
@@ -51,6 +53,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:maxLines="1"
                     android:text="@string/signature_update_signature_add_method_id_card" />
 
             </RadioGroup>

@@ -75,8 +75,11 @@
             android:id="@id/mainHomeMenuLocaleEt"
             style="@style/Widget.Application.MenuLocale"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:autoSizeTextType="uniform"
+            android:padding="14dp"
+            android:maxLines="2"
             android:text="@string/main_home_menu_locale_et" />
 
         <View
@@ -88,8 +91,11 @@
             android:id="@id/mainHomeMenuLocaleRu"
             style="@style/Widget.Application.MenuLocale"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:autoSizeTextType="uniform"
+            android:padding="14dp"
+            android:maxLines="4"
             android:text="@string/main_home_menu_locale_ru" />
 
         <View
@@ -101,8 +107,11 @@
             android:id="@id/mainHomeMenuLocaleEn"
             style="@style/Widget.Application.MenuLocale"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:autoSizeTextType="uniform"
+            android:padding="22dp"
+            android:maxLines="2"
             android:text="@string/main_home_menu_locale_en" />
 
     </RadioGroup>
