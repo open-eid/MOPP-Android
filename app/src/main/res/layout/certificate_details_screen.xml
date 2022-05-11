@@ -44,6 +44,7 @@
                     android:textColor="@color/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/subject_name"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -57,6 +58,7 @@
                     android:id="@id/certificateDetailCountryTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/country_or_region"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -78,6 +80,7 @@
                     android:id="@id/certificateDetailOrganizationTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/organization"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -99,6 +102,7 @@
                     android:id="@id/certificateDetailOrganizationalUnitTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/organizational_unit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -120,6 +124,7 @@
                     android:id="@id/certificateDetailCommonNameTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/common_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -141,6 +146,7 @@
                     android:id="@id/certificateDetailSurnameTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/surname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -162,6 +168,7 @@
                     android:id="@id/certificateDetailGivenNameTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/given_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -183,6 +190,7 @@
                     android:id="@id/certificateDetailSerialCodeTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/serial_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -205,6 +213,7 @@
                     android:id="@id/certificateDetailIssuerDataTitle"
                     style="@style/MaterialTypography.Dense.Subheading"
                     android:textColor="@color/title"
+                    android:text="@string/issuer_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold" />
@@ -220,6 +229,7 @@
                     android:id="@id/certificateDetailIssuerCountryTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/country_or_region"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -241,6 +251,7 @@
                     android:id="@id/certificateDetailIssuerOrganizationTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/organization"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -262,6 +273,7 @@
                     android:id="@id/certificateDetailIssuerCommonNameTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/common_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -283,6 +295,7 @@
                     android:id="@id/certificateDetailIssuerEmailTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/email_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -304,6 +317,7 @@
                     android:id="@id/certificateDetailIssuerOrganizationIdentifierTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/other_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -325,6 +339,7 @@
                     android:id="@id/certificateDetailSerialNumberTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/serial_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -346,6 +361,7 @@
                     android:id="@id/certificateDetailVersionTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/version"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -367,6 +383,7 @@
                     android:id="@id/certificateDetailSignatureAlgorithmTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/signature_algorithm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -388,6 +405,7 @@
                     android:id="@id/certificateDetailSignatureParametersTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/parameters"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -409,6 +427,7 @@
                     android:id="@id/certificateDetailNotValidBeforeTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/not_valid_before"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -430,6 +449,7 @@
                     android:id="@id/certificateDetailNotValidAfterTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/not_valid_after"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -452,6 +472,7 @@
                     android:id="@id/certificateDetailPublicKeyInfoTitle"
                     style="@style/MaterialTypography.Dense.Subheading"
                     android:textColor="@color/title"
+                    android:text="@string/public_key_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold" />
@@ -467,6 +488,7 @@
                     android:id="@id/certificateDetailPublicKeyAlgorithmTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/algorithm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -488,6 +510,7 @@
                     android:id="@id/certificateDetailPublicKeyParametersTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/parameters"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -509,6 +532,7 @@
                     android:id="@id/certificateDetailPublicKeyPKTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/public_key"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -530,6 +554,7 @@
                     android:id="@id/certificateDetailPublicKeyKeyUsageTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/key_usage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -551,6 +576,7 @@
                     android:id="@id/certificateDetailSignatureTitle"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/signature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -573,6 +599,7 @@
                     android:id="@id/certificateDetailExtensionsTitle"
                     style="@style/MaterialTypography.Dense.Subheading"
                     android:textColor="@color/title"
+                    android:text="@string/extensions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold" />
@@ -596,12 +623,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginBottom="@dimen/material_baseline_grid_3x">
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
 
                 <TextView
                     android:id="@id/certificateDetailFingerprintsTitle"
                     style="@style/MaterialTypography.Dense.Subheading"
                     android:textColor="@color/title"
+                    android:text="@string/fingerprints"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold" />
@@ -617,6 +645,7 @@
                     android:id="@id/certificateDetailFingerprintsSHA256Title"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/sha_256"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -638,6 +667,7 @@
                     android:id="@id/certificateDetailFingerprintsSHA1Title"
                     style="@style/MaterialTypography.Dense.Body1"
                     android:textColor="@color/detailInformationTitleLabel"
+                    android:text="@string/sha_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
