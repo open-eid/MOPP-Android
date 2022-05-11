@@ -10,18 +10,23 @@ import ee.ria.DigiDoc.sign.SignedContainer;
 
 public final class SignatureDetailScreen extends ConductorScreen {
 
-    private static Signature userSignature;
-    private static SignedContainer userSignedContainer;
+    private static final int SIGNATURE_DETAIL_SCREEN_ID = R.id.signatureDetailScreen;
+    private Signature userSignature;
+    private SignedContainer userSignedContainer;
+
+    public SignatureDetailScreen(int id, Signature signature, SignedContainer signedContainer) {
+        super(id);
+        this.userSignature = signature;
+        this.userSignedContainer = signedContainer;
+    }
 
     public static SignatureDetailScreen create(Signature signature, SignedContainer signedContainer) {
-        userSignature = signature;
-        userSignedContainer = signedContainer;
-        return new SignatureDetailScreen();
+        return new SignatureDetailScreen(SIGNATURE_DETAIL_SCREEN_ID, signature, signedContainer);
     }
 
     @SuppressWarnings("WeakerAccess")
     public SignatureDetailScreen() {
-        super(R.id.signatureDetailScreen);
+        super(SIGNATURE_DETAIL_SCREEN_ID);
     }
 
     @Override

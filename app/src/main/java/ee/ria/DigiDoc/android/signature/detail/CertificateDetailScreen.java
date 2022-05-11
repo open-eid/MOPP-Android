@@ -10,16 +10,21 @@ import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorScreen;
 
 public final class CertificateDetailScreen extends ConductorScreen {
 
-    private static X509Certificate userCertificate;
+    private static final int CERTIFICATE_DETAIL_SCREEN_ID = R.id.certificateDetailScreen;
+    private X509Certificate userCertificate;
+
+    public CertificateDetailScreen(int id, X509Certificate userCertificate) {
+        super(id);
+        this.userCertificate = userCertificate;
+    }
 
     public static CertificateDetailScreen create(X509Certificate certificate) {
-        userCertificate = certificate;
-        return new CertificateDetailScreen();
+        return new CertificateDetailScreen(CERTIFICATE_DETAIL_SCREEN_ID, certificate);
     }
 
     @SuppressWarnings("WeakerAccess")
     public CertificateDetailScreen() {
-        super(R.id.certificateDetailScreen);
+        super(CERTIFICATE_DETAIL_SCREEN_ID);
     }
 
     @Override
