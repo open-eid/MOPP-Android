@@ -1,18 +1,21 @@
 package ee.ria.DigiDoc.android.eid;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.google.android.material.textfield.TextInputLayout;
-
-import android.widget.ScrollView;
-import android.widget.Toolbar;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toolbar;
+
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -130,6 +133,7 @@ public final class CodeUpdateView extends CoordinatorLayout {
         successMessageView.setVisibility(successMessageVisible ? VISIBLE : GONE);
         if (successMessageVisible) {
             scrollView.smoothScrollTo(0, 0);
+            new Handler(Looper.getMainLooper()).post(successMessageView::requestFocus);
             AccessibilityUtils.sendAccessibilityEvent(getContext(),
                         AccessibilityEvent.TYPE_ANNOUNCEMENT, successMessageView.getText());
         }
@@ -192,6 +196,10 @@ public final class CodeUpdateView extends CoordinatorLayout {
         newView.setText(null);
         repeatView.setText(null);
         hideSoftKeyboard(this);
+
+        currentView.clearFocus();
+        newView.clearFocus();
+        repeatView.clearFocus();
     }
 
     public Observable closeButtonClick() {
