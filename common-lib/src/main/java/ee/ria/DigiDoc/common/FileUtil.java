@@ -1,12 +1,16 @@
 package ee.ria.DigiDoc.common;
 
+import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.webkit.URLUtil;
 
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class FileUtil {
 
@@ -88,6 +92,28 @@ public class FileUtil {
 
     public static Uri normalizePath(String filePath) {
         return Uri.parse(FilenameUtils.normalize(filePath));
+    }
+
+    public static boolean isPDF(File file) {
+        try (ParcelFileDescriptor parcelFileDescriptor = ParcelFileDescriptor.open(file,
+                ParcelFileDescriptor.MODE_READ_ONLY)) {
+            // Try to render as PDF. Throws exception if not a PDF file.
+            new PdfRenderer(parcelFileDescriptor);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static Path renameFile(Path path, String fileNameWithExtension) {
+        try {
+            Files.deleteIfExists(path.resolveSibling(fileNameWithExtension));
+            Path newFilePath = path.resolveSibling(fileNameWithExtension);
+            Files.move(path, newFilePath);
+            return newFilePath;
+        } catch (IOException e) {
+            return path;
+        }
     }
 
     private static boolean isRawUrl(String url) {
