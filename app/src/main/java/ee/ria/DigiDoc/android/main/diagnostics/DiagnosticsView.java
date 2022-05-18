@@ -6,6 +6,7 @@ import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnost
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileSaveClicksSubject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
@@ -126,7 +127,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
                         .doOnNext(next -> {
                             diagnosticsRestartConfirmationDialog.dismiss();
                             activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(true);
-                            activityContext.restartAppWithIntent(activityContext.getIntent());
+                            activityContext.restartAppWithIntent(activityContext.getIntent(), true);
                         })
                         .subscribe();
                 diagnosticsRestartConfirmationDialog.cancels()
@@ -139,7 +140,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
             } else {
                 activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(false);
                 activityContext.getSettingsDataStore().setIsLogFileGenerationRunning(false);
-                activityContext.restartAppWithIntent(activityContext.getIntent());
+                activityContext.restartAppWithIntent(activityContext.getIntent(), true);
             }
         });
     }

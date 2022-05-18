@@ -80,14 +80,14 @@ public final class Activity extends AppCompatActivity {
             getIntent().setAction(Intent.ACTION_MAIN);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            restartAppWithIntent(intent);
+            restartAppWithIntent(intent, false);
         } else if (Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
             rootScreenFactory.intent(intent);
         }
         else {
           // Avoid blank screen on language change
           if (savedInstanceState != null) {
-              restartAppWithIntent(intent);
+              restartAppWithIntent(intent, false);
           }
           rootScreenFactory.intent(intent);
         }
@@ -154,11 +154,13 @@ public final class Activity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
     }
 
-    public void restartAppWithIntent(Intent intent) {
+    public void restartAppWithIntent(Intent intent, boolean withExit) {
         finish();
         startActivity(intent);
         overridePendingTransition (0, 0);
-        System.exit(0);
+        if (withExit) {
+            System.exit(0);
+        }
     }
 
     private void handleIncomingFiles(Intent intent) {
