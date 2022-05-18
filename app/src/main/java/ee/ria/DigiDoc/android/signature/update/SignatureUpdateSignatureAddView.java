@@ -1,9 +1,12 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -19,6 +22,7 @@ import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdView;
 import io.reactivex.rxjava3.core.Observable;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static com.jakewharton.rxbinding4.widget.RxRadioGroup.checkedChanges;
 
 public final class SignatureUpdateSignatureAddView extends LinearLayout {
@@ -60,6 +64,12 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
                 getResources().getString(R.string.signature_update_signature_selected_method_smart_id, 2, 3));
         setupContentDescriptions(findViewById(R.id.signatureUpdateSignatureAddMethodIdCard),
                 getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 3));
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setLayoutParams(new FrameLayout.LayoutParams(MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
     public Observable<Integer> methodChanges() {

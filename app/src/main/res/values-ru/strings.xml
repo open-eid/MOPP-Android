@@ -129,8 +129,10 @@
     <string name="signature_update_signature_add_positive_button">ПОДПИСАТЬ</string>
     <string name="signature_update_signature_add_success">ПОДПИСЬ ДОБАВЛЕНА</string>
     <string name="signature_update_signature_add_error">Что-то пошло не так</string>
+    <string name="signature_update_signature_add_error_title">Не удалось подписать контейнер</string>
 
     <string name="signature_update_signature_error_message_additional_information">Дополнительная информация</string>
+    <string name="signature_update_signature_error_message_details">Детали</string>
 
     <string name="signature_update_signature_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Не удалось отправить запрос. Превышено количество неудачных запросов с этого IP-адреса. Пожалуйста, попробуйте позже.</string>
@@ -190,6 +192,7 @@
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Слишком много файлов в контейнере</string>
     <string name="signature_update_mobile_id_error_message_access_rights">Не удалось подписать контейнер. Проверьте настройки доступа услуги mobiil-ID. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Превышен лимит одновременных запросов</string>
+    <string name="signature_update_mobile_id_error_technical_error">Не удалось отправить запрос. Технический сбой услуги mobiil-ID. Пожалуйста, попробуйте позже.</string>
 
     <string name="signature_update_smart_id_message">Введите свой личный код для подписи с Smart-ID</string>
     <string name="signature_update_smart_id_country">Страна</string>
@@ -203,6 +206,7 @@
     <string name="signature_update_smart_id_error_message_account_not_found_or_timeout">Не удалось подписать контейнер. Срок действия вашей операции Smart-ID истек или учетная запись не найдена</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Сессия не найден</string>
     <string name="signature_update_smart_id_error_message_access_rights">Не удалось подписать контейнер. Проверьте настройки доступа услуги Smart-ID. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
+    <string name="signature_update_smart_id_error_technical_error">Не удалось отправить запрос. Технический сбой услуги Smart-ID. Пожалуйста, попробуйте позже.</string>
 
     <string name="signature_update_id_card_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>

@@ -59,11 +59,12 @@ public class SessionStatusResponse {
 
     public enum ProcessStatus {
         OK,
+        TIMEOUT,
         USER_REFUSED,
         DOCUMENT_UNUSABLE,
         WRONG_VC,
 
-        ACCOUNT_NOT_FOUND_OR_TIMEOUT,
+        ACCOUNT_NOT_FOUND,
         SESSION_NOT_FOUND,
         MISSING_SESSIONID,
         EXCEEDED_UNSUCCESSFUL_REQUESTS,
@@ -76,7 +77,8 @@ public class SessionStatusResponse {
         UNDER_MAINTENANCE,
         GENERAL_ERROR,
         NO_RESPONSE,
-        INVALID_SSL_HANDSHAKE
+        INVALID_SSL_HANDSHAKE,
+        TECHNICAL_ERROR
     }
 }
 

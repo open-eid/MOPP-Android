@@ -9,6 +9,7 @@ import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toast;
 
@@ -267,7 +268,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 if (action.documents().size() == 1) {
                     boolean isFileDeleted = action.containerFile().delete();
                     if (isFileDeleted) {
-                        Timber.d("File %s deleted", action.containerFile().getName());
+                        Timber.log(Log.DEBUG, "File %s deleted", action.containerFile().getName());
                     }
                     navigator.execute(Transaction.pop());
                     return Observable.just(Result.DocumentRemoveResult.success(null));
