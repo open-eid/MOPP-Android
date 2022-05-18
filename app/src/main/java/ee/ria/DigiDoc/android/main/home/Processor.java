@@ -110,7 +110,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             } else {
                 View myEidView = navigator.activity().findViewById(R.id.mainHomeNavigationEID);
                 if (myEidView != null) {
-                    myEidView.setContentDescription(application.getResources().getString(R.string.my_eid_content_description));
+                    myEidView.setContentDescription(application.getResources().getString(R.string.my_eid_content_description, 3, 3));
                 }
             }
             return Observable.just(Result.NavigationResult
