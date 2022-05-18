@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 
 import java.util.Locale;
@@ -63,6 +64,9 @@ public final class LocaleService {
     public void applicationLocale(Locale locale) {
         Timber.e("applicationLocale: %s", locale);
         settingsDataStore.setLocale(locale);
-        navigator.activity().recreate();
+        Intent intent = navigator.activity().getIntent();
+        navigator.activity().finish();
+        navigator.activity().startActivity(intent);
+        navigator.activity().overridePendingTransition(0, 0);
     }
 }
