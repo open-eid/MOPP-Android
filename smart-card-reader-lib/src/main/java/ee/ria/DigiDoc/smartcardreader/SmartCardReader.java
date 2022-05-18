@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.smartcardreader;
 
 import android.hardware.usb.UsbDevice;
+import android.util.Log;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,7 +47,7 @@ public abstract class SmartCardReader implements AutoCloseable {
      */
     public final byte[] transmit(int cla, int ins, int p1, int p2, byte[] data, Integer le)
             throws SmartCardReaderException {
-        Timber.d("transmit: %s %s %s %s %s %s", cla, ins, p1, p2, Collections.singletonList(data), le);
+        Timber.log(Log.DEBUG, "transmit: %s %s %s %s %s %s", cla, ins, p1, p2, Collections.singletonList(data), le);
 
         byte[] response;
         if (data == null || data.length == 0) {

@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.os.StrictMode;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -120,7 +121,7 @@ public class Application extends android.app.Application {
         try {
             tslFiles = getAssets().list(assetsPath);
         } catch (IOException e) {
-            Timber.e(e, "Failed to get folder list: %s", assetsPath);
+            Timber.log(Log.ERROR, e, "Failed to get folder list: %s", assetsPath);
         }
 
         if (tslFiles != null && tslFiles.length > 0) {
@@ -147,7 +148,7 @@ public class Application extends android.app.Application {
                 return assetsTslVersion != null && assetsTslVersion > cachedTslVersion;
             } catch (Exception e) {
                 String message = "Error comparing sequence number between assets and cached TSLs";
-                Timber.e(e, message);
+                Timber.log(Log.ERROR, e, message);
                 return false;
             }
         }
@@ -158,7 +159,7 @@ public class Application extends android.app.Application {
                 StandardCharsets.UTF_8))) {
             FileUtils.writeToFile(reader, destionationDir, fileName);
         } catch (IOException ex) {
-            Timber.e(ex, "Failed to copy file: %s from assets", fileName);
+            Timber.log(Log.ERROR, ex, "Failed to copy file: %s from assets", fileName);
         }
     }
 
@@ -199,7 +200,7 @@ public class Application extends android.app.Application {
     }
 
     private void setupRxJava() {
-        RxJavaPlugins.setErrorHandler(throwable -> Timber.e(throwable, "RxJava error handler"));
+        RxJavaPlugins.setErrorHandler(throwable -> Timber.log(Log.ERROR, throwable, "RxJava error handler"));
     }
 
     private void setupConfiguration() {

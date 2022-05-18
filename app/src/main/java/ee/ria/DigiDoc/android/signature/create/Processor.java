@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -142,7 +143,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         containerAdd.containerFile(), false,
                                         false))))
                 .doOnError(throwable1 -> {
-                    Timber.d(throwable1, "Add signed container failed");
+                    Timber.log(Log.DEBUG, throwable1, "Add signed container failed");
                     ToastUtil.showGeneralError(application);
 
                     navigator.execute(Transaction.pop());

@@ -330,7 +330,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         (tslVersion) -> tslUrlTextView.append(" ("+ tslVersion + ")"),
-                        (error) -> Timber.e(error, "Error reading TSL version")
+                        (error) -> Timber.log(Log.ERROR, error, "Error reading TSL version")
                 );
     }
 
@@ -345,7 +345,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
                  }
             } else {
                 String message = "Error fetching TSL, response code: " + response.code();
-                Timber.e(message);
+                Timber.log(Log.ERROR, message);
                 throw new TSLException(message);
             }
         });
@@ -379,7 +379,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
                     tslEntry.setText(tslEntryText);
                     tslCacheLayout.addView(tslEntry);
                 } catch (Exception e) {
-                    Timber.e(e, "Error displaying TSL version for: %s", tslFile.getAbsolutePath());
+                    Timber.log(Log.ERROR, e, "Error displaying TSL version for: %s", tslFile.getAbsolutePath());
                 }
             }
         }

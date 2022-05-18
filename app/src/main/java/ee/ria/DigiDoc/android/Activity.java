@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.URLUtil;
 import android.widget.Button;
 
@@ -168,7 +169,7 @@ public final class Activity extends AppCompatActivity {
             intent.setDataAndType(intent.getData(), "*/*");
             rootScreenFactory.intent(intent);
         } catch (ActivityNotFoundException e) {
-            Timber.e(e, "Handling incoming file intent");
+            Timber.log(Log.ERROR, e, "Handling incoming file intent");
         }
     }
 

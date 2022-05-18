@@ -134,8 +134,10 @@
     <string name="signature_update_signature_add_positive_button">SIGN</string>
     <string name="signature_update_signature_add_success">SIGNATURE ADDED</string>
     <string name="signature_update_signature_add_error">Something went wrong</string>
+    <string name="signature_update_signature_add_error_title">Failed to sign container</string>
 
     <string name="signature_update_signature_error_message_additional_information">Additional information</string>
+    <string name="signature_update_signature_error_message_details">Details</string>
 
     <string name="signature_update_signature_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Failed to send request. The number of unsuccessful request from this IP address has been exceeded. Please try again later.</string>
