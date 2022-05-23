@@ -58,7 +58,7 @@
     <string name="main_diagnostics_logging_switch">Активировать одноразовое создание лог-файла</string>
     <string name="main_diagnostics_save_log">Сохранить лог-файл</string>
     <string name="main_diagnostics_restart_message">Перезапустите RIA DigiDoc, чтобы активировать ведение журнала. https://www.id.ee/ru/artikkel/generirovanie-log-fajla-v-kliente-digidoc4/</string>
-    <string name="main_diagnostics_restart_message_read_more">Подробнее читайте здесь.</string>
+    <string name="main_diagnostics_restart_message_read_more">Подробнее читайте здесь</string>
     <string name="main_diagnostics_restart_message_restart_now">Перезапустить приложение?</string>
 
     <!-- Signature Home -->
