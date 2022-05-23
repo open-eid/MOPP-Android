@@ -187,7 +187,6 @@ final class SignatureUpdateAdapter extends
         static UpdateViewHolder create(int viewType, View itemView) {
             switch (viewType) {
                 case R.layout.signature_update_list_item_success:
-                    AccessibilityUtils.sendAccessibilityEvent(itemView.getContext(), TYPE_ANNOUNCEMENT, R.string.container_signature_added);
                     return new SuccessViewHolder(itemView);
                 case R.layout.signature_update_list_item_status:
                     return new StatusViewHolder(itemView);

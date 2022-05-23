@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -14,6 +15,7 @@ import android.widget.RadioGroup;
 import androidx.annotation.Nullable;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardView;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
@@ -23,6 +25,7 @@ import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdView;
 import io.reactivex.rxjava3.core.Observable;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding4.widget.RxRadioGroup.checkedChanges;
 
 public final class SignatureUpdateSignatureAddView extends LinearLayout {
@@ -111,6 +114,10 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         idCardView.reset(viewModel);
         mobileIdView.reset(viewModel);
         smartIdView.reset(viewModel);
+        mobileIdView.clearFocus();
+        smartIdView.clearFocus();
+        idCardView.clearFocus();
+        methodView.requestFocus();
     }
 
     public SignatureAddRequest request() {

@@ -137,16 +137,23 @@ public final class IdCardView extends LinearLayout implements
                     R.string.signature_update_id_card_sign_data, data.personalData().givenNames(),
                     data.personalData().surname(), data.personalData().personalCode()));
             signPin2ErrorView.setVisibility(VISIBLE);
-            signPin2ErrorView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+            signDataView.clearFocus();
+            progressMessageView.clearFocus();
             if (pinRetryCount == 1) {
                 signPin2ErrorView.setText(
                         R.string.signature_update_id_card_sign_pin2_invalid_final);
+                signPin2ErrorView.setContentDescription(
+                        getResources().getString(R.string.signature_update_id_card_sign_pin2_invalid_final));
             } else {
                 signPin2ErrorView.setText(getResources().getString(
                         R.string.signature_update_id_card_sign_pin2_invalid, pinRetryCount));
                 signPin2ErrorView.setContentDescription(getResources().getString(
                         R.string.signature_update_id_card_sign_pin2_invalid, pinRetryCount));
             }
+            signPin2ErrorView.postDelayed(() -> {
+                signPin2ErrorView.requestFocus();
+                signPin2ErrorView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+            }, 700);
         } else if (dataResponse != null && data != null) {
             progressContainerView.setVisibility(GONE);
             signContainerView.setVisibility(VISIBLE);
@@ -181,12 +188,6 @@ public final class IdCardView extends LinearLayout implements
             progressMessageView.setText(R.string.signature_update_id_card_progress_message_initial);
             progressMessageView.setContentDescription(
                     getResources().getString(R.string.signature_update_id_card_progress_message_initial));
-
-            progressMessageView.postDelayed(() -> {
-                progressMessageView.requestFocus();
-                progressMessageView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
-                AccessibilityUtils.sendAccessibilityEvent(getContext(), R.string.signature_update_id_card_progress_message_initial);
-            }, 1500);
 
             signContainerView.setVisibility(GONE);
         }

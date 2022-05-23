@@ -129,6 +129,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private ProgressBar documentAddProgressBar;
     ProgressBar progressBar;
     SignatureUpdateProgressBar signatureUpdateProgressBar = new SignatureUpdateProgressBar();
+    boolean isTitleViewFocused = false;
 
     public SignatureUpdateView(Context context, String screenId, boolean isExistingContainer,
                                boolean isNestedContainer, File containerFile,
@@ -230,6 +231,18 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         AccessibilityUtils.setAccessibilityPaneTitle(this, isExistingContainer ? getResources().getString(titleResId) : "Container signing");
 
+        listView.clearFocus();
+
+        TextView titleView = getTitleView(toolbarView);
+        AccessibilityUtils.disableDoubleTapToActivateFeedback(titleView);
+        if (titleView != null && !isTitleViewFocused) {
+            titleView.postDelayed(() -> {
+                titleView.requestFocus();
+                titleView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+            }, 1800);
+            isTitleViewFocused = true;
+        }
+
         if (isNestedContainer) {
             sendButton.setVisibility(GONE);
             buttonSpace.setVisibility(GONE);
@@ -272,7 +285,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         if (state.signatureAddSuccessMessageVisible()) {
             showSuccessNotification();
             AccessibilityUtils.sendAccessibilityEvent(getContext(),
-                    AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.signature_update_signature_add_success);
+                    AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.container_signature_added);
         }
 
         errorDialog.show(state.documentsAddError(), state.documentRemoveError(),
@@ -523,6 +536,15 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         return null;
     }
 
+    private TextView getTitleView(Toolbar toolbar) {
+        for (int i = 0; i < toolbar.getChildCount(); i++) {
+            if (toolbar.getChildAt(i) instanceof TextView) {
+                return ((TextView) toolbar.getChildAt(i));
+            }
+        }
+        return null;
+    }
+
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -573,6 +595,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         errorDialog.setOnDismissListener(null);
         errorDialog.dismiss();
         nameUpdateDialog.dismiss();
+        isTitleViewFocused = false;
         super.onDetachedFromWindow();
     }
 
