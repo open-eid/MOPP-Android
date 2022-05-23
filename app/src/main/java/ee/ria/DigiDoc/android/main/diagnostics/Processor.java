@@ -1,14 +1,12 @@
 package ee.ria.DigiDoc.android.main.diagnostics;
 
 import static android.app.Activity.RESULT_OK;
-import static android.view.View.GONE;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.common.io.ByteStreams;
@@ -126,10 +124,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             Toast.makeText(Activity.getContext().get(), Activity.getContext().get().getString(R.string.file_saved),
                     Toast.LENGTH_LONG).show();
 
-            Button diagnosticsLogsButton = activity.findViewById(R.id.mainDiagnosticsSaveLoggingButton);
-            if (diagnosticsLogsButton != null) {
-                diagnosticsLogsButton.setVisibility(GONE);
-            }
+            activity.recreate();
 
         } catch (Exception e) {
             Timber.log(Log.ERROR, e, "Unable to save diagnostics or logs file");
