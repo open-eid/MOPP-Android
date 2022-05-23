@@ -147,28 +147,6 @@ public final class IntentUtils {
         return false;
     }
 
-    private static boolean isDdoc(File file) {
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        try {
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(file);
-            NodeList nodes = doc.getElementsByTagName("SignedDoc");
-            for (int i = 0; i < nodes.getLength(); i++) {
-                NamedNodeMap attributes = nodes.item(i).getAttributes();
-                for (int j = 0; j < attributes.getLength(); j++) {
-                    if (attributes.item(j).getNodeValue().equals("DIGIDOC-XML")) {
-                        return true;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Timber.log(Log.ERROR, e, "XML parsing failed");
-            return false;
-        }
-
-        return false;
-    }
-
     public static File parseGetContentIntent(ContentResolver contentResolver, Uri uri,
                                             File externallyOpenedFilesDirectory) {
        return getExternallyOpenedFile(contentResolver, uri,
