@@ -105,6 +105,10 @@
         <!-- placeholder to keep line numbers same in different locales -->
         <!-- placeholder to keep line numbers same in different locales -->
     </plurals>
+    <plurals name="signature_update_signatures_valid">
+        <item quantity="one">%1$d kehtiv allkiri</item>
+        <item quantity="other">%1$d kehtivat allkirja</item>
+    </plurals>
     <string name="signature_update_signature_type_signature">Allkiri</string>
     <string name="signature_update_signature_status_valid">Allkiri on kehtiv</string>
     <string name="signature_update_signature_status_warning">(Hoiatused)</string>

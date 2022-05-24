@@ -45,7 +45,7 @@ public final class HomeMenuView extends NestedScrollView {
         helpView = findViewById(R.id.mainHomeMenuHelp);
         helpView.setContentDescription(
                 getResources().getString(R.string.main_home_menu_help) +
-                " link to www.id.ee");
+                " link www.id.ee");
         recentView = findViewById(R.id.mainHomeMenuRecent);
         settingsView = findViewById(R.id.mainHomeMenuSettings);
         aboutView = findViewById(R.id.mainHomeMenuAbout);

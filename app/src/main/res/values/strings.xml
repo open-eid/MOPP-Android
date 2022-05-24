@@ -105,6 +105,10 @@
         <!-- placeholder to keep line numbers same in different locales -->
         <!-- placeholder to keep line numbers same in different locales -->
     </plurals>
+    <plurals name="signature_update_signatures_valid">
+        <item quantity="one">%1$d valid signature</item>
+        <item quantity="other">%1$d valid signatures</item>
+    </plurals>
     <string name="signature_update_signature_type_signature">Signature</string>
     <string name="signature_update_signature_status_valid">Signature is valid</string>
     <string name="signature_update_signature_status_warning">(Warnings)</string>

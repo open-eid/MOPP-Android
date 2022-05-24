@@ -105,6 +105,12 @@
         <item quantity="few">%1$d НЕВЕРНАЯ ПОДПИСЬ</item>
         <item quantity="many">%1$d НЕВЕРНАЯ ПОДПИСЬ</item>
     </plurals>
+    <plurals name="signature_update_signatures_valid">
+        <item quantity="one">%1$d действительный подпись</item>
+        <item quantity="other">%1$d действительные подписи</item>
+        <item quantity="few">%1$d действительные подписи</item>
+        <item quantity="many">%1$d действительные подписи</item>
+    </plurals>
     <string name="signature_update_signature_type_signature">Подпись</string>
     <string name="signature_update_signature_status_valid">Подпись действительна</string>
     <string name="signature_update_signature_status_warning">(Предупреждения)</string>
