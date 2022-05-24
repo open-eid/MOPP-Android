@@ -55,6 +55,11 @@
     <string name="main_diagnostics_configuration_save_diagnostics_button">SAVE DIAGNOSTICS</string>
     <string name="main_diagnostics_rpuuid_default">is set by default</string>
     <string name="main_diagnostics_rpuuid_custom">is set manually</string>
+    <string name="main_diagnostics_logging_switch">Enable one-time log generation</string>
+    <string name="main_diagnostics_save_log">Save log</string>
+    <string name="main_diagnostics_restart_message">Restart RIA DigiDoc to activate logging. https://www.id.ee/en/article/log-file-generation-in-digidoc4-client/</string>
+    <string name="main_diagnostics_restart_message_read_more">Read more here</string>
+    <string name="main_diagnostics_restart_message_restart_now">Restart now?</string>
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Choose a file to sign or validate</string>
