@@ -12,6 +12,7 @@
     <string name="main_home_menu_title">Меню</string>
     <string name="main_home_menu_button">Меню</string>
     <string name="main_home_menu_help">ПОМОЩЬ</string>
+    <string name="main_home_menu_help_url_short">линк www.id.ee</string>
     <string name="main_home_menu_help_url">https://www.id.ee/ru/id-pomoshh/</string>
     <string name="main_home_menu_recent">НЕДАВНИЕ ДОКУМЕНТЫ</string>
     <string name="main_home_menu_settings">НАСТРОЙКИ</string>

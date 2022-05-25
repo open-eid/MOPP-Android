@@ -12,6 +12,7 @@
     <string name="main_home_menu_title">Menüü</string>
     <string name="main_home_menu_button">Menüü</string>
     <string name="main_home_menu_help">ABI</string>
+    <string name="main_home_menu_help_url_short">link www.id.ee</string>
     <string name="main_home_menu_help_url">https://www.id.ee/id-abikeskus/</string>
     <string name="main_home_menu_recent">HILJUTISED DOKUMENDID</string>
     <string name="main_home_menu_settings">SEADED</string>
