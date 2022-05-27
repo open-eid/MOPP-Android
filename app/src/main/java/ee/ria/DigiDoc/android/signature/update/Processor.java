@@ -41,6 +41,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
+import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -153,7 +154,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .map(newFile -> {
                             navigator.execute(Transaction.replace(SignatureUpdateScreen
-                                    .create(true, false, newFile, false, false)));
+                                    .create(true, false, newFile, false, false, null, true)));
                             return Result.NameUpdateResult.progress(newFile);
                         })
                         .onErrorReturn(throwable ->
@@ -215,7 +216,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     (SivaUtil.isSivaConfirmationNeeded(ImmutableList.of(FileStream.create(documentFile))) && documentFileExtension.equals("pdf"));
                             if (!isPdfInSignedPdfContainer && SignedContainer.isContainer(documentFile)) {
                                 transaction = Transaction.push(SignatureUpdateScreen
-                                        .create(true, true, documentFile, false, false));
+                                        .create(true, true, documentFile, false, false, null, true));
                             } else if (CryptoContainer.isContainerFileName(documentFile.getName())) {
                                 transaction = Transaction.push(CryptoCreateScreen.open(documentFile));
                             } else {
@@ -226,7 +227,14 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             navigator.execute(transaction);
                             return Result.DocumentViewResult.idle();
                         })
-                        .onErrorReturn(ignored -> Result.DocumentViewResult.idle())
+                        .onErrorReturn(throwable -> {
+                            if (throwable instanceof NoInternetConnectionException) {
+                                Toast.makeText(application.getApplicationContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(application.getApplicationContext(), R.string.signature_update_container_load_error, Toast.LENGTH_LONG).show();
+                            }
+                            return Result.DocumentViewResult.idle();
+                        })
                         .startWithItem(Result.DocumentViewResult.activity());
             }
         });
@@ -326,7 +334,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             .doOnNext(containerAdd ->
                                     navigator.execute(Transaction.push(SignatureUpdateScreen.create(
                                             containerAdd.isExistingContainer(), false,
-                                            containerAdd.containerFile(), true, false))))
+                                            containerAdd.containerFile(), true, false, null, true))))
                             .map(containerAdd -> Result.SignatureAddResult.clear())
                             .onErrorReturn(Result.SignatureAddResult::failure)
                             .startWithItem(Result.SignatureAddResult.activity());
@@ -339,7 +347,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             if (response.container() != null) {
                                 return Observable.fromCallable(() -> {
                                     navigator.execute(Transaction.replace(SignatureUpdateScreen
-                                            .create(true, false, containerFile, false, true)));
+                                            .create(true, false, containerFile, false, true, null, true)));
                                     return Result.SignatureAddResult.method(method, response);
                                 });
                             } else {

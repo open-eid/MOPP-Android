@@ -31,7 +31,7 @@ public final class SignatureListViewModel extends
             Intent.ContainerOpenIntent containerOpenIntent =
                     (Intent.ContainerOpenIntent) intent;
             return Action.ContainerOpenAction.create(containerOpenIntent.containerFile(),
-                    containerOpenIntent.confirmation());
+                    containerOpenIntent.confirmation(), containerOpenIntent.isSivaConfirmed());
         } else if (intent instanceof Intent.RefreshIntent) {
             return Action.ContainersLoadAction.create(false);
         } else if (intent instanceof Action) {
