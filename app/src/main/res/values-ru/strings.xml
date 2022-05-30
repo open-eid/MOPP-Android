@@ -454,7 +454,7 @@
     <string name="container_name_changed">Название контейнера изменено</string>
     <string name="container_name_change_cancelled">Изменение названия контейнера отменено</string>
     <string name="sign_container_button_description">Подписать</string>
-    <string name="container_signing_cancelled">Подписание контейнера прервано</string>
+    <string name="signing_cancelled">Подписание прервано</string>
     <string name="container_signature_added">Контейнер подписан</string>
     <string name="files_encrypted">Файлы зашифрованы</string>
     <string name="file_decrypted">Файл расшифрован</string>

@@ -451,7 +451,7 @@
     <string name="container_name_changed">Container name changed</string>
     <string name="container_name_change_cancelled">Container name change cancelled</string>
     <string name="sign_container_button_description">Sign container</string>
-    <string name="container_signing_cancelled">Container signing cancelled</string>
+    <string name="signing_cancelled">Signing cancelled</string>
     <string name="container_signature_added">Container signature added</string>
     <string name="files_encrypted">Files encrypted</string>
     <string name="file_decrypted">File decrypted</string>
