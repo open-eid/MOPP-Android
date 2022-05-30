@@ -366,9 +366,15 @@ final class CryptoCreateAdapter extends
                             ((RecipientItem) adapter.items.get(getBindingAdapterPosition())).recipient())
                     .subscribe(adapter.recipientClicksSubject);
             nameView.setText(item.recipient().commonName());
+            nameView.setContentDescription(item.recipient().commonName().toLowerCase());
             infoView.setText(itemView.getResources().getString(
                     R.string.crypto_recipient_info, formatter.eidType(item.recipient().type()),
                     formatter.instant(item.recipient().notAfter())));
+            infoView.setContentDescription(
+                    (itemView.getResources().getString(
+                            R.string.crypto_recipient_info, formatter.eidType(item.recipient().type()),
+                            formatter.instant(item.recipient().notAfter()))).toLowerCase()
+            );
 
             String removeRecipientDescription = removeButton.getResources().getString(R.string.crypto_recipient_remove_button);
             removeButton.setContentDescription(removeRecipientDescription + " " + nameView.getText());
