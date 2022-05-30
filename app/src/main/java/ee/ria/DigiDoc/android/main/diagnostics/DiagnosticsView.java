@@ -382,6 +382,10 @@ public final class DiagnosticsView extends CoordinatorLayout {
         return getResources().getString(uuid);
     }
 
+    private String getTsaUrlText() {
+        return ((Activity) this.getContext()).getSettingsDataStore().getTsaUrl();
+    }
+
     private void setTslCacheData() {
         LinearLayout tslCacheLayout = findViewById(R.id.mainDiagnosticsTslCacheLayout);
 

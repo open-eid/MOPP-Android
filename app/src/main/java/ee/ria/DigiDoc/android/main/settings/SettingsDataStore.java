@@ -142,6 +142,9 @@ public final class SettingsDataStore {
         editor.apply();
     }
 
+    public String getTsaUrl() {
+        return preferences.getString(resources.getString(R.string.main_settings_tsa_url_key), "");
+    }
     public Boolean getIsLogFileGenerationEnabled() {
         return preferences.getBoolean(resources.getString(R.string.main_diagnostics_logging_key), false);
     }
