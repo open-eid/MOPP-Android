@@ -104,6 +104,8 @@
 
     <!-- Diagnostics -->
     <string name="main_diagnostics_libdigidocpp_title">libdigidocpp %1$s</string>
+    <string name="main_diagnostics_logging_key">main_diagnostics_logging</string>
+    <string name="main_diagnostics_logging_running_key">main_diagnostics_logging_running</string>
 
     <!-- EID Home -->
     <string name="eid_home_certificate_pin_auth">PIN1</string>

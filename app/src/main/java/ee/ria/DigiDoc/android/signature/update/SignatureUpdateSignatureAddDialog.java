@@ -1,13 +1,16 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -16,12 +19,19 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.ObservableDialogClickListener;
 import io.reactivex.rxjava3.core.Observable;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static ee.ria.DigiDoc.android.Constants.VOID;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceLayoutWidth;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceOrientation;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceWidth;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDialogLandscapeWidth;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDialogPortraitWidth;
 
 public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
 
     private final SignatureUpdateSignatureAddView view;
     private final ObservableDialogClickListener positiveButtonClicks;
+    private View.OnLayoutChangeListener layoutChangeListener;
 
     private final ViewDisposables disposables = new ViewDisposables();
 
@@ -41,7 +51,7 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
         setButton(BUTTON_NEGATIVE, getContext().getString(android.R.string.cancel),
                 (dialog, which) -> {
                     cancel();
-                    AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.container_signing_cancelled);
+                    AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.signing_cancelled);
                 }
         );
     }
@@ -62,6 +72,8 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
             // https://stackoverflow.com/questions/9102074/android-edittext-in-dialog-doesnt-pull-up-soft-keyboard
             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                     WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+            setCustomLayoutChangeListener(window);
+            view.addOnLayoutChangeListener(getCustomLayoutChangeListener());
         }
     }
 
@@ -80,6 +92,23 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
     @Override
     public void onDetachedFromWindow() {
         disposables.detach();
+        removeListeners();
         super.onDetachedFromWindow();
+    }
+
+    // Prevent Dialog width change when rotating screen
+    private void setCustomLayoutChangeListener(Window window) {
+        layoutChangeListener = (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
+                window.setLayout(getDeviceLayoutWidth(getContext()), WRAP_CONTENT);
+    }
+
+    private View.OnLayoutChangeListener getCustomLayoutChangeListener() {
+        return layoutChangeListener;
+    }
+
+    private void removeListeners() {
+        if (layoutChangeListener == null) { return; }
+        view.removeOnLayoutChangeListener(layoutChangeListener);
+        layoutChangeListener = null;
     }
 }

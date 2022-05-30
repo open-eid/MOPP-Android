@@ -145,4 +145,20 @@ public final class SettingsDataStore {
     public String getTsaUrl() {
         return preferences.getString(resources.getString(R.string.main_settings_tsa_url_key), "");
     }
+    public Boolean getIsLogFileGenerationEnabled() {
+        return preferences.getBoolean(resources.getString(R.string.main_diagnostics_logging_key), false);
+    }
+
+    public void setIsLogFileGenerationEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(resources.getString(R.string.main_diagnostics_logging_key), isEnabled);
+        editor.commit();
+    }
+
+    public void setIsLogFileGenerationRunning(boolean isRunning) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(resources.getString(R.string.main_diagnostics_logging_running_key), isRunning);
+        editor.commit();
+    }
+
 }
