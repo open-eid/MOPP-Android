@@ -41,8 +41,17 @@ public final class ConfirmationDialog extends AlertDialog implements
                     R.string.siva_read_here,
                     R.string.siva_continue_question
             ), Html.FROM_HTML_MODE_LEGACY));
-
-        } else {
+        } else if (action == R.id.mainDiagnosticsRestartConfirmationDialog) {
+            setButton(BUTTON_POSITIVE, context.getString(R.string.yes_button), this);
+            setButton(BUTTON_NEGATIVE, context.getString(R.string.cancel_button), this);
+            setMessage(Html.fromHtml(UrlMessage.withURLAndQuestion(
+                    getContext(),
+                    message,
+                    R.string.main_diagnostics_restart_message_read_more,
+                    R.string.main_diagnostics_restart_message_restart_now
+            ), Html.FROM_HTML_MODE_LEGACY));
+        }
+        else {
             setMessage(context.getString(message));
             setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
             setButton(BUTTON_NEGATIVE, context.getString(android.R.string.cancel), this);

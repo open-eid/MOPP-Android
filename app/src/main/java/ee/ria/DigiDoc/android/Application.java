@@ -22,15 +22,18 @@ package ee.ria.DigiDoc.android;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.os.StrictMode;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.google.common.collect.ImmutableList;
 
@@ -99,6 +102,7 @@ public class Application extends android.app.Application {
 
     @Override
     public void onCreate() {
+        setupAppLogging();
         setupTSLFiles();
         setupStrictMode();
         super.onCreate();
@@ -117,7 +121,7 @@ public class Application extends android.app.Application {
         try {
             tslFiles = getAssets().list(assetsPath);
         } catch (IOException e) {
-            Timber.e(e, "Failed to get folder list: %s", assetsPath);
+            Timber.log(Log.ERROR, e, "Failed to get folder list: %s", assetsPath);
         }
 
         if (tslFiles != null && tslFiles.length > 0) {
@@ -144,7 +148,7 @@ public class Application extends android.app.Application {
                 return assetsTslVersion != null && assetsTslVersion > cachedTslVersion;
             } catch (Exception e) {
                 String message = "Error comparing sequence number between assets and cached TSLs";
-                Timber.e(e, message);
+                Timber.log(Log.ERROR, e, message);
                 return false;
             }
         }
@@ -155,7 +159,7 @@ public class Application extends android.app.Application {
                 StandardCharsets.UTF_8))) {
             FileUtils.writeToFile(reader, destionationDir, fileName);
         } catch (IOException ex) {
-            Timber.e(ex, "Failed to copy file: %s from assets", fileName);
+            Timber.log(Log.ERROR, ex, "Failed to copy file: %s from assets", fileName);
         }
     }
 
@@ -182,7 +186,7 @@ public class Application extends android.app.Application {
     // Timber
 
     private void setupTimber() {
-        if (BuildConfig.DEBUG) {
+        if (isLoggingEnabled() || BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
             Timber.plant(new FileLoggingTree(getApplicationContext()));
         }
@@ -192,11 +196,11 @@ public class Application extends android.app.Application {
     // Container configuration
 
     private void setupSignLib() {
-        SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider(), UserAgentUtil.getUserAgent(getApplicationContext()));
+        SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider(), UserAgentUtil.getUserAgent(getApplicationContext()), isLoggingEnabled());
     }
 
     private void setupRxJava() {
-        RxJavaPlugins.setErrorHandler(throwable -> Timber.e(throwable, "RxJava error handler"));
+        RxJavaPlugins.setErrorHandler(throwable -> Timber.log(Log.ERROR, throwable, "RxJava error handler"));
     }
 
     private void setupConfiguration() {
@@ -250,6 +254,43 @@ public class Application extends android.app.Application {
 
     public ConfigurationProvider getConfigurationProvider() {
         return configurationProvider;
+    }
+
+    private void setupAppLogging() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        if (!sharedPreferences.contains(getString(R.string.main_diagnostics_logging_key))) {
+            sharedPreferences.edit().putBoolean(getString(R.string.main_diagnostics_logging_key), false)
+                    .commit();
+        }
+
+        if (!sharedPreferences.contains(getString(R.string.main_diagnostics_logging_running_key))) {
+            sharedPreferences.edit().putBoolean(getString(R.string.main_diagnostics_logging_running_key), false)
+                    .commit();
+        }
+
+        boolean isDiagnosticsLoggingEnabled = sharedPreferences.getBoolean(getString(R.string.main_diagnostics_logging_key), false);
+        boolean isDiagnosticsLoggingRunning = sharedPreferences.getBoolean(getString(R.string.main_diagnostics_logging_running_key), false);
+
+        if (isDiagnosticsLoggingEnabled && isDiagnosticsLoggingRunning) {
+            isDiagnosticsLoggingEnabled = false;
+            isDiagnosticsLoggingRunning = false;
+        } else if (isDiagnosticsLoggingEnabled) {
+            isDiagnosticsLoggingRunning = true;
+        }
+
+        sharedPreferences.edit()
+                .putBoolean(getString(R.string.main_diagnostics_logging_key), isDiagnosticsLoggingEnabled)
+                .putBoolean(getString(R.string.main_diagnostics_logging_running_key), isDiagnosticsLoggingRunning)
+                .commit();
+    }
+
+    private boolean isLoggingEnabled() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean isDiagnosticsLoggingEnabled = sharedPreferences.getBoolean(getString(R.string.main_diagnostics_logging_key), false);
+        boolean isDiagnosticsLoggingRunning = sharedPreferences.getBoolean(getString(R.string.main_diagnostics_logging_running_key), false);
+
+        return isDiagnosticsLoggingEnabled && isDiagnosticsLoggingRunning;
     }
 
     public class ConfigurationProviderReceiver extends ResultReceiver {

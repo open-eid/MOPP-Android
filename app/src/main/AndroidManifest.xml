@@ -20,7 +20,9 @@
         <activity
             android:name=".android.Activity"
             android:exported="true"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden">
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:screenOrientation="fullSensor"
+            android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>

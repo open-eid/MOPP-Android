@@ -330,6 +330,33 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/material_baseline_grid_3x" >
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@id/mainDiagnosticsLogging"
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/main_diagnostics_logging_switch" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@id/mainDiagnosticsSaveLoggingButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/material_baseline_grid_3x"
+                        android:text="@string/main_diagnostics_save_log"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <Button
