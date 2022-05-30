@@ -1,12 +1,17 @@
 package ee.ria.DigiDoc.android.main.diagnostics;
 
+import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileLogsSaveClicksSubject;
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileSaveClicksSubject;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Build;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -295,31 +300,51 @@ public final class DiagnosticsView extends CoordinatorLayout {
         TextView centralConfigurationLastCheck = findViewById(R.id.mainDiagnosticsCentralConfigurationLastCheck);
         TextView centralConfigurationUpdateDate = findViewById(R.id.mainDiagnosticsCentralConfigurationUpdateDate);
 
-        applicationVersion.setText(getAppVersion());
-        androidVersion.setText(getAndroidVersion());
-        libDocVersion.setText(getResources().getString(R.string.main_diagnostics_libdigidocpp_title, getLibDigiDocVersion()));
+        applicationVersion.setText(setDisplayTextWithTitle(R.string.main_diagnostics_application_version_title,
+                getAppVersion(), Typeface.DEFAULT_BOLD));
+        androidVersion.setText(setDisplayTextWithTitle(R.string.main_diagnostics_operating_system_title,
+                getAndroidVersion(), Typeface.DEFAULT_BOLD));
+        libDocVersion.setText(setDisplayTextWithTitle(R.string.main_diagnostics_libdigidocpp_title,
+                getLibDigiDocVersion(), Typeface.DEFAULT_BOLD));
 
-        configUrl.setText(configurationProvider.getConfigUrl());
-        tslUrl.setText(configurationProvider.getTslUrl());
+        configUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_config_url_title,
+                configurationProvider.getConfigUrl(), Typeface.DEFAULT));
+        tslUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsl_url_title,
+                configurationProvider.getTslUrl(), Typeface.DEFAULT));
         appendTslVersion(tslUrl, configurationProvider.getTslUrl());
-        sivaUrl.setText(configurationProvider.getSivaUrl());
-        tsaUrl.setText(configurationProvider.getTsaUrl());
-        ldapPersonUrl.setText(configurationProvider.getLdapPersonUrl());
-        ldapCorpUrl.setText(configurationProvider.getLdapCorpUrl());
-        mobileIDUrl.setText(configurationProvider.getMidRestUrl());
-        mobileIDSKUrl.setText(configurationProvider.getMidSkRestUrl());
-        smartIDUrl.setText(configurationProvider.getSidRestUrl());
-        smartIDSKUrl.setText(configurationProvider.getSidSkRestUrl());
-        rpUuid.setText(getRpUuidText());
+        sivaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_siva_url_title,
+                configurationProvider.getSivaUrl(), Typeface.DEFAULT));
+        tsaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsa_url_title,
+                configurationProvider.getTsaUrl(), Typeface.DEFAULT));
+        ldapPersonUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_ldap_person_url_title,
+                configurationProvider.getLdapPersonUrl(), Typeface.DEFAULT));
+        ldapCorpUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_ldap_corp_url_title,
+                configurationProvider.getLdapCorpUrl(), Typeface.DEFAULT));
+        mobileIDUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_mid_proxy_url_title,
+                configurationProvider.getMidRestUrl(), Typeface.DEFAULT));
+        mobileIDSKUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_mid_sk_url_title,
+                configurationProvider.getMidSkRestUrl(), Typeface.DEFAULT));
+        smartIDUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_proxy_url_title,
+                configurationProvider.getSidRestUrl(), Typeface.DEFAULT));
+        smartIDSKUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_sk_url_title,
+                configurationProvider.getSidSkRestUrl(), Typeface.DEFAULT));
+        rpUuid.setText(setDisplayTextWithTitle(R.string.main_diagnostics_rpuuid_title,
+                getRpUuidText(), Typeface.DEFAULT));
 
         setTslCacheData();
 
-        centralConfigurationDate.setText(configurationProvider.getMetaInf().getDate());
-        centralConfigurationSerial.setText(String.valueOf(configurationProvider.getMetaInf().getSerial()));
-        centralConfigurationUrl.setText(configurationProvider.getMetaInf().getUrl());
-        centralConfigurationVersion.setText(String.valueOf(configurationProvider.getMetaInf().getVersion()));
-        centralConfigurationLastCheck.setText(displayDate(configurationProvider.getConfigurationLastUpdateCheckDate()));
-        centralConfigurationUpdateDate.setText(displayDate(configurationProvider.getConfigurationUpdateDate()));
+        centralConfigurationDate.setText(setDisplayTextWithTitle(R.string.main_diagnostics_date_title,
+                configurationProvider.getMetaInf().getDate(), Typeface.DEFAULT));
+        centralConfigurationSerial.setText(setDisplayTextWithTitle(R.string.main_diagnostics_serial_title,
+                String.valueOf(configurationProvider.getMetaInf().getSerial()), Typeface.DEFAULT));
+        centralConfigurationUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_url_title,
+                configurationProvider.getMetaInf().getUrl(), Typeface.DEFAULT));
+        centralConfigurationVersion.setText(setDisplayTextWithTitle(R.string.main_diagnostics_version_title,
+                String.valueOf(configurationProvider.getMetaInf().getVersion()), Typeface.DEFAULT));
+        centralConfigurationUpdateDate.setText(setDisplayTextWithTitle(R.string.main_diagnostics_configuration_update_date,
+                displayDate(configurationProvider.getConfigurationUpdateDate()), Typeface.DEFAULT));
+        centralConfigurationLastCheck.setText(setDisplayTextWithTitle(R.string.main_diagnostics_configuration_last_check_date,
+                displayDate(configurationProvider.getConfigurationLastUpdateCheckDate()), Typeface.DEFAULT));
     }
 
     private void appendTslVersion(TextView tslUrlTextView, String tslUrl) {
@@ -402,6 +427,14 @@ public final class DiagnosticsView extends CoordinatorLayout {
         }
 
         return dateFormat.format(date);
+    }
+
+    private Spannable setDisplayTextWithTitle(int titleId, String text, Typeface typeface) {
+        SpannableStringBuilder ssb = new SpannableStringBuilder();
+        ssb.append(getResources().getString(titleId),
+                new StyleSpan(typeface.getStyle()), SPAN_EXCLUSIVE_EXCLUSIVE);
+        ssb.append(text);
+        return ssb;
     }
 
     private static String getAppVersion() {

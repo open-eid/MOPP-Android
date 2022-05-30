@@ -103,7 +103,24 @@
     <string name="main_about_gson_title">Gson</string>
 
     <!-- Diagnostics -->
-    <string name="main_diagnostics_libdigidocpp_title">libdigidocpp %1$s</string>
+    <string name="main_diagnostics_libdigidocpp_title">libdigidocpp\u0020</string>
+    <string name="main_diagnostics_config_url_title">CONFIG_URL:\u0020</string>
+    <string name="main_diagnostics_tsl_url_title">TSL_URL:\u0020</string>
+    <string name="main_diagnostics_siva_url_title">SIVA_URL:\u0020</string>
+    <string name="main_diagnostics_tsa_url_title">TSA_URL:\u0020</string>
+    <string name="main_diagnostics_ldap_person_url_title">LDAP_PERSON_URL:\u0020</string>
+    <string name="main_diagnostics_ldap_corp_url_title">LDAP_CORP_URL:\u0020</string>
+    <string name="main_diagnostics_mid_proxy_url_title">MID_PROXY_URL:\u0020</string>
+    <string name="main_diagnostics_mid_sk_url_title">MID_SK_URL:\u0020</string>
+    <string name="main_diagnostics_sid_proxy_url_title">SID_PROXY_URL:\u0020</string>
+    <string name="main_diagnostics_sid_sk_url_title">SID_SK_URL:\u0020</string>
+    <string name="main_diagnostics_rpuuid_title">RPUUID:\u0020</string>
+
+    <string name="main_diagnostics_date_title">DATE:\u0020</string>
+    <string name="main_diagnostics_serial_title">SERIAL:\u0020</string>
+    <string name="main_diagnostics_url_title">URL:\u0020</string>
+    <string name="main_diagnostics_version_title">VERSION:\u0020</string>
+
     <string name="main_diagnostics_logging_key">main_diagnostics_logging</string>
     <string name="main_diagnostics_logging_running_key">main_diagnostics_logging_running</string>
 
