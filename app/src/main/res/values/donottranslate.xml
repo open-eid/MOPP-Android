@@ -121,6 +121,9 @@
     <string name="main_diagnostics_url_title">URL:\u0020</string>
     <string name="main_diagnostics_version_title">VERSION:\u0020</string>
 
+    <string name="main_diagnostics_logging_key">main_diagnostics_logging</string>
+    <string name="main_diagnostics_logging_running_key">main_diagnostics_logging_running</string>
+
     <!-- EID Home -->
     <string name="eid_home_certificate_pin_auth">PIN1</string>
     <string name="eid_home_certificate_pin_sign">PIN2</string>
