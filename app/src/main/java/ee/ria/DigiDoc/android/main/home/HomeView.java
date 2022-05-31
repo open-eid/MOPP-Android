@@ -2,14 +2,19 @@ package ee.ria.DigiDoc.android.main.home;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.os.Parcelable;
-import androidx.annotation.Nullable;
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -65,9 +70,9 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         BottomNavigationItemView signatureItem = findViewById(R.id.mainHomeNavigationSignature);
         BottomNavigationItemView cryptoItem = findViewById(R.id.mainHomeNavigationCrypto);
         BottomNavigationItemView eidItem = findViewById(R.id.mainHomeNavigationEID);
-        signatureItem.setContentDescription((getResources().getString(R.string.signature_content_description, 1, 3)).toLowerCase());
-        cryptoItem.setContentDescription((getResources().getString(R.string.crypto_content_description, 2, 3)).toLowerCase());
-        eidItem.setContentDescription((getResources().getString(R.string.my_eid_content_description, 3, 3)).toLowerCase());
+        setCustomAccessibilityFeedback(signatureItem, R.string.main_home_navigation_signature, getResources().getString(R.string.signature_content_description, 1, 3));
+        setCustomAccessibilityFeedback(cryptoItem, R.string.main_home_navigation_crypto, getResources().getString(R.string.crypto_content_description, 2, 3));
+        setCustomAccessibilityFeedback(eidItem, R.string.main_home_navigation_eid, getResources().getString(R.string.my_eid_content_description, 3, 3));
 
         menuDialog = new HomeMenuDialog(context);
         menuView = menuDialog.getMenuView();
@@ -172,5 +177,23 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
     public void restoreHierarchyState(SparseArray<Parcelable> container) {
         super.restoreHierarchyState(container);
         this.hierarchyState = container;
+    }
+
+    private void setCustomAccessibilityFeedback(BottomNavigationItemView bottomNavigationItemView, @StringRes int contentDescription, String toolTipText) {
+        bottomNavigationItemView.setAccessibilityDelegate(new AccessibilityDelegate() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setContentDescription(getResources().getString(contentDescription).toLowerCase());
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    info.setTooltipText(toolTipText);
+                } else {
+                    info.setContentDescription(toolTipText);
+                }
+                info.setClassName("");
+                info.setPackageName("");
+                info.setViewIdResourceName("");
+            }
+        });
     }
 }

@@ -45,7 +45,8 @@ public final class SignatureHomeView extends CoordinatorLayout implements HomeVi
         createButton = findViewById(R.id.signatureHomeCreateButton);
         navigator = Application.component(context).navigator();
         disposables = new ViewDisposables();
-        AccessibilityUtils.setAccessibilityPaneTitle(this, R.string.main_home_navigation_signature);
+        AccessibilityUtils.setAccessibilityPaneTitle(this,
+                getResources().getString(R.string.main_home_navigation_signature).toLowerCase());
 
         createButton.postDelayed(() -> {
             createButton.requestFocus();
