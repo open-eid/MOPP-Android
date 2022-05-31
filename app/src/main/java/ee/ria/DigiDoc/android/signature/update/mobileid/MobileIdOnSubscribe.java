@@ -63,10 +63,10 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                                 .fromJson(intent.getStringExtra(SERVICE_FAULT));
                         if (fault.getStatus() != null) {
                             emitter.onError(MobileIdMessageException
-                                    .create(navigator.activity(), fault.getStatus()));
+                                    .create(navigator.activity(), fault.getStatus(), fault.getDetailMessage()));
                         } else {
                             emitter.onError(MobileIdMessageException
-                                    .create(navigator.activity(), fault.getResult()));
+                                    .create(navigator.activity(), fault.getResult(), fault.getDetailMessage()));
                         }
                         break;
                     case CREATE_SIGNATURE_CHALLENGE:
@@ -89,7 +89,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                                 break;
                             default:
                                 emitter.onError(MobileIdMessageException
-                                        .create(navigator.activity(), status.getStatus()));
+                                        .create(navigator.activity(), status.getStatus(), null));
                                 break;
                         }
                         break;

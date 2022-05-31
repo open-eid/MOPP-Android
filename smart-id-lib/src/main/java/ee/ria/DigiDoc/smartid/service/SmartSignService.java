@@ -24,6 +24,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.IOException;
@@ -41,6 +42,7 @@ import ee.ria.DigiDoc.common.VerificationCodeUtil;
 import ee.ria.DigiDoc.smartid.dto.request.PostCertificateRequest;
 import ee.ria.DigiDoc.smartid.dto.request.PostCreateSignatureRequest;
 import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
+import ee.ria.DigiDoc.smartid.dto.response.ServiceFault;
 import ee.ria.DigiDoc.smartid.dto.response.SessionResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SmartIDServiceResponse;
@@ -86,14 +88,14 @@ public class SmartSignService extends IntentService {
                                 request.getUrl(), certificateCertBundle);
                     }
                 } catch (CertificateException | NoSuchAlgorithmException e) {
-                    broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE);
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
                     Timber.log(Log.ERROR, "SSL handshake failed. Exception message: %s.", e.getMessage());
                     return;
                 }
 
 
                 if (!UUIDUtil.isValid(request.getRelyingPartyUUID())) {
-                    broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS);
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS));
                     Timber.log(Log.DEBUG, "%s - Relying Party UUID not in valid format", request.getRelyingPartyUUID());
                     return;
                 }
@@ -127,36 +129,36 @@ public class SmartSignService extends IntentService {
                         broadcastSmartCreateSignatureStatusResponse(sessionStatusResponse);
                     }
                 } catch (UnknownHostException e) {
-                    broadcastFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE);
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE));
                     Timber.log(Log.ERROR, "REST API certificate request failed. Unknown host. Exception message: %s.", e.getMessage());
                 } catch (SSLPeerUnverifiedException e) {
-                    broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE);
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
                     Timber.log(Log.ERROR, "SSL handshake failed - Session status response. Exception message: %s.", e.getMessage());
                 } catch (IOException e) {
-                    broadcastFault();
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, e.getMessage()));
                     Timber.log(Log.ERROR, "REST API certificate request failed. Exception message: %s.", e.getMessage());
                 } catch (CertificateException e) {
-                    broadcastFault();
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, e.getMessage()));
                     Timber.log(Log.ERROR, "Generating certificate failed. Exception message: %s.", e.getMessage());
                 } catch (InterruptedException e) {
                     Timber.log(Log.ERROR, "Waiting for next call to SID REST API interrupted. Exception message: %s.", e.getMessage());
                     Thread.currentThread().interrupt();
                 } catch (NoSuchAlgorithmException e) {
-                    broadcastFault();
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, e.getMessage()));
                     Timber.log(Log.ERROR, "Generating verification code failed. Exception message: %s.", e.getMessage());
                 } catch (Exception e) {
                     Timber.log(Log.ERROR, "Exception message: %s.", e.getMessage());
                     if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
-                        broadcastFault(SessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS);
+                        broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS));
                         Timber.log(Log.ERROR, "Failed to sign with Smart-ID - Too Many Requests. Exception message: %s.", e.getMessage());
                     } else if (e.getMessage() != null && e.getMessage().contains("OCSP response not in valid time slot")) {
-                        broadcastFault(SessionStatusResponse.ProcessStatus.OCSP_INVALID_TIME_SLOT);
+                        broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.OCSP_INVALID_TIME_SLOT));
                         Timber.log(Log.ERROR, "Failed to sign with Smart-ID - OCSP response not in valid time slot. Exception message: %s.", e.getMessage());
                     } else if (e.getMessage() != null && e.getMessage().contains("Certificate status: revoked")) {
-                        broadcastFault(SessionStatusResponse.ProcessStatus.CERTIFICATE_REVOKED);
+                        broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.CERTIFICATE_REVOKED));
                         Timber.log(Log.ERROR, "Failed to sign with Smart-ID - Certificate status: revoked. Exception message: %s.", e.getMessage());
                     } else {
-                        broadcastFault();
+                        broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, e.getMessage()));
                         Timber.log(Log.ERROR, "Failed to sign with Smart-ID. Exception message: %s.", e.getMessage());
                     }
                 }
@@ -181,7 +183,7 @@ public class SmartSignService extends IntentService {
             }
             Timber.log(Log.DEBUG, sessionResponse.toString());
             if (sessionResponse.getSessionID() == null || sessionResponse.getSessionID().isEmpty()) {
-                broadcastFault(SessionStatusResponse.ProcessStatus.MISSING_SESSIONID);
+                broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.MISSING_SESSIONID));
                 Timber.log(Log.DEBUG, "Received empty Smart-ID session response");
                 return null;
             }
@@ -208,25 +210,20 @@ public class SmartSignService extends IntentService {
                 }
                 timeout += SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS;
             }
-            broadcastFault(SessionStatusResponse.ProcessStatus.ACCOUNT_NOT_FOUND_OR_TIMEOUT);
-            Timber.log(Log.DEBUG, "Request timeout (ACCOUNT_NOT_FOUND_OR_TIMEOUT)");
+            broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.TIMEOUT));
+            Timber.log(Log.DEBUG, "Request timeout (TIMEOUT)");
         } catch (UnknownHostException e) {
-            broadcastFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE);
+            broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE, e.getMessage()));
             Timber.log(Log.ERROR, "REST API session status request failed. Unknown host. Exception message: %s.", e.getMessage());
         }
         return null;
     }
 
-    private void broadcastFault() {
-        Timber.log(Log.DEBUG, "Broadcasting fault: %s", SessionStatusResponse.ProcessStatus.GENERAL_ERROR);
-        broadcastFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR);
-    }
-
-    private void broadcastFault(SessionStatusResponse.ProcessStatus status) {
-        Timber.log(Log.DEBUG, "Broadcasting fault: %s", status);
+    private void broadcastFault(ServiceFault serviceFault) {
+        Timber.log(Log.DEBUG, "Broadcasting fault: %s", serviceFault);
         Intent localIntent = new Intent(SmartSignConstants.SID_BROADCAST_ACTION)
                 .putExtra(SmartSignConstants.SID_BROADCAST_TYPE_KEY, SmartSignConstants.SERVICE_FAULT)
-                .putExtra(SmartSignConstants.SERVICE_FAULT, status);
+                .putExtra(SmartSignConstants.SERVICE_FAULT, ServiceFault.toJson(serviceFault));
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
@@ -289,37 +286,37 @@ public class SmartSignService extends IntentService {
             switch (httpResponse.code()) {
                 case 401:
                 case 403:
-                    broadcastFault(SessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS);
-                    Timber.log(Log.DEBUG, "Forbidden - HTTP status code: %s " + httpResponse.code());
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS));
+                    Timber.log(Log.DEBUG, "Forbidden - HTTP status code: %s ", httpResponse.code());
                     break;
                 case 404:
-                    broadcastFault(httpResponse.body() instanceof SessionResponse ?
+                    broadcastFault(new ServiceFault(httpResponse.body() instanceof SessionResponse ?
                             SessionStatusResponse.ProcessStatus.SESSION_NOT_FOUND :
-                            SessionStatusResponse.ProcessStatus.ACCOUNT_NOT_FOUND_OR_TIMEOUT);
+                            SessionStatusResponse.ProcessStatus.ACCOUNT_NOT_FOUND));
                     Timber.log(Log.DEBUG, "Account/session not found - HTTP status code: %s " + httpResponse.code());
                     break;
                 case 409:
-                    broadcastFault(SessionStatusResponse.ProcessStatus.EXCEEDED_UNSUCCESSFUL_REQUESTS);
-                    Timber.log(Log.DEBUG, "Exceeded unsuccessful requests - HTTP status code: %s " + httpResponse.code());
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.EXCEEDED_UNSUCCESSFUL_REQUESTS));
+                    Timber.log(Log.DEBUG, "Exceeded unsuccessful requests - HTTP status code: %s", httpResponse.code());
                     break;
                 case 429:
-                    broadcastFault(SessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS);
-                    Timber.log(Log.DEBUG, "Too many requests - HTTP status code: %s " + httpResponse.code());
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS));
+                    Timber.log(Log.DEBUG, "Too many requests - HTTP status code: %s", httpResponse.code());
                     break;
                 case 471:
-                    broadcastFault(SessionStatusResponse.ProcessStatus.NOT_QUALIFIED);
-                    Timber.log(Log.DEBUG, "Not qualified - HTTP status code: %s " + httpResponse.code());
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.NOT_QUALIFIED));
+                    Timber.log(Log.DEBUG, "Not qualified - HTTP status code: %s", httpResponse.code());
                     break;
                 case 480:
-                    broadcastFault(SessionStatusResponse.ProcessStatus.OLD_API);
-                    Timber.log(Log.DEBUG, "Old API - HTTP status code: %s " + httpResponse.code());
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.OLD_API));
+                    Timber.log(Log.DEBUG, "Old API - HTTP status code: %s", httpResponse.code());
                     break;
                 case 580:
-                    broadcastFault(SessionStatusResponse.ProcessStatus.UNDER_MAINTENANCE);
-                    Timber.log(Log.DEBUG, "Under maintenance - HTTP status code: %s " + httpResponse.code());
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.UNDER_MAINTENANCE));
+                    Timber.log(Log.DEBUG, "Under maintenance - HTTP status code: %s", httpResponse.code());
                     break;
                 default:
-                    broadcastFault(SessionStatusResponse.ProcessStatus.TECHNICAL_ERROR);
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.TECHNICAL_ERROR));
                     Timber.log(Log.DEBUG, "Request unsuccessful, technical or general error, HTTP status code: %s " + httpResponse.code());
                     break;
             }

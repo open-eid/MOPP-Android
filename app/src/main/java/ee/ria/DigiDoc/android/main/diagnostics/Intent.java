@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 
 import java.io.File;
+import java.util.List;
 
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
@@ -27,6 +28,17 @@ interface Intent extends MviIntent, MviAction {
 
         static DiagnosticsSaveIntent create(@Nullable File diagnosticsFile) {
             return new AutoValue_Intent_DiagnosticsSaveIntent(diagnosticsFile);
+        }
+    }
+
+    @AutoValue
+    abstract class DiagnosticsLogsSaveIntent implements Intent {
+
+        @Nullable
+        abstract File logFile();
+
+        static DiagnosticsLogsSaveIntent create(@Nullable File logFile) {
+            return new AutoValue_Intent_DiagnosticsLogsSaveIntent(logFile);
         }
     }
 }
