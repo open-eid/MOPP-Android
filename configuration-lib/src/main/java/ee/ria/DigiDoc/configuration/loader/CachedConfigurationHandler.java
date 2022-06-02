@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.configuration.loader;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -117,7 +119,7 @@ public class CachedConfigurationHandler {
             properties = new Properties();
             properties.load(fileInputStream);
         } catch (IOException e) {
-            Timber.d(e, "Cached properties file '" + CONFIGURATION_INFO_FILE_NAME + "' not found");
+            Timber.log(Log.DEBUG, e, "Cached properties file '" + CONFIGURATION_INFO_FILE_NAME + "' not found");
             properties = null;
         }
     }

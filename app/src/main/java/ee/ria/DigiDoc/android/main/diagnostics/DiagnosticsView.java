@@ -1,23 +1,32 @@
 package ee.ria.DigiDoc.android.main.diagnostics;
 
+import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileLogsSaveClicksSubject;
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileSaveClicksSubject;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Build;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,11 +42,14 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.TSLException;
 import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
@@ -55,6 +67,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
     private final SimpleDateFormat dateFormat;
     private final Toolbar toolbarView;
+    private final ConfirmationDialog diagnosticsRestartConfirmationDialog = new ConfirmationDialog(Activity.getContext().get(),
+            R.string.main_diagnostics_restart_message, R.id.mainDiagnosticsRestartConfirmationDialog);
 
     private final Navigator navigator;
 
@@ -65,6 +79,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
     private final String DIAGNOSTICS_FILE_NAME = "ria_digidoc_" + getAppVersion() + "_diagnostics.txt";
     private final String DIAGNOSTICS_FILE_PATH = getContext().getFilesDir().getPath()
             + File.separator + "diagnostics" + File.separator;
+    private final String DIAGNOSTICS_LOGS_FILE_NAME = "ria_digidoc_" + getAppVersion() + "_logs.txt";
 
     public DiagnosticsView(Context context) {
         super(context);
@@ -75,6 +90,11 @@ public final class DiagnosticsView extends CoordinatorLayout {
         View saveDiagnosticsButton = findViewById(R.id.configurationSaveButton);
         navigator = Application.component(context).navigator();
 
+        SwitchCompat activateLogFileGenerating = findViewById(R.id.mainDiagnosticsLogging);
+        activateLogFileGenerating.setChecked(((Activity) this.getContext()).getSettingsDataStore().getIsLogFileGenerationEnabled());
+        Button saveLogFileButton = findViewById(R.id.mainDiagnosticsSaveLoggingButton);
+        saveLogFileButton.setVisibility(FileUtil.logsExist(FileUtil.getLogsDirectory(getContext())) ? VISIBLE : GONE);
+
         ConfigurationProvider configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
         disposables = new ViewDisposables();
 
@@ -84,11 +104,48 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
         findViewById(R.id.configurationUpdateButton).setOnClickListener(view -> updateConfiguration());
 
+        fileLogToggleListener(activateLogFileGenerating);
+
         clicks(saveDiagnosticsButton).map(ignored ->
                 (saveDiagnostics()))
                 .subscribe(diagnosticsFileSaveClicksSubject);
 
+        clicks(saveLogFileButton).map(ignored ->
+                (saveLogFile()))
+                .subscribe(diagnosticsFileLogsSaveClicksSubject);
+
         setData(configurationProvider);
+    }
+
+    private void fileLogToggleListener(SwitchCompat activateLogFileGenerating) {
+        activateLogFileGenerating.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Activity activityContext = ((Activity) this.getContext());
+            boolean isLogFileGenerationEnabled = activityContext.getSettingsDataStore().getIsLogFileGenerationEnabled();
+            if (isChecked) {
+                diagnosticsRestartConfirmationDialog.show();
+                ClickableDialogUtil.makeLinksInDialogClickable(diagnosticsRestartConfirmationDialog);
+                diagnosticsRestartConfirmationDialog.positiveButtonClicks()
+                        .doOnNext(next -> {
+                            diagnosticsRestartConfirmationDialog.dismiss();
+                            activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(true);
+                            activityContext.restartAppWithIntent(activityContext.getIntent(), true);
+                        })
+                        .subscribe();
+                diagnosticsRestartConfirmationDialog.cancels()
+                        .doOnNext(next -> {
+                            diagnosticsRestartConfirmationDialog.dismiss();
+                            activateLogFileGenerating.setChecked(false);
+                            activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(false);
+                        })
+                        .subscribe();
+            } else {
+                activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(false);
+                activityContext.getSettingsDataStore().setIsLogFileGenerationRunning(false);
+                if (isLogFileGenerationEnabled) {
+                    activityContext.restartAppWithIntent(activityContext.getIntent(), true);
+                }
+            }
+        });
     }
 
     @Override
@@ -144,7 +201,6 @@ public final class DiagnosticsView extends CoordinatorLayout {
         } finally {
             textViews.clear();
         }
-
     }
 
     private static void findAllTextViews(View view, List<TextView> textViews) {
@@ -181,6 +237,13 @@ public final class DiagnosticsView extends CoordinatorLayout {
         }
 
         return diagnosticsText.toString();
+    }
+
+    private File saveLogFile() throws IOException {
+        if (FileUtil.logsExist(FileUtil.getLogsDirectory(getContext()))) {
+            return FileUtil.combineLogFiles(FileUtil.getLogsDirectory(getContext()), DIAGNOSTICS_LOGS_FILE_NAME);
+        }
+        throw new FileNotFoundException("Unable to get directory with logs");
     }
 
     private boolean isTitleOrButtonText(String text) {
@@ -237,31 +300,51 @@ public final class DiagnosticsView extends CoordinatorLayout {
         TextView centralConfigurationLastCheck = findViewById(R.id.mainDiagnosticsCentralConfigurationLastCheck);
         TextView centralConfigurationUpdateDate = findViewById(R.id.mainDiagnosticsCentralConfigurationUpdateDate);
 
-        applicationVersion.setText(getAppVersion());
-        androidVersion.setText(getAndroidVersion());
-        libDocVersion.setText(getResources().getString(R.string.main_diagnostics_libdigidocpp_title, getLibDigiDocVersion()));
+        applicationVersion.setText(setDisplayTextWithTitle(R.string.main_diagnostics_application_version_title,
+                getAppVersion(), Typeface.DEFAULT_BOLD));
+        androidVersion.setText(setDisplayTextWithTitle(R.string.main_diagnostics_operating_system_title,
+                getAndroidVersion(), Typeface.DEFAULT_BOLD));
+        libDocVersion.setText(setDisplayTextWithTitle(R.string.main_diagnostics_libdigidocpp_title,
+                getLibDigiDocVersion(), Typeface.DEFAULT_BOLD));
 
-        configUrl.setText(configurationProvider.getConfigUrl());
-        tslUrl.setText(configurationProvider.getTslUrl());
+        configUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_config_url_title,
+                configurationProvider.getConfigUrl(), Typeface.DEFAULT));
+        tslUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsl_url_title,
+                configurationProvider.getTslUrl(), Typeface.DEFAULT));
         appendTslVersion(tslUrl, configurationProvider.getTslUrl());
-        sivaUrl.setText(configurationProvider.getSivaUrl());
-        tsaUrl.setText(configurationProvider.getTsaUrl());
-        ldapPersonUrl.setText(configurationProvider.getLdapPersonUrl());
-        ldapCorpUrl.setText(configurationProvider.getLdapCorpUrl());
-        mobileIDUrl.setText(configurationProvider.getMidRestUrl());
-        mobileIDSKUrl.setText(configurationProvider.getMidSkRestUrl());
-        smartIDUrl.setText(configurationProvider.getSidRestUrl());
-        smartIDSKUrl.setText(configurationProvider.getSidSkRestUrl());
-        rpUuid.setText(getRpUuidText());
+        sivaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_siva_url_title,
+                configurationProvider.getSivaUrl(), Typeface.DEFAULT));
+        tsaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsa_url_title,
+                configurationProvider.getTsaUrl(), Typeface.DEFAULT));
+        ldapPersonUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_ldap_person_url_title,
+                configurationProvider.getLdapPersonUrl(), Typeface.DEFAULT));
+        ldapCorpUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_ldap_corp_url_title,
+                configurationProvider.getLdapCorpUrl(), Typeface.DEFAULT));
+        mobileIDUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_mid_proxy_url_title,
+                configurationProvider.getMidRestUrl(), Typeface.DEFAULT));
+        mobileIDSKUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_mid_sk_url_title,
+                configurationProvider.getMidSkRestUrl(), Typeface.DEFAULT));
+        smartIDUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_proxy_url_title,
+                configurationProvider.getSidRestUrl(), Typeface.DEFAULT));
+        smartIDSKUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_sk_url_title,
+                configurationProvider.getSidSkRestUrl(), Typeface.DEFAULT));
+        rpUuid.setText(setDisplayTextWithTitle(R.string.main_diagnostics_rpuuid_title,
+                getRpUuidText(), Typeface.DEFAULT));
 
         setTslCacheData();
 
-        centralConfigurationDate.setText(configurationProvider.getMetaInf().getDate());
-        centralConfigurationSerial.setText(String.valueOf(configurationProvider.getMetaInf().getSerial()));
-        centralConfigurationUrl.setText(configurationProvider.getMetaInf().getUrl());
-        centralConfigurationVersion.setText(String.valueOf(configurationProvider.getMetaInf().getVersion()));
-        centralConfigurationLastCheck.setText(displayDate(configurationProvider.getConfigurationLastUpdateCheckDate()));
-        centralConfigurationUpdateDate.setText(displayDate(configurationProvider.getConfigurationUpdateDate()));
+        centralConfigurationDate.setText(setDisplayTextWithTitle(R.string.main_diagnostics_date_title,
+                configurationProvider.getMetaInf().getDate(), Typeface.DEFAULT));
+        centralConfigurationSerial.setText(setDisplayTextWithTitle(R.string.main_diagnostics_serial_title,
+                String.valueOf(configurationProvider.getMetaInf().getSerial()), Typeface.DEFAULT));
+        centralConfigurationUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_url_title,
+                configurationProvider.getMetaInf().getUrl(), Typeface.DEFAULT));
+        centralConfigurationVersion.setText(setDisplayTextWithTitle(R.string.main_diagnostics_version_title,
+                String.valueOf(configurationProvider.getMetaInf().getVersion()), Typeface.DEFAULT));
+        centralConfigurationUpdateDate.setText(setDisplayTextWithTitle(R.string.main_diagnostics_configuration_update_date,
+                displayDate(configurationProvider.getConfigurationUpdateDate()), Typeface.DEFAULT));
+        centralConfigurationLastCheck.setText(setDisplayTextWithTitle(R.string.main_diagnostics_configuration_last_check_date,
+                displayDate(configurationProvider.getConfigurationLastUpdateCheckDate()), Typeface.DEFAULT));
     }
 
     private void appendTslVersion(TextView tslUrlTextView, String tslUrl) {
@@ -270,7 +353,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         (tslVersion) -> tslUrlTextView.append(" ("+ tslVersion + ")"),
-                        (error) -> Timber.e(error, "Error reading TSL version")
+                        (error) -> Timber.log(Log.ERROR, error, "Error reading TSL version")
                 );
     }
 
@@ -285,7 +368,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
                  }
             } else {
                 String message = "Error fetching TSL, response code: " + response.code();
-                Timber.e(message);
+                Timber.log(Log.ERROR, message);
                 throw new TSLException(message);
             }
         });
@@ -297,6 +380,10 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 ? R.string.main_diagnostics_rpuuid_default
                 : R.string.main_diagnostics_rpuuid_custom;
         return getResources().getString(uuid);
+    }
+
+    private String getTsaUrlText() {
+        return ((Activity) this.getContext()).getSettingsDataStore().getTsaUrl();
     }
 
     private void setTslCacheData() {
@@ -319,7 +406,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
                     tslEntry.setText(tslEntryText);
                     tslCacheLayout.addView(tslEntry);
                 } catch (Exception e) {
-                    Timber.e(e, "Error displaying TSL version for: %s", tslFile.getAbsolutePath());
+                    Timber.log(Log.ERROR, e, "Error displaying TSL version for: %s", tslFile.getAbsolutePath());
                 }
             }
         }
@@ -344,6 +431,14 @@ public final class DiagnosticsView extends CoordinatorLayout {
         }
 
         return dateFormat.format(date);
+    }
+
+    private Spannable setDisplayTextWithTitle(int titleId, String text, Typeface typeface) {
+        SpannableStringBuilder ssb = new SpannableStringBuilder();
+        ssb.append(getResources().getString(titleId),
+                new StyleSpan(typeface.getStyle()), SPAN_EXCLUSIVE_EXCLUSIVE);
+        ssb.append(text);
+        return ssb;
     }
 
     private static String getAppVersion() {

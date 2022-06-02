@@ -19,6 +19,7 @@ import static ee.ria.DigiDoc.sign.SignedContainer.mimeType;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toast;
 
@@ -228,7 +229,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                     })
                                     .map(Result.DataFilesAddResult::success)
                                     .onErrorReturn(throwable -> {
-                                        Timber.d(throwable, "No valid files in list");
+                                        Timber.log(Log.DEBUG, throwable, "No valid files in list");
                                         return Result.DataFilesAddResult.failure(throwable);
                                     })
                                     .subscribeOn(Schedulers.io())
@@ -262,7 +263,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 if (intent.containerFile() != null) {
                                     boolean isFileDeleted = intent.containerFile().delete();
                                     if (isFileDeleted) {
-                                        Timber.d("File %s deleted", intent.containerFile().getName());
+                                        Timber.log(Log.DEBUG, "File %s deleted", intent.containerFile().getName());
                                     }
                                 }
                                 navigator.execute(Transaction.pop());
@@ -309,7 +310,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 return Transaction.push(CryptoCreateScreen.open(file));
                             } else if (SignedContainer.isContainer(file)) {
                                 return Transaction.push(
-                                        SignatureUpdateScreen.create(true, true, file, false, false));
+                                        SignatureUpdateScreen.create(true, true, file, false, false, null, true));
                             } else {
                                 return Transaction.activity(
                                         createViewIntent(application, file, mimeType(file)), null);
@@ -405,7 +406,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             } catch (Exception e) {
                                 boolean isFileDeleted = containerFile.delete();
                                 if (isFileDeleted) {
-                                    Timber.d("File %s deleted", containerFile.getName());
+                                    Timber.log(Log.DEBUG, "File %s deleted", containerFile.getName());
                                 }
                                 throw e;
                             }
@@ -517,6 +518,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         ImmutableList<File> dataFiles = builder.build();
                         File file = fileSystem.generateSignatureContainerFile(
                                 createContainerFileName(dataFiles.get(0).getName()));
+                        if (dataFiles.size() > 1) {
+                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.files_added);
+                        } else {
+                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.file_added);
+                        }
                         return Result.InitialResult.success(file, dataFiles);
                     }
                 })

@@ -69,6 +69,7 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
 
+    private final ImmutableList<String> ASICS_TIMESTAMP_CONTAINERS = ImmutableList.of("asics", "scs");
     private static final ImmutableSet<String> UNSIGNABLE_CONTAINER_EXTENSIONS = ImmutableSet.<String>builder().add("asics", "scs", "ddoc").build();
 
     private static final String EMPTY_CHALLENGE = "";
@@ -81,6 +82,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private ImmutableList<DataFile> dataFiles = ImmutableList.of();
     private final boolean signatureAddVisible;
     private final boolean signatureAddSuccessMessageVisible;
+    @Nullable private final File nestedFile;
+    private final boolean isSivaConfirmed;
 
     private final Toolbar toolbarView;
     private final NameUpdateDialog nameUpdateDialog;
@@ -133,7 +136,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     public SignatureUpdateView(Context context, String screenId, boolean isExistingContainer,
                                boolean isNestedContainer, File containerFile,
                                boolean signatureAddVisible,
-                               boolean signatureAddSuccessMessageVisible) {
+                               boolean signatureAddSuccessMessageVisible,
+                               @Nullable File nestedFile,
+                               boolean isSivaConfirmed) {
         super(context);
 
         this.isExistingContainer = isExistingContainer;
@@ -141,6 +146,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         this.containerFile = containerFile;
         this.signatureAddVisible = signatureAddVisible;
         this.signatureAddSuccessMessageVisible = signatureAddSuccessMessageVisible;
+        this.nestedFile = nestedFile;
+        this.isSivaConfirmed = isSivaConfirmed;
 
         navigator = Application.component(context).navigator();
         viewModel = navigator.viewModel(screenId, SignatureUpdateViewModel.class);
@@ -183,6 +190,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         progressBar = (ProgressBar) activityIndicatorView;
         documentAddProgressBar.setVisibility(GONE);
+
+        setupAccessibilityTabs();
     }
 
     @SuppressWarnings("unchecked")
@@ -193,8 +202,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 signatureAddIntent(), sendIntent());
     }
 
-    private void checkIfDdocParentContainerIsTimestamped(ImmutableList<Signature> signatures) {
-        if (!isNestedContainer && Files.getFileExtension(containerFile.getName()).equalsIgnoreCase("asics") &&
+    private void checkIfDdocParentContainerIsTimestamped(ImmutableList<Signature> signatures, ImmutableList<DataFile> dataFiles) {
+        if (!isNestedContainer && ASICS_TIMESTAMP_CONTAINERS.contains(Files.getFileExtension(containerFile.getName()).toLowerCase()) &&
                 dataFiles.size() == 1 && signatures.size() == 1 &&
                 Files.getFileExtension(dataFiles.get(0).name()).equalsIgnoreCase("ddoc")) {
             Instant dateTimeInstant = DateUtil.toEpochSecond(2018, Month.JULY, 1, 0, 0, 0);
@@ -246,7 +255,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             }
 
             if (state.container() != null) {
-                checkIfDdocParentContainerIsTimestamped(state.container().signatures());
+                checkIfDdocParentContainerIsTimestamped(state.container().signatures(), state.container().dataFiles());
             }
         }
 
@@ -267,7 +276,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 || state.documentRemoveInProgress() || state.signatureRemoveInProgress()
                 || state.signatureAddActivity());
         adapter.setData(state.signatureAddSuccessMessageVisible(), isExistingContainer,
-                isNestedContainer, state.container());
+                isNestedContainer, state.container(), nestedFile, isSivaConfirmed);
 
         if (state.signatureAddSuccessMessageVisible()) {
             showSuccessNotification();
@@ -395,6 +404,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 smartIdChallengeView.setText(EMPTY_CHALLENGE);
             }
         }
+
+        setupAccessibilityTabs();
     }
 
     private void showSuccessNotification() {
@@ -449,9 +460,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private Observable<Intent.DocumentViewIntent> documentViewIntent() {
         return Observable.mergeArray(adapter.documentClicks()
-                .map(document -> Intent.DocumentViewIntent.confirmation(containerFile, document)),
+                .map(document -> Intent.DocumentViewIntent.confirmation((nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, document)),
                         sivaConfirmationDialog.positiveButtonClicks()
-                                .map(ignored -> Intent.DocumentViewIntent.open(containerFile, sivaConfirmation)),
+                                .map(ignored -> Intent.DocumentViewIntent.open((nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, sivaConfirmation)),
                         sivaConfirmationDialog.cancels()
                                 .map(ignored -> Intent.DocumentViewIntent.cancel()));
     }
@@ -539,7 +550,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         disposables.add(adapter.scrollToTop().subscribe(ignored -> listView.scrollToPosition(0)));
         disposables.add(adapter.documentSaveClicks().subscribe(document ->
                 documentSaveIntentSubject.onNext(Intent.DocumentSaveIntent
-                        .create(containerFile, document))));
+                        .create((nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, document))));
         disposables.add(adapter.documentRemoveClicks().subscribe(document ->
                 documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent
                         .showConfirmation(containerFile, dataFiles, document))));
@@ -591,5 +602,15 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                     parcel.readBundle(getClass().getClassLoader()));
             nameUpdateDialog.onRestoreInstanceState(parcel.readBundle(getClass().getClassLoader()));
         }));
+    }
+
+    private void setupAccessibilityTabs() {
+        if (sendButton.getVisibility() == VISIBLE && signatureAddButton.getVisibility() == VISIBLE) {
+            sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 1, 2));
+            signatureAddButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 2, 2));
+        } else {
+            sendButton.setContentDescription(getResources().getString(R.string.signature_update_send_button));
+            signatureAddButton.setContentDescription(getResources().getString(R.string.signature_update_signature_add_button));
+        }
     }
 }
