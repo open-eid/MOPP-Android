@@ -340,6 +340,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
         recipientsScreenDoneButtonClick = upstream -> upstream.switchMap(intent -> {
             navigator.execute(Transaction.pop());
+            if (application.getApplicationContext() != null) {
+                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipients_added);
+            }
             return Observable.empty();
         });
 

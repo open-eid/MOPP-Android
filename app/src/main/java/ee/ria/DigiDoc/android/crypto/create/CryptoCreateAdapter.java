@@ -386,13 +386,15 @@ final class CryptoCreateAdapter extends
                     nameViewAccessibility.append(nameText);
                 }
             }
-            nameView.setContentDescription(nameViewAccessibility);
+            nameView.setContentDescription(nameViewAccessibility.toString().toLowerCase());
             infoView.setText(itemView.getResources().getString(
                     R.string.crypto_recipient_info, formatter.eidType(item.recipient().type()),
                     formatter.instant(item.recipient().notAfter())));
+            infoView.setContentDescription(infoView.getText().toString().toLowerCase());
 
             String removeRecipientDescription = removeButton.getResources().getString(R.string.crypto_recipient_remove_button);
-            removeButton.setContentDescription(removeRecipientDescription + " " + nameView.getText());
+            removeButton.setContentDescription(removeRecipientDescription + " " +
+                    nameView.getText().toString().toLowerCase());
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton)
                     .map(ignored ->
@@ -403,9 +405,11 @@ final class CryptoCreateAdapter extends
             addButton.setText(item.addButtonEnabled()
                     ? R.string.crypto_recipient_add_button
                     : R.string.crypto_recipient_add_button_added);
+            addButton.setContentDescription(addButton.getText().toString().toLowerCase());
             if (item.addButtonEnabled()) {
                 String addRecipientDescription = addButton.getResources().getString(R.string.add_recipient);
-                addButton.setContentDescription(addRecipientDescription + " " + nameView.getText());
+                addButton.setContentDescription(addRecipientDescription + " " +
+                        nameViewAccessibility.toString().toLowerCase());
             }
             clicks(addButton)
                     .map(ignored ->
