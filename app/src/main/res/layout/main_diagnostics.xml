@@ -37,20 +37,10 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    style="@style/MaterialTypography.Dense.Body1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/main_diagnostics_application_version_title"
-                    android:textStyle="bold" />
-
-                <TextView
                     android:id="@id/mainDiagnosticsApplicationVersion"
                     style="@style/MaterialTypography.Dense.Body1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    tools:text="2.0.1" />
-
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
@@ -59,19 +49,10 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    style="@style/MaterialTypography.Dense.Body1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/main_diagnostics_operating_system_title"
-                    android:textStyle="bold" />
-
-                <TextView
                     android:id="@id/mainDiagnosticsAndroidVersion"
                     style="@style/MaterialTypography.Dense.Body1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    tools:text="Android 8.1" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
@@ -116,29 +97,16 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CONFIG_URL: " />
-
-                    <TextView
                         android:id="@id/mainDiagnosticsConfigUrl"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TSL_URL: " />
 
                     <TextView
                         android:id="@id/mainDiagnosticsTslUrl"
@@ -154,169 +122,94 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="SIVA_URL: " />
-
-                    <TextView
                         android:id="@id/mainDiagnosticsSivaUrl"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TSA_URL: " />
 
                     <TextView
                         android:id="@id/mainDiagnosticsTsaUrl"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="MID_SIGN_URL: " />
-
-                    <TextView
-                        android:id="@id/mainDiagnosticsMidSignUrl"
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="LDAP_PERSON_URL: " />
 
                     <TextView
                         android:id="@id/mainDiagnosticsLdapPersonUrl"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="LDAP_CORP_URL: " />
 
                     <TextView
                         android:id="@id/mainDiagnosticsLdapCorpUrl"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="MID-PROXY-URL: " />
 
                     <TextView
                         android:id="@id/mainDiagnosticsMobileIDUrl"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="MID-SK-URL: " />
 
                     <TextView
                         android:id="@id/mainDiagnosticsMobileIDSKUrl"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="SID-PROXY-URL: " />
 
                     <TextView
                         android:id="@id/mainDiagnosticsSmartIDUrl"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="SID-SK-URL: " />
 
                     <TextView
                         android:id="@id/mainDiagnosticsSmartIDSKUrl"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -325,17 +218,10 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="RPUUID: " />
-
-                    <TextView
                         android:id="@id/mainDiagnosticsRpUuid"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -375,93 +261,58 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="DATE: " />
-
-                    <TextView
                         android:id="@id/mainDiagnosticsCentralConfigurationDate"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="SERIAL: " />
 
                     <TextView
                         android:id="@id/mainDiagnosticsCentralConfigurationSerial"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="URL: " />
 
                     <TextView
                         android:id="@id/mainDiagnosticsCentralConfigurationUrl"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="VERSION: " />
 
                     <TextView
                         android:id="@id/mainDiagnosticsCentralConfigurationVersion"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/main_diagnostics_configuration_update_date" />
 
                     <TextView
                         android:id="@id/mainDiagnosticsCentralConfigurationUpdateDate"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -470,17 +321,37 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/main_diagnostics_configuration_last_check_date" />
-
-                    <TextView
                         android:id="@id/mainDiagnosticsCentralConfigurationLastCheck"
                         style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/material_baseline_grid_3x" >
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@id/mainDiagnosticsLogging"
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:text="@string/main_diagnostics_logging_switch" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@id/mainDiagnosticsSaveLoggingButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/material_baseline_grid_3x"
+                        android:text="@string/main_diagnostics_save_log"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -494,6 +365,20 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/material_baseline_grid_3x"
                         android:text="@string/main_diagnostics_configuration_check_for_update_button" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@id/configurationSaveButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/material_baseline_grid_3x"
+                        android:text="@string/main_diagnostics_configuration_save_diagnostics_button" />
 
                 </LinearLayout>
 

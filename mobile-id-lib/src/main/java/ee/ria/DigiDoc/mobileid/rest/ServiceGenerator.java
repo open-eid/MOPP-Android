@@ -19,6 +19,8 @@
 
 package ee.ria.DigiDoc.mobileid.rest;
 
+import android.util.Log;
+
 import org.bouncycastle.util.encoders.Base64;
 
 import java.net.URI;
@@ -42,6 +44,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 import timber.log.Timber;
 
 public class ServiceGenerator {
@@ -52,9 +55,10 @@ public class ServiceGenerator {
     private static HttpLoggingInterceptor loggingInterceptor;
 
     public static <S> S createService(Class<S> serviceClass, SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle, TrustManager[] trustManagers) throws CertificateException, NoSuchAlgorithmException {
-        Timber.d("Creating new retrofit instance");
+        Timber.log(Log.DEBUG, "Creating new retrofit instance");
         return new Retrofit.Builder()
                 .baseUrl(midSignServiceUrl + "/")
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(buildHttpClient(sslContext, midSignServiceUrl, certBundle, trustManagers))
                 .build()
@@ -62,7 +66,7 @@ public class ServiceGenerator {
     }
 
     private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle, TrustManager[] trustManagers) throws CertificateException, NoSuchAlgorithmException {
-        Timber.d("Building new httpClient");
+        Timber.log(Log.DEBUG, "Building new httpClient");
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .certificatePinner(trustedCertificates(midSignServiceUrl, certBundle));
@@ -71,7 +75,7 @@ public class ServiceGenerator {
             try {
                 httpClientBuilder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0]);
             } catch (Exception e) {
-                Timber.e(e, "Error building httpClient with sslContext");
+                Timber.log(Log.ERROR, e, "Error building httpClient with sslContext");
             }
         }
         return httpClientBuilder.build();
@@ -79,7 +83,7 @@ public class ServiceGenerator {
 
     private static void addLoggingInterceptor(OkHttpClient.Builder httpClientBuilder) {
         if (BuildConfig.DEBUG) {
-            Timber.d("Adding logging interceptor to HTTP client");
+            Timber.log(Log.DEBUG, "Adding logging interceptor to HTTP client");
             if (loggingInterceptor == null) {
                 loggingInterceptor = new HttpLoggingInterceptor();
                 loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
@@ -101,7 +105,7 @@ public class ServiceGenerator {
                     sha256Certificates[i] = "sha256/" + getSHA256FromCertificate(CertificateUtil.x509Certificate(pemCert));
                 }
             } catch (CertificateException | NoSuchAlgorithmException e) {
-                Timber.e(e, "Failed to convert to Certificate object");
+                Timber.log(Log.ERROR, e, "Failed to convert to Certificate object");
                 throw e;
             }
 
@@ -123,7 +127,7 @@ public class ServiceGenerator {
         try {
             return new URI(url);
         } catch (URISyntaxException e) {
-            Timber.e(e, "Failed to convert URI from URL");
+            Timber.log(Log.ERROR, e, "Failed to convert URI from URL");
             return null;
         }
     }
@@ -136,7 +140,7 @@ public class ServiceGenerator {
 
             return new String(base64EncodedHash, StandardCharsets.UTF_8);
         } catch (NoSuchAlgorithmException e) {
-            Timber.e(e, "Unable to get instance of algorithm");
+            Timber.log(Log.ERROR, e, "Unable to get instance of algorithm");
             throw e;
         }
     }

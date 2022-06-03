@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.utils;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.util.Log;
 
 import java.util.Locale;
 
@@ -30,9 +31,19 @@ public final class LocaleService {
             return context;
         }
         Locale.setDefault(locale);
+        Configuration configuration = applicationConfigurationWithLocale(context, locale);
+        return context.createConfigurationContext(configuration);
+    }
+
+    /**
+     * Return application-wide configuration with overridden locale
+     *
+     * @return Application-wide configuration with overridden locale
+     */
+    public Configuration applicationConfigurationWithLocale(Context context, Locale locale) {
         Configuration configuration = context.getResources().getConfiguration();
         configuration.setLocale(locale);
-        return context.createConfigurationContext(configuration);
+        return configuration;
     }
 
     /**
@@ -51,7 +62,7 @@ public final class LocaleService {
      * @param locale Application-wide locale.
      */
     public void applicationLocale(Locale locale) {
-        Timber.e("applicationLocale: %s", locale);
+        Timber.log(Log.ERROR, "applicationLocale: %s", locale);
         settingsDataStore.setLocale(locale);
         navigator.activity().recreate();
     }

@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.configuration;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -122,12 +123,12 @@ public class ConfigurationManager {
 
     private ConfigurationProvider loadCentralConfiguration() {
         try {
-            Timber.i("Attempting to load configuration from central configuration service <%s>", centralConfigurationServiceUrl);
+            Timber.log(Log.INFO, "Attempting to load configuration from central configuration service <%s>", centralConfigurationServiceUrl);
             byte[] centralConfigurationSignature = centralConfigurationLoader.loadConfigurationSignature();
             Date currentDate = new Date();
             cachedConfigurationHandler.updateConfigurationLastCheckDate(currentDate);
             if (cachedConfigurationHandler.doesCachedConfigurationExist() && isCachedConfUpToDate(centralConfigurationSignature)) {
-                Timber.i("Cached configuration signature matches with central configuration signature. Not updating and using cached configuration");
+                Timber.log(Log.INFO, "Cached configuration signature matches with central configuration signature. Not updating and using cached configuration");
                 cachedConfigurationHandler.updateProperties();
                 return loadCachedConfiguration();
             }
@@ -136,33 +137,33 @@ public class ConfigurationManager {
             verifyConfigurationSignature(centralConfigurationLoader);
 
             cachedConfigurationHandler.updateConfigurationUpdatedDate(currentDate);
-            Timber.i("Configuration successfully loaded from central configuration service");
+            Timber.log(Log.INFO, "Configuration successfully loaded from central configuration service");
             return parseAndCacheConfiguration(centralConfigurationLoader);
         } catch (Exception e) {
-            Timber.e(e, "Failed to load configuration from central configuration service");
+            Timber.log(Log.ERROR, e, "Failed to load configuration from central configuration service");
             return loadCachedConfiguration();
         }
     }
 
     private ConfigurationProvider loadCachedConfiguration() {
         try {
-            Timber.i("Attempting to load cached configuration");
+            Timber.log(Log.INFO, "Attempting to load cached configuration");
             cachedConfigurationLoader.load();
             verifyConfigurationSignature(cachedConfigurationLoader);
-            Timber.i("Cached configuration successfully loaded");
+            Timber.log(Log.INFO, "Cached configuration successfully loaded");
             return parseConfigurationProvider(cachedConfigurationLoader.getConfigurationJson());
         } catch (Exception e) {
-            Timber.e(e, "Failed to load cached configuration");
+            Timber.log(Log.ERROR, e, "Failed to load cached configuration");
             return loadDefaultConfiguration();
         }
     }
 
     private ConfigurationProvider loadDefaultConfiguration() {
         try {
-            Timber.i("Attempting to load default configuration");
+            Timber.log(Log.INFO, "Attempting to load default configuration");
             defaultConfigurationLoader.load();
             verifyConfigurationSignature(defaultConfigurationLoader);
-            Timber.i("Default configuration successfully loaded");
+            Timber.log(Log.INFO, "Default configuration successfully loaded");
             overrideConfUpdateDateWithDefaultConfigurationInitDownloadDate();
             return parseAndCacheConfiguration(defaultConfigurationLoader);
         } catch (Exception e) {
@@ -198,7 +199,7 @@ public class ConfigurationManager {
     private ConfigurationProvider parseAndCacheConfiguration(ConfigurationLoader configurationLoader) {
         ConfigurationProvider configurationProvider = parseConfigurationProvider(configurationLoader.getConfigurationJson());
         cacheConfiguration(configurationLoader, configurationProvider);
-        Timber.i("Configuration successfully cached");
+        Timber.log(Log.INFO, "Configuration successfully cached");
 
         cachedConfigurationHandler.updateProperties();
         return configurationProvider;
@@ -231,7 +232,6 @@ public class ConfigurationManager {
                 .setTslUrl(configurationParser.parseStringValue("TSL-URL"))
                 .setTslCerts(configurationParser.parseStringValues("TSL-CERTS"))
                 .setTsaUrl(configurationParser.parseStringValue("TSA-URL"))
-                .setMidSignUrl(configurationParser.parseStringValue("MID-SIGN-URL"))
                 .setLdapPersonUrl(configurationParser.parseStringValue("LDAP-PERSON-URL"))
                 .setLdapCorpUrl(configurationParser.parseStringValue("LDAP-CORP-URL"))
                 .setMidRestUrl(configurationParser.parseStringValue("MID-PROXY-URL"))
@@ -254,7 +254,7 @@ public class ConfigurationManager {
             // No explicit SSL certificate found in assets, using java default cacerts
             return null;
         } catch (IOException | CertificateException e) {
-            Timber.e(e, "Failed to load SSL certificate");
+            Timber.log(Log.ERROR, e, "Failed to load SSL certificate");
             throw new IllegalStateException("Failed to load SSL certificate", e);
         }
     }

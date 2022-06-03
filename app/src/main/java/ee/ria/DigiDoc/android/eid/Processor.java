@@ -21,6 +21,7 @@ import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeSameAsCurrentError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeTooEasyError;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
+import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.idcard.CodeType;
@@ -45,7 +46,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<Intent.CodeUpdateIntent, Result.CodeUpdateResult>
             codeUpdate;
 
-    @Inject Processor(Application application, Navigator navigator, IdCardService idCardService) {
+    @Inject Processor(Application application, Navigator navigator, IdCardService idCardService, LocaleService localeService) {
         load = upstream -> upstream.switchMap(action -> {
             Observable<Result.LoadResult> resultObservable = idCardService.data()
                     .map(idCardDataResponse -> {
@@ -81,7 +82,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         && updateAction.updateType().equals(CodeUpdateType.UNBLOCK)) {
                     navigator.execute(Transaction
                             .activity(createBrowserIntent(application,
-                                    R.string.eid_home_data_certificates_puk_link_url), null));
+                                    R.string.eid_home_data_certificates_puk_link_url,
+                                    localeService.applicationConfigurationWithLocale(application.getApplicationContext(),
+                                            localeService.applicationLocale())), null));
                     return Observable.just(Result.CodeUpdateResult.clear());
                 } else {
                     return Observable.just(Result.CodeUpdateResult.action(updateAction));

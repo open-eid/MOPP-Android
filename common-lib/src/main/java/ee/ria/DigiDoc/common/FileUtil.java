@@ -1,12 +1,17 @@
 package ee.ria.DigiDoc.common;
 
+import android.content.Context;
 import android.net.Uri;
 import android.webkit.URLUtil;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 
 public class FileUtil {
 
@@ -88,6 +93,35 @@ public class FileUtil {
 
     public static Uri normalizePath(String filePath) {
         return Uri.parse(FilenameUtils.normalize(filePath));
+    }
+
+    public static boolean logsExist(File logsDirectory) {
+        if (logsDirectory.exists()) {
+            File[] files = logsDirectory.listFiles();
+            return files != null && files.length > 0;
+        }
+        return false;
+    }
+
+    public static File combineLogFiles(File logsDirectory, String diagnosticsLogsFileName) throws IOException {
+        if (logsExist(logsDirectory)) {
+            File[] files = logsDirectory.listFiles() != null ? logsDirectory.listFiles() : new File[]{};
+            File combinedLogFile = new File(logsDirectory + File.separator + diagnosticsLogsFileName);
+            if (combinedLogFile.exists()) {
+                Files.delete(combinedLogFile.toPath());
+            }
+            for (File file : files) {
+                String header = "\n\n" + "===== File: " + file.getName() + " =====" + "\n\n";
+                String fileString = header + FileUtils.readFileToString(file, Charset.defaultCharset());
+                FileUtils.write(combinedLogFile, fileString, Charset.defaultCharset(), true);
+            }
+            return combinedLogFile;
+        }
+        throw new FileNotFoundException("Could not combine log files. Cannot find logs.");
+    }
+
+    public static File getLogsDirectory(Context context) {
+        return new File(context.getFilesDir() + "/logs");
     }
 
     private static boolean isRawUrl(String url) {

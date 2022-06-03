@@ -141,7 +141,8 @@ public class MobileCreateSignatureSessionStatusResponse {
         GENERAL_ERROR,
         NO_RESPONSE,
         INVALID_COUNTRY_CODE,
-        INVALID_SSL_HANDSHAKE
+        INVALID_SSL_HANDSHAKE,
+        TECHNICAL_ERROR
     }
 }
 

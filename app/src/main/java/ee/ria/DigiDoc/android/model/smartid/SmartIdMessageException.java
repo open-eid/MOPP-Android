@@ -22,18 +22,39 @@ package ee.ria.DigiDoc.android.model.smartid;
 
 import android.content.Context;
 
+import androidx.annotation.Nullable;
+
+import ee.ria.DigiDoc.common.DetailMessageSource;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse.ProcessStatus;
 
 /**
  * Exception thrown by Smart-ID service that contains message suitable for showing to the user.
  */
-public final class SmartIdMessageException extends Exception {
+public final class SmartIdMessageException extends Exception implements DetailMessageSource {
+
+    @Nullable private final String detailMessage;
 
     public static SmartIdMessageException create(Context context, ProcessStatus status) {
         return new SmartIdMessageException(SmartIdStatusMessages.message(context, status));
     }
 
+    public static SmartIdMessageException create(Context context, ProcessStatus status, @Nullable String detailMessage) {
+        return new SmartIdMessageException(SmartIdStatusMessages.message(context, status), detailMessage);
+    }
+
     private SmartIdMessageException(String message) {
         super(message);
+        this.detailMessage = null;
+    }
+
+    private SmartIdMessageException(String message, @Nullable String detailMessage) {
+        super(message);
+        this.detailMessage = detailMessage;
+    }
+
+    @Override
+    @Nullable
+    public String getDetailMessage() {
+        return detailMessage;
     }
 }

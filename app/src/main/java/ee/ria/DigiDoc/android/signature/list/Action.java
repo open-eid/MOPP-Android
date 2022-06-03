@@ -38,8 +38,10 @@ interface Action extends MviAction {
 
         abstract boolean confirmation();
 
-        static ContainerOpenAction create(@Nullable File containerFile, boolean confirmation) {
-            return new AutoValue_Action_ContainerOpenAction(containerFile, confirmation);
+        abstract boolean isSivaConfirmed();
+
+        static ContainerOpenAction create(@Nullable File containerFile, boolean confirmation, boolean isSivaConfirmed) {
+            return new AutoValue_Action_ContainerOpenAction(containerFile, confirmation, isSivaConfirmed);
         }
     }
 

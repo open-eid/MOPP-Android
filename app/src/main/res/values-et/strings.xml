@@ -52,8 +52,14 @@
     <string name="main_diagnostics_configuration_update_date">UUENDAMISE KUUPÄEV:\u0020</string>
     <string name="main_diagnostics_configuration_last_check_date">VIIMATI KONTROLLITUD:\u0020</string>
     <string name="main_diagnostics_configuration_check_for_update_button">KONTROLLI VÄRSKENDUSI</string>
+    <string name="main_diagnostics_configuration_save_diagnostics_button">SALVESTA DIAGNOSTIKA</string>
     <string name="main_diagnostics_rpuuid_default">vaikimisi määratud</string>
     <string name="main_diagnostics_rpuuid_custom">käsitsi määratud</string>
+    <string name="main_diagnostics_logging_switch">Aktiveeri ühekordne logifaili genereerimine</string>
+    <string name="main_diagnostics_save_log">Salvesta logifail</string>
+    <string name="main_diagnostics_restart_message">Logimise aktiveerimiseks taaskäivita RIA DigiDoc. https://www.id.ee/artikkel/logifaili-genereerimine-digidoc4-kliendis/</string>
+    <string name="main_diagnostics_restart_message_read_more">Loe täpsemalt siit</string>
+    <string name="main_diagnostics_restart_message_restart_now">Taaskäivita rakendus?</string>
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Allkirjastamiseks või kontrollimiseks vali fail</string>
@@ -120,6 +126,11 @@
     <string name="signature_update_send_button">JAGA</string>
     <string name="signature_update_signature_add_button">ALLKIRJASTA</string>
 
+    <string name="signature_update_signature_type_timestamp">Ümbriku ajatemplid</string>
+    <string name="signature_update_timestamp_status_valid">Ajatempel on kehtiv</string>
+    <string name="signature_update_timestamp_status_invalid">Ajatempel ei ole kehtiv</string>
+    <string name="signature_update_timestamp_status_unknown">Ajatempel on teadmata</string>
+
     <string name="signature_update_signature_add_method">Allkirjastamise meetod</string>
     <string name="signature_update_signature_method_selected">allkirjastamise meetod valitud</string>
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>
@@ -128,8 +139,10 @@
     <string name="signature_update_signature_add_positive_button">ALLKIRJASTA</string>
     <string name="signature_update_signature_add_success">ALLKIRI LISATUD</string>
     <string name="signature_update_signature_add_error">Midagi läks valesti</string>
+    <string name="signature_update_signature_add_error_title">Ümbriku allkirjastamine ebaõnnestus</string>
 
     <string name="signature_update_signature_error_message_additional_information">Loe täpsemalt siit</string>
+    <string name="signature_update_signature_error_message_details">Detailid</string>
 
     <string name="signature_update_signature_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Päringu saatmine ebaõnnestus. Sellelt IP-aadressilt on ebaõnnestunud päringute arv ületatud. Palun proovige mõne aja pärast uuesti.</string>
@@ -188,6 +201,7 @@
     <string name="signature_update_mobile_id_error_message_exceeds_volume_limit">Liiga palju faile ühes konteineris</string>
     <string name="signature_update_mobile_id_error_message_access_rights">Ümbriku allkirjastamine ebaõnnestus. Kontrolli mobiil-ID teenuse ligipääsu seadeid. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
     <string name="signature_update_mobile_id_error_simultaneous_requests_limit_exceeded">Samaaegsete pöördumiste limiit ületatud</string>
+    <string name="signature_update_mobile_id_error_technical_error">Päringu saatmine ebaõnnestus. Mobiil-ID teenuses esinevad tehnilised tõrked. Palun proovige mõne aja pärast uuesti.</string>
 
     <string name="signature_update_smart_id_message">Sisesta oma isikukood Smart-IDga allkirjastamiseks</string>
     <string name="signature_update_smart_id_country">Riik</string>
@@ -201,6 +215,7 @@
     <string name="signature_update_smart_id_error_message_account_not_found_or_timeout">Ümbriku allkirjastamine ebaõnnestus. Sinu Smart-ID toiming aegus või kontot ei leitud</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Sessiooni ei leitud</string>
     <string name="signature_update_smart_id_error_message_access_rights">Ümbriku allkirjastamine ebaõnnestus. Kontrolli Smart-ID teenuse ligipääsu seadeid. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
+    <string name="signature_update_smart_id_error_technical_error">Päringu saatmine ebaõnnestus. Smart-ID teenuses esinevad tehnilised tõrked. Palun proovige mõne aja pärast uuesti.</string>
 
     <string name="signature_update_id_card_progress_message_initial">Ühenda kaardilugeja nutiseadmega ja sisesta ID-kaart lugejasse</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>
@@ -400,6 +415,7 @@
     <string name="crypto_content_description">Krüpto, vahekaart %1$d / %2$d</string>
     <string name="my_eid_content_description">Minu eID, vahekaart %1$d / %2$d</string>
 
+    <string name="sign_send_content_description">Allkirjasta, vahekaart %1$d / %2$d</string>
     <string name="decrypt_content_description">Dekrüpteeri, vahekaart %1$d / %2$d</string>
     <string name="decrypt_send_content_description">Jaga, vahekaart %1$d / %2$d</string>
 
@@ -422,6 +438,7 @@
     <string name="file_removed">Fail eemaldatud</string>
     <string name="file_removal_cancelled">Faili eemaldamine katkestatud</string>
     <string name="file_saved">Fail salvestatud</string>
+    <string name="file_saved_error">Faili salvestamine ebaõnnestus</string>
     <string name="document_removed">Dokument eemaldatud</string>
     <string name="document_removal_cancelled">Dokumendi eemaldamine katkestatud</string>
     <string name="file_added">Fail lisatud</string>
@@ -437,7 +454,7 @@
     <string name="container_name_changed">Ümbriku nimi muudetud</string>
     <string name="container_name_change_cancelled">Ümbriku nime muutmine katkestatud</string>
     <string name="sign_container_button_description">Allkirjasta</string>
-    <string name="container_signing_cancelled">Ümbriku allkirjastamine katkestatud</string>
+    <string name="signing_cancelled">Allkirjastamine katkestatud</string>
     <string name="container_signature_added">Ümbrikule allkiri lisatud</string>
     <string name="files_encrypted">Failid krüpteeritud</string>
     <string name="file_decrypted">Fail dekrüpteeritud</string>

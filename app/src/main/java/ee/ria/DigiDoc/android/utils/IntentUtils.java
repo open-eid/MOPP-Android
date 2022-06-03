@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
@@ -13,9 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import com.google.common.collect.ImmutableList;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 
@@ -106,25 +104,28 @@ public final class IntentUtils {
                 .createChooser(new Intent(Intent.ACTION_CREATE_DOCUMENT)
                         .addCategory(Intent.CATEGORY_OPENABLE)
                         .putExtra(Intent.EXTRA_TITLE, FileUtil.sanitizeString(dataFile.name(), ""))
-                        .setType(dataFile.mimeType())
+                        .setType(getDataFileMimetype(dataFile))
                         .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION), null);
     }
 
     public static Intent createSaveIntent(File file, ContentResolver contentResolver) {
-        int extensionIndex = file.getName().lastIndexOf(".");
-        String extension = extensionIndex != -1 ? file.getName().substring(extensionIndex + 1) : "";
-        String mimeType = !extension.isEmpty() ? MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) : "application/octet-stream";
         return Intent
                 .createChooser(new Intent(Intent.ACTION_CREATE_DOCUMENT)
                         .addCategory(Intent.CATEGORY_OPENABLE)
                         .putExtra(Intent.EXTRA_TITLE, FileUtil.sanitizeString(file.getName(), ""))
-                        .setType(mimeType)
+                        .setType(SignedContainer.mimeType(file))
                         .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION), null);
     }
 
-    public static Intent createBrowserIntent(Context context, int stringRes){
-        String url = context.getResources().getString(stringRes);
-        return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+    public static Intent createBrowserIntent(Context context, int stringRes, Configuration configuration) {
+        String localizedUrl = context.createConfigurationContext(configuration).getText(stringRes).toString();
+        return new Intent(Intent.ACTION_VIEW, Uri.parse(localizedUrl));
+    }
+
+    private static String getDataFileMimetype(DataFile dataFile) {
+        int extensionIndex = dataFile.name().lastIndexOf(".");
+        String extension = extensionIndex != -1 ? dataFile.name().substring(extensionIndex + 1) : "";
+        return !extension.isEmpty() ? MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) : "application/octet-stream";
     }
 
     private static long getFileSize(ContentResolver contentResolver, Uri uri) {

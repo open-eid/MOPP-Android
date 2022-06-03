@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.configuration.util;
 
+import android.util.Log;
+
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedReader;
@@ -125,7 +127,7 @@ public class FileUtils {
                 writer.write(fileLine + System.getProperty("line.separator"));
             }
         } catch (IOException e) {
-            Timber.e(e, "Failed to open file: %s", fileName);
+            Timber.log(Log.ERROR, e, "Failed to open file: %s", fileName);
         }
     }
 
