@@ -51,7 +51,7 @@ public final class IntentUtils {
      * @return List of {@link FileStream file stream} objects.
      */
     public static ImmutableList<FileStream> parseGetContentIntent(ContentResolver contentResolver,
-                                                                  Intent intent) {
+                                                                  Intent intent) throws Exception {
         ImmutableList.Builder<FileStream> builder = ImmutableList.builder();
 
         ClipData clipData = intent.getClipData();
@@ -59,8 +59,10 @@ public final class IntentUtils {
         if (clipData != null) {
             for (int i = 0; i < clipData.getItemCount(); i++) {
                 Uri uri = clipData.getItemAt(i).getUri();
-                builder.add(FileStream.create(contentResolver, uri, getFileSize(contentResolver,
-                        FileUtil.normalizeUri(uri))));
+                if (uri != null) {
+                    builder.add(FileStream.create(contentResolver, uri, getFileSize(contentResolver,
+                            FileUtil.normalizeUri(uri))));
+                }
             }
         } else if (data != null) {
             builder.add(FileStream.create(contentResolver, data, getFileSize(contentResolver,
@@ -128,7 +130,7 @@ public final class IntentUtils {
         return !extension.isEmpty() ? MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) : "application/octet-stream";
     }
 
-    private static long getFileSize(ContentResolver contentResolver, Uri uri) {
+    private static long getFileSize(ContentResolver contentResolver, Uri uri) throws Exception {
         Cursor cursor = contentResolver.
                 query(FileUtil.normalizeUri(uri),
                         null, null, null, null);
