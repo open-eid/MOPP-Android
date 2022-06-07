@@ -12,6 +12,8 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -351,7 +353,11 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         Boolean showNotification = ((Activity) view.getContext()).getSettingsDataStore().getShowSuccessNotification();
         if (showNotification) {
             NotificationDialog successNotificationDialog = new NotificationDialog((Activity) view.getContext());
-            successNotificationDialog.show();
+            if (AccessibilityUtils.isAccessibilityEnabled()) {
+                new Handler(Looper.getMainLooper()).postDelayed(successNotificationDialog::show, 2000);
+            } else {
+                new Handler(Looper.getMainLooper()).postDelayed(successNotificationDialog::show, 1000);
+            }
         }
     }
 
