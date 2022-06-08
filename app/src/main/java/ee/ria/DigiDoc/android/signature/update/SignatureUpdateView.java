@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -412,7 +413,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         Boolean showNotification = ((Activity) getContext()).getSettingsDataStore().getShowSuccessNotification();
         if (showNotification) {
             NotificationDialog successNotificationDialog = new NotificationDialog((Activity) getContext());
-            new Handler().postDelayed(successNotificationDialog::show, 1000);
+            if (AccessibilityUtils.isAccessibilityEnabled()) {
+                new Handler(Looper.getMainLooper()).postDelayed(successNotificationDialog::show, 2000);
+            } else {
+                new Handler(Looper.getMainLooper()).postDelayed(successNotificationDialog::show, 1000);
+            }
         }
     }
 
