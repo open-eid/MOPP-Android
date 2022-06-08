@@ -130,7 +130,7 @@ public final class IntentUtils {
         return !extension.isEmpty() ? MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) : "application/octet-stream";
     }
 
-    private static long getFileSize(ContentResolver contentResolver, Uri uri) throws Exception {
+    private static long getFileSize(ContentResolver contentResolver, Uri uri) {
         Cursor cursor = contentResolver.
                 query(FileUtil.normalizeUri(uri),
                         null, null, null, null);

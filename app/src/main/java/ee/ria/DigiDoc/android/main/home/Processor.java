@@ -3,14 +3,14 @@ package ee.ria.DigiDoc.android.main.home;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
-import androidx.annotation.IdRes;
-import androidx.annotation.Nullable;
-
 import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.util.SparseIntArray;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
@@ -29,6 +29,7 @@ import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
 import ee.ria.DigiDoc.android.utils.LocaleService;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
@@ -96,13 +97,16 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return Observable.never();
             }
             return Observable
-                    .fromCallable(() -> {
-                        return Result.InitialResult.create(
-                                R.id.mainHomeSignature,
-                                LOCALES.inverse().get(
-                                        localeService.applicationLocale().getLanguage()));
-                    });
-        });
+                    .fromCallable(() -> Result.InitialResult.create(
+                            R.id.mainHomeSignature,
+                            LOCALES.inverse().get(
+                                    localeService.applicationLocale().getLanguage())));
+        })
+                .onErrorReturn(throwable -> {
+                    ToastUtil.showGeneralError(navigator.activity());
+                    navigator.execute(Transaction.pop());
+                    return Result.InitialResult.create(R.id.mainHomeSignature, null);
+                });
 
         navigation = upstream -> upstream.switchMap(action -> {
             if (action.item() != R.id.mainHomeNavigationEID) {
