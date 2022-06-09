@@ -19,6 +19,7 @@
 
 package ee.ria.DigiDoc.idcard;
 
+import android.util.Log;
 import android.util.SparseArray;
 
 import org.bouncycastle.util.encoders.Hex;
@@ -87,14 +88,14 @@ abstract class EstEIDToken implements Token {
             dateOfBirth = LocalDate.parse(dateOfBirthString, DATE_FORMAT);
         } catch (Exception e) {
             dateOfBirth = null;
-            Timber.e(e, "Could not parse date of birth %s", dateOfBirthString);
+            Timber.log(Log.ERROR, e, "Could not parse date of birth %s", dateOfBirthString);
         }
         LocalDate expiryDate;
         try {
             expiryDate = LocalDate.parse(expiryDateString, DATE_FORMAT);
         } catch (Exception e) {
             expiryDate = null;
-            Timber.e(e, "Could not parse expiry date %s", expiryDateString);
+            Timber.log(Log.ERROR, e, "Could not parse expiry date %s", expiryDateString);
         }
 
         return PersonalData.create(surname, givenNames.toString(), citizenship, dateOfBirth,

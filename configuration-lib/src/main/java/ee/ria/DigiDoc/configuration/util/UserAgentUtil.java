@@ -7,6 +7,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +59,7 @@ public final class UserAgentUtil {
                     .append(context.getPackageManager()
                             .getPackageInfo(context.getPackageName(), 0).versionCode);
         } catch (PackageManager.NameNotFoundException e) {
-            Timber.e(e, "Failed getting app version from package info");
+            Timber.log(Log.ERROR, e, "Failed getting app version from package info");
         }
 
         return versionName;

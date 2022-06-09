@@ -79,6 +79,9 @@
     <item type="id" name="mainDiagnosticsCentralConfigurationUpdateDate" />
     <item type="id" name="configurationUpdateButton" />
     <item type="id" name="configurationSaveButton" />
+    <item type="id" name="mainDiagnosticsLogging" />
+    <item type="id" name="mainDiagnosticsSaveLoggingButton" />
+    <item type="id" name="mainDiagnosticsRestartConfirmationDialog" />
 
     <!-- Signature Home -->
     <item type="id" name="signatureHomeCreateButton" />
