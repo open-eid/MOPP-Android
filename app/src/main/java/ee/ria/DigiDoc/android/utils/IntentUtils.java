@@ -51,7 +51,7 @@ public final class IntentUtils {
      * @return List of {@link FileStream file stream} objects.
      */
     public static ImmutableList<FileStream> parseGetContentIntent(ContentResolver contentResolver,
-                                                                  Intent intent) throws Exception {
+                                                                  Intent intent) {
         ImmutableList.Builder<FileStream> builder = ImmutableList.builder();
 
         ClipData clipData = intent.getClipData();
