@@ -19,6 +19,8 @@
 
 package ee.ria.DigiDoc.android;
 
+import static ee.ria.DigiDoc.common.LoggingUtil.isLoggingEnabled;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -186,7 +188,7 @@ public class Application extends android.app.Application {
     // Timber
 
     private void setupTimber() {
-        if (isLoggingEnabled() || BuildConfig.DEBUG) {
+        if (isLoggingEnabled(getApplicationContext()) || BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
             Timber.plant(new FileLoggingTree(getApplicationContext()));
         }
@@ -196,7 +198,7 @@ public class Application extends android.app.Application {
     // Container configuration
 
     private void setupSignLib() {
-        SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider(), UserAgentUtil.getUserAgent(getApplicationContext()), isLoggingEnabled());
+        SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider(), UserAgentUtil.getUserAgent(getApplicationContext()), isLoggingEnabled(getApplicationContext()));
     }
 
     private void setupRxJava() {
@@ -283,14 +285,6 @@ public class Application extends android.app.Application {
                 .putBoolean(getString(R.string.main_diagnostics_logging_key), isDiagnosticsLoggingEnabled)
                 .putBoolean(getString(R.string.main_diagnostics_logging_running_key), isDiagnosticsLoggingRunning)
                 .commit();
-    }
-
-    private boolean isLoggingEnabled() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        boolean isDiagnosticsLoggingEnabled = sharedPreferences.getBoolean(getString(R.string.main_diagnostics_logging_key), false);
-        boolean isDiagnosticsLoggingRunning = sharedPreferences.getBoolean(getString(R.string.main_diagnostics_logging_running_key), false);
-
-        return isDiagnosticsLoggingEnabled && isDiagnosticsLoggingRunning;
     }
 
     public class ConfigurationProviderReceiver extends ResultReceiver {

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="main_diagnostics_logging_key">main_diagnostics_logging</string>
+    <string name="main_diagnostics_logging_running_key">main_diagnostics_logging_running</string>
+</resources>

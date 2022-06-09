@@ -43,6 +43,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -105,18 +106,20 @@ public class MobileSignService extends IntentService {
         try {
             trustManagers = TrustManagerUtil.getTrustManagers();
         } catch (NoSuchAlgorithmException | KeyStoreException e) {
-            Timber.log(Log.ERROR, "Unable to get Trust Managers", e);
+            Timber.log(Log.ERROR, e, "Unable to get Trust Managers. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
         }
 
         timeout = 0;
         MobileCreateSignatureRequest request = getRequestFromIntent(intent);
         if (request != null) {
             PostMobileCreateSignatureCertificateRequest certificateRequest = getCertificateRequest(request);
+            Timber.log(Log.DEBUG, "Certificate request: %s", certificateRequest.toString());
             SSLContext restSSLConfig;
             try {
+                Timber.log(Log.DEBUG, "Creating SSL config");
                 restSSLConfig = createSSLConfig(intent, trustManagers);
             } catch (Exception e) {
-                Timber.log(Log.ERROR, e, "Can't create SSL config");
+                Timber.log(Log.ERROR, e, "Can't create SSL config. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                 restSSLConfig = null;
             }
 
@@ -124,10 +127,12 @@ public class MobileSignService extends IntentService {
                 ArrayList<String> certificateCertBundle = intent.getStringArrayListExtra(CERTIFICATE_CERT_BUNDLE);
                 if (certificateCertBundle != null) {
                     midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class,
-                            restSSLConfig, request.getUrl(), certificateCertBundle, trustManagers);
+                            restSSLConfig, request.getUrl(), certificateCertBundle, trustManagers, getApplicationContext());
+                } else {
+                    Timber.log(Log.DEBUG, "Certificate cert bundle is null");
                 }
             } catch (CertificateException | NoSuchAlgorithmException e) {
-                Timber.log(Log.ERROR, e, "Invalid SSL handshake");
+                Timber.log(Log.ERROR, e, "Invalid SSL handshake. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                 broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
                 return;
             }
@@ -148,39 +153,47 @@ public class MobileSignService extends IntentService {
             try {
                 Response<MobileCreateSignatureCertificateResponse> responseWrapper = call.execute();
                 if (!responseWrapper.isSuccessful()) {
+                    Timber.log(Log.DEBUG, "Mobile-ID certificate request unsuccessful. Status: %s, message: %s, body: %s, errorBody: %s",
+                            responseWrapper.code(), responseWrapper.message(), responseWrapper.body(), responseWrapper.errorBody());
                     parseErrorAndBroadcast(responseWrapper);
                 } else {
                     MobileCreateSignatureCertificateResponse response = responseWrapper.body();
+                    Timber.log(Log.DEBUG, "MobileCreateSignatureCertificateResponse response body: %s", response != null ? response.toString() : "null");
                     if (isResponseError(responseWrapper, response, MobileCreateSignatureCertificateResponse.class)) {
                         return;
                     }
                     containerWrapper = new ContainerWrapper(request.getContainerPath());
                     String base64Hash = containerWrapper.prepareSignature(getCertificatePem(response.getCert()));
                     if (base64Hash != null && !base64Hash.isEmpty()) {
+                        Timber.log(Log.DEBUG, "Broadcasting create signature response");
                         broadcastMobileCreateSignatureResponse(base64Hash);
                         sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
                         String sessionId = getMobileIdSession(base64Hash, request);
                         if (sessionId == null) {
+                            Timber.log(Log.DEBUG, "Session ID missing");
                             return;
                         }
+                        Timber.log(Log.DEBUG, "Session ID: %s", sessionId);
                         doCreateSignatureStatusRequestLoop(new GetMobileCreateSignatureSessionStatusRequest(sessionId));
+                    } else {
+                        Timber.log(Log.DEBUG, "Base64 (Prepare signature) is empty or null");
                     }
                 }
             } catch (UnknownHostException e) {
                 broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE));
-                Timber.log(Log.ERROR, e, "REST API certificate request failed. Unknown host");
+                Timber.log(Log.ERROR, e, "REST API certificate request failed. Unknown host. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
             } catch (SSLPeerUnverifiedException e) {
                 broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
-                Timber.log(Log.ERROR, e, "SSL handshake failed");
+                Timber.log(Log.ERROR, e, "SSL handshake failed. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
             } catch (IOException e) {
                 broadcastFault(defaultError(e.getMessage()));
-                Timber.log(Log.ERROR, e, "REST API certificate request failed");
+                Timber.log(Log.ERROR, e, "REST API certificate request failed. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
             } catch (CertificateException e) {
                 broadcastFault(defaultError(e.getMessage()));
-                Timber.log(Log.ERROR, e, "Generating certificate failed");
+                Timber.log(Log.ERROR, e, "Generating certificate failed. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
             } catch (Exception e) {
                 broadcastFault(defaultError(e.getMessage()));
-                Timber.log(Log.ERROR, e, "Failed to get certificate or parse response");
+                Timber.log(Log.ERROR, e, "Failed to get certificate or parse response. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
             }
         }
     }
@@ -213,52 +226,60 @@ public class MobileSignService extends IntentService {
 
         try {
             Response<MobileCreateSignatureSessionStatusResponse> responseWrapper = responseCall.execute();
+            Timber.log(Log.DEBUG, "MobileCreateSignatureSessionStatusResponse response: %s", responseWrapper.toString());
             if (!responseWrapper.isSuccessful()) {
+                Timber.log(Log.DEBUG, "MobileCreateSignatureSessionStatusResponse responseWrapper unsuccessful: %s", responseWrapper.toString());
                 parseErrorAndBroadcast(responseWrapper);
                 return;
             }
 
             MobileCreateSignatureSessionStatusResponse response = responseWrapper.body();
+            Timber.log(Log.DEBUG, "MobileCreateSignatureSessionStatusResponse response body: %s", response != null ? response.toString() : "null");
             if (response != null && isSessionStatusRequestComplete(response.getState())) {
                 if (isResponseError(responseWrapper, response, MobileCreateSignatureSessionStatusResponse.class)) {
+                    Timber.log(Log.DEBUG, "Response error: %s", responseWrapper.toString());
                     return;
                 }
                 try {
+                    Timber.log(Log.DEBUG, "Finalizing signature...");
                     containerWrapper.finalizeSignature(response.getSignature().getValue());
+                    Timber.log(Log.DEBUG, "Broadcasting create signature status response");
                     broadcastMobileCreateSignatureStatusResponse(response, containerWrapper.getContainer());
                     return;
                 } catch (Exception e) {
                     if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
                         RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TOO_MANY_REQUESTS);
                         broadcastFault(fault);
-                        Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID - Too Many Requests");
+                        Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID - Too Many Requests. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                     } else if (e.getMessage() != null && e.getMessage().contains("OCSP response not in valid time slot")) {
                         RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.OCSP_INVALID_TIME_SLOT);
                         broadcastFault(fault);
-                        Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID - OCSP response not in valid time slot");
+                        Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID - OCSP response not in valid time slot. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                     } else if (e.getMessage() != null && e.getMessage().contains("Certificate status: revoked")) {
                         RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.CERTIFICATE_REVOKED);
                         broadcastFault(fault);
-                        Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID - Certificate status: revoked");
+                        Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID - Certificate status: revoked. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                     } else {
                         RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TECHNICAL_ERROR);
                         broadcastFault(fault);
-                        Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID. Technical or general error %s", responseWrapper.code());
+                        Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID. Technical or general error %s. Exception message: %s. Exception: %s", responseWrapper.code(), e.getMessage(), Arrays.toString(e.getStackTrace()));
                     }
                     return;
                 }
             }
 
             if (timeout > TIMEOUT_CANCEL) {
+                Timber.log(Log.DEBUG, "Timeout: doCreateSignatureStatusRequestLoop timeout counter: %s", timeout);
                 broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TIMEOUT));
                 Timber.log(Log.DEBUG, "Request timeout");
                 return;
             }
+            Timber.log(Log.DEBUG, "doCreateSignatureStatusRequestLoop timeout counter: %s", timeout);
             sleep(SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
             doCreateSignatureStatusRequestLoop(request);
         } catch (UnknownHostException e) {
             broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE));
-            Timber.log(Log.ERROR, e, "REST API session status request failed. Unknown host");
+            Timber.log(Log.ERROR, e, "REST API session status request failed. Unknown host. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -268,9 +289,12 @@ public class MobileSignService extends IntentService {
 
     private String getMobileIdSession(String hash, MobileCreateSignatureRequest request) throws IOException {
         PostMobileCreateSignatureSessionRequest sessionRequest = getSessionRequest(request);
+        Timber.log(Log.DEBUG, "Session request: %s", sessionRequest);
         sessionRequest.setHash(hash);
+        Timber.log(Log.DEBUG, "Request hash: %s", hash);
 
         String requestString = MessageUtil.toJsonString(sessionRequest);
+        Timber.log(Log.DEBUG, "Request string: %s", requestString);
 
         Call<MobileCreateSignatureSessionResponse> call = midRestServiceClient.getMobileCreateSession(requestString);
 
@@ -278,12 +302,15 @@ public class MobileSignService extends IntentService {
 
         Response<MobileCreateSignatureSessionResponse> responseWrapper = call.execute();
         if (!responseWrapper.isSuccessful()) {
+            Timber.log(Log.DEBUG, "Mobile-ID session request unsuccessful. Status: %s, message: %s, body: %s, errorBody: %s",
+                    responseWrapper.code(), responseWrapper.message(), responseWrapper.body(), responseWrapper.errorBody());
             if (!isResponseError(responseWrapper, responseWrapper.body(), MobileCreateSignatureSessionResponse.class)) {
                 parseErrorAndBroadcast(responseWrapper);
             }
             return null;
         } else {
             sessionResponse = responseWrapper.body();
+            Timber.log(Log.DEBUG, "Session response: %s", sessionResponse);
         }
 
         return sessionResponse != null ? sessionResponse.getSessionID() : null;
@@ -306,6 +333,7 @@ public class MobileSignService extends IntentService {
     }
 
     private void broadcastFault(RESTServiceFault fault) {
+        Timber.log(Log.DEBUG, "Broadcasting fault: %s", fault.toString());
         Intent localIntent = new Intent(MobileSignConstants.MID_BROADCAST_ACTION)
                 .putExtra(MobileSignConstants.MID_BROADCAST_TYPE_KEY, MobileSignConstants.SERVICE_FAULT)
                 .putExtra(MobileSignConstants.SERVICE_FAULT, RESTServiceFault.toJson(fault));
@@ -313,6 +341,7 @@ public class MobileSignService extends IntentService {
     }
 
     private void broadcastMobileCreateSignatureStatusResponse(MobileCreateSignatureSessionStatusResponse response, Container container) {
+        Timber.log(Log.DEBUG, "Broadcasting create signature status response: %s", response.toString());
         Intent localIntent = new Intent(MobileSignConstants.MID_BROADCAST_ACTION)
                 .putExtra(MobileSignConstants.MID_BROADCAST_TYPE_KEY, MobileSignConstants.CREATE_SIGNATURE_STATUS)
                 .putExtra(MobileSignConstants.CREATE_SIGNATURE_STATUS, MobileIdServiceResponse.toJson(generateMobileIdResponse(response, container)));
@@ -320,6 +349,7 @@ public class MobileSignService extends IntentService {
     }
 
     private void broadcastMobileCreateSignatureResponse(String base64Hash) {
+        Timber.log(Log.DEBUG, "Broadcasting create signature response: %s", base64Hash);
         Intent localIntent = new Intent(MobileSignConstants.MID_BROADCAST_ACTION)
                 .putExtra(MobileSignConstants.MID_BROADCAST_TYPE_KEY, MobileSignConstants.CREATE_SIGNATURE_CHALLENGE)
                 .putExtra(MobileSignConstants.CREATE_SIGNATURE_CHALLENGE, VerificationCodeUtil.calculateMobileIdVerificationCode(Base64.decode(base64Hash)));
@@ -335,16 +365,19 @@ public class MobileSignService extends IntentService {
         mobileIdResponse.setContainer(container);
         mobileIdResponse.setStatus(response.getResult());
         mobileIdResponse.setSignature(response.getSignature().getValue());
+        Timber.log(Log.DEBUG, "Mobile-ID status: %s, signature: %s", mobileIdResponse.getStatus().toString(), mobileIdResponse.getSignature());
         return mobileIdResponse;
     }
 
     private MobileCreateSignatureRequest getRequestFromIntent(Intent intent) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(intent.getStringExtra(CREATE_SIGNATURE_REQUEST), MobileCreateSignatureRequest.class);
+            MobileCreateSignatureRequest mobileCreateSignatureRequest = objectMapper.readValue(intent.getStringExtra(CREATE_SIGNATURE_REQUEST), MobileCreateSignatureRequest.class);
+            Timber.log(Log.DEBUG, "Mobile-ID request from intent: %s", mobileCreateSignatureRequest.toString());
+            return mobileCreateSignatureRequest;
         } catch (JsonProcessingException e) {
             broadcastFault(defaultError(e.getMessage()));
-            Timber.log(Log.ERROR, e, "Failed to process signature request JSON");
+            Timber.log(Log.ERROR, e, "Failed to process signature request JSON. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
         }
 
         return null;
@@ -357,7 +390,7 @@ public class MobileSignService extends IntentService {
         certificateRequest.setRelyingPartyUUID(signatureRequest.getRelyingPartyUUID());
         certificateRequest.setPhoneNumber(signatureRequest.getPhoneNumber());
         certificateRequest.setNationalIdentityNumber(signatureRequest.getNationalIdentityNumber());
-
+        Timber.log(Log.DEBUG, "Mobile-ID certificate request: %s", certificateRequest.toString());
         return certificateRequest;
     }
 
@@ -371,7 +404,7 @@ public class MobileSignService extends IntentService {
         sessionRequest.setHashType(signatureRequest.getHashType());
         sessionRequest.setDisplayText(signatureRequest.getDisplayText());
         sessionRequest.setDisplayTextFormat(signatureRequest.getDisplayTextFormat());
-
+        Timber.log(Log.DEBUG, "Mobile-ID session request: %s", sessionRequest.toString());
         return sessionRequest;
     }
 
@@ -382,7 +415,7 @@ public class MobileSignService extends IntentService {
                 if (!certificateResponse.getResult().equals(MobileCertificateResultType.OK)) {
                     RESTServiceFault fault = new RESTServiceFault(httpResponse.code(), certificateResponse.getResult(), certificateResponse.getTime(), certificateResponse.getTraceId(), certificateResponse.getError());
                     broadcastFault(fault);
-                    Timber.log(Log.DEBUG, "Received Mobile-ID certificate response: %s", certificateResponse.getResult());
+                    Timber.log(Log.DEBUG, "Received Mobile-ID certificate response: %s", certificateResponse.toString());
                     return true;
                 }
             } else if (responseClass.equals(MobileCreateSignatureSessionStatusResponse.class)) {
@@ -390,13 +423,13 @@ public class MobileSignService extends IntentService {
                 if (!sessionStatusResponse.getResult().equals(MobileCreateSignatureSessionStatusResponse.ProcessStatus.OK)) {
                     RESTServiceFault restServiceFault = new RESTServiceFault(httpResponse.code(), sessionStatusResponse.getState(), sessionStatusResponse.getResult(), sessionStatusResponse.getTime(), sessionStatusResponse.getTraceId(), sessionStatusResponse.getError());
                     broadcastFault(restServiceFault);
-                    Timber.log(Log.DEBUG, "Received Mobile-ID session signature response: %s", sessionStatusResponse.getResult());
+                    Timber.log(Log.DEBUG, "Received Mobile-ID session signature response: %s", sessionStatusResponse.toString());
                     return true;
                 }
             }
         } catch (ClassCastException e) {
             broadcastFault(defaultError(e.getMessage()));
-            Timber.log(Log.ERROR, e, "Unable to get correct response type");
+            Timber.log(Log.ERROR, e, "Unable to get correct response type. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
             return true;
         }
 
@@ -404,6 +437,7 @@ public class MobileSignService extends IntentService {
     }
 
     private RESTServiceFault defaultError(@Nullable String detailMessage) {
+        Timber.log(Log.DEBUG, "Default error: %s", detailMessage != null ? detailMessage : "null");
         return new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.GENERAL_ERROR, detailMessage);
     }
 
@@ -412,7 +446,7 @@ public class MobileSignService extends IntentService {
             timeout += millis;
             Thread.sleep(millis);
         } catch (InterruptedException e) {
-            Timber.log(Log.ERROR, e, "Waiting for next call to MID REST API interrupted");
+            Timber.log(Log.ERROR, e, "Waiting for next call to MID REST API interrupted. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
             Thread.currentThread().interrupt();
         }
     }
