@@ -1,7 +1,7 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +14,7 @@ import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,7 +36,6 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
@@ -125,6 +125,13 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         setActivity(state.recipientsSearchState().equals(State.ACTIVE));
         adapter.dataForRecipients(state.recipientsSearchState(), state.recipientsSearchResult(), state.recipientsSearchError(),
                 recipients);
+        if (doneButton != null) {
+            doneButton.setEnabled(!recipients.isEmpty());
+            if (getApplicationContext() != null) {
+                doneButton.setBackgroundColor(recipients.isEmpty() ? Color.GRAY :
+                        ContextCompat.getColor(getApplicationContext(), R.color.bottomNavigation));
+            }
+        }
     }
 
     @Override
