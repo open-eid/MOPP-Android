@@ -118,7 +118,7 @@ final class SignatureUpdateAdapter extends
                     if (ASICS_TIMESTAMP_CONTAINERS.contains(Files.getFileExtension(container.name()).toLowerCase())) {
                         createAsicsTimestampView(builder, container);
                     } else {
-                        createAsicsSignatureView(builder, container);
+                        createRegularSignatureView(builder, container, isNestedContainer);
                     }
                 }
             } else {
