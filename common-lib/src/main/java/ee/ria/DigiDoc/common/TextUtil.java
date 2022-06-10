@@ -5,4 +5,8 @@ public class TextUtil {
     public static String splitTextAndJoin(String text, String delimiter) {
         return text.replaceAll(".(?=.)", "$0" + delimiter);
     }
+
+    public static boolean isOnlyDigits(String text) {
+        return text.chars().allMatch(Character::isDigit);
+    }
 }

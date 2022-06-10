@@ -20,7 +20,7 @@
         <activity
             android:name=".android.Activity"
             android:exported="true"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|locale"
             android:screenOrientation="fullSensor"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
@@ -39,7 +39,7 @@
             android:name="LauncherActivity"
             android:exported="true"
             android:targetActivity=".android.Activity"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|locale"
             android:launchMode="singleInstance" >
 
             <intent-filter>

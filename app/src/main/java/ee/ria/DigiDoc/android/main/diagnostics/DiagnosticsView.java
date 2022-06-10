@@ -48,8 +48,8 @@ import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
-import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
@@ -315,7 +315,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
         sivaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_siva_url_title,
                 configurationProvider.getSivaUrl(), Typeface.DEFAULT));
         tsaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsa_url_title,
-                configurationProvider.getTsaUrl(), Typeface.DEFAULT));
+                (getTsaUrlText() != null && !getTsaUrlText().isEmpty()) ?
+                        getTsaUrlText() : configurationProvider.getTsaUrl(), Typeface.DEFAULT));
         ldapPersonUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_ldap_person_url_title,
                 configurationProvider.getLdapPersonUrl(), Typeface.DEFAULT));
         ldapCorpUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_ldap_corp_url_title,

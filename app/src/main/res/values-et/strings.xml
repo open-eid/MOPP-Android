@@ -225,6 +225,28 @@
     <string name="signature_update_id_card_sign_pin2_invalid_final">Vale PIN2. Järgmise vale sisestusega lukustub PIN.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 on lukus. Mine Minu eID, et avada.</string>
 
+    <!-- Signature Details -->
+    <string name="signature_details_title">Allkirja detailid</string>
+    <string name="signer_certificate_issuer_label">Allkirjastaja sertifikaadi väljaandja</string>
+    <string name="signers_certificate_label">Allkirjastaja sertifikaat</string>
+    <string name="signature_method_label">Allkirja meetod</string>
+    <string name="container_format_label">Ümbriku formaat</string>
+    <string name="signature_format_label">Allkirja formaat</string>
+    <string name="signed_file_count_label">Allkirjastatud failide arv</string>
+    <string name="signature_timestamp_label">Allkirja ajatempel</string>
+    <string name="signature_timestamp_utc_label">Allkirja ajatempel (UTC)</string>
+    <string name="hash_value_of_signature_label">Allkirja sõnumilühend</string>
+    <string name="ts_certificate_issuer_label">Ajatempliteenuse sertifikaadi väljaandja</string>
+    <string name="ts_certificate_label">Ajatempliteenuse sertifikaat</string>
+    <string name="ocsp_certificate_issuer_label">Kehtivuskinnituse sertifikaadi väljaandja</string>
+    <string name="ocsp_certificate_label">Kehtivuskinnituse sertifikaat</string>
+    <string name="ocsp_time_label">Kehtivuskinnituse aeg</string>
+    <string name="ocsp_time_utc_label">Kehtivuskinnituse aeg (UTC)</string>
+    <string name="signers_mobile_time_label">Allkirjastaja telefoni kellaaeg (UTC)</string>
+
+    <!-- Certificate Details -->
+    <string name="certificate_details_title">Sertifikaadi detailid</string>
+
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Krüpteerimiseks või dekrüpteerimiseks vali fail</string>
     <string name="crypto_home_create_button">VALI FAIL</string>
