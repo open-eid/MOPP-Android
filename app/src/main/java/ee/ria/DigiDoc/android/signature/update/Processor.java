@@ -31,6 +31,7 @@ import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
+import ee.ria.DigiDoc.android.signature.detail.SignatureDetailScreen;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
 import ee.ria.DigiDoc.android.utils.SivaUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
@@ -72,6 +73,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Action.SignatureRemoveAction,
                                         Result.SignatureRemoveResult> signatureRemove;
+
+    private final ObservableTransformer<Action.SignatureViewAction,
+            Result.SignatureViewResult> signatureView;
 
     private final ObservableTransformer<Action.SignatureAddAction,
                                         Result.SignatureAddResult> signatureAdd;
@@ -317,6 +321,25 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
         });
 
+        signatureView = upstream -> upstream.flatMap(action -> {
+            File containerFile = action.containerFile();
+            return signatureContainerDataSource
+                    .get(containerFile)
+                    .toObservable()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .map(signedContainerFile -> {
+                        Transaction transaction;
+                        transaction = Transaction.push(SignatureDetailScreen
+                                .create(action.signature(), signedContainerFile));
+                        navigator.execute(transaction);
+                        return Result.SignatureViewResult.idle();
+                    })
+                    .onErrorReturn(ignored -> Result.SignatureViewResult.idle())
+                    .startWithItem(Result.SignatureViewResult.activity());
+        });
+
+
         signatureAdd = upstream -> upstream.switchMap(action -> {
             Integer method = action.method();
             Boolean existingContainer = action.existingContainer();
@@ -383,6 +406,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Intent.DocumentSaveIntent.class).compose(documentSave),
                 shared.ofType(Action.DocumentRemoveAction.class).compose(documentRemove),
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
+                shared.ofType(Action.SignatureViewAction.class).compose(signatureView),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd),
                 shared.ofType(Action.SendAction.class).compose(send)));
     }

@@ -15,7 +15,6 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.webkit.URLUtil;
 import android.widget.Button;
 
 import androidx.annotation.Nullable;
@@ -95,10 +94,6 @@ public final class Activity extends AppCompatActivity {
             rootScreenFactory.intent(intent);
         }
         else {
-          // Avoid blank screen on language change
-          if (savedInstanceState != null) {
-              restartAppWithIntent(intent, false);
-          }
           rootScreenFactory.intent(intent);
         }
 

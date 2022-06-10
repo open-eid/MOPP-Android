@@ -84,6 +84,20 @@ interface Action extends MviAction {
     }
 
     @AutoValue
+    abstract class SignatureViewAction implements Action {
+
+        @Nullable abstract File containerFile();
+
+        @Nullable abstract Signature signature();
+
+        static SignatureViewAction create(@Nullable File containerFile,
+                                         @Nullable Signature signature) {
+            return new AutoValue_Action_SignatureViewAction(containerFile,
+                    signature);
+        }
+    }
+
+    @AutoValue
     abstract class SignatureAddAction implements Action {
 
         @Nullable abstract Integer method();
