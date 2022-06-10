@@ -51,7 +51,7 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
         setButton(BUTTON_NEGATIVE, getContext().getString(android.R.string.cancel),
                 (dialog, which) -> {
                     cancel();
-                    AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.container_signing_cancelled);
+                    AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.signing_cancelled);
                 }
         );
     }

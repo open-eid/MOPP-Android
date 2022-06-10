@@ -23,13 +23,13 @@ import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
+import ee.ria.DigiDoc.android.utils.files.SignedFilesUtil;
 import ee.ria.DigiDoc.android.utils.navigator.ActivityResult;
 import ee.ria.DigiDoc.android.utils.navigator.ActivityResultException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.common.ActivityUtil;
-import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -47,9 +47,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ConfirmationDialog sivaConfirmationDialog = new ConfirmationDialog(Activity.getContext().get(),
             R.string.siva_send_message_dialog, R.id.sivaConfirmationDialog);
 
-    private static final ImmutableSet<String> SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS = ImmutableSet.<String>builder()
-            .add("ddoc", "asics", "scs")
-            .build();
+    private static final ImmutableSet<String> TIMESTAMP_CONTAINER_EXTENSIONS = ImmutableSet.of("asics", "scs");
 
     @Inject Processor(Navigator navigator,
                       SignatureContainerDataSource signatureContainerDataSource,
@@ -85,17 +83,25 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             sivaConfirmationDialog.show();
                             ClickableDialogUtil.makeLinksInDialogClickable(sivaConfirmationDialog);
                             sivaConfirmationDialog.cancels()
-                                    .doOnNext(next -> navigator.execute(Transaction.pop()))
+                                    .flatMap(next -> {
+                                        if (validFiles.size() == 1 && SignedContainer.isAsicsFile(validFiles.get(0).displayName().toLowerCase())) {
+                                            sivaConfirmationDialog.dismiss();
+                                            return addFilesToContainer(navigator, signatureContainerDataSource, application, validFiles, false);
+                                        } else {
+                                            navigator.execute(Transaction.pop());
+                                            return Observable.empty();
+                                        }
+                                    })
                                     .subscribe();
                             sivaConfirmationDialog.positiveButtonClicks()
                                     .flatMap(next -> {
                                         sivaConfirmationDialog.dismiss();
-                                        return addFilesToContainer(navigator, signatureContainerDataSource, application, validFiles);
+                                        return addFilesToContainer(navigator, signatureContainerDataSource, application, validFiles, true);
                                     })
                                     .subscribe();
                             return Observable.just(Result.ChooseFilesResult.create());
                         } else {
-                            return addFilesToContainer(navigator, signatureContainerDataSource, application, validFiles);
+                            return addFilesToContainer(navigator, signatureContainerDataSource, application, validFiles, true);
                         }
                     } else {
                         if (ActivityUtil.isExternalFileOpened(navigator.activity())) {
@@ -132,7 +138,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private Observable<Result.ChooseFilesResult> addFilesToContainer(Navigator navigator,
                                                                      SignatureContainerDataSource signatureContainerDataSource,
                                                                      Application application,
-                                                                     ImmutableList<FileStream> validFiles) {
+                                                                     ImmutableList<FileStream> validFiles,
+                                                                     boolean isSivaConfirmed) {
         return signatureContainerDataSource
                 .addContainer(validFiles, false)
                 .toObservable()
@@ -142,7 +149,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         navigator.execute(Transaction.replace(SignatureUpdateScreen
                                 .create(containerAdd.isExistingContainer(), false,
                                         containerAdd.containerFile(), false,
-                                        false))))
+                                        false,
+                                        SignedContainer.isAsicsFile(containerAdd.containerFile().getName()) ?
+                                                SignedFilesUtil.getContainerDataFile(signatureContainerDataSource,
+                                                        SignedContainer.open(containerAdd.containerFile())) : null, isSivaConfirmed))))
                 .doOnError(throwable1 -> {
                     Timber.log(Log.DEBUG, throwable1, "Add signed container failed");
                     ToastUtil.showGeneralError(application);

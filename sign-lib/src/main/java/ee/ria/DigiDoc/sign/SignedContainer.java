@@ -3,7 +3,6 @@ package ee.ria.DigiDoc.sign;
 import static com.google.common.collect.ImmutableList.sortedCopyOf;
 import static com.google.common.io.Files.getFileExtension;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
@@ -16,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 
 import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -50,8 +49,11 @@ import timber.log.Timber;
 @AutoValue
 public abstract class SignedContainer {
 
+    private static final ImmutableSet<String> ASICS_EXTENSIONS = ImmutableSet.of("asics", "scs");
+
     private static final ImmutableSet<String> EXTENSIONS = ImmutableSet.<String>builder()
-            .add("asice", "asics", "sce", "scs", "adoc", "bdoc", "ddoc", "edoc")
+            .add("asice", "sce", "adoc", "bdoc", "ddoc", "edoc")
+            .addAll(ASICS_EXTENSIONS)
             .build();
     private static final ImmutableSet<String> NON_LEGACY_EXTENSIONS = ImmutableSet.<String>builder()
             .add("asice", "sce", "bdoc")
@@ -176,7 +178,7 @@ public abstract class SignedContainer {
 
         try {
             Container container = container(file());
-          
+
             ee.ria.libdigidocpp.Signature signature = container
                     .prepareWebSignature(certificate.toByteArray(), signatureProfile());
             if (signature != null) {
@@ -489,5 +491,8 @@ public abstract class SignedContainer {
         }
 
         return false;
+    }
+    public static boolean isAsicsFile(String fileName) {
+        return ASICS_EXTENSIONS.contains(Files.getFileExtension(fileName).toLowerCase());
     }
 }
