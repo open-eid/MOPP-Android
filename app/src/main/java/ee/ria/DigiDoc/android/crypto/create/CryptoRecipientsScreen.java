@@ -73,7 +73,6 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     private View activityIndicatorView;
 
     private ImmutableList<Certificate> recipients = ImmutableList.of();
-    private float defaultTextSize = 16;
 
     @SuppressWarnings("WeakerAccess")
     public CryptoRecipientsScreen(Bundle args) {
@@ -174,7 +173,6 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                 public void onGlobalLayout() {
                     searchViewInnerText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     if (getResources() != null) {
-                        defaultTextSize = searchViewInnerText.getTextSize();
                         if (searchViewInnerText.getTextSize() > 40) {
                             searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
                         }

@@ -4,6 +4,7 @@ import static com.google.common.collect.ImmutableList.sortedCopyOf;
 import static com.google.common.io.Files.getFileExtension;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -11,6 +12,7 @@ import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -370,7 +372,8 @@ public abstract class SignedContainer {
     }
 
     private static String toHexString(byte[] bytes) {
-        return Hex.toHexString(bytes).replaceAll("..", "$0 ").trim();
+        return TextUtils.join(" ",
+                Splitter.fixedLength(2).split(Hex.toHexString(bytes))).trim();
     }
 
     private static Signature signature(ee.ria.libdigidocpp.Signature signature) {

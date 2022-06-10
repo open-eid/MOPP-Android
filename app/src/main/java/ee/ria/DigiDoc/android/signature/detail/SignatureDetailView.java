@@ -69,7 +69,11 @@ public final class SignatureDetailView extends CoordinatorLayout {
     }
 
     private String getContainerMimeType(SignedContainer signedContainer) {
-        return Container.open(signedContainer.file().getAbsolutePath()).mediaType();
+        Container container = Container.open(signedContainer.file().getAbsolutePath());
+        if (container == null) {
+            return "";
+        }
+        return container.mediaType();
     }
 
     private int getNumberOfFilesInContainer(SignedContainer signedContainer) {
