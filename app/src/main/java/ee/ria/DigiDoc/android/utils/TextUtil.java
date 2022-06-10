@@ -1,5 +1,8 @@
 package ee.ria.DigiDoc.android.utils;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.style.AlignmentSpan;
@@ -10,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
 
 public class TextUtil {
@@ -48,5 +52,16 @@ public class TextUtil {
                 textView.setText(itemText);
             }
         });
+    }
+
+    public static void handleDetailText(@Nullable String text, View detailView) {
+        if (text != null && !text.isEmpty() && detailView instanceof TextView && detailView.getParent() != null) {
+            ((TextView) detailView).setText(text);
+            ((View) detailView.getParent()).setVisibility(VISIBLE);
+        } else {
+            if (detailView != null && detailView.getParent() != null) {
+                ((View) detailView.getParent()).setVisibility(GONE);
+            }
+        }
     }
 }

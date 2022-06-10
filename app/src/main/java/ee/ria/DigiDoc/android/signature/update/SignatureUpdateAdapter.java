@@ -208,6 +208,10 @@ final class SignatureUpdateAdapter extends
         return documentSaveClicksSubject;
     }
 
+    Observable<Signature> signatureClicks() {
+        return signatureClicksSubject;
+    }
+
     Observable<DataFile> documentRemoveClicks() {
         return documentRemoveClicksSubject;
     }
