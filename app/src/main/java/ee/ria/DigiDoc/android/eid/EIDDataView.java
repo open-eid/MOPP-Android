@@ -38,6 +38,7 @@ public final class EIDDataView extends LinearLayout {
     private final TextView typeView;
     private final TextView givenNamesView;
     private final TextView surnameView;
+    private final TextView personalCodeLabelView;
     private final TextView personalCodeView;
     private final TextView citizenshipView;
     private final View documentNumberLabelView;
@@ -77,6 +78,7 @@ public final class EIDDataView extends LinearLayout {
         typeView = findViewById(R.id.eidHomeDataType);
         givenNamesView = findViewById(R.id.eidHomeDataGivenNames);
         surnameView = findViewById(R.id.eidHomeDataSurname);
+        personalCodeLabelView = findViewById(R.id.eidHomeDataPersonalCodeLabel);
         personalCodeView = findViewById(R.id.eidHomeDataPersonalCode);
         citizenshipView = findViewById(R.id.eidHomeDataCitizenship);
         documentNumberLabelView = findViewById(R.id.eidHomeDataDocumentNumberLabel);
@@ -108,6 +110,7 @@ public final class EIDDataView extends LinearLayout {
         givenNamesView.setContentDescription(data.personalData().givenNames().toLowerCase());
         surnameView.setText(data.personalData().surname());
         surnameView.setContentDescription(data.personalData().surname().toLowerCase());
+        personalCodeLabelView.setContentDescription(personalCodeLabelView.getText().toString().toLowerCase());
         personalCodeView.setText(data.personalData().personalCode());
         personalCodeView.setContentDescription(TextUtil.splitTextAndJoin(data.personalData().personalCode().toLowerCase(), " "));
         citizenshipView.setText(data.personalData().citizenship());

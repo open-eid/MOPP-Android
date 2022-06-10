@@ -73,11 +73,11 @@ public final class CertificateDataView extends LinearLayout {
                 ? R.string.eid_home_certificate_data_button_unblock_auth
                 : R.string.eid_home_certificate_data_button_unblock_sign;
         String buttonChangeAccessibility = type == CertificateType.AUTHENTICATION
-                ? getResources().getString(R.string.eid_home_certificate_data_button_change_auth_accessibility)
-                : getResources().getString(R.string.eid_home_certificate_data_button_change_sign_accessibility);
+                ? (getResources().getString(R.string.eid_home_certificate_data_button_change_auth_accessibility)).toLowerCase()
+                : (getResources().getString(R.string.eid_home_certificate_data_button_change_sign_accessibility)).toLowerCase();
         String buttonUnblockAccessibility = type == CertificateType.AUTHENTICATION
-                ? getResources().getString(R.string.eid_home_certificate_data_button_unblock_auth_accessibility)
-                : getResources().getString(R.string.eid_home_certificate_data_button_unblock_sign_accessibility);
+                ? (getResources().getString(R.string.eid_home_certificate_data_button_unblock_auth_accessibility)).toLowerCase()
+                : (getResources().getString(R.string.eid_home_certificate_data_button_unblock_sign_accessibility)).toLowerCase();
         buttonView.setText(buttonUnblocks ? buttonUnblock : buttonChange);
         buttonView.setContentDescription(buttonUnblocks ? buttonUnblockAccessibility : buttonChangeAccessibility);
         linkView.setText(type == CertificateType.AUTHENTICATION

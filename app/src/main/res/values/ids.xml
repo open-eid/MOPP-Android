@@ -217,6 +217,7 @@
     <item type="id" name="eidHomeDataType" />
     <item type="id" name="eidHomeDataGivenNames" />
     <item type="id" name="eidHomeDataSurname" />
+    <item type="id" name="eidHomeDataPersonalCodeLabel" />
     <item type="id" name="eidHomeDataPersonalCode" />
     <item type="id" name="eidHomeDataCitizenship" />
     <item type="id" name="eidHomeDataDocumentNumberLabel" />
