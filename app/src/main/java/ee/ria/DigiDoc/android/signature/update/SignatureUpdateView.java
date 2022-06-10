@@ -120,6 +120,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             PublishSubject.create();
     private final Subject<Intent.DocumentRemoveIntent> documentRemoveIntentSubject =
             PublishSubject.create();
+    private final Subject<Intent.SignatureViewIntent> signatureViewIntentSubject =
+            PublishSubject.create();
     private final Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject =
             PublishSubject.create();
     private final Subject<Intent.SignatureAddIntent> signatureAddIntentSubject =
@@ -200,7 +202,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), addDocumentsIntent(),
                 documentViewIntent(), documentSaveIntent(), documentRemoveIntent(), signatureRemoveIntent(),
-                signatureAddIntent(), sendIntent());
+                signatureAddIntent(), signatureViewIntent(), sendIntent());
     }
 
     private void checkIfDdocParentContainerIsTimestamped(ImmutableList<Signature> signatures, ImmutableList<DataFile> dataFiles) {
@@ -480,6 +482,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         return documentRemoveIntentSubject;
     }
 
+    private Observable<Intent.SignatureViewIntent> signatureViewIntent() {
+        return adapter.signatureClicks()
+                .map(document -> Intent.SignatureViewIntent.create(containerFile, document));
+    }
+
     private Observable<Intent.SignatureRemoveIntent> signatureRemoveIntent() {
         return signatureRemoveIntentSubject;
     }
@@ -556,6 +563,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         disposables.add(adapter.documentSaveClicks().subscribe(document ->
                 documentSaveIntentSubject.onNext(Intent.DocumentSaveIntent
                         .create((nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, document))));
+        disposables.add(adapter.signatureClicks().subscribe(signature ->
+                signatureViewIntentSubject.onNext(Intent.SignatureViewIntent
+                        .create(containerFile, signature))));
         disposables.add(adapter.documentRemoveClicks().subscribe(document ->
                 documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent
                         .showConfirmation(containerFile, dataFiles, document))));
