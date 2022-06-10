@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.common.TextUtil;
 
 final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -241,13 +242,22 @@ final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((HeaderViewHolder) holder).riaDigiDocVersionTitle.setText(resources.getString(
                     R.string.main_about_ria_digidoc_version_title,
                     BuildConfig.VERSION_NAME));
+            ((HeaderViewHolder) holder).riaDigiDocVersionTitle.setContentDescription(resources.getString(
+                    R.string.main_about_ria_digidoc_version_title,
+                    TextUtil.splitTextAndJoin(BuildConfig.VERSION_NAME, " ")));
         } else if (holder instanceof ComponentViewHolder) {
             Component component = components.get(position - 1);
             ComponentViewHolder componentViewHolder = (ComponentViewHolder) holder;
             componentViewHolder.nameView.setText(resources.getString(
                     component.name()));
+            componentViewHolder.nameView.setContentDescription(getAccessibilityText(
+                    resources.getString(component.name())));
             componentViewHolder.licenseNameView.setText(component.licenseName());
+            componentViewHolder.licenseNameView.setContentDescription(getAccessibilityText(
+                    resources.getString(component.licenseName())));
             componentViewHolder.licenseUrlView.setText(component.licenseUrl());
+            componentViewHolder.licenseUrlView.setContentDescription(getAccessibilityText(
+                    resources.getString(component.licenseUrl())));
         }
     }
 
@@ -263,6 +273,20 @@ final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else {
             return R.layout.main_about_component;
         }
+    }
+
+    private StringBuilder getAccessibilityText(String text) {
+        StringBuilder nameViewAccessibility = new StringBuilder();
+        String[] nameTextSplit = text.split("\\.");
+
+        for (String nameText : nameTextSplit) {
+            if (TextUtil.isOnlyDigits(nameText)) {
+                nameViewAccessibility.append(" .").append(nameText);
+            } else {
+                nameViewAccessibility.append(nameText);
+            }
+        }
+        return nameViewAccessibility;
     }
 
     static final class HeaderViewHolder extends RecyclerView.ViewHolder {
