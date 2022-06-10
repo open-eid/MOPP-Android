@@ -9,4 +9,7 @@ public class TextUtil {
         return TextUtils.join(joinDelimiter, nameComponents);
     }
 
+    public static boolean isOnlyDigits(String text) {
+        return text.chars().allMatch(Character::isDigit);
+    }
 }

@@ -3,7 +3,6 @@ package ee.ria.DigiDoc.android.main.settings;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.accessibility.AccessibilityEvent;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
@@ -48,10 +47,6 @@ public final class SettingsView extends CoordinatorLayout {
 
         if (toolbarTitleView != null) {
             toolbarTitleView.setContentDescription("\u202F");
-            toolbarTitleView.postDelayed(() -> {
-                toolbarTitleView.requestFocus();
-                toolbarTitleView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
-            }, 2500);
         }
     }
 

@@ -57,13 +57,16 @@ final class CryptoCreateAdapter extends
                           boolean dataFilesRemoveEnabled, ImmutableList<Certificate> recipients,
                           boolean recipientsAddEnabled, boolean recipientsRemoveEnabled,
                           boolean encryptSuccessMessageVisible,
-                          boolean decryptSuccessMessageVisible) {
+                          boolean decryptSuccessMessageVisible,
+                          RecyclerView listView) {
         this.dataFilesViewEnabled = dataFilesViewEnabled;
 
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (encryptSuccessMessageVisible) {
+            listView.smoothScrollToPosition(0);
             builder.add(SuccessItem.create(R.string.crypto_create_encrypt_success_message));
         } else if (decryptSuccessMessageVisible) {
+            listView.smoothScrollToPosition(0);
             builder.add(SuccessItem.create(R.string.crypto_create_decrypt_success_message));
         }
         if (name != null) {

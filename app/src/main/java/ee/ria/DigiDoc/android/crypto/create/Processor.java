@@ -307,7 +307,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 return Transaction.push(CryptoCreateScreen.open(file));
                             } else if (SignedContainer.isContainer(file)) {
                                 return Transaction.push(
-                                        SignatureUpdateScreen.create(true, true, file, false, false));
+                                        SignatureUpdateScreen.create(true, true, file, false, false, null, true));
                             } else {
                                 return Transaction.activity(
                                         createViewIntent(application, file, mimeType(file)), null);
@@ -502,6 +502,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         ImmutableList<File> dataFiles = builder.build();
                         File file = fileSystem.generateSignatureContainerFile(
                                 createContainerFileName(dataFiles.get(0).getName()));
+                        if (dataFiles.size() > 1) {
+                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.files_added);
+                        } else {
+                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.file_added);
+                        }
                         return Result.InitialResult.success(file, dataFiles);
                     }
                 })

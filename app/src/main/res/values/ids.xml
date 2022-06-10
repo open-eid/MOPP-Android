@@ -44,6 +44,8 @@
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsFragment" />
     <item type="id" name="mainSettingsOpenAllFileTypes" />
+    <item type="id" name="mainSettingsAccessToSigningService" />
+    <item type="id" name="mainSettingsAccessToTimeStampingService" />
 
     <!-- Main About -->
     <item type="id" name="mainAboutList" />
@@ -77,6 +79,9 @@
     <item type="id" name="mainDiagnosticsCentralConfigurationUpdateDate" />
     <item type="id" name="configurationUpdateButton" />
     <item type="id" name="configurationSaveButton" />
+    <item type="id" name="mainDiagnosticsLogging" />
+    <item type="id" name="mainDiagnosticsSaveLoggingButton" />
+    <item type="id" name="mainDiagnosticsRestartConfirmationDialog" />
 
     <!-- Signature Home -->
     <item type="id" name="signatureHomeCreateButton" />
