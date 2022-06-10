@@ -55,6 +55,11 @@
     <string name="main_diagnostics_configuration_save_diagnostics_button">СОХРАНИТЬ ДИАГНОСТИКУ</string>
     <string name="main_diagnostics_rpuuid_default">назначено по умолчанию</string>
     <string name="main_diagnostics_rpuuid_custom">назначено вручную</string>
+    <string name="main_diagnostics_logging_switch">Активировать одноразовое создание лог-файла</string>
+    <string name="main_diagnostics_save_log">Сохранить лог-файл</string>
+    <string name="main_diagnostics_restart_message">Перезапустите RIA DigiDoc, чтобы активировать ведение журнала. https://www.id.ee/ru/artikkel/generirovanie-log-fajla-v-kliente-digidoc4/</string>
+    <string name="main_diagnostics_restart_message_read_more">Подробнее читайте здесь</string>
+    <string name="main_diagnostics_restart_message_restart_now">Перезапустить приложение?</string>
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Выберите файл для подписания или проверки</string>
@@ -120,6 +125,11 @@
     <string name="signature_update_container_load_error">Ошибка при открывании контейнера</string>
     <string name="signature_update_send_button">ПОДЕЛИТЬСЯ</string>
     <string name="signature_update_signature_add_button">ПОДПИСАТЬ</string>
+
+    <string name="signature_update_signature_type_timestamp">Временные штампы контейнерa</string>
+    <string name="signature_update_timestamp_status_valid">Временной штамп действителен</string>
+    <string name="signature_update_timestamp_status_invalid">Временной штамп недействителен</string>
+    <string name="signature_update_timestamp_status_unknown">Временной штамп неизвестный</string>
 
     <string name="signature_update_signature_add_method">Метод подписи</string>
     <string name="signature_update_signature_method_selected">выбран метод подписи</string>
@@ -428,6 +438,7 @@
     <string name="crypto_content_description">Крипто, вкладка %1$d из %2$d</string>
     <string name="my_eid_content_description">Мой e-ID, вкладка %1$d из %2$d</string>
 
+    <string name="sign_send_content_description">Подписать, вкладка %1$d из %2$d</string>
     <string name="decrypt_content_description">Дешифровать, вкладка %1$d из %2$d</string>
     <string name="decrypt_send_content_description">Поделиться, вкладка %1$d из %2$d</string>
 
@@ -465,7 +476,7 @@
     <string name="container_name_changed">Название контейнера изменено</string>
     <string name="container_name_change_cancelled">Изменение названия контейнера отменено</string>
     <string name="sign_container_button_description">Подписать</string>
-    <string name="container_signing_cancelled">Подписание контейнера прервано</string>
+    <string name="signing_cancelled">Подписание прервано</string>
     <string name="container_signature_added">Контейнер подписан</string>
     <string name="files_encrypted">Файлы зашифрованы</string>
     <string name="file_decrypted">Файл расшифрован</string>

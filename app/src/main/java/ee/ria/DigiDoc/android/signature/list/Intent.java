@@ -36,22 +36,24 @@ interface Intent extends MviIntent {
 
         abstract boolean confirmation();
 
+        abstract boolean isSivaConfirmed();
+
         static ContainerOpenIntent confirmation(File containerFile) {
             boolean isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(
                     ImmutableList.of(FileStream.create(containerFile)));
-            return create(containerFile, isConfirmationNeeded);
+            return create(containerFile, isConfirmationNeeded, false);
         }
 
-        static ContainerOpenIntent open(File containerFile) {
-            return create(containerFile, false);
+        static ContainerOpenIntent open(File containerFile, boolean isSivaConfirmed) {
+            return create(containerFile, false, isSivaConfirmed);
         }
 
         static ContainerOpenIntent cancel() {
-            return create(null, false);
+            return create(null, false, true);
         }
 
-        private static ContainerOpenIntent create(@Nullable File containerFile, boolean confirmation) {
-            return new AutoValue_Intent_ContainerOpenIntent(containerFile, confirmation);
+        private static ContainerOpenIntent create(@Nullable File containerFile, boolean confirmation, boolean isSivaConfirmed) {
+            return new AutoValue_Intent_ContainerOpenIntent(containerFile, confirmation, isSivaConfirmed);
         }
     }
 

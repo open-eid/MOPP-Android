@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 
 import org.apache.commons.io.FilenameUtils;
 import org.bouncycastle.asn1.x500.RDN;
@@ -56,8 +57,11 @@ import timber.log.Timber;
 @AutoValue
 public abstract class SignedContainer {
 
+    private static final ImmutableSet<String> ASICS_EXTENSIONS = ImmutableSet.of("asics", "scs");
+
     private static final ImmutableSet<String> EXTENSIONS = ImmutableSet.<String>builder()
-            .add("asice", "asics", "sce", "scs", "adoc", "bdoc", "ddoc", "edoc")
+            .add("asice", "sce", "adoc", "bdoc", "ddoc", "edoc")
+            .addAll(ASICS_EXTENSIONS)
             .build();
     private static final ImmutableSet<String> NON_LEGACY_EXTENSIONS = ImmutableSet.<String>builder()
             .add("asice", "sce", "bdoc")
@@ -521,5 +525,9 @@ public abstract class SignedContainer {
             Timber.log(Log.ERROR, e, "Unable to check if PDF file is signed");
             return false;
         }
+    }
+
+    public static boolean isAsicsFile(String fileName) {
+        return ASICS_EXTENSIONS.contains(Files.getFileExtension(fileName).toLowerCase());
     }
 }
