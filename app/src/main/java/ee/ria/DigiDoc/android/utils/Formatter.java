@@ -12,6 +12,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ import org.xml.sax.XMLReader;
 import java.text.DateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -54,6 +56,10 @@ public final class Formatter {
                 timeFormat().format(date));
     }
 
+    public String instantAccessibility(Instant instant) {
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toString();
+    }
+
     public CharSequence eidType(EIDType eidType) {
         return resources().getString(EID_TYPES.get(eidType));
     }
@@ -77,6 +83,15 @@ public final class Formatter {
                 .append(date)
                 .append(" | ")
                 .append(validityIndicator);
+    }
+
+    public CharSequence idCardExpiryDateAccessibility(@Nullable CharSequence text, @Nullable LocalDate expiryDate) {
+        if (text == null || expiryDate == null) {
+            return resources().getString(R.string.eid_home_data_expiry_date_invalid);
+        }
+        String[] idCardExpiryDateDescription = text.toString().split("\\|");
+        idCardExpiryDateDescription[0] = expiryDate.toString();
+        return TextUtils.join(" ", idCardExpiryDateDescription);
     }
 
     public CharSequence certificateDataValidity(CertificateType type, Certificate certificate) {
