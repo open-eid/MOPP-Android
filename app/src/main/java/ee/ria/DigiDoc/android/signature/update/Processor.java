@@ -84,7 +84,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     @Inject Processor(SignatureContainerDataSource signatureContainerDataSource,
                       SignatureAddSource signatureAddSource, Application application,
-                      Navigator navigator) {
+                      Navigator navigator,
+                      FileSystem fileSystem) {
         containerLoad = upstream -> upstream.switchMap(action ->
                 signatureContainerDataSource.get(action.containerFile())
                         .toObservable()
@@ -180,7 +181,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 .switchMap(activityResult -> {
                                     android.content.Intent data = activityResult.data();
                                     if (activityResult.resultCode() == RESULT_OK && data != null) {
-                                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(parseGetContentIntent(application.getContentResolver(), data));
+                                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
+                                                parseGetContentIntent(application.getContentResolver(), data, fileSystem.getExternallyOpenedFilesDir()));
                                         ToastUtil.handleEmptyFileError(validFiles, application);
                                         announceAccessibilityFilesAddedEvent(application.getApplicationContext(), validFiles.size());
                                         return signatureContainerDataSource
