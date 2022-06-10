@@ -103,7 +103,26 @@
     <string name="main_about_gson_title">Gson</string>
 
     <!-- Diagnostics -->
-    <string name="main_diagnostics_libdigidocpp_title">libdigidocpp %1$s</string>
+    <string name="main_diagnostics_libdigidocpp_title">libdigidocpp\u0020</string>
+    <string name="main_diagnostics_config_url_title">CONFIG_URL:\u0020</string>
+    <string name="main_diagnostics_tsl_url_title">TSL_URL:\u0020</string>
+    <string name="main_diagnostics_siva_url_title">SIVA_URL:\u0020</string>
+    <string name="main_diagnostics_tsa_url_title">TSA_URL:\u0020</string>
+    <string name="main_diagnostics_ldap_person_url_title">LDAP_PERSON_URL:\u0020</string>
+    <string name="main_diagnostics_ldap_corp_url_title">LDAP_CORP_URL:\u0020</string>
+    <string name="main_diagnostics_mid_proxy_url_title">MID_PROXY_URL:\u0020</string>
+    <string name="main_diagnostics_mid_sk_url_title">MID_SK_URL:\u0020</string>
+    <string name="main_diagnostics_sid_proxy_url_title">SID_PROXY_URL:\u0020</string>
+    <string name="main_diagnostics_sid_sk_url_title">SID_SK_URL:\u0020</string>
+    <string name="main_diagnostics_rpuuid_title">RPUUID:\u0020</string>
+
+    <string name="main_diagnostics_date_title">DATE:\u0020</string>
+    <string name="main_diagnostics_serial_title">SERIAL:\u0020</string>
+    <string name="main_diagnostics_url_title">URL:\u0020</string>
+    <string name="main_diagnostics_version_title">VERSION:\u0020</string>
+
+    <string name="main_diagnostics_logging_key">main_diagnostics_logging</string>
+    <string name="main_diagnostics_logging_running_key">main_diagnostics_logging_running</string>
 
     <!-- EID Home -->
     <string name="eid_home_data_type_description">My e-ID</string>
@@ -115,5 +134,32 @@
     <string name="show_success_notification_key">show_success_notification</string>
 
     <string name="is_ddoc_parent_container_timestamped_key">is_ddoc_parent_container_timestamped</string>
+
+    <!-- Signature details -->
+    <string name="subject_name">Subject Name</string>
+    <string name="country_or_region">Country or Region</string>
+    <string name="organization">Organization</string>
+    <string name="organizational_unit">Organizational Unit</string>
+    <string name="common_name">Common Name</string>
+    <string name="surname">Surname</string>
+    <string name="given_name">Given Name</string>
+    <string name="serial_number">Serial Number</string>
+    <string name="issuer_name">Issuer Name</string>
+    <string name="email_address">Email address</string>
+    <string name="other_name">Other Name</string>
+    <string name="version">Version</string>
+    <string name="signature_algorithm">Signature Algorithm</string>
+    <string name="parameters">Parameters</string>
+    <string name="not_valid_before">Not Valid Before</string>
+    <string name="not_valid_after">Not Valid After</string>
+    <string name="public_key_info">Public Key Info</string>
+    <string name="algorithm">Algorithm</string>
+    <string name="public_key">Public Key</string>
+    <string name="key_usage">Key Usage</string>
+    <string name="signature">Signature</string>
+    <string name="extensions">Extensions</string>
+    <string name="fingerprints">Fingerprints</string>
+    <string name="sha_256">SHA-256</string>
+    <string name="sha_1">SHA-1</string>
 
 </resources>

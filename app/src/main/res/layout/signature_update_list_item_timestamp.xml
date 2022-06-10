@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,9 +16,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/material_list_icon_first_position_margin_start"
         android:layout_marginEnd="@dimen/material_list_icon_first_position_margin_start"
-        android:src="@drawable/ic_icon_signature"
-        android:tint="?android:attr/textColorPrimary"
-        android:contentDescription="@string/signature_update_signature_type_signature" />
+        android:src="@drawable/ic_icon_digitempel"
+        android:contentDescription="@string/signature_update_signature_type_timestamp"
+        app:tint="?android:attr/textColorPrimary" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -31,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:singleLine="false"
+            android:singleLine="true"
             android:ellipsize="end"
             android:textStyle="bold"
             tools:text="Mari Maasikas, 48405050123" />
@@ -48,7 +49,7 @@
                 android:textAppearance="?attr/textAppearanceListItemSecondary"
                 android:singleLine="true"
                 android:ellipsize="end"
-                android:text="@string/signature_update_signature_status_valid"
+                android:text="@string/signature_update_timestamp_status_valid"
                 android:textColor="@color/success" />
 
             <TextView
@@ -73,15 +74,5 @@
             tools:text="Signed 01 June 2015 13:45" />
 
     </LinearLayout>
-
-    <ImageButton
-        android:id="@id/signatureUpdateListSignatureRemoveButton"
-        style="@style/Widget.Application.Button.Borderless.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/material_list_icon_last_position_margin_horizontal"
-        android:src="@drawable/ic_icon_remove"
-        android:tint="@color/error"
-        android:contentDescription="@string/signature_update_signature_remove_button" />
 
 </LinearLayout>
