@@ -27,6 +27,7 @@ import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.common.TextUtil;
 import ee.ria.DigiDoc.crypto.NoInternetConnectionException;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -368,7 +369,7 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((RecipientItem) adapter.items.get(getBindingAdapterPosition())).recipient())
                     .subscribe(adapter.recipientClicksSubject);
-            nameView.setText(item.recipient().commonName());
+            nameView.setText(TextUtil.splitTextAndJoin(item.recipient().commonName(), ",", ", "));
             infoView.setText(itemView.getResources().getString(
                     R.string.crypto_recipient_info, formatter.eidType(item.recipient().type()),
                     formatter.instant(item.recipient().notAfter())));

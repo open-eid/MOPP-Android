@@ -37,6 +37,7 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.common.TextUtil;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignatureStatus;
@@ -476,8 +477,7 @@ final class SignatureUpdateAdapter extends
             clicks(itemView).map(ignored ->
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
-            String name = item.signature().name().replace(",", ", ");
-            nameView.setText(name);
+            nameView.setText(TextUtil.splitTextAndJoin(item.signature().name(), ",", ", "));
             switch (item.signature().status()) {
                 case INVALID:
                     statusView.setText(R.string.signature_update_signature_status_invalid);
