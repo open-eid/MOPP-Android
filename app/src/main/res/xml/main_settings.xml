@@ -21,6 +21,7 @@
     -->
 
     <ee.ria.DigiDoc.android.main.settings.UUIDPreference
+        android:id="@+id/mainSettingsAccessToSigningService"
         android:key="@string/main_settings_uuid_key"
         android:title="@string/main_settings_uuid_title"
         android:widgetLayout="@layout/widget_icon_layout"
@@ -29,19 +30,13 @@
         android:inputType="textPassword" />
 
     <ee.ria.DigiDoc.android.main.settings.TsaUrlPreference
+        android:id="@+id/mainSettingsAccessToTimeStampingService"
         android:inputType="textUri"
         android:key="@string/main_settings_tsa_url_key"
         android:title="@string/main_settings_tsa_url_title"
         android:widgetLayout="@layout/widget_icon_layout"
         android:minHeight="@dimen/material_baseline_grid_6x"
         app:iconSpaceReserved="false" />
-
-    <ee.ria.DigiDoc.android.main.settings.OpenAllFiletypesPreference
-        android:id="@+id/mainSettingsOpenAllFileTypes"
-        android:key="@string/main_settings_open_all_filetypes_key"
-        android:title="@string/main_settings_open_all_filetypes_title"
-        app:iconSpaceReserved="false"
-        android:defaultValue="true"/>
 
     <!--<EditTextPreference-->
         <!--android:key="@string/main_settings_role_key"-->
