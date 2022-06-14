@@ -64,9 +64,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
                 android:minHeight="@dimen/material_baseline_grid_6x"
-                android:accessibilityTraversalAfter="@id/signatureUpdateSmartIdPersonalCodeText"
-                android:maxLength="11" />
+                android:accessibilityTraversalAfter="@id/signatureUpdateSmartIdPersonalCodeText" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

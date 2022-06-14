@@ -2,9 +2,12 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -32,6 +35,7 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.common.TextUtil;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignatureStatus;
@@ -41,6 +45,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static android.view.accessibility.AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED;
 import static androidx.core.content.res.ResourcesCompat.getColor;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.Constants.VOID;
@@ -218,6 +223,9 @@ final class SignatureUpdateAdapter extends
 
         @Override
         void bind(SignatureUpdateAdapter adapter, SuccessItem item) {
+            new Handler(Looper.getMainLooper()).postDelayed(() ->
+                    AccessibilityUtils.sendAccessibilityEvent(itemView.getContext(), TYPE_ANNOUNCEMENT, R.string.container_signature_added),
+                    100);
         }
     }
 
@@ -405,6 +413,17 @@ final class SignatureUpdateAdapter extends
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
             nameView.setText(item.signature().name());
+            StringBuilder nameViewAccessibility = new StringBuilder();
+            String[] nameTextSplit = nameView.getText().toString().split(",");
+
+            for (String nameText : nameTextSplit) {
+                if (TextUtil.isOnlyDigits(nameText)) {
+                    nameViewAccessibility.append(TextUtil.splitTextAndJoin(nameText, " "));
+                } else {
+                    nameViewAccessibility.append(nameText);
+                }
+            }
+            nameView.setContentDescription(nameViewAccessibility.toString().toLowerCase());
             switch (item.signature().status()) {
                 case INVALID:
                     statusView.setText(R.string.signature_update_signature_status_invalid);
