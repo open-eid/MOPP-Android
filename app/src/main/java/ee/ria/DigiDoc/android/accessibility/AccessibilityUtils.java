@@ -94,7 +94,7 @@ public class AccessibilityUtils {
                 String[] personalCodeTextSplit = editText.getText().toString().split(",");
                 for (String nameText : personalCodeTextSplit) {
                     if (TextUtil.isOnlyDigits(nameText)) {
-                        editTextAccessibility.append(TextUtil.splitTextAndJoin(nameText, " "));
+                        editTextAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
                     } else {
                         editTextAccessibility.append(nameText);
                     }
