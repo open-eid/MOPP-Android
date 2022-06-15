@@ -158,7 +158,11 @@ public class MobileSignService extends IntentService {
                     parseErrorAndBroadcast(responseWrapper);
                 } else {
                     MobileCreateSignatureCertificateResponse response = responseWrapper.body();
-                    Timber.log(Log.DEBUG, "MobileCreateSignatureCertificateResponse response body: %s", response != null ? response.toString() : "null");
+                    if (response == null) {
+                        Timber.log(Log.DEBUG, "Mobile-ID signature certificate response is null");
+                        return;
+                    }
+                    Timber.log(Log.DEBUG, "MobileCreateSignatureCertificateResponse response body: %s", response.toString());
                     if (isResponseError(responseWrapper, response, MobileCreateSignatureCertificateResponse.class)) {
                         return;
                     }
