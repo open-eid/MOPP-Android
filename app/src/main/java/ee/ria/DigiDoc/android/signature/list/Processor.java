@@ -15,6 +15,7 @@ import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.LocaleService;
+import ee.ria.DigiDoc.android.utils.files.SignedFilesUtil;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
@@ -69,7 +70,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     navigator.execute(Transaction.push(CryptoCreateScreen.open(containerFile)));
                 } else {
                     navigator.execute(Transaction.push(SignatureUpdateScreen
-                            .create(true, false, containerFile, false, false)));
+                            .create(true, false, containerFile, false, false,
+                                    SignedContainer.isAsicsFile(containerFile.getName()) ?
+                                            SignedFilesUtil.getContainerDataFile(signatureContainerDataSource,
+                                                    SignedContainer.open(containerFile)) : null, action.isSivaConfirmed())));
                     SignedContainer signedContainer = SignedContainer.open(containerFile);
                     sendContainerStatusAccessibilityMessage(signedContainer, application.getApplicationContext(), localeService.applicationConfigurationWithLocale(application.getApplicationContext(),
                             localeService.applicationLocale()));

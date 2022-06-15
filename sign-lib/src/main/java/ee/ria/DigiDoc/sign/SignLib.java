@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.common.io.ByteStreams;
 
@@ -42,15 +43,15 @@ public final class SignLib {
      * <p>
      * Unzips the schema, access certificate and initializes libdigidocpp.
      */
-    public static void init(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent) {
+    public static void init(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent, boolean isLoggingEnabled) {
         initNativeLibs();
         try {
             initSchema(context);
         } catch (IOException e) {
-            Timber.e(e, "Init schema failed");
+            Timber.log(Log.ERROR, e, "Init schema failed");
         }
 
-        initLibDigiDocpp(context, tsaUrlPreferenceKey, configurationProvider, userAgent);
+        initLibDigiDocpp(context, tsaUrlPreferenceKey, configurationProvider, userAgent, isLoggingEnabled);
 
     }
 
@@ -88,15 +89,15 @@ public final class SignLib {
         }
     }
 
-    private static void initLibDigiDocpp(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent) {
+    private static void initLibDigiDocpp(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent, boolean isLoggingEnabled) {
         String path = getSchemaDir(context).getAbsolutePath();
         try {
             Os.setenv("HOME", path, true);
         } catch (ErrnoException e) {
-            Timber.e(e, "Setting HOME environment variable failed");
+            Timber.log(Log.ERROR, e, "Setting HOME environment variable failed");
         }
 
-        initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider);
+        initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider, isLoggingEnabled);
         digidoc.initializeLib(userAgent, path);
     }
 
@@ -105,17 +106,17 @@ public final class SignLib {
         if (!logDirectory.exists()) {
             boolean isDirCreated = logDirectory.mkdir();
             if (isDirCreated) {
-                Timber.d("Directories created for %s", logDirectory.getPath());
+                Timber.log(Log.DEBUG, "Directories created for %s", logDirectory.getPath());
             }
         }
         DigiDocConf.instance().setLogLevel(LIBDIGIDOCPP_LOG_LEVEL);
         DigiDocConf.instance().setLogFile(logDirectory.getAbsolutePath() + File.separator + "libdigidocpp.log");
     }
 
-    private static void initLibDigiDocConfiguration(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider) {
+    private static void initLibDigiDocConfiguration(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, boolean isLoggingEnabled) {
         DigiDocConf conf = new DigiDocConf(getSchemaDir(context).getAbsolutePath());
         Conf.init(conf.transfer());
-        if (BuildConfig.BUILD_TYPE.contentEquals("debug")) {
+        if (isLoggingEnabled || BuildConfig.BUILD_TYPE.contentEquals("debug")) {
             initLibDigiDocLogging(context);
         }
 
@@ -176,7 +177,7 @@ public final class SignLib {
         File schemaDir = new File(context.getCacheDir(), SCHEMA_DIR);
         boolean isDirsCreated = schemaDir.mkdirs();
         if (isDirsCreated) {
-            Timber.d("Directories created for %s", schemaDir.getPath());
+            Timber.log(Log.DEBUG, "Directories created for %s", schemaDir.getPath());
         }
         return schemaDir;
     }

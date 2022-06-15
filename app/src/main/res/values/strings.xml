@@ -56,6 +56,11 @@
     <string name="main_diagnostics_configuration_save_diagnostics_button">SAVE DIAGNOSTICS</string>
     <string name="main_diagnostics_rpuuid_default">is set by default</string>
     <string name="main_diagnostics_rpuuid_custom">is set manually</string>
+    <string name="main_diagnostics_logging_switch">Enable one-time log generation</string>
+    <string name="main_diagnostics_save_log">Save log</string>
+    <string name="main_diagnostics_restart_message">Restart RIA DigiDoc to activate logging. https://www.id.ee/en/article/log-file-generation-in-digidoc4-client/</string>
+    <string name="main_diagnostics_restart_message_read_more">Read more here</string>
+    <string name="main_diagnostics_restart_message_restart_now">Restart now?</string>
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Choose a file to sign or validate</string>
@@ -126,6 +131,11 @@
     <string name="signature_update_send_button">SHARE</string>
     <string name="signature_update_signature_add_button">SIGN</string>
 
+    <string name="signature_update_signature_type_timestamp">Container timestamps</string>
+    <string name="signature_update_timestamp_status_valid">Timestamp is valid</string>
+    <string name="signature_update_timestamp_status_invalid">Timestamp is not valid</string>
+    <string name="signature_update_timestamp_status_unknown">Timestamp is unknown</string>
+
     <string name="signature_update_signature_add_method">Signing method</string>
     <string name="signature_update_signature_method_selected">signing method selected</string>
     <string name="signature_update_signature_add_method_mobile_id">Mobile-ID</string>
@@ -134,8 +144,10 @@
     <string name="signature_update_signature_add_positive_button">SIGN</string>
     <string name="signature_update_signature_add_success">SIGNATURE ADDED</string>
     <string name="signature_update_signature_add_error">Something went wrong</string>
+    <string name="signature_update_signature_add_error_title">Failed to sign container</string>
 
     <string name="signature_update_signature_error_message_additional_information">Additional information</string>
+    <string name="signature_update_signature_error_message_details">Details</string>
 
     <string name="signature_update_signature_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Failed to send request. The number of unsuccessful request from this IP address has been exceeded. Please try again later.</string>
@@ -220,6 +232,28 @@
     <string name="signature_update_id_card_sign_pin2_invalid">Wrong PIN2. You have %1$d attempts left.</string>
     <string name="signature_update_id_card_sign_pin2_invalid_final">Wrong PIN2. You have 1 attempt left until your PIN2 is blocked.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 blocked. Go to My eID to unblock it.</string>
+
+    <!-- Signature Details -->
+    <string name="signature_details_title">Signature details</string>
+    <string name="signer_certificate_issuer_label">Signer\'s Certificate issuer:</string>
+    <string name="signers_certificate_label">Signer\'s Certificate:</string>
+    <string name="signature_method_label">Signature method:</string>
+    <string name="container_format_label">Container format:</string>
+    <string name="signature_format_label">Signature format:</string>
+    <string name="signed_file_count_label">Signed file count:</string>
+    <string name="signature_timestamp_label">Signature timestamp:</string>
+    <string name="signature_timestamp_utc_label">Signature timestamp (UTC):</string>
+    <string name="hash_value_of_signature_label">Hash value of signature:</string>
+    <string name="ts_certificate_issuer_label">TS Certificate issuer:</string>
+    <string name="ts_certificate_label">TS Certificate:</string>
+    <string name="ocsp_certificate_issuer_label">OCSP Certificate issuer:</string>
+    <string name="ocsp_certificate_label">OCSP Certificate:</string>
+    <string name="ocsp_time_label">OCSP time:</string>
+    <string name="ocsp_time_utc_label">OCSP time (UTC):</string>
+    <string name="signers_mobile_time_label">Signer\'s mobile time:</string>
+
+    <!-- Certificate Details -->
+    <string name="certificate_details_title">Certificate details</string>
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Choose a file to encrypt or decrypt</string>
@@ -408,6 +442,7 @@
     <string name="crypto_content_description">Crypto, tab %1$d of %2$d</string>
     <string name="my_eid_content_description">My e-ID, tab %1$d of %2$d</string>
 
+    <string name="sign_send_content_description">Sign, tab %1$d of %2$d</string>
     <string name="decrypt_content_description">Decrypt, tab %1$d of %2$d</string>
     <string name="decrypt_send_content_description">Share, tab %1$d of %2$d</string>
 
@@ -443,7 +478,7 @@
     <string name="container_name_changed">Container name changed</string>
     <string name="container_name_change_cancelled">Container name change cancelled</string>
     <string name="sign_container_button_description">Sign container</string>
-    <string name="container_signing_cancelled">Container signing cancelled</string>
+    <string name="signing_cancelled">Signing cancelled</string>
     <string name="container_signature_added">Container signature added</string>
     <string name="files_encrypted">Files encrypted</string>
     <string name="file_decrypted">File decrypted</string>

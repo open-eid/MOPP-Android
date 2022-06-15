@@ -56,6 +56,11 @@
     <string name="main_diagnostics_configuration_save_diagnostics_button">SALVESTA DIAGNOSTIKA</string>
     <string name="main_diagnostics_rpuuid_default">vaikimisi määratud</string>
     <string name="main_diagnostics_rpuuid_custom">käsitsi määratud</string>
+    <string name="main_diagnostics_logging_switch">Aktiveeri ühekordne logifaili genereerimine</string>
+    <string name="main_diagnostics_save_log">Salvesta logifail</string>
+    <string name="main_diagnostics_restart_message">Logimise aktiveerimiseks taaskäivita RIA DigiDoc. https://www.id.ee/artikkel/logifaili-genereerimine-digidoc4-kliendis/</string>
+    <string name="main_diagnostics_restart_message_read_more">Loe täpsemalt siit</string>
+    <string name="main_diagnostics_restart_message_restart_now">Taaskäivita rakendus?</string>
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Allkirjastamiseks või kontrollimiseks vali fail</string>
@@ -126,6 +131,11 @@
     <string name="signature_update_send_button">JAGA</string>
     <string name="signature_update_signature_add_button">ALLKIRJASTA</string>
 
+    <string name="signature_update_signature_type_timestamp">Ümbriku ajatemplid</string>
+    <string name="signature_update_timestamp_status_valid">Ajatempel on kehtiv</string>
+    <string name="signature_update_timestamp_status_invalid">Ajatempel ei ole kehtiv</string>
+    <string name="signature_update_timestamp_status_unknown">Ajatempel on teadmata</string>
+
     <string name="signature_update_signature_add_method">Allkirjastamise meetod</string>
     <string name="signature_update_signature_method_selected">allkirjastamise meetod valitud</string>
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>
@@ -134,8 +144,10 @@
     <string name="signature_update_signature_add_positive_button">ALLKIRJASTA</string>
     <string name="signature_update_signature_add_success">ALLKIRI LISATUD</string>
     <string name="signature_update_signature_add_error">Midagi läks valesti</string>
+    <string name="signature_update_signature_add_error_title">Ümbriku allkirjastamine ebaõnnestus</string>
 
     <string name="signature_update_signature_error_message_additional_information">Loe täpsemalt siit</string>
+    <string name="signature_update_signature_error_message_details">Detailid</string>
 
     <string name="signature_update_signature_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Päringu saatmine ebaõnnestus. Sellelt IP-aadressilt on ebaõnnestunud päringute arv ületatud. Palun proovige mõne aja pärast uuesti.</string>
@@ -220,6 +232,28 @@
     <string name="signature_update_id_card_sign_pin2_invalid">Vale PIN2. Saad PIN2-koodi sisestada veel %1$d korda.</string>
     <string name="signature_update_id_card_sign_pin2_invalid_final">Vale PIN2. Järgmise vale sisestusega lukustub PIN.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 on lukus. Mine Minu eID, et avada.</string>
+
+    <!-- Signature Details -->
+    <string name="signature_details_title">Allkirja detailid</string>
+    <string name="signer_certificate_issuer_label">Allkirjastaja sertifikaadi väljaandja</string>
+    <string name="signers_certificate_label">Allkirjastaja sertifikaat</string>
+    <string name="signature_method_label">Allkirja meetod</string>
+    <string name="container_format_label">Ümbriku formaat</string>
+    <string name="signature_format_label">Allkirja formaat</string>
+    <string name="signed_file_count_label">Allkirjastatud failide arv</string>
+    <string name="signature_timestamp_label">Allkirja ajatempel</string>
+    <string name="signature_timestamp_utc_label">Allkirja ajatempel (UTC)</string>
+    <string name="hash_value_of_signature_label">Allkirja sõnumilühend</string>
+    <string name="ts_certificate_issuer_label">Ajatempliteenuse sertifikaadi väljaandja</string>
+    <string name="ts_certificate_label">Ajatempliteenuse sertifikaat</string>
+    <string name="ocsp_certificate_issuer_label">Kehtivuskinnituse sertifikaadi väljaandja</string>
+    <string name="ocsp_certificate_label">Kehtivuskinnituse sertifikaat</string>
+    <string name="ocsp_time_label">Kehtivuskinnituse aeg</string>
+    <string name="ocsp_time_utc_label">Kehtivuskinnituse aeg (UTC)</string>
+    <string name="signers_mobile_time_label">Allkirjastaja telefoni kellaaeg (UTC)</string>
+
+    <!-- Certificate Details -->
+    <string name="certificate_details_title">Sertifikaadi detailid</string>
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Krüpteerimiseks või dekrüpteerimiseks vali fail</string>
@@ -408,6 +442,7 @@
     <string name="crypto_content_description">Krüpto, vahekaart %1$d / %2$d</string>
     <string name="my_eid_content_description">Minu eID, vahekaart %1$d / %2$d</string>
 
+    <string name="sign_send_content_description">Allkirjasta, vahekaart %1$d / %2$d</string>
     <string name="decrypt_content_description">Dekrüpteeri, vahekaart %1$d / %2$d</string>
     <string name="decrypt_send_content_description">Jaga, vahekaart %1$d / %2$d</string>
 
@@ -446,7 +481,7 @@
     <string name="container_name_changed">Ümbriku nimi muudetud</string>
     <string name="container_name_change_cancelled">Ümbriku nime muutmine katkestatud</string>
     <string name="sign_container_button_description">Allkirjasta</string>
-    <string name="container_signing_cancelled">Ümbriku allkirjastamine katkestatud</string>
+    <string name="signing_cancelled">Allkirjastamine katkestatud</string>
     <string name="container_signature_added">Ümbrikule allkiri lisatud</string>
     <string name="files_encrypted">Failid krüpteeritud</string>
     <string name="file_decrypted">Fail dekrüpteeritud</string>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -22,11 +23,11 @@ public final class HomeMenuView extends NestedScrollView {
 
     private final View closeButton;
 
-    private final TextView helpView;
-    private final TextView recentView;
-    private final TextView settingsView;
-    private final TextView aboutView;
-    private final TextView diagnosticsView;
+    private final Button helpView;
+    private final Button recentView;
+    private final Button settingsView;
+    private final Button aboutView;
+    private final Button diagnosticsView;
     private final RadioGroup localeView;
 
     public HomeMenuView(@NonNull Context context) {

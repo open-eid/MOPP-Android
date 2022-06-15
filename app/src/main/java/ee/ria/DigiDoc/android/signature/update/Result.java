@@ -241,6 +241,31 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
+    abstract class SignatureViewResult implements Result {
+
+        @State abstract String state();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .documentViewState(state())
+                    .build();
+        }
+
+        static SignatureViewResult activity() {
+            return create(State.ACTIVE);
+        }
+
+        static SignatureViewResult idle() {
+            return create(State.IDLE);
+        }
+
+        private static SignatureViewResult create(@State String state) {
+            return new AutoValue_Result_SignatureViewResult(state);
+        }
+    }
+
+    @AutoValue
     abstract class SignatureRemoveResult implements Result {
 
         @Nullable abstract Signature showConfirmation();

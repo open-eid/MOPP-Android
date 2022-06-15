@@ -20,6 +20,8 @@
 
 package ee.ria.DigiDoc.smartid.rest;
 
+import android.util.Log;
+
 import org.bouncycastle.util.encoders.Base64;
 
 import java.net.URI;
@@ -48,7 +50,7 @@ public class ServiceGenerator {
 
     public static <S> S createService(Class<S> serviceClass, String sidSignServiceUrl, ArrayList<String> certBundle)
             throws CertificateException, NoSuchAlgorithmException {
-        Timber.d("Creating new retrofit instance");
+        Timber.log(Log.DEBUG, "Creating new retrofit instance");
         return new Retrofit.Builder()
                 .baseUrl(sidSignServiceUrl + "/")
                 .addConverterFactory(ScalarsConverterFactory.create())
@@ -60,7 +62,7 @@ public class ServiceGenerator {
 
     private static OkHttpClient buildHttpClient(String sidSignServiceUrl, ArrayList<String> certBundle)
             throws CertificateException, NoSuchAlgorithmException {
-        Timber.d("Building new httpClient");
+        Timber.log(Log.DEBUG, "Building new httpClient");
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .certificatePinner(trustedCertificates(sidSignServiceUrl, certBundle))
@@ -71,7 +73,7 @@ public class ServiceGenerator {
 
     private static void addLoggingInterceptor(OkHttpClient.Builder httpClientBuilder) {
         if (BuildConfig.DEBUG) {
-            Timber.d("Adding logging interceptor to HTTP client");
+            Timber.log(Log.DEBUG, "Adding logging interceptor to HTTP client");
             if (loggingInterceptor == null) {
                 loggingInterceptor = new HttpLoggingInterceptor();
                 loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
@@ -88,7 +90,7 @@ public class ServiceGenerator {
         try {
             uri = new URI(sidSignServiceUrl);
         } catch (URISyntaxException e) {
-            Timber.e(e, "Failed to convert URI from URL");
+            Timber.log(Log.ERROR, e, "Failed to convert URI from URL");
             return new CertificatePinner.Builder().build();
         }
         String[] sha256Certificates = new String[certBundle.size()];
@@ -97,7 +99,7 @@ public class ServiceGenerator {
                 sha256Certificates[i] = "sha256/" + getSHA256FromCertificate(CertificateUtil.x509Certificate(Base64.decode(certBundle.get(i))));
             }
         } catch (CertificateException | NoSuchAlgorithmException e) {
-            Timber.e(e, "Failed to convert to Certificate object");
+            Timber.log(Log.ERROR, e, "Failed to convert to Certificate object");
             throw e;
         }
         return new CertificatePinner.Builder()
@@ -112,7 +114,7 @@ public class ServiceGenerator {
             byte[] base64EncodedHash = Base64.encode(encodedHash);
             return new String(base64EncodedHash, StandardCharsets.UTF_8);
         } catch (NoSuchAlgorithmException e) {
-            Timber.e(e, "Unable to get instance of algorithm");
+            Timber.log(Log.ERROR, e, "Unable to get instance of algorithm");
             throw e;
         }
     }
