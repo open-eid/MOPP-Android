@@ -3,9 +3,6 @@ package ee.ria.DigiDoc.android.utils;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.os.Build;
-import androidx.annotation.ColorInt;
-import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spannable;
@@ -16,6 +13,10 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
+
 import com.google.common.collect.ImmutableMap;
 
 import org.xml.sax.XMLReader;
@@ -23,9 +24,10 @@ import org.xml.sax.XMLReader;
 import java.text.DateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -56,8 +58,14 @@ public final class Formatter {
                 timeFormat().format(date));
     }
 
-    public String instantAccessibility(Instant instant) {
-        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toString();
+    public String instantAccessibility(Instant instant, boolean withTime) {
+        Locale locale = Locale.forLanguageTag("et");
+        DateTimeFormatter dtfPattern = DateTimeFormatter.ofPattern("dd-MMM yyyy HH:mm:ss", locale);
+        if (!withTime) {
+            dtfPattern = DateTimeFormatter.ofPattern("dd-MMM yyyy", locale);
+        }
+        String dateTimeFormat = instant.atZone(ZoneId.systemDefault()).format(dtfPattern);
+        return String.format(locale, "%s", dateTimeFormat);
     }
 
     public CharSequence eidType(EIDType eidType) {
@@ -90,7 +98,7 @@ public final class Formatter {
             return resources().getString(R.string.eid_home_data_expiry_date_invalid);
         }
         String[] idCardExpiryDateDescription = text.toString().split("\\|");
-        idCardExpiryDateDescription[0] = expiryDate.toString();
+        idCardExpiryDateDescription[0] = instantAccessibility(expiryDate.atStartOfDay().toInstant(ZoneOffset.UTC), false);
         return TextUtils.join(" ", idCardExpiryDateDescription);
     }
 
