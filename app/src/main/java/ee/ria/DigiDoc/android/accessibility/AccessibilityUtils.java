@@ -30,6 +30,11 @@ public class AccessibilityUtils {
         sendAccessibilityEvent(context, eventType, context.getString(messageResId));
     }
 
+    public static void interrupt(Context context) {
+        AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(ACCESSIBILITY_SERVICE);
+        accessibilityManager.interrupt();
+    }
+
     public static void sendAccessibilityEvent(Context context, int eventType, CharSequence message) {
         AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(ACCESSIBILITY_SERVICE);
         if (accessibilityManager.isEnabled()) {

@@ -261,6 +261,8 @@ final class SignatureUpdateAdapter extends
         static UpdateViewHolder create(int viewType, View itemView) {
             switch (viewType) {
                 case R.layout.signature_update_list_item_success:
+                    AccessibilityUtils.interrupt(itemView.getContext());
+                    AccessibilityUtils.sendAccessibilityEvent(itemView.getContext(), TYPE_ANNOUNCEMENT, R.string.container_signature_added);
                     return new SuccessViewHolder(itemView);
                 case R.layout.signature_update_list_item_status:
                     return new StatusViewHolder(itemView);
@@ -293,11 +295,7 @@ final class SignatureUpdateAdapter extends
         }
 
         @Override
-        void bind(SignatureUpdateAdapter adapter, SuccessItem item) {
-            new Handler(Looper.getMainLooper()).postDelayed(() ->
-                    AccessibilityUtils.sendAccessibilityEvent(itemView.getContext(), TYPE_ANNOUNCEMENT, R.string.container_signature_added),
-                    100);
-        }
+        void bind(SignatureUpdateAdapter adapter, SuccessItem item) {}
     }
 
     static final class EmptyViewHolder extends UpdateViewHolder<EmptyItem> {
