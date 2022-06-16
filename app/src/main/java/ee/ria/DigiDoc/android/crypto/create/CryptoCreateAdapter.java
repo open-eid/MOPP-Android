@@ -384,7 +384,7 @@ final class CryptoCreateAdapter extends
 
             for (String nameText : nameTextSplit) {
                 if (TextUtil.isOnlyDigits(nameText)) {
-                    nameViewAccessibility.append(TextUtil.splitTextAndJoin(nameText, " "));
+                    nameViewAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
                 } else {
                     nameViewAccessibility.append(nameText);
                 }
