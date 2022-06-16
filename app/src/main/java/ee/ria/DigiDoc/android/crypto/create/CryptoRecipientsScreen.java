@@ -3,6 +3,9 @@ package ee.ria.DigiDoc.android.crypto.create;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +72,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     private View activityIndicatorView;
 
     private ImmutableList<Certificate> recipients = ImmutableList.of();
+    private float defaultTextSize = 16;
 
     @SuppressWarnings("WeakerAccess")
     public CryptoRecipientsScreen(Bundle args) {
@@ -176,9 +180,30 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                 public void onGlobalLayout() {
                     searchViewInnerText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     if (getResources() != null) {
+                        defaultTextSize = searchViewInnerText.getTextSize();
+                        if (searchViewInnerText.getTextSize() > 40) {
+                            searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
+                        }
                         searchViewInnerText.setLayoutParams(
-                                new LinearLayout.LayoutParams(searchView.getWidth(), DisplayUtil.getDisplayMetricsDpToInt(getResources(), 48))
+                                new LinearLayout.LayoutParams((int) (searchView.getWidth() / 1.5), DisplayUtil.getDisplayMetricsDpToInt(getResources(), 70))
                         );
+
+                        searchViewInnerText.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                if (s.length() == 0) {
+                                    searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
+                                } else {
+                                    searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50);
+                                }
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {}
+                        });
                     }
                 }
             });

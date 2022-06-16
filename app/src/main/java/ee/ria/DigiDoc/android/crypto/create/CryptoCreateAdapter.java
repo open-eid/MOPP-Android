@@ -378,9 +378,9 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((RecipientItem) adapter.items.get(getBindingAdapterPosition())).recipient())
                     .subscribe(adapter.recipientClicksSubject);
-            nameView.setText(item.recipient().commonName());
+            nameView.setText(TextUtil.splitTextAndJoin(item.recipient().commonName(), ",", ", "));
             StringBuilder nameViewAccessibility = new StringBuilder();
-            String[] nameTextSplit = nameView.getText().toString().split(",");
+            String[] nameTextSplit = nameView.getText().toString().split(", ");
 
             for (String nameText : nameTextSplit) {
                 if (TextUtil.isOnlyDigits(nameText)) {

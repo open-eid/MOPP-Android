@@ -244,7 +244,7 @@ final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     BuildConfig.VERSION_NAME));
             ((HeaderViewHolder) holder).riaDigiDocVersionTitle.setContentDescription(resources.getString(
                     R.string.main_about_ria_digidoc_version_title,
-                    TextUtil.splitTextAndJoin(BuildConfig.VERSION_NAME, " ")));
+                    TextUtil.splitTextAndJoin(BuildConfig.VERSION_NAME, " ", " ")));
         } else if (holder instanceof ComponentViewHolder) {
             Component component = components.get(position - 1);
             ComponentViewHolder componentViewHolder = (ComponentViewHolder) holder;
