@@ -395,20 +395,27 @@ public abstract class SignedContainer {
 
         String tsCertificateIssuer = "";
         X509Certificate tsCertificate = null;
-        if (x509Certificate(signature.TimeStampCertificateDer()) != null) {
-            tsCertificateIssuer = getX509CertificateIssuer(x509Certificate(signature.TimeStampCertificateDer()));
+        if (signature.TimeStampCertificateDer() != null && signature.TimeStampCertificateDer().length > 0) {
             tsCertificate = x509Certificate(signature.TimeStampCertificateDer());
+            tsCertificateIssuer = getX509CertificateIssuer(tsCertificate);
         }
 
         String ocspCertificateIssuer = "";
         X509Certificate ocspCertificate = null;
-        if (x509Certificate(signature.OCSPCertificateDer()) != null) {
-            ocspCertificateIssuer = getX509CertificateIssuer(x509Certificate(signature.OCSPCertificateDer()));
+        if (signature.OCSPCertificateDer() != null && signature.OCSPCertificateDer().length > 0) {
             ocspCertificate = x509Certificate(signature.OCSPCertificateDer());
+            ocspCertificateIssuer = getX509CertificateIssuer(ocspCertificate);
         }
 
-        String ocspTime = getFormattedDateTime(signature.OCSPProducedAt(), false);
-        String ocspTimeUTC = getFormattedDateTime(signature.OCSPProducedAt(), true);
+        String ocspTime = "";
+        String ocspTimeUTC = "";
+        if (!signature.OCSPProducedAt().isEmpty()) {
+            ocspTime = getFormattedDateTime(signature.OCSPProducedAt(), false);
+        }
+        if (!signature.OCSPProducedAt().isEmpty()) {
+            ocspTimeUTC = getFormattedDateTime(signature.OCSPProducedAt(), true);
+        }
+
         String signersMobileTimeUTC = getFormattedDateTime(signature.claimedSigningTime(), true);
 
         return Signature.create(id, name, createdAt, status, profile, signersCertificateIssuer,

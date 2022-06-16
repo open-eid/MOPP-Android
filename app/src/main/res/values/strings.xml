@@ -277,7 +277,6 @@
     <string name="crypto_create_encrypt_button_description">Encrypt document</string>
     <string name="crypto_create_encrypt_error_no_recipients">No recipients specified</string>
     <string name="crypto_create_decrypt_button">DECRYPT</string>
-    <string name="crypto_create_decrypt_button_description">Decrypt document</string>
     <string name="crypto_create_decrypt_positive_button">Decrypt</string>
     <string name="crypto_create_send_button">SHARE</string>
     <string name="crypto_create_error">Something went wrong with encryption</string>
@@ -437,8 +436,8 @@
     <string name="crypto_content_description">Crypto, tab %1$d of %2$d</string>
     <string name="my_eid_content_description">My e-ID, tab %1$d of %2$d</string>
 
+    <string name="decrypt_content_description">Decrypt document, tab %1$d of %2$d</string>
     <string name="sign_send_content_description">Sign, tab %1$d of %2$d</string>
-    <string name="decrypt_content_description">Decrypt, tab %1$d of %2$d</string>
     <string name="decrypt_send_content_description">Share, tab %1$d of %2$d</string>
 
     <string name="yes_button">YES</string>
@@ -467,6 +466,7 @@
     <string name="recipients_found">Recipients found</string>
     <string name="recipient_found">Recipient found</string>
     <string name="recipient_added">Recipient added</string>
+    <string name="recipients_added">Recipients added</string>
     <string name="recipient_removed">Recipient removed</string>
     <string name="recipient_addition_cancelled">Recipient addition cancelled</string>
     <string name="add_recipient">Add recipient</string>

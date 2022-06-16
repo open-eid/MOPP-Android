@@ -1,9 +1,12 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -27,6 +30,7 @@ import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.common.TextUtil;
 import ee.ria.DigiDoc.crypto.NoInternetConnectionException;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -279,6 +283,12 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((AddButtonItem) adapter.items.get(getBindingAdapterPosition())).text())
                     .subscribe(adapter.addButtonClicksSubject);
+            if (buttonView.getText() == buttonView.getResources().getString(R.string.crypto_create_data_files_add_button)) {
+                new Handler(Looper.getMainLooper()).postDelayed(() ->
+                        itemView.findViewById(R.id.cryptoCreateAddButton)
+                                .sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED),
+                        2500);
+            }
         }
     }
 
@@ -368,7 +378,18 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((RecipientItem) adapter.items.get(getBindingAdapterPosition())).recipient())
                     .subscribe(adapter.recipientClicksSubject);
-            nameView.setText(item.recipient().commonName());
+            nameView.setText(TextUtil.splitTextAndJoin(item.recipient().commonName(), ",", ", "));
+            StringBuilder nameViewAccessibility = new StringBuilder();
+            String[] nameTextSplit = nameView.getText().toString().split(", ");
+
+            for (String nameText : nameTextSplit) {
+                if (TextUtil.isOnlyDigits(nameText)) {
+                    nameViewAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
+                } else {
+                    nameViewAccessibility.append(nameText);
+                }
+            }
+            nameView.setContentDescription(nameViewAccessibility.toString().toLowerCase());
             infoView.setText(itemView.getResources().getString(
                     R.string.crypto_recipient_info, formatter.eidType(item.recipient().type()),
                     formatter.instant(item.recipient().notAfter())));
@@ -377,7 +398,8 @@ final class CryptoCreateAdapter extends
                     formatter.instantAccessibility(item.recipient().notAfter(), true)));
 
             String removeRecipientDescription = removeButton.getResources().getString(R.string.crypto_recipient_remove_button);
-            removeButton.setContentDescription(removeRecipientDescription + " " + nameView.getText());
+            removeButton.setContentDescription(removeRecipientDescription + " " +
+                    nameView.getText().toString().toLowerCase());
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton)
                     .map(ignored ->
@@ -388,9 +410,11 @@ final class CryptoCreateAdapter extends
             addButton.setText(item.addButtonEnabled()
                     ? R.string.crypto_recipient_add_button
                     : R.string.crypto_recipient_add_button_added);
+            addButton.setContentDescription(addButton.getText().toString().toLowerCase());
             if (item.addButtonEnabled()) {
                 String addRecipientDescription = addButton.getResources().getString(R.string.add_recipient);
-                addButton.setContentDescription(addRecipientDescription + " " + nameView.getText());
+                addButton.setContentDescription(addRecipientDescription + " " +
+                        nameViewAccessibility.toString().toLowerCase());
             }
             clicks(addButton)
                     .map(ignored ->
