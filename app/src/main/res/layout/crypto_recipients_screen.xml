@@ -46,7 +46,8 @@
             style="@style/Widget.Application.Button.Container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/crypto_recipients_done_button" />
+            android:text="@string/crypto_recipients_done_button"
+            android:contentDescription="@string/crypto_recipients_done_button" />
 
         <FrameLayout
             android:id="@id/activityOverlay"

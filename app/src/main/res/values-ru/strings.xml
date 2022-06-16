@@ -278,7 +278,6 @@
     <string name="crypto_create_encrypt_button_description">Зашифровать документ</string>
     <string name="crypto_create_encrypt_error_no_recipients">Не добавлено ни одного получателя</string>
     <string name="crypto_create_decrypt_button">ДЕШИФРОВАТЬ</string>
-    <string name="crypto_create_decrypt_button_description">Дешифрировать документ</string>
     <string name="crypto_create_decrypt_positive_button">Дешифровать</string>
     <string name="crypto_create_send_button">ПОДЕЛИТЬСЯ</string>
     <string name="crypto_create_error">Что-то пошло не так с шифрованием</string>
@@ -438,8 +437,8 @@
     <string name="crypto_content_description">Крипто, вкладка %1$d из %2$d</string>
     <string name="my_eid_content_description">Мой e-ID, вкладка %1$d из %2$d</string>
 
+    <string name="decrypt_content_description">Дешифрировать документ, вкладка %1$d из %2$d</string>
     <string name="sign_send_content_description">Подписать, вкладка %1$d из %2$d</string>
-    <string name="decrypt_content_description">Дешифровать, вкладка %1$d из %2$d</string>
     <string name="decrypt_send_content_description">Поделиться, вкладка %1$d из %2$d</string>
 
     <string name="yes_button">ДА</string>
@@ -470,6 +469,7 @@
     <string name="recipients_found">Получатели найдены</string>
     <string name="recipient_found">Получатель найден</string>
     <string name="recipient_added">Получатель добавлен</string>
+    <string name="recipients_added">Получатели добавлены</string>
     <string name="recipient_removed">Получатель удален</string>
     <string name="recipient_addition_cancelled">Добавление получателя отменено</string>
     <string name="add_recipient">Добавить получателя</string>

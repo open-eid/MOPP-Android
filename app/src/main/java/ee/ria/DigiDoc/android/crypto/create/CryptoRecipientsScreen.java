@@ -1,17 +1,10 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-import static ee.ria.DigiDoc.android.Constants.VOID;
-
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.SpannableString;
 import android.text.TextWatcher;
-import android.text.style.RelativeSizeSpan;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +17,7 @@ import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,6 +38,11 @@ import ee.ria.DigiDoc.common.Certificate;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
+
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.Constants.VOID;
 
 public final class CryptoRecipientsScreen extends Controller implements Screen,
         MviView<Intent, ViewState>, Navigator.BackButtonClickListener {
@@ -83,11 +82,14 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
     private Observable<Intent.RecipientsScreenUpButtonClickIntent>
             recipientsScreenUpButtonClickIntent() {
-        return Observable.merge(
-                navigationClicks(toolbarView)
-                        .map(ignored -> Intent.RecipientsScreenUpButtonClickIntent.create()),
-                clicks(doneButton)
-                        .map(ignored -> Intent.RecipientsScreenUpButtonClickIntent.create()));
+        return navigationClicks(toolbarView)
+                .map(ignored -> Intent.RecipientsScreenUpButtonClickIntent.create());
+    }
+
+    private Observable<Intent.RecipientsScreenDoneButtonClickIntent>
+            recipientsScreenDoneButtonClickIntent() {
+        return clicks(doneButton)
+                .map(ignored -> Intent.RecipientsScreenDoneButtonClickIntent.create());
     }
 
     private Observable<Intent.RecipientsSearchIntent> recipientsSearchIntent() {
@@ -112,8 +114,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
     @Override
     public Observable<Intent> intents() {
-        return Observable.merge(recipientsScreenUpButtonClickIntent(), recipientsSearchIntent(),
-                recipientAddIntent(), recipientRemoveIntent());
+        return Observable.mergeArray(recipientsScreenUpButtonClickIntent(), recipientsScreenDoneButtonClickIntent(),
+                recipientsSearchIntent(), recipientAddIntent(), recipientRemoveIntent());
     }
 
     private void setActivity(boolean activity) {
@@ -127,14 +129,18 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         setActivity(state.recipientsSearchState().equals(State.ACTIVE));
         adapter.dataForRecipients(state.recipientsSearchState(), state.recipientsSearchResult(), state.recipientsSearchError(),
                 recipients);
+        if (doneButton != null) {
+            doneButton.setEnabled(!recipients.isEmpty());
+            if (getApplicationContext() != null) {
+                doneButton.setBackgroundColor(recipients.isEmpty() ? Color.GRAY :
+                        ContextCompat.getColor(getApplicationContext(), R.color.bottomNavigation));
+            }
+        }
     }
 
     @Override
     public boolean onBackButtonClick() {
         backButtonClicksSubject.onNext(VOID);
-        if (getApplicationContext() != null) {
-            AccessibilityUtils.sendAccessibilityEvent(getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_addition_cancelled);
-        }
         return false;
     }
 
