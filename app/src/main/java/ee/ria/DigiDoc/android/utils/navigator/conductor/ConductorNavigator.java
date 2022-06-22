@@ -54,7 +54,8 @@ public final class ConductorNavigator implements Navigator {
     @Override
     public void onCreate(Activity activity, ViewGroup container,
                          @Nullable Bundle savedInstanceState) {
-        router = Conductor.attachRouter(activity, container, savedInstanceState);
+        router = Conductor.attachRouter(activity, container, savedInstanceState)
+                .setPopRootControllerMode(Router.PopRootControllerMode.NEVER);
         router.addChangeListener(new ControllerChangeHandler.ControllerChangeListener() {
             @Override
             public void onChangeStarted(@Nullable Controller to, @Nullable Controller from,

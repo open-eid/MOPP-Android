@@ -147,7 +147,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                             return Result.InitialResult.failure(throwable);
                                         });
                             } else {
-                                navigator.onBackPressed();
+                                navigator.execute(Transaction.pop());
                                 return Observable.just(Result.InitialResult.clear());
                             }
                         });
