@@ -117,7 +117,8 @@ public class MobileSignService extends IntentService {
                 restSSLConfig = createSSLConfig(intent, trustManagers);
             } catch (Exception e) {
                 Timber.log(Log.ERROR, e, "Can't create SSL config");
-                restSSLConfig = null;
+                broadcastFault(defaultError("Unable to create SSL configuration"));
+                return;
             }
 
             try {

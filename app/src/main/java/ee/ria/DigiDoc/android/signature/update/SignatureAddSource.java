@@ -100,8 +100,11 @@ final class SignatureAddSource {
                             return Observable.just(response);
                         }
                     })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .startWithItem(MobileIdResponse
-                            .status(MobileCreateSignatureSessionStatusResponse.ProcessStatus.OK));
+                            .status(MobileCreateSignatureSessionStatusResponse.ProcessStatus.OK))
+                    .onErrorResumeNext(Observable::error);
         } else if (request instanceof SmartIdRequest) {
             SmartIdRequest smartIdRequest = (SmartIdRequest) request;
             if (smartIdRequest.rememberMe()) {
@@ -117,11 +120,12 @@ final class SignatureAddSource {
                             Observable.create(new SmartIdOnSubscribe(navigator, container,
                                     settingsDataStore.getUuid(), smartIdRequest.personalCode(),
                                     smartIdRequest.country())))
-                    .switchMap(response ->
-                            Observable.just(response)
-                    )
+                    .switchMap(Observable::just)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .startWithItem(SmartIdResponse
-                            .status(SessionStatusResponse.ProcessStatus.OK));
+                            .status(SessionStatusResponse.ProcessStatus.OK))
+                    .onErrorResumeNext(Observable::error);
         } else if (request instanceof IdCardRequest) {
             IdCardRequest idCardRequest = (IdCardRequest) request;
             return signatureContainerDataSource
