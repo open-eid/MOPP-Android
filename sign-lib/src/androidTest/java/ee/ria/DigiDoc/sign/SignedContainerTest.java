@@ -33,7 +33,7 @@ public final class SignedContainerTest {
         ConfigurationProperties configurationProperties = new ConfigurationProperties(targetContext.getAssets());
         CachedConfigurationHandler cachedConfigurationHandler = new CachedConfigurationHandler(targetContext.getCacheDir());
         ConfigurationManager configurationManager = new ConfigurationManager(targetContext, configurationProperties, cachedConfigurationHandler, "SignedContainerTest-User-Agent");
-        SignLib.init(targetContext, "tsa_url", configurationManager.getConfiguration(), "SignedContainerTest-User-Agent");
+        SignLib.init(targetContext, "tsa_url", configurationManager.getConfiguration(), "SignedContainerTest-User-Agent", false);
     }
 
     private static final String DIR = "signed-containers";

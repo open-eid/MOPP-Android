@@ -66,6 +66,8 @@ public class UUIDPreference extends EditTextPreference {
                 120f, context.getResources().getDisplayMetrics()));
         checkBox.setX(48f);
 
+        setViewId(R.id.mainSettingsAccessToSigningService);
+
         setOnPreferenceChangeListener((preference, newValue) -> {
             AccessibilityUtils.sendAccessibilityEvent(context, TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
             return true;

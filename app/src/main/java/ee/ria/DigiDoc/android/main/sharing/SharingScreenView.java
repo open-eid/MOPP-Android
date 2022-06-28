@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.FileProvider;
+
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -134,7 +136,7 @@ public final class SharingScreenView extends CoordinatorLayout {
                     restartToMainApp();
                 }
             } catch (IllegalArgumentException e) {
-                Timber.e(e, "File selecting failed");
+                Timber.log(Log.ERROR, e, "File selecting failed");
                 restartToMainApp();
             }
         });
@@ -144,7 +146,7 @@ public final class SharingScreenView extends CoordinatorLayout {
         if (isIntentWithExtraReferrer(activity)) {
           restartAppWithIntent(intent);
         } else {
-            Timber.e("File selecting failed");
+            Timber.log(Log.ERROR, "File selecting failed");
             restartToMainApp();
         }
     }

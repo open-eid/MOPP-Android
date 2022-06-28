@@ -9,6 +9,7 @@ import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
+import ee.ria.DigiDoc.android.signature.detail.SignatureDetailScreen;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
 import ee.ria.DigiDoc.android.utils.SivaUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
@@ -40,6 +42,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
+import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -71,6 +74,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<Action.SignatureRemoveAction,
                                         Result.SignatureRemoveResult> signatureRemove;
 
+    private final ObservableTransformer<Action.SignatureViewAction,
+            Result.SignatureViewResult> signatureView;
+
     private final ObservableTransformer<Action.SignatureAddAction,
                                         Result.SignatureAddResult> signatureAdd;
 
@@ -78,7 +84,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     @Inject Processor(SignatureContainerDataSource signatureContainerDataSource,
                       SignatureAddSource signatureAddSource, Application application,
-                      Navigator navigator) {
+                      Navigator navigator,
+                      FileSystem fileSystem) {
         containerLoad = upstream -> upstream.switchMap(action ->
                 signatureContainerDataSource.get(action.containerFile())
                         .toObservable()
@@ -152,7 +159,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .map(newFile -> {
                             navigator.execute(Transaction.replace(SignatureUpdateScreen
-                                    .create(true, false, newFile, false, false)));
+                                    .create(true, false, newFile, false, false, null, true)));
                             return Result.NameUpdateResult.progress(newFile);
                         })
                         .onErrorReturn(throwable ->
@@ -174,7 +181,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 .switchMap(activityResult -> {
                                     android.content.Intent data = activityResult.data();
                                     if (activityResult.resultCode() == RESULT_OK && data != null) {
-                                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(parseGetContentIntent(application.getContentResolver(), data));
+                                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
+                                                parseGetContentIntent(application.getContentResolver(), data, fileSystem.getExternallyOpenedFilesDir()));
                                         ToastUtil.handleEmptyFileError(validFiles, application);
                                         announceAccessibilityFilesAddedEvent(application.getApplicationContext(), validFiles.size());
                                         return signatureContainerDataSource
@@ -214,7 +222,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     (SivaUtil.isSivaConfirmationNeeded(ImmutableList.of(FileStream.create(documentFile))) && documentFileExtension.equals("pdf"));
                             if (!isPdfInSignedPdfContainer && SignedContainer.isContainer(documentFile)) {
                                 transaction = Transaction.push(SignatureUpdateScreen
-                                        .create(true, true, documentFile, false, false));
+                                        .create(true, true, documentFile, false, false, null, true));
                             } else if (CryptoContainer.isContainerFileName(documentFile.getName())) {
                                 transaction = Transaction.push(CryptoCreateScreen.open(documentFile));
                             } else {
@@ -225,7 +233,14 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             navigator.execute(transaction);
                             return Result.DocumentViewResult.idle();
                         })
-                        .onErrorReturn(ignored -> Result.DocumentViewResult.idle())
+                        .onErrorReturn(throwable -> {
+                            if (throwable instanceof NoInternetConnectionException) {
+                                Toast.makeText(application.getApplicationContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(application.getApplicationContext(), R.string.signature_update_container_load_error, Toast.LENGTH_LONG).show();
+                            }
+                            return Result.DocumentViewResult.idle();
+                        })
                         .startWithItem(Result.DocumentViewResult.activity());
             }
         });
@@ -236,26 +251,24 @@ final class Processor implements ObservableTransformer<Action, Result> {
             return navigator.activityResults()
                     .filter(activityResult ->
                             activityResult.requestCode() == SAVE_FILE)
-                    .switchMap(activityResult -> {
-                        return signatureContainerDataSource
-                                .getDocumentFile(action.containerFile(), action.document())
-                                .toObservable()
-                                .map(documentFile -> {
-                                    if (activityResult.resultCode() == RESULT_OK) {
-                                        try (
-                                                InputStream inputStream = new FileInputStream(documentFile);
-                                                OutputStream outputStream = application.getContentResolver().openOutputStream(activityResult.data().getData())
-                                        ) {
-                                            ByteStreams.copy(inputStream, outputStream);
-                                        }
-                                        Toast.makeText(application, Activity.getContext().get().getString(R.string.file_saved),
-                                                Toast.LENGTH_LONG).show();
+                    .switchMap(activityResult -> signatureContainerDataSource
+                            .getDocumentFile(action.containerFile(), action.document())
+                            .toObservable()
+                            .map(documentFile -> {
+                                if (activityResult.resultCode() == RESULT_OK) {
+                                    try (
+                                            InputStream inputStream = new FileInputStream(documentFile);
+                                            OutputStream outputStream = application.getContentResolver().openOutputStream(activityResult.data().getData())
+                                    ) {
+                                        ByteStreams.copy(inputStream, outputStream);
                                     }
-                                    return Result.DocumentSaveResult.idle();
-                                })
-                                .onErrorReturn(ignored -> Result.DocumentSaveResult.idle())
-                                .startWithItem(Result.DocumentSaveResult.activity());
-                    });
+                                    Toast.makeText(application, Activity.getContext().get().getString(R.string.file_saved),
+                                            Toast.LENGTH_LONG).show();
+                                }
+                                return Result.DocumentSaveResult.idle();
+                            })
+                            .onErrorReturn(ignored -> Result.DocumentSaveResult.idle())
+                            .startWithItem(Result.DocumentSaveResult.activity()));
         });
 
         documentRemove = upstream -> upstream.flatMap(action -> {
@@ -267,7 +280,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 if (action.documents().size() == 1) {
                     boolean isFileDeleted = action.containerFile().delete();
                     if (isFileDeleted) {
-                        Timber.d("File %s deleted", action.containerFile().getName());
+                        Timber.log(Log.DEBUG, "File %s deleted", action.containerFile().getName());
                     }
                     navigator.execute(Transaction.pop());
                     return Observable.just(Result.DocumentRemoveResult.success(null));
@@ -308,6 +321,25 @@ final class Processor implements ObservableTransformer<Action, Result> {
             }
         });
 
+        signatureView = upstream -> upstream.flatMap(action -> {
+            File containerFile = action.containerFile();
+            return signatureContainerDataSource
+                    .get(containerFile)
+                    .toObservable()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .map(signedContainerFile -> {
+                        Transaction transaction;
+                        transaction = Transaction.push(SignatureDetailScreen
+                                .create(action.signature(), signedContainerFile));
+                        navigator.execute(transaction);
+                        return Result.SignatureViewResult.idle();
+                    })
+                    .onErrorReturn(ignored -> Result.SignatureViewResult.idle())
+                    .startWithItem(Result.SignatureViewResult.activity());
+        });
+
+
         signatureAdd = upstream -> upstream.switchMap(action -> {
             Integer method = action.method();
             Boolean existingContainer = action.existingContainer();
@@ -325,7 +357,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             .doOnNext(containerAdd ->
                                     navigator.execute(Transaction.push(SignatureUpdateScreen.create(
                                             containerAdd.isExistingContainer(), false,
-                                            containerAdd.containerFile(), true, false))))
+                                            containerAdd.containerFile(), true, false, null, true))))
                             .map(containerAdd -> Result.SignatureAddResult.clear())
                             .onErrorReturn(Result.SignatureAddResult::failure)
                             .startWithItem(Result.SignatureAddResult.activity());
@@ -338,7 +370,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             if (response.container() != null) {
                                 return Observable.fromCallable(() -> {
                                     navigator.execute(Transaction.replace(SignatureUpdateScreen
-                                            .create(true, false, containerFile, false, true)));
+                                            .create(true, false, containerFile, false, true, null, true)));
                                     return Result.SignatureAddResult.method(method, response);
                                 });
                             } else {
@@ -374,6 +406,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Intent.DocumentSaveIntent.class).compose(documentSave),
                 shared.ofType(Action.DocumentRemoveAction.class).compose(documentRemove),
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
+                shared.ofType(Action.SignatureViewAction.class).compose(signatureView),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd),
                 shared.ofType(Action.SendAction.class).compose(send)));
     }

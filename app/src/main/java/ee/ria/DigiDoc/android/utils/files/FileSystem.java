@@ -1,8 +1,10 @@
 package ee.ria.DigiDoc.android.utils.files;
 
+import static ee.ria.DigiDoc.android.Constants.DIR_EXTERNALLY_OPENED_FILES;
 import static ee.ria.DigiDoc.android.Constants.DIR_SIGNATURE_CONTAINERS;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
@@ -131,6 +133,15 @@ public final class FileSystem {
         return directory;
     }
 
+    public File getExternallyOpenedFilesDir() {
+        File dir = new File(application.getFilesDir(), DIR_EXTERNALLY_OPENED_FILES);
+        boolean isDirsCreated = dir.mkdirs();
+        if (isDirsCreated) {
+            Timber.log(Log.DEBUG, "Directories created for %s", dir.getPath());
+        }
+        return dir;
+    }
+
     /**
      * Check if byte stream has invalid size in list.
      *
@@ -176,7 +187,7 @@ public final class FileSystem {
                  SignedContainer signedContainer = SignedContainer.open(containerFile);
                  return signedContainer.hasEmptyFiles();
              } catch (Exception e) {
-                 Timber.e(e, "Unable to check files in container");
+                 Timber.log(Log.ERROR, e, "Unable to check files in container");
                  return false;
              }
          }
@@ -216,7 +227,7 @@ public final class FileSystem {
         File dir = new File(application.getFilesDir(), DIR_SIGNATURE_CONTAINERS);
         boolean isDirsCreated = dir.mkdirs();
         if (isDirsCreated) {
-            Timber.d("Directories created for %s", dir.getPath());
+            Timber.log(Log.DEBUG, "Directories created for %s", dir.getPath());
         }
         return dir;
     }
@@ -253,7 +264,7 @@ public final class FileSystem {
         boolean isDirCreated = dir.mkdir();
 
         if (isDirsCreated || isDirCreated) {
-            Timber.d("Directories created for %s", directory.getPath());
+            Timber.log(Log.DEBUG, "Directories created for %s", directory.getPath());
         }
 
         return dir;
