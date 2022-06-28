@@ -1,62 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:parentTag="android.widget.LinearLayout"
     tools:layout_width="match_parent"
     tools:layout_height="wrap_content"
-    tools:orientation="vertical">
+    tools:orientation="vertical"
+    app:contentPadding="@dimen/material_card_title_block_padding_horizontal">
 
-    <RadioGroup
-        android:id="@id/signatureUpdateSignatureAddMethod"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/material_dialog_content_area_title_content_margin"
-        android:orientation="horizontal"
-        android:background="@drawable/signature_add_methods_background">
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <RadioButton
-            android:id="@id/signatureUpdateSignatureAddMethodMobileId"
-            style="@style/Widget.Application.SignatureAddMethod"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:checked="true"
-            android:text="@string/signature_update_signature_add_method_mobile_id" />
+            android:orientation="vertical">
 
-        <RadioButton
-            android:id="@+id/signatureUpdateSignatureAddMethodSmartId"
-            style="@style/Widget.Application.SignatureAddMethod"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:checked="true"
-            android:text="@string/signature_update_signature_add_method_smart_id" />
+            <RadioGroup
+                android:id="@id/signatureUpdateSignatureAddMethod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/material_dialog_content_area_title_content_margin"
+                android:orientation="horizontal"
+                android:background="@drawable/signature_add_methods_background">
 
-        <RadioButton
-            android:id="@id/signatureUpdateSignatureAddMethodIdCard"
-            style="@style/Widget.Application.SignatureAddMethod"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/signature_update_signature_add_method_id_card" />
+                <RadioButton
+                    android:id="@id/signatureUpdateSignatureAddMethodMobileId"
+                    style="@style/Widget.Application.SignatureAddMethod"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:maxLines="1"
+                    android:text="@string/signature_update_signature_add_method_mobile_id" />
 
-    </RadioGroup>
+                <RadioButton
+                    android:id="@+id/signatureUpdateSignatureAddMethodSmartId"
+                    style="@style/Widget.Application.SignatureAddMethod"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:maxLines="1"
+                    android:text="@string/signature_update_signature_add_method_smart_id" />
 
-    <ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdView
-        android:id="@id/signatureUpdateMobileId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@id/signatureUpdateSignatureAddMethodIdCard"
+                    style="@style/Widget.Application.SignatureAddMethod"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:text="@string/signature_update_signature_add_method_id_card" />
 
-    <ee.ria.DigiDoc.android.signature.update.smartid.SmartIdView
-        android:id="@id/signatureUpdateSmartId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+            </RadioGroup>
 
-    <ee.ria.DigiDoc.android.signature.update.idcard.IdCardView
-        android:id="@id/signatureUpdateIdCard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+
+            <ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdView
+                android:id="@id/signatureUpdateMobileId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ee.ria.DigiDoc.android.signature.update.smartid.SmartIdView
+                android:id="@id/signatureUpdateSmartId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <ee.ria.DigiDoc.android.signature.update.idcard.IdCardView
+                android:id="@id/signatureUpdateIdCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
 
 </merge>

@@ -3,14 +3,14 @@ package ee.ria.DigiDoc.android.main.home;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
-import androidx.annotation.IdRes;
-import androidx.annotation.Nullable;
-
 import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.util.SparseIntArray;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
@@ -30,6 +30,7 @@ import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
 import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
+import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
@@ -76,7 +77,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     @Nullable private String eidScreenId;
 
     @Inject Processor(Application application, Navigator navigator, LocaleService localeService,
-                      ContentResolver contentResolver) {
+                      ContentResolver contentResolver, FileSystem fileSystem) {
         this.navigator = navigator;
 
         initial = upstream -> upstream.switchMap(intent -> {
@@ -84,7 +85,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                     && TextUtils.equals(intent.intent().getAction(), ACTION_VIEW)
                     && intent.intent().getData() != null) {
                 ImmutableList<FileStream> fileStreams =
-                        parseGetContentIntent(contentResolver, intent.intent());
+                        parseGetContentIntent(contentResolver, intent.intent(), fileSystem.getExternallyOpenedFilesDir());
                 Screen screen;
                 if (fileStreams.size() == 1
                         && CryptoContainer.isContainerFileName(fileStreams.get(0).displayName())) {
