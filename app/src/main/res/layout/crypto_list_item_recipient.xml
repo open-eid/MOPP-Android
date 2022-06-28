@@ -31,7 +31,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:singleLine="true"
             android:ellipsize="end" />
 
         <TextView
@@ -39,7 +38,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceListItemSecondary"
-            android:singleLine="true"
             android:ellipsize="end" />
 
     </LinearLayout>

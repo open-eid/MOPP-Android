@@ -38,13 +38,15 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.Application.Value"
                 android:gravity="center_horizontal"
-                android:text="@string/signature_home_create_text" />
+                android:text="@string/signature_home_create_text"
+                android:importantForAccessibility="no" />
 
             <Button
                 android:id="@id/signatureHomeCreateButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/signature_home_create_button" />
+                android:text="@string/signature_home_create_button"
+                android:contentDescription="@string/signature_home_create_text" />
 
         </LinearLayout>
 

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -98,9 +99,15 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
     }
 
     private void requestPermission(UsbDevice device) {
-        usbManager.requestPermission(device,
-                PendingIntent
-                        .getBroadcast(context, 0, new Intent(ACTION_USB_DEVICE_PERMISSION), 0));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            usbManager.requestPermission(device,
+                    PendingIntent
+                            .getBroadcast(context, 0, new Intent(ACTION_USB_DEVICE_PERMISSION), PendingIntent.FLAG_MUTABLE));
+        } else {
+            usbManager.requestPermission(device,
+                    PendingIntent
+                            .getBroadcast(context, 0, new Intent(ACTION_USB_DEVICE_PERMISSION), 0));
+        }
     }
 
     private void clearCurrent() {

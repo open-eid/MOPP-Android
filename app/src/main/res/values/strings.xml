@@ -228,6 +228,28 @@
     <string name="signature_update_id_card_sign_pin2_invalid_final">Wrong PIN2. You have 1 attempt left until your PIN2 is blocked.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 blocked. Go to My eID to unblock it.</string>
 
+    <!-- Signature Details -->
+    <string name="signature_details_title">Signature details</string>
+    <string name="signer_certificate_issuer_label">Signer\'s Certificate issuer:</string>
+    <string name="signers_certificate_label">Signer\'s Certificate:</string>
+    <string name="signature_method_label">Signature method:</string>
+    <string name="container_format_label">Container format:</string>
+    <string name="signature_format_label">Signature format:</string>
+    <string name="signed_file_count_label">Signed file count:</string>
+    <string name="signature_timestamp_label">Signature timestamp:</string>
+    <string name="signature_timestamp_utc_label">Signature timestamp (UTC):</string>
+    <string name="hash_value_of_signature_label">Hash value of signature:</string>
+    <string name="ts_certificate_issuer_label">TS Certificate issuer:</string>
+    <string name="ts_certificate_label">TS Certificate:</string>
+    <string name="ocsp_certificate_issuer_label">OCSP Certificate issuer:</string>
+    <string name="ocsp_certificate_label">OCSP Certificate:</string>
+    <string name="ocsp_time_label">OCSP time:</string>
+    <string name="ocsp_time_utc_label">OCSP time (UTC):</string>
+    <string name="signers_mobile_time_label">Signer\'s mobile time:</string>
+
+    <!-- Certificate Details -->
+    <string name="certificate_details_title">Certificate details</string>
+
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Choose a file to encrypt or decrypt</string>
     <string name="crypto_home_create_button">CHOOSE FILE</string>
@@ -255,7 +277,6 @@
     <string name="crypto_create_encrypt_button_description">Encrypt document</string>
     <string name="crypto_create_encrypt_error_no_recipients">No recipients specified</string>
     <string name="crypto_create_decrypt_button">DECRYPT</string>
-    <string name="crypto_create_decrypt_button_description">Decrypt document</string>
     <string name="crypto_create_decrypt_positive_button">Decrypt</string>
     <string name="crypto_create_send_button">SHARE</string>
     <string name="crypto_create_error">Something went wrong with encryption</string>
@@ -415,8 +436,8 @@
     <string name="crypto_content_description">Crypto, tab %1$d of %2$d</string>
     <string name="my_eid_content_description">My e-ID, tab %1$d of %2$d</string>
 
+    <string name="decrypt_content_description">Decrypt document, tab %1$d of %2$d</string>
     <string name="sign_send_content_description">Sign, tab %1$d of %2$d</string>
-    <string name="decrypt_content_description">Decrypt, tab %1$d of %2$d</string>
     <string name="decrypt_send_content_description">Share, tab %1$d of %2$d</string>
 
     <string name="yes_button">YES</string>
@@ -445,6 +466,7 @@
     <string name="recipients_found">Recipients found</string>
     <string name="recipient_found">Recipient found</string>
     <string name="recipient_added">Recipient added</string>
+    <string name="recipients_added">Recipients added</string>
     <string name="recipient_removed">Recipient removed</string>
     <string name="recipient_addition_cancelled">Recipient addition cancelled</string>
     <string name="add_recipient">Add recipient</string>

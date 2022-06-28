@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.utils.files;
 
+import static ee.ria.DigiDoc.android.Constants.DIR_EXTERNALLY_OPENED_FILES;
 import static ee.ria.DigiDoc.android.Constants.DIR_SIGNATURE_CONTAINERS;
 
 import android.app.Application;
@@ -130,6 +131,15 @@ public final class FileSystem {
             directory = createDataFileDirectory(containerFile.getParentFile(), containerFile);
         }
         return directory;
+    }
+
+    public File getExternallyOpenedFilesDir() {
+        File dir = new File(application.getFilesDir(), DIR_EXTERNALLY_OPENED_FILES);
+        boolean isDirsCreated = dir.mkdirs();
+        if (isDirsCreated) {
+            Timber.log(Log.DEBUG, "Directories created for %s", dir.getPath());
+        }
+        return dir;
     }
 
     /**

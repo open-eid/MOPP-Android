@@ -63,7 +63,7 @@ public class AccessibilityUtils {
 
     public static void setAccessibilityPaneTitle(View view, String title) {
         if (Build.VERSION.SDK_INT >= 28) {
-            view.setAccessibilityPaneTitle("Displaying " + title + " pane");
+            view.setAccessibilityPaneTitle(title);
         }
     }
 

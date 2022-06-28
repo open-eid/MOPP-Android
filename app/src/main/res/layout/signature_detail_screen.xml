@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="androidx.coordinatorlayout.widget.CoordinatorLayout"
+    tools:layout_width="match_parent"
+    tools:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.widget.Toolbar
+            android:id="@id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.Application.ActionBar" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/material_content_edge_margin_horizontal"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    android:id="@id/signersCertificateIssuerTitle"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/signer_certificate_issuer_label" />
+
+                <TextView
+                    android:id="@id/signatureDetailSignersCertificateIssuer"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    android:id="@id/signersCertificateTitle"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/signers_certificate_label" />
+
+                <Button
+                    android:id="@id/signersCertificateButton"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_right_24"
+                    android:background="@null"
+                    android:textColor="@color/detailInformationLabel"
+                    android:padding="0dp"
+                    android:layout_margin="0dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:gravity="start|center_vertical"
+                    android:text="@string/signers_certificate_label" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/signature_method_label" />
+
+                <TextView
+                    android:id="@id/signatureDetailMethod"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/container_format_label" />
+
+                <TextView
+                    android:id="@id/containerDetailFormat"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/signature_format_label" />
+
+                <TextView
+                    android:id="@id/signatureDetailFormat"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/signed_file_count_label" />
+
+                <TextView
+                    android:id="@id/containerDetailSignedFileCount"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/signature_timestamp_label" />
+
+                <TextView
+                    android:id="@id/signatureDetailTimestamp"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/signature_timestamp_utc_label" />
+
+                <TextView
+                    android:id="@id/signatureDetailTimestampUTC"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hash_value_of_signature_label" />
+
+                <TextView
+                    android:id="@id/signatureDetailHashValue"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    android:id="@id/signatureDetailTSCertificateIssuerTitle"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ts_certificate_issuer_label" />
+
+                <TextView
+                    android:id="@id/signatureDetailTimestampCertificateIssuer"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    android:id="@id/signatureDetailTSCertificateButtonTitle"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ts_certificate_label" />
+
+                <Button
+                    android:id="@id/signatureDetailTimestampCertificateButton"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_right_24"
+                    android:background="@null"
+                    android:textColor="@color/detailInformationLabel"
+                    android:padding="0dp"
+                    android:layout_margin="0dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:gravity="start|center_vertical"
+                    android:text="@string/ts_certificate_label" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    android:id="@id/signatureDetailOCSPCertificateIssuerTitle"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ocsp_certificate_issuer_label" />
+
+                <TextView
+                    android:id="@id/signatureDetailOCSPCertificateIssuer"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    android:id="@id/signatureDetailOCSPCertificateButtonTitle"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ocsp_certificate_label" />
+
+                <Button
+                    android:id="@id/signatureDetailOCSPCertificateButton"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_right_24"
+                    android:background="@null"
+                    android:textColor="@color/detailInformationLabel"
+                    android:padding="0dp"
+                    android:layout_margin="0dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:gravity="start|center_vertical"
+                    android:text="@string/ocsp_certificate_label" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ocsp_time_label" />
+
+                <TextView
+                    android:id="@id/signatureDetailOCSPTime"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ocsp_time_utc_label" />
+
+                <TextView
+                    android:id="@id/signatureDetailOCSPTimeUTC"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationTitleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/signers_mobile_time_label" />
+
+                <TextView
+                    android:id="@id/signatureDetailSignersMobileTimeUTC"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textColor="@color/detailInformationLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</merge>
