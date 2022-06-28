@@ -1,12 +1,20 @@
 package ee.ria.DigiDoc.common;
 
+import android.content.Context;
+import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.webkit.URLUtil;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class FileUtil {
 
@@ -88,6 +96,57 @@ public class FileUtil {
 
     public static Uri normalizePath(String filePath) {
         return Uri.parse(FilenameUtils.normalize(filePath));
+    }
+
+    public static boolean isPDF(File file) {
+        try (ParcelFileDescriptor parcelFileDescriptor = ParcelFileDescriptor.open(file,
+                ParcelFileDescriptor.MODE_READ_ONLY)) {
+            // Try to render as PDF. Throws exception if not a PDF file.
+            new PdfRenderer(parcelFileDescriptor);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static Path renameFile(Path path, String fileNameWithExtension) {
+        try {
+            Files.deleteIfExists(path.resolveSibling(fileNameWithExtension));
+            Path newFilePath = path.resolveSibling(fileNameWithExtension);
+            Files.move(path, newFilePath);
+            return newFilePath;
+        } catch (IOException e) {
+            return path;
+        }
+    }
+
+    public static boolean logsExist(File logsDirectory) {
+        if (logsDirectory.exists()) {
+            File[] files = logsDirectory.listFiles();
+            return files != null && files.length > 0;
+        }
+        return false;
+    }
+
+    public static File combineLogFiles(File logsDirectory, String diagnosticsLogsFileName) throws IOException {
+        if (logsExist(logsDirectory)) {
+            File[] files = logsDirectory.listFiles() != null ? logsDirectory.listFiles() : new File[]{};
+            File combinedLogFile = new File(logsDirectory + File.separator + diagnosticsLogsFileName);
+            if (combinedLogFile.exists()) {
+                Files.delete(combinedLogFile.toPath());
+            }
+            for (File file : files) {
+                String header = "\n\n" + "===== File: " + file.getName() + " =====" + "\n\n";
+                String fileString = header + FileUtils.readFileToString(file, Charset.defaultCharset());
+                FileUtils.write(combinedLogFile, fileString, Charset.defaultCharset(), true);
+            }
+            return combinedLogFile;
+        }
+        throw new FileNotFoundException("Could not combine log files. Cannot find logs.");
+    }
+
+    public static File getLogsDirectory(Context context) {
+        return new File(context.getFilesDir() + "/logs");
     }
 
     private static boolean isRawUrl(String url) {

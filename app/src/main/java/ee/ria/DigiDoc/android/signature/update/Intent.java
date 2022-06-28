@@ -143,6 +143,18 @@ interface Intent extends MviIntent {
     }
 
     @AutoValue
+    abstract class SignatureViewIntent implements Intent {
+
+        abstract File containerFile();
+
+        abstract Signature signature();
+
+        static SignatureViewIntent create(File containerFile, Signature signature) {
+            return new AutoValue_Intent_SignatureViewIntent(containerFile, signature);
+        }
+    }
+
+    @AutoValue
     abstract class DocumentRemoveIntent implements Intent {
 
         abstract boolean showConfirmation();

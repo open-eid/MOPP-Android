@@ -44,6 +44,8 @@
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsFragment" />
     <item type="id" name="mainSettingsOpenAllFileTypes" />
+    <item type="id" name="mainSettingsAccessToSigningService" />
+    <item type="id" name="mainSettingsAccessToTimeStampingService" />
 
     <!-- Main About -->
     <item type="id" name="mainAboutList" />
@@ -77,6 +79,9 @@
     <item type="id" name="mainDiagnosticsCentralConfigurationUpdateDate" />
     <item type="id" name="configurationUpdateButton" />
     <item type="id" name="configurationSaveButton" />
+    <item type="id" name="mainDiagnosticsLogging" />
+    <item type="id" name="mainDiagnosticsSaveLoggingButton" />
+    <item type="id" name="mainDiagnosticsRestartConfirmationDialog" />
 
     <!-- Signature Home -->
     <item type="id" name="signatureHomeCreateButton" />
@@ -86,6 +91,93 @@
     <item type="id" name="signatureList" />
     <item type="id" name="signatureListItemName" />
     <item type="id" name="signatureListItemRemoveButton" />
+
+    <!-- Signature Details -->
+    <item type="id" name="signatureDetailScreen" />
+    <item type="id" name="signersCertificateIssuerTitle" />
+    <item type="id" name="signersCertificateTitle" />
+    <item type="id" name="signatureDetailSignersCertificateIssuer" />
+    <item type="id" name="signersCertificateButton" />
+    <item type="id" name="signatureDetailMethod" />
+    <item type="id" name="signatureDetailFormat" />
+    <item type="id" name="signatureDetailTimestamp" />
+    <item type="id" name="signatureDetailTSCertificateIssuerTitle" />
+    <item type="id" name="signatureDetailTSCertificateButtonTitle" />
+    <item type="id" name="signatureDetailTimestampUTC" />
+    <item type="id" name="signatureDetailHashValue" />
+    <item type="id" name="signatureDetailTimestampCertificateIssuer" />
+    <item type="id" name="signatureDetailTimestampCertificateButton" />
+    <item type="id" name="signatureDetailOCSPCertificateIssuerTitle" />
+    <item type="id" name="signatureDetailOCSPCertificateButtonTitle" />
+    <item type="id" name="signatureDetailOCSPCertificateIssuer" />
+    <item type="id" name="signatureDetailOCSPCertificateButton" />
+    <item type="id" name="signatureDetailOCSPTime" />
+    <item type="id" name="signatureDetailOCSPTimeUTC" />
+    <item type="id" name="signatureDetailSignersMobileTimeUTC" />
+
+    <!-- Container Details -->
+    <item type="id" name="containerDetailFormat" />
+    <item type="id" name="containerDetailSignedFileCount" />
+
+    <!-- Certificate Details -->
+    <item type="id" name="certificateDetailScreen" />
+    <item type="id" name="certificateDetailName" />
+    <item type="id" name="certificateDetailSubjectDataTitle" />
+    <item type="id" name="certificateDetailCountryTitle" />
+    <item type="id" name="certificateDetailCountry" />
+    <item type="id" name="certificateDetailOrganizationTitle" />
+    <item type="id" name="certificateDetailOrganization" />
+    <item type="id" name="certificateDetailOrganizationalUnitTitle" />
+    <item type="id" name="certificateDetailOrganizationalUnit" />
+    <item type="id" name="certificateDetailCommonNameTitle" />
+    <item type="id" name="certificateDetailCommonName" />
+    <item type="id" name="certificateDetailSurnameTitle" />
+    <item type="id" name="certificateDetailSurname" />
+    <item type="id" name="certificateDetailGivenNameTitle" />
+    <item type="id" name="certificateDetailGivenName" />
+    <item type="id" name="certificateDetailSerialCodeTitle" />
+    <item type="id" name="certificateDetailSerialCode" />
+    <item type="id" name="certificateDetailIssuerDataTitle" />
+    <item type="id" name="certificateDetailIssuerCountryTitle" />
+    <item type="id" name="certificateDetailIssuerCountry" />
+    <item type="id" name="certificateDetailIssuerOrganizationTitle" />
+    <item type="id" name="certificateDetailIssuerOrganization" />
+    <item type="id" name="certificateDetailIssuerCommonNameTitle" />
+    <item type="id" name="certificateDetailIssuerCommonName" />
+    <item type="id" name="certificateDetailIssuerEmailTitle" />
+    <item type="id" name="certificateDetailIssuerEmail" />
+    <item type="id" name="certificateDetailIssuerOrganizationIdentifierTitle" />
+    <item type="id" name="certificateDetailIssuerOrganizationIdentifier" />
+    <item type="id" name="certificateDetailSerialNumberTitle" />
+    <item type="id" name="certificateDetailSerialNumber" />
+    <item type="id" name="certificateDetailVersionTitle" />
+    <item type="id" name="certificateDetailVersion" />
+    <item type="id" name="certificateDetailSignatureAlgorithmTitle" />
+    <item type="id" name="certificateDetailSignatureAlgorithm" />
+    <item type="id" name="certificateDetailSignatureParametersTitle" />
+    <item type="id" name="certificateDetailSignatureParameters" />
+    <item type="id" name="certificateDetailNotValidBeforeTitle" />
+    <item type="id" name="certificateDetailNotValidBefore" />
+    <item type="id" name="certificateDetailNotValidAfterTitle" />
+    <item type="id" name="certificateDetailNotValidAfter" />
+    <item type="id" name="certificateDetailPublicKeyInfoTitle" />
+    <item type="id" name="certificateDetailPublicKeyAlgorithmTitle" />
+    <item type="id" name="certificateDetailPublicKeyAlgorithm" />
+    <item type="id" name="certificateDetailPublicKeyParametersTitle" />
+    <item type="id" name="certificateDetailPublicKeyParameters" />
+    <item type="id" name="certificateDetailPublicKeyPKTitle" />
+    <item type="id" name="certificateDetailPublicKeyPK" />
+    <item type="id" name="certificateDetailPublicKeyKeyUsageTitle" />
+    <item type="id" name="certificateDetailPublicKeyKeyUsage" />
+    <item type="id" name="certificateDetailSignatureTitle" />
+    <item type="id" name="certificateDetailSignature" />
+    <item type="id" name="certificateDetailExtensionsTitle" />
+    <item type="id" name="certificateDetailExtensions" />
+    <item type="id" name="certificateDetailFingerprintsTitle" />
+    <item type="id" name="certificateDetailFingerprintsSHA256Title" />
+    <item type="id" name="certificateDetailFingerprintsSHA256" />
+    <item type="id" name="certificateDetailFingerprintsSHA1Title" />
+    <item type="id" name="certificateDetailFingerprintsSHA1" />
 
     <!-- Signature Create -->
     <item type="id" name="signatureCreateScreen" />
