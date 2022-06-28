@@ -55,6 +55,10 @@ interface Result extends MviResult<ViewState> {
             return create(State.IDLE, error);
         }
 
+        static DiagnosticsSaveResult cancel() {
+            return create(State.IDLE, null);
+        }
+
         private static DiagnosticsSaveResult create(@State String state, @Nullable Throwable error) {
             return new AutoValue_Result_DiagnosticsSaveResult(state, error);
         }

@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.Conductor;
@@ -63,7 +65,7 @@ public final class ConductorNavigator implements Navigator {
             public void onChangeCompleted(@Nullable Controller to, @Nullable Controller from,
                                           boolean isPush, @NonNull ViewGroup container,
                                           @NonNull ControllerChangeHandler handler) {
-                Timber.d("onChangeCompleted:\nFROM:  %s\nTO:    %s\nPUSH:  %s\nSTACK: %s", from, to,
+                Timber.log(Log.DEBUG, "onChangeCompleted:\nFROM:  %s\nTO:    %s\nPUSH:  %s\nSTACK: %s", from, to,
                         isPush, stack(router));
                 if (!isPush && from != null) {
                     String screenId = from.getInstanceId();
@@ -92,7 +94,7 @@ public final class ConductorNavigator implements Navigator {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Timber.d("onActivityResult: %s, %s, %s", requestCode, resultCode, data);
+        Timber.log(Log.DEBUG, "onActivityResult: %s, %s, %s", requestCode, resultCode, data);
         activityResultSubject.onNext(ActivityResult.create(requestCode, resultCode, data));
     }
 
@@ -114,7 +116,7 @@ public final class ConductorNavigator implements Navigator {
 
     @Override
     public void execute(Transaction transaction) {
-        Timber.d("Execute: %s", transaction);
+        Timber.log(Log.DEBUG, "Execute: %s", transaction);
         if (transaction instanceof Transaction.RootTransaction) {
             router.setRoot(routerTransaction(((Transaction.RootTransaction) transaction).screen()));
         } else if (transaction instanceof Transaction.PushTransaction) {

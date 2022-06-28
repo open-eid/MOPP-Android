@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.util.List;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -26,6 +27,7 @@ public final class DiagnosticsScreen extends ConductorScreen implements Screen, 
     private final ViewDisposables disposables = new ViewDisposables();
     private DiagnosticsViewModel viewModel;
     static final Subject<File> diagnosticsFileSaveClicksSubject = PublishSubject.create();
+    static final Subject<File> diagnosticsFileLogsSaveClicksSubject = PublishSubject.create();
 
     @NonNull
     @Override
@@ -74,9 +76,15 @@ public final class DiagnosticsScreen extends ConductorScreen implements Screen, 
                 .map(Intent.DiagnosticsSaveIntent::create);
     }
 
+    private Observable<Intent.DiagnosticsLogsSaveIntent> diagnosticsLogsFilesSaveIntent() {
+        return diagnosticsFileLogsSaveClicksSubject
+                .map(Intent.DiagnosticsLogsSaveIntent::create);
+    }
+
     @Override
     public Observable<Intent> intents() {
-        return Observable.mergeArray(initialIntent(), diagnosticsFileSaveIntent());
+        return Observable.mergeArray(initialIntent(), diagnosticsFileSaveIntent(),
+                diagnosticsLogsFilesSaveIntent());
     }
 
     @Override
