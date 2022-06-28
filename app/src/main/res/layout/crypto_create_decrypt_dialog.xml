@@ -1,76 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@id/cryptoCreateDecryptProgressContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@id/cryptoCreateDecryptProgressMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal" />
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@id/cryptoCreateDecryptContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
-
         <LinearLayout
+            android:id="@id/cryptoCreateDecryptProgressContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusable="true"
             android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="@string/crypto_create_decrypt_message" />
 
             <TextView
-                android:id="@id/cryptoCreateDecryptData"
+                android:id="@id/cryptoCreateDecryptProgressMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal" />
 
-            <TextView
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@id/cryptoCreateDecryptContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/crypto_create_decrypt_message" />
+
+                <TextView
+                    android:id="@id/cryptoCreateDecryptData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/crypto_create_decrypt_pin1"
+                    android:labelFor="@id/cryptoCreateDecryptPin1" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@id/cryptoCreateDecryptPin1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="@string/crypto_create_decrypt_pin1"
-                android:labelFor="@id/cryptoCreateDecryptPin1" />
+                android:inputType="numberPassword"
+                android:maxLength="12" />
+
+            <TextView
+                android:id="@id/cryptoCreateDecryptPin1Error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Application.Error"
+                android:text="@string/crypto_create_decrypt_pin1_invalid"
+                android:visibility="gone" />
+
         </LinearLayout>
 
-        <EditText
-            android:id="@id/cryptoCreateDecryptPin1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:inputType="numberPassword"
-            android:maxLength="12" />
-
-        <TextView
-            android:id="@id/cryptoCreateDecryptPin1Error"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Application.Error"
-            android:text="@string/crypto_create_decrypt_pin1_invalid"
-            android:visibility="gone" />
-
     </LinearLayout>
-
-</LinearLayout>
+</ScrollView>
