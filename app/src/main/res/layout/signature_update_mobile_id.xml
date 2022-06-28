@@ -39,6 +39,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="phone"
                 android:digits="0123456789"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
                 android:accessibilityTraversalAfter="@id/signatureUpdateMobileIdPhoneNoText"
                 android:minHeight="@dimen/material_baseline_grid_6x" />
 
@@ -67,6 +69,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:maxLength="11"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
                 android:accessibilityTraversalAfter="@id/signatureUpdateMobileIdPersonalCodeText"
                 android:minHeight="@dimen/material_baseline_grid_6x" />
 
@@ -75,7 +79,7 @@
         <CheckBox
             android:id="@id/signatureUpdateMobileIdRememberMe"
             android:layout_width="200dp"
-            android:layout_height="@dimen/material_baseline_grid_6x"
+            android:layout_height="70dp"
             android:checked="false"
             android:text="@string/signature_update_mobile_id_remember_me" />
 

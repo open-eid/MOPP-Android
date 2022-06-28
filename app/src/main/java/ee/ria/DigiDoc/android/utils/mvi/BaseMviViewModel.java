@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.utils.mvi;
 
+import android.util.Log;
+
 import androidx.lifecycle.ViewModel;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -74,6 +76,6 @@ public abstract class BaseMviViewModel<
 
     private void logD(String message, Object... args) {
         Timber.tag(getClass().getSimpleName());
-        Timber.d(message, args);
+        Timber.log(Log.DEBUG, message, args);
     }
 }

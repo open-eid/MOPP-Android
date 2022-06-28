@@ -18,5 +18,7 @@
     <color name="menuLocaleBackgroundChecked">#041E42</color>
     <color name="menuLocaleText">#C9CBDF</color>
     <color name="menuLocaleTextChecked">#F4F5F6</color>
+    <color name="detailInformationTitleLabel">#18181C</color>
+    <color name="detailInformationLabel">#56565D</color>
 
 </resources>

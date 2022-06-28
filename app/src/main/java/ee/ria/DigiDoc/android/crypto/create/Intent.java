@@ -161,6 +161,14 @@ interface Intent extends MviIntent, MviAction {
     }
 
     @AutoValue
+    abstract class RecipientsScreenDoneButtonClickIntent implements Intent {
+
+        static RecipientsScreenDoneButtonClickIntent create() {
+            return new AutoValue_Intent_RecipientsScreenDoneButtonClickIntent();
+        }
+    }
+
+    @AutoValue
     abstract class RecipientsSearchIntent implements Intent {
 
         @Nullable abstract String query();
