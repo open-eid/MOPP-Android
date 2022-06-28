@@ -1,0 +1,50 @@
+name: RIA DigiDoc Android
+on: [push, pull_request]
+env:
+  BUILD_NUMBER: ${{ github.run_number }}
+jobs:
+  ubuntu:
+    name: Build on Ubuntu
+    if: contains(github.repository, 'open-eid/MOPP-Android') && contains(github.ref, 'master')
+    runs-on: ubuntu-latest
+    env:
+      APK_RELEASE_DIRECTORY: "app/build/outputs/apk/release"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Setup environment
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          echo "APP_VERSION_NAME=$(grep 'appVersionName=' gradle.properties | cut -d'=' -f 2 | cut -d'-' -f 1)" >> $GITHUB_ENV
+          cd ${{ github.workspace }}/app
+          echo -n "$GOOGLE_SERVICES_JSON" | base64 --decode > "google-services.json"
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 11
+      - name: Setup Gradle and Build
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: wrapper
+          arguments: clean --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=${{ env.APP_VERSION_NAME }}.${{ env.BUILD_NUMBER }} assembleRelease --info
+      - name: Sign app APK
+        uses: r0adkll/sign-android-release@v1
+        id: signed_apk
+        with:
+          releaseDirectory: ${{ env.APK_RELEASE_DIRECTORY }}
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.SIGNING_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+      - name: Rename APK
+        run: |
+          mv ${{ github.workspace }}/${{ env.APK_RELEASE_DIRECTORY }}/app-release-unsigned-signed.apk ${{ github.workspace }}/${{ env.APK_RELEASE_DIRECTORY }}/"RIA_DigiDoc_${{ env.APP_VERSION_NAME }}.${{ env.BUILD_NUMBER }}.apk"
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          name: "RIA_DigiDoc_${{ env.APP_VERSION_NAME }}.${{ env.BUILD_NUMBER }}"
+          path: ${{ github.workspace }}/${{ env.APK_RELEASE_DIRECTORY }}/RIA_DigiDoc_${{ env.APP_VERSION_NAME }}.${{ env.BUILD_NUMBER }}.apk

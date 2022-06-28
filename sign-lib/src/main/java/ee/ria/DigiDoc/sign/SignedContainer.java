@@ -3,9 +3,9 @@ package ee.ria.DigiDoc.sign;
 import static com.google.common.collect.ImmutableList.sortedCopyOf;
 import static com.google.common.io.Files.getFileExtension;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Base64;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
@@ -15,19 +15,39 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 
 import org.apache.commons.io.FilenameUtils;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.bouncycastle.util.encoders.Hex;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Paths;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
@@ -43,8 +63,11 @@ import timber.log.Timber;
 @AutoValue
 public abstract class SignedContainer {
 
+    private static final ImmutableSet<String> ASICS_EXTENSIONS = ImmutableSet.of("asics", "scs");
+
     private static final ImmutableSet<String> EXTENSIONS = ImmutableSet.<String>builder()
-            .add("asice", "asics", "sce", "scs", "adoc", "bdoc", "ddoc", "edoc")
+            .add("asice", "sce", "adoc", "bdoc", "ddoc", "edoc")
+            .addAll(ASICS_EXTENSIONS)
             .build();
     private static final ImmutableSet<String> NON_LEGACY_EXTENSIONS = ImmutableSet.<String>builder()
             .add("asice", "sce", "bdoc")
@@ -169,7 +192,7 @@ public abstract class SignedContainer {
 
         try {
             Container container = container(file());
-          
+
             ee.ria.libdigidocpp.Signature signature = container
                     .prepareWebSignature(certificate.toByteArray(), signatureProfile());
             if (signature != null) {
@@ -182,19 +205,19 @@ public abstract class SignedContainer {
             throw new Exception("Empty signature value");
         } catch (Exception e) {
             if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
-                Timber.e(e, "Failed to sign with ID-card - Too Many Requests");
+                Timber.log(Log.ERROR, e, "Failed to sign with ID-card - Too Many Requests");
                 throw new TooManyRequestsException();
             }
             if (e.getMessage() != null && e.getMessage().contains("OCSP response not in valid time slot")) {
-                Timber.e(e, "Failed to sign with ID-card - OCSP response not in valid time slot");
+                Timber.log(Log.ERROR, e, "Failed to sign with ID-card - OCSP response not in valid time slot");
                 throw new OcspInvalidTimeSlotException();
             }
             if (e.getMessage() != null && e.getMessage().contains("Certificate status: revoked")) {
-                Timber.e(e, "Failed to sign with ID-card - Certificate status: revoked");
+                Timber.log(Log.ERROR, e, "Failed to sign with ID-card - Certificate status: revoked");
                 throw new CertificateRevokedException();
             }
             if (e.getMessage() != null && e.getMessage().contains("Failed to connect")) {
-                Timber.e(e, "Failed to connect to Internet");
+                Timber.log(Log.ERROR, e, "Failed to connect to Internet");
                 throw new NoInternetConnectionException();
             }
 
@@ -298,7 +321,7 @@ public abstract class SignedContainer {
                     return true;
                 }
             } catch (Exception e) {
-                Timber.d("Could not open PDF as signature container %s", file);
+                Timber.log(Log.DEBUG, "Could not open PDF as signature container %s", file);
             }
         }
         return false;
@@ -316,9 +339,38 @@ public abstract class SignedContainer {
         return !NON_LEGACY_EXTENSIONS.contains(extension);
     }
 
+    public static String getMediaType(File file) throws Exception {
+         return container(file).mediaType();
+    }
+
     private static DataFile dataFile(ee.ria.libdigidocpp.DataFile dataFile) {
         return DataFile.create(dataFile.id(), new File(dataFile.fileName()).getName(),
                 dataFile.fileSize(), dataFile.mediaType());
+    }
+
+    private static X509Certificate x509Certificate(byte[] bytes) {
+        try {
+            return (X509Certificate) CertificateFactory.getInstance("X.509")
+                    .generateCertificate(new ByteArrayInputStream(bytes));
+        } catch (CertificateException e) {
+            Timber.log(Log.ERROR, "Can't parse certificate", e);
+            return null;
+        }
+    }
+
+    private static String getX509CertificateIssuer(X509Certificate x509Certificate) {
+        try {
+            X500Name x500name = new JcaX509CertificateHolder(x509Certificate).getIssuer();
+            RDN cn = x500name.getRDNs(BCStyle.CN)[0];
+            return IETFUtils.valueToString(cn.getFirst().getValue());
+        } catch (CertificateEncodingException e) {
+            Timber.log(Log.ERROR, "Unable to get certificate issuer", e);
+            return "";
+        }
+    }
+
+    private static String toHexString(byte[] bytes) {
+        return Hex.toHexString(bytes).replaceAll("..", "$0 ").trim();
     }
 
     private static Signature signature(ee.ria.libdigidocpp.Signature signature) {
@@ -327,7 +379,63 @@ public abstract class SignedContainer {
         Instant createdAt = Instant.parse(signature.trustedSigningTime());
         SignatureStatus status = signatureStatus(signature);
         String profile = signature.profile();
-        return Signature.create(id, name, createdAt, status, profile);
+
+        String signersCertificateIssuer = "";
+        X509Certificate signingCertificate = null;
+
+        if (x509Certificate(signature.signingCertificateDer()) != null) {
+            signersCertificateIssuer = getX509CertificateIssuer(x509Certificate(signature.signingCertificateDer()));
+            signingCertificate = x509Certificate(signature.signingCertificateDer());
+        }
+        String signatureMethod = signature.signatureMethod();
+        String signatureFormat = signature.profile();
+        String signatureTimestamp = getFormattedDateTime(signature.trustedSigningTime(), false);
+        String signatureTimestampUTC = getFormattedDateTime(signature.trustedSigningTime(), true);
+        String hashValueOfSignature = toHexString(signature.messageImprint());
+
+        String tsCertificateIssuer = "";
+        X509Certificate tsCertificate = null;
+        if (signature.TimeStampCertificateDer() != null && signature.TimeStampCertificateDer().length > 0) {
+            tsCertificate = x509Certificate(signature.TimeStampCertificateDer());
+            tsCertificateIssuer = getX509CertificateIssuer(tsCertificate);
+        }
+
+        String ocspCertificateIssuer = "";
+        X509Certificate ocspCertificate = null;
+        if (signature.OCSPCertificateDer() != null && signature.OCSPCertificateDer().length > 0) {
+            ocspCertificate = x509Certificate(signature.OCSPCertificateDer());
+            ocspCertificateIssuer = getX509CertificateIssuer(ocspCertificate);
+        }
+
+        String ocspTime = "";
+        String ocspTimeUTC = "";
+        if (!signature.OCSPProducedAt().isEmpty()) {
+            ocspTime = getFormattedDateTime(signature.OCSPProducedAt(), false);
+        }
+        if (!signature.OCSPProducedAt().isEmpty()) {
+            ocspTimeUTC = getFormattedDateTime(signature.OCSPProducedAt(), true);
+        }
+
+        String signersMobileTimeUTC = getFormattedDateTime(signature.claimedSigningTime(), true);
+
+        return Signature.create(id, name, createdAt, status, profile, signersCertificateIssuer,
+                signingCertificate, signatureMethod, signatureFormat, signatureTimestamp,
+                signatureTimestampUTC, hashValueOfSignature, tsCertificateIssuer, tsCertificate,
+                ocspCertificateIssuer, ocspCertificate, ocspTime, ocspTimeUTC, signersMobileTimeUTC);
+    }
+
+    private static String getFormattedDateTime(String dateTimeString, boolean isUTC) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            if (isUTC) {
+                return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(dateFormat.parse(dateTimeString)) + " +0000";
+            }
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return new SimpleDateFormat("dd.MM.yyyy HH:mm:ssZ").format(dateFormat.parse(dateTimeString));
+        } catch (ParseException | IllegalStateException e) {
+            Timber.log(Log.ERROR, e, "Unable to parse date");
+        }
+        return "";
     }
 
     private static String signatureName(ee.ria.libdigidocpp.Signature signature) {
@@ -336,7 +444,7 @@ public abstract class SignedContainer {
             commonName = Certificate.create(ByteString.of(signature.signingCertificateDer()))
                     .friendlyName();
         } catch (IOException e) {
-            Timber.e(e, "Can't parse certificate to get CN");
+            Timber.log(Log.ERROR, e, "Can't parse certificate to get CN");
             commonName = null;
         }
         return commonName == null ? signature.signedBy() : commonName;
@@ -431,8 +539,55 @@ public abstract class SignedContainer {
 
             return isSignedContainer;
         } catch (IOException e) {
-            Timber.e(e, "Unable to check if PDF file is signed");
+            Timber.log(Log.ERROR, e, "Unable to check if PDF file is signed");
             return false;
         }
+    }
+
+    public static boolean isCdoc(File file) {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(file);
+            NodeList nodes = doc.getElementsByTagName("denc:EncryptionProperty");
+            for (int i = 0; i < nodes.getLength(); i++) {
+                NamedNodeMap attributes = nodes.item(i).getAttributes();
+                for (int j = 0; j < attributes.getLength(); j++) {
+                    if (attributes.item(j).getNodeValue().equals("DocumentFormat")) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Timber.log(Log.ERROR, e, "XML parsing failed");
+            return false;
+        }
+
+        return false;
+    }
+
+    public static boolean isDdoc(File file) {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(file);
+            NodeList nodes = doc.getElementsByTagName("SignedDoc");
+            for (int i = 0; i < nodes.getLength(); i++) {
+                NamedNodeMap attributes = nodes.item(i).getAttributes();
+                for (int j = 0; j < attributes.getLength(); j++) {
+                    if (attributes.item(j).getNodeValue().equals("DIGIDOC-XML")) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Timber.log(Log.ERROR, e, "XML parsing failed");
+            return false;
+        }
+
+        return false;
+    }
+    public static boolean isAsicsFile(String fileName) {
+        return ASICS_EXTENSIONS.contains(Files.getFileExtension(fileName).toLowerCase());
     }
 }

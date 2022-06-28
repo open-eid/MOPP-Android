@@ -19,6 +19,7 @@ import static ee.ria.DigiDoc.sign.SignedContainer.mimeType;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toast;
 
@@ -91,6 +92,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     private final ObservableTransformer<Intent.RecipientsScreenUpButtonClickIntent,
                                         Result> recipientsScreenUpButtonClick;
 
+    private final ObservableTransformer<Intent.RecipientsScreenDoneButtonClickIntent,
+            Result> recipientsScreenDoneButtonClick;
+
     private final ObservableTransformer<Intent.RecipientsSearchIntent,
             Result.RecipientsSearchResult> recipientsSearch;
 
@@ -127,7 +131,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .startWithItem(Result.InitialResult.activity());
             } else if (androidIntent != null) {
-                return parseIntent(androidIntent, application);
+                return parseIntent(androidIntent, application, fileSystem.getExternallyOpenedFilesDir());
             } else {
                 navigator.execute(Transaction.activityForResult(RC_CRYPTO_CREATE_INITIAL,
                         createGetContentIntent(), null));
@@ -137,7 +141,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .switchMap(activityResult -> {
                             android.content.Intent data = activityResult.data();
                             if (activityResult.resultCode() == RESULT_OK && data != null) {
-                                return parseIntent(data, application)
+                                return parseIntent(data, application, fileSystem.getExternallyOpenedFilesDir())
                                         .onErrorReturn(throwable -> {
                                             if (throwable instanceof EmptyFileException) {
                                                 ToastUtil.showEmptyFileError(application);
@@ -202,7 +206,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             return Observable
                                     .fromCallable(() -> {
                                         ImmutableList<FileStream> fileStreams =
-                                                parseGetContentIntent(contentResolver, data);
+                                                parseGetContentIntent(contentResolver, data, fileSystem.getExternallyOpenedFilesDir());
                                         ImmutableList.Builder<File> builder =
                                                 ImmutableList.<File>builder().addAll(dataFiles);
                                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(fileStreams);
@@ -225,7 +229,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                     })
                                     .map(Result.DataFilesAddResult::success)
                                     .onErrorReturn(throwable -> {
-                                        Timber.d(throwable, "No valid files in list");
+                                        Timber.log(Log.DEBUG, throwable, "No valid files in list");
                                         return Result.DataFilesAddResult.failure(throwable);
                                     })
                                     .subscribeOn(Schedulers.io())
@@ -259,7 +263,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 if (intent.containerFile() != null) {
                                     boolean isFileDeleted = intent.containerFile().delete();
                                     if (isFileDeleted) {
-                                        Timber.d("File %s deleted", intent.containerFile().getName());
+                                        Timber.log(Log.DEBUG, "File %s deleted", intent.containerFile().getName());
                                     }
                                 }
                                 navigator.execute(Transaction.pop());
@@ -306,7 +310,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 return Transaction.push(CryptoCreateScreen.open(file));
                             } else if (SignedContainer.isContainer(file)) {
                                 return Transaction.push(
-                                        SignatureUpdateScreen.create(true, true, file, false, false));
+                                        SignatureUpdateScreen.create(true, true, file, false, false, null, true));
                             } else {
                                 return Transaction.activity(
                                         createViewIntent(application, file, mimeType(file)), null);
@@ -329,6 +333,17 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
         recipientsScreenUpButtonClick = upstream -> upstream.switchMap(intent -> {
             navigator.execute(Transaction.pop());
+            if (application.getApplicationContext() != null) {
+                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_addition_cancelled);
+            }
+            return Observable.empty();
+        });
+
+        recipientsScreenDoneButtonClick = upstream -> upstream.switchMap(intent -> {
+            navigator.execute(Transaction.pop());
+            if (application.getApplicationContext() != null) {
+                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipients_added);
+            }
             return Observable.empty();
         });
 
@@ -391,7 +406,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             } catch (Exception e) {
                                 boolean isFileDeleted = containerFile.delete();
                                 if (isFileDeleted) {
-                                    Timber.d("File %s deleted", containerFile.getName());
+                                    Timber.log(Log.DEBUG, "File %s deleted", containerFile.getName());
                                 }
                                 throw e;
                             }
@@ -475,6 +490,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .compose(recipientsAddButtonClick),
                 shared.ofType(Intent.RecipientsScreenUpButtonClickIntent.class)
                         .compose(recipientsScreenUpButtonClick),
+                shared.ofType(Intent.RecipientsScreenDoneButtonClickIntent.class)
+                        .compose(recipientsScreenDoneButtonClick),
                 shared.ofType(Intent.RecipientsSearchIntent.class).compose(recipientsSearch),
                 shared.ofType(Intent.RecipientAddIntent.class).compose(recipientAdd),
                 shared.ofType(Intent.RecipientRemoveIntent.class).compose(recipientRemove),
@@ -484,10 +501,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.SendIntent.class).compose(send)));
     }
 
-    private Observable<Result.InitialResult> parseIntent(android.content.Intent intent, Application application) {
+    private Observable<Result.InitialResult> parseIntent(android.content.Intent intent, Application application, File externallyOpenedFileDir) {
         return Observable
                 .fromCallable(() -> {
-                    ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(parseGetContentIntent(contentResolver, intent));
+                    ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
+                            parseGetContentIntent(contentResolver, intent, externallyOpenedFileDir));
                     ToastUtil.handleEmptyFileError(validFiles, application);
                     if (validFiles.size() == 1
                             && isContainerFileName(validFiles.get(0).displayName())) {
@@ -501,6 +519,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         ImmutableList<File> dataFiles = builder.build();
                         File file = fileSystem.generateSignatureContainerFile(
                                 createContainerFileName(dataFiles.get(0).getName()));
+                        if (dataFiles.size() > 1) {
+                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.files_added);
+                        } else {
+                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.file_added);
+                        }
                         return Result.InitialResult.success(file, dataFiles);
                     }
                 })

@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.smartcardreader.acs;
 
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.util.Log;
 
 import com.acs.smartcard.Reader;
 import com.acs.smartcard.ReaderException;
@@ -44,7 +45,7 @@ public final class AcsSmartCardReader extends SmartCardReader {
                 reader.power(SLOT, Reader.CARD_WARM_RESET);
                 reader.setProtocol(SLOT, Reader.PROTOCOL_TX);
             } catch (ReaderException e) {
-                Timber.e(e, "Connecting to ACS reader");
+                Timber.log(Log.ERROR, e, "Connecting to ACS reader");
             }
         }
         return reader.isOpened() && reader.getState(SLOT) == Reader.CARD_SPECIFIC;
