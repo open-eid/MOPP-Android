@@ -92,9 +92,13 @@ public final class Activity extends AppCompatActivity {
             restartAppWithIntent(intent, false);
         } else if (Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
             rootScreenFactory.intent(intent);
-        }
-        else {
-          rootScreenFactory.intent(intent);
+        } else if (Intent.ACTION_MAIN.equals(intent.getAction()) && savedInstanceState != null) {
+            savedInstanceState = null;
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            restartAppWithIntent(intent, false);
+        } else {
+            rootScreenFactory.intent(intent);
         }
 
         mContext = new WeakReference<>(this);
@@ -164,13 +168,14 @@ public final class Activity extends AppCompatActivity {
         startActivity(intent);
         overridePendingTransition (0, 0);
         if (withExit) {
-            System.exit(0);
+            int pid = android.os.Process.myPid();
+            android.os.Process.killProcess(pid);
         }
     }
 
     private void handleIncomingFiles(Intent intent) {
         try {
-            intent.setDataAndType(intent.getData(), "*/*");
+            intent.setDataAndType(FileUtil.normalizeUri(intent.getData()), "*/*");
             rootScreenFactory.intent(intent);
         } catch (ActivityNotFoundException e) {
             Timber.log(Log.ERROR, e, "Handling incoming file intent");
