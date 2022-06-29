@@ -128,7 +128,7 @@ public final class CodeUpdateView extends CoordinatorLayout {
 
         positiveButton.setContentDescription(getResources().getString(changeButtonDescriptionResId));
         negativeButton.setContentDescription(getResources().getString(cancelButtonDescriptionResId));
-        AccessibilityUtils.setAccessibilityPaneTitle(toolbarView, overlayPaneTitleResId);
+        AccessibilityUtils.setViewAccessibilityPaneTitle(toolbarView, overlayPaneTitleResId);
 
         successMessageView.setVisibility(successMessageVisible ? VISIBLE : GONE);
         if (successMessageVisible) {

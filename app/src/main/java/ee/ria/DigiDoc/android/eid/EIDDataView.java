@@ -72,7 +72,6 @@ public final class EIDDataView extends LinearLayout {
         formatter = Application.component(context).formatter();
         setOrientation(VERTICAL);
         inflate(context, R.layout.eid_home_data, this);
-        AccessibilityUtils.setAccessibilityPaneTitle(this, "ID-card information");
         typeView = findViewById(R.id.eidHomeDataType);
         givenNamesView = findViewById(R.id.eidHomeDataGivenNames);
         surnameView = findViewById(R.id.eidHomeDataSurname);

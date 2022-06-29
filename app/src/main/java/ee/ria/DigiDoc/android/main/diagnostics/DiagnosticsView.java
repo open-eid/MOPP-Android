@@ -88,7 +88,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
         super(context);
         dateFormat = ConfigurationDateUtil.getDateFormat();
         inflate(context, R.layout.main_diagnostics, this);
-        AccessibilityUtils.setAccessibilityPaneTitle(this, R.string.main_diagnostics_title);
+        AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.main_diagnostics_title);
         toolbarView = findViewById(R.id.toolbar);
         View saveDiagnosticsButton = findViewById(R.id.configurationSaveButton);
         navigator = Application.component(context).navigator();
