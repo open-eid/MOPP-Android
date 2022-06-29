@@ -67,7 +67,7 @@ public final class CertificateDetailView extends CoordinatorLayout {
         super(context);
 
         inflate(context, R.layout.certificate_details_screen, this);
-        AccessibilityUtils.setAccessibilityPaneTitle(this, R.string.certificate_details_title);
+        AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.certificate_details_title);
 
         navigator = Application.component(context).navigator();
         toolbarView = findViewById(R.id.toolbar);
