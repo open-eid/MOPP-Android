@@ -240,7 +240,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         toolbarView.setNavigationIcon(R.drawable.ic_clear);
         toolbarView.setNavigationContentDescription(R.string.close);
 
-        AccessibilityUtils.setAccessibilityPaneTitle(this, isExistingContainer ? getResources().getString(titleResId) : "Container signing");
+        AccessibilityUtils.setViewAccessibilityPaneTitle(this, titleResId);
 
         if (isNestedContainer) {
             sendButton.setVisibility(GONE);

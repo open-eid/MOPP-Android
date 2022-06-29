@@ -1,9 +1,12 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -279,6 +282,12 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((AddButtonItem) adapter.items.get(getBindingAdapterPosition())).text())
                     .subscribe(adapter.addButtonClicksSubject);
+            if (buttonView.getText() == buttonView.getResources().getString(R.string.documents_add_button_accessibility)) {
+                new Handler(Looper.getMainLooper()).postDelayed(() ->
+                        itemView.findViewById(R.id.cryptoCreateAddButton)
+                                .sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED),
+                        2500);
+            }
         }
     }
 

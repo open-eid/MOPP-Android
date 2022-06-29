@@ -83,12 +83,15 @@ public final class CertificateDataView extends LinearLayout {
         linkView.setText(type == CertificateType.AUTHENTICATION
                 ? R.string.eid_home_certificate_data_link_auth
                 : R.string.eid_home_certificate_data_link_sign);
+        linkView.setContentDescription(type == CertificateType.AUTHENTICATION
+                ? getContext().getString(R.string.eid_home_certificate_data_link_auth_accessibility)
+                : getContext().getString(R.string.eid_home_certificate_data_link_sign_accessibility));
         errorView.setText(type == CertificateType.AUTHENTICATION
                 ? R.string.eid_home_certificate_data_error_auth
                 : R.string.eid_home_certificate_data_error_sign);
         errorView.setContentDescription(type == CertificateType.AUTHENTICATION
-                ? getContext().getString(R.string.eid_home_certificate_data_error_auth)
-                : getContext().getString(R.string.eid_home_certificate_data_error_sign));
+                ? getContext().getString(R.string.eid_home_certificate_data_error_auth_accessibility)
+                : getContext().getString(R.string.eid_home_certificate_data_error_sign_accessibility));
 
         if (!pinBlocked && !pukBlocked) {
             buttonView.setVisibility(VISIBLE);

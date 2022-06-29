@@ -263,7 +263,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         toolbarView.setNavigationIcon(R.drawable.ic_clear);
         toolbarView.setNavigationContentDescription(R.string.close);
 
-        AccessibilityUtils.setAccessibilityPaneTitle(view, "File " + Objects.requireNonNull(getResources()).getString(titleResId));
+        AccessibilityUtils.setViewAccessibilityPaneTitle(view, titleResId);
 
         adapter.dataForContainer(name, containerFile, dataFiles, state.dataFilesViewEnabled(),
                 state.dataFilesAddEnabled(), state.dataFilesRemoveEnabled(), recipients,

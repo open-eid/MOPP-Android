@@ -152,7 +152,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
         View view = inflater.inflate(R.layout.crypto_recipients_screen, container, false);
 
-        AccessibilityUtils.setAccessibilityPaneTitle(view, R.string.crypto_recipients_title);
+        AccessibilityUtils.setViewAccessibilityPaneTitle(view, R.string.crypto_recipients_title);
 
         toolbarView = view.findViewById(R.id.toolbar);
         toolbarView.setTitle(R.string.crypto_recipients_title);

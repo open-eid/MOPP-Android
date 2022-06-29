@@ -74,7 +74,6 @@ public final class EIDDataView extends LinearLayout {
         formatter = Application.component(context).formatter();
         setOrientation(VERTICAL);
         inflate(context, R.layout.eid_home_data, this);
-        AccessibilityUtils.setAccessibilityPaneTitle(this, "ID-card information");
         typeView = findViewById(R.id.eidHomeDataType);
         givenNamesView = findViewById(R.id.eidHomeDataGivenNames);
         surnameView = findViewById(R.id.eidHomeDataSurname);
@@ -112,9 +111,9 @@ public final class EIDDataView extends LinearLayout {
         surnameView.setContentDescription(data.personalData().surname().toLowerCase());
         personalCodeLabelView.setContentDescription(personalCodeLabelView.getText().toString().toLowerCase());
         personalCodeView.setText(data.personalData().personalCode());
-        personalCodeView.setContentDescription(TextUtil.splitTextAndJoin(data.personalData().personalCode().toLowerCase(), " "));
+        personalCodeView.setContentDescription(TextUtil.splitTextAndJoin(data.personalData().personalCode().toLowerCase(), ""));
         citizenshipView.setText(data.personalData().citizenship());
-        citizenshipView.setContentDescription(TextUtil.splitTextAndJoin(data.personalData().citizenship().toLowerCase(), " "));
+        citizenshipView.setContentDescription(TextUtil.splitTextAndJoin(data.personalData().citizenship().toLowerCase(), ""));
 
         certificatesTitleView.setTextColor(certificateContainerExpanded
                 ? expandedTitleColor
@@ -147,7 +146,7 @@ public final class EIDDataView extends LinearLayout {
             pukLinkView.setVisibility(GONE);
         }
         documentNumberView.setText(data.personalData().documentNumber());
-        documentNumberView.setContentDescription(TextUtil.splitTextAndJoin(data.personalData().documentNumber(), " "));
+        documentNumberView.setContentDescription(TextUtil.splitTextAndJoin(data.personalData().documentNumber(), ""));
         expiryDateView.setText(formatter.idCardExpiryDate(data.personalData().expiryDate()));
         documentNumberLabelView.setVisibility(VISIBLE);
         documentNumberView.setVisibility(VISIBLE);

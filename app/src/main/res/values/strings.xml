@@ -558,10 +558,16 @@
     <string name="eid_home_data_citizenship_accessibility">Citizenship</string>
     <string name="eid_home_data_document_number_accessibility">Document number</string>
     <string name="eid_home_data_expiry_date_accessibility">Date of expiry</string>
-    <string name="eid_home_data_certificates_title_accessibility">PIN, PUK codes and certificates</string>
-    <string name="eid_home_certificate_data_button_change_auth_accessibility">Change PIN1</string>
-    <string name="eid_home_certificate_data_button_change_sign_accessibility">Change PIN2</string>
+    <string name="eid_home_data_certificates_title_accessibility">pin, puk codes and certificates</string>
+    <string name="eid_home_certificate_data_button_change_auth_accessibility">Change pin1</string>
+    <string name="eid_home_certificate_data_button_change_sign_accessibility">Change pin2</string>
     <string name="eid_home_certificate_data_button_unblock_auth_accessibility">Unblock</string>
     <string name="eid_home_certificate_data_button_unblock_sign_accessibility">Unblock</string>
-    <string name="eid_home_data_certificates_puk_button_accessibility">Change PUK</string>
+    <string name="eid_home_data_certificates_puk_button_accessibility">Change puk</string>
+    <string name="eid_home_certificate_data_link_auth_accessibility">Forgot pin1?</string>
+    <string name="eid_home_certificate_data_link_sign_accessibility">Forgot pin2?</string>
+    <string name="eid_home_certificate_data_error_auth_accessibility">pin1 is blocked, because pin1 has been inserted 3 times incorrectly.</string>
+    <string name="eid_home_certificate_data_error_sign_accessibility">pin2 is blocked, because pin2 has been inserted 3 times incorrectly.</string>
+    <string name="eid_home_data_certificates_puk_title_accessibility">puk code</string>
+    <string name="eid_home_data_certificates_puk_text_accessibility">puk code is in your code envelope</string>
 </resources>

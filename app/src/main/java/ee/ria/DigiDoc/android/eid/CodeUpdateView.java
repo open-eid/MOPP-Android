@@ -129,7 +129,7 @@ public final class CodeUpdateView extends CoordinatorLayout {
 
         positiveButton.setContentDescription(getResources().getString(changeButtonDescriptionResId));
         negativeButton.setContentDescription(getResources().getString(cancelButtonDescriptionResId));
-        AccessibilityUtils.setAccessibilityPaneTitle(toolbarView, overlayPaneTitleResId);
+        AccessibilityUtils.setViewAccessibilityPaneTitle(toolbarView, overlayPaneTitleResId);
 
         successMessageView.setVisibility(successMessageVisible ? VISIBLE : GONE);
         if (successMessageVisible) {
@@ -192,12 +192,12 @@ public final class CodeUpdateView extends CoordinatorLayout {
         }
 
         AccessibilityUtils.setContentDescription(successMessageView, getResources().getString(action.successMessageRes()));
-        AccessibilityUtils.setContentDescription(currentView, getResources().getString(R.string.eid_home_code_update_current_pin1_edit));
+        AccessibilityUtils.setContentDescription(currentView, getResources().getString(action.currentRes()));
         AccessibilityUtils.setContentDescription(currentLabelView, getResources().getString(action.currentRes()));
         AccessibilityUtils.setContentDescription(newLabelView, getResources().getString(action.newRes(), action.newMinLength()));
-        AccessibilityUtils.setContentDescription(newView, getResources().getString(R.string.eid_home_code_update_new_pin1, action.newMinLength()));
+        AccessibilityUtils.setContentDescription(newView, getResources().getString(action.newRes(), action.newMinLength()));
         AccessibilityUtils.setContentDescription(repeatLabelView, getResources().getString(action.repeatRes()));
-        AccessibilityUtils.setContentDescription(repeatView, getResources().getString(R.string.eid_home_code_update_repeat_pin1));
+        AccessibilityUtils.setContentDescription(repeatView, getResources().getString(action.repeatRes()));
     }
 
     public void clear() {

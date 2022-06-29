@@ -262,14 +262,17 @@
                     style="@style/Widget.Application.EID.Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/eid_home_data_certificates_puk_title" />
+                    android:text="@string/eid_home_data_certificates_puk_title"
+                    android:contentDescription="@string/eid_home_data_certificates_puk_title_accessibility" />
 
                 <TextView
                     android:id="@id/eidHomeDataCertificatesPukText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="@string/eid_home_data_certificates_puk_text" />
+                    android:text="@string/eid_home_data_certificates_puk_text"
+                    android:contentDescription="@string/eid_home_data_certificates_puk_text_accessibility" />
+
             </LinearLayout>
 
             <Button
