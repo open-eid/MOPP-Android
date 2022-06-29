@@ -100,6 +100,7 @@ dependencies {
     implementation "com.jakewharton.rxbinding4:rxbinding:${rxBindingVersion}"
     implementation "com.jakewharton.rxbinding4:rxbinding-material:${rxBindingVersion}"
 
+    implementation "org.apache.commons:commons-text:${commonsTextVersion}"
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
     annotationProcessor "com.ryanharter.auto.value:auto-value-parcel:${autoValueParcelVersion}"

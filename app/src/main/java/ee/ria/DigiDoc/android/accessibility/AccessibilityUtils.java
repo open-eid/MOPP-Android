@@ -63,7 +63,6 @@ public class AccessibilityUtils {
         }
     }
 
-
     public static void disableContentDescription(View view) {
         view.setContentDescription(null);
     }

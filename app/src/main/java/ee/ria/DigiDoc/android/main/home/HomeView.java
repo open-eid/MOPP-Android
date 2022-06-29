@@ -3,19 +3,30 @@ package ee.ria.DigiDoc.android.main.home;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Parcelable;
-import androidx.annotation.Nullable;
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.text.Layout;
+import android.text.SpannableString;
+import android.text.style.AlignmentSpan;
 import android.util.SparseArray;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.internal.BaselineLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.crypto.home.CryptoHomeView;
 import ee.ria.DigiDoc.android.eid.EIDHomeView;
 import ee.ria.DigiDoc.android.signature.home.SignatureHomeView;
+import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import io.reactivex.rxjava3.core.Observable;
@@ -69,11 +80,32 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         cryptoItem.setContentDescription(getResources().getString(R.string.crypto_content_description, 2, 3));
         eidItem.setContentDescription(getResources().getString(R.string.my_eid_content_description, 3, 3));
 
+        setBottomToolbarItemSizes(signatureItem);
+        setBottomToolbarItemSizes(cryptoItem);
+        setBottomToolbarItemSizes(eidItem);
+
         menuDialog = new HomeMenuDialog(context);
         menuView = menuDialog.getMenuView();
         viewModel = Application.component(context).navigator().viewModel(screenId,
                 HomeViewModel.class);
         viewModel.eidScreenId(eidScreenId);
+    }
+
+    private void setBottomToolbarItemSizes(BottomNavigationItemView itemView) {
+        for (int i = 0; i < itemView.getChildCount(); i++) {
+            if (itemView.getChildAt(i) instanceof BaselineLayout) {
+                BaselineLayout baselineLayout = ((BaselineLayout) itemView.getChildAt(i));
+                if (baselineLayout.getChildCount() > 0) {
+                    for (int j = 0; j < baselineLayout.getChildCount(); j++) {
+                        if (baselineLayout.getChildAt(j) instanceof AppCompatTextView) {
+                            AppCompatTextView textView = (AppCompatTextView) baselineLayout.getChildAt(j);
+                            textView.setPadding(0, 50, 0, 0);
+                            TextUtil.setTextViewSizeInContainer(textView);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override

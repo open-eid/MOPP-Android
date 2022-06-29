@@ -27,9 +27,12 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,8 +51,8 @@ import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
-import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
@@ -191,9 +194,10 @@ public final class DiagnosticsView extends CoordinatorLayout {
         }
 
         File diagnosticsFileLocation = new File(DIAGNOSTICS_FILE_PATH + DIAGNOSTICS_FILE_NAME);
-        try (FileWriter fileWriter = new FileWriter(diagnosticsFileLocation)) {
-            fileWriter.append(formatDiagnosticsText(textViews));
-            fileWriter.flush();
+        try (FileOutputStream fileStream = new FileOutputStream(diagnosticsFileLocation);
+             OutputStreamWriter writer = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8.name())) {
+            writer.append(formatDiagnosticsText(textViews));
+            writer.flush();
             return diagnosticsFileLocation;
         } catch (IOException ex) {
             Timber.log(Log.ERROR, ex, "Unable to get diagnostics file location");
@@ -315,7 +319,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
         sivaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_siva_url_title,
                 configurationProvider.getSivaUrl(), Typeface.DEFAULT));
         tsaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsa_url_title,
-                configurationProvider.getTsaUrl(), Typeface.DEFAULT));
+                (getTsaUrlText() != null && !getTsaUrlText().isEmpty()) ?
+                        getTsaUrlText() : configurationProvider.getTsaUrl(), Typeface.DEFAULT));
         ldapPersonUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_ldap_person_url_title,
                 configurationProvider.getLdapPersonUrl(), Typeface.DEFAULT));
         ldapCorpUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_ldap_corp_url_title,
@@ -403,7 +408,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
                     tslEntry.setTextAppearance(R.style.MaterialTypography_Dense_Body1);
                     tslEntry.setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
                     String tslEntryText = tslFile.getName() + " (" + version + ")";
-                    tslEntry.setText(tslEntryText);
+                    tslEntry.setText(FileUtil.normalizeText(tslEntryText));
                     tslCacheLayout.addView(tslEntry);
                 } catch (Exception e) {
                     Timber.log(Log.ERROR, e, "Error displaying TSL version for: %s", tslFile.getAbsolutePath());

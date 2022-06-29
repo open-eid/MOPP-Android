@@ -12,9 +12,12 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
@@ -90,7 +93,8 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private CryptoCreateAdapter adapter;
     private View activityOverlayView;
     private View activityIndicatorView;
-    private TextView encryptButton;
+    private Button encryptButton;
+    private RecyclerView listView;
     private TextView decryptButton;
     private TextView sendButton;
     private View buttonSpaceView;
@@ -263,7 +267,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         adapter.dataForContainer(name, containerFile, dataFiles, state.dataFilesViewEnabled(),
                 state.dataFilesAddEnabled(), state.dataFilesRemoveEnabled(), recipients,
                 state.recipientsAddEnabled(), state.recipientsRemoveEnabled(),
-                state.encryptSuccessMessageVisible(), state.decryptSuccessMessageVisible());
+                state.encryptSuccessMessageVisible(), state.decryptSuccessMessageVisible(), listView);
 
         if (state.encryptSuccessMessageVisible()) {
             showSuccessNotification();
@@ -348,7 +352,11 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         Boolean showNotification = ((Activity) view.getContext()).getSettingsDataStore().getShowSuccessNotification();
         if (showNotification) {
             NotificationDialog successNotificationDialog = new NotificationDialog((Activity) view.getContext());
-            successNotificationDialog.show();
+            if (AccessibilityUtils.isAccessibilityEnabled()) {
+                new Handler(Looper.getMainLooper()).postDelayed(successNotificationDialog::show, 2000);
+            } else {
+                new Handler(Looper.getMainLooper()).postDelayed(successNotificationDialog::show, 1000);
+            }
         }
     }
 
@@ -383,7 +391,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 R.string.crypto_create_remove_data_file_confirmation_message, R.id.documentRemovalDialog);
         sivaConfirmationDialog = new ConfirmationDialog(Activity.getContext().get(),
                 R.string.siva_send_message_dialog, R.id.sivaConfirmationDialog);
-        RecyclerView listView = view.findViewById(R.id.cryptoCreateList);
+        listView = view.findViewById(R.id.cryptoCreateList);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         encryptButton = view.findViewById(R.id.cryptoCreateEncryptButton);
