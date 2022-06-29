@@ -4,6 +4,7 @@ import static com.google.common.collect.ImmutableList.sortedCopyOf;
 import static com.google.common.io.Files.getFileExtension;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -11,6 +12,7 @@ import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -24,6 +26,9 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.util.encoders.Hex;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -42,6 +47,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
@@ -333,6 +341,10 @@ public abstract class SignedContainer {
         return !NON_LEGACY_EXTENSIONS.contains(extension);
     }
 
+    public static String getMediaType(File file) throws Exception {
+         return container(file).mediaType();
+    }
+
     private static DataFile dataFile(ee.ria.libdigidocpp.DataFile dataFile) {
         return DataFile.create(dataFile.id(), new File(dataFile.fileName()).getName(),
                 dataFile.fileSize(), dataFile.mediaType());
@@ -360,7 +372,8 @@ public abstract class SignedContainer {
     }
 
     private static String toHexString(byte[] bytes) {
-        return Hex.toHexString(bytes).replaceAll("..", "$0 ").trim();
+        return TextUtils.join(" ",
+                Splitter.fixedLength(2).split(Hex.toHexString(bytes))).trim();
     }
 
     private static Signature signature(ee.ria.libdigidocpp.Signature signature) {
@@ -385,20 +398,27 @@ public abstract class SignedContainer {
 
         String tsCertificateIssuer = "";
         X509Certificate tsCertificate = null;
-        if (x509Certificate(signature.TimeStampCertificateDer()) != null) {
-            tsCertificateIssuer = getX509CertificateIssuer(x509Certificate(signature.TimeStampCertificateDer()));
+        if (signature.TimeStampCertificateDer() != null && signature.TimeStampCertificateDer().length > 0) {
             tsCertificate = x509Certificate(signature.TimeStampCertificateDer());
+            tsCertificateIssuer = getX509CertificateIssuer(tsCertificate);
         }
 
         String ocspCertificateIssuer = "";
         X509Certificate ocspCertificate = null;
-        if (x509Certificate(signature.OCSPCertificateDer()) != null) {
-            ocspCertificateIssuer = getX509CertificateIssuer(x509Certificate(signature.OCSPCertificateDer()));
+        if (signature.OCSPCertificateDer() != null && signature.OCSPCertificateDer().length > 0) {
             ocspCertificate = x509Certificate(signature.OCSPCertificateDer());
+            ocspCertificateIssuer = getX509CertificateIssuer(ocspCertificate);
         }
 
-        String ocspTime = getFormattedDateTime(signature.OCSPProducedAt(), false);
-        String ocspTimeUTC = getFormattedDateTime(signature.OCSPProducedAt(), true);
+        String ocspTime = "";
+        String ocspTimeUTC = "";
+        if (!signature.OCSPProducedAt().isEmpty()) {
+            ocspTime = getFormattedDateTime(signature.OCSPProducedAt(), false);
+        }
+        if (!signature.OCSPProducedAt().isEmpty()) {
+            ocspTimeUTC = getFormattedDateTime(signature.OCSPProducedAt(), true);
+        }
+
         String signersMobileTimeUTC = getFormattedDateTime(signature.claimedSigningTime(), true);
 
         return Signature.create(id, name, createdAt, status, profile, signersCertificateIssuer,
@@ -527,6 +547,49 @@ public abstract class SignedContainer {
         }
     }
 
+    public static boolean isCdoc(File file) {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(file);
+            NodeList nodes = doc.getElementsByTagName("denc:EncryptionProperty");
+            for (int i = 0; i < nodes.getLength(); i++) {
+                NamedNodeMap attributes = nodes.item(i).getAttributes();
+                for (int j = 0; j < attributes.getLength(); j++) {
+                    if (attributes.item(j).getNodeValue().equals("DocumentFormat")) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Timber.log(Log.ERROR, e, "XML parsing failed");
+            return false;
+        }
+
+        return false;
+    }
+
+    public static boolean isDdoc(File file) {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(file);
+            NodeList nodes = doc.getElementsByTagName("SignedDoc");
+            for (int i = 0; i < nodes.getLength(); i++) {
+                NamedNodeMap attributes = nodes.item(i).getAttributes();
+                for (int j = 0; j < attributes.getLength(); j++) {
+                    if (attributes.item(j).getNodeValue().equals("DIGIDOC-XML")) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Timber.log(Log.ERROR, e, "XML parsing failed");
+            return false;
+        }
+
+        return false;
+    }
     public static boolean isAsicsFile(String fileName) {
         return ASICS_EXTENSIONS.contains(Files.getFileExtension(fileName).toLowerCase());
     }

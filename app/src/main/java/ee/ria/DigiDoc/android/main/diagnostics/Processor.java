@@ -137,8 +137,10 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         File logsDirectory = FileUtil.getLogsDirectory(context);
         if (FileUtil.logsExist(logsDirectory)) {
             File[] files = logsDirectory.listFiles() != null ? logsDirectory.listFiles() : new File[]{};
-            for (File file: files) {
-                Files.deleteIfExists(file.toPath());
+            if (files != null) {
+                for (File file : files) {
+                    Files.deleteIfExists(file.toPath());
+                }
             }
         }
     }

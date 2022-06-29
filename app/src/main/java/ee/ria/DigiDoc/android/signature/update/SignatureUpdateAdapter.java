@@ -477,7 +477,7 @@ final class SignatureUpdateAdapter extends
             clicks(itemView).map(ignored ->
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
-            nameView.setText(TextUtil.splitTextAndJoin(item.signature().name(), ","));
+            nameView.setText(TextUtil.splitTextAndJoin(item.signature().name(), ",", ", "));
             nameView.setContentDescription(nameView.getText().toString().toLowerCase());
             switch (item.signature().status()) {
                 case INVALID:
@@ -578,7 +578,7 @@ final class SignatureUpdateAdapter extends
         @Override
         void bind(SignatureUpdateAdapter adapter, TimestampItem item) {
             clicks(itemView).map(ignored ->
-                    ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
+                    ((TimestampItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
             nameView.setText(item.signature().name());
             switch (item.signature().status()) {

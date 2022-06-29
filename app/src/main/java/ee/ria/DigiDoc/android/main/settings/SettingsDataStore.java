@@ -149,6 +149,7 @@ public final class SettingsDataStore {
     public void setIsOpenAllFileTypesEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(resources.getString(R.string.main_settings_open_all_filetypes_key), isEnabled);
+        editor.commit();
     }
 
     public String getTsaUrl() {

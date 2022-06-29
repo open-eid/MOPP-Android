@@ -12,6 +12,7 @@
     <string name="main_home_menu_title">Menüü</string>
     <string name="main_home_menu_button">Menüü</string>
     <string name="main_home_menu_help">ABI</string>
+    <string name="main_home_menu_help_url_short">link www.id.ee</string>
     <string name="main_home_menu_help_url">https://www.id.ee/id-abikeskus/</string>
     <string name="main_home_menu_recent">HILJUTISED DOKUMENDID</string>
     <string name="main_home_menu_settings">SEADED</string>
@@ -106,6 +107,10 @@
         <item quantity="other">%1$d ALLKIRJA EI KEHTI</item>
         <!-- placeholder to keep line numbers same in different locales -->
         <!-- placeholder to keep line numbers same in different locales -->
+    </plurals>
+    <plurals name="signature_update_signatures_valid">
+        <item quantity="one">%1$d kehtiv allkiri</item>
+        <item quantity="other">%1$d kehtivat allkirja</item>
     </plurals>
     <string name="signature_update_signature_type_signature">Allkiri</string>
     <string name="signature_update_signature_status_valid">Allkiri on kehtiv</string>
@@ -258,6 +263,8 @@
     <string name="crypto_create_decrypt_success_message">DEKRÜPTEERIMINE ÕNNESTUS</string>
     <string name="crypto_create_name_update_button">Muuda ümbriku nime</string>
     <string name="crypto_create_data_files_title">Krüpteeritud failid</string>
+    <string name="crypto_create_data_files_add_button_description">Lisa veel faile</string>
+    <string name="crypto_create_data_files_add_button">+ LISA VEEL FAILE</string>
     <string name="crypto_create_data_files_add_error_exists">Fail on juba ümbrikus olemas</string>
     <string name="crypto_create_data_file_remove_button">Eemalda fail</string>
     <string name="crypto_create_remove_data_file_confirmation_message">Soovid eemaldada faili ümbrikust?</string>
@@ -265,12 +272,12 @@
     <string name="crypto_create_data_file_save_button">Salvesta fail ümbrikust</string>
     <string name="crypto_create_recipients_title">Adressaadid</string>
     <string name="crypto_create_recipients_empty">Adressaadid puuduvad</string>
+    <string name="crypto_create_recipients_add_button_description">Lisa adresaat</string>
     <string name="crypto_create_recipients_add_button">+ LISA ADRESSAAT</string>
     <string name="crypto_create_encrypt_button">KRÜPTEERI</string>
     <string name="crypto_create_encrypt_button_description">Krüpteeri dokument</string>
     <string name="crypto_create_encrypt_error_no_recipients">Ühtegi adressaati ei ole lisatud</string>
     <string name="crypto_create_decrypt_button">DEKRÜPTEERI</string>
-    <string name="crypto_create_decrypt_button_description">Dekrüpteeri dokument</string>
     <string name="crypto_create_decrypt_positive_button">Dekrüpteeri</string>
     <string name="crypto_create_send_button">JAGA</string>
     <string name="crypto_create_error">Midagi läks krüpteerimisel valesti</string>
@@ -430,8 +437,8 @@
     <string name="crypto_content_description">Krüpto, vahekaart %1$d / %2$d</string>
     <string name="my_eid_content_description">Minu eID, vahekaart %1$d / %2$d</string>
 
+    <string name="decrypt_content_description">Dekrüpteeri dokument, vahekaart %1$d / %2$d</string>
     <string name="sign_send_content_description">Allkirjasta, vahekaart %1$d / %2$d</string>
-    <string name="decrypt_content_description">Dekrüpteeri, vahekaart %1$d / %2$d</string>
     <string name="decrypt_send_content_description">Jaga, vahekaart %1$d / %2$d</string>
 
     <string name="document">Dokument</string>
@@ -466,6 +473,7 @@
     <string name="recipients_found">Adressaati leitud</string>
     <string name="recipient_found">Adressaat leitud</string>
     <string name="recipient_added">Adressaat lisatud</string>
+    <string name="recipients_added">Adressaadid lisatud</string>
     <string name="recipient_removed">Adressaat eemaldatud</string>
     <string name="recipient_addition_cancelled">Adressaadi lisamine katkestatud</string>
     <string name="add_recipient">Lisa adressaat</string>

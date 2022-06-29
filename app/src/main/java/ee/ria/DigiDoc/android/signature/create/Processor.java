@@ -51,7 +51,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     @Inject Processor(Navigator navigator,
                       SignatureContainerDataSource signatureContainerDataSource,
-                      Application application) {
+                      Application application,
+                      FileSystem fileSystem) {
         chooseFiles = upstream -> upstream
                 .switchMap(action -> {
                     if (action.intent() != null) {
@@ -76,7 +77,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             .activityResult;
                     if (activityResult.resultCode() == RESULT_OK) {
                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
-                                parseGetContentIntent(application.getContentResolver(), activityResult.data()));
+                                parseGetContentIntent(application.getContentResolver(), activityResult.data(), fileSystem.getExternallyOpenedFilesDir()));
                         ToastUtil.handleEmptyFileError(validFiles, application);
                         if (SivaUtil.isSivaConfirmationNeeded(validFiles)) {
                             sivaConfirmationDialog.show();

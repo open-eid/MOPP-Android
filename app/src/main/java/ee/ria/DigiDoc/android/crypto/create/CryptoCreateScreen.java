@@ -17,6 +17,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
@@ -92,8 +93,8 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private CryptoCreateAdapter adapter;
     private View activityOverlayView;
     private View activityIndicatorView;
+    private Button encryptButton;
     private RecyclerView listView;
-    private TextView encryptButton;
     private TextView decryptButton;
     private TextView sendButton;
     private View buttonSpaceView;
