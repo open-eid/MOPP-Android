@@ -57,13 +57,9 @@ public class AccessibilityUtils {
         }
     }
 
-    public static void setAccessibilityPaneTitle(View view, @StringRes int titleResId) {
-        setAccessibilityPaneTitle(view, view.getResources().getString(titleResId));
-    }
-
-    public static void setAccessibilityPaneTitle(View view, String title) {
-        if (Build.VERSION.SDK_INT >= 28) {
-            view.setAccessibilityPaneTitle("Displaying " + title + " pane");
+    public static void setViewAccessibilityPaneTitle(View view, @StringRes int titleResId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            view.setAccessibilityPaneTitle(view.getResources().getString(titleResId));
         }
     }
 

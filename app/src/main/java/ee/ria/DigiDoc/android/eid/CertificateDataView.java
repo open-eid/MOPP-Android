@@ -73,6 +73,7 @@ public final class CertificateDataView extends LinearLayout {
                 ? R.string.eid_home_certificate_data_button_unblock_auth
                 : R.string.eid_home_certificate_data_button_unblock_sign;
         buttonView.setText(buttonUnblocks ? buttonUnblock : buttonChange);
+        buttonView.setContentDescription(buttonView.getText().toString().toLowerCase());
         linkView.setText(type == CertificateType.AUTHENTICATION
                 ? R.string.eid_home_certificate_data_link_auth
                 : R.string.eid_home_certificate_data_link_sign);
