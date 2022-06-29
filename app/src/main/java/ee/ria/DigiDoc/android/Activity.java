@@ -45,6 +45,7 @@ import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.ContainerMimeTypeUtil;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
@@ -261,9 +262,18 @@ public final class Activity extends AppCompatActivity {
         }
 
         private Screen chooseScreen(Intent intent) {
+            ImmutableList<FileStream> fileStreams;
             File externallyOpenedFilesDir = new File(getContext().get().getFilesDir(), DIR_EXTERNALLY_OPENED_FILES);
-            ImmutableList<FileStream> fileStreams = IntentUtils.parseGetContentIntent(
-                    getContext().get().getContentResolver(), intent, externallyOpenedFilesDir);
+            try {
+                fileStreams = IntentUtils.parseGetContentIntent(getContext().get().getContentResolver(), intent, externallyOpenedFilesDir);
+            } catch (Exception e) {
+                Timber.log(Log.ERROR, e, "Unable to open file");
+                ToastUtil.showGeneralError(getContext().get());
+                return HomeScreen.create(
+                        new Intent(Intent.ACTION_MAIN)
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                );
+            }
             if (!CollectionUtils.isEmpty(fileStreams) && fileStreams.size() == 1) {
                 String fileName = fileStreams.get(0).displayName();
                 int extensionPart = fileName.lastIndexOf(".");
