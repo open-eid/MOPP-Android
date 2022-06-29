@@ -291,10 +291,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         if (state.signatureAddSuccessMessageVisible()) {
             showSuccessNotification();
-            AccessibilityUtils.interrupt(getContext());
-            AccessibilityUtils.sendAccessibilityEvent(getContext(),
-                    TYPE_ANNOUNCEMENT, R.string.container_signature_added);
-
+            if (AccessibilityUtils.isAccessibilityEnabled()) {
+                AccessibilityUtils.interrupt(getContext());
+                AccessibilityUtils.sendAccessibilityEvent(getContext(),
+                        TYPE_ANNOUNCEMENT, R.string.container_signature_added);
+            }
         }
 
         errorDialog.show(state.documentsAddError(), state.documentRemoveError(),
