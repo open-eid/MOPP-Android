@@ -83,17 +83,10 @@ public final class CodeUpdateView extends CoordinatorLayout {
         toolbarView.setNavigationIcon(R.drawable.ic_clear);
         toolbarView.setNavigationContentDescription(R.string.close);
         successMessageView.setText(action.successMessageRes());
-        successMessageView.setContentDescription(successMessageView.getText().toString().toLowerCase());
         textView.itemsRes(action.textRowsRes());
-        currentView.setContentDescription(currentView.getText().toString().toLowerCase());
         currentLabelView.setHint(getResources().getString(action.currentRes()));
-        currentLabelView.setContentDescription(getResources().getString(action.currentRes()).toLowerCase());
         newLabelView.setHint(getResources().getString(action.newRes(), action.newMinLength()));
-        newLabelView.setContentDescription(getResources().getString(action.newRes(), action.newMinLength()).toLowerCase());
-        newView.setContentDescription(newView.getText().toString().toLowerCase());
         repeatLabelView.setHint(getResources().getString(action.repeatRes()));
-        repeatLabelView.setContentDescription(getResources().getString(action.repeatRes()).toLowerCase());
-        repeatView.setContentDescription(repeatView.getText().toString().toLowerCase());
         positiveButton.setText(action.positiveButtonRes());
         positiveButton.setContentDescription(getResources().getString(action.positiveButtonRes()).toLowerCase());
         activityOverlayView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);
@@ -197,6 +190,14 @@ public final class CodeUpdateView extends CoordinatorLayout {
                 repeatLabelView.setError(getResources().getString(action.repeatMismatchErrorRes()));
             }
         }
+
+        AccessibilityUtils.setContentDescription(successMessageView, getResources().getString(action.successMessageRes()));
+        AccessibilityUtils.setContentDescription(currentView, getResources().getString(R.string.eid_home_code_update_current_pin1_edit));
+        AccessibilityUtils.setContentDescription(currentLabelView, getResources().getString(action.currentRes()));
+        AccessibilityUtils.setContentDescription(newLabelView, getResources().getString(action.newRes(), action.newMinLength()));
+        AccessibilityUtils.setContentDescription(newView, getResources().getString(R.string.eid_home_code_update_new_pin1, action.newMinLength()));
+        AccessibilityUtils.setContentDescription(repeatLabelView, getResources().getString(action.repeatRes()));
+        AccessibilityUtils.setContentDescription(repeatView, getResources().getString(R.string.eid_home_code_update_repeat_pin1));
     }
 
     public void clear() {

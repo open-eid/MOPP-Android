@@ -5,11 +5,15 @@ import android.os.Build;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.view.AccessibilityDelegateCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import ee.ria.DigiDoc.android.Activity;
 
@@ -65,6 +69,29 @@ public class AccessibilityUtils {
         if (Build.VERSION.SDK_INT >= 28) {
             view.setAccessibilityPaneTitle("Displaying " + title + " pane");
         }
+    }
+
+    public static void setContentDescription(View view, @Nullable String text) {
+        ViewCompat.setAccessibilityDelegate(view, new AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                String contentDescription = "";
+                if (text == null || text.isEmpty()) {
+                    if (view instanceof TextView) {
+                        contentDescription = ((TextView) view).getText().toString().toLowerCase();
+                    } else if (view instanceof TextInputLayout) {
+                        contentDescription = view.toString().toLowerCase();
+                    }
+                } else {
+                    contentDescription = text.toLowerCase();
+                }
+                info.setText(contentDescription);
+                info.setContentDescription(contentDescription);
+                info.setHintText(contentDescription);
+                host.setContentDescription(contentDescription);
+            }
+        });
     }
 
     public static void disableContentDescription(View view) {
