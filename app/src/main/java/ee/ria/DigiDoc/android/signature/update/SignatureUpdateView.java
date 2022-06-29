@@ -381,9 +381,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             smartIdContainerView.setFocusable(true);
             smartIdContainerView.setFocusableInTouchMode(true);
 
-            if (isTimerStarted) {
+            if (isTimerStarted && progressBar.getProgress() == 0) {
                 signatureUpdateProgressBar.startProgressBar(progressBar);
             }
+
             isTimerStarted = true;
 
             if (!signingInfoDelegated) {
