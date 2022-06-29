@@ -38,7 +38,7 @@ public final class AboutScreen extends Controller implements Screen {
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
         View view = inflater.inflate(R.layout.main_about_screen, container, false);
-        AccessibilityUtils.setAccessibilityPaneTitle(view, R.string.main_about_title);
+        AccessibilityUtils.setViewAccessibilityPaneTitle(view, R.string.main_about_title);
 
         Toolbar toolbarView = view.findViewById(R.id.toolbar);
         toolbarView.setTitle(R.string.main_about_title);

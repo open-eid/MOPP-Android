@@ -594,7 +594,7 @@ final class SignatureUpdateAdapter extends
         @Override
         void bind(SignatureUpdateAdapter adapter, TimestampItem item) {
             clicks(itemView).map(ignored ->
-                    ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
+                    ((TimestampItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
             nameView.setText(item.signature().name());
             switch (item.signature().status()) {

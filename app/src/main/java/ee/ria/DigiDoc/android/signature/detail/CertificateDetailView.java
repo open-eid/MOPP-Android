@@ -13,6 +13,8 @@ import android.widget.Toolbar;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import com.google.common.base.Splitter;
+
 import org.apache.commons.text.WordUtils;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -28,6 +30,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -64,7 +67,7 @@ public final class CertificateDetailView extends CoordinatorLayout {
         super(context);
 
         inflate(context, R.layout.certificate_details_screen, this);
-        AccessibilityUtils.setAccessibilityPaneTitle(this, R.string.certificate_details_title);
+        AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.certificate_details_title);
 
         navigator = Application.component(context).navigator();
         toolbarView = findViewById(R.id.toolbar);
@@ -96,7 +99,8 @@ public final class CertificateDetailView extends CoordinatorLayout {
             TextUtil.handleDetailText(addLeadingZeroToHex(formatHexString(certificate.getSerialNumber().toString(16))), findViewById(R.id.certificateDetailSerialNumber));
             TextUtil.handleDetailText(String.valueOf(certificate.getVersion()), findViewById(R.id.certificateDetailVersion));
             TextUtil.handleDetailText(certificate.getSigAlgName() + " (" + certificate.getSigAlgOID() + ")", findViewById(R.id.certificateDetailSignatureAlgorithm));
-            TextUtil.handleDetailText(certificate.getSigAlgParams() == null || new String(certificate.getSigAlgParams()).trim().isEmpty() ? "None" : new String(certificate.getSigAlgParams()), findViewById(R.id.certificateDetailSignatureParameters));
+            TextUtil.handleDetailText(certificate.getSigAlgParams() == null || new String(certificate.getSigAlgParams(), StandardCharsets.UTF_8).trim().isEmpty() ? "None" :
+                    new String(certificate.getSigAlgParams(), StandardCharsets.UTF_8), findViewById(R.id.certificateDetailSignatureParameters));
             TextUtil.handleDetailText(dateToCertificateFormat(certificate.getNotBefore()), findViewById(R.id.certificateDetailNotValidBefore));
             TextUtil.handleDetailText(dateToCertificateFormat(certificate.getNotAfter()), findViewById(R.id.certificateDetailNotValidAfter));
             TextUtil.handleDetailText(certificate.getPublicKey().getAlgorithm(), findViewById(R.id.certificateDetailPublicKeyAlgorithm));
@@ -160,7 +164,8 @@ public final class CertificateDetailView extends CoordinatorLayout {
     }
 
     private static String formatHexString(String text) {
-        return text.replaceAll("..", "$0 ").trim().toUpperCase();
+        return TextUtils.join(" ",
+                Splitter.fixedLength(2).split(text)).trim().toUpperCase();
     }
 
     private static String getExtensionName(Extension extension) {

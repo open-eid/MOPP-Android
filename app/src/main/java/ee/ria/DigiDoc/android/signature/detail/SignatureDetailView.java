@@ -44,7 +44,7 @@ public final class SignatureDetailView extends CoordinatorLayout {
         super(context);
 
         inflate(context, R.layout.signature_detail_screen, this);
-        AccessibilityUtils.setAccessibilityPaneTitle(this, R.string.signature_details_title);
+        AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.signature_details_title);
 
         navigator = Application.component(context).navigator();
         toolbarView = findViewById(R.id.toolbar);
@@ -69,7 +69,11 @@ public final class SignatureDetailView extends CoordinatorLayout {
     }
 
     private String getContainerMimeType(SignedContainer signedContainer) {
-        return Container.open(signedContainer.file().getAbsolutePath()).mediaType();
+        Container container = Container.open(signedContainer.file().getAbsolutePath());
+        if (container == null) {
+            return "";
+        }
+        return container.mediaType();
     }
 
     private int getNumberOfFilesInContainer(SignedContainer signedContainer) {

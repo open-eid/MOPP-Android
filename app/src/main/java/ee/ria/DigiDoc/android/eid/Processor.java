@@ -1,6 +1,8 @@
 package ee.ria.DigiDoc.android.eid;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.view.accessibility.AccessibilityEvent;
 
 import com.google.common.collect.ImmutableSet;
@@ -74,7 +76,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
             Token token = action.token();
             if (action.cleared()) {
                 return Observable.just(Result.CodeUpdateResult.clear())
-                        .doFinally(() -> sendCancellationAccessibilityEvent(updateAction, application));
+                        .doFinally(() -> sendCancellationAccessibilityEvent(updateAction, application,
+                                localeService.applicationConfigurationWithLocale(application.getApplicationContext(),
+                                        localeService.applicationLocale())));
             } else if (updateAction == null) {
                 return Observable.just(Result.CodeUpdateResult.clear());
             } else if (request == null || data == null || token == null) {
@@ -234,28 +238,41 @@ final class Processor implements ObservableTransformer<Action, Result> {
         }
     }
 
-    private void sendCancellationAccessibilityEvent(CodeUpdateAction updateAction, Application application) {
-        int clearingMessageId;
+    private void sendCancellationAccessibilityEvent(CodeUpdateAction updateAction, Application application, Configuration configuration) {
+        String actionText = "";
+        Context configurationContext = application.getApplicationContext().createConfigurationContext(configuration);
         switch (updateAction.pinType()) {
             case PIN1:
                 if (updateAction.updateType().equals(CodeUpdateType.UNBLOCK)) {
-                    clearingMessageId = R.string.pin1_unblock_cancelled;
+                    actionText = configurationContext.getText(application.getResources()
+                                    .getIdentifier("pin1_unblock_cancelled", "string",
+                                            application.getPackageName())).toString();
                 } else {
-                    clearingMessageId = R.string.pin1_change_cancelled;
+                    actionText = configurationContext.getText(application.getResources()
+                            .getIdentifier("pin1_change_cancelled", "string",
+                                    application.getPackageName())).toString();
                 }
                 break;
             case PIN2:
                 if (updateAction.updateType().equals(CodeUpdateType.UNBLOCK)) {
-                    clearingMessageId = R.string.pin2_unblock_cancelled;
+                    actionText = configurationContext.getText(application.getResources()
+                            .getIdentifier("pin2_unblock_cancelled", "string",
+                                    application.getPackageName())).toString();
                 } else {
-                    clearingMessageId = R.string.pin2_change_cancelled;
+                    actionText = configurationContext.getText(application.getResources()
+                            .getIdentifier("pin2_change_cancelled", "string",
+                                    application.getPackageName())).toString();
                 }
                 break;
-            case PUK:  clearingMessageId = R.string.puk_code_change_cancelled; break;
+            case PUK:
+                actionText = configurationContext.getText(application.getResources()
+                        .getIdentifier("puk_code_change_cancelled", "string",
+                                application.getPackageName())).toString();
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + updateAction.pinType());
         }
         AccessibilityUtils.sendAccessibilityEvent(
-                application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, clearingMessageId);
+                application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, actionText);
     }
 }

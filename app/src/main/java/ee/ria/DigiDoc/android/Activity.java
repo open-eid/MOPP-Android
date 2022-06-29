@@ -45,6 +45,7 @@ import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.ContainerMimeTypeUtil;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
@@ -92,9 +93,13 @@ public final class Activity extends AppCompatActivity {
             restartAppWithIntent(intent, false);
         } else if (Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
             rootScreenFactory.intent(intent);
-        }
-        else {
-          rootScreenFactory.intent(intent);
+        } else if (Intent.ACTION_MAIN.equals(intent.getAction()) && savedInstanceState != null) {
+            savedInstanceState = null;
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            restartAppWithIntent(intent, false);
+        } else {
+            rootScreenFactory.intent(intent);
         }
 
         mContext = new WeakReference<>(this);
@@ -164,13 +169,14 @@ public final class Activity extends AppCompatActivity {
         startActivity(intent);
         overridePendingTransition (0, 0);
         if (withExit) {
-            System.exit(0);
+            int pid = android.os.Process.myPid();
+            android.os.Process.killProcess(pid);
         }
     }
 
     private void handleIncomingFiles(Intent intent) {
         try {
-            intent.setDataAndType(intent.getData(), "*/*");
+            intent.setDataAndType(FileUtil.normalizeUri(intent.getData()), "*/*");
             rootScreenFactory.intent(intent);
         } catch (ActivityNotFoundException e) {
             Timber.log(Log.ERROR, e, "Handling incoming file intent");
@@ -256,9 +262,18 @@ public final class Activity extends AppCompatActivity {
         }
 
         private Screen chooseScreen(Intent intent) {
+            ImmutableList<FileStream> fileStreams;
             File externallyOpenedFilesDir = new File(getContext().get().getFilesDir(), DIR_EXTERNALLY_OPENED_FILES);
-            ImmutableList<FileStream> fileStreams = IntentUtils.parseGetContentIntent(
-                    getContext().get().getContentResolver(), intent, externallyOpenedFilesDir);
+            try {
+                fileStreams = IntentUtils.parseGetContentIntent(getContext().get().getContentResolver(), intent, externallyOpenedFilesDir);
+            } catch (Exception e) {
+                Timber.log(Log.ERROR, e, "Unable to open file");
+                ToastUtil.showGeneralError(getContext().get());
+                return HomeScreen.create(
+                        new Intent(Intent.ACTION_MAIN)
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                );
+            }
             if (!CollectionUtils.isEmpty(fileStreams) && fileStreams.size() == 1) {
                 String fileName = fileStreams.get(0).displayName();
                 int extensionPart = fileName.lastIndexOf(".");

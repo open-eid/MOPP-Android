@@ -12,6 +12,7 @@
     <string name="main_home_menu_title">Menu</string>
     <string name="main_home_menu_button">Menu</string>
     <string name="main_home_menu_help">HELP</string>
+    <string name="main_home_menu_help_url_short">link www.id.ee</string>
     <string name="main_home_menu_help_url">https://www.id.ee/en/id-help/</string>
     <string name="main_home_menu_recent">RECENT DOCUMENTS</string>
     <string name="main_home_menu_settings">SETTINGS</string>
@@ -109,6 +110,10 @@
         <item quantity="other">%1$d INVALID SIGNATURES</item>
         <!-- placeholder to keep line numbers same in different locales -->
         <!-- placeholder to keep line numbers same in different locales -->
+    </plurals>
+    <plurals name="signature_update_signatures_valid">
+        <item quantity="one">%1$d valid signature</item>
+        <item quantity="other">%1$d valid signatures</item>
     </plurals>
     <string name="signature_update_signature_type_signature">Signature</string>
     <string name="signature_update_signature_status_valid">Signature is valid</string>
@@ -277,7 +282,6 @@
     <string name="crypto_create_encrypt_button_description">Encrypt document</string>
     <string name="crypto_create_encrypt_error_no_recipients">No recipients specified</string>
     <string name="crypto_create_decrypt_button">DECRYPT</string>
-    <string name="crypto_create_decrypt_button_description">Decrypt document</string>
     <string name="crypto_create_decrypt_positive_button">Decrypt</string>
     <string name="crypto_create_send_button">SHARE</string>
     <string name="crypto_create_error">Something went wrong with encryption</string>
@@ -437,8 +441,8 @@
     <string name="crypto_content_description">Crypto, tab %1$d of %2$d</string>
     <string name="my_eid_content_description">My e-ID, tab %1$d of %2$d</string>
 
+    <string name="decrypt_content_description">Decrypt document, tab %1$d of %2$d</string>
     <string name="sign_send_content_description">Sign, tab %1$d of %2$d</string>
-    <string name="decrypt_content_description">Decrypt, tab %1$d of %2$d</string>
     <string name="decrypt_send_content_description">Share, tab %1$d of %2$d</string>
 
     <string name="yes_button">YES</string>
@@ -467,6 +471,7 @@
     <string name="recipients_found">Recipients found</string>
     <string name="recipient_found">Recipient found</string>
     <string name="recipient_added">Recipient added</string>
+    <string name="recipients_added">Recipients added</string>
     <string name="recipient_removed">Recipient removed</string>
     <string name="recipient_addition_cancelled">Recipient addition cancelled</string>
     <string name="add_recipient">Add recipient</string>
