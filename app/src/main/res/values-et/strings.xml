@@ -530,4 +530,6 @@
 
     <string name="rooted_device">Tuvastasime, et sinu nutiseade võib olla ruuditud. Turvalisuse kaalutlustel ei soovita me kasutada seda rakendust ruuditud seadmel.</string>
 
+    <string name="eid_home_certificate_data_valid_accessibility">Sertifikaat kehtib kuni </string>
+
 </resources>

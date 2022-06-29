@@ -526,4 +526,6 @@
 
     <string name="rooted_device">We\'ve detected that your device may be rooted. For security reasons we don\'t recommend using this app on a rooted device.</string>
 
+    <string name="eid_home_certificate_data_valid_accessibility">Certificate is valid until </string>
+
 </resources>
