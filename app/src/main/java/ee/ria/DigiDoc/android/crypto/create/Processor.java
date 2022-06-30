@@ -92,6 +92,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     private final ObservableTransformer<Intent.RecipientsScreenUpButtonClickIntent,
                                         Result> recipientsScreenUpButtonClick;
 
+    private final ObservableTransformer<Intent.RecipientsScreenDoneButtonClickIntent,
+            Result> recipientsScreenDoneButtonClick;
+
     private final ObservableTransformer<Intent.RecipientsSearchIntent,
             Result.RecipientsSearchResult> recipientsSearch;
 
@@ -330,6 +333,17 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
         recipientsScreenUpButtonClick = upstream -> upstream.switchMap(intent -> {
             navigator.execute(Transaction.pop());
+            if (application.getApplicationContext() != null) {
+                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_addition_cancelled);
+            }
+            return Observable.empty();
+        });
+
+        recipientsScreenDoneButtonClick = upstream -> upstream.switchMap(intent -> {
+            navigator.execute(Transaction.pop());
+            if (application.getApplicationContext() != null) {
+                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipients_added);
+            }
             return Observable.empty();
         });
 
@@ -476,6 +490,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .compose(recipientsAddButtonClick),
                 shared.ofType(Intent.RecipientsScreenUpButtonClickIntent.class)
                         .compose(recipientsScreenUpButtonClick),
+                shared.ofType(Intent.RecipientsScreenDoneButtonClickIntent.class)
+                        .compose(recipientsScreenDoneButtonClick),
                 shared.ofType(Intent.RecipientsSearchIntent.class).compose(recipientsSearch),
                 shared.ofType(Intent.RecipientAddIntent.class).compose(recipientAdd),
                 shared.ofType(Intent.RecipientRemoveIntent.class).compose(recipientRemove),

@@ -1,18 +1,21 @@
 package ee.ria.DigiDoc.android.main.home;
 
 import android.content.Context;
+import android.speech.tts.TextToSpeech;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.widget.NestedScrollView;
 
+import java.util.Locale;
+
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.common.TextUtil;
 import io.reactivex.rxjava3.core.Observable;
 
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
@@ -30,6 +33,26 @@ public final class HomeMenuView extends NestedScrollView {
     private final Button diagnosticsView;
     private final RadioGroup localeView;
 
+    // Estonian TalkBack does not pronounce "dot"
+    private final TextToSpeech textToSpeech = new TextToSpeech(getContext(),
+            new TextToSpeech.OnInitListener() {
+        @Override
+        public void onInit(int status) {
+            Locale accessibilityLocale = textToSpeech.getVoice().getLocale();
+            if (accessibilityLocale.getLanguage().equals("et")) {
+                helpView.setContentDescription(
+                        getResources().getString(R.string.main_home_menu_help) +
+                                " link " +
+                                "w w w punkt i d punkt e e");
+            } else {
+                helpView.setContentDescription(
+                        getResources().getString(R.string.main_home_menu_help) + " " +
+                                TextUtil.splitTextAndJoin(
+                                        getResources().getString(R.string.main_home_menu_help_url_short), "", " "));
+            }
+        }
+    });
+
     public HomeMenuView(@NonNull Context context) {
         this(context, null);
     }
@@ -45,8 +68,9 @@ public final class HomeMenuView extends NestedScrollView {
         closeButton.setContentDescription(getResources().getString(R.string.close_menu));
         helpView = findViewById(R.id.mainHomeMenuHelp);
         helpView.setContentDescription(
-                getResources().getString(R.string.main_home_menu_help) +
-                " link to www.id.ee");
+                getResources().getString(R.string.main_home_menu_help) + " " +
+                        TextUtil.splitTextAndJoin(
+                                getResources().getString(R.string.main_home_menu_help_url_short), "", " "));
         recentView = findViewById(R.id.mainHomeMenuRecent);
         settingsView = findViewById(R.id.mainHomeMenuSettings);
         aboutView = findViewById(R.id.mainHomeMenuAbout);

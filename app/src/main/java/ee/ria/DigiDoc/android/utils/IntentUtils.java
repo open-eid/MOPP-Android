@@ -74,21 +74,9 @@ public final class IntentUtils {
         if (clipData != null) {
             for (int i = 0; i < clipData.getItemCount(); i++) {
                 Uri uri = clipData.getItemAt(i).getUri();
-                FileStream fileStream = getFileStream(contentResolver, uri);
-                if (fileStream.fileSize() != 0) {
-                    builder.add(fileStream);
-                } else {
-                    File file = parseGetContentIntent(contentResolver, uri, externallyOpenedFilesDirectory);
-                    if (file != null) {
-                        String fileName = getFileName(file);
-                        if (!Files.getFileExtension(fileName).isEmpty()) {
-                            Path renamedFile = FileUtil.renameFile(file.toPath(),
-                                    fileName);
-                            builder.add(FileStream.create(renamedFile.toFile()));
-                        } else {
-                            builder.add(FileStream.create(file));
-                        }
-                    }
+                if (uri != null) {
+                    builder.add(FileStream.create(contentResolver, uri, getFileSize(contentResolver,
+                            FileUtil.normalizeUri(uri))));
                 }
             }
         } else if (data != null) {

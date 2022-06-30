@@ -75,12 +75,14 @@ public class FileUtil {
             return null;
         }
 
-        String uriString = uri.toString();
+        return Uri.parse(normalizeText(uri.toString()));
+    }
 
-        StringBuilder sb = new StringBuilder(uriString.length());
+    public static String normalizeText(String text) {
+        StringBuilder sb = new StringBuilder(text.length());
 
-        for (int offset = 0; offset < uriString.length(); offset++) {
-            int i = ALLOWED_URL_CHARACTERS.indexOf(uriString.charAt(offset));
+        for (int offset = 0; offset < text.length(); offset++) {
+            int i = ALLOWED_URL_CHARACTERS.indexOf(text.charAt(offset));
 
             if (i == -1) {
                 sb.append("");
@@ -91,7 +93,7 @@ public class FileUtil {
             }
         }
 
-        return Uri.parse(sb.toString());
+        return sb.toString();
     }
 
     public static Uri normalizePath(String filePath) {
@@ -135,10 +137,12 @@ public class FileUtil {
             if (combinedLogFile.exists()) {
                 Files.delete(combinedLogFile.toPath());
             }
-            for (File file : files) {
-                String header = "\n\n" + "===== File: " + file.getName() + " =====" + "\n\n";
-                String fileString = header + FileUtils.readFileToString(file, Charset.defaultCharset());
-                FileUtils.write(combinedLogFile, fileString, Charset.defaultCharset(), true);
+            if (files != null) {
+                for (File file : files) {
+                    String header = "\n\n" + "===== File: " + file.getName() + " =====" + "\n\n";
+                    String fileString = header + FileUtils.readFileToString(file, Charset.defaultCharset());
+                    FileUtils.write(combinedLogFile, fileString, Charset.defaultCharset(), true);
+                }
             }
             return combinedLogFile;
         }
