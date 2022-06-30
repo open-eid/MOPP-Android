@@ -171,7 +171,7 @@ public final class SignatureListScreen extends Controller implements Screen,
         sivaConfirmationDialog = new ConfirmationDialog(Activity.getContext().get(),
                 R.string.siva_send_message_dialog, R.id.sivaConfirmationDialog);
         View view = inflater.inflate(R.layout.signature_list_screen, container, false);
-        AccessibilityUtils.setAccessibilityPaneTitle(view, R.string.signature_list_title);
+        AccessibilityUtils.setViewAccessibilityPaneTitle(view, R.string.signature_list_title);
 
         toolbarView = view.findViewById(R.id.toolbar);
         toolbarView.setTitle(R.string.signature_list_title);
