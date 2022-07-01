@@ -58,6 +58,8 @@ android {
 
     lintOptions {
         lintConfig file('../lint.xml')
+        checkReleaseBuilds false
+        abortOnError false
     }
 
     compileOptions {
