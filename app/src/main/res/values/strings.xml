@@ -575,4 +575,8 @@
     <string name="eid_home_certificate_data_error_sign_accessibility">pin2 is blocked, because pin2 has been inserted 3 times incorrectly.</string>
     <string name="eid_home_data_certificates_puk_title_accessibility">puk code</string>
     <string name="eid_home_data_certificates_puk_text_accessibility">puk code is in your code envelope</string>
+
+    <!-- Signing -->
+    <string name="signature_update_id_card_sign_pin2_invalid_accessibility">Wrong pin2. You have %1$d attempts left.</string>
+    <string name="signature_update_id_card_sign_pin2_invalid_final_accessibility">Wrong pin2. You have 1 attempt left until your pin2 is blocked.</string>
 </resources>

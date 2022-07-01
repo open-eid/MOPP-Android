@@ -163,6 +163,8 @@ public final class CodeUpdateView extends CoordinatorLayout {
                 if (retryCount == 1) {
                     currentLabelView.setError(getResources().getString(
                             action.currentInvalidFinalErrorRes()));
+                    currentLabelView.setContentDescription(getResources().getString(
+                            action.currentInvalidFinalErrorRes()).toLowerCase());
                 } else {
                     currentLabelView.setError(getResources().getString(
                             action.currentInvalidErrorRes(), retryCount));

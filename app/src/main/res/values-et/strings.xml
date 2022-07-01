@@ -491,7 +491,7 @@
     <string name="pin1_unblock_cancelled">Pin1 lahti blokeerimine katkestatud</string>
     <string name="pin2_change_cancelled">Pin2 muutmine katkestatud</string>
     <string name="pin2_unblock_cancelled">Pin2 lahti blokeerimine katkestatud</string>
-    <string name="puk_code_change_cancelled">PUK-koodi muutmine katkestatud</string>
+    <string name="puk_code_change_cancelled">Puk koodi muutmine katkestatud</string>
 
     <string name="mobile_id_challenge">Mobiil-ID allkirjastamise kontrollkood</string>
     <string name="smart_id_challenge">Smart-ID allkirjastamise kontrollkood</string>
@@ -518,8 +518,8 @@
     <string name="cancel_pin2_change">Katkesta Pin2 muutmine</string>
     <string name="confirm_pin2_unblock">Kinnita Pin2 lahti blokeerimine</string>
     <string name="cancel_pin2_unblock">Katkesta Pin2 lahti blokeerimine</string>
-    <string name="confirm_puk_change">Kinnita PUK muutmine</string>
-    <string name="cancel_puk_change">Katkesta PUK muutmine</string>
+    <string name="confirm_puk_change">Kinnita Puk muutmine</string>
+    <string name="cancel_puk_change">Katkesta Puk muutmine</string>
 
     <string name="success_notification_dialog_text">Ümbriku jagamiseks klõpsa \"JAGA\" nupul ning vali soovitud rakendus. Kõik ümbrikud on leitavad ka rakenduse seadetes asuvas \"Hiljutised dokumendid\" kaustast.</string>
     <string name="success_notification_dialog_dont_show_again">Ära rohkem näita</string>
@@ -583,4 +583,8 @@
     <string name="eid_home_certificate_data_button_unblock_auth_accessibility">Tühista blokeering</string>
     <string name="eid_home_certificate_data_button_unblock_sign_accessibility">Tühista blokeering</string>
     <string name="eid_home_data_certificates_puk_button_accessibility">Muuda puk</string>
+
+    <!-- Signing -->
+    <string name="signature_update_id_card_sign_pin2_invalid_accessibility">Vale pin2. Saad pin2-koodi sisestada veel %1$d korda.</string>
+    <string name="signature_update_id_card_sign_pin2_invalid_final_accessibility">Vale pin2. Järgmise vale sisestusega lukustub pin.</string>
 </resources>

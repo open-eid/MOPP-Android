@@ -580,4 +580,8 @@
     <string name="eid_home_certificate_data_error_sign_accessibility">pin1 заблокирован, потому что был неверно введен 3 раза.</string>
     <string name="eid_home_data_certificates_puk_title_accessibility">puk-код</string>
     <string name="eid_home_data_certificates_puk_text_accessibility">puk-код в Вашем конверте кодов</string>
+
+    <!-- Signing -->
+    <string name="signature_update_id_card_sign_pin2_invalid_accessibility">Неверный pin2. У Вас осталось %1$d попыток.</string>
+    <string name="signature_update_id_card_sign_pin2_invalid_final_accessibility">Неверный pin2. У Вас осталась 1 попытка до блокировки Вашего pin2.</string>
 </resources>
