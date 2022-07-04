@@ -22,7 +22,7 @@
             android:textAppearance="@style/TextAppearance.Application.Label"
             android:textAllCaps="false"
             android:text="@string/eid_home_data_type"
-            android:contentDescription="@string/my_eid_content_description" />
+            android:contentDescription="@string/eid_home_data_type_description" />
 
         <TextView
             android:id="@id/eidHomeDataType"
