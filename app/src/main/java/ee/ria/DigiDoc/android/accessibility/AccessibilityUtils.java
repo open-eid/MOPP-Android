@@ -83,9 +83,6 @@ public class AccessibilityUtils {
                     contentDescription = text.toLowerCase();
                 }
                 info.setText(contentDescription);
-                info.setContentDescription(contentDescription);
-                info.setHintText(contentDescription);
-                host.setContentDescription(contentDescription);
             }
         });
     }

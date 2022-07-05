@@ -510,8 +510,8 @@
     <string name="cancel_pin2_change">Cancel Pin2 changing process</string>
     <string name="confirm_pin2_unblock">Confirm Pin2 unblock</string>
     <string name="cancel_pin2_unblock">Cancel Pin2 unblocking process</string>
-    <string name="confirm_puk_change">Confirm PUK change</string>
-    <string name="cancel_puk_change">Cancel PUK changing process</string>
+    <string name="confirm_puk_change">Confirm Puk change</string>
+    <string name="cancel_puk_change">Cancel Puk changing process</string>
 
     <string name="success_notification_dialog_text">To share the container click the \"SHARE\" button and choose your preferred application. All containers can also be found in the application settings \"Recent Documents\" folder.</string>
     <string name="success_notification_dialog_dont_show_again">Don\'t show again</string>
