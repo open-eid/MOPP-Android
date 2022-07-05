@@ -66,6 +66,9 @@ public final class CertificateDataView extends LinearLayout {
                 ? R.string.eid_home_certificate_data_title_auth
                 : R.string.eid_home_certificate_data_title_sign);
         validityView.setText(formatter.certificateDataValidity(type, data));
+        if (!data.expired()) {
+            validityView.setContentDescription(getResources().getString(R.string.eid_home_certificate_data_valid_accessibility) + formatter.instantAccessibility(data.notAfter(), false));
+        }
         int buttonChange = type == CertificateType.AUTHENTICATION
                 ? R.string.eid_home_certificate_data_button_change_auth
                 : R.string.eid_home_certificate_data_button_change_sign;

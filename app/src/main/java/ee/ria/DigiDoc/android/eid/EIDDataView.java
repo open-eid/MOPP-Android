@@ -31,6 +31,9 @@ import io.reactivex.rxjava3.core.Observable;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 public final class EIDDataView extends LinearLayout {
 
     private final Formatter formatter;
@@ -147,7 +150,9 @@ public final class EIDDataView extends LinearLayout {
         }
         documentNumberView.setText(data.personalData().documentNumber());
         documentNumberView.setContentDescription(TextUtil.splitTextAndJoin(data.personalData().documentNumber(), "", " "));
-        expiryDateView.setText(formatter.idCardExpiryDate(data.personalData().expiryDate()));
+        LocalDate expiryDate = data.personalData().expiryDate();
+        expiryDateView.setText(formatter.idCardExpiryDate(expiryDate));
+        expiryDateView.setContentDescription(formatter.idCardExpiryDateAccessibility(expiryDateView.getText(), expiryDate));
         documentNumberLabelView.setVisibility(VISIBLE);
         documentNumberView.setVisibility(VISIBLE);
         expiryDateLabelView.setVisibility(VISIBLE);

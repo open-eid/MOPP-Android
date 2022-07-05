@@ -393,7 +393,9 @@ final class CryptoCreateAdapter extends
             infoView.setText(itemView.getResources().getString(
                     R.string.crypto_recipient_info, formatter.eidType(item.recipient().type()),
                     formatter.instant(item.recipient().notAfter())));
-            infoView.setContentDescription(infoView.getText().toString().toLowerCase());
+            infoView.setContentDescription(itemView.getResources().getString(
+                    R.string.crypto_recipient_info, formatter.eidType(item.recipient().type()),
+                    formatter.instantAccessibility(item.recipient().notAfter(), true)));
 
             String removeRecipientDescription = removeButton.getResources().getString(R.string.crypto_recipient_remove_button);
             removeButton.setContentDescription(removeRecipientDescription + " " +

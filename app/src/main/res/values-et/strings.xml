@@ -583,8 +583,7 @@
     <string name="eid_home_certificate_data_button_unblock_auth_accessibility">Tühista blokeering</string>
     <string name="eid_home_certificate_data_button_unblock_sign_accessibility">Tühista blokeering</string>
     <string name="eid_home_data_certificates_puk_button_accessibility">Muuda puk</string>
-
-    <!-- Signing -->
+    <string name="eid_home_certificate_data_valid_accessibility">Sertifikaat kehtib kuni </string>
     <string name="signature_update_id_card_sign_pin2_invalid_accessibility">Vale pin2. Saad pin2-koodi sisestada veel %1$d korda.</string>
     <string name="signature_update_id_card_sign_pin2_invalid_final_accessibility">Vale pin2. Järgmise vale sisestusega lukustub pin.</string>
 </resources>
