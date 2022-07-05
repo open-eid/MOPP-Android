@@ -24,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
@@ -40,11 +39,9 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.utils.DateUtil;
-import ee.ria.DigiDoc.android.utils.SivaUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
 import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
-import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
@@ -60,12 +57,8 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
-import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
@@ -135,6 +128,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private ProgressBar documentAddProgressBar;
     ProgressBar progressBar;
     SignatureUpdateProgressBar signatureUpdateProgressBar = new SignatureUpdateProgressBar();
+    boolean isTitleViewFocused = false;
 
     public SignatureUpdateView(Context context, String screenId, boolean isExistingContainer,
                                boolean isNestedContainer, File containerFile,
@@ -240,7 +234,21 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         toolbarView.setNavigationIcon(R.drawable.ic_clear);
         toolbarView.setNavigationContentDescription(R.string.close);
 
-        AccessibilityUtils.setViewAccessibilityPaneTitle(this, titleResId);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            setAccessibilityPaneTitle(isExistingContainer ? getResources().getString(titleResId) : "Container signing");
+        }
+
+        listView.clearFocus();
+
+        TextView titleView = getTitleView(toolbarView);
+        AccessibilityUtils.disableDoubleTapToActivateFeedback(titleView);
+        if (titleView != null && !isTitleViewFocused && isNestedContainer) {
+            titleView.postDelayed(() -> {
+                titleView.requestFocus();
+                titleView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+            }, 1000);
+            isTitleViewFocused = true;
+        }
 
         if (isNestedContainer) {
             sendButton.setVisibility(GONE);
@@ -283,8 +291,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         if (state.signatureAddSuccessMessageVisible()) {
             showSuccessNotification();
-            AccessibilityUtils.sendAccessibilityEvent(getContext(),
-                    AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.signature_update_signature_add_success);
+            if (AccessibilityUtils.isAccessibilityEnabled()) {
+                AccessibilityUtils.interrupt(getContext());
+                AccessibilityUtils.sendAccessibilityEvent(getContext(),
+                        TYPE_ANNOUNCEMENT, R.string.container_signature_added);
+            }
         }
 
         errorDialog.show(state.documentsAddError(), state.documentRemoveError(),
@@ -416,7 +427,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         if (showNotification) {
             NotificationDialog successNotificationDialog = new NotificationDialog((Activity) getContext());
             if (AccessibilityUtils.isAccessibilityEnabled()) {
-                new Handler(Looper.getMainLooper()).postDelayed(successNotificationDialog::show, 2000);
+                new Handler(Looper.getMainLooper()).postDelayed(successNotificationDialog::show, 2500);
             } else {
                 new Handler(Looper.getMainLooper()).postDelayed(successNotificationDialog::show, 1000);
             }
@@ -546,6 +557,15 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         return null;
     }
 
+    private TextView getTitleView(Toolbar toolbar) {
+        for (int i = 0; i < toolbar.getChildCount(); i++) {
+            if (toolbar.getChildAt(i) instanceof TextView) {
+                return ((TextView) toolbar.getChildAt(i));
+            }
+        }
+        return null;
+    }
+
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -599,6 +619,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         errorDialog.setOnDismissListener(null);
         errorDialog.dismiss();
         nameUpdateDialog.dismiss();
+        isTitleViewFocused = false;
         super.onDetachedFromWindow();
     }
 

@@ -20,8 +20,12 @@
 
 package ee.ria.DigiDoc.android.signature.update.smartid;
 
+import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
+
 import android.content.Context;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -34,30 +38,35 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Arrays;
 import java.util.List;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
-import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
-
 public final class SmartIdView extends LinearLayout implements
         SignatureAddView<SmartIdRequest, SmartIdResponse> {
 
+    private static final int MAXIMUM_PERSONAL_CODE_LENGTH = 11;
+
     private static final List<String> COUNTRY_LIST = Arrays.asList("EE", "LT", "LV");
     private final Subject<Object> positiveButtonStateSubject = PublishSubject.create();
+    private final TextView message;
     private final Spinner countryView;
-    private final EditText personalCodeView;
+    private final TextInputEditText personalCodeView;
     private final CheckBox rememberMeView;
+    private final TextWatcher textWatcher;
 
     public SmartIdView(Context context) {
         this(context, null);
@@ -76,6 +85,7 @@ public final class SmartIdView extends LinearLayout implements
         super(context, attrs, defStyleAttr, defStyleRes);
         setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update_smart_id, this);
+        message = findViewById(R.id.signatureUpdateSmartIdMessage);
         countryView = findViewById(R.id.signatureUpdateSmartIdCountry);
         personalCodeView = findViewById(R.id.signatureUpdateSmartIdPersonalCode);
         rememberMeView = findViewById(R.id.signatureUpdateSmartIdRememberMe);
@@ -90,6 +100,26 @@ public final class SmartIdView extends LinearLayout implements
                 setPersonalCodeViewFilters(0);
             }
         });
+
+        AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView);
+        AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
+
+        textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() >= MAXIMUM_PERSONAL_CODE_LENGTH) {
+                    s.delete(MAXIMUM_PERSONAL_CODE_LENGTH, s.length());
+                }
+            }
+        };
+
+        personalCodeView.addTextChangedListener(textWatcher);
     }
 
     @Override
@@ -98,6 +128,14 @@ public final class SmartIdView extends LinearLayout implements
         setPersonalCodeViewFilters(countryView.getSelectedItemPosition());
         personalCodeView.setText(viewModel.sidPersonalCode());
         rememberMeView.setChecked(personalCodeView.getText().length() > 0);
+        if (textWatcher != null) {
+            personalCodeView.addTextChangedListener(textWatcher);
+        }
+        AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
+        message.clearFocus();
+        countryView.clearFocus();
+        personalCodeView.clearFocus();
+        rememberMeView.clearFocus();
     }
 
     @Override
@@ -141,6 +179,7 @@ public final class SmartIdView extends LinearLayout implements
             }
             personalCodeView.setText(personalCodeView.getText().subSequence(0,
                     Math.min(personalCodeView.getText().length(), 11)));
+            AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView);
         } else {
             if (pos != -1) {
                 InputFilter[] copy = Arrays.copyOf(inputFilters, inputFilters.length - 1);
@@ -160,6 +199,7 @@ public final class SmartIdView extends LinearLayout implements
                                 getResources().getString(R.string.signature_update_signature_add_method_mobile_id)) ||
                                 event.getText().get(0).toString().equals(
                                         getResources().getString(R.string.signature_update_signature_add_method_id_card)))) {
+                    event.getText().clear();
                     event.getText().add(getContentDescription());
                 }
             }
@@ -200,5 +240,11 @@ public final class SmartIdView extends LinearLayout implements
             idCardRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
             idCardRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 3));
         }, 3500);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        personalCodeView.removeTextChangedListener(textWatcher);
+        super.onDetachedFromWindow();
     }
 }
