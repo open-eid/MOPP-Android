@@ -40,16 +40,14 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.smartid.SmartIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
 import ee.ria.DigiDoc.smartid.dto.response.ServiceFault;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SmartIDServiceResponse;
 import ee.ria.DigiDoc.smartid.service.SmartSignService;
-import ee.ria.DigiDoc.sign.SignedContainer;
-
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
-
 import timber.log.Timber;
 
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CERTIFICATE_CERT_BUNDLE;
@@ -86,6 +84,11 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                if (navigator.activity() == null) {
+                    Timber.log(Log.ERROR,"Activity is null");
+                    IllegalStateException ise = new IllegalStateException("Activity not found. Please try again after restarting application");
+                    emitter.onError(ise);
+                }
                 switch (intent.getStringExtra(SID_BROADCAST_TYPE_KEY)) {
                     case SERVICE_FAULT: {
                         NotificationManagerCompat.from(navigator.activity()).cancelAll();

@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.util.Log;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
+import timber.log.Timber;
 
 import static ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest.toJson;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
@@ -57,6 +60,11 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                if (navigator.activity() == null) {
+                    Timber.log(Log.ERROR,"Activity is null");
+                    IllegalStateException ise = new IllegalStateException("Activity not found. Please try again after restarting application");
+                    emitter.onError(ise);
+                }
                 switch (intent.getStringExtra(MID_BROADCAST_TYPE_KEY)) {
                     case SERVICE_FAULT:
                         RESTServiceFault fault = RESTServiceFault
