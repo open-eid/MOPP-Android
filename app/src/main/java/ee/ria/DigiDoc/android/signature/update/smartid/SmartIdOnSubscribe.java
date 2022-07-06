@@ -94,15 +94,17 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                         NotificationManagerCompat.from(navigator.activity()).cancelAll();
                         ServiceFault serviceFault =
                                 ServiceFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
-                        Timber.log(Log.DEBUG, "Got status: %s", serviceFault.getStatus());
+                        Timber.log(Log.DEBUG, "Got SERVICE_FAULT status: %s", serviceFault.getStatus());
                         emitter.onError(SmartIdMessageException
                                 .create(navigator.activity(), serviceFault.getStatus(), serviceFault.getDetailMessage()));
                         break;
                     }
                     case CREATE_SIGNATURE_DEVICE:
+                        Timber.log(Log.DEBUG, "Selecting device (CREATE_SIGNATURE_DEVICE)");
                         emitter.onNext(SmartIdResponse.selectDevice(true));
                         break;
                     case CREATE_SIGNATURE_CHALLENGE:
+                        Timber.log(Log.DEBUG, "Signature challenge (CREATE_SIGNATURE_CHALLENGE)");
                         String challenge =
                                 intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE);
                         emitter.onNext(SmartIdResponse.challenge(challenge));
@@ -112,6 +114,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                                     NOTIFICATION_CHANNEL + "_NAME", NotificationManager.IMPORTANCE_HIGH);
                             NotificationManager systemService = navigator.activity().getSystemService(NotificationManager.class);
                             if (systemService != null) {
+                                Timber.log(Log.DEBUG, "Creating notification channel");
                                 systemService.createNotificationChannel(channel);
                             }
                         }
@@ -132,9 +135,11 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                                 SmartIDServiceResponse.fromJson(
                                         intent.getStringExtra(CREATE_SIGNATURE_STATUS));
                         if (status.getStatus() == SessionStatusResponse.ProcessStatus.OK) {
+                            Timber.log(Log.DEBUG, "Got CREATE_SIGNATURE_STATUS success status: %s", status.getStatus());
                             emitter.onNext(SmartIdResponse.success(container));
                             emitter.onComplete();
                         } else {
+                            Timber.log(Log.DEBUG, "Got CREATE_SIGNATURE_STATUS error status: %s", status.getStatus());
                             emitter.onError(SmartIdMessageException
                                     .create(navigator.activity(), status.getStatus()));
                         }
