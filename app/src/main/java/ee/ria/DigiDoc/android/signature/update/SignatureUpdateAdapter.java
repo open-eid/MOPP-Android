@@ -2,10 +2,13 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -48,6 +51,7 @@ import io.reactivex.rxjava3.subjects.Subject;
 import timber.log.Timber;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static android.view.accessibility.AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED;
 import static androidx.core.content.res.ResourcesCompat.getColor;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.Constants.VOID;
@@ -257,7 +261,10 @@ final class SignatureUpdateAdapter extends
         static UpdateViewHolder create(int viewType, View itemView) {
             switch (viewType) {
                 case R.layout.signature_update_list_item_success:
-                    AccessibilityUtils.sendAccessibilityEvent(itemView.getContext(), TYPE_ANNOUNCEMENT, R.string.container_signature_added);
+                    if (AccessibilityUtils.isAccessibilityEnabled()) {
+                        AccessibilityUtils.interrupt(itemView.getContext());
+                        AccessibilityUtils.sendAccessibilityEvent(itemView.getContext(), TYPE_ANNOUNCEMENT, R.string.container_signature_added);
+                    }
                     return new SuccessViewHolder(itemView);
                 case R.layout.signature_update_list_item_status:
                     return new StatusViewHolder(itemView);
@@ -290,8 +297,7 @@ final class SignatureUpdateAdapter extends
         }
 
         @Override
-        void bind(SignatureUpdateAdapter adapter, SuccessItem item) {
-        }
+        void bind(SignatureUpdateAdapter adapter, SuccessItem item) {}
     }
 
     static final class EmptyViewHolder extends UpdateViewHolder<EmptyItem> {
@@ -478,7 +484,17 @@ final class SignatureUpdateAdapter extends
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
             nameView.setText(TextUtil.splitTextAndJoin(item.signature().name(), ",", ", "));
-            nameView.setContentDescription(nameView.getText().toString().toLowerCase());
+            StringBuilder nameViewAccessibility = new StringBuilder();
+            String[] nameTextSplit = nameView.getText().toString().split(", ");
+
+            for (String nameText : nameTextSplit) {
+                if (TextUtil.isOnlyDigits(nameText)) {
+                    nameViewAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
+                } else {
+                    nameViewAccessibility.append(nameText);
+                }
+            }
+            nameView.setContentDescription(nameViewAccessibility.toString().toLowerCase());
             switch (item.signature().status()) {
                 case INVALID:
                     statusView.setText(R.string.signature_update_signature_status_invalid);

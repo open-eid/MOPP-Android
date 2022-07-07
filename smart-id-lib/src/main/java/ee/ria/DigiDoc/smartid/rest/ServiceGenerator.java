@@ -20,6 +20,9 @@
 
 package ee.ria.DigiDoc.smartid.rest;
 
+import static ee.ria.DigiDoc.common.LoggingUtil.isLoggingEnabled;
+
+import android.content.Context;
 import android.util.Log;
 
 import org.bouncycastle.util.encoders.Base64;
@@ -32,13 +35,18 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import ee.ria.DigiDoc.common.CertificateUtil;
 import ee.ria.DigiDoc.smartid.BuildConfig;
 import okhttp3.CertificatePinner;
+import okhttp3.Headers;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import okio.Buffer;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -48,31 +56,31 @@ public class ServiceGenerator {
 
     private static HttpLoggingInterceptor loggingInterceptor;
 
-    public static <S> S createService(Class<S> serviceClass, String sidSignServiceUrl, ArrayList<String> certBundle)
+    public static <S> S createService(Class<S> serviceClass, String sidSignServiceUrl, ArrayList<String> certBundle, Context context)
             throws CertificateException, NoSuchAlgorithmException {
         Timber.log(Log.DEBUG, "Creating new retrofit instance");
         return new Retrofit.Builder()
                 .baseUrl(sidSignServiceUrl + "/")
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(buildHttpClient(sidSignServiceUrl, certBundle))
+                .client(buildHttpClient(sidSignServiceUrl, certBundle, context))
                 .build()
                 .create(serviceClass);
     }
 
-    private static OkHttpClient buildHttpClient(String sidSignServiceUrl, ArrayList<String> certBundle)
+    private static OkHttpClient buildHttpClient(String sidSignServiceUrl, ArrayList<String> certBundle, Context context)
             throws CertificateException, NoSuchAlgorithmException {
         Timber.log(Log.DEBUG, "Building new httpClient");
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .certificatePinner(trustedCertificates(sidSignServiceUrl, certBundle))
                 .cache(null);
-        addLoggingInterceptor(httpClientBuilder);
+        addLoggingInterceptor(httpClientBuilder, context);
         return httpClientBuilder.build();
     }
 
-    private static void addLoggingInterceptor(OkHttpClient.Builder httpClientBuilder) {
-        if (BuildConfig.DEBUG) {
+    private static void addLoggingInterceptor(OkHttpClient.Builder httpClientBuilder, Context context) {
+        if (isLoggingEnabled(context) || BuildConfig.DEBUG) {
             Timber.log(Log.DEBUG, "Adding logging interceptor to HTTP client");
             if (loggingInterceptor == null) {
                 loggingInterceptor = new HttpLoggingInterceptor();
@@ -81,6 +89,22 @@ public class ServiceGenerator {
             if (!httpClientBuilder.interceptors().contains(loggingInterceptor)) {
                 httpClientBuilder.addInterceptor(loggingInterceptor);
             }
+            httpClientBuilder.addInterceptor(chain -> {
+                Request request = chain.request();
+                if (isLoggingEnabled(context) || BuildConfig.DEBUG) {
+                    Timber.log(Log.DEBUG, request.method() + " " + request.url());
+                    Headers headers = request.headers();
+                    Timber.log(Log.DEBUG, "Headers: " + Arrays.deepToString(new Headers[]{headers}));
+                    RequestBody requestBody = request.body();
+                    if (requestBody != null) {
+                        try (Buffer buffer = new Buffer()) {
+                            requestBody.writeTo(buffer);
+                            Timber.log(Log.DEBUG, " Body: " + buffer.readUtf8());
+                        }
+                    }
+                }
+                return chain.proceed(request);
+            });
         }
     }
 

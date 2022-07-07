@@ -18,6 +18,7 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
+import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
@@ -50,7 +51,7 @@ public final class AboutScreen extends Controller implements Screen {
 
         disposables.attach();
         disposables.add(navigationClicks(toolbarView).subscribe(ignored ->
-                Application.component(container.getContext()).navigator().onBackPressed()));
+                Application.component(container.getContext()).navigator().execute(Transaction.pop())));
 
         return view;
     }

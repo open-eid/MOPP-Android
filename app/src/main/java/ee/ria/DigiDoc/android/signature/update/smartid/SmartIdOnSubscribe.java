@@ -40,16 +40,14 @@ import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.smartid.SmartIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
 import ee.ria.DigiDoc.smartid.dto.response.ServiceFault;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SmartIDServiceResponse;
 import ee.ria.DigiDoc.smartid.service.SmartSignService;
-import ee.ria.DigiDoc.sign.SignedContainer;
-
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
-
 import timber.log.Timber;
 
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CERTIFICATE_CERT_BUNDLE;
@@ -86,20 +84,27 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                if (navigator.activity() == null) {
+                    Timber.log(Log.ERROR,"Activity is null");
+                    IllegalStateException ise = new IllegalStateException("Activity not found. Please try again after restarting application");
+                    emitter.onError(ise);
+                }
                 switch (intent.getStringExtra(SID_BROADCAST_TYPE_KEY)) {
                     case SERVICE_FAULT: {
                         NotificationManagerCompat.from(navigator.activity()).cancelAll();
                         ServiceFault serviceFault =
                                 ServiceFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
-                        Timber.log(Log.DEBUG, "Got status: %s", serviceFault.getStatus());
+                        Timber.log(Log.DEBUG, "Got SERVICE_FAULT status: %s", serviceFault.getStatus());
                         emitter.onError(SmartIdMessageException
                                 .create(navigator.activity(), serviceFault.getStatus(), serviceFault.getDetailMessage()));
                         break;
                     }
                     case CREATE_SIGNATURE_DEVICE:
+                        Timber.log(Log.DEBUG, "Selecting device (CREATE_SIGNATURE_DEVICE)");
                         emitter.onNext(SmartIdResponse.selectDevice(true));
                         break;
                     case CREATE_SIGNATURE_CHALLENGE:
+                        Timber.log(Log.DEBUG, "Signature challenge (CREATE_SIGNATURE_CHALLENGE)");
                         String challenge =
                                 intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE);
                         emitter.onNext(SmartIdResponse.challenge(challenge));
@@ -109,6 +114,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                                     NOTIFICATION_CHANNEL + "_NAME", NotificationManager.IMPORTANCE_HIGH);
                             NotificationManager systemService = navigator.activity().getSystemService(NotificationManager.class);
                             if (systemService != null) {
+                                Timber.log(Log.DEBUG, "Creating notification channel");
                                 systemService.createNotificationChannel(channel);
                             }
                         }
@@ -129,9 +135,11 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                                 SmartIDServiceResponse.fromJson(
                                         intent.getStringExtra(CREATE_SIGNATURE_STATUS));
                         if (status.getStatus() == SessionStatusResponse.ProcessStatus.OK) {
+                            Timber.log(Log.DEBUG, "Got CREATE_SIGNATURE_STATUS success status: %s", status.getStatus());
                             emitter.onNext(SmartIdResponse.success(container));
                             emitter.onComplete();
                         } else {
+                            Timber.log(Log.DEBUG, "Got CREATE_SIGNATURE_STATUS error status: %s", status.getStatus());
                             emitter.onError(SmartIdMessageException
                                     .create(navigator.activity(), status.getStatus()));
                         }

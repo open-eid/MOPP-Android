@@ -5,6 +5,7 @@ import android.os.Build;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -16,6 +17,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import com.google.android.material.textfield.TextInputLayout;
 
 import ee.ria.DigiDoc.android.Activity;
+import ee.ria.DigiDoc.common.TextUtil;
 
 import static android.content.Context.ACCESSIBILITY_SERVICE;
 
@@ -29,6 +31,11 @@ public class AccessibilityUtils {
 
     public static void sendAccessibilityEvent(Context context, int eventType, @StringRes int messageResId) {
         sendAccessibilityEvent(context, eventType, context.getString(messageResId));
+    }
+
+    public static void interrupt(Context context) {
+        AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(ACCESSIBILITY_SERVICE);
+        accessibilityManager.interrupt();
     }
 
     public static void sendAccessibilityEvent(Context context, int eventType, CharSequence message) {
@@ -97,8 +104,34 @@ public class AccessibilityUtils {
             public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 info.addAction(AccessibilityNodeInfoCompat.ACTION_FOCUS);
+                info.removeAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK);
             }
         });
+    }
+
+    public static void setSingleCharactersContentDescription(EditText editText) {
+        ViewCompat.setAccessibilityDelegate(editText, new AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                StringBuilder editTextAccessibility = new StringBuilder();
+                String[] personalCodeTextSplit = editText.getText().toString().split(",");
+                for (String nameText : personalCodeTextSplit) {
+                    if (TextUtil.isOnlyDigits(nameText)) {
+                        editTextAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
+                    } else {
+                        editTextAccessibility.append(nameText);
+                    }
+                }
+                info.setText(editTextAccessibility);
+                info.setContentDescription(editTextAccessibility);
+                host.setContentDescription(editTextAccessibility);
+            }
+        });
+    }
+
+    public static void setEditTextCursorToEnd(EditText editText) {
+        editText.post(() -> editText.setSelection(editText.getText().length()));
     }
 
     private static String combineMessages(CharSequence... messages) {

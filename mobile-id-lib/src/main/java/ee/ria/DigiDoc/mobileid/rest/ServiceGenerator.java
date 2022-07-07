@@ -19,6 +19,9 @@
 
 package ee.ria.DigiDoc.mobileid.rest;
 
+import static ee.ria.DigiDoc.common.LoggingUtil.isLoggingEnabled;
+
+import android.content.Context;
 import android.util.Log;
 
 import org.bouncycastle.util.encoders.Base64;
@@ -41,7 +44,10 @@ import ee.ria.DigiDoc.common.CertificateUtil;
 import ee.ria.DigiDoc.mobileid.BuildConfig;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import okio.Buffer;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -54,23 +60,23 @@ public class ServiceGenerator {
 
     private static HttpLoggingInterceptor loggingInterceptor;
 
-    public static <S> S createService(Class<S> serviceClass, SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle, TrustManager[] trustManagers) throws CertificateException, NoSuchAlgorithmException {
+    public static <S> S createService(Class<S> serviceClass, SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle, TrustManager[] trustManagers, Context context) throws CertificateException, NoSuchAlgorithmException {
         Timber.log(Log.DEBUG, "Creating new retrofit instance");
         return new Retrofit.Builder()
                 .baseUrl(midSignServiceUrl + "/")
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(buildHttpClient(sslContext, midSignServiceUrl, certBundle, trustManagers))
+                .client(buildHttpClient(sslContext, midSignServiceUrl, certBundle, trustManagers, context))
                 .build()
                 .create(serviceClass);
     }
 
-    private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle, TrustManager[] trustManagers) throws CertificateException, NoSuchAlgorithmException {
+    private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle, TrustManager[] trustManagers, Context context) throws CertificateException, NoSuchAlgorithmException {
         Timber.log(Log.DEBUG, "Building new httpClient");
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .certificatePinner(trustedCertificates(midSignServiceUrl, certBundle));
-        addLoggingInterceptor(httpClientBuilder);
+        addLoggingInterceptor(httpClientBuilder, context);
         if (sslContext != null) {
             try {
                 httpClientBuilder.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0]);
@@ -81,8 +87,8 @@ public class ServiceGenerator {
         return httpClientBuilder.build();
     }
 
-    private static void addLoggingInterceptor(OkHttpClient.Builder httpClientBuilder) {
-        if (BuildConfig.DEBUG) {
+    private static void addLoggingInterceptor(OkHttpClient.Builder httpClientBuilder, Context context) {
+        if (isLoggingEnabled(context) || BuildConfig.DEBUG) {
             Timber.log(Log.DEBUG, "Adding logging interceptor to HTTP client");
             if (loggingInterceptor == null) {
                 loggingInterceptor = new HttpLoggingInterceptor();
@@ -91,6 +97,20 @@ public class ServiceGenerator {
             if (!httpClientBuilder.interceptors().contains(loggingInterceptor)) {
                 httpClientBuilder.addInterceptor(loggingInterceptor);
             }
+            httpClientBuilder.addInterceptor(chain -> {
+                Request request = chain.request();
+                if (isLoggingEnabled(context) || BuildConfig.DEBUG) {
+                    Timber.log(Log.DEBUG, request.method() + " " + request.url());
+                    RequestBody requestBody = request.body();
+                    if (requestBody != null) {
+                        try (Buffer buffer = new Buffer()) {
+                            requestBody.writeTo(buffer);
+                            Timber.log(Log.DEBUG, " Body: " + buffer.readUtf8());
+                        }
+                    }
+                }
+                return chain.proceed(request);
+            });
         }
     }
 
