@@ -47,7 +47,8 @@
             android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
             android:textAppearance="@style/TextAppearance.Application.Label"
             android:labelFor="@id/eidHomeDataGivenNames"
-            android:text="@string/eid_home_data_given_names" />
+            android:text="@string/eid_home_data_given_names"
+            android:contentDescription="@string/eid_home_data_given_names_accessibility"/>
 
         <TextView
             android:id="@id/eidHomeDataGivenNames"
@@ -72,7 +73,8 @@
             android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
             android:textAppearance="@style/TextAppearance.Application.Label"
             android:labelFor="@id/eidHomeDataSurname"
-            android:text="@string/eid_home_data_surname" />
+            android:text="@string/eid_home_data_surname"
+            android:contentDescription="@string/eid_home_data_surname_accessibility"/>
 
         <TextView
             android:id="@id/eidHomeDataSurname"
@@ -90,6 +92,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@id/eidHomeDataPersonalCodeLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/material_baseline_grid_1x"
@@ -122,7 +125,8 @@
             android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
             android:textAppearance="@style/TextAppearance.Application.Label"
             android:labelFor="@id/eidHomeDataCitizenship"
-            android:text="@string/eid_home_data_citizenship" />
+            android:text="@string/eid_home_data_citizenship"
+            android:contentDescription="@string/eid_home_data_citizenship_accessibility" />
 
         <TextView
             android:id="@id/eidHomeDataCitizenship"
@@ -148,7 +152,8 @@
             android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
             android:textAppearance="@style/TextAppearance.Application.Label"
             android:labelFor="@id/eidHomeDataDocumentNumber"
-            android:text="@string/eid_home_data_document_number" />
+            android:text="@string/eid_home_data_document_number"
+            android:contentDescription="@string/eid_home_data_document_number_accessibility" />
 
         <TextView
             android:id="@id/eidHomeDataDocumentNumber"
@@ -174,7 +179,8 @@
             android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
             android:textAppearance="@style/TextAppearance.Application.Label"
             android:labelFor="@id/eidHomeDataExpiryDate"
-            android:text="@string/eid_home_data_expiry_date" />
+            android:text="@string/eid_home_data_expiry_date"
+            android:contentDescription="@string/eid_home_data_expiry_date_accessibility" />
 
         <TextView
             android:id="@id/eidHomeDataExpiryDate"
@@ -203,6 +209,7 @@
         android:background="?attr/selectableItemBackground"
         android:textStyle="bold"
         android:text="@string/eid_home_data_certificates_title"
+        android:contentDescription="@string/eid_home_data_certificates_title_accessibility"
         android:drawableStart="@drawable/ic_icon_accordion_collapsed" />
 
     <net.cachapa.expandablelayout.ExpandableLayout
@@ -255,14 +262,17 @@
                     style="@style/Widget.Application.EID.Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/eid_home_data_certificates_puk_title" />
+                    android:text="@string/eid_home_data_certificates_puk_title"
+                    android:contentDescription="@string/eid_home_data_certificates_puk_title_accessibility" />
 
                 <TextView
                     android:id="@id/eidHomeDataCertificatesPukText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="@string/eid_home_data_certificates_puk_text" />
+                    android:text="@string/eid_home_data_certificates_puk_text"
+                    android:contentDescription="@string/eid_home_data_certificates_puk_text_accessibility" />
+
             </LinearLayout>
 
             <Button
@@ -270,7 +280,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/material_baseline_grid_1x"
-                android:text="@string/eid_home_data_certificates_puk_button" />
+                android:text="@string/eid_home_data_certificates_puk_button"
+                android:contentDescription="@string/eid_home_data_certificates_puk_button_accessibility" />
 
             <TextView
                 android:id="@id/eidHomeDataCertificatesPukError"

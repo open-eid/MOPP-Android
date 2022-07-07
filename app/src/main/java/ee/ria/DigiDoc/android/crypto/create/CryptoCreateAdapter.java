@@ -80,7 +80,7 @@ final class CryptoCreateAdapter extends
             builder.add(DataFileItem.create(dataFile, dataFilesRemoveEnabled, dataFilesViewEnabled));
         }
         if (dataFilesAddEnabled) {
-            builder.add(AddButtonItem.create(R.string.crypto_create_data_files_add_button, R.string.crypto_create_data_files_add_button_description));
+            builder.add(AddButtonItem.create(R.string.documents_add_button, R.string.documents_add_button_accessibility));
         }
         builder.add(SubheadItem.create(R.string.crypto_create_recipients_title));
         for (Certificate recipient : recipients) {
@@ -90,7 +90,7 @@ final class CryptoCreateAdapter extends
             builder.add(EmptyTextItem.create(R.string.crypto_create_recipients_empty));
         }
         if (recipientsAddEnabled) {
-            builder.add(AddButtonItem.create(R.string.crypto_create_recipients_add_button, R.string.crypto_create_recipients_add_button_description));
+            builder.add(AddButtonItem.create(R.string.crypto_create_recipients_add_button, R.string.crypto_create_recipients_add_button_accessibility));
         }
         items(builder.build());
     }
@@ -132,7 +132,7 @@ final class CryptoCreateAdapter extends
 
     Observable<Object> dataFilesAddButtonClicks() {
         return addButtonClicksSubject
-                .filter(text -> text == R.string.crypto_create_data_files_add_button)
+                .filter(text -> text == R.string.documents_add_button)
                 .map(ignored -> VOID);
     }
 
@@ -283,7 +283,7 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((AddButtonItem) adapter.items.get(getBindingAdapterPosition())).text())
                     .subscribe(adapter.addButtonClicksSubject);
-            if (buttonView.getText() == buttonView.getResources().getString(R.string.crypto_create_data_files_add_button)) {
+            if (buttonView.getText() == buttonView.getResources().getString(R.string.documents_add_button_accessibility)) {
                 new Handler(Looper.getMainLooper()).postDelayed(() ->
                         itemView.findViewById(R.id.cryptoCreateAddButton)
                                 .sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED),
@@ -413,8 +413,10 @@ final class CryptoCreateAdapter extends
             addButton.setContentDescription(addButton.getText().toString().toLowerCase());
             if (item.addButtonEnabled()) {
                 String addRecipientDescription = addButton.getResources().getString(R.string.add_recipient);
-                addButton.setContentDescription(addRecipientDescription + " " +
-                        nameViewAccessibility.toString().toLowerCase());
+                addButton.setContentDescription((addRecipientDescription + " " + nameView.getText()).toLowerCase());
+            } else {
+                String addRecipientDescription = addButton.getResources().getString(R.string.crypto_recipient_add_button_added_accessibility);
+                addButton.setContentDescription((addRecipientDescription + " " + nameView.getText()).toLowerCase());
             }
             clicks(addButton)
                     .map(ignored ->

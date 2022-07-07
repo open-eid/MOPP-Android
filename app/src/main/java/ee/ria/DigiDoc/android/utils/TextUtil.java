@@ -9,12 +9,16 @@ import android.text.style.AlignmentSpan;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 public class TextUtil {
 
@@ -37,6 +41,28 @@ public class TextUtil {
             }
         }
 
+        return null;
+    }
+
+    public static AppCompatTextView getTextInputLayoutAppCompatTextView(TextInputLayout textInputLayout) {
+        for (int i = 0; i < textInputLayout.getChildCount(); i++) {
+            final View textInputLayoutChild = textInputLayout.getChildAt(i);
+            if (textInputLayoutChild instanceof LinearLayout) {
+                final LinearLayout linearLayout = (LinearLayout) textInputLayoutChild;
+                for (int j = 0; j < linearLayout.getChildCount(); j++) {
+                    final View linearLayoutChild = linearLayout.getChildAt(j);
+                    if (linearLayoutChild instanceof FrameLayout) {
+                        final FrameLayout frameLayout = (FrameLayout) linearLayoutChild;
+                        for (int k = 0; k < frameLayout.getChildCount(); k++) {
+                            final View frameLayoutChild = frameLayout.getChildAt(k);
+                            if (frameLayoutChild instanceof AppCompatTextView) {
+                                return (AppCompatTextView) frameLayoutChild;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return null;
     }
 

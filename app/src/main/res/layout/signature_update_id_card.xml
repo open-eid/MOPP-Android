@@ -82,7 +82,7 @@
             android:textAppearance="@style/TextAppearance.Application.Error"
             android:focusable="true"
             android:text="@string/signature_update_id_card_sign_pin2_invalid"
-            android:contentDescription="@string/signature_update_id_card_sign_pin2_invalid"
+            android:contentDescription="@string/signature_update_id_card_sign_pin2_invalid_accessibility"
             android:visibility="gone" />
 
     </LinearLayout>

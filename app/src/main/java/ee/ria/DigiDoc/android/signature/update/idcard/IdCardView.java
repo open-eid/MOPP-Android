@@ -143,12 +143,13 @@ public final class IdCardView extends LinearLayout implements
                 signPin2ErrorView.setText(
                         R.string.signature_update_id_card_sign_pin2_invalid_final);
                 signPin2ErrorView.setContentDescription(
-                        getResources().getString(R.string.signature_update_id_card_sign_pin2_invalid_final));
+                        getResources().getString(R.string.signature_update_id_card_sign_pin2_invalid_final_accessibility)
+                );
             } else {
                 signPin2ErrorView.setText(getResources().getString(
                         R.string.signature_update_id_card_sign_pin2_invalid, pinRetryCount));
                 signPin2ErrorView.setContentDescription(getResources().getString(
-                        R.string.signature_update_id_card_sign_pin2_invalid, pinRetryCount));
+                        R.string.signature_update_id_card_sign_pin2_invalid_accessibility, pinRetryCount));
             }
             signPin2ErrorView.postDelayed(() -> {
                 signPin2ErrorView.requestFocus();

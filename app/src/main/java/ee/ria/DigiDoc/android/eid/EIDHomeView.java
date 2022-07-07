@@ -162,6 +162,9 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
                 codeUpdateErrorDialog.setMessage(getResources().getString(R.string.eid_home_error));
             }
             codeUpdateErrorDialog.show();
+            TextView codeUpdateErrorDialogMessage = codeUpdateErrorDialog.findViewById(android.R.id.message);
+            AccessibilityUtils.setContentDescription(codeUpdateErrorDialogMessage, getResources()
+                    .getString(codeUpdateAction.currentBlockedErrorRes()));
         } else {
             errorDialog.dismiss();
             codeUpdateErrorDialog.dismiss();

@@ -716,7 +716,7 @@ final class SignatureUpdateAdapter extends
             int buttonRes;
             if (subheadItemType.equals(DOCUMENT)) {
                 titleRes = R.string.signature_update_documents_title;
-                buttonRes = R.string.signature_update_documents_add_button_description;
+                buttonRes = R.string.documents_add_button_accessibility;
             } else if (subheadItemType.equals(TIMESTAMP)) {
                 titleRes = R.string.signature_update_signature_type_timestamp;
                 buttonRes = 0;

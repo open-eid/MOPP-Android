@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.Application.Label"
-            android:text="@string/crypto_create_name" />
+            android:text="@string/container_title" />
 
         <TextView
             android:id="@id/cryptoCreateName"

@@ -75,17 +75,26 @@ public final class CertificateDataView extends LinearLayout {
         int buttonUnblock = type == CertificateType.AUTHENTICATION
                 ? R.string.eid_home_certificate_data_button_unblock_auth
                 : R.string.eid_home_certificate_data_button_unblock_sign;
+        String buttonChangeAccessibility = type == CertificateType.AUTHENTICATION
+                ? (getResources().getString(R.string.eid_home_certificate_data_button_change_auth_accessibility)).toLowerCase()
+                : (getResources().getString(R.string.eid_home_certificate_data_button_change_sign_accessibility)).toLowerCase();
+        String buttonUnblockAccessibility = type == CertificateType.AUTHENTICATION
+                ? (getResources().getString(R.string.eid_home_certificate_data_button_unblock_auth_accessibility)).toLowerCase()
+                : (getResources().getString(R.string.eid_home_certificate_data_button_unblock_sign_accessibility)).toLowerCase();
         buttonView.setText(buttonUnblocks ? buttonUnblock : buttonChange);
-        buttonView.setContentDescription(buttonView.getText().toString().toLowerCase());
+        buttonView.setContentDescription(buttonUnblocks ? buttonUnblockAccessibility : buttonChangeAccessibility);
         linkView.setText(type == CertificateType.AUTHENTICATION
                 ? R.string.eid_home_certificate_data_link_auth
                 : R.string.eid_home_certificate_data_link_sign);
+        linkView.setContentDescription(type == CertificateType.AUTHENTICATION
+                ? getContext().getString(R.string.eid_home_certificate_data_link_auth_accessibility)
+                : getContext().getString(R.string.eid_home_certificate_data_link_sign_accessibility));
         errorView.setText(type == CertificateType.AUTHENTICATION
                 ? R.string.eid_home_certificate_data_error_auth
                 : R.string.eid_home_certificate_data_error_sign);
         errorView.setContentDescription(type == CertificateType.AUTHENTICATION
-                ? getContext().getString(R.string.eid_home_certificate_data_error_auth)
-                : getContext().getString(R.string.eid_home_certificate_data_error_sign));
+                ? getContext().getString(R.string.eid_home_certificate_data_error_auth_accessibility)
+                : getContext().getString(R.string.eid_home_certificate_data_error_sign_accessibility));
 
         if (!pinBlocked && !pukBlocked) {
             buttonView.setVisibility(VISIBLE);

@@ -110,8 +110,8 @@ public final class ConfirmationDialog extends AlertDialog implements
             return getContext().getString(R.string.signature_update_cancel_file_removal_button);
         } else if (action == R.id.signatureRemovalDialog) {
             return getContext().getString(R.string.signature_update_cancel_signature_removal_button);
+        } else {
+            return getContext().getString(R.string.cancel_button_accessibility);
         }
-
-        return null;
     }
 }

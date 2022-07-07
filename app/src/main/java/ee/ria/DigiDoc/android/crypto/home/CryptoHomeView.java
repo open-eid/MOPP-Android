@@ -44,6 +44,7 @@ public final class CryptoHomeView extends CoordinatorLayout implements HomeView.
         toolbarView = findViewById(R.id.toolbar);
         createButton = findViewById(R.id.cryptoHomeCreateButton);
         navigator = Application.component(context).navigator();
+        AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.main_home_navigation_crypto);
 
         createButton.postDelayed(() -> {
             createButton.requestFocus();

@@ -32,14 +32,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/material_baseline_grid_1x"
-        android:text="@string/eid_home_certificate_data_button_change_auth" />
+        android:text="@string/eid_home_certificate_data_button_change_auth"
+        android:contentDescription="@string/eid_home_certificate_data_button_change_auth_accessibility" />
 
     <TextView
         android:id="@id/eidHomeCertificateDataLink"
         style="@style/Widget.Application.EID.Link"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/eid_home_certificate_data_link_auth" />
+        android:text="@string/eid_home_certificate_data_link_auth"
+        android:contentDescription="@string/eid_home_certificate_data_link_auth_accessibility" />
 
     <TextView
         android:id="@id/eidHomeCertificateDataError"
@@ -48,6 +50,6 @@
         android:layout_height="wrap_content"
         android:focusable="true"
         android:text="@string/eid_home_certificate_data_error_auth"
-        android:contentDescription="@string/eid_home_certificate_data_error_auth" />
+        android:contentDescription="@string/eid_home_certificate_data_error_auth_accessibility" />
 
 </merge>

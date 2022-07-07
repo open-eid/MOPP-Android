@@ -5,4 +5,5 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/material_list_normal_padding_vertical"
     android:layout_marginEnd="@dimen/material_list_normal_padding_vertical"
-    android:text="@string/crypto_create_data_files_add_button" />
+    android:text="@string/documents_add_button"
+    android:contentDescription="@string/documents_add_button_accessibility"/>
