@@ -32,7 +32,7 @@ final class MobileCreateSignatureRequestHelper {
     private static final String ALTERNATIVE_DISPLAY_TEXT_FORMAT = "UCS-2";
 
     static MobileCreateSignatureRequest create(SignedContainer container, String uuid, String proxyUrl,
-                                               String skUrl, String personalCode,
+                                               String skUrl, Locale locale, String personalCode,
                                                String phoneNo, String displayMessage) {
         MobileCreateSignatureRequest request = new MobileCreateSignatureRequest();
         request.setRelyingPartyName(RELYING_PARTY_NAME);
@@ -43,7 +43,7 @@ final class MobileCreateSignatureRequestHelper {
 
         request.setContainerPath(container.file().getPath());
         request.setHashType(DIGEST_TYPE);
-        String language = getLanguage();
+        String language = getLanguage(locale);
         request.setLanguage(language);
         request.setDisplayText(MessageUtil.escape(
                 MessageUtil.trimDisplayMessageIfNotWithinSizeLimit(
@@ -54,9 +54,12 @@ final class MobileCreateSignatureRequestHelper {
         return request;
     }
 
-    private static String getLanguage() {
+    private static String getLanguage(Locale locale) {
+        if (locale == null) {
+            return DEFAULT_LANGUAGE;
+        }
         try {
-            String language = Locale.getDefault().getISO3Language().toUpperCase();
+            String language = locale.getISO3Language().toUpperCase();
             return SUPPORTED_LANGUAGES.contains(language) ? language : DEFAULT_LANGUAGE;
         } catch (Exception e) {
             return DEFAULT_LANGUAGE;
