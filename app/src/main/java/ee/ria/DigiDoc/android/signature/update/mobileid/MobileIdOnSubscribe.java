@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -40,15 +41,17 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
 
     private final Navigator navigator;
     private final SignedContainer container;
+    private final Locale locale;
     private final LocalBroadcastManager broadcastManager;
     private final String uuid;
     private final String personalCode;
     private final String phoneNo;
 
-    public MobileIdOnSubscribe(Navigator navigator, SignedContainer container, String uuid,
-                               String personalCode, String phoneNo) {
+    public MobileIdOnSubscribe(Navigator navigator, SignedContainer container, Locale locale,
+                               String uuid, String personalCode, String phoneNo) {
         this.navigator = navigator;
         this.container = container;
+        this.locale = locale;
         this.broadcastManager = LocalBroadcastManager.getInstance(navigator.activity());
         this.uuid = uuid;
         this.personalCode = personalCode;
@@ -114,7 +117,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                 .getString(R.string.signature_update_mobile_id_display_message);
         MobileCreateSignatureRequest request = MobileCreateSignatureRequestHelper
                 .create(container, uuid, configurationProvider.getMidRestUrl(),
-                        configurationProvider.getMidSkRestUrl(), personalCode, phoneNo, displayMessage);
+                        configurationProvider.getMidSkRestUrl(), locale, personalCode, phoneNo, displayMessage);
 
         android.content.Intent intent = new Intent(navigator.activity(), MobileSignService.class);
         intent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));

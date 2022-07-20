@@ -83,7 +83,7 @@ final class SignatureAddSource {
             return signatureContainerDataSource
                     .get(containerFile)
                     .flatMapObservable(container ->
-                            Observable.create(new MobileIdOnSubscribe(navigator, container,
+                            Observable.create(new MobileIdOnSubscribe(navigator, container, settingsDataStore.getLocale(),
                                     settingsDataStore.getUuid(), mobileIdRequest.personalCode(),
                                     mobileIdRequest.phoneNo())))
                     .switchMap(response -> {
