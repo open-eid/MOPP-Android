@@ -72,7 +72,10 @@ public class ServiceGenerator {
             throws CertificateException, NoSuchAlgorithmException {
         Timber.log(Log.DEBUG, "Building new httpClient");
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(120, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
+                .writeTimeout(120, TimeUnit.SECONDS)
+                .pingInterval(3, TimeUnit.SECONDS)
                 .certificatePinner(trustedCertificates(sidSignServiceUrl, certBundle))
                 .cache(null);
         addLoggingInterceptor(httpClientBuilder, context);
