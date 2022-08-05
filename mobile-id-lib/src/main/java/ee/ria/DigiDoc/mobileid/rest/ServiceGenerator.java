@@ -74,7 +74,10 @@ public class ServiceGenerator {
     private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle, TrustManager[] trustManagers, Context context) throws CertificateException, NoSuchAlgorithmException {
         Timber.log(Log.DEBUG, "Building new httpClient");
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(120, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
+                .writeTimeout(120, TimeUnit.SECONDS)
+                .pingInterval(3, TimeUnit.SECONDS)
                 .certificatePinner(trustedCertificates(midSignServiceUrl, certBundle));
         addLoggingInterceptor(httpClientBuilder, context);
         if (sslContext != null) {
