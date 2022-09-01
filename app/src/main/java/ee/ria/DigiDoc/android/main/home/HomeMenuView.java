@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.main.home;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.Voice;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -13,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.core.widget.NestedScrollView;
 
 import java.util.Locale;
+import java.util.Set;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.common.TextUtil;
@@ -38,8 +40,16 @@ public final class HomeMenuView extends NestedScrollView {
             new TextToSpeech.OnInitListener() {
         @Override
         public void onInit(int status) {
-            Locale accessibilityLocale = textToSpeech.getVoice().getLocale();
-            if (accessibilityLocale.getLanguage().equals("et")) {
+            Voice textToSpeechVoice = textToSpeech.getVoice();
+            String language = Locale.getDefault().getLanguage();
+            boolean isESTLanguageAvailable = isTextToSpeechLanguageAvailable(textToSpeech.getAvailableLanguages(),
+                    Set.of(new Locale("est", "EST"), new Locale("et", "ET")));
+            if ((textToSpeechVoice == null && isESTLanguageAvailable) ||
+                    (textToSpeechVoice != null &&
+                            textToSpeechVoice.getLocale().getLanguage().equals("et"))) {
+                language = "et";
+            }
+            if (language.equals("et")) {
                 helpView.setContentDescription(
                         getResources().getString(R.string.main_home_menu_help) +
                                 " link " +
@@ -113,5 +123,11 @@ public final class HomeMenuView extends NestedScrollView {
 
     public Observable<Integer> localeChecks() {
         return checkedChanges(localeView).skipInitialValue();
+    }
+
+    private boolean isTextToSpeechLanguageAvailable(Set<Locale> availableLocales, Set<Locale> locales) {
+        return locales.stream().anyMatch(lo ->
+                availableLocales.stream().anyMatch(b -> b.getLanguage().equals(lo.getLanguage()))
+        );
     }
 }
