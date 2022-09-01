@@ -127,7 +127,7 @@ public final class HomeMenuView extends NestedScrollView {
 
     private boolean isTextToSpeechLanguageAvailable(Set<Locale> availableLocales, Set<Locale> locales) {
         return locales.stream().anyMatch(lo ->
-                availableLocales.stream().anyMatch(b -> b.getLanguage().equals(lo.getLanguage()))
+                availableLocales.stream().anyMatch(al -> al.getLanguage().equals(lo.getLanguage()))
         );
     }
 }
