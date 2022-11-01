@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update.mobileid;
 
+import android.util.Log;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
@@ -11,6 +13,7 @@ import ee.ria.DigiDoc.common.MessageUtil;
 import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignedContainer;
+import timber.log.Timber;
 
 final class MobileCreateSignatureRequestHelper {
 
@@ -62,6 +65,7 @@ final class MobileCreateSignatureRequestHelper {
             String language = locale.getISO3Language().toUpperCase();
             return SUPPORTED_LANGUAGES.contains(language) ? language : DEFAULT_LANGUAGE;
         } catch (Exception e) {
+            Timber.log(Log.ERROR, "Unable to get language from locale", e);
             return DEFAULT_LANGUAGE;
         }
     }

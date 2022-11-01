@@ -1,7 +1,6 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 
 import javax.inject.Inject;
 
@@ -19,11 +18,12 @@ import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdOnSubscribe;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdRequest;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
+import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
-import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.sign.SignedContainer;
+import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
@@ -36,16 +36,19 @@ final class SignatureAddSource {
     private final SignatureContainerDataSource signatureContainerDataSource;
     private final SettingsDataStore settingsDataStore;
     private final IdCardService idCardService;
+    private final LocaleService localeService;
 
     private static final String EMPTY_VALUE = "";
 
     @Inject SignatureAddSource(Navigator navigator,
                                SignatureContainerDataSource signatureContainerDataSource,
-                               SettingsDataStore settingsDataStore, IdCardService idCardService) {
+                               SettingsDataStore settingsDataStore, IdCardService idCardService,
+                               LocaleService localeService) {
         this.navigator = navigator;
         this.signatureContainerDataSource = signatureContainerDataSource;
         this.settingsDataStore = settingsDataStore;
         this.idCardService = idCardService;
+        this.localeService = localeService;
     }
 
     Observable<Result.SignatureAddResult> show(int method) {
@@ -83,7 +86,8 @@ final class SignatureAddSource {
             return signatureContainerDataSource
                     .get(containerFile)
                     .flatMapObservable(container ->
-                            Observable.create(new MobileIdOnSubscribe(navigator, container, settingsDataStore.getLocale(),
+                            Observable.create(new MobileIdOnSubscribe(navigator, container,
+                                            localeService.applicationLocale(),
                                     settingsDataStore.getUuid(), mobileIdRequest.personalCode(),
                                     mobileIdRequest.phoneNo())))
                     .switchMap(response -> {
