@@ -69,9 +69,7 @@ public class AccessibilityUtils {
     }
 
     public static void setViewAccessibilityPaneTitle(View view, @StringRes int titleResId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            view.setAccessibilityPaneTitle((view.getResources().getString(titleResId)).toLowerCase());
-        }
+        view.setAccessibilityPaneTitle((view.getResources().getString(titleResId)).toLowerCase());
     }
 
     public static void setContentDescription(View view, @Nullable String text) {

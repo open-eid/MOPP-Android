@@ -234,9 +234,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         toolbarView.setNavigationIcon(R.drawable.ic_clear);
         toolbarView.setNavigationContentDescription(R.string.close);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            setAccessibilityPaneTitle(isExistingContainer ? getResources().getString(titleResId) : "Container signing");
-        }
+        setAccessibilityPaneTitle(isExistingContainer ? getResources().getString(titleResId) : "Container signing");
 
         listView.clearFocus();
 
@@ -359,9 +357,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         tintCompoundDrawables(signatureAddButton);
 
         if (mobileIdContainerView.getVisibility() == VISIBLE) {
-            if (Build.VERSION.SDK_INT >= 26) {
-                mobileIdContainerView.setFocusedByDefault(true);
-            }
+            mobileIdContainerView.setFocusedByDefault(true);
             mobileIdContainerView.setFocusable(true);
             mobileIdContainerView.setFocusableInTouchMode(true);
 
@@ -386,9 +382,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         smartIdContainerView.setVisibility(
                 signatureAddResponse instanceof SmartIdResponse ? VISIBLE : GONE);
         if (smartIdContainerView.getVisibility() == VISIBLE) {
-            if (Build.VERSION.SDK_INT >= 26) {
-                smartIdContainerView.setFocusedByDefault(true);
-            }
+            smartIdContainerView.setFocusedByDefault(true);
             smartIdContainerView.setFocusable(true);
             smartIdContainerView.setFocusableInTouchMode(true);
 
