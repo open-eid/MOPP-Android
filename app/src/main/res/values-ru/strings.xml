@@ -171,6 +171,10 @@
 
     <string name="signature_update_mobile_id_display_message">Подписать документ</string>
 
+    <string name="signature_update_mobile_id_invalid_country_code">Неверный код страны.</string>
+    <string name="signature_update_mobile_id_invalid_phone_number">Телефонный номер не действителен.</string>
+    <string name="signature_update_mobile_id_invalid_personal_code">Личный код недействителен.</string>
+
     <string name="signature_update_mobile_id_status_request_sent">Запрос на подпись отправлен</string>
     <string name="signature_update_mobile_id_status_request_ok">Запрос принят</string>
     <string name="signature_update_mobile_id_status_no_country_code">Номер телефона должен содержать код страны</string>

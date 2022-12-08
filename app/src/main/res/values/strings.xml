@@ -168,6 +168,11 @@
     <string name="signature_update_mobile_id_info">Make sure the control code matches the one on phone screen and enter mobile-ID PIN2 code</string>
     <string name="signature_update_mobile_id_display_message">Sign document</string>
 
+
+    <string name="signature_update_mobile_id_invalid_country_code">Invalid country code.</string>
+    <string name="signature_update_mobile_id_invalid_phone_number">Phone number is not valid.</string>
+    <string name="signature_update_mobile_id_invalid_personal_code">Personal code is not valid.</string>
+
     <string name="signature_update_mobile_id_status_request_sent">Signing request sent</string>
     <string name="signature_update_mobile_id_status_request_ok">Request accepted</string>
     <string name="signature_update_mobile_id_status_no_country_code">Please include correct country code</string>
