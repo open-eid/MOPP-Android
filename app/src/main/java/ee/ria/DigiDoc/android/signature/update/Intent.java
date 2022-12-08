@@ -13,7 +13,6 @@ import java.io.File;
 import java.util.Locale;
 
 import ee.ria.DigiDoc.android.utils.SivaUtil;
-import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
@@ -93,16 +92,8 @@ interface Intent extends MviIntent {
             String containerFileExtension = getFileExtension(containerFile.getName()).toLowerCase(Locale.US);
             String documentFileExtension = getFileExtension(document.name()).toLowerCase(Locale.US);
             if (!containerFileExtension.equals("pdf") && SignedContainer.isContainer(containerFile)) {
-                boolean isConfirmationNeeded;
                 try {
-                    SignedContainer signedContainer = SignedContainer.open(containerFile);
-                    String extension = getFileExtension(signedContainer.name()).toLowerCase(Locale.US);
-                    if (!extension.isEmpty() && extension.equals("pdf") && signedContainer.dataFiles().size() == 1) {
-                        isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(containerFile, document);
-                    } else {
-                        File dataFile = signedContainer.getDataFile(document, containerFile.getParentFile());
-                        isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(ImmutableList.of(FileStream.create(dataFile)));
-                    }
+                    boolean isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(containerFile, document);
                     return create(containerFile, document, isConfirmationNeeded);
                 } catch (Exception e) {
                     Timber.log(Log.ERROR, e, "Unable to get data file from container");
