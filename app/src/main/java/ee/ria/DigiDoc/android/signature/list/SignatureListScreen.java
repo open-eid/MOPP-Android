@@ -70,7 +70,7 @@ public final class SignatureListScreen extends Controller implements Screen,
 
     private Observable<Intent.ContainerOpenIntent> containerOpenIntent() {
         return Observable.merge(adapter.itemClicks()
-                .map(Intent.ContainerOpenIntent::confirmation),
+                .flatMap(file -> Intent.ContainerOpenIntent.confirmation(file, getApplicationContext())),
                 sivaConfirmationDialog.positiveButtonClicks()
                     .map(ignored -> Intent.ContainerOpenIntent.open(sivaConfirmationContainerFile, true)),
                 sivaConfirmationDialog.cancels()

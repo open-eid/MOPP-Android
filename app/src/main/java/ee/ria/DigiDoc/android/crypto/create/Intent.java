@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import android.content.Context;
+
 import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
@@ -12,6 +14,8 @@ import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 import ee.ria.DigiDoc.common.Certificate;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
 
 interface Intent extends MviIntent, MviAction {
 
@@ -123,10 +127,12 @@ interface Intent extends MviIntent, MviAction {
 
         abstract boolean confirmation();
 
-        static DataFileViewIntent confirmation(File containerFile) {
-            boolean isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(
-                    ImmutableList.of(FileStream.create(containerFile)));
-            return create(containerFile, isConfirmationNeeded);
+        static Observable<DataFileViewIntent> confirmation(File containerFile, Context context) {
+            return SivaUtil.isSivaConfirmationNeeded(
+                            ImmutableList.of(FileStream.create(containerFile)), context)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .map(isSivaConfirmationNeeded -> create(containerFile, isSivaConfirmationNeeded))
+                    .subscribeOn(AndroidSchedulers.mainThread());
         }
 
         static DataFileViewIntent open(File dataFile) {

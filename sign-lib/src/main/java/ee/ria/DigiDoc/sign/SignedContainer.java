@@ -30,10 +30,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -519,9 +521,16 @@ public abstract class SignedContainer {
      * @param byteSource ByteSource of the file.
      * @return boolean true if file is signed PDF file. False otherwise.
      */
-    public static boolean isSignedPDFFile(ByteSource byteSource, Context context, String fileName) {
-        try {
-            byte[] bytes = byteSource.read();
+    public static boolean isSignedPDFFile(ByteSource byteSource, Context context, String fileName) throws IllegalStateException {
+        Timber.log(Log.DEBUG, "Checking if PDF is signed");
+        try (InputStream in = new BufferedInputStream(byteSource.openStream())) {
+
+            byte[] bytes = new byte[(int) byteSource.size()];
+
+            Timber.log(Log.DEBUG, "Reading PDF bytes");
+            while ((in.read(bytes)) != -1) {
+                Timber.log(Log.DEBUG, "Done reading PDF bytes");
+            }
 
             File pdfFilesDirectory = new File(context.getFilesDir(), "tempPdfFiles");
 
@@ -540,10 +549,14 @@ public abstract class SignedContainer {
             FileUtils.removeFile(file.getCanonicalPath());
             FileUtils.removeFile(pdfFilesDirectory.getCanonicalPath());
 
+            Timber.log(Log.DEBUG, String.format("Is PDF signed: %s", isSignedContainer));
+
             return isSignedContainer;
         } catch (IOException e) {
-            Timber.log(Log.ERROR, e, "Unable to check if PDF file is signed");
-            return false;
+            Timber.log(Log.ERROR, e,
+                    String.format("Unable to check if PDF file is signed. Error: %s",
+                    e.getLocalizedMessage()));
+            throw new IllegalStateException("Unable to check if PDF file is signed");
         }
     }
 
