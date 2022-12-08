@@ -1,5 +1,8 @@
 package ee.ria.DigiDoc.android.main.home;
 
+import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
+import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
+
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
@@ -7,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
@@ -97,6 +101,13 @@ public final class HomeMenuView extends NestedScrollView {
             helpView.requestFocus();
             helpView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
         }, 2000);
+
+        RadioButton englishButton = findViewById(R.id.mainHomeMenuLocaleEn);
+        if (!isLargeFontEnabled(getResources())) {
+            int padding = convertPxToDp(14f, context);
+            englishButton.setPadding(padding, padding, padding, padding);
+            englishButton.setMaxLines(4);
+        }
     }
 
     public Observable closeButtonClicks() {
