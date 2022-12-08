@@ -14,10 +14,31 @@
     <string name="main_home_menu_help">ПОМОЩЬ</string>
     <string name="main_home_menu_help_url_short">линк www.id.ee</string>
     <string name="main_home_menu_help_url">https://www.id.ee/ru/id-pomoshh/</string>
+    <string name="main_home_menu_accessibility">ДОСТУПНОСТЬ</string>
     <string name="main_home_menu_recent">НЕДАВНИЕ ДОКУМЕНТЫ</string>
     <string name="main_home_menu_settings">НАСТРОЙКИ</string>
     <string name="main_home_menu_about">ИНФОРМАЦИЯ</string>
     <string name="main_home_menu_diagnostics">ДИАГНОСТИКА</string>
+
+    <!-- Main Accessibility -->
+    <string name="main_accessibility_title">Доступность</string>
+
+    <string name="main_accessibility_introduction">Приложение RIA DigiDoc построено таким образом, чтобы оно соответствовало протоколам доступа WCAG 2.1 AA. Это означает, что при разработке RIA DigiDoc соблюдались принципы, позволяющие использовать приложение неспособным видеть и слабовидящим пользователям, лицам с ограничением двигательной функции или силы и т. п.</string>
+    <string name="main_accessibility_introduction_2">Доступность можно исправить путём использования встроенных в смарт-устройство вспомогательных средств. Далее даётся обзор основных вспомогательных средств.</string>
+    <string name="main_accessibility_introduction_screen_reader_title">Экранное считывающее устройство </string>
+    <string name="main_accessibility_introduction_screen_reader_introduction">Экранное считывающее устройство (также программа экранного чтения, или скрин-ридер) – это программа, задачей которой является преобразование изображаемой на экране смарт-устройства информации в подходящий для пользователя вид – например, речь. В первую очередь это вспомогательное средство предназначено для слабовидящих пользователей.</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_2">При построении приложения RIA DigiDoc учитывалась возможность преобразования визуального содержания любого типа в подходящий для пользователя вид. Например, картинки снабжены текстовыми описаниями, расположение и последовательность структурных элементов учитывает перемещение экранного считывающего устройства по экрану и позволят потреблять информацию в логической последовательности.</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_apps">Наиболее распространённые скрин-ридеры для смарт-устройств:</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_ios">VoiceOver (iOS, встроенный) https://support.apple.com/ru-ru/guide/iphone/iph3e2e415f/ios</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_android">Talkback (Android, встроенный) https://support.google.com/accessibility/android/answer/6007100?hl=ru</string>
+    <string name="main_accessibility_introduction_screen_magnification_title">Увеличение экрана и изменение цветов</string>
+    <string name="main_accessibility_introduction_screen_magnification_introduction">Если слабовидящий пользователь видит достаточно для чтения текста, для более удобного просмотра экрана можно использовать встроенные в смарт-устройство вспомогательные средства. При помощи вспомогательных средств можно изменять размеры текстов, основной тип шрифта, цветовые решения интерфейса пользователя, а также можно увеличивать экран при помощи экранной лупы.</string>
+    <string name="main_accessibility_introduction_screen_magnification_screen_tools">Вспомогательные средства для регулировки цвета экрана и размера текста:</string>
+    <string name="main_accessibility_introduction_screen_magnification_screen_tools_ios">iOS https://support.apple.com/ru-ru/guide/iphone/iph3e2e1fb0/ios</string>
+    <string name="main_accessibility_introduction_screen_magnification_screen_tools_android">Android https://support.google.com/accessibility/android/answer/11183305?hl=ru&amp;ref_topic=9079043</string>
+    <string name="main_accessibility_introduction_screen_magnification_tools">Вспомогательные средства для увеличения экрана:</string>
+    <string name="main_accessibility_introduction_screen_magnification_tools_ios">Zoom (iOS, встроенный) https://support.apple.com/ru-ru/guide/iphone/iph3e2e367e/ios</string>
+    <string name="main_accessibility_introduction_screen_magnification_tools_android">Magnification (Android, встроенный) https://support.google.com/accessibility/android/answer/6006949?hl=ru</string>
 
     <!-- Main Settings -->
     <string name="main_settings_title">Настройки</string>

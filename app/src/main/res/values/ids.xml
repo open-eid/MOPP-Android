@@ -31,6 +31,7 @@
     <item type="id" name="mainHomeMenu" />
     <item type="id" name="mainHomeMenuCloseButton" />
     <item type="id" name="mainHomeMenuHelp" />
+    <item type="id" name="mainHomeMenuAccessibility" />
     <item type="id" name="mainHomeMenuRecent" />
     <item type="id" name="mainHomeMenuSettings" />
     <item type="id" name="mainHomeMenuAbout" />
@@ -39,6 +40,27 @@
     <item type="id" name="mainHomeMenuLocaleEt" />
     <item type="id" name="mainHomeMenuLocaleRu" />
     <item type="id" name="mainHomeMenuLocaleEn" />
+
+    <!-- Main Accessibility -->
+    <item type="id" name="mainAccessibilityScreen" />
+    <item type="id" name="mainAccessibilityFragment" />
+
+    <item type="id" name="mainAccessibilityIntroduction" />
+    <item type="id" name="mainAccessibilityIntroduction2" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderTitle" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroduction" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroduction2" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroductionApps" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroductionIos" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroductionAndroid" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationTitle" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationIntroduction" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationScreenTools" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationScreenToolsIos" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationScreenToolsAndroid" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationTools" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationToolsIos" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationToolsAndroid" />
 
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />

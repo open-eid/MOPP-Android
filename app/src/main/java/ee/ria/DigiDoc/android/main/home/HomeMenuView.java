@@ -29,6 +29,7 @@ public final class HomeMenuView extends NestedScrollView {
     private final View closeButton;
 
     private final Button helpView;
+    private final Button accessibilityView;
     private final Button recentView;
     private final Button settingsView;
     private final Button aboutView;
@@ -81,6 +82,7 @@ public final class HomeMenuView extends NestedScrollView {
                 getResources().getString(R.string.main_home_menu_help) + " " +
                         TextUtil.splitTextAndJoin(
                                 getResources().getString(R.string.main_home_menu_help_url_short), "", " "));
+        accessibilityView = findViewById(R.id.mainHomeMenuAccessibility);
         recentView = findViewById(R.id.mainHomeMenuRecent);
         settingsView = findViewById(R.id.mainHomeMenuSettings);
         aboutView = findViewById(R.id.mainHomeMenuAbout);
@@ -107,6 +109,7 @@ public final class HomeMenuView extends NestedScrollView {
     public Observable<Integer> itemClicks() {
         return Observable.mergeArray(
                 clicks(helpView).map(ignored -> R.id.mainHomeMenuHelp),
+                clicks(accessibilityView).map(ignored -> R.id.mainHomeMenuAccessibility),
                 clicks(recentView).map(ignored -> R.id.mainHomeMenuRecent),
                 clicks(settingsView).map(ignored -> R.id.mainHomeMenuSettings),
                 clicks(aboutView).map(ignored -> R.id.mainHomeMenuAbout),
