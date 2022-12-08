@@ -1,0 +1,63 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  schedule:
+    - cron: "42 11 * * 5"
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ java ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: After Prepare
+        run: |
+          export ANDROID_SDK_ROOT=/opt/work/lgtm-workspace/lgtm/android && echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          export ANDROID_HOME=$ANDROID_SDK_ROOT && echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          export ANDROID_COMMAND_LINE_TOOLS=/opt/extra/android/versions/30/cmdline-tools && echo "ANDROID_COMMAND_LINE_TOOLS=$ANDROID_COMMAND_LINE_TOOLS" >> $GITHUB_ENV
+          export ANDROID_SDK_LICENSES=$ANDROID_SDK_ROOT/licenses && echo "ANDROID_SDK_LICENSES=$ANDROID_SDK_LICENSES" >> $GITHUB_ENV
+          mkdir $ANDROID_SDK_ROOT
+          mkdir $ANDROID_SDK_LICENSES
+          echo -e '
+          24333f8a63b6825ea9c5514f83c2829b004d1fee' > $ANDROID_SDK_LICENSES/android-sdk-license
+          echo -e '
+          84831b9409646a918e30573bab4c9c91346d8abd' > $ANDROID_SDK_LICENSES/android-sdk-preview-license
+          (cd $ANDROID_COMMAND_LINE_TOOLS/bin/ && yes | ./sdkmanager --update --sdk_root=$ANDROID_COMMAND_LINE_TOOLS)
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 11
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          queries: +security-and-quality
+
+      - name: Build java
+        run: |
+          ./gradlew -Dorg.gradle.caching=false --no-daemon -S clean
+          ./gradlew -Dorg.gradle.caching=false --no-daemon -S app:assembleDebug -x app:processDebugGoogleServices -x app:uploadCrashlyticsMappingFileDebug
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:${{ matrix.language }}"
