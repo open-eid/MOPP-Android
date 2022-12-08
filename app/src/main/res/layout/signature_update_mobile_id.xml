@@ -24,7 +24,8 @@
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
             android:text="@string/signature_update_mobile_id_phone_no"
-            android:paddingTop="1px"/>
+            android:paddingTop="1px"
+            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateMobileIdPhoneNoLabel"
@@ -54,7 +55,8 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
-            android:text="@string/signature_update_mobile_id_personal_code" />
+            android:text="@string/signature_update_mobile_id_personal_code"
+            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateMobileIdPersonalCodeLabel"

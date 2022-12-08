@@ -32,7 +32,9 @@ public final class MobileIdView extends LinearLayout implements
 
     private final Subject<Object> positiveButtonStateSubject = PublishSubject.create();
     private final TextView message;
+    private final TextView phoneNoViewLabel;
     private final EditText phoneNoView;
+    private final TextView personalCodeViewLabel;
     private final TextInputEditText personalCodeView;
     private final CheckBox rememberMeView;
     private final TextWatcher textWatcher;
@@ -55,12 +57,16 @@ public final class MobileIdView extends LinearLayout implements
         setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update_mobile_id, this);
         message = findViewById(R.id.signatureUpdateMobileIdMessage);
+        phoneNoViewLabel = findViewById(R.id.signatureUpdateMobileIdPhoneNoText);
         phoneNoView = findViewById(R.id.signatureUpdateMobileIdPhoneNo);
+        personalCodeViewLabel = findViewById(R.id.signatureUpdateMobileIdPersonalCodeText);
         personalCodeView = findViewById(R.id.signatureUpdateMobileIdPersonalCode);
         rememberMeView = findViewById(R.id.signatureUpdateMobileIdRememberMe);
 
-        AccessibilityUtils.setSingleCharactersContentDescription(phoneNoView);
-        AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView);
+        AccessibilityUtils.setTextViewContentDescription(
+                phoneNoView, phoneNoViewLabel.getText().toString());
+        AccessibilityUtils.setTextViewContentDescription(
+                personalCodeView, personalCodeViewLabel.getText().toString());
         AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
 

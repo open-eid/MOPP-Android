@@ -109,23 +109,23 @@ public class AccessibilityUtils {
         });
     }
 
-    public static void setSingleCharactersContentDescription(EditText editText) {
+    public static void setTextViewContentDescription(EditText editText, String label) {
         ViewCompat.setAccessibilityDelegate(editText, new AccessibilityDelegateCompat() {
             @Override
             public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 StringBuilder editTextAccessibility = new StringBuilder();
-                String[] personalCodeTextSplit = editText.getText().toString().split(",");
-                for (String nameText : personalCodeTextSplit) {
-                    if (TextUtil.isOnlyDigits(nameText)) {
-                        editTextAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
+                String[] splitText = editText.getText().toString().split(",");
+                for (String text : splitText) {
+                    if (TextUtil.isOnlyDigits(text)) {
+                        editTextAccessibility.append(TextUtil.splitTextAndJoin(text, "", " "));
                     } else {
-                        editTextAccessibility.append(nameText);
+                        editTextAccessibility.append(text);
                     }
                 }
-                info.setText(editTextAccessibility);
-                info.setContentDescription(editTextAccessibility);
-                host.setContentDescription(editTextAccessibility);
+                info.setText(label + " " + editTextAccessibility);
+                info.setContentDescription(label + " " + editTextAccessibility);
+                host.setContentDescription(label + " " + editTextAccessibility);
             }
         });
     }

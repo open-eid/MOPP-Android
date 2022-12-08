@@ -33,7 +33,6 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -63,7 +62,9 @@ public final class SmartIdView extends LinearLayout implements
     private static final List<String> COUNTRY_LIST = Arrays.asList("EE", "LT", "LV");
     private final Subject<Object> positiveButtonStateSubject = PublishSubject.create();
     private final TextView message;
+    private final TextView countryViewLabel;
     private final Spinner countryView;
+    private final TextView personalCodeViewLabel;
     private final TextInputEditText personalCodeView;
     private final CheckBox rememberMeView;
     private final TextWatcher textWatcher;
@@ -86,13 +87,16 @@ public final class SmartIdView extends LinearLayout implements
         setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update_smart_id, this);
         message = findViewById(R.id.signatureUpdateSmartIdMessage);
+        countryViewLabel = findViewById(R.id.signatureUpdateSmartIdCountryText);
         countryView = findViewById(R.id.signatureUpdateSmartIdCountry);
+        personalCodeViewLabel = findViewById(R.id.signatureUpdateSmartIdPersonalCodeText);
         personalCodeView = findViewById(R.id.signatureUpdateSmartIdPersonalCode);
         rememberMeView = findViewById(R.id.signatureUpdateSmartIdRememberMe);
         countryView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 setPersonalCodeViewFilters(position);
+                countryView.setContentDescription(getCountryViewAccessibilityText());
             }
 
             @Override
@@ -101,8 +105,11 @@ public final class SmartIdView extends LinearLayout implements
             }
         });
 
-        AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView);
+        AccessibilityUtils.setTextViewContentDescription(
+                personalCodeView, personalCodeViewLabel.getText().toString());
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
+
+        countryView.setContentDescription(getCountryViewAccessibilityText());
 
         textWatcher = new TextWatcher() {
             @Override
@@ -179,7 +186,8 @@ public final class SmartIdView extends LinearLayout implements
             }
             personalCodeView.setText(personalCodeView.getText().subSequence(0,
                     Math.min(personalCodeView.getText().length(), 11)));
-            AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView);
+            AccessibilityUtils.setTextViewContentDescription(
+                    personalCodeView, personalCodeViewLabel.getText().toString());
         } else {
             if (pos != -1) {
                 InputFilter[] copy = Arrays.copyOf(inputFilters, inputFilters.length - 1);
@@ -240,6 +248,10 @@ public final class SmartIdView extends LinearLayout implements
             idCardRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
             idCardRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 3));
         }, 3500);
+    }
+
+    private String getCountryViewAccessibilityText() {
+        return countryViewLabel.getText().toString() + " " + countryView.getSelectedItem().toString();
     }
 
     @Override
