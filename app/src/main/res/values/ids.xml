@@ -67,8 +67,10 @@
     <item type="id" name="mainDiagnosticsLdapCorpUrl" />
     <item type="id" name="mainDiagnosticsMobileIDUrl" />
     <item type="id" name="mainDiagnosticsMobileIDSKUrl" />
-    <item type="id" name="mainDiagnosticsSmartIDUrl" />
-    <item type="id" name="mainDiagnosticsSmartIDSKUrl" />
+    <item type="id" name="mainDiagnosticsSmartIDUrlV1" />
+    <item type="id" name="mainDiagnosticsSmartIDSKUrlV1" />
+    <item type="id" name="mainDiagnosticsSmartIDUrlV2" />
+    <item type="id" name="mainDiagnosticsSmartIDSKUrlV2" />
     <item type="id" name="mainDiagnosticsRpUuid" />
     <item type="id" name="mainDiagnosticsTslCacheLayout" />
     <item type="id" name="mainDiagnosticsCentralConfigurationDate" />

@@ -22,6 +22,7 @@ package ee.ria.DigiDoc.android.signature.update.smartid;
 
 import java.nio.charset.StandardCharsets;
 
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.common.MessageUtil;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
@@ -34,22 +35,33 @@ final class SmartCreateSignatureRequestHelper {
 
     private static final String RELYING_PARTY_NAME = "RIA DigiDoc";
 
-    static SmartIDSignatureRequest create(SignedContainer container, String uuid, String proxyUrl,
-                                          String skUrl, String country, String nationalIdentityNumber,
+    static SmartIDSignatureRequest create(SignedContainer container, String uuid, String proxyUrlV1,
+                                          String proxyUrlV2, String skUrlV1, String skUrlV2,
+                                          String country, String nationalIdentityNumber,
                                           String displayMessage) {
         SmartIDSignatureRequest request = new SmartIDSignatureRequest();
         request.setRelyingPartyName(RELYING_PARTY_NAME);
         request.setRelyingPartyUUID(uuid == null || uuid.isEmpty() ? "00000000-0000-0000-0000-000000000000" : uuid);
-        request.setUrl(uuid == null || uuid.isEmpty() ? proxyUrl : skUrl);
+        request.setUrl(uuid == null || uuid.isEmpty() ? proxyUrlV2 : skUrlV2);
+        if (request.getUrl().isEmpty()) {
+            request.setUrl(uuid == null || uuid.isEmpty() ? proxyUrlV1 : skUrlV1);
+        }
         request.setCountry(country);
         request.setNationalIdentityNumber(nationalIdentityNumber);
 
         request.setContainerPath(container.file().getPath());
         request.setHashType(DIGEST_TYPE);
-        request.setDisplayText(MessageUtil.escape(
-                MessageUtil.trimDisplayMessageIfNotWithinSizeLimit(
-                        displayMessage, MAX_DISPLAY_MESSAGE_BYTES, StandardCharsets.UTF_8
-                )));
+        String url = request.getUrl();
+        if (url.equals(proxyUrlV1) || url.equals(skUrlV1)) {
+            request.setDisplayText(MessageUtil.escape(
+                    MessageUtil.trimDisplayMessageIfNotWithinSizeLimit(
+                            displayMessage, MAX_DISPLAY_MESSAGE_BYTES, StandardCharsets.UTF_8
+                    )));
+        } else {
+            request.setDisplayText(String.format("%s %s",
+                    displayMessage, FileUtil.getSignDocumentFileName(container.file())
+            ));
+        }
         return request;
     }
 }
