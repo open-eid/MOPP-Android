@@ -211,6 +211,7 @@
     <string name="signature_update_smart_id_select_device">Confirm device for signing in Smart-ID application.</string>
     <string name="signature_update_smart_id_status_document_unusable">Your Smart-ID transaction has failed. Please check your Smart-ID application or contact Smart-ID customer support.</string>
     <string name="signature_update_smart_id_status_wrong_vc">Error: an incorrect control code was chosen</string>
+    <string name="signature_update_smart_id_required_interaction_not_supported_by_app">Failed to sign container. You need to update your Smart-ID application to sign documents in DigiDoc4 Client.</string>
     <string name="signature_update_smart_id_error_message_not_qualified">Your Smart-ID certificate level must be qualified to sign documents in RIA DigiDoc mobile application.</string>
     <string name="signature_update_smart_id_error_message_old_api">RIA DigiDoc mobile application needs an upgrade. Please install new version from the mobile app store. Additional info is available ID-helpline (+372) 666 8888.</string>
     <string name="signature_update_smart_id_error_message_under_maintenance">Smart-ID service has encountered technical errors. Please try again later.</string>

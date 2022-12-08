@@ -38,9 +38,15 @@ public interface SIDRestServiceClient {
 
     @Headers({ CONTENT_TYPE_HEADER, CONTENT_TYPE_ACCEPT })
     @POST("certificatechoice/pno/{country}/{nationalIdentityNumber}")
-    Call<SessionResponse> getCertificate(
+    Call<SessionResponse> getCertificateV1(
             @Path(value = "country", encoded = true) String country,
             @Path(value = "nationalIdentityNumber", encoded = true) String nationalIdentityNumber,
+            @Body PostCertificateRequest body);
+
+    @Headers({ CONTENT_TYPE_HEADER, CONTENT_TYPE_ACCEPT })
+    @POST("certificatechoice/etsi/{semanticsIdentifier}")
+    Call<SessionResponse> getCertificateV2(
+            @Path(value = "semanticsIdentifier", encoded = true) String semanticsIdentifier,
             @Body PostCertificateRequest body);
 
     @Headers({ CONTENT_TYPE_HEADER, CONTENT_TYPE_ACCEPT })

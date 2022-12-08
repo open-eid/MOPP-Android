@@ -238,6 +238,8 @@ public class ConfigurationManager {
                 .setMidSkRestUrl(configurationParser.parseStringValue("MID-SK-URL"))
                 .setSidRestUrl(configurationParser.parseStringValue("SID-PROXY-URL"))
                 .setSidSkRestUrl(configurationParser.parseStringValue("SID-SK-URL"))
+                .setSidV2RestUrl(configurationParser.parseStringValue("SIDV2-PROXY-URL"))
+                .setSidV2SkRestUrl(configurationParser.parseStringValue("SIDV2-SK-URL"))
                 .setOCSPUrls(configurationParser.parseStringValuesToMap("OCSP-URL-ISSUER"))
                 .setCertBundle(configurationParser.parseStringValues("CERT-BUNDLE"))
                 .setConfigurationLastUpdateCheckDate(cachedConfigurationHandler.getConfLastUpdateCheckDate())

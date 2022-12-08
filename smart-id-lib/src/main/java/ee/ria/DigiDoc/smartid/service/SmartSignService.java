@@ -24,7 +24,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.IOException;
@@ -33,6 +32,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 
@@ -42,6 +42,8 @@ import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
 import ee.ria.DigiDoc.smartid.dto.request.PostCertificateRequest;
 import ee.ria.DigiDoc.smartid.dto.request.PostCreateSignatureRequest;
+import ee.ria.DigiDoc.smartid.dto.request.PostCreateSignatureRequestV2;
+import ee.ria.DigiDoc.smartid.dto.request.RequestAllowedInteractionsOrder;
 import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
 import ee.ria.DigiDoc.smartid.dto.response.ServiceFault;
 import ee.ria.DigiDoc.smartid.dto.response.SessionResponse;
@@ -102,8 +104,16 @@ public class SmartSignService extends IntentService {
                 }
 
                 try {
-                    SessionStatusResponse sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCertificate(
-                            request.getCountry(), request.getNationalIdentityNumber(), getCertificateRequest(request)), true);
+                    SessionStatusResponse sessionStatusResponse;
+
+                    if (request.getUrl().contains("v1")) {
+                        sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCertificateV1(
+                                request.getCountry(), request.getNationalIdentityNumber(), getCertificateRequest(request)), true);
+                    } else {
+                        String semanticsIdentifier = "PNO" + request.getCountry() + "-" + request.getNationalIdentityNumber();
+                        sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCertificateV2(
+                                semanticsIdentifier, getCertificateRequest(request)), true);
+                    }
                     if (sessionStatusResponse == null) {
                         Timber.log(Log.ERROR, "No session status response");
                         return;
@@ -118,7 +128,12 @@ public class SmartSignService extends IntentService {
                         broadcastSmartCreateSignatureChallengeResponse(base64Hash);
                         Thread.sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
 
-                        String requestString = MessageUtil.toJsonString(getSignatureRequest(request, base64Hash));
+                        String requestString;
+                        if (request.getUrl().contains("v1")) {
+                            requestString = MessageUtil.toJsonString(getSignatureRequestV1(request, base64Hash));
+                        } else {
+                            requestString = MessageUtil.toJsonString(getSignatureRequestV2(request, base64Hash));
+                        }
                         Timber.log(Log.DEBUG, "Request: %s", requestString);
 
                         sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCreateSignature(
@@ -277,9 +292,9 @@ public class SmartSignService extends IntentService {
         return certificateRequest;
     }
 
-    private PostCreateSignatureRequest getSignatureRequest(
+    private PostCreateSignatureRequest getSignatureRequestV1(
             SmartIDSignatureRequest request, String hash) {
-        Timber.log(Log.DEBUG, "Signature request: %s", request);
+        Timber.log(Log.DEBUG, "Signature request V1: %s", request);
         PostCreateSignatureRequest signatureRequest = new PostCreateSignatureRequest();
         signatureRequest.setRelyingPartyUUID(request.getRelyingPartyUUID());
         signatureRequest.setRelyingPartyName(request.getRelyingPartyName());
@@ -287,6 +302,21 @@ public class SmartSignService extends IntentService {
         signatureRequest.setHash(hash);
         signatureRequest.setDisplayText(request.getDisplayText());
         signatureRequest.setRequestProperties(new PostCreateSignatureRequest.RequestProperties(true));
+        return signatureRequest;
+    }
+
+    private PostCreateSignatureRequestV2 getSignatureRequestV2(
+            SmartIDSignatureRequest request, String hash) {
+        Timber.log(Log.DEBUG, "Signature request V2: %s", request);
+        PostCreateSignatureRequestV2 signatureRequest = new PostCreateSignatureRequestV2();
+        signatureRequest.setRelyingPartyUUID(request.getRelyingPartyUUID());
+        signatureRequest.setRelyingPartyName(request.getRelyingPartyName());
+        signatureRequest.setHashType(request.getHashType());
+        signatureRequest.setHash(hash);
+        RequestAllowedInteractionsOrder allowedInteractionsOrder = new RequestAllowedInteractionsOrder();
+        allowedInteractionsOrder.setType("confirmationMessageAndVerificationCodeChoice");
+        allowedInteractionsOrder.setDisplayText200(request.getDisplayText());
+        signatureRequest.setAllowedInteractionsOrder(List.of(allowedInteractionsOrder));
         return signatureRequest;
     }
 

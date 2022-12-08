@@ -112,8 +112,10 @@
     <string name="main_diagnostics_ldap_corp_url_title">LDAP_CORP_URL:\u0020</string>
     <string name="main_diagnostics_mid_proxy_url_title">MID_PROXY_URL:\u0020</string>
     <string name="main_diagnostics_mid_sk_url_title">MID_SK_URL:\u0020</string>
-    <string name="main_diagnostics_sid_proxy_url_title">SID_PROXY_URL:\u0020</string>
-    <string name="main_diagnostics_sid_sk_url_title">SID_SK_URL:\u0020</string>
+    <string name="main_diagnostics_sid_v1_proxy_url_title">SID_PROXY_URL:\u0020</string>
+    <string name="main_diagnostics_sid_v1_sk_url_title">SID_SK_URL:\u0020</string>
+    <string name="main_diagnostics_sid_v2_proxy_url_title">SIDV2_PROXY_URL:\u0020</string>
+    <string name="main_diagnostics_sid_v2_sk_url_title">SIDV2_SK_URL:\u0020</string>
     <string name="main_diagnostics_rpuuid_title">RPUUID:\u0020</string>
 
     <string name="main_diagnostics_date_title">DATE:\u0020</string>
