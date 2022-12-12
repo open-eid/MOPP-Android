@@ -219,6 +219,8 @@
     <string name="signature_update_smart_id_error_message_access_rights">Ümbriku allkirjastamine ebaõnnestus. Kontrolli Smart-ID teenuse ligipääsu seadeid. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
     <string name="signature_update_smart_id_error_technical_error">Päringu saatmine ebaõnnestus. Smart-ID teenuses esinevad tehnilised tõrked. Palun proovige mõne aja pärast uuesti.</string>
 
+    <string name="signature_update_smart_id_invalid_personal_code">Isikukood pole korrektne.</string>
+
     <string name="signature_update_id_card_progress_message_initial">Ühenda kaardilugeja nutiseadmega ja sisesta ID-kaart lugejasse</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>
     <string name="signature_update_id_card_progress_message_card_detected">ID-kaart leitud. Pärin andmeid...</string>
