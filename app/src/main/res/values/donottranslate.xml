@@ -24,6 +24,8 @@
     <string name="main_settings_open_all_filetypes_key">mainSettingsOpenAllFilesTypes</string>
 
     <string name="signature_add_mobile_id_challenge_placeholder">____</string>
+    <string name="signature_id_card_pin1">PIN1</string>
+    <string name="signature_id_card_pin2">PIN2</string>
 
     <!-- Main About -->
     <string name="main_about_libdigidocpp_title">libdigidocpp</string>

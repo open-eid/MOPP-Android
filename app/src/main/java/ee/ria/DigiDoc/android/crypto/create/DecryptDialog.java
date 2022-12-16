@@ -1,17 +1,24 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import static ee.ria.DigiDoc.common.PinConstants.PIN1_MIN_LENGTH;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -39,7 +46,8 @@ final class DecryptDialog extends AlertDialog {
     private final TextView progressMessageView;
     private final View containerView;
     private final TextView dataView;
-    private final EditText pin1View;
+    private final TextInputLayout pin1ViewLabel;
+    private final TextInputEditText pin1View;
     private final TextView pin1ErrorView;
 
     private final ViewDisposables disposables = new ViewDisposables();
@@ -60,6 +68,7 @@ final class DecryptDialog extends AlertDialog {
         containerView = view.findViewById(R.id.cryptoCreateDecryptContainer);
         dataView = view.findViewById(R.id.cryptoCreateDecryptData);
         pin1View = view.findViewById(R.id.cryptoCreateDecryptPin1);
+        pin1ViewLabel = view.findViewById(R.id.cryptoCreateDecryptPin1Label);
         pin1ErrorView = view.findViewById(R.id.cryptoCreateDecryptPin1Error);
         setView(view, padding, padding, padding, padding);
 
@@ -72,6 +81,9 @@ final class DecryptDialog extends AlertDialog {
                     AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.file_decryption_cancelled);
                 }
         );
+
+        checkForDoneButtonClick();
+        checkInputsValidity();
     }
 
     void idCardDataResponse(IdCardDataResponse idCardDataResponse, @State String decryptState,
@@ -158,6 +170,41 @@ final class DecryptDialog extends AlertDialog {
 
     private Observable<Boolean> positiveButtonEnabled() {
         return pin1FieldChange().map(ignored -> token != null && pin1View.getText().length() >= 4);
+    }
+
+    private void checkInputsValidity() {
+        checkPinCodeValidity();
+
+        pin1View.setOnFocusChangeListener((view, hasfocus) -> checkPinCodeValidity());
+    }
+
+    private void checkPinCodeValidity() {
+        pin1ViewLabel.setError(null);
+
+        Editable pinCodeView = pin1View.getText();
+
+        if (pinCodeView != null && !pinCodeView.toString().isEmpty() &&
+                !isPinLengthEnough(pinCodeView.toString())) {
+            pin1ViewLabel.setError(getContext().getResources().getString(
+                    R.string.id_card_sign_pin_invalid_length,
+                    getContext().getResources().getString(R.string.signature_id_card_pin1),
+                    Integer.toString(PIN1_MIN_LENGTH)));
+        }
+    }
+
+    private boolean isPinLengthEnough(String pin) {
+        return pin.length() >= PIN1_MIN_LENGTH;
+    }
+
+    private void checkForDoneButtonClick() {
+        // Remove focus on "Done" click
+        pin1View.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                pin1View.setEnabled(false);
+                pin1View.setEnabled(true);
+            }
+            return false;
+        });
     }
 
     @Override
