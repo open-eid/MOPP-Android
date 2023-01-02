@@ -118,8 +118,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             if (isDiagnosticsLogsFile) {
                 activity.getSettingsDataStore().setIsLogFileGenerationEnabled(false);
                 activity.getSettingsDataStore().setIsLogFileGenerationRunning(false);
-                removeLogFiles(activity.getApplicationContext());
             }
+
+            removeLogFiles(activity.getApplicationContext());
 
             Toast.makeText(Activity.getContext().get(), Activity.getContext().get().getString(R.string.file_saved),
                     Toast.LENGTH_LONG).show();

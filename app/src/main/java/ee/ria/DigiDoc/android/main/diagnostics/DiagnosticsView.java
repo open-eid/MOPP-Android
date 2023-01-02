@@ -96,7 +96,9 @@ public final class DiagnosticsView extends CoordinatorLayout {
         SwitchCompat activateLogFileGenerating = findViewById(R.id.mainDiagnosticsLogging);
         activateLogFileGenerating.setChecked(((Activity) this.getContext()).getSettingsDataStore().getIsLogFileGenerationEnabled());
         Button saveLogFileButton = findViewById(R.id.mainDiagnosticsSaveLoggingButton);
-        saveLogFileButton.setVisibility(FileUtil.logsExist(FileUtil.getLogsDirectory(getContext())) ? VISIBLE : GONE);
+        saveLogFileButton.setVisibility(
+                (activateLogFileGenerating.isChecked() &&
+                        FileUtil.logsExist(FileUtil.getLogsDirectory(getContext()))) ? VISIBLE : GONE);
 
         ConfigurationProvider configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
         disposables = new ViewDisposables();
@@ -231,11 +233,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 if (isCategoryLabel(text)) {
                     diagnosticsText.append("\n\n").append(text).append("\n");
                 } else {
-                    if (!isTSLFile(text) && textView.getId() == -1) {
-                        diagnosticsText.append(text);
-                    } else {
-                        diagnosticsText.append(text).append("\n");
-                    }
+                    diagnosticsText.append(text).append("\n");
                 }
             }
         }
@@ -253,7 +251,9 @@ public final class DiagnosticsView extends CoordinatorLayout {
     private boolean isTitleOrButtonText(String text) {
         return text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_title)) ||
                 text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_configuration_check_for_update_button)) ||
-                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_configuration_save_diagnostics_button));
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_configuration_save_diagnostics_button)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_save_log)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_logging_switch));
     }
 
     private boolean isCategoryLabel(String text) {
