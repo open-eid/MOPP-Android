@@ -334,8 +334,8 @@
     <item type="id" name="eidHomeCodeUpdateText" />
     <item type="id" name="eidHomeCodeUpdateCurrentLabel" />
     <item type="id" name="eidHomeCodeUpdateCurrent" />
-    <item type="id" name="eidHomeCodeUpdateNewLabel" />
-    <item type="id" name="eidHomeCodeUpdateNew" />
+    <item type="id" name="eidHomeUpdateNewLabel" />
+    <item type="id" name="eidHomeUpdateNewText" />
     <item type="id" name="eidHomeCodeUpdateRepeatLabel" />
     <item type="id" name="eidHomeCodeUpdateRepeat" />
     <item type="id" name="eidHomeCodeUpdateNegativeButton" />
