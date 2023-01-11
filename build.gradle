@@ -59,7 +59,7 @@ ext {
     bouncycastleVersion = '1.70'
     materialValuesVersion = '1.1.1'
     lombokVersion = '1.18.22'
-    daggerVersion = '2.41'
+    daggerVersion = '2.44.2'
     conductorVersion = '3.1.5'
     rxJavaVersion = '3.1.4'
     rxAndroidVersion = '3.0.0'
