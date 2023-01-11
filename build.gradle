@@ -58,7 +58,7 @@ ext {
     retrofitVersion = '2.9.0'
     bouncycastleVersion = '1.70'
     materialValuesVersion = '1.1.1'
-    lombokVersion = '1.18.22'
+    lombokVersion = '1.18.24'
     daggerVersion = '2.41'
     conductorVersion = '3.1.5'
     rxJavaVersion = '3.1.4'
