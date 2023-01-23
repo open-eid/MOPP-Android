@@ -161,9 +161,10 @@
         <Button
             android:id="@id/signatureUpdateSendButton"
             style="@style/Widget.Application.Button.Container"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:maxLines="1"
             android:text="@string/signature_update_send_button"
             android:drawableTop="@drawable/ic_icon_share" />
 
@@ -175,9 +176,10 @@
         <Button
             android:id="@id/signatureUpdateSignatureAddButton"
             style="@style/Widget.Application.Button.Container"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:maxLines="1"
             android:text="@string/signature_update_signature_add_button"
             android:drawableTop="@drawable/ic_icon_signature" />
 
