@@ -134,4 +134,11 @@
 
     </application>
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="application/*" />
+        </intent>
+    </queries>
+
 </manifest>

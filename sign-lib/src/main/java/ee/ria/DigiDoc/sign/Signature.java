@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.sign;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
@@ -164,5 +165,31 @@ public abstract class Signature {
                 signatureFormat, signatureTimestamp, signatureTimestampUTC,
                 hashValueOfSignature, tsCertificateIssuer, tsCertificate, ocspCertificateIssuer,
                 ocspCertificate, ocspTime, ocspTimeUTC, signersMobileTimeUTC);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Signature{" +
+                "id=" + id() + " " +
+                ", name=" + name() +
+                ", createdAt=" + createdAt() +
+                ", status=" + status() +
+                ", profile=" + profile() +
+                ", signersCertificateIssuer=" + signersCertificateIssuer() +
+                ", signingCertificate exists=" + (signingCertificate() != null) +
+                ", signatureMethod=" + signatureMethod() +
+                ", signatureFormat=" + signatureFormat() +
+                ", signatureTimestamp=" + signatureTimestamp() +
+                ", signatureTimestampUTC=" + signatureTimestampUTC() +
+                ", hashValueOfSignature=" + hashValueOfSignature() +
+                ", tsCertificateIssuer=" + tsCertificateIssuer() +
+                ", tsCertificate exists=" + (tsCertificate() != null) +
+                ", ocspCertificateIssuer=" + ocspCertificateIssuer() +
+                ", ocspCertificate exists=" + (ocspCertificate() != null) +
+                ", ocspTime=" + ocspTime() +
+                ", ocspTimeUTC=" + ocspTimeUTC() +
+                ", signersMobileTimeUTC=" + signersMobileTimeUTC() +
+                "}";
     }
 }
