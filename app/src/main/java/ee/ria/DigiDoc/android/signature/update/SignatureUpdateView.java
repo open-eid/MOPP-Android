@@ -39,6 +39,7 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.utils.DateUtil;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
 import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
@@ -218,7 +219,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         if (state.containerLoadError() != null) {
             int messageId = state.containerLoadError() instanceof NoInternetConnectionException
                     ? R.string.no_internet_connection : R.string.signature_update_container_load_error;
-            Toast.makeText(getContext(), messageId, Toast.LENGTH_LONG).show();
+            ToastUtil.showError(getContext(), messageId);
             navigator.execute(Transaction.pop());
             signatureUpdateProgressBar.stopProgressBar(progressBar, isTimerStarted);
             isTimerStarted = false;
@@ -259,7 +260,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             buttonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
             if (UNSIGNABLE_CONTAINER_EXTENSIONS.contains(
                     Files.getFileExtension(containerFile.getName()).toLowerCase()) ||
-                    FileSystem.isEmptyDataFileInContainer(containerFile)) {
+                    FileSystem.isEmptyDataFileInContainer(navigator.activity(), containerFile)) {
                 signatureAddButton.setVisibility(GONE);
             } else {
                 signatureAddButton.setVisibility(VISIBLE);
@@ -286,7 +287,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 || state.documentViewState().equals(State.ACTIVE)
                 || state.documentRemoveInProgress() || state.signatureRemoveInProgress()
                 || state.signatureAddActivity());
-        adapter.setData(state.signatureAddSuccessMessageVisible(), isExistingContainer,
+        adapter.setData(navigator.activity(), state.signatureAddSuccessMessageVisible(), isExistingContainer,
                 isNestedContainer, state.container(), nestedFile, isSivaConfirmed);
 
         if (state.signatureAddSuccessMessageVisible()) {
@@ -479,7 +480,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private Observable<Intent.DocumentViewIntent> documentViewIntent() {
         return Observable.mergeArray(adapter.documentClicks()
-                .map(document -> Intent.DocumentViewIntent.confirmation((nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, document)),
+                .map(document -> Intent.DocumentViewIntent.confirmation(getContext(), (nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, document)),
                         sivaConfirmationDialog.positiveButtonClicks()
                                 .map(ignored -> Intent.DocumentViewIntent.open((nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, sivaConfirmation)),
                         sivaConfirmationDialog.cancels()

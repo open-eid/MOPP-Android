@@ -18,6 +18,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
+import com.tom_roush.pdfbox.android.PDFBoxResourceLoader;
+import com.tom_roush.pdfbox.pdmodel.PDDocument;
+import com.tom_roush.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
 
 import org.apache.commons.io.FilenameUtils;
 import org.bouncycastle.asn1.x500.RDN;
@@ -44,6 +47,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -312,7 +316,7 @@ public abstract class SignedContainer {
      * @param file File to check.
      * @return True if it is a container, false otherwise.
      */
-    public static boolean isContainer(File file) {
+    public static boolean isContainer(Context context, File file) throws Exception {
         String extension = getFileExtension(file.getName()).toLowerCase();
         if (EXTENSIONS.contains(extension)) {
             return true;
@@ -323,7 +327,12 @@ public abstract class SignedContainer {
                     return true;
                 }
             } catch (Exception e) {
-                Timber.log(Log.DEBUG, "Could not open PDF as signature container %s", file);
+                if (e instanceof NoInternetConnectionException) {
+                    if (isSignedPDF(context, file)) {
+                        throw e;
+                    }
+                }
+                return false;
             }
         }
         return false;
@@ -490,6 +499,32 @@ public abstract class SignedContainer {
     }
 
     /**
+     * Check whether a PDF file is signed or not.
+     *
+     * @param file File to check.
+     * @return True if it is a container, false otherwise.
+     */
+    private static boolean isSignedPDF(Context context, File file) {
+        PDFBoxResourceLoader.init(context);
+        try (PDDocument document = PDDocument.load(file)) {
+            List<PDSignature> signatures = document.getSignatureDictionaries();
+            for (PDSignature signature : signatures) {
+                String filter = signature.getFilter();
+                String subFilter = signature.getSubFilter();
+
+                if (filter.equals("Adobe.PPKLite") ||
+                        (subFilter.equals("ETSI.CAdES.detached") ||
+                                subFilter.equals("adbe.pkcs7.detached"))) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            Timber.log(Log.ERROR, e, "Unable to check if PDF is signed");
+        }
+        return false;
+    }
+
+    /**
      * Get MIME type from file extension.
      *
      * @param file File to get the extension from.
@@ -536,12 +571,12 @@ public abstract class SignedContainer {
                 }
             }
 
-            boolean isSignedContainer = SignedContainer.isContainer(file);
+            boolean isSignedContainer = SignedContainer.isContainer(context, file);
             FileUtils.removeFile(file.getCanonicalPath());
             FileUtils.removeFile(pdfFilesDirectory.getCanonicalPath());
 
             return isSignedContainer;
-        } catch (IOException e) {
+        } catch (Exception e) {
             Timber.log(Log.ERROR, e, "Unable to check if PDF file is signed");
             return false;
         }

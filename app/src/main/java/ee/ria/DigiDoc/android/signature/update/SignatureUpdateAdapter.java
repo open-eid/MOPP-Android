@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.os.Handler;
@@ -77,7 +78,7 @@ final class SignatureUpdateAdapter extends
 
     private ImmutableList<Item> items = ImmutableList.of();
 
-    void setData(boolean isSuccess, boolean isExistingContainer, boolean isNestedContainer,
+    void setData(Context context, boolean isSuccess, boolean isExistingContainer, boolean isNestedContainer,
                  @Nullable SignedContainer container, @Nullable File nestedFile,
                  boolean isSivaConfirmed) {
         boolean signaturesValid = container == null || container.signaturesValid();
@@ -111,7 +112,7 @@ final class SignatureUpdateAdapter extends
                             createAsicsTimestampView(builder, container);
                         }
 
-                        if (SignedContainer.isContainer(nestedFile) && !signedContainerNested.dataFiles().isEmpty()) {
+                        if (SignedContainer.isContainer(context, nestedFile) && !signedContainerNested.dataFiles().isEmpty()) {
                             createAsicsSignatureView(builder, signedContainerNested);
                         }
                     } catch (Exception e) {

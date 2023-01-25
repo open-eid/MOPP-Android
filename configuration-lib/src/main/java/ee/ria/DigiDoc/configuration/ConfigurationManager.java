@@ -3,11 +3,15 @@ package ee.ria.DigiDoc.configuration;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.UnknownHostException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -77,6 +81,8 @@ public class ConfigurationManager {
 
     private ConfigurationSignatureVerifier confSignatureVerifier;
 
+    private final Context context;
+
     public ConfigurationManager(Context context, ConfigurationProperties configurationProperties, CachedConfigurationHandler cachedConfigurationHandler, String userAgent) {
         this.cachedConfigurationHandler = cachedConfigurationHandler;
         this.centralConfigurationServiceUrl = configurationProperties.getCentralConfigurationServiceUrl();
@@ -84,6 +90,7 @@ public class ConfigurationManager {
         this.centralConfigurationLoader = new CentralConfigurationLoader(centralConfigurationServiceUrl, userAgent);
         this.defaultConfigurationLoader = new DefaultConfigurationLoader(context.getAssets());
         this.cachedConfigurationLoader = new CachedConfigurationLoader(cachedConfigurationHandler);
+        this.context = context;
     }
 
     public ConfigurationProvider getConfiguration() {
@@ -141,6 +148,11 @@ public class ConfigurationManager {
             return parseAndCacheConfiguration(centralConfigurationLoader);
         } catch (Exception e) {
             Timber.log(Log.ERROR, e, "Failed to load configuration from central configuration service");
+            if (e.getCause() instanceof UnknownHostException) {
+                Handler handler = new Handler(Looper.getMainLooper());
+                Runnable runnable = () -> Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+                handler.post(runnable);
+            }
             return loadCachedConfiguration();
         }
     }

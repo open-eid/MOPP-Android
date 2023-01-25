@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.signature.update;
 
 import static com.google.common.io.Files.getFileExtension;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -89,10 +90,10 @@ interface Intent extends MviIntent {
 
         abstract boolean confirmation();
 
-        static DocumentViewIntent confirmation(File containerFile, DataFile document) {
+        static DocumentViewIntent confirmation(Context context, File containerFile, DataFile document) throws Exception {
             String containerFileExtension = getFileExtension(containerFile.getName()).toLowerCase(Locale.US);
             String documentFileExtension = getFileExtension(document.name()).toLowerCase(Locale.US);
-            if (!containerFileExtension.equals("pdf") && SignedContainer.isContainer(containerFile)) {
+            if (!containerFileExtension.equals("pdf") && SignedContainer.isContainer(context, containerFile)) {
                 boolean isConfirmationNeeded;
                 try {
                     SignedContainer signedContainer = SignedContainer.open(containerFile);

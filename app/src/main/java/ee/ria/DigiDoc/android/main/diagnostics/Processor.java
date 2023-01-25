@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.main.diagnostics.source.DiagnosticsDataSource;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
@@ -51,8 +52,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         diagnosticsSave = upstream -> upstream.switchMap(action -> {
             if (action.diagnosticsFile() == null) {
                 Timber.log(Log.ERROR, "Unable to get diagnostics file");
-                Toast.makeText(Activity.getContext().get(), Activity.getContext().get().getString(R.string.file_saved_error),
-                        Toast.LENGTH_LONG).show();
+                ToastUtil.showError(navigator.activity(), R.string.file_saved_error);
                 return Observable.just(Result.DiagnosticsSaveResult.failure(new EmptyFileException()));
             }
             navigator.execute(Transaction.activityForResult(SAVE_FILE,
@@ -78,8 +78,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         diagnosticsLogsSave = upstream -> upstream.switchMap(action -> {
             if (action.logFile() == null) {
                 Timber.log(Log.ERROR, "Unable to get diagnostics logs files");
-                Toast.makeText(Activity.getContext().get(), Activity.getContext().get().getString(R.string.file_saved_error),
-                        Toast.LENGTH_LONG).show();
+                ToastUtil.showError(navigator.activity(), R.string.file_saved_error);
                 return Observable.just(Result.DiagnosticsSaveResult.failure(new EmptyFileException()));
             }
             navigator.execute(Transaction.activityForResult(SAVE_FILE,
@@ -121,8 +120,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 removeLogFiles(activity.getApplicationContext());
             }
 
-            Toast.makeText(Activity.getContext().get(), Activity.getContext().get().getString(R.string.file_saved),
-                    Toast.LENGTH_LONG).show();
+            ToastUtil.showError(activity.getApplicationContext(), R.string.file_saved);
 
             activity.recreate();
 

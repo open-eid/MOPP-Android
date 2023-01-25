@@ -265,10 +265,10 @@ public final class Activity extends AppCompatActivity {
             ImmutableList<FileStream> fileStreams;
             File externallyOpenedFilesDir = new File(getContext().get().getFilesDir(), DIR_EXTERNALLY_OPENED_FILES);
             try {
-                fileStreams = IntentUtils.parseGetContentIntent(getContext().get().getContentResolver(), intent, externallyOpenedFilesDir);
+                fileStreams = IntentUtils.parseGetContentIntent(getContext().get(), getContext().get().getContentResolver(), intent, externallyOpenedFilesDir);
             } catch (Exception e) {
                 Timber.log(Log.ERROR, e, "Unable to open file");
-                ToastUtil.showGeneralError(getContext().get());
+                ToastUtil.showError(getContext().get(), R.string.signature_create_error);
                 return HomeScreen.create(
                         new Intent(Intent.ACTION_MAIN)
                                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -283,7 +283,7 @@ public final class Activity extends AppCompatActivity {
                         return CryptoCreateScreen.open(intent);
                     }
                 } else if (intent.getClipData() != null || intent.getData() != null) {
-                    File file = IntentUtils.parseGetContentIntent(
+                    File file = IntentUtils.parseGetContentIntent(getContext().get(),
                             getContext().get().getContentResolver(), intent.getClipData() != null ?
                                     intent.getClipData().getItemAt(0).getUri() :
                                     intent.getData(),
