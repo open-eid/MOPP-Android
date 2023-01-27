@@ -33,6 +33,8 @@
     <string name="main_settings_postal_code_title">Postikood</string>
     <string name="main_settings_signature_profile_title">Vaikimisi faili tüüp</string>
     <string name="main_settings_open_all_filetypes_title">Luba rakendusel avada kõiki failitüüpe (vajab rakenduse taaskäivitamist)</string>
+    <string name="main_settings_allow_screenshots_title">Luba ekraanipildistamine (vajab rakenduse taaskäivitamist)</string>
+
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
