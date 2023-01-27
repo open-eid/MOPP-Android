@@ -165,4 +165,9 @@ public abstract class Signature {
                 hashValueOfSignature, tsCertificateIssuer, tsCertificate, ocspCertificateIssuer,
                 ocspCertificate, ocspTime, ocspTimeUTC, signersMobileTimeUTC);
     }
+
+    @Override
+    public String toString() {
+        return "Signature{}";
+    }
 }
