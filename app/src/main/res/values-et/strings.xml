@@ -9,6 +9,7 @@
     <string name="main_home_navigation_crypto">KRÜPTO</string>
     <string name="main_home_navigation_eid">Minu eID</string>
 
+    <string name="main_home_logo">DigiDoc</string>
     <string name="main_home_menu_title">Menüü</string>
     <string name="main_home_menu_button">Menüü</string>
     <string name="main_home_menu_help">ABI</string>
@@ -36,6 +37,7 @@
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
+    <string name="main_about_digidoc_and_el_logos">Projekti on toetatud Euroopa Liidu Regionaalarengu Fondist</string>
     <string name="main_about_ria_digidoc_version_title">RIA DigiDoc versioon %1$s</string>
     <string name="main_about_software_developed_by_title">Eesti ID-tarkvara on välja antud Riigi Infosüsteemi Ameti poolt</string>
     <string name="main_about_contact_information_title">Küsimuste korral pöördu id.ee.</string>
