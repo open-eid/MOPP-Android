@@ -66,6 +66,7 @@
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Выберите файл для подписания или проверки</string>
+    <string name="signature_home_create_text_accessibility">Выберите файл для подписания или проверки</string>
     <string name="signature_home_create_button">ВЫБРАТЬ ФАЙЛ</string>
 
     <!-- Signature List -->
@@ -267,6 +268,7 @@
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Выберите файл для шифрования или расшифровки</string>
+    <string name="crypto_home_create_text_accessibility">Выберите файл для шифрования или расшифровки</string>
     <string name="crypto_home_create_button">ВЫБРАТЬ ФАЙЛ</string>
 
     <!-- Crypto Create -->

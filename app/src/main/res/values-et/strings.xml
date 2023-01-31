@@ -66,6 +66,7 @@
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Allkirjastamiseks või kontrollimiseks vali fail</string>
+    <string name="signature_home_create_text_accessibility">Vali fail allkirjastamiseks või kontrollimiseks</string>
     <string name="signature_home_create_button">VALI FAIL</string>
 
     <!-- Signature List -->
@@ -264,6 +265,7 @@
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Krüpteerimiseks või dekrüpteerimiseks vali fail</string>
+    <string name="crypto_home_create_text_accessibility">Vali fail krüpteerimiseks või dekrüpteerimiseks</string>
     <string name="crypto_home_create_button">VALI FAIL</string>
 
     <!-- Crypto Create -->

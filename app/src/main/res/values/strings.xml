@@ -66,6 +66,7 @@
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Choose a file to sign or validate</string>
+    <string name="signature_home_create_text_accessibility">Choose a file to sign or validate</string>
     <string name="signature_home_create_button">CHOOSE FILE</string>
 
     <!-- Signature List -->
@@ -265,6 +266,7 @@
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Choose a file to encrypt or decrypt</string>
+    <string name="crypto_home_create_text_accessibility">Choose a file to encrypt or decrypt</string>
     <string name="crypto_home_create_button">CHOOSE FILE</string>
 
     <!-- Crypto Create -->
