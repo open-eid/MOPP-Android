@@ -170,6 +170,10 @@
     <string name="signature_update_mobile_id_info">Veendu kontrollkoodi õiguses ja sisesta telefonil mobiil-ID PIN2-kood.</string>
     <string name="signature_update_mobile_id_display_message">Allkirjasta dokument</string>
 
+    <string name="signature_update_mobile_id_invalid_country_code">Vigane riigikood.</string>
+    <string name="signature_update_mobile_id_invalid_phone_number">Telefoninumber pole korrektne.</string>
+    <string name="signature_update_mobile_id_invalid_personal_code">Isikukood pole korrektne.</string>
+
     <string name="signature_update_mobile_id_status_request_sent">Allkirjastamispäring saadetud</string>
     <string name="signature_update_mobile_id_status_request_ok">Päring vastuvõetud</string>
     <string name="signature_update_mobile_id_status_no_country_code">Telefoninumber peab sisaldama riigikoodi</string>

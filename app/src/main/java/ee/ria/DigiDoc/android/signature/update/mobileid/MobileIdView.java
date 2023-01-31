@@ -16,6 +16,9 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.List;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -28,13 +31,18 @@ import io.reactivex.rxjava3.subjects.Subject;
 public final class MobileIdView extends LinearLayout implements
         SignatureAddView<MobileIdRequest, MobileIdResponse> {
 
+    // Country code (3 numbers) + phone number (7 or more numbers)
+    private static final int MINIMUM_PHONE_NUMBER_LENGTH = 10;
     private static final int MAXIMUM_PERSONAL_CODE_LENGTH = 11;
+    private static final List<String> ALLOWED_PHONE_NUMBER_COUNTRY_CODES = List.of("370", "372");
 
     private final Subject<Object> positiveButtonStateSubject = PublishSubject.create();
     private final TextView message;
     private final EditText phoneNoView;
     private final TextInputEditText personalCodeView;
     private final CheckBox rememberMeView;
+    private final TextInputLayout phoneNoLabel;
+    private final TextInputLayout personalCodeLabel;
     private final TextWatcher textWatcher;
 
     public MobileIdView(Context context) {
@@ -59,10 +67,15 @@ public final class MobileIdView extends LinearLayout implements
         personalCodeView = findViewById(R.id.signatureUpdateMobileIdPersonalCode);
         rememberMeView = findViewById(R.id.signatureUpdateMobileIdRememberMe);
 
+        phoneNoLabel = findViewById(R.id.signatureUpdateMobileIdPhoneNoLabel);
+        personalCodeLabel = findViewById(R.id.signatureUpdateMobileIdPersonalCodeLabel);
+
         AccessibilityUtils.setSingleCharactersContentDescription(phoneNoView);
         AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView);
         AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
+
+        checkInputsValidity();
 
         textWatcher = new TextWatcher() {
             @Override
@@ -110,13 +123,6 @@ public final class MobileIdView extends LinearLayout implements
     public void setDefaultPhoneNoPrefix(String phoneNoPrefix) {
         if (TextUtils.isEmpty(phoneNoView.getText())) {
             phoneNoView.setText(phoneNoPrefix, TextView.BufferType.EDITABLE);
-            phoneNoView.setOnFocusChangeListener((view, hasfocus) -> {
-                if (hasfocus) {
-                    phoneNoView.setHint("372XXXXXXXX");
-                } else {
-                    phoneNoView.setHint("");
-                }
-            });
         }
     }
 
@@ -133,12 +139,73 @@ public final class MobileIdView extends LinearLayout implements
     }
 
     public boolean positiveButtonEnabled() {
-        return phoneNoView.getText().length() > 3 && personalCodeView.getText().length() == 11;
+        Editable phoneNumber = phoneNoView.getText();
+        Editable personalCode = personalCodeView.getText();
+        return (phoneNumber != null && isCountryCodeCorrect(phoneNumber.toString()) &&
+                isPhoneNumberCorrect(phoneNumber.toString())) &&
+                (personalCode != null && isPersonalCodeCorrect(personalCode.toString()));
     }
 
     @Override
     protected void onDetachedFromWindow() {
         personalCodeView.removeTextChangedListener(textWatcher);
         super.onDetachedFromWindow();
+    }
+
+    private void checkInputsValidity() {
+        checkPhoneNumberValidity();
+        checkPersonalCodeValidity();
+
+        phoneNoView.setOnFocusChangeListener((view, hasfocus) -> checkPhoneNumberValidity());
+        personalCodeView.setOnFocusChangeListener((view, hasfocus) -> checkPersonalCodeValidity());
+    }
+
+    private void checkPhoneNumberValidity() {
+        phoneNoLabel.setError(null);
+
+        Editable phoneNumber = phoneNoView.getText();
+
+        if (phoneNumber != null && !phoneNumber.toString().isEmpty()) {
+            if (isCountryCodeMissing(phoneNumber.toString())) {
+                phoneNoLabel.setError(getResources().getString(R.string.signature_update_mobile_id_status_no_country_code));
+            } else if (!isCountryCodeCorrect(phoneNoView.getText().toString())) {
+                phoneNoLabel.setError(getResources().getString(R.string.signature_update_mobile_id_invalid_country_code));
+            } else if (!isPhoneNumberCorrect(phoneNoView.getText().toString())) {
+                phoneNoLabel.setError(getResources().getString(R.string.signature_update_mobile_id_invalid_phone_number));
+            }
+        }
+    }
+
+    private void checkPersonalCodeValidity() {
+        personalCodeLabel.setError(null);
+
+        if (personalCodeView.getText() != null &&
+                !personalCodeView.getText().toString().isEmpty() &&
+                !isPersonalCodeCorrect(personalCodeView.getText().toString())) {
+            personalCodeLabel.setError(getResources().getString(R.string.signature_update_mobile_id_invalid_personal_code));
+        }
+    }
+
+    // Country code (3 numbers) + phone number (7 or more numbers)
+    private boolean isCountryCodeMissing(String phoneNumber) {
+        return phoneNumber.length() < MINIMUM_PHONE_NUMBER_LENGTH &&
+                !isCountryCodeCorrect(phoneNumber);
+    }
+
+    private boolean isCountryCodeCorrect(String phoneNumber) {
+        for (String allowedCountryCode : ALLOWED_PHONE_NUMBER_COUNTRY_CODES) {
+            if (phoneNumber.startsWith(allowedCountryCode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isPhoneNumberCorrect(String phoneNumber) {
+        return phoneNumber.length() >= MINIMUM_PHONE_NUMBER_LENGTH;
+    }
+
+    private boolean isPersonalCodeCorrect(String personalCode) {
+        return personalCode.length() == MAXIMUM_PERSONAL_CODE_LENGTH;
     }
 }
