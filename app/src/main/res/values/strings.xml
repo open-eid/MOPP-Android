@@ -239,6 +239,8 @@
     <string name="signature_update_id_card_sign_pin2_invalid_final">Wrong PIN2. You have 1 attempt left until your PIN2 is blocked.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 blocked. Go to My eID to unblock it.</string>
 
+    <string name="id_card_sign_pin_invalid_length">%1$s code must be at least %2$s digits long</string>
+
     <!-- Signature Details -->
     <string name="signature_details_title">Signature details</string>
     <string name="signer_certificate_issuer_label">Signer\'s Certificate issuer:</string>

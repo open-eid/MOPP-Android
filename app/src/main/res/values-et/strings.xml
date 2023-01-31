@@ -238,6 +238,8 @@
     <string name="signature_update_id_card_sign_pin2_invalid_final">Vale PIN2. Järgmise vale sisestusega lukustub PIN.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 on lukus. Mine Minu eID, et avada.</string>
 
+    <string name="id_card_sign_pin_invalid_length">%1$s-kood peab olema vähemalt %2$s-kohaline</string>
+
     <!-- Signature Details -->
     <string name="signature_details_title">Allkirja detailid</string>
     <string name="signer_certificate_issuer_label">Allkirjastaja sertifikaadi väljaandja</string>
