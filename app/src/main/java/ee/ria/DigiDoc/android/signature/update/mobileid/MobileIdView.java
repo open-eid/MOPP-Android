@@ -188,7 +188,7 @@ public final class MobileIdView extends LinearLayout implements
 
     // Country code (3 numbers) + phone number (7 or more numbers)
     private boolean isCountryCodeMissing(String phoneNumber) {
-        return phoneNumber.length() < MINIMUM_PHONE_NUMBER_LENGTH &&
+        return phoneNumber.length() > 3 && phoneNumber.length() < MINIMUM_PHONE_NUMBER_LENGTH &&
                 !isCountryCodeCorrect(phoneNumber);
     }
 
