@@ -20,6 +20,8 @@
 
 package ee.ria.DigiDoc.smartid.service;
 
+import static ee.ria.DigiDoc.common.SigningUtil.checkSigningCancelled;
+
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
@@ -40,6 +42,7 @@ import ee.ria.DigiDoc.common.ContainerWrapper;
 import ee.ria.DigiDoc.common.MessageUtil;
 import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
+import ee.ria.DigiDoc.common.exception.SigningCancelledException;
 import ee.ria.DigiDoc.smartid.dto.request.PostCertificateRequest;
 import ee.ria.DigiDoc.smartid.dto.request.PostCreateSignatureRequest;
 import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
@@ -63,6 +66,7 @@ public class SmartSignService extends IntentService {
     private static final long INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 1000;
     private static final long SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 5 * 1000;
     private static final long TIMEOUT_CANCEL = 80 * 1000;
+    private boolean isCancelled = false;
 
     private SIDRestServiceClient SIDRestServiceClient;
 
@@ -176,6 +180,12 @@ public class SmartSignService extends IntentService {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        isCancelled = true;
+    }
+
     private String getCertificatePem(String cert) {
         return PEM_BEGIN_CERT + "\n" + cert + "\n" + PEM_END_CERT;
     }
@@ -223,6 +233,9 @@ public class SmartSignService extends IntentService {
         } catch (UnknownHostException e) {
             broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE, e.getMessage()));
             Timber.log(Log.ERROR, "REST API session status request failed. Unknown host. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+        } catch (SigningCancelledException sce) {
+            broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.USER_REFUSED));
+            Timber.log(Log.ERROR, sce, "Failed to sign with Smart-ID. Technical or general error. Exception message: %s. Exception: %s", sce.getMessage(), Arrays.toString(sce.getStackTrace()));
         }
         return null;
     }
@@ -291,6 +304,7 @@ public class SmartSignService extends IntentService {
     }
 
     private <S> S handleRequest(Call<S> request) throws IOException {
+        checkSigningCancelled(isCancelled);
         Response<S> httpResponse = request.execute();
         if (!httpResponse.isSuccessful()) {
             Timber.log(Log.DEBUG, "Smart-ID request unsuccessful. Status: %s, message: %s, body: %s, errorBody: %s",

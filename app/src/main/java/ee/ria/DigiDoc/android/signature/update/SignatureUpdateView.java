@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -88,9 +89,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final View mobileIdContainerView;
     private final TextView mobileIdChallengeView;
     private final TextView mobileIdChallengeTextView;
+    private final Button mobileIdCancelButton;
     private final View smartIdContainerView;
     private final TextView smartIdInfo;
     private final TextView smartIdChallengeView;
+    private final Button smartIdCancelButton;
     private final Button sendButton;
     private final View buttonSpace;
     private final Button signatureAddButton;
@@ -161,11 +164,15 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         smartIdContainerView = findViewById(R.id.signatureUpdateSmartIdContainer);
         smartIdInfo = findViewById(R.id.signatureUpdateSmartIdInfo);
         smartIdChallengeView = findViewById(R.id.signatureUpdateSmartIdChallenge);
+        smartIdCancelButton = findViewById(R.id.signatureUpdateSmartIdCancelButton);
+        smartIdCancelButton.setContentDescription(getResources().getString(R.string.cancel_button_accessibility));
         sendButton = findViewById(R.id.signatureUpdateSendButton);
         sendButton.setContentDescription(getResources().getString(R.string.share_container));
         buttonSpace = findViewById(R.id.signatureUpdateButtonSpace);
         signatureAddButton = findViewById(R.id.signatureUpdateSignatureAddButton);
         mobileIdChallengeTextView = findViewById(R.id.signatureUpdateMobileIdChallengeText);
+        mobileIdCancelButton = findViewById(R.id.signatureUpdateMobileIdCancelButton);
+        mobileIdCancelButton.setContentDescription(getResources().getString(R.string.cancel_button_accessibility));
         documentAddProgressBar = findViewById(R.id.signatureAddDocumentProgress);
 
         listView.setLayoutManager(new LinearLayoutManager(context));
@@ -608,6 +615,14 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                     AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_removal_cancelled);
                     signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear());
                 }));
+        disposables.add(clicks(mobileIdCancelButton).subscribe(ignored -> {
+            resetSignatureAddDialog();
+            signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clear());
+        }));
+        disposables.add(clicks(smartIdCancelButton).subscribe(ignored -> {
+            resetSignatureAddDialog();
+            signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clear());
+        }));
     }
 
     @Override

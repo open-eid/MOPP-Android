@@ -19,7 +19,6 @@ import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileIdServiceResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.RESTServiceFault;
-import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.core.ObservableEmitter;
@@ -47,9 +46,12 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
     private final String personalCode;
     private final String phoneNo;
 
-    public MobileIdOnSubscribe(Navigator navigator, SignedContainer container, Locale locale,
+    private final Intent intent;
+
+    public MobileIdOnSubscribe(Navigator navigator, Intent intent, SignedContainer container, Locale locale,
                                String uuid, String personalCode, String phoneNo) {
         this.navigator = navigator;
+        this.intent = intent;
         this.container = container;
         this.locale = locale;
         this.broadcastManager = LocalBroadcastManager.getInstance(navigator.activity());
@@ -119,7 +121,6 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                 .create(container, uuid, configurationProvider.getMidRestUrl(),
                         configurationProvider.getMidSkRestUrl(), locale, personalCode, phoneNo, displayMessage);
 
-        android.content.Intent intent = new Intent(navigator.activity(), MobileSignService.class);
         intent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));
         intent.putExtra(ACCESS_TOKEN_PASS, SignLib.accessTokenPass());
         intent.putExtra(ACCESS_TOKEN_PATH, SignLib.accessTokenPath());

@@ -211,25 +211,28 @@ interface Intent extends MviIntent {
 
         @Nullable abstract SignatureAddRequest request();
 
+        abstract boolean isCancelled();
+
         static SignatureAddIntent show(int method, boolean existingContainer, File containerFile) {
-            return create(method, existingContainer, containerFile, null);
+            return create(method, existingContainer, containerFile, null, false);
         }
 
         static SignatureAddIntent sign(int method, boolean existingContainer, File containerFile,
                                        SignatureAddRequest request) {
-            return create(method, existingContainer, containerFile, request);
+            return create(method, existingContainer, containerFile, request, false);
         }
 
         static SignatureAddIntent clear() {
-            return create(null, null, null, null);
+            return create(null, null, null, null, true);
         }
 
         private static SignatureAddIntent create(@Nullable Integer method,
                                                  @Nullable Boolean existingContainer,
                                                  @Nullable File containerFile,
-                                                 @Nullable SignatureAddRequest request) {
+                                                 @Nullable SignatureAddRequest request,
+                                                 boolean isCancelled) {
             return new AutoValue_Intent_SignatureAddIntent(method, existingContainer, containerFile,
-                    request);
+                    request, isCancelled);
         }
     }
 
