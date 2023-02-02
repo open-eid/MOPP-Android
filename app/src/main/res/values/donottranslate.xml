@@ -23,7 +23,10 @@
     <string name="main_settings_postal_code_key">mainSettingsPostalCode</string>
     <string name="main_settings_open_all_filetypes_key">mainSettingsOpenAllFilesTypes</string>
 
+    <string name="mobile_id_country_code_and_phone_number_placeholder">372XXXXXXXX</string>
     <string name="signature_add_mobile_id_challenge_placeholder">____</string>
+    <string name="signature_id_card_pin1">PIN1</string>
+    <string name="signature_id_card_pin2">PIN2</string>
 
     <!-- Main About -->
     <string name="main_about_libdigidocpp_title">libdigidocpp</string>
