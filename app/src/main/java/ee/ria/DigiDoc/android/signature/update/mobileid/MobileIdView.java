@@ -1,11 +1,11 @@
 package ee.ria.DigiDoc.android.signature.update.mobileid;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
+import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
 
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -24,6 +24,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
+import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
@@ -43,7 +44,6 @@ public final class MobileIdView extends LinearLayout implements
     private final CheckBox rememberMeView;
     private final TextInputLayout phoneNoLabel;
     private final TextInputLayout personalCodeLabel;
-    private final TextWatcher textWatcher;
 
     public MobileIdView(Context context) {
         this(context, null);
@@ -76,23 +76,6 @@ public final class MobileIdView extends LinearLayout implements
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
 
         checkInputsValidity();
-
-        textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() >= MAXIMUM_PERSONAL_CODE_LENGTH) {
-                    s.delete(MAXIMUM_PERSONAL_CODE_LENGTH, s.length());
-                }
-            }
-        };
-
-        personalCodeView.addTextChangedListener(textWatcher);
     }
 
     @Override
@@ -102,9 +85,10 @@ public final class MobileIdView extends LinearLayout implements
         setDefaultCheckBoxToggle(viewModel);
         AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
-        if (textWatcher != null) {
-            personalCodeView.addTextChangedListener(textWatcher);
-        }
+
+        phoneNoView.setError(null);
+        personalCodeView.setError(null);
+
         message.clearFocus();
         phoneNoView.clearFocus();
         personalCodeView.clearFocus();
@@ -141,14 +125,18 @@ public final class MobileIdView extends LinearLayout implements
     public boolean positiveButtonEnabled() {
         Editable phoneNumber = phoneNoView.getText();
         Editable personalCode = personalCodeView.getText();
-        return (phoneNumber != null && isCountryCodeCorrect(phoneNumber.toString()) &&
-                isPhoneNumberCorrect(phoneNumber.toString())) &&
-                (personalCode != null && isPersonalCodeCorrect(personalCode.toString()));
+        if (phoneNumber != null && personalCode != null) {
+            PersonalCodeValidator.validatePersonalCode(personalCodeView);
+
+            return isCountryCodeCorrect(phoneNumber.toString()) &&
+                    isPhoneNumberCorrect(phoneNumber.toString()) &&
+                    isPersonalCodeCorrect(personalCode.toString());
+        }
+        return false;
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        personalCodeView.removeTextChangedListener(textWatcher);
         super.onDetachedFromWindow();
     }
 
@@ -156,7 +144,11 @@ public final class MobileIdView extends LinearLayout implements
         checkPhoneNumberValidity();
         checkPersonalCodeValidity();
 
-        phoneNoView.setOnFocusChangeListener((view, hasfocus) -> checkPhoneNumberValidity());
+        phoneNoView.setOnFocusChangeListener((view, hasfocus) -> {
+            if (!hasfocus) {
+                checkPhoneNumberValidity();
+            }
+        });
         personalCodeView.setOnFocusChangeListener((view, hasfocus) -> checkPersonalCodeValidity());
     }
 

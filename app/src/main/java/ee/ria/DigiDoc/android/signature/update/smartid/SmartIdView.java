@@ -21,11 +21,11 @@
 package ee.ria.DigiDoc.android.signature.update.smartid;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
+import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
 
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -51,14 +51,13 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
+import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
 public final class SmartIdView extends LinearLayout implements
         SignatureAddView<SmartIdRequest, SmartIdResponse> {
-
-    private static final int MAXIMUM_PERSONAL_CODE_LENGTH = 11;
 
     private static final List<String> COUNTRY_LIST = Arrays.asList("EE", "LT", "LV");
     private final Subject<Object> positiveButtonStateSubject = PublishSubject.create();
@@ -67,7 +66,6 @@ public final class SmartIdView extends LinearLayout implements
     private final TextInputEditText personalCodeView;
     private final CheckBox rememberMeView;
     private final TextInputLayout personalCodeLabel;
-    private final TextWatcher textWatcher;
 
     public SmartIdView(Context context) {
         this(context, null);
@@ -108,23 +106,6 @@ public final class SmartIdView extends LinearLayout implements
 
         checkForDoneButtonClick();
         checkInputsValidity();
-
-        textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() >= MAXIMUM_PERSONAL_CODE_LENGTH) {
-                    s.delete(MAXIMUM_PERSONAL_CODE_LENGTH, s.length());
-                }
-            }
-        };
-
-        personalCodeView.addTextChangedListener(textWatcher);
     }
 
     @Override
@@ -133,10 +114,8 @@ public final class SmartIdView extends LinearLayout implements
         setPersonalCodeViewFilters(countryView.getSelectedItemPosition());
         personalCodeView.setText(viewModel.sidPersonalCode());
         rememberMeView.setChecked(personalCodeView.getText().length() > 0);
-        if (textWatcher != null) {
-            personalCodeView.addTextChangedListener(textWatcher);
-        }
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
+
         message.clearFocus();
         countryView.clearFocus();
         personalCodeView.clearFocus();
@@ -162,7 +141,12 @@ public final class SmartIdView extends LinearLayout implements
 
     public boolean positiveButtonEnabled() {
         Editable personalCode = personalCodeView.getText();
-        return personalCode != null && isPersonalCodeCorrect(personalCode.toString());
+        if (personalCode != null) {
+            PersonalCodeValidator.validatePersonalCode(personalCodeView);
+            return countryView.getSelectedItemPosition() != 0 ||
+                    isPersonalCodeCorrect(personalCode.toString());
+        }
+        return false;
     }
 
     private void checkInputsValidity() {
@@ -282,7 +266,6 @@ public final class SmartIdView extends LinearLayout implements
 
     @Override
     protected void onDetachedFromWindow() {
-        personalCodeView.removeTextChangedListener(textWatcher);
         super.onDetachedFromWindow();
     }
 }
