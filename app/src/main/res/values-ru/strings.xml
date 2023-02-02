@@ -9,6 +9,7 @@
     <string name="main_home_navigation_crypto">КРИПТО</string>
     <string name="main_home_navigation_eid">Мой eID</string>
 
+    <string name="main_home_logo">DigiDoc</string>
     <string name="main_home_menu_title">Меню</string>
     <string name="main_home_menu_button">Меню</string>
     <string name="main_home_menu_help">ПОМОЩЬ</string>
@@ -36,6 +37,7 @@
 
     <!-- Main About -->
     <string name="main_about_title">Информация</string>
+    <string name="main_about_digidoc_and_el_logos">Проект поддерживается Европейским фондом регионального развития</string>
     <string name="main_about_ria_digidoc_version_title">RIA DigiDoc версия %1$s</string>
     <string name="main_about_software_developed_by_title">Эстонское программное обеспечение ID выпущено Государственным департаментом инфосистем</string>
     <string name="main_about_contact_information_title">Если у вас возникнут вопросы, пожалуйста, обратитесь на id.ee.</string>
@@ -64,6 +66,7 @@
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Выберите файл для подписания или проверки</string>
+    <string name="signature_home_create_text_accessibility">Выберите файл для подписания или проверки</string>
     <string name="signature_home_create_button">ВЫБРАТЬ ФАЙЛ</string>
 
     <!-- Signature List -->
@@ -171,6 +174,10 @@
 
     <string name="signature_update_mobile_id_display_message">Подписать документ</string>
 
+    <string name="signature_update_mobile_id_invalid_country_code">Неверный код страны.</string>
+    <string name="signature_update_mobile_id_invalid_phone_number">Телефонный номер не действителен.</string>
+    <string name="signature_update_mobile_id_invalid_personal_code">Личный код недействителен.</string>
+
     <string name="signature_update_mobile_id_status_request_sent">Запрос на подпись отправлен</string>
     <string name="signature_update_mobile_id_status_request_ok">Запрос принят</string>
     <string name="signature_update_mobile_id_status_no_country_code">Номер телефона должен содержать код страны</string>
@@ -222,6 +229,8 @@
     <string name="signature_update_smart_id_error_message_access_rights">Не удалось подписать контейнер. Проверьте настройки доступа услуги Smart-ID. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="signature_update_smart_id_error_technical_error">Не удалось отправить запрос. Технический сбой услуги Smart-ID. Пожалуйста, попробуйте позже.</string>
 
+    <string name="signature_update_smart_id_invalid_personal_code">Личный код недействителен.</string>
+
     <string name="signature_update_id_card_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
     <string name="signature_update_id_card_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация...</string>
@@ -232,6 +241,8 @@
     <string name="signature_update_id_card_sign_pin2_invalid">Неверный PIN2. У Вас осталось %1$d попыток.</string>
     <string name="signature_update_id_card_sign_pin2_invalid_final">Неверный PIN2. У Вас осталась 1 попытка до блокировки Вашего PIN2.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 заблокирован. Зайдите в Мой eID, чтобы разблокировать его.</string>
+
+    <string name="id_card_sign_pin_invalid_length">%1$s-код должен быть не менее %2$s символов</string>
 
     <!-- Signature Details -->
     <string name="signature_details_title">Детали подписи</string>
@@ -257,6 +268,7 @@
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Выберите файл для шифрования или расшифровки</string>
+    <string name="crypto_home_create_text_accessibility">Выберите файл для шифрования или расшифровки</string>
     <string name="crypto_home_create_button">ВЫБРАТЬ ФАЙЛ</string>
 
     <!-- Crypto Create -->

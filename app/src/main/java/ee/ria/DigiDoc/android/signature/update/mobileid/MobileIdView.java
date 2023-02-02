@@ -1,11 +1,11 @@
 package ee.ria.DigiDoc.android.signature.update.mobileid;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
+import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
 
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -16,11 +16,15 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.List;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
+import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
@@ -28,7 +32,10 @@ import io.reactivex.rxjava3.subjects.Subject;
 public final class MobileIdView extends LinearLayout implements
         SignatureAddView<MobileIdRequest, MobileIdResponse> {
 
+    // Country code (3 numbers) + phone number (7 or more numbers)
+    private static final int MINIMUM_PHONE_NUMBER_LENGTH = 10;
     private static final int MAXIMUM_PERSONAL_CODE_LENGTH = 11;
+    private static final List<String> ALLOWED_PHONE_NUMBER_COUNTRY_CODES = List.of("370", "372");
 
     private final Subject<Object> positiveButtonStateSubject = PublishSubject.create();
     private final TextView message;
@@ -37,7 +44,8 @@ public final class MobileIdView extends LinearLayout implements
     private final TextView personalCodeViewLabel;
     private final TextInputEditText personalCodeView;
     private final CheckBox rememberMeView;
-    private final TextWatcher textWatcher;
+    private final TextInputLayout phoneNoLabel;
+    private final TextInputLayout personalCodeLabel;
 
     public MobileIdView(Context context) {
         this(context, null);
@@ -67,25 +75,16 @@ public final class MobileIdView extends LinearLayout implements
                 phoneNoView, phoneNoViewLabel.getText().toString());
         AccessibilityUtils.setTextViewContentDescription(
                 personalCodeView, personalCodeViewLabel.getText().toString());
+
+        phoneNoLabel = findViewById(R.id.signatureUpdateMobileIdPhoneNoLabel);
+        personalCodeLabel = findViewById(R.id.signatureUpdateMobileIdPersonalCodeLabel);
+
+        AccessibilityUtils.setSingleCharactersContentDescription(phoneNoView);
+        AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView);
         AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
 
-        textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() >= MAXIMUM_PERSONAL_CODE_LENGTH) {
-                    s.delete(MAXIMUM_PERSONAL_CODE_LENGTH, s.length());
-                }
-            }
-        };
-
-        personalCodeView.addTextChangedListener(textWatcher);
+        checkInputsValidity();
     }
 
     @Override
@@ -95,9 +94,10 @@ public final class MobileIdView extends LinearLayout implements
         setDefaultCheckBoxToggle(viewModel);
         AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
-        if (textWatcher != null) {
-            personalCodeView.addTextChangedListener(textWatcher);
-        }
+
+        phoneNoView.setError(null);
+        personalCodeView.setError(null);
+
         message.clearFocus();
         phoneNoView.clearFocus();
         personalCodeView.clearFocus();
@@ -116,13 +116,6 @@ public final class MobileIdView extends LinearLayout implements
     public void setDefaultPhoneNoPrefix(String phoneNoPrefix) {
         if (TextUtils.isEmpty(phoneNoView.getText())) {
             phoneNoView.setText(phoneNoPrefix, TextView.BufferType.EDITABLE);
-            phoneNoView.setOnFocusChangeListener((view, hasfocus) -> {
-                if (hasfocus) {
-                    phoneNoView.setHint("372XXXXXXXX");
-                } else {
-                    phoneNoView.setHint("");
-                }
-            });
         }
     }
 
@@ -139,12 +132,81 @@ public final class MobileIdView extends LinearLayout implements
     }
 
     public boolean positiveButtonEnabled() {
-        return phoneNoView.getText().length() > 3 && personalCodeView.getText().length() == 11;
+        Editable phoneNumber = phoneNoView.getText();
+        Editable personalCode = personalCodeView.getText();
+        if (phoneNumber != null && personalCode != null) {
+            PersonalCodeValidator.validatePersonalCode(personalCodeView);
+
+            return isCountryCodeCorrect(phoneNumber.toString()) &&
+                    isPhoneNumberCorrect(phoneNumber.toString()) &&
+                    isPersonalCodeCorrect(personalCode.toString());
+        }
+        return false;
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        personalCodeView.removeTextChangedListener(textWatcher);
         super.onDetachedFromWindow();
+    }
+
+    private void checkInputsValidity() {
+        checkPhoneNumberValidity();
+        checkPersonalCodeValidity();
+
+        phoneNoView.setOnFocusChangeListener((view, hasfocus) -> {
+            if (!hasfocus) {
+                checkPhoneNumberValidity();
+            }
+        });
+        personalCodeView.setOnFocusChangeListener((view, hasfocus) -> checkPersonalCodeValidity());
+    }
+
+    private void checkPhoneNumberValidity() {
+        phoneNoLabel.setError(null);
+
+        Editable phoneNumber = phoneNoView.getText();
+
+        if (phoneNumber != null && !phoneNumber.toString().isEmpty()) {
+            if (isCountryCodeMissing(phoneNumber.toString())) {
+                phoneNoLabel.setError(getResources().getString(R.string.signature_update_mobile_id_status_no_country_code));
+            } else if (!isCountryCodeCorrect(phoneNoView.getText().toString())) {
+                phoneNoLabel.setError(getResources().getString(R.string.signature_update_mobile_id_invalid_country_code));
+            } else if (!isPhoneNumberCorrect(phoneNoView.getText().toString())) {
+                phoneNoLabel.setError(getResources().getString(R.string.signature_update_mobile_id_invalid_phone_number));
+            }
+        }
+    }
+
+    private void checkPersonalCodeValidity() {
+        personalCodeLabel.setError(null);
+
+        if (personalCodeView.getText() != null &&
+                !personalCodeView.getText().toString().isEmpty() &&
+                !isPersonalCodeCorrect(personalCodeView.getText().toString())) {
+            personalCodeLabel.setError(getResources().getString(R.string.signature_update_mobile_id_invalid_personal_code));
+        }
+    }
+
+    // Country code (3 numbers) + phone number (7 or more numbers)
+    private boolean isCountryCodeMissing(String phoneNumber) {
+        return phoneNumber.length() < MINIMUM_PHONE_NUMBER_LENGTH &&
+                !isCountryCodeCorrect(phoneNumber);
+    }
+
+    private boolean isCountryCodeCorrect(String phoneNumber) {
+        for (String allowedCountryCode : ALLOWED_PHONE_NUMBER_COUNTRY_CODES) {
+            if (phoneNumber.startsWith(allowedCountryCode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isPhoneNumberCorrect(String phoneNumber) {
+        return phoneNumber.length() >= MINIMUM_PHONE_NUMBER_LENGTH;
+    }
+
+    private boolean isPersonalCodeCorrect(String personalCode) {
+        return personalCode.length() == MAXIMUM_PERSONAL_CODE_LENGTH;
     }
 }

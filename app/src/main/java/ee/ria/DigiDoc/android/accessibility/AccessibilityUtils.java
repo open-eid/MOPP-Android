@@ -1,6 +1,8 @@
 package ee.ria.DigiDoc.android.accessibility;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -69,9 +71,7 @@ public class AccessibilityUtils {
     }
 
     public static void setViewAccessibilityPaneTitle(View view, @StringRes int titleResId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            view.setAccessibilityPaneTitle((view.getResources().getString(titleResId)).toLowerCase());
-        }
+        view.setAccessibilityPaneTitle((view.getResources().getString(titleResId)).toLowerCase());
     }
 
     public static void setContentDescription(View view, @Nullable String text) {
@@ -132,6 +132,11 @@ public class AccessibilityUtils {
 
     public static void setEditTextCursorToEnd(EditText editText) {
         editText.post(() -> editText.setSelection(editText.getText().length()));
+    }
+
+    public static boolean isLargeFontEnabled(Resources resources) {
+        Configuration configuration = resources.getConfiguration();
+        return configuration.fontScale > 1;
     }
 
     private static String combineMessages(CharSequence... messages) {
