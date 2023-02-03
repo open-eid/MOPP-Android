@@ -220,11 +220,7 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
             public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 info.setContentDescription(getResources().getString(contentDescription).toLowerCase());
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    info.setTooltipText(toolTipText);
-                } else {
-                    info.setContentDescription(toolTipText);
-                }
+                info.setTooltipText(toolTipText);
                 info.setClassName("");
                 info.setPackageName("");
                 info.setViewIdResourceName("");

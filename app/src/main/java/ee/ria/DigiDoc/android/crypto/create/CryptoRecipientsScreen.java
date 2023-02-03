@@ -1,5 +1,11 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
+import static ee.ria.DigiDoc.android.Constants.VOID;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -25,6 +31,8 @@ import com.bluelinelabs.conductor.Controller;
 import com.google.common.collect.ImmutableList;
 import com.jakewharton.rxbinding4.widget.SearchViewQueryTextEvent;
 
+import org.apache.commons.lang3.StringUtils;
+
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -34,15 +42,11 @@ import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
+import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
 import ee.ria.DigiDoc.common.Certificate;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
-
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-import static ee.ria.DigiDoc.android.Constants.VOID;
 
 public final class CryptoRecipientsScreen extends Controller implements Screen,
         MviView<Intent, ViewState>, Navigator.BackButtonClickListener {
@@ -196,6 +200,12 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                                     searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
                                 } else {
                                     searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50);
+                                    // Validate personal codes only. Allow company registry numbers and names
+                                    if (searchViewInnerText.getText() != null &&
+                                            searchViewInnerText.getText().length() >= MAXIMUM_PERSONAL_CODE_LENGTH &&
+                                            StringUtils.isNumeric(searchViewInnerText.getText())) {
+                                        PersonalCodeValidator.validatePersonalCode(searchViewInnerText);
+                                    }
                                 }
                             }
 

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,15 +25,19 @@
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
             android:text="@string/signature_update_mobile_id_phone_no"
-            android:paddingTop="1px"/>
+            android:paddingTop="1px"
+            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateMobileIdPhoneNoLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginTop="-10dp"
-            android:minHeight="@dimen/material_baseline_grid_6x">
+            android:layout_marginTop="20dp"
+            android:minHeight="@dimen/material_baseline_grid_6x"
+            android:hint="@string/signature_update_mobile_id_phone_no"
+            app:errorEnabled="true"
+            app:expandedHintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@id/signatureUpdateMobileIdPhoneNo"
@@ -42,6 +47,7 @@
                 android:digits="0123456789"
                 android:imeOptions="actionDone"
                 android:maxLines="1"
+                android:hint="@string/mobile_id_country_code_and_phone_number_placeholder"
                 android:accessibilityTraversalAfter="@id/signatureUpdateMobileIdPhoneNoText"
                 android:minHeight="@dimen/material_baseline_grid_6x" />
 
@@ -54,15 +60,19 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
-            android:text="@string/signature_update_mobile_id_personal_code" />
+            android:text="@string/signature_update_mobile_id_personal_code"
+            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateMobileIdPersonalCodeLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginTop="-10dp"
-            android:minHeight="@dimen/material_baseline_grid_6x">
+            android:layout_marginTop="20dp"
+            android:minHeight="@dimen/material_baseline_grid_6x"
+            android:hint="@string/signature_update_mobile_id_personal_code"
+            app:errorEnabled="true"
+            app:expandedHintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@id/signatureUpdateMobileIdPersonalCode"

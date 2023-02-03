@@ -1,19 +1,23 @@
 package ee.ria.DigiDoc.android.signature.update.idcard;
 
+import static ee.ria.DigiDoc.common.PinConstants.PIN2_MIN_LENGTH;
+
 import android.content.Context;
+import android.text.Editable;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-import android.widget.EditText;
+import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -41,7 +45,8 @@ public final class IdCardView extends LinearLayout implements
     private final View signContainerView;
     private final View signContainerMessage;
     private final TextView signDataView;
-    private final EditText signPin2View;
+    private final TextInputLayout signPin2Label;
+    private final TextInputEditText signPin2View;
     private final TextView signPin2ErrorView;
 
     @Nullable private Token token;
@@ -70,8 +75,12 @@ public final class IdCardView extends LinearLayout implements
         signContainerView = findViewById(R.id.signatureUpdateIdCardSignContainer);
         signContainerMessage = findViewById(R.id.signatureUpdateIdCardSignMessage);
         signDataView = findViewById(R.id.signatureUpdateIdCardSignData);
+        signPin2Label = findViewById(R.id.signatureUpdateIdCardSignPin2Label);
         signPin2View = findViewById(R.id.signatureUpdateIdCardSignPin2);
         signPin2ErrorView = findViewById(R.id.signatureUpdateIdCardSignPin2Error);
+
+        checkForDoneButtonClick();
+        checkInputsValidity();
     }
 
     public Observable<Object> positiveButtonState() {
@@ -79,7 +88,8 @@ public final class IdCardView extends LinearLayout implements
     }
 
     public boolean positiveButtonEnabled() {
-        return token != null && signPin2View.getText().length() >= 4;
+        Editable pinCodeText = signPin2View.getText();
+        return token != null && pinCodeText != null && isPinLengthEnough(pinCodeText.toString());
     }
 
     @Override
@@ -205,6 +215,41 @@ public final class IdCardView extends LinearLayout implements
                 signContainerMessage.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
             }, 100);
         }
+    }
+
+    private void checkInputsValidity() {
+        checkPinCodeValidity();
+
+        signPin2View.setOnFocusChangeListener((view, hasfocus) -> checkPinCodeValidity());
+    }
+
+    private void checkPinCodeValidity() {
+        signPin2Label.setError(null);
+
+        Editable pinCodeView = signPin2View.getText();
+
+        if (pinCodeView != null && !pinCodeView.toString().isEmpty() &&
+                !isPinLengthEnough(pinCodeView.toString())) {
+            signPin2Label.setError(getResources().getString(
+                    R.string.id_card_sign_pin_invalid_length,
+                    getResources().getString(R.string.signature_id_card_pin2),
+                    Integer.toString(PIN2_MIN_LENGTH)));
+        }
+    }
+
+    private boolean isPinLengthEnough(String pin) {
+        return pin.length() >= PIN2_MIN_LENGTH;
+    }
+
+    private void checkForDoneButtonClick() {
+        // Remove focus on "Done" click
+        signPin2View.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                signPin2View.setEnabled(false);
+                signPin2View.setEnabled(true);
+            }
+            return false;
+        });
     }
 
     private void setupContentDescriptions(RadioButton radioButton, CharSequence contentDescription) {
