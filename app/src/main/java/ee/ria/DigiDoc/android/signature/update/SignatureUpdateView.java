@@ -372,7 +372,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             }
 
             if (!mobileIdChallengeView.getText().equals(EMPTY_CHALLENGE)) {
-                String mobileIdChallengeDescription = getResources().getString(R.string.mobile_id_challenge) + mobileIdChallengeView.getText();
+                AccessibilityUtils.setSingleCharactersContentDescription(mobileIdChallengeView);
+                String mobileIdChallengeDescription = getResources().getString(R.string.mobile_id_challenge) +
+                        AccessibilityUtils.getTextAsSingleCharacters(mobileIdChallengeView.getText().toString());
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, mobileIdChallengeDescription);
             }
         }
@@ -391,20 +393,24 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 signingInfoDelegated = true;
             }
 
-            SmartIdResponse smartIdResponse = (SmartIdResponse) signatureAddResponse;
-            if (smartIdResponse.selectDevice()) {
-                smartIdInfo.setText(R.string.signature_update_smart_id_select_device);
-                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, smartIdInfo.getText());
-            }
-            String smartIdChallenge = smartIdResponse.challenge();
-            if (smartIdChallenge != null) {
-                smartIdChallengeView.setText(smartIdChallenge);
-                smartIdInfo.setText(R.string.signature_update_smart_id_info);
-                String smartIdChallengeDescription = getResources().getString(R.string.smart_id_challenge) + smartIdChallenge;
-                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, smartIdChallengeDescription);
-                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_smart_id_info);
-            } else {
-                smartIdChallengeView.setText(EMPTY_CHALLENGE);
+            if (signatureAddResponse instanceof SmartIdResponse) {
+                SmartIdResponse smartIdResponse = (SmartIdResponse) signatureAddResponse;
+                String selectDeviceText = getResources().getString(R.string.signature_update_smart_id_select_device);
+                if (smartIdResponse.selectDevice() && !smartIdInfo.getText().equals(selectDeviceText)) {
+                    smartIdInfo.setText(R.string.signature_update_smart_id_select_device);
+                    AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, smartIdInfo.getText());
+                }
+                String smartIdChallenge = smartIdResponse.challenge();
+                if (smartIdChallenge != null) {
+                    smartIdChallengeView.setText(smartIdChallenge);
+                    smartIdInfo.setText(R.string.signature_update_smart_id_info);
+                    String smartIdChallengeDescription = getResources().getString(R.string.smart_id_challenge) +
+                            AccessibilityUtils.getTextAsSingleCharacters(smartIdChallenge);
+                    AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, smartIdChallengeDescription);
+                    AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_smart_id_info);
+                } else {
+                    smartIdChallengeView.setText(EMPTY_CHALLENGE);
+                }
             }
         }
 

@@ -1,9 +1,10 @@
 package ee.ria.DigiDoc.android.accessibility;
 
+import static android.content.Context.ACCESSIBILITY_SERVICE;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Build;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
@@ -20,8 +21,6 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.common.TextUtil;
-
-import static android.content.Context.ACCESSIBILITY_SERVICE;
 
 public class AccessibilityUtils {
 
@@ -109,25 +108,29 @@ public class AccessibilityUtils {
         });
     }
 
-    public static void setSingleCharactersContentDescription(EditText editText) {
-        ViewCompat.setAccessibilityDelegate(editText, new AccessibilityDelegateCompat() {
+    public static void setSingleCharactersContentDescription(TextView textView) {
+        ViewCompat.setAccessibilityDelegate(textView, new AccessibilityDelegateCompat() {
             @Override
             public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
-                StringBuilder editTextAccessibility = new StringBuilder();
-                String[] personalCodeTextSplit = editText.getText().toString().split(",");
+                StringBuilder textViewAccessibility = new StringBuilder();
+                String[] personalCodeTextSplit = textView.getText().toString().split(",");
                 for (String nameText : personalCodeTextSplit) {
                     if (TextUtil.isOnlyDigits(nameText)) {
-                        editTextAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
+                        textViewAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
                     } else {
-                        editTextAccessibility.append(nameText);
+                        textViewAccessibility.append(nameText);
                     }
                 }
-                info.setText(editTextAccessibility);
-                info.setContentDescription(editTextAccessibility);
-                host.setContentDescription(editTextAccessibility);
+                info.setText(textViewAccessibility);
+                info.setContentDescription(textViewAccessibility);
+                host.setContentDescription(textViewAccessibility);
             }
         });
+    }
+
+    public static String getTextAsSingleCharacters(String text) {
+        return TextUtil.splitTextAndJoin(text, "", " ");
     }
 
     public static void setTextViewContentDescription(EditText editText, String label) {

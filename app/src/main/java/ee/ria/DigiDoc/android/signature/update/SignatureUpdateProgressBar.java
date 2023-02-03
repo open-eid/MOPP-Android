@@ -9,7 +9,6 @@ class SignatureUpdateProgressBar {
     private static CountDownTimer timeoutTimer;
 
     static void startProgressBar(ProgressBar progressBar) {
-        stopProgressBar(progressBar);
         if (progressBar.getProgress() == 0) {
             progressBar.setMax((int) (PROGRESS_BAR_TIMEOUT_CANCEL / 1000));
             timeoutTimer = new CountDownTimer(PROGRESS_BAR_TIMEOUT_CANCEL, 1000) {
