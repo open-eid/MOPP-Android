@@ -303,7 +303,7 @@ public class SmartSignService extends IntentService {
         return signatureRequest;
     }
 
-    private <S> S handleRequest(Call<S> request) throws IOException {
+    private <S> S handleRequest(Call<S> request) throws IOException, SigningCancelledException {
         checkSigningCancelled(isCancelled);
         Response<S> httpResponse = request.execute();
         if (!httpResponse.isSuccessful()) {

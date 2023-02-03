@@ -1,8 +1,6 @@
 package ee.ria.DigiDoc.common.exception;
 
-import java.io.IOException;
-
-public class SigningCancelledException extends IOException {
+public class SigningCancelledException extends Exception {
 
     public SigningCancelledException(String message) {
         super(message);

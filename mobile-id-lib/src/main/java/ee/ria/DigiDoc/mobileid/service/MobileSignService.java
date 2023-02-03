@@ -299,6 +299,9 @@ public class MobileSignService extends IntentService {
         } catch (UnknownHostException e) {
             broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE));
             Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID. REST API session status request failed. Unknown host. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+        } catch (SigningCancelledException e) {
+            broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.USER_CANCELLED));
+            Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID. User cancelled signing. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
         }
     }
 
