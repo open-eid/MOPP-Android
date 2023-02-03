@@ -207,8 +207,6 @@ public final class CodeUpdateView extends CoordinatorLayout {
             if (repeatError instanceof CodeRepeatMismatchError) {
                 repeatLabelView.setError(getResources().getString(action.repeatMismatchErrorRes()));
                 setViewContentDescription(repeatLabelView, getResources().getString(action.repeatMismatchErrorRes()));
-            } else {
-                repeatLabelView.setError(null);
             }
 
             if (newError != null || repeatError != null) {
