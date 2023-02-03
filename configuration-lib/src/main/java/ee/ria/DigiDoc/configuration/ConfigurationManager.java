@@ -3,10 +3,14 @@ package ee.ria.DigiDoc.configuration;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.StringRes;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,6 +21,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationLoader;
@@ -150,7 +155,9 @@ public class ConfigurationManager {
             Timber.log(Log.ERROR, e, "Failed to load configuration from central configuration service");
             if (e.getCause() instanceof UnknownHostException) {
                 Handler handler = new Handler(Looper.getMainLooper());
-                Runnable runnable = () -> Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+                Runnable runnable = () -> Toast.makeText(context,
+                        getLocalizedMessage(context, R.string.no_internet_connection),
+                        Toast.LENGTH_SHORT).show();
                 handler.post(runnable);
             }
             return loadCachedConfiguration();
@@ -269,5 +276,14 @@ public class ConfigurationManager {
             Timber.log(Log.ERROR, e, "Failed to load SSL certificate");
             throw new IllegalStateException("Failed to load SSL certificate", e);
         }
+    }
+
+    private String getLocalizedMessage(Context context, @StringRes int message) {
+        Resources resources = context.getResources();
+        Configuration configuration = resources.getConfiguration();
+        configuration.setLocale(Locale.getDefault());
+        return context.createConfigurationContext(configuration)
+                .getText(message)
+                .toString();
     }
 }
