@@ -114,23 +114,13 @@ public final class HomeMenuView extends NestedScrollView {
     }
 
     private void setLanguagesTextSize() {
-        Configuration configuration = getResources().getConfiguration();
-        float orientation = configuration.orientation;
-        float fontScale = configuration.fontScale;
-
         estButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
         ruButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
         engButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
 
         estButton.setAutoSizeTextTypeUniformWithConfiguration(11, 16, 1, COMPLEX_UNIT_SP);
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            ruButton.setAutoSizeTextTypeUniformWithConfiguration(11, 16, 1, COMPLEX_UNIT_SP);
-        } else if (fontScale > 1) {
-            ruButton.setAutoSizeTextTypeUniformWithConfiguration(7, 11, 1, COMPLEX_UNIT_SP);
-        } else {
-            ruButton.setAutoSizeTextTypeUniformWithConfiguration(11, 16, 1, COMPLEX_UNIT_SP);
-        }
         engButton.setAutoSizeTextTypeUniformWithConfiguration(11, 16, 1, COMPLEX_UNIT_SP);
+        ruButton.setAutoSizeTextTypeUniformWithConfiguration(11, 16, 1, COMPLEX_UNIT_SP);
     }
 
     @Override
