@@ -433,9 +433,6 @@
     <string name="eid_home_code_update_repeat_error_mismatch_puk">Uued PUK-koodid peavad olema samad</string>
 
     <!--  General  -->
-    <string name="signature_content_description">Allkiri, vahekaart %1$d / %2$d</string>
-    <string name="crypto_content_description">Krüpto, vahekaart %1$d / %2$d</string>
-    <string name="my_eid_content_description">Minu eID, vahekaart %1$d / %2$d</string>
 
     <string name="decrypt_content_description">Dekrüpteeri dokument, vahekaart %1$d / %2$d</string>
     <string name="sign_send_content_description">Allkirjasta, vahekaart %1$d / %2$d</string>
@@ -544,6 +541,7 @@
     <!-- Home -->
     <string name="main_home_navigation_signature_accessibility">Allkiri</string>
     <string name="main_home_navigation_crypto_accessibility">Krüpto</string>
+    <string name="main_home_navigation_myEid_accessibility">Minu e I D</string>
 
     <!-- Menu -->
     <string name="main_home_menu_help_accessibility">Abi</string>
