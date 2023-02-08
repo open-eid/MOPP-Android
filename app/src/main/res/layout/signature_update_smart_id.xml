@@ -77,7 +77,8 @@
                 android:imeOptions="actionDone"
                 android:maxLines="1"
                 android:minHeight="@dimen/material_baseline_grid_6x"
-                android:accessibilityTraversalAfter="@id/signatureUpdateSmartIdPersonalCodeText" />
+                android:accessibilityTraversalAfter="@id/signatureUpdateSmartIdPersonalCodeText"
+                android:background="@drawable/bottom_border_background" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
