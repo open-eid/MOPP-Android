@@ -110,6 +110,11 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                 .map(recipient -> Intent.RecipientAddIntent.create(recipients, recipient));
     }
 
+    private Observable<Intent.RecipientAddAllIntent> recipientAddAllIntent() {
+        return adapter.recipientAddAllClicks()
+                .map(addedRecipients -> Intent.RecipientAddAllIntent.create(recipients, addedRecipients));
+    }
+
     private Observable<Intent.RecipientRemoveIntent> recipientRemoveIntent() {
         return adapter.recipientRemoveClicks()
                 .map(recipient -> Intent.RecipientRemoveIntent.create(recipients, recipient));
@@ -118,7 +123,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(recipientsScreenUpButtonClickIntent(), recipientsScreenDoneButtonClickIntent(),
-                recipientsSearchIntent(), recipientAddIntent(), recipientRemoveIntent());
+                recipientsSearchIntent(), recipientAddIntent(), recipientAddAllIntent(), recipientRemoveIntent());
     }
 
     private void setActivity(boolean activity) {

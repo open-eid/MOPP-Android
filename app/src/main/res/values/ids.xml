@@ -284,6 +284,7 @@
     <item type="id" name="cryptoRecipientType" />
     <item type="id" name="cryptoRecipientName" />
     <item type="id" name="cryptoRecipientInfo" />
+    <item type="id" name="cryptoRecipientsAddAllButton" />
     <item type="id" name="cryptoRecipientRemoveButton" />
     <item type="id" name="cryptoRecipientAddButton" />
 
