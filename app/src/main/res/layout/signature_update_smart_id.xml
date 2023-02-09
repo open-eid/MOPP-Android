@@ -37,6 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
+            android:hint="@string/signature_update_smart_id_country"
             android:minHeight="@dimen/material_baseline_grid_6x">
 
             <Spinner
@@ -47,16 +48,6 @@
                 android:minHeight="@dimen/material_baseline_grid_6x" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/signatureUpdateSmartIdPersonalCodeText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:layout_marginTop="11dp"
-            android:layout_marginStart="4dp"
-            android:text="@string/signature_update_mobile_id_personal_code"
-            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/signatureUpdateSmartIdPersonalCodeLabel"
@@ -77,7 +68,7 @@
                 android:imeOptions="actionDone"
                 android:maxLines="1"
                 android:minHeight="@dimen/material_baseline_grid_6x"
-                android:accessibilityTraversalAfter="@id/signatureUpdateSmartIdPersonalCodeText"
+                android:accessibilityTraversalAfter="@id/signatureUpdateSmartIdCountry"
                 android:background="@drawable/bottom_border_background" />
 
         </com.google.android.material.textfield.TextInputLayout>

@@ -233,7 +233,6 @@
     <item type="id" name="signatureUpdateSmartIdCountryText" />
     <item type="id" name="signatureUpdateSmartIdCountryLabel" />
     <item type="id" name="signatureUpdateSmartIdCountry" />
-    <item type="id" name="signatureUpdateSmartIdPersonalCodeText" />
     <item type="id" name="signatureUpdateSmartIdPersonalCodeLabel" />
     <item type="id" name="signatureUpdateSmartIdPersonalCode" />
     <item type="id" name="signatureUpdateSmartIdRememberMe" />
