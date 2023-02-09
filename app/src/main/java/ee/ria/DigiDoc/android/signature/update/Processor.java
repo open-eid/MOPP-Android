@@ -186,7 +186,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     if (activityResult.resultCode() == RESULT_OK && data != null) {
                                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
                                                 parseGetContentIntent(application.getContentResolver(), data, fileSystem.getExternallyOpenedFilesDir()));
-                                        ToastUtil.handleEmptyFileError(validFiles, application);
+                                        ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
                                         ImmutableList<FileStream> filesNotInContainer = getFilesNotInContainer(validFiles, action.containerFile());
                                         announceAccessibilityFilesAddedEvent(application.getApplicationContext(), filesNotInContainer.size());
                                         return signatureContainerDataSource
@@ -266,7 +266,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     ) {
                                         ByteStreams.copy(inputStream, outputStream);
                                     }
-                                    Toast.makeText(application, Activity.getContext().get().getString(R.string.file_saved),
+                                    Toast.makeText(application, navigator.activity().getString(R.string.file_saved),
                                             Toast.LENGTH_LONG).show();
                                 }
                                 return Result.DocumentSaveResult.idle();

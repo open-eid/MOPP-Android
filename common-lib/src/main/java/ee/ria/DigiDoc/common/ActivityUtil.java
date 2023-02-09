@@ -21,6 +21,7 @@ public class ActivityUtil {
     public static boolean isExternalFileOpened(Activity activity) {
         return activity != null && activity.getIntent() != null && activity.getIntent().getAction() != null &&
                 (activity.getIntent().getAction().equals(Intent.ACTION_SEND) ||
+                activity.getIntent().getAction().equals(Intent.ACTION_SEND_MULTIPLE) ||
                 activity.getIntent().getAction().equals(Intent.ACTION_VIEW) ||
                 activity.getIntent().getAction().equals(Intent.ACTION_GET_CONTENT));
     }

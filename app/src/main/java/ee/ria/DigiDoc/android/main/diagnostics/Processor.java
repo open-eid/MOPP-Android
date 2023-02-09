@@ -51,7 +51,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         diagnosticsSave = upstream -> upstream.switchMap(action -> {
             if (action.diagnosticsFile() == null) {
                 Timber.log(Log.ERROR, "Unable to get diagnostics file");
-                Toast.makeText(Activity.getContext().get(), Activity.getContext().get().getString(R.string.file_saved_error),
+                Toast.makeText(navigator.activity(), navigator.activity().getString(R.string.file_saved_error),
                         Toast.LENGTH_LONG).show();
                 return Observable.just(Result.DiagnosticsSaveResult.failure(new EmptyFileException()));
             }
@@ -78,7 +78,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         diagnosticsLogsSave = upstream -> upstream.switchMap(action -> {
             if (action.logFile() == null) {
                 Timber.log(Log.ERROR, "Unable to get diagnostics logs files");
-                Toast.makeText(Activity.getContext().get(), Activity.getContext().get().getString(R.string.file_saved_error),
+                Toast.makeText(navigator.activity(), navigator.activity().getString(R.string.file_saved_error),
                         Toast.LENGTH_LONG).show();
                 return Observable.just(Result.DiagnosticsSaveResult.failure(new EmptyFileException()));
             }
@@ -121,7 +121,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 removeLogFiles(activity.getApplicationContext());
             }
 
-            Toast.makeText(Activity.getContext().get(), Activity.getContext().get().getString(R.string.file_saved),
+            Toast.makeText(activity, activity.getString(R.string.file_saved),
                     Toast.LENGTH_LONG).show();
 
             activity.recreate();
