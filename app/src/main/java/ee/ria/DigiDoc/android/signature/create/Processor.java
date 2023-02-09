@@ -44,8 +44,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<Action.ChooseFilesAction, Result.ChooseFilesResult>
             chooseFiles;
 
-    private final ConfirmationDialog sivaConfirmationDialog = new ConfirmationDialog(Activity.getContext().get(),
-            R.string.siva_send_message_dialog, R.id.sivaConfirmationDialog);
+    private final ConfirmationDialog sivaConfirmationDialog;
 
     private static final ImmutableSet<String> TIMESTAMP_CONTAINER_EXTENSIONS = ImmutableSet.of("asics", "scs");
 
@@ -53,6 +52,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                       SignatureContainerDataSource signatureContainerDataSource,
                       Application application,
                       FileSystem fileSystem) {
+        sivaConfirmationDialog = new ConfirmationDialog(navigator.activity(),
+                R.string.siva_send_message_dialog, R.id.sivaConfirmationDialog);
+
         chooseFiles = upstream -> upstream
                 .switchMap(action -> {
                     if (action.intent() != null) {
@@ -78,7 +80,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     if (activityResult.resultCode() == RESULT_OK) {
                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
                                 parseGetContentIntent(application.getContentResolver(), activityResult.data(), fileSystem.getExternallyOpenedFilesDir()));
-                        ToastUtil.handleEmptyFileError(validFiles, application);
+                        ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
                         if (SivaUtil.isSivaConfirmationNeeded(validFiles)) {
                             sivaConfirmationDialog.show();
                             ClickableDialogUtil.makeLinksInDialogClickable(sivaConfirmationDialog);
@@ -118,9 +120,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         boolean isEmptyFileException = exceptions.stream().anyMatch(exception ->
                                 (exception instanceof EmptyFileException));
                         if (isEmptyFileException) {
-                            ToastUtil.showEmptyFileError(Activity.getContext().get());
+                            ToastUtil.showEmptyFileError(navigator.activity(), application);
                         } else {
-                            ToastUtil.showGeneralError(Activity.getContext().get());
+                            ToastUtil.showGeneralError(navigator.activity());
                         }
                     }
                     navigator.execute(Transaction.pop());

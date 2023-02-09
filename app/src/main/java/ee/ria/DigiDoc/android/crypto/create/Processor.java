@@ -144,7 +144,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 return parseIntent(data, application, fileSystem.getExternallyOpenedFilesDir())
                                         .onErrorReturn(throwable -> {
                                             if (throwable instanceof EmptyFileException) {
-                                                ToastUtil.showEmptyFileError(application);
+                                                ToastUtil.showEmptyFileError(navigator.activity(), application);
                                             }
                                             navigator.execute(Transaction.pop());
                                             return Result.InitialResult.failure(throwable);
@@ -210,12 +210,12 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                         ImmutableList.Builder<File> builder =
                                                 ImmutableList.<File>builder().addAll(dataFiles);
                                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(fileStreams);
-                                        ToastUtil.handleEmptyFileError(validFiles, application);
+                                        ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
                                         for (FileStream fileStream : validFiles) {
                                             File dataFile = fileSystem.cache(fileStream);
                                             if (dataFiles.contains(dataFile)) {
                                                 throw new IllegalArgumentException(
-                                                        Activity.getContext().get().getString(
+                                                        navigator.activity().getString(
                                                                 R.string.crypto_create_data_files_add_error_exists));
                                             }
                                             builder.add(dataFile);
@@ -289,7 +289,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             ) {
                                 ByteStreams.copy(inputStream, outputStream);
                             }
-                            Toast.makeText(application, Activity.getContext().get().getString(R.string.file_saved),
+                            Toast.makeText(application, navigator.activity().getString(R.string.file_saved),
                                     Toast.LENGTH_LONG).show();
                         }
                         return Observable.empty();
@@ -506,7 +506,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 .fromCallable(() -> {
                     ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
                             parseGetContentIntent(contentResolver, intent, externallyOpenedFileDir));
-                    ToastUtil.handleEmptyFileError(validFiles, application);
+                    ToastUtil.handleEmptyFileError(validFiles, application, application.getApplicationContext());
                     if (validFiles.size() == 1
                             && isContainerFileName(validFiles.get(0).displayName())) {
                         File file = fileSystem.addSignatureContainer(validFiles.get(0));
