@@ -226,4 +226,18 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         super.restoreHierarchyState(container);
         this.hierarchyState = container;
     }
+
+    private void setCustomAccessibilityFeedback(BottomNavigationItemView bottomNavigationItemView, @StringRes int contentDescription, String toolTipText) {
+        bottomNavigationItemView.setAccessibilityDelegate(new AccessibilityDelegate() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setContentDescription(getResources().getString(contentDescription).toLowerCase());
+                info.setTooltipText(toolTipText);
+                info.setClassName("");
+                info.setPackageName("");
+                info.setViewIdResourceName("");
+            }
+        });
+    }
 }

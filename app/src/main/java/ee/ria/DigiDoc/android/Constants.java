@@ -23,5 +23,10 @@ public final class Constants {
 
     public static final String SIGNATURE_CONTAINER_EXT = "asice";
 
+    /**
+     * Personal code
+     */
+    public static final int MAXIMUM_PERSONAL_CODE_LENGTH = 11;
+
     private Constants() {}
 }

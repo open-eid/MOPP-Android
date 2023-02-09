@@ -9,6 +9,7 @@
     <string name="main_home_navigation_crypto">CRYPTO</string>
     <string name="main_home_navigation_eid">MY eID</string>
 
+    <string name="main_home_logo">DigiDoc</string>
     <string name="main_home_menu_title">Menu</string>
     <string name="main_home_menu_button">Menu</string>
     <string name="main_home_menu_help">HELP</string>
@@ -36,6 +37,7 @@
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
+    <string name="main_about_digidoc_and_el_logos">The project is supported by the European Regional Development Fund</string>
     <string name="main_about_ria_digidoc_version_title">RIA DigiDoc version %1$s</string>
     <string name="main_about_software_developed_by_title">Estonian ID-software is released by Information System Authority</string>
     <string name="main_about_contact_information_title">In case of questions please contact our support via <a href="http://www.id.ee">id.ee</a></string>
@@ -64,6 +66,7 @@
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Choose a file to sign or validate</string>
+    <string name="signature_home_create_text_accessibility">Choose a file to sign or validate</string>
     <string name="signature_home_create_button">CHOOSE FILE</string>
 
     <!-- Signature List -->
@@ -168,6 +171,11 @@
     <string name="signature_update_mobile_id_info">Make sure the control code matches the one on phone screen and enter mobile-ID PIN2 code</string>
     <string name="signature_update_mobile_id_display_message">Sign document</string>
 
+
+    <string name="signature_update_mobile_id_invalid_country_code">Invalid country code.</string>
+    <string name="signature_update_mobile_id_invalid_phone_number">Phone number is not valid.</string>
+    <string name="signature_update_mobile_id_invalid_personal_code">Personal code is not valid.</string>
+
     <string name="signature_update_mobile_id_status_request_sent">Signing request sent</string>
     <string name="signature_update_mobile_id_status_request_ok">Request accepted</string>
     <string name="signature_update_mobile_id_status_no_country_code">Please include correct country code</string>
@@ -219,6 +227,8 @@
     <string name="signature_update_smart_id_error_message_access_rights">Failed to sign container. Check your Smart-ID service access settings. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
     <string name="signature_update_smart_id_error_technical_error">Failed to send request. Smart-ID service has encountered technical errors. Please try again later.</string>
 
+    <string name="signature_update_smart_id_invalid_personal_code">Personal code is not valid.</string>
+
     <string name="signature_update_id_card_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Reader found. Insert your ID-card into the reader.</string>
     <string name="signature_update_id_card_progress_message_card_detected">ID-card found. Requesting information...</string>
@@ -229,6 +239,8 @@
     <string name="signature_update_id_card_sign_pin2_invalid">Wrong PIN2. You have %1$d attempts left.</string>
     <string name="signature_update_id_card_sign_pin2_invalid_final">Wrong PIN2. You have 1 attempt left until your PIN2 is blocked.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 blocked. Go to My eID to unblock it.</string>
+
+    <string name="id_card_sign_pin_invalid_length">%1$s code must be at least %2$s digits long</string>
 
     <!-- Signature Details -->
     <string name="signature_details_title">Signature details</string>
@@ -254,6 +266,7 @@
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Choose a file to encrypt or decrypt</string>
+    <string name="crypto_home_create_text_accessibility">Choose a file to encrypt or decrypt</string>
     <string name="crypto_home_create_button">CHOOSE FILE</string>
 
     <!-- Crypto Create -->

@@ -1,12 +1,18 @@
 package ee.ria.DigiDoc.android.main.home;
 
+import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
+import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceOrientation;
+
 import android.content.Context;
+import android.content.res.Configuration;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
@@ -34,6 +40,7 @@ public final class HomeMenuView extends NestedScrollView {
     private final Button aboutView;
     private final Button diagnosticsView;
     private final RadioGroup localeView;
+    private final RadioButton englishButton;
 
     // Estonian TalkBack does not pronounce "dot"
     private final TextToSpeech textToSpeech = new TextToSpeech(getContext(),
@@ -86,6 +93,7 @@ public final class HomeMenuView extends NestedScrollView {
         aboutView = findViewById(R.id.mainHomeMenuAbout);
         diagnosticsView = findViewById(R.id.mainHomeMenuDiagnostics);
         localeView = findViewById(R.id.mainHomeMenuLocale);
+        englishButton = findViewById(R.id.mainHomeMenuLocaleEn);
 
         tintCompoundDrawables(helpView);
         tintCompoundDrawables(recentView);
@@ -97,6 +105,19 @@ public final class HomeMenuView extends NestedScrollView {
             helpView.requestFocus();
             helpView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
         }, 2000);
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (getDeviceOrientation(getContext()) == Configuration.ORIENTATION_LANDSCAPE) {
+            if (!isLargeFontEnabled(getResources())) {
+                int padding = convertPxToDp(14f, getContext());
+                englishButton.setPadding(padding, padding, padding, padding);
+                englishButton.setTextSize(24f);
+            }
+        }
     }
 
     public Observable closeButtonClicks() {

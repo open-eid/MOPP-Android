@@ -1,6 +1,11 @@
 package ee.ria.DigiDoc.android.eid;
 
+import static ee.ria.DigiDoc.common.PinConstants.PIN1_MIN_LENGTH;
+import static ee.ria.DigiDoc.common.PinConstants.PIN2_MIN_LENGTH;
+import static ee.ria.DigiDoc.common.PinConstants.PUK_MIN_LENGTH;
+
 import android.os.Parcelable;
+
 import androidx.annotation.StringRes;
 
 import com.google.auto.value.AutoValue;
@@ -13,10 +18,6 @@ import ee.ria.DigiDoc.idcard.CodeType;
 
 @AutoValue
 abstract class CodeUpdateAction implements Parcelable {
-
-    private static final int PIN1_MIN_LENGTH = 4;
-    private static final int PIN2_MIN_LENGTH = 5;
-    private static final int PUK_MIN_LENGTH = 8;
 
     abstract CodeType pinType();
     @CodeUpdateType abstract String updateType();

@@ -83,6 +83,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:autoSizeTextType="uniform"
+            android:textSize="@dimen/material_baseline_grid_3x"
+            android:autoSizeMaxTextSize="@dimen/material_baseline_grid_5x"
             android:padding="14dp"
             android:maxLines="2"
             android:text="@string/main_home_menu_locale_et" />
@@ -99,6 +101,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:autoSizeTextType="uniform"
+            android:textSize="@dimen/material_baseline_grid_3x"
+            android:autoSizeMaxTextSize="@dimen/material_baseline_grid_5x"
             android:padding="14dp"
             android:maxLines="4"
             android:text="@string/main_home_menu_locale_ru" />
@@ -115,7 +119,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:autoSizeTextType="uniform"
-            android:padding="22dp"
+            android:textSize="@dimen/material_baseline_grid_2.5x"
+            android:autoSizeMaxTextSize="@dimen/material_baseline_grid_5x"
+            android:padding="14dp"
             android:maxLines="2"
             android:text="@string/main_home_menu_locale_en" />
 

@@ -407,6 +407,7 @@ final class CryptoCreateAdapter extends
                     .subscribe(adapter.recipientRemoveClicksSubject);
             addButton.setVisibility(item.addButtonVisible() ? View.VISIBLE : View.GONE);
             addButton.setEnabled(item.addButtonEnabled());
+            addButton.setClickable(item.addButtonEnabled());
             addButton.setText(item.addButtonEnabled()
                     ? R.string.crypto_recipient_add_button
                     : R.string.crypto_recipient_add_button_added);
@@ -419,8 +420,10 @@ final class CryptoCreateAdapter extends
                 addButton.setContentDescription((addRecipientDescription + " " + nameView.getText()).toLowerCase());
             }
             clicks(addButton)
-                    .map(ignored ->
-                            ((RecipientItem) adapter.items.get(getBindingAdapterPosition())).recipient())
+                    .map(ignored -> {
+                        addButton.setEnabled(false);
+                        return ((RecipientItem) adapter.items.get(getBindingAdapterPosition())).recipient();
+                    })
                     .subscribe(adapter.recipientAddClicksSubject);
         }
     }

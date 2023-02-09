@@ -5,7 +5,8 @@
     <item type="id" name="appBar" />
     <item type="id" name="toolbar" />
     <item type="id" name="activityIndicator" />
-    <item type="id" name="activityIndicator_mobile_id" />
+    <item type="id" name="activityIndicatorMobileId" />
+    <item type="id" name="activityIndicatorSmartId" />
     <item type="id" name="activityOverlay" />
     <item type="id" name="listEmpty" />
 
@@ -232,7 +233,6 @@
     <item type="id" name="signatureUpdateSmartIdCountryText" />
     <item type="id" name="signatureUpdateSmartIdCountryLabel" />
     <item type="id" name="signatureUpdateSmartIdCountry" />
-    <item type="id" name="signatureUpdateSmartIdPersonalCodeText" />
     <item type="id" name="signatureUpdateSmartIdPersonalCodeLabel" />
     <item type="id" name="signatureUpdateSmartIdPersonalCode" />
     <item type="id" name="signatureUpdateSmartIdRememberMe" />
@@ -244,6 +244,7 @@
     <item type="id" name="signatureUpdateIdCardSignMessage" />
     <item type="id" name="signatureUpdateIdCardSignData" />
     <item type="id" name="signatureUpdateIdCardSignPin2" />
+    <item type="id" name="signatureUpdateIdCardSignPin2Label" />
     <item type="id" name="signatureUpdateIdCardSignPin2Error" />
 
     <!-- Signature Add -->
@@ -295,6 +296,7 @@
     <item type="id" name="cryptoCreateDecryptContainer" />
     <item type="id" name="cryptoCreateDecryptData" />
     <item type="id" name="cryptoCreateDecryptPin1" />
+    <item type="id" name="cryptoCreateDecryptPin1Label" />
     <item type="id" name="cryptoCreateDecryptPin1Error" />
 
     <!-- EID Home -->
@@ -334,8 +336,8 @@
     <item type="id" name="eidHomeCodeUpdateText" />
     <item type="id" name="eidHomeCodeUpdateCurrentLabel" />
     <item type="id" name="eidHomeCodeUpdateCurrent" />
-    <item type="id" name="eidHomeCodeUpdateNewLabel" />
-    <item type="id" name="eidHomeCodeUpdateNew" />
+    <item type="id" name="eidHomeUpdateNewLabel" />
+    <item type="id" name="eidHomeUpdateNewText" />
     <item type="id" name="eidHomeCodeUpdateRepeatLabel" />
     <item type="id" name="eidHomeCodeUpdateRepeat" />
     <item type="id" name="eidHomeCodeUpdateNegativeButton" />
