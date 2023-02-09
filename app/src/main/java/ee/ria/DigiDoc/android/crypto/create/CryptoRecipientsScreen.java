@@ -178,6 +178,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         toolbarView.setNavigationContentDescription(R.string.back);
 
         searchView = view.findViewById(R.id.cryptoRecipientsSearch);
+        searchView.setOnClickListener(v -> searchView.onActionViewExpanded());
         if (getResources() != null) {
             searchView.setQueryHint(getResources().getString(R.string.crypto_recipients_search));
             searchView.setIconifiedByDefault(false);
@@ -245,6 +246,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     protected void onDetach(@NonNull View view) {
         disposables.detach();
         navigator.removeBackButtonClickListener(this);
+        searchView.clearFocus();
+        searchView.setOnCloseListener(null);
         super.onDetach(view);
     }
 }
