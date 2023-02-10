@@ -8,7 +8,6 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
@@ -363,7 +362,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             mobileIdContainerView.setFocusable(true);
             mobileIdContainerView.setFocusableInTouchMode(true);
 
-            SignatureUpdateProgressBar.startProgressBar(mobileIdProgressBar);
+            if (mobileIdProgressBar.getProgress() == 0) {
+                SignatureUpdateProgressBar.startProgressBar(mobileIdProgressBar);
+            }
 
             if (!signingInfoDelegated) {
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_mobile_id_status_request_sent);
@@ -386,7 +387,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             smartIdContainerView.setFocusable(true);
             smartIdContainerView.setFocusableInTouchMode(true);
 
-            SignatureUpdateProgressBar.startProgressBar(smartIdProgressBar);
+            if (smartIdProgressBar.getProgress() == 0) {
+                SignatureUpdateProgressBar.startProgressBar(smartIdProgressBar);
+            }
 
             if (!signingInfoDelegated) {
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_mobile_id_status_request_sent);
@@ -446,6 +449,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     }
 
     private void resetSignatureAddDialog() {
+        SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
+        SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
         signatureAddView.reset(viewModel);
     }
 
@@ -515,8 +520,12 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                         sendMethodSelectionAccessibilityEvent(method);
                         return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile);
                 }),
-                signatureAddDialog.positiveButtonClicks().map(ignored -> Intent.SignatureAddIntent.sign(signatureAddView.method(),
-                        isExistingContainer, containerFile, signatureAddView.request())),
+                signatureAddDialog.positiveButtonClicks().map(ignored -> {
+                    SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
+                    SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
+                    return Intent.SignatureAddIntent.sign(signatureAddView.method(),
+                            isExistingContainer, containerFile, signatureAddView.request());
+                }),
                 signatureAddIntentSubject
         );
     }
