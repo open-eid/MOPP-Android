@@ -34,6 +34,7 @@
     <string name="main_settings_postal_code_title">ZIP code</string>
     <string name="main_settings_signature_profile_title">Default file type</string>
     <string name="main_settings_open_all_filetypes_title">Allow app to use all file types (requires app restart)</string>
+    <string name="main_settings_allow_screenshots_title">Allow screenshots (requires app restart)</string>
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>

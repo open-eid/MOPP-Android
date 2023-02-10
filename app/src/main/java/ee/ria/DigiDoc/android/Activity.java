@@ -75,7 +75,7 @@ public final class Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Prevent screen recording
-        SecureUtil.markAsSecure(getWindow());
+        SecureUtil.markAsSecure(this, getWindow());
 
         handleCrashOnPreviousExecution();
 
@@ -125,7 +125,7 @@ public final class Activity extends AppCompatActivity {
                 return;
             }
             Dialog crashReportDialog = new Dialog(this);
-            SecureUtil.markAsSecure(crashReportDialog.getWindow());
+            SecureUtil.markAsSecure(this, crashReportDialog.getWindow());
             crashReportDialog.setContentView(R.layout.crash_report_dialog);
 
             Button sendButton = crashReportDialog.findViewById(R.id.sendButton);

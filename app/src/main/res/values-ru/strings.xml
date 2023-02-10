@@ -34,6 +34,7 @@
     <string name="main_settings_postal_code_title">Почтовый код</string>
     <string name="main_settings_signature_profile_title">Формат файла по умолчанию</string>
     <string name="main_settings_open_all_filetypes_title">Разрешить приложению открывать все типы файлов (потребуется перезапуск приложения)</string>
+    <string name="main_settings_allow_screenshots_title">Разрешить скриншоты (потребуется перезапуск приложения)</string>
 
     <!-- Main About -->
     <string name="main_about_title">Информация</string>

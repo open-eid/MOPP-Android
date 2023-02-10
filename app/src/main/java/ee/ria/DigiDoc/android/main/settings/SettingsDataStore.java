@@ -152,6 +152,16 @@ public final class SettingsDataStore {
         editor.commit();
     }
 
+    public Boolean getIsScreenshotAllowed() {
+        return preferences.getBoolean(resources.getString(R.string.main_settings_allow_screenshots_key), false);
+    }
+
+    public void setIsScreenshotAllowed(boolean isEnabled) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(resources.getString(R.string.main_settings_allow_screenshots_key), isEnabled);
+        editor.commit();
+    }
+
     public String getTsaUrl() {
         return preferences.getString(resources.getString(R.string.main_settings_tsa_url_key), "");
     }
