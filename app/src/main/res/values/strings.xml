@@ -444,10 +444,6 @@
     <string name="eid_home_code_update_repeat_error_mismatch_puk">New PUK codes must match</string>
 
     <!--  General  -->
-    <string name="signature_content_description">Signature, tab %1$d of %2$d</string>
-    <string name="crypto_content_description">Crypto, tab %1$d of %2$d</string>
-    <string name="my_eid_content_description">My e-ID, tab %1$d of %2$d</string>
-
     <string name="decrypt_content_description">Decrypt document, tab %1$d of %2$d</string>
     <string name="sign_send_content_description">Sign, tab %1$d of %2$d</string>
     <string name="decrypt_send_content_description">Share, tab %1$d of %2$d</string>
@@ -550,6 +546,7 @@
     <!-- Home -->
     <string name="main_home_navigation_signature_accessibility">Signature</string>
     <string name="main_home_navigation_crypto_accessibility">Crypto</string>
+    <string name="main_home_navigation_myEid_accessibility">My e I D</string>
 
     <!-- Menu -->
     <string name="main_home_menu_help_accessibility">Help</string>

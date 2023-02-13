@@ -446,9 +446,6 @@
     <string name="eid_home_code_update_repeat_error_mismatch_puk">Новые PUK-коды должны совпадать</string>
 
     <!--  General  -->
-    <string name="signature_content_description">Подпись, вкладка %1$d из %2$d</string>
-    <string name="crypto_content_description">Крипто, вкладка %1$d из %2$d</string>
-    <string name="my_eid_content_description">Мой e-ID, вкладка %1$d из %2$d</string>
 
     <string name="decrypt_content_description">Дешифрировать документ, вкладка %1$d из %2$d</string>
     <string name="sign_send_content_description">Подписать, вкладка %1$d из %2$d</string>
@@ -554,6 +551,7 @@
     <!-- Home -->
     <string name="main_home_navigation_signature_accessibility">Подпись</string>
     <string name="main_home_navigation_crypto_accessibility">Крипто</string>
+    <string name="main_home_navigation_myEid_accessibility">Мой e I D</string>
 
     <!-- Menu -->
     <string name="main_home_menu_help_accessibility">Помощь</string>
