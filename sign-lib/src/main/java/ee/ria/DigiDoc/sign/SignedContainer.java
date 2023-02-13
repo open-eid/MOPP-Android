@@ -400,14 +400,18 @@ public abstract class SignedContainer {
         X509Certificate tsCertificate = null;
         if (signature.TimeStampCertificateDer() != null && signature.TimeStampCertificateDer().length > 0) {
             tsCertificate = x509Certificate(signature.TimeStampCertificateDer());
-            tsCertificateIssuer = getX509CertificateIssuer(tsCertificate);
+            if (tsCertificate != null) {
+                tsCertificateIssuer = getX509CertificateIssuer(tsCertificate);
+            }
         }
 
         String ocspCertificateIssuer = "";
         X509Certificate ocspCertificate = null;
         if (signature.OCSPCertificateDer() != null && signature.OCSPCertificateDer().length > 0) {
             ocspCertificate = x509Certificate(signature.OCSPCertificateDer());
-            ocspCertificateIssuer = getX509CertificateIssuer(ocspCertificate);
+            if (ocspCertificate != null) {
+                ocspCertificateIssuer = getX509CertificateIssuer(ocspCertificate);
+            }
         }
 
         String ocspTime = "";

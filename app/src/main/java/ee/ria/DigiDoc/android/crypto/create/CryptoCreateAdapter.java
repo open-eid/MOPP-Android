@@ -283,7 +283,7 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((AddButtonItem) adapter.items.get(getBindingAdapterPosition())).text())
                     .subscribe(adapter.addButtonClicksSubject);
-            if (buttonView.getText() == buttonView.getResources().getString(R.string.documents_add_button_accessibility)) {
+            if (buttonView.getText().equals(buttonView.getResources().getString(R.string.documents_add_button_accessibility))) {
                 new Handler(Looper.getMainLooper()).postDelayed(() ->
                         itemView.findViewById(R.id.cryptoCreateAddButton)
                                 .sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED),

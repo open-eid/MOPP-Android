@@ -241,13 +241,15 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         listView.clearFocus();
 
         TextView titleView = getTitleView(toolbarView);
-        AccessibilityUtils.disableDoubleTapToActivateFeedback(titleView);
-        if (titleView != null && !isTitleViewFocused && isNestedContainer) {
-            titleView.postDelayed(() -> {
-                titleView.requestFocus();
-                titleView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
-            }, 1000);
-            isTitleViewFocused = true;
+        if (titleView != null) {
+            AccessibilityUtils.disableDoubleTapToActivateFeedback(titleView);
+            if (!isTitleViewFocused && isNestedContainer) {
+                titleView.postDelayed(() -> {
+                    titleView.requestFocus();
+                    titleView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+                }, 1000);
+                isTitleViewFocused = true;
+            }
         }
 
         if (isNestedContainer) {
