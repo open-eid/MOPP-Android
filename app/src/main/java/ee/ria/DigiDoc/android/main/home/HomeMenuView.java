@@ -9,11 +9,14 @@ import android.content.res.Configuration;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,7 +43,9 @@ public final class HomeMenuView extends NestedScrollView {
     private final Button aboutView;
     private final Button diagnosticsView;
     private final RadioGroup localeView;
+    private final RadioButton estonianButton;
     private final RadioButton englishButton;
+    private final RadioButton russianButton;
 
     // Estonian TalkBack does not pronounce "dot"
     private final TextToSpeech textToSpeech = new TextToSpeech(getContext(),
@@ -93,7 +98,9 @@ public final class HomeMenuView extends NestedScrollView {
         aboutView = findViewById(R.id.mainHomeMenuAbout);
         diagnosticsView = findViewById(R.id.mainHomeMenuDiagnostics);
         localeView = findViewById(R.id.mainHomeMenuLocale);
+        estonianButton = findViewById(R.id.mainHomeMenuLocaleEt);
         englishButton = findViewById(R.id.mainHomeMenuLocaleEn);
+        russianButton = findViewById(R.id.mainHomeMenuLocaleRu);
 
         tintCompoundDrawables(helpView);
         tintCompoundDrawables(recentView);
@@ -105,19 +112,15 @@ public final class HomeMenuView extends NestedScrollView {
             helpView.requestFocus();
             helpView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
         }, 2000);
+
+        setFontSize();
     }
 
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        if (getDeviceOrientation(getContext()) == Configuration.ORIENTATION_LANDSCAPE) {
-            if (!isLargeFontEnabled(getResources())) {
-                int padding = convertPxToDp(14f, getContext());
-                englishButton.setPadding(padding, padding, padding, padding);
-                englishButton.setTextSize(24f);
-            }
-        }
+        setFontSize();
     }
 
     public Observable closeButtonClicks() {
@@ -150,5 +153,63 @@ public final class HomeMenuView extends NestedScrollView {
         return locales.stream().anyMatch(lo ->
                 availableLocales.stream().anyMatch(al -> al.getLanguage().equals(lo.getLanguage()))
         );
+    }
+
+    private void setFontSize() {
+        if (isLargeFontEnabled(getResources())) {
+            setLargeFontTextSize();
+        } else {
+            setRegularFontTextSize();
+        }
+    }
+
+    private void setRegularFontTextSize() {
+        setTextSize();
+        setButtonsParameters(72, localeView);
+        setAutoTextSizeNone();
+    }
+
+    private void setButtonsParameters(int height, View view) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.height = convertPxToDp(height, getContext());
+        view.setLayoutParams(params);
+    }
+
+    private void setLargeFontTextSize() {
+        setButtonsParameters(100, localeView);
+
+        if (getDeviceOrientation(getContext()) == Configuration.ORIENTATION_LANDSCAPE) {
+            setTextSize();
+            setAutoTextSizeNone();
+        } else {
+            setAutoTextSize();
+        }
+    }
+
+    private void setTextSize() {
+        int textSize = 18;
+        estonianButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSize);
+        englishButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSize);
+        russianButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSize);
+    }
+
+    private void setAutoTextSize() {
+        int minTextSize = 17;
+        int maxTextSize = 19;
+        int largeMaxTextSize = 21;
+        int autoStepSize = 1;
+
+        estonianButton.setAutoSizeTextTypeUniformWithConfiguration(
+                minTextSize, maxTextSize, autoStepSize, TypedValue.COMPLEX_UNIT_DIP);
+        englishButton.setAutoSizeTextTypeUniformWithConfiguration(
+                minTextSize, largeMaxTextSize, autoStepSize, TypedValue.COMPLEX_UNIT_DIP);
+        russianButton.setAutoSizeTextTypeUniformWithConfiguration(
+                minTextSize, largeMaxTextSize, autoStepSize, TypedValue.COMPLEX_UNIT_DIP);
+    }
+
+    private void setAutoTextSizeNone() {
+        estonianButton.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_NONE);
+        englishButton.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_NONE);
+        russianButton.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_NONE);
     }
 }

@@ -19,6 +19,8 @@ android {
             abiFilters = []
             abiFilters.addAll(appAbiFilters.split(';').collect{it as String})
         }
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -122,5 +124,7 @@ dependencies {
     implementation project(':smart-id-lib')
 
     testAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
-    testImplementation "junit:junit:${junitVersion}"
+    androidTestImplementation "junit:junit:${junitVersion}"
+    androidTestImplementation "androidx.test.ext:junit:${androidxTestVersion}"
+    androidTestImplementation "androidx.test:rules:${androidxTestRulesVersion}"
 }
