@@ -348,7 +348,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         });
 
         recipientsSearch = upstream -> upstream.switchMap(intent -> {
-            if (intent.query() == null) {
+            if (intent.query() == null || intent.query().isEmpty()) {
                 return Observable.just(Result.RecipientsSearchResult.clear());
             } else {
                 return Observable

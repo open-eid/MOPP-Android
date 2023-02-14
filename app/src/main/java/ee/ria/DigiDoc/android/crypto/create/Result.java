@@ -228,7 +228,7 @@ interface Result extends MviResult<ViewState> {
 
         @State abstract String state();
 
-        abstract ImmutableList<Certificate> result();
+        @Nullable abstract ImmutableList<Certificate> result();
 
         @Nullable abstract Throwable error();
 
@@ -254,11 +254,11 @@ interface Result extends MviResult<ViewState> {
         }
 
         static RecipientsSearchResult clear() {
-            return create(State.IDLE, ImmutableList.of(), null);
+            return create(State.CLEAR, null, null);
         }
 
         private static RecipientsSearchResult create(
-                @State String state, ImmutableList<Certificate> result, @Nullable Throwable error) {
+                @State String state, @Nullable ImmutableList<Certificate> result, @Nullable Throwable error) {
             return new AutoValue_Result_RecipientsSearchResult(state, result, error);
         }
     }

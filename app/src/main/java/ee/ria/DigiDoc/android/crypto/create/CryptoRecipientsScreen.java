@@ -75,6 +75,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     private View activityOverlayView;
     private View activityIndicatorView;
 
+    private String submittedQuery = "";
     private ImmutableList<Certificate> recipients = ImmutableList.of();
 
     @SuppressWarnings("WeakerAccess")
@@ -100,13 +101,20 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                 queryTextChangeEvents(searchView)
                         .filter(SearchViewQueryTextEvent::isSubmitted)
                         .doOnNext(ignored -> {
-                            String trimmed = StringUtils.trim(searchViewInnerText.getText().toString());
-                            searchView.setQuery(trimmed, false);
-                            searchView.clearFocus();
+                            String query = StringUtils.trim(searchView.getQuery().toString());
+                            submittedQuery = query;
+                            setDoneSearchQuery(query);
                         })
                         .map(event ->
-                                Intent.RecipientsSearchIntent.search(StringUtils.trim(event.getQueryText().toString()))),
-                backButtonClicksSubject.map(ignored -> Intent.RecipientsSearchIntent.clear()));
+                                Intent.RecipientsSearchIntent.search(
+                                        StringUtils.trim(event.getQueryText().toString()))),
+                backButtonClicksSubject.map(ignored -> Intent.RecipientsSearchIntent.clear()),
+                clicks(searchView)
+                        .map(ignored -> StringUtils.trim(searchView.getQuery().toString()))
+                        .filter(trimmedQuery -> (trimmedQuery != null &&
+                                !trimmedQuery.isEmpty()) && !submittedQuery.equals(trimmedQuery))
+                        .map(query -> Intent.RecipientsSearchIntent.search(
+                                setSearchQuery(query))));
     }
 
     private Observable<Intent.RecipientAddIntent> recipientAddIntent() {
@@ -178,7 +186,6 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         toolbarView.setNavigationContentDescription(R.string.back);
 
         searchView = view.findViewById(R.id.cryptoRecipientsSearch);
-        searchView.setOnClickListener(v -> searchView.onActionViewExpanded());
         if (getResources() != null) {
             searchView.setQueryHint(getResources().getString(R.string.crypto_recipients_search));
             searchView.setIconifiedByDefault(false);
@@ -223,6 +230,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         }
 
         searchView.setSubmitButtonEnabled(true);
+        searchView.setEnabled(true);
         RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());
@@ -231,6 +239,21 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         return view;
+    }
+
+    private void setDoneSearchQuery(String text) {
+        searchView.setQuery(StringUtils.trim(text), false);
+        searchView.clearFocus();
+    }
+
+    private String setSearchQuery(String text) {
+        if (text != null && !text.isEmpty()) {
+            String trimmed = StringUtils.trim(text);
+            submittedQuery = trimmed;
+            setDoneSearchQuery(trimmed);
+            return trimmed;
+        }
+        return "";
     }
 
     @Override
