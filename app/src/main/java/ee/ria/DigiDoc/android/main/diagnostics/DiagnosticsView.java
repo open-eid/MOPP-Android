@@ -68,12 +68,10 @@ import timber.log.Timber;
 
 public final class DiagnosticsView extends CoordinatorLayout {
 
+    private final Navigator navigator;
     private final SimpleDateFormat dateFormat;
     private final Toolbar toolbarView;
-    private final ConfirmationDialog diagnosticsRestartConfirmationDialog = new ConfirmationDialog(Activity.getContext().get(),
-            R.string.main_diagnostics_restart_message, R.id.mainDiagnosticsRestartConfirmationDialog);
-
-    private final Navigator navigator;
+    private final ConfirmationDialog diagnosticsRestartConfirmationDialog;
 
     private final ViewDisposables disposables;
 
@@ -92,6 +90,9 @@ public final class DiagnosticsView extends CoordinatorLayout {
         toolbarView = findViewById(R.id.toolbar);
         View saveDiagnosticsButton = findViewById(R.id.configurationSaveButton);
         navigator = Application.component(context).navigator();
+
+        diagnosticsRestartConfirmationDialog = new ConfirmationDialog(navigator.activity(),
+                R.string.main_diagnostics_restart_message, R.id.mainDiagnosticsRestartConfirmationDialog);
 
         SwitchCompat activateLogFileGenerating = findViewById(R.id.mainDiagnosticsLogging);
         activateLogFileGenerating.setChecked(((Activity) this.getContext()).getSettingsDataStore().getIsLogFileGenerationEnabled());

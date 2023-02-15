@@ -1,6 +1,9 @@
 package ee.ria.DigiDoc.android.main.home;
 
 import static android.util.TypedValue.COMPLEX_UNIT_SP;
+import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
+import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceOrientation;
 
 import android.content.Context;
 import android.content.res.Configuration;
