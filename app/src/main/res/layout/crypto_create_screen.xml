@@ -77,6 +77,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/crypto_create_decrypt_button"
+            android:autoSizeTextType="uniform"
+            android:lines="1"
+            android:autoSizeMinTextSize="11dp"
+            android:autoSizeMaxTextSize="24dp"
+            android:autoSizeStepGranularity="1dp"
             android:drawableTop="@drawable/ic_icon_crypto" />
 
         <Space
@@ -91,6 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/crypto_create_send_button"
+            android:lines="1"
             android:drawableTop="@drawable/ic_icon_share" />
 
     </LinearLayout>
