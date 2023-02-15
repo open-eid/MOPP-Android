@@ -304,6 +304,8 @@
     <string name="crypto_recipients_title">Добавить получателей</string>
     <string name="crypto_recipients_search">Введите личный код, код компании или регистра</string>
     <string name="crypto_recipients_search_result_empty">У человека или компании нет действующего сертификата.\nДля шифрования необходимо иметь действующий сертификат.\nЕсли у вас возникнут вопросы, пожалуйста, обратитесь на id.ee.</string>
+    <string name="crypto_recipients_add_all">ДОБАВИТЬ ВСЕ</string>
+    <string name="crypto_recipients_add_all_accessibility">Добавить все</string>
     <string name="crypto_recipients_selected_subhead">Добавлен получатель</string>
     <string name="crypto_recipients_done_button">ПОДТВЕРДИТЬ</string>
 
