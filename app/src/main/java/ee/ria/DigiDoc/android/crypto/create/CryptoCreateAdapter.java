@@ -39,6 +39,8 @@ import io.reactivex.rxjava3.subjects.Subject;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.Constants.VOID;
 
+import org.apache.commons.lang3.StringUtils;
+
 final class CryptoCreateAdapter extends
         RecyclerView.Adapter<CryptoCreateAdapter.CreateViewHolder<CryptoCreateAdapter.Item>> {
 
@@ -283,7 +285,7 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((AddButtonItem) adapter.items.get(getBindingAdapterPosition())).text())
                     .subscribe(adapter.addButtonClicksSubject);
-            if (buttonView.getText().equals(buttonView.getResources().getString(R.string.documents_add_button_accessibility))) {
+            if (StringUtils.equals(buttonView.getText(), buttonView.getResources().getString(R.string.documents_add_button_accessibility))) {
                 new Handler(Looper.getMainLooper()).postDelayed(() ->
                         itemView.findViewById(R.id.cryptoCreateAddButton)
                                 .sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED),
