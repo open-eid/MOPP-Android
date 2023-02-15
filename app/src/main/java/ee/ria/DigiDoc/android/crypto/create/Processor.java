@@ -5,6 +5,7 @@ import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_DATA_FILE_ADD;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_INITIAL;
 import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
+import static ee.ria.DigiDoc.android.utils.Immutables.merge;
 import static ee.ria.DigiDoc.android.utils.Immutables.with;
 import static ee.ria.DigiDoc.android.utils.Immutables.without;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
@@ -100,6 +101,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ObservableTransformer<Intent.RecipientAddIntent,
             Result.RecipientAddResult> recipientAdd;
+
+    private final ObservableTransformer<Intent.RecipientAddAllIntent,
+            Result.RecipientAddAllResult> recipientAddAll;
 
     private final ObservableTransformer<Intent.RecipientRemoveIntent,
                                         Result.RecipientRemoveResult> recipientRemove;
@@ -381,6 +385,12 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                     .doFinally(() ->
                         AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_added)));
 
+        recipientAddAll = upstream -> upstream.switchMap(intent ->
+                Observable.fromCallable(() ->
+                                Result.RecipientAddAllResult.create(merge(intent.recipients(), intent.addedRecipients())))
+                        .doFinally(() ->
+                                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipients_added)));
+
         recipientRemove = upstream -> upstream.switchMap(intent ->
                 Observable.fromCallable(() ->
                         Result.RecipientRemoveResult.create(without(intent.recipients(), intent.recipient())))
@@ -494,6 +504,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .compose(recipientsScreenDoneButtonClick),
                 shared.ofType(Intent.RecipientsSearchIntent.class).compose(recipientsSearch),
                 shared.ofType(Intent.RecipientAddIntent.class).compose(recipientAdd),
+                shared.ofType(Intent.RecipientAddAllIntent.class).compose(recipientAddAll),
                 shared.ofType(Intent.RecipientRemoveIntent.class).compose(recipientRemove),
                 shared.ofType(Intent.EncryptIntent.class).compose(encrypt),
                 shared.ofType(Intent.DecryptionIntent.class).compose(decryption),

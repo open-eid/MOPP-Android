@@ -34,6 +34,7 @@
     <string name="main_settings_postal_code_title">ZIP code</string>
     <string name="main_settings_signature_profile_title">Default file type</string>
     <string name="main_settings_open_all_filetypes_title">Allow app to use all file types (requires app restart)</string>
+    <string name="main_settings_allow_screenshots_title">Allow screenshots (requires app restart)</string>
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
@@ -301,6 +302,8 @@
     <string name="crypto_recipients_title">Add recipients</string>
     <string name="crypto_recipients_search">Enter personal code, company or registry code</string>
     <string name="crypto_recipients_search_result_empty">Person or company does not own a valid certificate.\nIt is necessary to have a valid certificate for encryption.\nIn case of questions please contact our support via id.ee.</string>
+    <string name="crypto_recipients_add_all">ADD ALL</string>
+    <string name="crypto_recipients_add_all_accessibility">Add all</string>
     <string name="crypto_recipients_selected_subhead">Added recipients</string>
     <string name="crypto_recipients_done_button">CONFIRM</string>
 
@@ -443,10 +446,6 @@
     <string name="eid_home_code_update_repeat_error_mismatch_puk">New PUK codes must match</string>
 
     <!--  General  -->
-    <string name="signature_content_description">Signature, tab %1$d of %2$d</string>
-    <string name="crypto_content_description">Crypto, tab %1$d of %2$d</string>
-    <string name="my_eid_content_description">My e-ID, tab %1$d of %2$d</string>
-
     <string name="decrypt_content_description">Decrypt document, tab %1$d of %2$d</string>
     <string name="sign_send_content_description">Sign, tab %1$d of %2$d</string>
     <string name="decrypt_send_content_description">Share, tab %1$d of %2$d</string>
@@ -549,6 +548,7 @@
     <!-- Home -->
     <string name="main_home_navigation_signature_accessibility">Signature</string>
     <string name="main_home_navigation_crypto_accessibility">Crypto</string>
+    <string name="main_home_navigation_myEid_accessibility">My e I D</string>
 
     <!-- Menu -->
     <string name="main_home_menu_help_accessibility">Help</string>

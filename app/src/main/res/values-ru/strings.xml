@@ -34,6 +34,7 @@
     <string name="main_settings_postal_code_title">Почтовый код</string>
     <string name="main_settings_signature_profile_title">Формат файла по умолчанию</string>
     <string name="main_settings_open_all_filetypes_title">Разрешить приложению открывать все типы файлов (потребуется перезапуск приложения)</string>
+    <string name="main_settings_allow_screenshots_title">Разрешить скриншоты (потребуется перезапуск приложения)</string>
 
     <!-- Main About -->
     <string name="main_about_title">Информация</string>
@@ -303,6 +304,8 @@
     <string name="crypto_recipients_title">Добавить получателей</string>
     <string name="crypto_recipients_search">Введите личный код, код компании или регистра</string>
     <string name="crypto_recipients_search_result_empty">У человека или компании нет действующего сертификата.\nДля шифрования необходимо иметь действующий сертификат.\nЕсли у вас возникнут вопросы, пожалуйста, обратитесь на id.ee.</string>
+    <string name="crypto_recipients_add_all">ДОБАВИТЬ ВСЕ</string>
+    <string name="crypto_recipients_add_all_accessibility">Добавить все</string>
     <string name="crypto_recipients_selected_subhead">Добавлен получатель</string>
     <string name="crypto_recipients_done_button">ПОДТВЕРДИТЬ</string>
 
@@ -445,9 +448,6 @@
     <string name="eid_home_code_update_repeat_error_mismatch_puk">Новые PUK-коды должны совпадать</string>
 
     <!--  General  -->
-    <string name="signature_content_description">Подпись, вкладка %1$d из %2$d</string>
-    <string name="crypto_content_description">Крипто, вкладка %1$d из %2$d</string>
-    <string name="my_eid_content_description">Мой e-ID, вкладка %1$d из %2$d</string>
 
     <string name="decrypt_content_description">Дешифрировать документ, вкладка %1$d из %2$d</string>
     <string name="sign_send_content_description">Подписать, вкладка %1$d из %2$d</string>
@@ -553,6 +553,7 @@
     <!-- Home -->
     <string name="main_home_navigation_signature_accessibility">Подпись</string>
     <string name="main_home_navigation_crypto_accessibility">Крипто</string>
+    <string name="main_home_navigation_myEid_accessibility">Мой e I D</string>
 
     <!-- Menu -->
     <string name="main_home_menu_help_accessibility">Помощь</string>
