@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static android.util.TypedValue.COMPLEX_UNIT_SP;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
 
@@ -8,10 +9,11 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build;
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
@@ -191,6 +193,31 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         documentAddProgressBar.setVisibility(GONE);
 
         setupAccessibilityTabs();
+
+        setActionButtonsTextSize();
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        setActionButtonsTextSize();
+    }
+
+    private void setActionButtonsTextSize() {
+        Configuration configuration = getResources().getConfiguration();
+        float fontScale = configuration.fontScale;
+
+        signatureAddButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
+        sendButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
+
+        if (fontScale > 1) {
+            signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
+            sendButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
+        } else {
+            signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
+            sendButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
+        }
     }
 
     @SuppressWarnings("unchecked")
