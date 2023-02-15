@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -188,6 +189,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                 parseGetContentIntent(application.getContentResolver(), data, fileSystem.getExternallyOpenedFilesDir()));
                                         ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
                                         ImmutableList<FileStream> filesNotInContainer = getFilesNotInContainer(validFiles, action.containerFile());
+                                        if (filesNotInContainer.isEmpty()) {
+                                            throw new FileAlreadyExistsException(navigator.activity()
+                                                    .getResources()
+                                                    .getString(R.string.signature_update_documents_add_error_exists));
+                                        }
                                         announceAccessibilityFilesAddedEvent(application.getApplicationContext(), filesNotInContainer.size());
                                         return signatureContainerDataSource
                                                 .addDocuments(action.containerFile(), filesNotInContainer)
@@ -440,15 +446,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private ImmutableList<FileStream> getFilesNotInContainer(ImmutableList<FileStream> validFiles, File container) throws Exception {
         List<FileStream> filesNotInContainer = new ArrayList<>();
         List<String> containerDataFileNames = new ArrayList<>();
-        if (validFiles.size() > 1 && SignedContainer.isContainer(container)) {
+        if (!validFiles.isEmpty() && SignedContainer.isContainer(container)) {
             SignedContainer signedContainer = SignedContainer.open(container);
             ImmutableList<DataFile> dataFiles = signedContainer.dataFiles();
             for (DataFile dataFile : dataFiles) {
-                containerDataFileNames.add(dataFile.name());
+                containerDataFileNames.add(FileUtil.normalizeString(dataFile.name()));
             }
 
             for (FileStream validFile : validFiles) {
-                if (!containerDataFileNames.contains(validFile.displayName())) {
+                if (!containerDataFileNames.contains(FileUtil.normalizeString(validFile.displayName()))) {
                     filesNotInContainer.add(validFile);
                 }
             }
