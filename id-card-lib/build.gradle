@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 
 android {
+    namespace 'ee.ria.DigiDoc.idcard'
     compileSdkVersion project.compileSdkVersion
 
     defaultConfig {

@@ -277,8 +277,6 @@
     <string name="crypto_create_decrypt_success_message">DEKRÜPTEERIMINE ÕNNESTUS</string>
     <string name="crypto_create_name_update_button">Muuda ümbriku nime</string>
     <string name="crypto_create_data_files_title">Krüpteeritud failid</string>
-    <string name="crypto_create_data_files_add_button_description">Lisa veel faile</string>
-    <string name="crypto_create_data_files_add_button">+ LISA VEEL FAILE</string>
     <string name="crypto_create_data_files_add_error_exists">Fail on juba ümbrikus olemas</string>
     <string name="crypto_create_data_file_remove_button">Eemalda fail</string>
     <string name="crypto_create_remove_data_file_confirmation_message">Soovid eemaldada faili ümbrikust?</string>
@@ -286,7 +284,6 @@
     <string name="crypto_create_data_file_save_button">Salvesta fail ümbrikust</string>
     <string name="crypto_create_recipients_title">Adressaadid</string>
     <string name="crypto_create_recipients_empty">Adressaadid puuduvad</string>
-    <string name="crypto_create_recipients_add_button_description">Lisa adresaat</string>
     <string name="crypto_create_recipients_add_button">+ LISA ADRESSAAT</string>
     <string name="crypto_create_encrypt_button">KRÜPTEERI</string>
     <string name="crypto_create_encrypt_button_description">Krüpteeri dokument</string>
