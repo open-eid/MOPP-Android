@@ -21,6 +21,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +45,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
+import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -183,10 +187,16 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     if (activityResult.resultCode() == RESULT_OK && data != null) {
                                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
                                                 parseGetContentIntent(application.getContentResolver(), data, fileSystem.getExternallyOpenedFilesDir()));
-                                        ToastUtil.handleEmptyFileError(validFiles, application);
-                                        announceAccessibilityFilesAddedEvent(application.getApplicationContext(), validFiles.size());
+                                        ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
+                                        ImmutableList<FileStream> filesNotInContainer = getFilesNotInContainer(validFiles, action.containerFile());
+                                        if (filesNotInContainer.isEmpty()) {
+                                            throw new FileAlreadyExistsException(navigator.activity()
+                                                    .getResources()
+                                                    .getString(R.string.signature_update_documents_add_error_exists));
+                                        }
+                                        announceAccessibilityFilesAddedEvent(application.getApplicationContext(), filesNotInContainer.size());
                                         return signatureContainerDataSource
-                                                .addDocuments(action.containerFile(), validFiles)
+                                                .addDocuments(action.containerFile(), filesNotInContainer)
                                                 .toObservable()
                                                 .map(Result.DocumentsAddResult::success)
                                                 .onErrorReturn(Result.DocumentsAddResult::failure)
@@ -262,7 +272,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     ) {
                                         ByteStreams.copy(inputStream, outputStream);
                                     }
-                                    Toast.makeText(application, Activity.getContext().get().getString(R.string.file_saved),
+                                    Toast.makeText(application, navigator.activity().getString(R.string.file_saved),
                                             Toast.LENGTH_LONG).show();
                                 }
                                 return Result.DocumentSaveResult.idle();
@@ -431,6 +441,28 @@ final class Processor implements ObservableTransformer<Action, Result> {
         }
 
         return name;
+    }
+
+    private ImmutableList<FileStream> getFilesNotInContainer(ImmutableList<FileStream> validFiles, File container) throws Exception {
+        List<FileStream> filesNotInContainer = new ArrayList<>();
+        List<String> containerDataFileNames = new ArrayList<>();
+        if (!validFiles.isEmpty() && SignedContainer.isContainer(container)) {
+            SignedContainer signedContainer = SignedContainer.open(container);
+            ImmutableList<DataFile> dataFiles = signedContainer.dataFiles();
+            for (DataFile dataFile : dataFiles) {
+                containerDataFileNames.add(FileUtil.normalizeString(dataFile.name()));
+            }
+
+            for (FileStream validFile : validFiles) {
+                if (!containerDataFileNames.contains(FileUtil.normalizeString(validFile.displayName()))) {
+                    filesNotInContainer.add(validFile);
+                }
+            }
+
+            return ImmutableList.copyOf(filesNotInContainer);
+        }
+
+        return validFiles;
     }
 
     private void announceAccessibilityFilesAddedEvent(Context context, int addedDataList) {

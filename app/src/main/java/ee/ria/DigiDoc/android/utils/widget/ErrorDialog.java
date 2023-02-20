@@ -13,7 +13,7 @@ public class ErrorDialog extends AlertDialog {
 
     public ErrorDialog(@NonNull Context context) {
         super(context);
-        SecureUtil.markAsSecure(getWindow());
+        SecureUtil.markAsSecure(context, getWindow());
     }
 
     @Override
