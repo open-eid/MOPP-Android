@@ -81,7 +81,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         if (activityResult.data() != null) {
                             ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
                                     parseGetContentIntent(application.getContentResolver(), activityResult.data(), fileSystem.getExternallyOpenedFilesDir()));
-                            ToastUtil.handleEmptyFileError(validFiles, application);
+                            ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
 
                             return handleFiles(navigator, signatureContainerDataSource, validFiles)
                                     .subscribeOn(Schedulers.io())
