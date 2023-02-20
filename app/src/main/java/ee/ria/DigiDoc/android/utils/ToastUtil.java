@@ -40,7 +40,7 @@ public final class ToastUtil {
     }
 
     public static void showGeneralError(Context context) {
-        Toast.makeText(context, Activity.getContext().get().getString(R.string.signature_create_error),
+        Toast.makeText(context, context.getString(R.string.signature_create_error),
                 Toast.LENGTH_LONG)
                 .show();
     }
