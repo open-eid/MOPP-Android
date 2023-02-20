@@ -28,6 +28,9 @@ dependencies {
     implementation "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
 
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
+
+    implementation project(path: ':common-lib')
+
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
     api project(':smart-card-reader-lib')
