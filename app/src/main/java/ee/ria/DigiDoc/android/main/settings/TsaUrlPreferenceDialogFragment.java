@@ -77,7 +77,7 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = DisplayUtil.setCustomDialogSettings(super.onCreateDialog(savedInstanceState));
-        SecureUtil.markAsSecure(dialog.getWindow());
+        SecureUtil.markAsSecure(getContext(), dialog.getWindow());
         return dialog;
     }
 

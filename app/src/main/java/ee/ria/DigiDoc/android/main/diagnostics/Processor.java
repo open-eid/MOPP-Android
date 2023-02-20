@@ -37,6 +37,7 @@ import timber.log.Timber;
 final class Processor implements ObservableTransformer<Intent, Result> {
 
     private static final int SAVE_FILE = 1;
+    private static final int SAVE_LOGS_FILE = 2;
 
     private final ObservableTransformer<Intent.InitialIntent, Result.InitialResult> initial;
     private final ObservableTransformer<Intent.DiagnosticsSaveIntent, Result> diagnosticsSave;
@@ -51,7 +52,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         diagnosticsSave = upstream -> upstream.switchMap(action -> {
             if (action.diagnosticsFile() == null) {
                 Timber.log(Log.ERROR, "Unable to get diagnostics file");
-                Toast.makeText(Activity.getContext().get(), Activity.getContext().get().getString(R.string.file_saved_error),
+                Toast.makeText(navigator.activity(), navigator.activity().getString(R.string.file_saved_error),
                         Toast.LENGTH_LONG).show();
                 return Observable.just(Result.DiagnosticsSaveResult.failure(new EmptyFileException()));
             }
@@ -65,9 +66,13 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             .toObservable()
                             .map(documentFile -> {
                                 if (activityResult.resultCode() == RESULT_OK) {
-                                    return saveFile(documentFile, activityResult.data().getData(),
-                                            action.diagnosticsFile().toPath(),
-                                            (Activity) navigator.activity(), false);
+                                    android.content.Intent dataIntent = activityResult.data();
+                                    if (dataIntent != null) {
+                                        Uri data = dataIntent.getData();
+                                        return saveFile(documentFile, data,
+                                                action.diagnosticsFile().toPath(),
+                                                (Activity) navigator.activity(), false);
+                                    }
                                 }
                                 return Result.DiagnosticsSaveResult.cancel();
                             })
@@ -78,23 +83,27 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         diagnosticsLogsSave = upstream -> upstream.switchMap(action -> {
             if (action.logFile() == null) {
                 Timber.log(Log.ERROR, "Unable to get diagnostics logs files");
-                Toast.makeText(Activity.getContext().get(), Activity.getContext().get().getString(R.string.file_saved_error),
+                Toast.makeText(navigator.activity(), navigator.activity().getString(R.string.file_saved_error),
                         Toast.LENGTH_LONG).show();
                 return Observable.just(Result.DiagnosticsSaveResult.failure(new EmptyFileException()));
             }
-            navigator.execute(Transaction.activityForResult(SAVE_FILE,
+            navigator.execute(Transaction.activityForResult(SAVE_LOGS_FILE,
                     createSaveIntent(action.logFile(), contentResolver), null));
             return navigator.activityResults()
                     .filter(activityResult ->
-                            activityResult.requestCode() == SAVE_FILE)
+                            activityResult.requestCode() == SAVE_LOGS_FILE)
                     .switchMap(activityResult -> diagnosticsDataSource
                             .get(action.logFile())
                             .toObservable()
                             .map(documentFile -> {
                                 if (activityResult.resultCode() == RESULT_OK) {
-                                    return saveFile(documentFile, activityResult.data().getData(),
-                                            action.logFile().toPath(),
-                                            (Activity) navigator.activity(), true);
+                                    android.content.Intent dataIntent = activityResult.data();
+                                    if (dataIntent != null) {
+                                        Uri data = dataIntent.getData();
+                                        return saveFile(documentFile, data,
+                                                action.logFile().toPath(),
+                                                (Activity) navigator.activity(), true);
+                                    }
                                 }
                                 return Result.DiagnosticsSaveResult.cancel();
                             })
@@ -105,6 +114,12 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
     private Result.DiagnosticsSaveResult saveFile(File documentFile, Uri data, Path logFilePath,
                                                   Activity activity, boolean isDiagnosticsLogsFile) {
+        if (data == null) {
+            Toast.makeText(Activity.getContext().get(), Activity.getContext().get().getString(R.string.file_saved_error),
+                    Toast.LENGTH_LONG).show();
+            return Result.DiagnosticsSaveResult.failure(new IllegalArgumentException("No data to save"));
+        }
+
         try (
                 InputStream inputStream = new FileInputStream(documentFile);
                 OutputStream outputStream = activity.getApplicationContext().getContentResolver().openOutputStream(data)
@@ -121,10 +136,12 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 removeLogFiles(activity.getApplicationContext());
             }
 
-            Toast.makeText(Activity.getContext().get(), Activity.getContext().get().getString(R.string.file_saved),
+            Toast.makeText(activity, activity.getString(R.string.file_saved),
                     Toast.LENGTH_LONG).show();
 
-            activity.recreate();
+            if (isDiagnosticsLogsFile) {
+                activity.restartAppWithIntent(activity.getIntent(), true);
+            }
 
         } catch (Exception e) {
             Timber.log(Log.ERROR, e, "Unable to save diagnostics or logs file");

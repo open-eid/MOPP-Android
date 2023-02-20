@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/crypto_home_create_button"
-                android:contentDescription="@string/crypto_home_create_text" />
+                android:contentDescription="@string/crypto_home_create_text_accessibility" />
 
         </LinearLayout>
 

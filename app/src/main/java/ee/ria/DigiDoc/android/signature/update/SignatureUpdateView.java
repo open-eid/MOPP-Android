@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static android.util.TypedValue.COMPLEX_UNIT_SP;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
 
@@ -8,13 +9,11 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build;
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
@@ -23,6 +22,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -68,8 +71,6 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private static final String EMPTY_CHALLENGE = "";
 
-    private boolean isTimerStarted = false;
-
     private final boolean isExistingContainer;
     private final boolean isNestedContainer;
     private final File containerFile;
@@ -82,7 +83,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final NameUpdateDialog nameUpdateDialog;
     private final RecyclerView listView;
     private final SignatureUpdateAdapter adapter;
-    private final View activityIndicatorView;
+    private final View mobileIdActivityIndicatorView;
+    private final View smartIdActivityIndicatorView;
     private final View activityOverlayView;
     private final View mobileIdContainerView;
     private final TextView mobileIdChallengeView;
@@ -124,9 +126,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     @Nullable private Signature signatureRemoveConfirmation;
 
     private boolean signingInfoDelegated = false;
-    private ProgressBar documentAddProgressBar;
-    ProgressBar progressBar;
-    SignatureUpdateProgressBar signatureUpdateProgressBar = new SignatureUpdateProgressBar();
+    private final ProgressBar documentAddProgressBar;
+    private final ProgressBar mobileIdProgressBar;
+    private final ProgressBar smartIdProgressBar;
     boolean isTitleViewFocused = false;
 
     public SignatureUpdateView(Context context, String screenId, boolean isExistingContainer,
@@ -151,7 +153,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         toolbarView = findViewById(R.id.toolbar);
         nameUpdateDialog = new NameUpdateDialog(context);
         listView = findViewById(R.id.signatureUpdateList);
-        activityIndicatorView = findViewById(R.id.activityIndicator);
+        mobileIdActivityIndicatorView = findViewById(R.id.activityIndicatorMobileId);
+        smartIdActivityIndicatorView = findViewById(R.id.activityIndicatorSmartId);
         activityOverlayView = findViewById(R.id.activityOverlay);
         mobileIdContainerView = findViewById(R.id.signatureUpdateMobileIdContainer);
         mobileIdChallengeView = findViewById(R.id.signatureUpdateMobileIdChallenge);
@@ -182,10 +185,36 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 documentRemoveIntentSubject, signatureAddIntentSubject,
                 signatureRemoveIntentSubject, signatureAddDialog, this);
 
-        progressBar = (ProgressBar) activityIndicatorView;
+        mobileIdProgressBar = (ProgressBar) mobileIdActivityIndicatorView;
+        smartIdProgressBar = (ProgressBar) smartIdActivityIndicatorView;
         documentAddProgressBar.setVisibility(GONE);
 
         setupAccessibilityTabs();
+
+        setActionButtonsTextSize();
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        setActionButtonsTextSize();
+    }
+
+    private void setActionButtonsTextSize() {
+        Configuration configuration = getResources().getConfiguration();
+        float fontScale = configuration.fontScale;
+
+        signatureAddButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
+        sendButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
+
+        if (fontScale > 1) {
+            signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
+            sendButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
+        } else {
+            signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
+            sendButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -217,8 +246,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                     ? R.string.no_internet_connection : R.string.signature_update_container_load_error;
             Toast.makeText(getContext(), messageId, Toast.LENGTH_LONG).show();
             navigator.execute(Transaction.pop());
-            signatureUpdateProgressBar.stopProgressBar(progressBar, isTimerStarted);
-            isTimerStarted = false;
+            SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
+            SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
             return;
         }
 
@@ -231,9 +260,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         toolbarView.setNavigationIcon(R.drawable.ic_clear);
         toolbarView.setNavigationContentDescription(R.string.close);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            setAccessibilityPaneTitle(isExistingContainer ? getResources().getString(titleResId) : "Container signing");
-        }
+        setAccessibilityPaneTitle(isExistingContainer ? getResources().getString(titleResId) : "Container signing");
 
         listView.clearFocus();
 
@@ -356,17 +383,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         tintCompoundDrawables(signatureAddButton);
 
         if (mobileIdContainerView.getVisibility() == VISIBLE) {
-            if (Build.VERSION.SDK_INT >= 26) {
-                mobileIdContainerView.setFocusedByDefault(true);
-            }
+            mobileIdContainerView.setFocusedByDefault(true);
             mobileIdContainerView.setFocusable(true);
             mobileIdContainerView.setFocusableInTouchMode(true);
 
-            if (isTimerStarted) {
-                signatureUpdateProgressBar.startProgressBar(progressBar);
-            }
-
-            isTimerStarted = true;
+            SignatureUpdateProgressBar.startProgressBar(mobileIdProgressBar);
 
             if (!signingInfoDelegated) {
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_mobile_id_status_request_sent);
@@ -383,17 +404,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         smartIdContainerView.setVisibility(
                 signatureAddResponse instanceof SmartIdResponse ? VISIBLE : GONE);
         if (smartIdContainerView.getVisibility() == VISIBLE) {
-            if (Build.VERSION.SDK_INT >= 26) {
-                smartIdContainerView.setFocusedByDefault(true);
-            }
+            smartIdContainerView.setFocusedByDefault(true);
             smartIdContainerView.setFocusable(true);
             smartIdContainerView.setFocusableInTouchMode(true);
 
-            if (isTimerStarted && progressBar.getProgress() == 0) {
-                signatureUpdateProgressBar.startProgressBar(progressBar);
-            }
-
-            isTimerStarted = true;
+            SignatureUpdateProgressBar.startProgressBar(smartIdProgressBar);
 
             if (!signingInfoDelegated) {
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_mobile_id_status_request_sent);
@@ -437,13 +452,14 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     }
 
     private void setActivity(boolean activity) {
-        activityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
+        mobileIdActivityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
+        smartIdActivityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
         activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
         sendButton.setEnabled(!activity);
         signatureAddButton.setEnabled(!activity);
-        if (!activity && isTimerStarted) {
-            signatureUpdateProgressBar.stopProgressBar(progressBar, isTimerStarted);
-            isTimerStarted = false;
+        if (!activity) {
+            SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
+            SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
         }
     }
 
@@ -622,6 +638,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         errorDialog.dismiss();
         nameUpdateDialog.dismiss();
         isTitleViewFocused = false;
+        SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
+        SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
         super.onDetachedFromWindow();
     }
 
