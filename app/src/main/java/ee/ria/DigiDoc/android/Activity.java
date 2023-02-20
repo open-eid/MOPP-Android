@@ -75,7 +75,7 @@ public final class Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Prevent screen recording
-        SecureUtil.markAsSecure(getWindow());
+        SecureUtil.markAsSecure(this, getWindow());
 
         handleCrashOnPreviousExecution();
 
@@ -92,14 +92,14 @@ public final class Activity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             restartAppWithIntent(intent, false);
         } else if (Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
-            rootScreenFactory.intent(intent);
+            rootScreenFactory.intent(intent, this);
         } else if (Intent.ACTION_MAIN.equals(intent.getAction()) && savedInstanceState != null) {
             savedInstanceState = null;
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             restartAppWithIntent(intent, false);
         } else {
-            rootScreenFactory.intent(intent);
+            rootScreenFactory.intent(intent, this);
         }
 
         mContext = new WeakReference<>(this);
@@ -125,7 +125,7 @@ public final class Activity extends AppCompatActivity {
                 return;
             }
             Dialog crashReportDialog = new Dialog(this);
-            SecureUtil.markAsSecure(crashReportDialog.getWindow());
+            SecureUtil.markAsSecure(this, crashReportDialog.getWindow());
             crashReportDialog.setContentView(R.layout.crash_report_dialog);
 
             Button sendButton = crashReportDialog.findViewById(R.id.sendButton);
@@ -177,7 +177,7 @@ public final class Activity extends AppCompatActivity {
     private void handleIncomingFiles(Intent intent) {
         try {
             intent.setDataAndType(FileUtil.normalizeUri(intent.getData()), "*/*");
-            rootScreenFactory.intent(intent);
+            rootScreenFactory.intent(intent, navigator.activity());
         } catch (ActivityNotFoundException e) {
             Timber.log(Log.ERROR, e, "Handling incoming file intent");
         }
@@ -243,32 +243,38 @@ public final class Activity extends AppCompatActivity {
 
         @Nullable private Intent intent;
 
+        private android.app.Activity activity;
+
         @Inject RootScreenFactory() {}
 
-        void intent(Intent intent) {
+        void intent(Intent intent, android.app.Activity activity) {
             this.intent = intent;
+            this.activity = activity;
         }
 
         @Override
         public Screen call() {
-            if ((intent.getAction() != null && Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
-                return chooseScreen(intent);
-            } else if (intent.getAction() != null && Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) && intent.getType() != null) {
-                return SignatureCreateScreen.create(intent);
-            } else if (intent.getAction() != null && Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
+            if ((intent != null && intent.getAction() != null &&
+                    (Intent.ACTION_SEND.equals(intent.getAction()) ||
+                            Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) ||
+                            Intent.ACTION_VIEW.equals(intent.getAction()))) &&
+                    intent.getType() != null) {
+                return chooseScreen(intent, activity);
+            } else if (intent != null && intent.getAction() != null &&
+                    Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
                 return SharingScreen.create();
             }
             return HomeScreen.create(intent);
         }
 
-        private Screen chooseScreen(Intent intent) {
+        private Screen chooseScreen(Intent intent, android.app.Activity activity) {
             ImmutableList<FileStream> fileStreams;
-            File externallyOpenedFilesDir = new File(getContext().get().getFilesDir(), DIR_EXTERNALLY_OPENED_FILES);
+            File externallyOpenedFilesDir = new File(activity.getFilesDir(), DIR_EXTERNALLY_OPENED_FILES);
             try {
-                fileStreams = IntentUtils.parseGetContentIntent(getContext().get().getContentResolver(), intent, externallyOpenedFilesDir);
+                fileStreams = IntentUtils.parseGetContentIntent(activity.getContentResolver(), intent, externallyOpenedFilesDir);
             } catch (Exception e) {
                 Timber.log(Log.ERROR, e, "Unable to open file");
-                ToastUtil.showGeneralError(getContext().get());
+                ToastUtil.showGeneralError(activity);
                 return HomeScreen.create(
                         new Intent(Intent.ACTION_MAIN)
                                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -284,7 +290,7 @@ public final class Activity extends AppCompatActivity {
                     }
                 } else if (intent.getClipData() != null || intent.getData() != null) {
                     File file = IntentUtils.parseGetContentIntent(
-                            getContext().get().getContentResolver(), intent.getClipData() != null ?
+                            activity.getContentResolver(), intent.getClipData() != null ?
                                     intent.getClipData().getItemAt(0).getUri() :
                                     intent.getData(),
                             externallyOpenedFilesDir);
@@ -294,7 +300,7 @@ public final class Activity extends AppCompatActivity {
                             Path renamedFile = FileUtil.renameFile(file.toPath(),
                                     newFileName + ".cdoc");
                             CryptoContainer.open(renamedFile.toFile());
-                            Intent updatedIntent = setIntentData(intent, renamedFile);
+                            Intent updatedIntent = setIntentData(intent, renamedFile, activity);
                             return CryptoCreateScreen.open(updatedIntent);
                         } else {
                             String externalFileName = getFileName(file);
@@ -302,7 +308,7 @@ public final class Activity extends AppCompatActivity {
                                 Path renamedFile = FileUtil.renameFile(file.toPath(),
                                         newFileName);
                                 SignedContainer.open(renamedFile.toFile());
-                                Intent updatedIntent = setIntentData(intent, renamedFile);
+                                Intent updatedIntent = setIntentData(intent, renamedFile, activity);
                                 return SignatureCreateScreen.create(updatedIntent);
                             } else {
                                 return SignatureCreateScreen.create(intent);
@@ -332,11 +338,11 @@ public final class Activity extends AppCompatActivity {
             }
         }
 
-        private static Intent setIntentData(Intent intent, Path filePath) {
+        private static Intent setIntentData(Intent intent, Path filePath, android.app.Activity activity) {
             intent.setData(Uri.parse(filePath.toUri().toString()));
             intent.setClipData(ClipData.newRawUri(filePath.getFileName().toString(), FileProvider.getUriForFile(
-                    getContext().get(),
-                    getContext().get().getString(R.string.file_provider_authority),
+                    activity,
+                    activity.getString(R.string.file_provider_authority),
                     filePath.toFile())));
             return intent;
         }
