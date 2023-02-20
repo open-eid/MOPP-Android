@@ -30,7 +30,7 @@ public final class ConfirmationDialog extends AlertDialog implements
 
     public ConfirmationDialog(@NonNull Context context, @StringRes int message, int action) {
         super(context);
-        SecureUtil.markAsSecure(getWindow());
+        SecureUtil.markAsSecure(context, getWindow());
 
         if (action == R.id.sivaConfirmationDialog) {
             setButton(BUTTON_POSITIVE, context.getString(R.string.yes_button), this);

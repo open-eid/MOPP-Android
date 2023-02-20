@@ -33,6 +33,12 @@ public final class Immutables {
         return builder.build();
     }
 
+    public static <T> ImmutableList<T> merge(ImmutableList<T> list, ImmutableList<T> values) {
+        ImmutableSet.Builder<T> builder = ImmutableSet.builder();
+        builder.addAll(values).addAll(list);
+        return builder.build().asList();
+    }
+
     public static <T> ImmutableList<T> without(ImmutableList<T> list, T value) {
         return FluentIterable.from(list)
                 .filter(not(equalTo(value)))
