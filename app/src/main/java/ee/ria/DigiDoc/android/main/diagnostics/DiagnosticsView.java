@@ -266,30 +266,6 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_tsl_cache_title));
     }
 
-    private boolean isTSLFile(String tslFileName) {
-        if (tslFileName.contains(".xml")) {
-            File tslCacheDir = new File(getContext().getApplicationContext().getCacheDir().getAbsolutePath() + "/schema");
-            File[] tslFiles = tslCacheDir.listFiles((directory, fileName) -> fileName.endsWith(".xml"));
-            if (tslFiles != null) {
-                Object[] fileNames = Arrays.stream(Arrays.stream(tslFiles)
-                        .filter(File::isFile)
-                        .map(tslFile -> {
-                            try (InputStream tslInputStream = new FileInputStream(tslFile)) {
-                                return getTSLFileVersion(tslInputStream, tslFile.getName());
-                            } catch (IOException | XmlPullParserException e) {
-                                Timber.log(Log.ERROR, e, "Unable to get TSL file %s version",
-                                        tslFile.getAbsolutePath());
-                                return tslFile.getName();
-                            }
-                        })
-                        .toArray(String[]::new))
-                        .toArray();
-                return Arrays.asList(fileNames).contains(tslFileName);
-            }
-        }
-         return false;
-    }
-
     private String getTSLFileVersion(InputStream tslInputStream, String tslFileName) throws XmlPullParserException, IOException {
         int version = TSLUtil.readSequenceNumber(tslInputStream);
         return tslFileName + " (" + version + ")";
