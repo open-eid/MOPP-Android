@@ -15,10 +15,31 @@
     <string name="main_home_menu_help">HELP</string>
     <string name="main_home_menu_help_url_short">link www.id.ee</string>
     <string name="main_home_menu_help_url">https://www.id.ee/en/id-help/</string>
+    <string name="main_home_menu_accessibility">ACCESSIBILITY</string>
     <string name="main_home_menu_recent">RECENT DOCUMENTS</string>
     <string name="main_home_menu_settings">SETTINGS</string>
     <string name="main_home_menu_about">INFO</string>
     <string name="main_home_menu_diagnostics">DIAGNOSTICS</string>
+
+    <!-- Main Accessibility -->
+    <string name="main_accessibility_title">Accessibility</string>
+
+    <string name="main_accessibility_introduction">RIA DigiDoc is designed to comply with the WCAG 2.1 AA accessibility guidelines. This means that the RIA DigiDoc application has been developed using the principles that the application should be usable by the blind and people with visual, mobility, and strength impairments.</string>
+    <string name="main_accessibility_introduction_2">Accessibility can be improved by using built-in assistive tools on your smart device. You can find an overview of the main assistive tools below.</string>
+    <string name="main_accessibility_introduction_screen_reader_title">Screen reader</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction">A screen reader is a program that converts the information on the screen of a smart device into a user-friendly output, for instance, into speech. In particular, it is a tool for the visually impaired.</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_2">RIA DigiDoc has been built based on the principle that all types of visual content can be converted into user-friendly output. For example, the images are accompanied by textual descriptions. Furthermore, the arrangement and order of the structural elements consider the screen reader’s movement on the screen and allow the information to be consumed in a logical sequence.</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_apps">The most common smart device screen readers:</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_ios">VoiceOver (iOS, built in) https://support.apple.com/en-gb/guide/iphone/iph3e2e415f/ios</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_android">Talkback (Android, built in) https://support.google.com/accessibility/android/answer/6007100?hl=en</string>
+    <string name="main_accessibility_introduction_screen_magnification_title">Screen magnification and colour change</string>
+    <string name="main_accessibility_introduction_screen_magnification_introduction">If you have enough vision to read the text, you can use the built-in assistive tools to view the screen more comfortably. Assistive tools make it possible to change the size of text, the main font, and the colours of the user interface and enlarge the screen by using the screen magnifier.</string>
+    <string name="main_accessibility_introduction_screen_magnification_screen_tools">Tools to adjust screen colour and text size:</string>
+    <string name="main_accessibility_introduction_screen_magnification_screen_tools_ios">iOS https://support.apple.com/en-gb/guide/iphone/iph3e2e1fb0/ios</string>
+    <string name="main_accessibility_introduction_screen_magnification_screen_tools_android">Android https://support.google.com/accessibility/android/answer/11183305?hl=en&amp;ref_topic=9079043</string>
+    <string name="main_accessibility_introduction_screen_magnification_tools">Screen magnification tools:</string>
+    <string name="main_accessibility_introduction_screen_magnification_tools_ios">Zoom (iOS, built in) https://support.apple.com/en-gb/guide/iphone/iph3e2e367e/ios</string>
+    <string name="main_accessibility_introduction_screen_magnification_tools_android">Magnification (Android, built in) https://support.google.com/accessibility/android/answer/6006949?hl=en</string>
 
     <!-- Main Settings -->
     <string name="main_settings_title">Settings</string>

@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
 
+import ee.ria.DigiDoc.common.DateOfBirthUtil;
 import timber.log.Timber;
 
 class ID1PersonalDataParser {
@@ -96,41 +97,11 @@ class ID1PersonalDataParser {
     }
 
     private static LocalDate parseDigiIdDateOfBirth(String personalCode) {
-        int firstNumber = Character.getNumericValue(personalCode.charAt(0));
-
-        int century;
-        switch (firstNumber) {
-            case 1:
-            case 2:
-                century = 1800;
-                break;
-            case 3:
-            case 4:
-                century = 1900;
-                break;
-            case 5:
-            case 6:
-                century = 2000;
-                break;
-            case 7:
-            case 8:
-                century = 2100;
-                break;
-            default:
-                Timber.log(Log.DEBUG, "Invalid number: " + firstNumber);
-                throw new IllegalArgumentException("Invalid personal code");
-        }
-
-        int year = Integer.parseInt(personalCode.substring(1, 3)) + century;
-        int month = Integer.parseInt(personalCode.substring(3, 5));
-        int day = Integer.parseInt(personalCode.substring(5, 7));
-
         try {
-            return LocalDate.of(year, month, day);
+            return DateOfBirthUtil.parseDateOfBirth(personalCode);
         } catch (DateTimeException e) {
             Timber.log(Log.ERROR, "Invalid personal code birth of date", e);
             throw new IllegalArgumentException("Invalid personal code");
         }
     }
-
 }
