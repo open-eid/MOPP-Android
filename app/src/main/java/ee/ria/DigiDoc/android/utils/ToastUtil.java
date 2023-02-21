@@ -19,27 +19,28 @@ import timber.log.Timber;
 public final class ToastUtil {
 
     public static void handleEmptyFileError(ImmutableList<FileStream> validFiles,
-                                            Application application) throws EmptyFileException {
+                                            Application application,
+                                            Context context) throws EmptyFileException {
         if (validFiles.isEmpty()) {
             Timber.log(Log.ERROR, "Add file to container failed");
             throw new EmptyFileException();
         }
         if (FileSystem.isEmptyFileInList(validFiles)) {
-            showEmptyFileError(application);
+            showEmptyFileError(context, application);
         }
     }
 
-    public static void showEmptyFileError(Context context) {
+    public static void showEmptyFileError(Context context, Application application) {
         Timber.log(Log.DEBUG, "Excluded empty files in list");
         new Handler(Looper.getMainLooper()).post(() ->
-                Toast.makeText(context, Activity.getContext().get().getString(R.string.empty_file_error),
+                Toast.makeText(context, application.getApplicationContext().getString(R.string.empty_file_error),
                 Toast.LENGTH_LONG)
                 .show());
 
     }
 
     public static void showGeneralError(Context context) {
-        Toast.makeText(context, Activity.getContext().get().getString(R.string.signature_create_error),
+        Toast.makeText(context, context.getString(R.string.signature_create_error),
                 Toast.LENGTH_LONG)
                 .show();
     }

@@ -1,7 +1,6 @@
 package ee.ria.DigiDoc.configuration.util;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
@@ -13,12 +12,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import timber.log.Timber;
 
 import static android.content.Context.USB_SERVICE;
 
 public final class UserAgentUtil {
+
+    private static final List<String> deviceNameFilters = List.of("Smart", "Reader", "Card");
 
     private UserAgentUtil() {}
 
@@ -32,7 +35,7 @@ public final class UserAgentUtil {
                 deviceProductNames.add(device.getProductName());
             }
 
-            initializingMessage.append("libdigidoc/").append(getAppVersion(context));
+            initializingMessage.append("riadigidoc/").append(getAppVersion(context));
             initializingMessage.append(" (Android ").append(Build.VERSION.RELEASE).append(")");
             initializingMessage.append(" Lang: ").append(Locale.getDefault().getLanguage());
             if (deviceProductNames.size() > 0) {
@@ -47,7 +50,19 @@ public final class UserAgentUtil {
         UsbManager usbManager = (UsbManager)context.getSystemService(USB_SERVICE);
         HashMap<String, UsbDevice> devices = usbManager.getDeviceList();
 
-        return new ArrayList<>(devices.values());
+        Map<String, UsbDevice> smartDevices = devices.entrySet()
+                .stream()
+                .filter(usbDevice ->
+                        deviceNameFilters
+                                .stream()
+                                .anyMatch(usbDevice.getValue().getProductName()::contains) ||
+                        deviceNameFilters
+                                .stream()
+                                .anyMatch(usbDevice.getValue().getDeviceName()::contains)
+                )
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        return new ArrayList<>(smartDevices.values());
     }
 
     private static StringBuilder getAppVersion(Context context) {

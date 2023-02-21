@@ -21,6 +21,8 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -50,6 +52,7 @@ final class CryptoCreateAdapter extends
     final Subject<Certificate> recipientClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientRemoveClicksSubject = PublishSubject.create();
     final Subject<Certificate> recipientAddClicksSubject = PublishSubject.create();
+    final Subject<ImmutableList<Certificate>> recipientAddAllClicksSubject = PublishSubject.create();
 
     private boolean dataFilesViewEnabled = false;
 
@@ -101,10 +104,14 @@ final class CryptoCreateAdapter extends
                            ImmutableList<Certificate> recipients) {
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (searchResults != null && searchResults.size() > 0) {
+            List<Certificate> certificates = new ArrayList<>();
             for (Certificate searchResult : searchResults) {
+                certificates.add(searchResult);
                 builder.add(RecipientItem.create(searchResult, false, true,
                         !recipients.contains(searchResult)));
             }
+            builder.add(AddAllButtonItem.create(R.string.crypto_recipients_add_all,
+                    R.string.crypto_recipients_add_all_accessibility, ImmutableList.copyOf(certificates)));
         } else if (searchError instanceof NoInternetConnectionException) {
             builder.add(EmptyTextItem.create(R.string.no_internet_connection));
         } else if (searchResults != null && !searchState.equals(State.ACTIVE)) {
@@ -164,6 +171,10 @@ final class CryptoCreateAdapter extends
         return recipientAddClicksSubject;
     }
 
+    Observable<ImmutableList<Certificate>> recipientAddAllClicks() {
+        return recipientAddAllClicksSubject;
+    }
+
     @Override
     public int getItemViewType(int position) {
         return items.get(position).type();
@@ -211,6 +222,8 @@ final class CryptoCreateAdapter extends
                     return new DataFileViewHolder(itemView);
                 case R.layout.crypto_list_item_recipient:
                     return new RecipientViewHolder(itemView);
+                case R.layout.crypto_list_item_add_all_button:
+                    return new AddAllViewHolder(itemView);
                 default:
                     throw new IllegalArgumentException("Unknown view type " + viewType);
             }
@@ -428,6 +441,24 @@ final class CryptoCreateAdapter extends
         }
     }
 
+    static final class AddAllViewHolder extends CreateViewHolder<AddAllButtonItem> {
+
+        private final Button addButton;
+
+        AddAllViewHolder(View itemView) {
+            super(itemView);
+            addButton = itemView.findViewById(R.id.cryptoRecipientsAddAllButton);
+        }
+
+        @Override
+        void bind(CryptoCreateAdapter adapter, AddAllButtonItem item) {
+            clicks(addButton)
+                    .map(ignored ->
+                            ((AddAllButtonItem) adapter.items.get(getBindingAdapterPosition())).recipients())
+                    .subscribe(adapter.recipientAddAllClicksSubject);
+        }
+    }
+
     static abstract class Item {
 
         @LayoutRes abstract int type();
@@ -479,6 +510,23 @@ final class CryptoCreateAdapter extends
         static AddButtonItem create(@StringRes int text, @StringRes int contentDescription) {
             return new AutoValue_CryptoCreateAdapter_AddButtonItem(
                     R.layout.crypto_create_list_item_add_button, text, contentDescription);
+        }
+    }
+
+    @AutoValue
+    static abstract class AddAllButtonItem extends Item {
+
+        @StringRes abstract int text();
+
+        @StringRes abstract int contentDescription();
+
+        abstract ImmutableList<Certificate> recipients();
+
+        static AddAllButtonItem create(@StringRes int text,
+                                       @StringRes int contentDescription,
+                                       ImmutableList<Certificate> recipients) {
+            return new AutoValue_CryptoCreateAdapter_AddAllButtonItem(
+                    R.layout.crypto_list_item_add_all_button, text, contentDescription, recipients);
         }
     }
 

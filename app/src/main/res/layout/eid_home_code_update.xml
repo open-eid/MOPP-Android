@@ -59,7 +59,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
                 android:layout_marginTop="@dimen/material_content_edge_margin_horizontal"
-                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal">
+                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal"
+                android:minHeight="@dimen/material_baseline_grid_6x"
+                app:errorEnabled="true"
+                app:expandedHintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@id/eidHomeCodeUpdateCurrent"
@@ -72,15 +75,18 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@id/eidHomeCodeUpdateNewLabel"
+                android:id="@id/eidHomeUpdateNewLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
                 android:layout_marginTop="@dimen/material_baseline_grid_1x"
-                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal">
+                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal"
+                android:minHeight="@dimen/material_baseline_grid_6x"
+                app:errorEnabled="true"
+                app:expandedHintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@id/eidHomeCodeUpdateNew"
+                    android:id="@id/eidHomeUpdateNewText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberPassword"
@@ -95,7 +101,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
                 android:layout_marginTop="@dimen/material_baseline_grid_1x"
-                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal">
+                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal"
+                android:minHeight="@dimen/material_baseline_grid_6x"
+                app:errorEnabled="true"
+                app:expandedHintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@id/eidHomeCodeUpdateRepeat"
