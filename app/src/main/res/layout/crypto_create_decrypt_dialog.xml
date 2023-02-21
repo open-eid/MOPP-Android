@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -59,13 +60,27 @@
                     android:labelFor="@id/cryptoCreateDecryptPin1" />
             </LinearLayout>
 
-            <EditText
-                android:id="@id/cryptoCreateDecryptPin1"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@id/cryptoCreateDecryptPin1Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:inputType="numberPassword"
-                android:maxLength="12" />
+                android:minHeight="@dimen/material_baseline_grid_6x"
+                app:errorEnabled="true"
+                app:expandedHintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@id/cryptoCreateDecryptPin1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberPassword"
+                    android:digits="0123456789"
+                    android:imeOptions="actionDone"
+                    android:maxLines="1"
+                    android:maxLength="12"
+                    android:minHeight="@dimen/material_baseline_grid_6x" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@id/cryptoCreateDecryptPin1Error"

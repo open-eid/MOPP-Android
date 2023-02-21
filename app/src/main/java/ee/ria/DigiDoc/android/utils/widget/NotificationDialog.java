@@ -15,7 +15,7 @@ public class NotificationDialog extends Dialog {
 
     public NotificationDialog(@NonNull Activity context) {
         super(context);
-        SecureUtil.markAsSecure(getWindow());
+        SecureUtil.markAsSecure(context, getWindow());
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         setContentView(R.layout.success_notification_dialog);
         Button okButton = findViewById(R.id.okButton);

@@ -68,7 +68,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
                 <ProgressBar
-                    android:id="@id/activityIndicator"
+                    android:id="@id/activityIndicatorSmartId"
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -78,6 +78,7 @@
                     app:layout_anchor="@id/appBar"
                     app:layout_anchorGravity="bottom"
                     android:progressTint="@color/title"
+                    android:progress="0"
                     android:indeterminate="false" />
 
                 <TextView
@@ -118,7 +119,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
                 <ProgressBar
-                    android:id="@id/activityIndicator"
+                    android:id="@id/activityIndicatorMobileId"
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -128,6 +129,7 @@
                     app:layout_anchor="@id/appBar"
                     app:layout_anchorGravity="bottom"
                     android:progressTint="@color/title"
+                    android:progress="0"
                     android:indeterminate="false" />
 
                 <TextView
@@ -161,9 +163,10 @@
         <Button
             android:id="@id/signatureUpdateSendButton"
             style="@style/Widget.Application.Button.Container"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:maxLines="1"
             android:text="@string/signature_update_send_button"
             android:drawableTop="@drawable/ic_icon_share" />
 
@@ -175,9 +178,10 @@
         <Button
             android:id="@id/signatureUpdateSignatureAddButton"
             style="@style/Widget.Application.Button.Container"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:maxLines="1"
             android:text="@string/signature_update_signature_add_button"
             android:drawableTop="@drawable/ic_icon_signature" />
 
