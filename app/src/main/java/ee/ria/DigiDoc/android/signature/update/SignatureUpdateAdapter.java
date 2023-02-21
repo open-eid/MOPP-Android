@@ -79,8 +79,7 @@ final class SignatureUpdateAdapter extends
     private ImmutableList<Item> items = ImmutableList.of();
 
     void setData(Context context, boolean isSuccess, boolean isExistingContainer, boolean isNestedContainer,
-                 @Nullable SignedContainer container, @Nullable File nestedFile,
-                 boolean isSivaConfirmed) {
+                 @Nullable SignedContainer container, @Nullable File nestedFile) {
         boolean signaturesValid = container == null || container.signaturesValid();
         boolean isEmptyFileInContainer = container != null && container.hasEmptyFiles();
         String name = container == null ? null : FileUtil.sanitizeString(container.name(), "");
@@ -98,12 +97,12 @@ final class SignatureUpdateAdapter extends
         }
 
         if (container != null) {
-            if (nestedFile == null || !isSivaConfirmed) {
+            if (nestedFile == null) {
                 createRegularDataFilesView(builder, name, container, isNestedContainer, isExistingContainer);
             }
 
             if (isExistingContainer) {
-                if (nestedFile != null && isSivaConfirmed) {
+                if (nestedFile != null) {
                     try {
                         SignedContainer signedContainerNested = SignedContainer.open(nestedFile);
                         if (!container.dataFiles().isEmpty() && container.dataFiles().size() == 1 &&

@@ -4,6 +4,7 @@ apply plugin: 'com.android.library'
 apply plugin: LibdigidocppPlugin
 
 android {
+    namespace 'ee.ria.DigiDoc.sign'
     compileSdkVersion project.compileSdkVersion
 
     defaultConfig {
