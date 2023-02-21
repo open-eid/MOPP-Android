@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toolbar;
@@ -139,8 +142,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     }
 
     private void setActivity(boolean activity) {
-        activityOverlayView.setVisibility(activity ? View.VISIBLE : View.GONE);
-        activityIndicatorView.setVisibility(activity ? View.VISIBLE : View.GONE);
+        activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
+        activityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
     }
 
     @Override
@@ -194,6 +197,23 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         if (getResources() != null) {
             searchView.setQueryHint(getResources().getString(R.string.crypto_recipients_search));
             searchView.setIconifiedByDefault(false);
+
+            // Remove ">" search button from the right side of the Search Bar
+            searchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> {
+                if (hasFocus) {
+                    searchView.setSubmitButtonEnabled(false);
+                    if (getResources() != null) {
+                        ImageView rightSearchButton = searchView.findViewById(
+                                getResources()
+                                        .getIdentifier("android:id/search_go_btn", null, null));
+                        if (rightSearchButton != null) {
+                            rightSearchButton.setVisibility(GONE);
+                            rightSearchButton.setImageDrawable(null);
+                            rightSearchButton.setEnabled(false);
+                        }
+                    }
+                }
+            });
             searchViewInnerText = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
             searchViewInnerText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
