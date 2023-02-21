@@ -106,7 +106,7 @@ public final class CodeUpdateView extends CoordinatorLayout {
         activityIndicatorView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);
 
         checkPinLength(currentView);
-        checkPinLength(newView);
+        checkPinLength(newTextView);
         checkPinLength(repeatView);
 
         int changeButtonDescriptionResId;
