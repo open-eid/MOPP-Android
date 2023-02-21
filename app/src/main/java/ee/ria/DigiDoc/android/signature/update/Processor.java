@@ -186,9 +186,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     android.content.Intent data = activityResult.data();
                                     if (activityResult.resultCode() == RESULT_OK && data != null) {
                                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
-                                                parseGetContentIntent(application.getContentResolver(), data, fileSystem.getExternallyOpenedFilesDir()));
+                                                parseGetContentIntent(navigator.activity(), application.getContentResolver(),
+                                                        data, fileSystem.getExternallyOpenedFilesDir()));
                                         ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
-                                        ImmutableList<FileStream> filesNotInContainer = getFilesNotInContainer(validFiles, action.containerFile());
+                                        ImmutableList<FileStream> filesNotInContainer = getFilesNotInContainer(navigator.activity(), validFiles, action.containerFile());
                                         if (filesNotInContainer.isEmpty()) {
                                             throw new FileAlreadyExistsException(navigator.activity()
                                                     .getResources()
@@ -234,7 +235,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         (SivaUtil.isSivaConfirmationNeeded(containerFile, action.document()) &&
                                                 documentFileExtension.equals("pdf"));
                             }
-                            if (!isPdfInSignedPdfContainer && SignedContainer.isContainer(documentFile)) {
+                            if (!isPdfInSignedPdfContainer && SignedContainer.isContainer(navigator.activity(), documentFile)) {
                                 transaction = Transaction.push(SignatureUpdateScreen
                                         .create(true, true, documentFile, false, false, null));
                             } else if (CryptoContainer.isContainerFileName(documentFile.getName())) {
@@ -249,9 +250,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         })
                         .onErrorReturn(throwable -> {
                             if (throwable instanceof NoInternetConnectionException) {
-                                Toast.makeText(application.getApplicationContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+                                ToastUtil.showError(navigator.activity(),R.string.no_internet_connection);
                             } else {
-                                Toast.makeText(application.getApplicationContext(), R.string.signature_update_container_load_error, Toast.LENGTH_LONG).show();
+                                ToastUtil.showError(navigator.activity(), R.string.signature_update_container_load_error);
                             }
                             return Result.DocumentViewResult.idle();
                         })
@@ -276,8 +277,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     ) {
                                         ByteStreams.copy(inputStream, outputStream);
                                     }
-                                    Toast.makeText(application, navigator.activity().getString(R.string.file_saved),
-                                            Toast.LENGTH_LONG).show();
+                                    ToastUtil.showError(navigator.activity(), R.string.file_saved);
                                 }
                                 return Result.DocumentSaveResult.idle();
                             })
@@ -364,7 +364,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
             } else if (request == null && existingContainer != null && containerFile != null) {
                 if (SignedContainer.isLegacyContainer(containerFile)) {
                     return signatureContainerDataSource
-                            .addContainer(ImmutableList.of(FileStream.create(containerFile)), true)
+                            .addContainer(navigator.activity(), ImmutableList.of(FileStream.create(containerFile)), true)
                             .toObservable()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -447,10 +447,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
         return name;
     }
 
-    private ImmutableList<FileStream> getFilesNotInContainer(ImmutableList<FileStream> validFiles, File container) throws Exception {
+    private ImmutableList<FileStream> getFilesNotInContainer(Context context, ImmutableList<FileStream> validFiles, File container) throws Exception {
         List<FileStream> filesNotInContainer = new ArrayList<>();
         List<String> containerDataFileNames = new ArrayList<>();
-        if (!validFiles.isEmpty() && SignedContainer.isContainer(container)) {
+        if (!validFiles.isEmpty() && SignedContainer.isContainer(context, container)) {
             SignedContainer signedContainer = SignedContainer.open(container);
             ImmutableList<DataFile> dataFiles = signedContainer.dataFiles();
             for (DataFile dataFile : dataFiles) {

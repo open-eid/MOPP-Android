@@ -65,12 +65,14 @@ public final class IntentUtils {
      *
      * Always returns a list, even if only one file was chosen.
      *
+     * @param context Context.
      * @param contentResolver Content resolver to get display name, type and input stream.
      * @param intent Intent returned from
      *               {@link android.app.Activity#onActivityResult(int, int, Intent)}.
+     * @param externallyOpenedFilesDirectory File Externally opened files directory.
      * @return List of {@link FileStream file stream} objects.
      */
-    public static ImmutableList<FileStream> parseGetContentIntent(ContentResolver contentResolver,
+    public static ImmutableList<FileStream> parseGetContentIntent(Context context, ContentResolver contentResolver,
                                                                   Intent intent,
                                                                   File externallyOpenedFilesDirectory) {
         ImmutableList.Builder<FileStream> builder = ImmutableList.builder();
@@ -90,7 +92,7 @@ public final class IntentUtils {
             if (fileStream.fileSize() != 0) {
                 builder.add(fileStream);
             } else {
-                File file = parseGetContentIntent(contentResolver, data, externallyOpenedFilesDirectory);
+                File file = parseGetContentIntent(context, contentResolver, data, externallyOpenedFilesDirectory);
                 if (file != null) {
                     Path renamedFile = FileUtil.renameFile(file.toPath(),
                             getFileName(file));
@@ -141,9 +143,9 @@ public final class IntentUtils {
         return false;
     }
 
-    public static File parseGetContentIntent(ContentResolver contentResolver, Uri uri,
+    public static File parseGetContentIntent(Context context, ContentResolver contentResolver, Uri uri,
                                             File externallyOpenedFilesDirectory) {
-       return getExternallyOpenedFile(contentResolver, uri,
+       return getExternallyOpenedFile(context, contentResolver, uri,
                     externallyOpenedFilesDirectory.getPath());
     }
 
@@ -258,14 +260,14 @@ public final class IntentUtils {
         return fileSize;
     }
 
-    private static File getExternallyOpenedFile(ContentResolver contentResolver, Uri uri, String directory) {
+    private static File getExternallyOpenedFile(Context context, ContentResolver contentResolver, Uri uri, String directory) {
         try (InputStream initialStream = contentResolver.openInputStream(uri)) {
             // File without extension, as we can't tell what type of file it is
             File externalFile = new File(directory + "/file");
 
             FileUtils.copyInputStreamToFile(initialStream, externalFile);
 
-            boolean isContainer = SignedContainer.isContainer(externalFile);
+            boolean isContainer = SignedContainer.isContainer(context, externalFile);
             if (isContainer) {
                 return SignedContainer.open(externalFile).file();
             }

@@ -86,7 +86,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                     && TextUtils.equals(intent.intent().getAction(), ACTION_VIEW)
                     && intent.intent().getData() != null) {
                 ImmutableList<FileStream> fileStreams =
-                        parseGetContentIntent(contentResolver, intent.intent(), fileSystem.getExternallyOpenedFilesDir());
+                        parseGetContentIntent(navigator.activity(), contentResolver, intent.intent(), fileSystem.getExternallyOpenedFilesDir());
                 Screen screen;
                 if (fileStreams.size() == 1
                         && CryptoContainer.isContainerFileName(fileStreams.get(0).displayName())) {
@@ -104,7 +104,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                     localeService.applicationLocale().getLanguage())));
         })
                 .onErrorReturn(throwable -> {
-                    ToastUtil.showGeneralError(navigator.activity());
+                    ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
                     navigator.execute(Transaction.pop());
                     return Result.InitialResult.create(R.id.mainHomeSignature, null);
                 });
