@@ -17,17 +17,6 @@
             android:gravity="center_horizontal"
             android:text="@string/signature_update_mobile_id_message" />
 
-        <TextView
-            android:id="@id/signatureUpdateMobileIdPhoneNoText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:layout_marginTop="11dp"
-            android:layout_marginStart="4dp"
-            android:text="@string/signature_update_mobile_id_phone_no"
-            android:paddingTop="1px"
-            android:importantForAccessibility="no" />
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateMobileIdPhoneNoLabel"
             android:layout_width="match_parent"
@@ -49,19 +38,10 @@
                 android:maxLines="1"
                 android:hint="@string/mobile_id_country_code_and_phone_number_placeholder"
                 android:accessibilityTraversalAfter="@id/signatureUpdateMobileIdPhoneNoText"
-                android:minHeight="@dimen/material_baseline_grid_6x" />
+                android:minHeight="@dimen/material_baseline_grid_6x"
+                android:background="@drawable/bottom_border_background"/>
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@id/signatureUpdateMobileIdPersonalCodeText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:layout_marginTop="11dp"
-            android:layout_marginStart="4dp"
-            android:text="@string/signature_update_mobile_id_personal_code"
-            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateMobileIdPersonalCodeLabel"
@@ -82,7 +62,8 @@
                 android:imeOptions="actionDone"
                 android:maxLines="1"
                 android:accessibilityTraversalAfter="@id/signatureUpdateMobileIdPersonalCodeText"
-                android:minHeight="@dimen/material_baseline_grid_6x" />
+                android:minHeight="@dimen/material_baseline_grid_6x"
+                android:background="@drawable/bottom_border_background" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

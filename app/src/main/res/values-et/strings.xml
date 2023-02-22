@@ -15,10 +15,31 @@
     <string name="main_home_menu_help">ABI</string>
     <string name="main_home_menu_help_url_short">link www.id.ee</string>
     <string name="main_home_menu_help_url">https://www.id.ee/id-abikeskus/</string>
+    <string name="main_home_menu_accessibility">JUURDEPÄÄSETAVUS</string>
     <string name="main_home_menu_recent">HILJUTISED DOKUMENDID</string>
     <string name="main_home_menu_settings">SEADED</string>
     <string name="main_home_menu_about">INFO</string>
     <string name="main_home_menu_diagnostics">DIAGNOSTIKA</string>
+
+    <!-- Main Accessibility -->
+    <string name="main_accessibility_title">Juurdepääsetavus</string>
+
+    <string name="main_accessibility_introduction">RIA DigiDoc on ehitatud nii, et see vastaks WCAG 2.1 AA juurdepääsetavuse suunistele. See tähendab, et RIA DigiDoc rakenduse arendamisel on kasutatud põhimõtteid, et see oleks kasutatav ilma nägemisvõimeta, piiratud nägemisvõimega, piiratud liikumisvõime või jõuga jms.</string>
+    <string name="main_accessibility_introduction_2">Juurdepääsetavust on võimalik parandada oma nutiseadmesse sisseehitatud abivahendeid kasutades. Alljärgnevalt ülevaade põhilistest abivahenditest.</string>
+    <string name="main_accessibility_introduction_screen_reader_title">Ekraanilugeja</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction">Ekraanilugeja on programm, mille ülesandeks on muuta nutiseadme ekraanil kujutatavat informatsiooni kasutajale sobivaks väljundiks – näiteks kõneks. Eelkõige on see abivahend vaegnägijate jaoks.</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_2">RIA DigiDoc ehitamisel on arvestatud, et igat tüüpi visuaalset sisu oleks võimalik muuta kasutajale sobivaks väljundiks. Näiteks on piltidel küljes tekstilised kirjeldused, struktuursete elementide paigutus ja järjekord arvestab ekraanilugeja liikumist ekraanil ja võimaldab infot tarbida loogilises järjekorras.</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_apps">Levinumad nutiseadme ekraanilugejad:</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_ios">VoiceOver (iOS, sisseehitatud) https://support.apple.com/et-ee/guide/iphone/iph3e2e415f/ios</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_android">Talkback (Android, sisseehitatud) https://support.google.com/accessibility/android/answer/6007100?hl=en</string>
+    <string name="main_accessibility_introduction_screen_magnification_title">Ekraani suurendus ja värvide muutmine</string>
+    <string name="main_accessibility_introduction_screen_magnification_introduction">Kui nägemisjääk teksti lugemiseks on piisav on võimalik mugavamaks ekraani vaatamiseks kasutada nutiseadmesse sisseehitatud abivahendeid. Abivahendeid kasutades on võimalik muuta tekstide suurusi, peamist kirjatüüpi, kasutajaliidese värvilahendusi ning ekraani suurendada kasutades ekraaniluupi.</string>
+    <string name="main_accessibility_introduction_screen_magnification_screen_tools">Ekraani värvi ja teksti suuruse reguleerimise abivahendid:</string>
+    <string name="main_accessibility_introduction_screen_magnification_screen_tools_ios">iOS https://support.apple.com/et-ee/guide/iphone/iph3e2e1fb0/ios</string>
+    <string name="main_accessibility_introduction_screen_magnification_screen_tools_android">Android https://support.google.com/accessibility/android/answer/11183305?hl=en&amp;ref_topic=9079043</string>
+    <string name="main_accessibility_introduction_screen_magnification_tools">Ekraani suurendamise abivahendid:</string>
+    <string name="main_accessibility_introduction_screen_magnification_tools_ios">Zoom (iOS, sisseehitatud) https://support.apple.com/et-ee/guide/iphone/iph3e2e367e/ios</string>
+    <string name="main_accessibility_introduction_screen_magnification_tools_android">Magnification (Android, sisseehitatud) https://support.google.com/accessibility/android/answer/6006949?hl=en</string>
 
     <!-- Main Settings -->
     <string name="main_settings_title">Seaded</string>
@@ -34,6 +55,8 @@
     <string name="main_settings_postal_code_title">Postikood</string>
     <string name="main_settings_signature_profile_title">Vaikimisi faili tüüp</string>
     <string name="main_settings_open_all_filetypes_title">Luba rakendusel avada kõiki failitüüpe (vajab rakenduse taaskäivitamist)</string>
+    <string name="main_settings_allow_screenshots_title">Luba ekraanipildistamine (vajab rakenduse taaskäivitamist)</string>
+
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
@@ -275,8 +298,6 @@
     <string name="crypto_create_decrypt_success_message">DEKRÜPTEERIMINE ÕNNESTUS</string>
     <string name="crypto_create_name_update_button">Muuda ümbriku nime</string>
     <string name="crypto_create_data_files_title">Krüpteeritud failid</string>
-    <string name="crypto_create_data_files_add_button_description">Lisa veel faile</string>
-    <string name="crypto_create_data_files_add_button">+ LISA VEEL FAILE</string>
     <string name="crypto_create_data_files_add_error_exists">Fail on juba ümbrikus olemas</string>
     <string name="crypto_create_data_file_remove_button">Eemalda fail</string>
     <string name="crypto_create_remove_data_file_confirmation_message">Soovid eemaldada faili ümbrikust?</string>
@@ -284,7 +305,6 @@
     <string name="crypto_create_data_file_save_button">Salvesta fail ümbrikust</string>
     <string name="crypto_create_recipients_title">Adressaadid</string>
     <string name="crypto_create_recipients_empty">Adressaadid puuduvad</string>
-    <string name="crypto_create_recipients_add_button_description">Lisa adresaat</string>
     <string name="crypto_create_recipients_add_button">+ LISA ADRESSAAT</string>
     <string name="crypto_create_encrypt_button">KRÜPTEERI</string>
     <string name="crypto_create_encrypt_button_description">Krüpteeri dokument</string>
@@ -303,6 +323,8 @@
     <string name="crypto_recipients_title">Adressaatide lisamine</string>
     <string name="crypto_recipients_search">Sisesta isikukood, asutus või registrikood</string>
     <string name="crypto_recipients_search_result_empty">Isikul või asutusel puudub kehtiv sertifikaat. \nKrüpteerimiseks on vaja kehtivat sertikaati.\nKüsimuste korral pöördu id.ee.</string>
+    <string name="crypto_recipients_add_all">LISA KÕIK</string>
+    <string name="crypto_recipients_add_all_accessibility">Lisa kõik</string>
     <string name="crypto_recipients_selected_subhead">Lisatud adressaadid</string>
     <string name="crypto_recipients_done_button">KINNITA</string>
 
@@ -445,9 +467,6 @@
     <string name="eid_home_code_update_repeat_error_mismatch_puk">Uued PUK-koodid peavad olema samad</string>
 
     <!--  General  -->
-    <string name="signature_content_description">Allkiri, vahekaart %1$d / %2$d</string>
-    <string name="crypto_content_description">Krüpto, vahekaart %1$d / %2$d</string>
-    <string name="my_eid_content_description">Minu eID, vahekaart %1$d / %2$d</string>
 
     <string name="decrypt_content_description">Dekrüpteeri dokument, vahekaart %1$d / %2$d</string>
     <string name="sign_send_content_description">Allkirjasta, vahekaart %1$d / %2$d</string>
@@ -556,6 +575,7 @@
     <!-- Home -->
     <string name="main_home_navigation_signature_accessibility">Allkiri</string>
     <string name="main_home_navigation_crypto_accessibility">Krüpto</string>
+    <string name="main_home_navigation_myEid_accessibility">Minu e I D</string>
 
     <!-- Menu -->
     <string name="main_home_menu_help_accessibility">Abi</string>

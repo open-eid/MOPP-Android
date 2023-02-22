@@ -99,15 +99,24 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         return Observable.merge(
                 queryTextChangeEvents(searchView)
                         .filter(SearchViewQueryTextEvent::isSubmitted)
-                        .doOnNext(ignored -> searchView.clearFocus())
+                        .doOnNext(ignored -> {
+                            String trimmed = StringUtils.trim(searchViewInnerText.getText().toString());
+                            searchView.setQuery(trimmed, false);
+                            searchView.clearFocus();
+                        })
                         .map(event ->
-                                Intent.RecipientsSearchIntent.search(event.getQueryText().toString())),
+                                Intent.RecipientsSearchIntent.search(StringUtils.trim(event.getQueryText().toString()))),
                 backButtonClicksSubject.map(ignored -> Intent.RecipientsSearchIntent.clear()));
     }
 
     private Observable<Intent.RecipientAddIntent> recipientAddIntent() {
         return adapter.recipientAddClicks()
                 .map(recipient -> Intent.RecipientAddIntent.create(recipients, recipient));
+    }
+
+    private Observable<Intent.RecipientAddAllIntent> recipientAddAllIntent() {
+        return adapter.recipientAddAllClicks()
+                .map(addedRecipients -> Intent.RecipientAddAllIntent.create(recipients, addedRecipients));
     }
 
     private Observable<Intent.RecipientRemoveIntent> recipientRemoveIntent() {
@@ -118,7 +127,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(recipientsScreenUpButtonClickIntent(), recipientsScreenDoneButtonClickIntent(),
-                recipientsSearchIntent(), recipientAddIntent(), recipientRemoveIntent());
+                recipientsSearchIntent(), recipientAddIntent(), recipientAddAllIntent(), recipientRemoveIntent());
     }
 
     private void setActivity(boolean activity) {

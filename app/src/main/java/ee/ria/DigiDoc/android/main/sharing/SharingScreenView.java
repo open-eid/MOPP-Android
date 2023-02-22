@@ -22,6 +22,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.Constants;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
@@ -177,7 +178,7 @@ public final class SharingScreenView extends CoordinatorLayout {
     }
 
     private void restartToMainApp() {
-        Toast.makeText(getContext(), R.string.signature_update_container_load_error, Toast.LENGTH_LONG).show();
+        ToastUtil.showError(getContext(), R.string.signature_update_container_load_error);
         Intent mainIntent = new Intent(Intent.ACTION_MAIN);
         restartAppWithIntent(mainIntent);
     }

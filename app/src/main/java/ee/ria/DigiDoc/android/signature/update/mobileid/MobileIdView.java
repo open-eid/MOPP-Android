@@ -39,9 +39,7 @@ public final class MobileIdView extends LinearLayout implements
 
     private final Subject<Object> positiveButtonStateSubject = PublishSubject.create();
     private final TextView message;
-    private final TextView phoneNoViewLabel;
     private final EditText phoneNoView;
-    private final TextView personalCodeViewLabel;
     private final TextInputEditText personalCodeView;
     private final CheckBox rememberMeView;
     private final TextInputLayout phoneNoLabel;
@@ -65,16 +63,9 @@ public final class MobileIdView extends LinearLayout implements
         setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update_mobile_id, this);
         message = findViewById(R.id.signatureUpdateMobileIdMessage);
-        phoneNoViewLabel = findViewById(R.id.signatureUpdateMobileIdPhoneNoText);
         phoneNoView = findViewById(R.id.signatureUpdateMobileIdPhoneNo);
-        personalCodeViewLabel = findViewById(R.id.signatureUpdateMobileIdPersonalCodeText);
         personalCodeView = findViewById(R.id.signatureUpdateMobileIdPersonalCode);
         rememberMeView = findViewById(R.id.signatureUpdateMobileIdRememberMe);
-
-        AccessibilityUtils.setTextViewContentDescription(
-                phoneNoView, phoneNoViewLabel.getText().toString());
-        AccessibilityUtils.setTextViewContentDescription(
-                personalCodeView, personalCodeViewLabel.getText().toString());
 
         phoneNoLabel = findViewById(R.id.signatureUpdateMobileIdPhoneNoLabel);
         personalCodeLabel = findViewById(R.id.signatureUpdateMobileIdPersonalCodeLabel);
@@ -189,7 +180,7 @@ public final class MobileIdView extends LinearLayout implements
 
     // Country code (3 numbers) + phone number (7 or more numbers)
     private boolean isCountryCodeMissing(String phoneNumber) {
-        return phoneNumber.length() < MINIMUM_PHONE_NUMBER_LENGTH &&
+        return phoneNumber.length() > 3 && phoneNumber.length() < MINIMUM_PHONE_NUMBER_LENGTH &&
                 !isCountryCodeCorrect(phoneNumber);
     }
 

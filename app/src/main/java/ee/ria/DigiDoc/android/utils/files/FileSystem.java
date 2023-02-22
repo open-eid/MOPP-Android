@@ -4,6 +4,7 @@ import static ee.ria.DigiDoc.android.Constants.DIR_EXTERNALLY_OPENED_FILES;
 import static ee.ria.DigiDoc.android.Constants.DIR_SIGNATURE_CONTAINERS;
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import com.google.common.collect.ImmutableList;
@@ -181,29 +182,41 @@ public final class FileSystem {
      * @param containerFile Container file.
      * @return Boolean if container has empty file or not.
      */
-    public static boolean isEmptyDataFileInContainer(File containerFile) {
-         if (SignedContainer.isContainer(containerFile)) {
-             try {
-                 SignedContainer signedContainer = SignedContainer.open(containerFile);
-                 return signedContainer.hasEmptyFiles();
-             } catch (Exception e) {
-                 Timber.log(Log.ERROR, e, "Unable to check files in container");
-                 return false;
-             }
-         }
-         return false;
+    public static boolean isEmptyDataFileInContainer(Context context, File containerFile) {
+        try {
+            if (SignedContainer.isContainer(context, containerFile)) {
+                try {
+                    SignedContainer signedContainer = SignedContainer.open(containerFile);
+                    return signedContainer.hasEmptyFiles();
+                } catch (Exception e) {
+                    Timber.log(Log.ERROR, e, "Unable to check files in container");
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            Timber.log(Log.ERROR, e, "Unable to check if file is a container");
+        }
+        return false;
     }
 
     /**
      * Filter out container files
      *
+     * @param context Context.
      * @param files List of files.
      * @return ImmutableList<File> of containers only.
      */
-    public static ImmutableList<File> filterContainers(ImmutableList<File> files) {
+    public static ImmutableList<File> filterContainers(Context context, ImmutableList<File> files) {
         return ImmutableList.copyOf(files.stream()
-                .filter(file -> SignedContainer.isContainer(file) ||
-                        CryptoContainer.isCryptoContainer(file))
+                .filter(file -> {
+                    try {
+                        return SignedContainer.isContainer(context, file) ||
+                                CryptoContainer.isCryptoContainer(file);
+                    } catch (Exception e) {
+                        Timber.log(Log.ERROR, e, "Unable to check if file is a container");
+                        return false;
+                    }
+                })
                 .collect(Collectors.toList()));
     }
 

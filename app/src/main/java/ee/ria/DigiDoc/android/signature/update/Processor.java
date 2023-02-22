@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -162,7 +163,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .map(newFile -> {
                             navigator.execute(Transaction.replace(SignatureUpdateScreen
-                                    .create(true, false, newFile, false, false, null, true)));
+                                    .create(true, false, newFile, false, false, null)));
                             return Result.NameUpdateResult.progress(newFile);
                         })
                         .onErrorReturn(throwable ->
@@ -185,9 +186,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     android.content.Intent data = activityResult.data();
                                     if (activityResult.resultCode() == RESULT_OK && data != null) {
                                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
-                                                parseGetContentIntent(application.getContentResolver(), data, fileSystem.getExternallyOpenedFilesDir()));
-                                        ToastUtil.handleEmptyFileError(validFiles, application);
-                                        ImmutableList<FileStream> filesNotInContainer = getFilesNotInContainer(validFiles, action.containerFile());
+                                                parseGetContentIntent(navigator.activity(), application.getContentResolver(),
+                                                        data, fileSystem.getExternallyOpenedFilesDir()));
+                                        ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
+                                        ImmutableList<FileStream> filesNotInContainer = getFilesNotInContainer(navigator.activity(), validFiles, action.containerFile());
+                                        if (filesNotInContainer.isEmpty()) {
+                                            throw new FileAlreadyExistsException(navigator.activity()
+                                                    .getResources()
+                                                    .getString(R.string.signature_update_documents_add_error_exists));
+                                        }
                                         announceAccessibilityFilesAddedEvent(application.getApplicationContext(), filesNotInContainer.size());
                                         return signatureContainerDataSource
                                                 .addDocuments(action.containerFile(), filesNotInContainer)
@@ -222,11 +229,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             Transaction transaction;
                             String containerFileExtension = getFileExtension(containerFile.getName()).toLowerCase(Locale.US);
                             String documentFileExtension = getFileExtension(documentFile.getName()).toLowerCase(Locale.US);
-                            boolean isPdfInSignedPdfContainer = containerFileExtension.equals("pdf") &&
-                                    (SivaUtil.isSivaConfirmationNeeded(ImmutableList.of(FileStream.create(documentFile))) && documentFileExtension.equals("pdf"));
-                            if (!isPdfInSignedPdfContainer && SignedContainer.isContainer(documentFile)) {
+                            boolean isPdfInSignedPdfContainer = false;
+                            if (action.document() != null) {
+                                isPdfInSignedPdfContainer = containerFileExtension.equals("pdf") &&
+                                        (SivaUtil.isSivaConfirmationNeeded(containerFile, action.document()) &&
+                                                documentFileExtension.equals("pdf"));
+                            }
+                            if (!isPdfInSignedPdfContainer && SignedContainer.isContainer(navigator.activity(), documentFile)) {
                                 transaction = Transaction.push(SignatureUpdateScreen
-                                        .create(true, true, documentFile, false, false, null, true));
+                                        .create(true, true, documentFile, false, false, null));
                             } else if (CryptoContainer.isContainerFileName(documentFile.getName())) {
                                 transaction = Transaction.push(CryptoCreateScreen.open(documentFile));
                             } else {
@@ -239,9 +250,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         })
                         .onErrorReturn(throwable -> {
                             if (throwable instanceof NoInternetConnectionException) {
-                                Toast.makeText(application.getApplicationContext(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+                                ToastUtil.showError(navigator.activity(),R.string.no_internet_connection);
                             } else {
-                                Toast.makeText(application.getApplicationContext(), R.string.signature_update_container_load_error, Toast.LENGTH_LONG).show();
+                                ToastUtil.showError(navigator.activity(), R.string.signature_update_container_load_error);
                             }
                             return Result.DocumentViewResult.idle();
                         })
@@ -266,8 +277,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     ) {
                                         ByteStreams.copy(inputStream, outputStream);
                                     }
-                                    Toast.makeText(application, Activity.getContext().get().getString(R.string.file_saved),
-                                            Toast.LENGTH_LONG).show();
+                                    ToastUtil.showError(navigator.activity(), R.string.file_saved);
                                 }
                                 return Result.DocumentSaveResult.idle();
                             })
@@ -354,14 +364,14 @@ final class Processor implements ObservableTransformer<Action, Result> {
             } else if (request == null && existingContainer != null && containerFile != null) {
                 if (SignedContainer.isLegacyContainer(containerFile)) {
                     return signatureContainerDataSource
-                            .addContainer(ImmutableList.of(FileStream.create(containerFile)), true)
+                            .addContainer(navigator.activity(), ImmutableList.of(FileStream.create(containerFile)), true)
                             .toObservable()
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .doOnNext(containerAdd ->
                                     navigator.execute(Transaction.push(SignatureUpdateScreen.create(
                                             containerAdd.isExistingContainer(), false,
-                                            containerAdd.containerFile(), true, false, null, true))))
+                                            containerAdd.containerFile(), true, false, null))))
                             .map(containerAdd -> Result.SignatureAddResult.clear())
                             .onErrorReturn(Result.SignatureAddResult::failure)
                             .startWithItem(Result.SignatureAddResult.activity());
@@ -374,7 +384,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             if (response.container() != null) {
                                 return Observable.fromCallable(() -> {
                                     navigator.execute(Transaction.replace(SignatureUpdateScreen
-                                            .create(true, false, containerFile, false, true, null, true)));
+                                            .create(true, false, containerFile, false, true, null)));
                                     return Result.SignatureAddResult.method(method, response);
                                 });
                             } else {
@@ -437,18 +447,18 @@ final class Processor implements ObservableTransformer<Action, Result> {
         return name;
     }
 
-    private ImmutableList<FileStream> getFilesNotInContainer(ImmutableList<FileStream> validFiles, File container) throws Exception {
+    private ImmutableList<FileStream> getFilesNotInContainer(Context context, ImmutableList<FileStream> validFiles, File container) throws Exception {
         List<FileStream> filesNotInContainer = new ArrayList<>();
         List<String> containerDataFileNames = new ArrayList<>();
-        if (validFiles.size() > 1 && SignedContainer.isContainer(container)) {
+        if (!validFiles.isEmpty() && SignedContainer.isContainer(context, container)) {
             SignedContainer signedContainer = SignedContainer.open(container);
             ImmutableList<DataFile> dataFiles = signedContainer.dataFiles();
             for (DataFile dataFile : dataFiles) {
-                containerDataFileNames.add(dataFile.name());
+                containerDataFileNames.add(FileUtil.normalizeString(dataFile.name()));
             }
 
             for (FileStream validFile : validFiles) {
-                if (!containerDataFileNames.contains(validFile.displayName())) {
+                if (!containerDataFileNames.contains(FileUtil.normalizeString(validFile.displayName()))) {
                     filesNotInContainer.add(validFile);
                 }
             }
