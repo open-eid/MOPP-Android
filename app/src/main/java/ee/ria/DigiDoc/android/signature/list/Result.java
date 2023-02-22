@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.signature.list;
 
+import android.content.Context;
+
 import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
@@ -38,8 +40,8 @@ interface Result extends MviResult<ViewState> {
             return create(indicateActivity, true, null, null);
         }
 
-        static ContainersLoadResult success(ImmutableList<File> containerFiles) {
-            return create(true, false, FileSystem.filterContainers(containerFiles), null);
+        static ContainersLoadResult success(Context context, ImmutableList<File> containerFiles) {
+            return create(true, false, FileSystem.filterContainers(context, containerFiles), null);
         }
 
         static ContainersLoadResult failure(Throwable error) {
@@ -113,8 +115,8 @@ interface Result extends MviResult<ViewState> {
             return create(null, true, null, null);
         }
 
-        static ContainerRemoveResult success(ImmutableList<File> containerFiles) {
-            return create(null, false, FileSystem.filterContainers(containerFiles), null);
+        static ContainerRemoveResult success(Context context, ImmutableList<File> containerFiles) {
+            return create(null, false, FileSystem.filterContainers(context, containerFiles), null);
         }
 
         static ContainerRemoveResult failure(Throwable error) {
