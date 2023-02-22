@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <Button
+        android:id="@id/cryptoRecipientsAddAllButton"
+        style="@style/Widget.Application.Button.ButtonBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/crypto_recipients_add_all"
+        android:contentDescription="@string/crypto_recipients_add_all_accessibility" />
+</LinearLayout>
