@@ -110,7 +110,7 @@ public final class Activity extends AppCompatActivity {
     }
 
     private void handleRootedDevice() {
-        if (CommonUtils.isRooted(getApplicationContext())) {
+        if (CommonUtils.isRooted()) {
             ErrorDialog errorDialog = new ErrorDialog(this);
             errorDialog.setMessage(getResources().getString(R.string.rooted_device));
             errorDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.ok), (dialog, which) -> dialog.cancel());
