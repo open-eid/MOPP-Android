@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.Toolbar;
 
 import androidx.annotation.Nullable;
@@ -388,7 +387,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             mobileIdContainerView.setFocusable(true);
             mobileIdContainerView.setFocusableInTouchMode(true);
 
-            SignatureUpdateProgressBar.startProgressBar(mobileIdProgressBar);
+            if (mobileIdProgressBar.getProgress() == 0) {
+                SignatureUpdateProgressBar.startProgressBar(mobileIdProgressBar);
+            }
 
             if (!signingInfoDelegated) {
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_mobile_id_status_request_sent);
@@ -397,7 +398,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             }
 
             if (!mobileIdChallengeView.getText().equals(EMPTY_CHALLENGE)) {
-                String mobileIdChallengeDescription = getResources().getString(R.string.mobile_id_challenge) + mobileIdChallengeView.getText();
+                AccessibilityUtils.setSingleCharactersContentDescription(mobileIdChallengeView);
+                String mobileIdChallengeDescription = getResources().getString(R.string.mobile_id_challenge) +
+                        AccessibilityUtils.getTextAsSingleCharacters(mobileIdChallengeView.getText().toString());
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, mobileIdChallengeDescription);
             }
         }
@@ -409,27 +412,33 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             smartIdContainerView.setFocusable(true);
             smartIdContainerView.setFocusableInTouchMode(true);
 
-            SignatureUpdateProgressBar.startProgressBar(smartIdProgressBar);
+            if (smartIdProgressBar.getProgress() == 0) {
+                SignatureUpdateProgressBar.startProgressBar(smartIdProgressBar);
+            }
 
             if (!signingInfoDelegated) {
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_mobile_id_status_request_sent);
                 signingInfoDelegated = true;
             }
 
-            SmartIdResponse smartIdResponse = (SmartIdResponse) signatureAddResponse;
-            if (smartIdResponse.selectDevice()) {
-                smartIdInfo.setText(R.string.signature_update_smart_id_select_device);
-                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, smartIdInfo.getText());
-            }
-            String smartIdChallenge = smartIdResponse.challenge();
-            if (smartIdChallenge != null) {
-                smartIdChallengeView.setText(smartIdChallenge);
-                smartIdInfo.setText(R.string.signature_update_smart_id_info);
-                String smartIdChallengeDescription = getResources().getString(R.string.smart_id_challenge) + smartIdChallenge;
-                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, smartIdChallengeDescription);
-                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_smart_id_info);
-            } else {
-                smartIdChallengeView.setText(EMPTY_CHALLENGE);
+            if (signatureAddResponse instanceof SmartIdResponse) {
+                SmartIdResponse smartIdResponse = (SmartIdResponse) signatureAddResponse;
+                String selectDeviceText = getResources().getString(R.string.signature_update_smart_id_select_device);
+                if (smartIdResponse.selectDevice() && !smartIdInfo.getText().equals(selectDeviceText)) {
+                    smartIdInfo.setText(R.string.signature_update_smart_id_select_device);
+                    AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, smartIdInfo.getText());
+                }
+                String smartIdChallenge = smartIdResponse.challenge();
+                if (smartIdChallenge != null) {
+                    smartIdChallengeView.setText(smartIdChallenge);
+                    smartIdInfo.setText(R.string.signature_update_smart_id_info);
+                    String smartIdChallengeDescription = getResources().getString(R.string.smart_id_challenge) +
+                            AccessibilityUtils.getTextAsSingleCharacters(smartIdChallenge);
+                    AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, smartIdChallengeDescription);
+                    AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_smart_id_info);
+                } else {
+                    smartIdChallengeView.setText(EMPTY_CHALLENGE);
+                }
             }
         }
 
@@ -465,6 +474,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     }
 
     private void resetSignatureAddDialog() {
+        SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
+        SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
         signatureAddView.reset(viewModel);
     }
 
@@ -537,8 +548,12 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                         sendMethodSelectionAccessibilityEvent(method);
                         return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile);
                 }),
-                signatureAddDialog.positiveButtonClicks().map(ignored -> Intent.SignatureAddIntent.sign(signatureAddView.method(),
-                        isExistingContainer, containerFile, signatureAddView.request())),
+                signatureAddDialog.positiveButtonClicks().map(ignored -> {
+                    SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
+                    SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
+                    return Intent.SignatureAddIntent.sign(signatureAddView.method(),
+                            isExistingContainer, containerFile, signatureAddView.request());
+                }),
                 signatureAddIntentSubject
         );
     }
