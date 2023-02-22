@@ -35,7 +35,7 @@ ext {
 
     androidxVersion = '1.5.0'
     androidxAppCompatVersion = '1.5.1'
-    androidxLifecycleVersion = '2.4.1'
+    androidxLifecycleVersion = '2.5.1'
     androidMaterialVersion = '1.7.0'
     androidxRecyclerviewVersion = '1.2.1'
     androidxCardviewVersion = '1.0.0'
@@ -60,7 +60,7 @@ ext {
     materialValuesVersion = '1.1.1'
     lombokVersion = '1.18.24'
     daggerVersion = '2.44.2'
-    conductorVersion = '3.1.5'
+    conductorVersion = '3.1.8'
     rxJavaVersion = '3.1.5'
     rxAndroidVersion = '3.0.2'
     rxBindingVersion = '4.0.0'
