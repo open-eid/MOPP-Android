@@ -14,7 +14,7 @@ public final class HomeMenuDialog extends AlertDialog {
 
     public HomeMenuDialog(@NonNull Context context) {
         super(context, R.style.ThemeOverlay_Application_Menu);
-        SecureUtil.markAsSecure(getWindow());
+        SecureUtil.markAsSecure(context, getWindow());
         menuView = new HomeMenuView(getContext());
         menuView.setId(R.id.mainHomeMenu);
         AccessibilityUtils.setViewAccessibilityPaneTitle(menuView, R.string.main_home_menu_title);

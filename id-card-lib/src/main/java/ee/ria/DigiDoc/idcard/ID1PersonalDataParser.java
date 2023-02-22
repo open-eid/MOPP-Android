@@ -3,10 +3,13 @@ package ee.ria.DigiDoc.idcard;
 import android.util.Log;
 import android.util.SparseArray;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.List;
 
+import ee.ria.DigiDoc.common.DateOfBirthUtil;
 import timber.log.Timber;
 
 class ID1PersonalDataParser {
@@ -16,6 +19,7 @@ class ID1PersonalDataParser {
             .toFormatter();
     private static final int SURNAME_POS = 1;
     private static final int GIVEN_NAMES_POS = 2;
+    private static final int GENDER_POS = 3;
     private static final int CITIZENSHIP_POS = 4;
     private static final int DATE_AND_PLACE_OF_BIRTH_POS = 5;
     private static final int PERSONAL_CODE_POS = 6;
@@ -33,7 +37,20 @@ class ID1PersonalDataParser {
         String documentNumber = data.get(DOCUMENT_NUMBER_POS);
         String expiryDateString = data.get(EXPIRY_DATE_POS);
 
-        LocalDate dateOfBirth = parseDateOfBirth(dateAndPlaceOfBirthString);
+        if (data.get(GENDER_POS).isEmpty() && !personalCode.isEmpty()) {
+            data.set(GENDER_POS, parseDigiIdGender(personalCode));
+        }
+
+        LocalDate dateOfBirth;
+
+        if (!dateAndPlaceOfBirthString.isEmpty()) {
+            dateOfBirth = parseDateOfBirth(dateAndPlaceOfBirthString);
+        } else if (!personalCode.isEmpty()) {
+            dateOfBirth = parseDigiIdDateOfBirth(personalCode);
+        } else {
+            throw new IllegalArgumentException("Personal code not found");
+        }
+
         LocalDate expiryDate = parseExpiryDate(expiryDateString);
 
         return PersonalData.create(surname, givenNames, citizenship, dateOfBirth,
@@ -65,4 +82,26 @@ class ID1PersonalDataParser {
         }
     }
 
+    private static String parseDigiIdGender(String personalCode) {
+        int genderNumber = Character.getNumericValue(personalCode.charAt(0));
+        List<Integer> males = List.of(1, 3, 5, 7);
+        List<Integer> females = List.of(2, 4, 6, 8);
+
+        if (males.contains(genderNumber)) {
+            return "M";
+        } else if (females.contains(genderNumber)) {
+            return "F";
+        }
+
+        throw new IllegalArgumentException("Invalid personal code");
+    }
+
+    private static LocalDate parseDigiIdDateOfBirth(String personalCode) {
+        try {
+            return DateOfBirthUtil.parseDateOfBirth(personalCode);
+        } catch (DateTimeException e) {
+            Timber.log(Log.ERROR, "Invalid personal code birth of date", e);
+            throw new IllegalArgumentException("Invalid personal code");
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.signature.data;
 
+import android.content.Context;
+
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
@@ -15,7 +17,7 @@ public interface SignatureContainerDataSource {
 
     Single<ImmutableList<File>> find();
 
-    Single<ContainerAdd> addContainer(ImmutableList<FileStream> fileStreams, boolean forceCreate);
+    Single<ContainerAdd> addContainer(Context context, ImmutableList<FileStream> fileStreams, boolean forceCreate);
 
     Single<SignedContainer> get(File containerFile);
 

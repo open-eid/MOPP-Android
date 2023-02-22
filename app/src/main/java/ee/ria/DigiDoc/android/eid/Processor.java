@@ -169,7 +169,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
             dateOfBirthValuesBuilder
                     .add(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy")))
                     .add(dateOfBirth.format(DateTimeFormatter.ofPattern("MMdd")))
-                    .add(dateOfBirth.format(DateTimeFormatter.ofPattern("ddMM")));
+                    .add(dateOfBirth.format(DateTimeFormatter.ofPattern("ddMM")))
+                    .add(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         }
         ImmutableSet<String> dateOfBirthValues = dateOfBirthValuesBuilder.build();
 
@@ -213,8 +214,21 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private static boolean isCodeTooEasy(String code) {
         Integer delta = null;
         for (int i = 0; i < code.length() - 1; i++) {
-            int d = Character.getNumericValue(code.charAt(i)) -
-                    Character.getNumericValue(code.charAt(i + 1));
+            int currentNumber = Character.getNumericValue(code.charAt(i));
+            int nextNumber = Character.getNumericValue(code.charAt(i + 1));
+
+            int d = currentNumber - nextNumber;
+
+            // Reset sequence
+            if (Math.abs(d) == 9) {
+                delta = null;
+                if ((currentNumber == 9 && nextNumber == 0)) {
+                    d = -1;
+                } else if ((currentNumber == 0 && nextNumber == 9)) {
+                    d = 1;
+                }
+            }
+
             if (Math.abs(d) > 1) {
                 return false;
             }
