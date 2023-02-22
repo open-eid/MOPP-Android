@@ -70,7 +70,7 @@ ext {
     autoValueParcelVersion = '0.2.9'
     logbackAndroidVersion = '2.0.0'
     expandablelayoutVersion = '2.9.2'
-    ldapSdkVersion = '6.0.4'
+    ldapSdkVersion = '6.0.7'
     cdoc4jVersion = '1.4'
     slf4jVersion = '1.7.36'
     junitVersion = '4.13.2'
