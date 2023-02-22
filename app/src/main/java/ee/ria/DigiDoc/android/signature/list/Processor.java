@@ -47,7 +47,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
         containersLoad = upstream -> upstream.switchMap(action ->
                 signatureContainerDataSource.find()
                         .toObservable()
-                        .map(Result.ContainersLoadResult::success)
+                        .map((containerFiles) -> Result.ContainersLoadResult.success(navigator.activity(),containerFiles))
                         .onErrorReturn(Result.ContainersLoadResult::failure)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -73,7 +73,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             .create(true, false, containerFile, false, false,
                                     SignedContainer.isAsicsFile(containerFile.getName()) ?
                                             SignedFilesUtil.getContainerDataFile(signatureContainerDataSource,
-                                                    SignedContainer.open(containerFile)) : null, action.isSivaConfirmed())));
+                                                    SignedContainer.open(containerFile)) : null)));
                     SignedContainer signedContainer = SignedContainer.open(containerFile);
                     sendContainerStatusAccessibilityMessage(signedContainer, application.getApplicationContext(), localeService.applicationConfigurationWithLocale(application.getApplicationContext(),
                             localeService.applicationLocale()));
@@ -94,7 +94,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .toObservable()
                         .map(file -> {
                             AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.document_removed);
-                            return Result.ContainerRemoveResult.success(file);
+                            return Result.ContainerRemoveResult.success(navigator.activity(), file);
                         })
                         .onErrorReturn(Result.ContainerRemoveResult::failure)
                         .subscribeOn(Schedulers.io())

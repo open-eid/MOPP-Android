@@ -37,7 +37,7 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
 
     SignatureUpdateSignatureAddDialog(@NonNull Context context) {
         super(context);
-        SecureUtil.markAsSecure(getWindow());
+        SecureUtil.markAsSecure(context, getWindow());
         TypedArray a = context.obtainStyledAttributes(new int[]{R.attr.dialogPreferredPadding});
         int padding = a.getDimensionPixelSize(0, 0);
         a.recycle();
