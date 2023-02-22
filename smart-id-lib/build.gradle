@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 
 android {
+    namespace 'ee.ria.DigiDoc.smartid'
     compileSdkVersion project.compileSdkVersion
 
     defaultConfig {

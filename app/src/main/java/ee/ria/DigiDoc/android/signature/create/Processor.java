@@ -30,6 +30,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.common.ActivityUtil;
+import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -44,8 +45,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<Action.ChooseFilesAction, Result.ChooseFilesResult>
             chooseFiles;
 
-    private final ConfirmationDialog sivaConfirmationDialog = new ConfirmationDialog(Activity.getContext().get(),
-            R.string.siva_send_message_dialog, R.id.sivaConfirmationDialog);
+    private final ConfirmationDialog sivaConfirmationDialog;
 
     private static final ImmutableSet<String> TIMESTAMP_CONTAINER_EXTENSIONS = ImmutableSet.of("asics", "scs");
 
@@ -53,6 +53,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                       SignatureContainerDataSource signatureContainerDataSource,
                       Application application,
                       FileSystem fileSystem) {
+        sivaConfirmationDialog = new ConfirmationDialog(navigator.activity(),
+                R.string.siva_send_message_dialog, R.id.sivaConfirmationDialog);
+
         chooseFiles = upstream -> upstream
                 .switchMap(action -> {
                     if (action.intent() != null) {
@@ -76,32 +79,27 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     ActivityResult activityResult = ((ActivityResultException) throwable)
                             .activityResult;
                     if (activityResult.resultCode() == RESULT_OK) {
-                        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
-                                parseGetContentIntent(application.getContentResolver(), activityResult.data(), fileSystem.getExternallyOpenedFilesDir()));
-                        ToastUtil.handleEmptyFileError(validFiles, application);
-                        if (SivaUtil.isSivaConfirmationNeeded(validFiles)) {
-                            sivaConfirmationDialog.show();
-                            ClickableDialogUtil.makeLinksInDialogClickable(sivaConfirmationDialog);
-                            sivaConfirmationDialog.cancels()
-                                    .flatMap(next -> {
-                                        if (validFiles.size() == 1 && SignedContainer.isAsicsFile(validFiles.get(0).displayName().toLowerCase())) {
-                                            sivaConfirmationDialog.dismiss();
-                                            return addFilesToContainer(navigator, signatureContainerDataSource, application, validFiles, false);
-                                        } else {
-                                            navigator.execute(Transaction.pop());
-                                            return Observable.empty();
-                                        }
-                                    })
-                                    .subscribe();
-                            sivaConfirmationDialog.positiveButtonClicks()
-                                    .flatMap(next -> {
-                                        sivaConfirmationDialog.dismiss();
-                                        return addFilesToContainer(navigator, signatureContainerDataSource, application, validFiles, true);
-                                    })
-                                    .subscribe();
-                            return Observable.just(Result.ChooseFilesResult.create());
+                        if (activityResult.data() != null) {
+                            ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
+                                    parseGetContentIntent(navigator.activity(), application.getContentResolver(), activityResult.data(), fileSystem.getExternallyOpenedFilesDir()));
+                            ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
+
+                            return handleFiles(navigator, signatureContainerDataSource, validFiles)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .doOnError(throwable1 -> {
+                                        Timber.log(Log.ERROR, throwable1,
+                                                String.format("Unable to add file to container. Error: %s",
+                                                        throwable1.getLocalizedMessage()));
+                                        ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
+
+                                        navigator.execute(Transaction.pop());
+                                    });
                         } else {
-                            return addFilesToContainer(navigator, signatureContainerDataSource, application, validFiles, true);
+                            Timber.log(Log.ERROR, "Data from file chooser is empty");
+                            ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
+
+                            navigator.execute(Transaction.pop());
                         }
                     } else {
                         if (ActivityUtil.isExternalFileOpened(navigator.activity())) {
@@ -111,6 +109,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         }
                         return Observable.just(Result.ChooseFilesResult.create());
                     }
+
+                    return Observable.empty();
                 })
                 .onErrorReturn(throwable -> {
                     List<Throwable> exceptions = ((CompositeException) throwable).getExceptions();
@@ -118,9 +118,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         boolean isEmptyFileException = exceptions.stream().anyMatch(exception ->
                                 (exception instanceof EmptyFileException));
                         if (isEmptyFileException) {
-                            ToastUtil.showEmptyFileError(Activity.getContext().get());
+                            ToastUtil.showEmptyFileError(navigator.activity(), application);
                         } else {
-                            ToastUtil.showGeneralError(Activity.getContext().get());
+                            ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
                         }
                     }
                     navigator.execute(Transaction.pop());
@@ -137,11 +137,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private Observable<Result.ChooseFilesResult> addFilesToContainer(Navigator navigator,
                                                                      SignatureContainerDataSource signatureContainerDataSource,
-                                                                     Application application,
-                                                                     ImmutableList<FileStream> validFiles,
-                                                                     boolean isSivaConfirmed) {
+                                                                     ImmutableList<FileStream> validFiles) {
         return signatureContainerDataSource
-                .addContainer(validFiles, false)
+                .addContainer(navigator.activity(), validFiles, false)
                 .toObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -152,13 +150,52 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         false,
                                         SignedContainer.isAsicsFile(containerAdd.containerFile().getName()) ?
                                                 SignedFilesUtil.getContainerDataFile(signatureContainerDataSource,
-                                                        SignedContainer.open(containerAdd.containerFile())) : null, isSivaConfirmed))))
+                                                        SignedContainer.open(containerAdd.containerFile())) : null))))
                 .doOnError(throwable1 -> {
-                    Timber.log(Log.DEBUG, throwable1, "Add signed container failed");
-                    ToastUtil.showGeneralError(application);
+                    Timber.log(Log.ERROR, throwable1, "Add signed container failed");
+                    if (throwable1 instanceof NoInternetConnectionException) {
+                        ToastUtil.showError(navigator.activity(), R.string.no_internet_connection);
+                    } else {
+                        ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
+                    }
 
                     navigator.execute(Transaction.pop());
                 })
                 .map(containerAdd -> Result.ChooseFilesResult.create());
+    }
+
+    private Observable<Result.ChooseFilesResult> handleFiles(Navigator navigator,
+                                                             SignatureContainerDataSource signatureContainerDataSource,
+                                                             ImmutableList<FileStream> validFiles) {
+        return SivaUtil.isSivaConfirmationNeeded(validFiles, navigator.activity())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(isSivaConfirmationNeeded -> {
+                    if (isSivaConfirmationNeeded) {
+                        sivaConfirmationDialog.show();
+                        ClickableDialogUtil.makeLinksInDialogClickable(sivaConfirmationDialog);
+                        sivaConfirmationDialog.cancels()
+                                .flatMap(next -> {
+                                    if (validFiles.size() == 1 && SignedContainer.isAsicsFile(validFiles.get(0).displayName().toLowerCase())) {
+                                        sivaConfirmationDialog.dismiss();
+                                        return addFilesToContainer(navigator, signatureContainerDataSource, validFiles);
+                                    } else {
+                                        navigator.execute(Transaction.pop());
+                                        return Observable.empty();
+                                    }
+                                })
+                                .subscribeOn(AndroidSchedulers.mainThread())
+                                .subscribe();
+                        sivaConfirmationDialog.positiveButtonClicks()
+                                .flatMap(next -> {
+                                    sivaConfirmationDialog.dismiss();
+                                    return addFilesToContainer(navigator, signatureContainerDataSource, validFiles);
+                                })
+                                .subscribeOn(AndroidSchedulers.mainThread())
+                                .subscribe();
+                    } else {
+                        return addFilesToContainer(navigator, signatureContainerDataSource, validFiles);
+                    }
+                    return Observable.just(Result.ChooseFilesResult.create());
+                });
     }
 }

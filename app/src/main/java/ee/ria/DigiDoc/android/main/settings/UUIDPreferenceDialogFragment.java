@@ -1,6 +1,6 @@
 /*
  * app
- * Copyright 2017 - 2022 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -91,7 +91,7 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = DisplayUtil.setCustomDialogSettings(super.onCreateDialog(savedInstanceState));
-        SecureUtil.markAsSecure(dialog.getWindow());
+        SecureUtil.markAsSecure(getContext(), dialog.getWindow());
         return dialog;
     }
 
