@@ -61,9 +61,11 @@ final class SmartCreateSignatureRequestHelper {
                             displayMessage, MAX_DISPLAY_MESSAGE_BYTES, StandardCharsets.UTF_8
                     )));
         } else {
-            request.setDisplayText(StringUtils.truncate(String.format("%s %s",
-                    displayMessage, FileUtil.getSignDocumentFileName(container.file())
-            ), MAX_DISPLAY_MESSAGE_LENGTH));
+            request.setDisplayText(MessageUtil.escape(
+                    StringUtils.truncate(String.format("%s %s",
+                                    displayMessage,
+                                    FileUtil.getSignDocumentFileName(container.file())),
+                            MAX_DISPLAY_MESSAGE_LENGTH)));
         }
         return request;
     }
