@@ -1,12 +1,17 @@
 package ee.ria.DigiDoc.android.utils;
 
+import static ee.ria.DigiDoc.BuildConfig.APPLICATION_ID;
+
 import android.content.ClipData;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -25,6 +30,8 @@ import org.w3c.dom.NodeList;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,7 +39,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.common.FileUtil;
-import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import timber.log.Timber;
@@ -59,12 +65,14 @@ public final class IntentUtils {
      *
      * Always returns a list, even if only one file was chosen.
      *
+     * @param context Context.
      * @param contentResolver Content resolver to get display name, type and input stream.
      * @param intent Intent returned from
      *               {@link android.app.Activity#onActivityResult(int, int, Intent)}.
+     * @param externallyOpenedFilesDirectory File Externally opened files directory.
      * @return List of {@link FileStream file stream} objects.
      */
-    public static ImmutableList<FileStream> parseGetContentIntent(ContentResolver contentResolver,
+    public static ImmutableList<FileStream> parseGetContentIntent(Context context, ContentResolver contentResolver,
                                                                   Intent intent,
                                                                   File externallyOpenedFilesDirectory) {
         ImmutableList.Builder<FileStream> builder = ImmutableList.builder();
@@ -84,7 +92,7 @@ public final class IntentUtils {
             if (fileStream.fileSize() != 0) {
                 builder.add(fileStream);
             } else {
-                File file = parseGetContentIntent(contentResolver, data, externallyOpenedFilesDirectory);
+                File file = parseGetContentIntent(context, contentResolver, data, externallyOpenedFilesDirectory);
                 if (file != null) {
                     Path renamedFile = FileUtil.renameFile(file.toPath(),
                             getFileName(file));
@@ -135,9 +143,9 @@ public final class IntentUtils {
         return false;
     }
 
-    public static File parseGetContentIntent(ContentResolver contentResolver, Uri uri,
+    public static File parseGetContentIntent(Context context, ContentResolver contentResolver, Uri uri,
                                             File externallyOpenedFilesDirectory) {
-       return getExternallyOpenedFile(contentResolver, uri,
+       return getExternallyOpenedFile(context, contentResolver, uri,
                     externallyOpenedFilesDirectory.getPath());
     }
 
@@ -169,10 +177,42 @@ public final class IntentUtils {
     public static Intent createSendIntent(Context context, File file) {
         Uri uri = FileProvider.getUriForFile(context,
                 context.getString(R.string.file_provider_authority), file);
-        return Intent
-                .createChooser(new Intent(Intent.ACTION_SEND)
-                        .putExtra(Intent.EXTRA_STREAM, uri)
-                        .setType(SignedContainer.mimeType(file)), null);
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND)
+                .putExtra(Intent.EXTRA_STREAM, uri)
+                .setType(SignedContainer.mimeType(file));
+
+        // Remove app from "Share" menu
+        List<Intent> shareIntentList = new ArrayList<>();
+        List<ResolveInfo> resolveInfos = context.getPackageManager()
+                .queryIntentActivities(shareIntent, 0);
+
+        if (resolveInfos != null && !resolveInfos.isEmpty()) {
+            for (ResolveInfo resolveInfo : resolveInfos) {
+                String appPackageName = context.getPackageName() != null ?
+                        context.getPackageName() : APPLICATION_ID;
+                String packageName = resolveInfo.activityInfo.packageName;
+                String name = resolveInfo.activityInfo.name;
+                if (appPackageName != null && packageName != null && name != null &&
+                        !packageName.equalsIgnoreCase(appPackageName)) {
+                    ComponentName componentName = new ComponentName(packageName, name);
+                    Intent intent = new Intent(Intent.ACTION_SEND)
+                            .putExtra(Intent.EXTRA_STREAM, uri)
+                            .setType(SignedContainer.mimeType(file))
+                            .setComponent(componentName)
+                            .setPackage(packageName);
+                    shareIntentList.add(intent);
+                }
+            }
+        }
+
+        Intent selfAppIntent = shareIntentList.get(0);
+        Intent chooserIntent = Intent.createChooser(selfAppIntent, null);
+        shareIntentList.remove(selfAppIntent);
+        chooserIntent.putExtra(
+                Intent.EXTRA_INITIAL_INTENTS,
+                shareIntentList.toArray(new Parcelable[0]));
+        return chooserIntent;
     }
 
     public static Intent createSaveIntent(DataFile dataFile) {
@@ -220,14 +260,14 @@ public final class IntentUtils {
         return fileSize;
     }
 
-    private static File getExternallyOpenedFile(ContentResolver contentResolver, Uri uri, String directory) {
+    private static File getExternallyOpenedFile(Context context, ContentResolver contentResolver, Uri uri, String directory) {
         try (InputStream initialStream = contentResolver.openInputStream(uri)) {
             // File without extension, as we can't tell what type of file it is
             File externalFile = new File(directory + "/file");
 
             FileUtils.copyInputStreamToFile(initialStream, externalFile);
 
-            boolean isContainer = SignedContainer.isContainer(externalFile);
+            boolean isContainer = SignedContainer.isContainer(context, externalFile);
             if (isContainer) {
                 return SignedContainer.open(externalFile).file();
             }
