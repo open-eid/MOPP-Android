@@ -30,6 +30,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.common.ActivityUtil;
+import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -80,7 +81,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     if (activityResult.resultCode() == RESULT_OK) {
                         if (activityResult.data() != null) {
                             ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
-                                    parseGetContentIntent(application.getContentResolver(), activityResult.data(), fileSystem.getExternallyOpenedFilesDir()));
+                                    parseGetContentIntent(navigator.activity(), application.getContentResolver(), activityResult.data(), fileSystem.getExternallyOpenedFilesDir()));
                             ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
 
                             return handleFiles(navigator, signatureContainerDataSource, validFiles)
@@ -90,13 +91,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         Timber.log(Log.ERROR, throwable1,
                                                 String.format("Unable to add file to container. Error: %s",
                                                         throwable1.getLocalizedMessage()));
-                                        ToastUtil.showGeneralError(navigator.activity());
+                                        ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
 
                                         navigator.execute(Transaction.pop());
                                     });
                         } else {
                             Timber.log(Log.ERROR, "Data from file chooser is empty");
-                            ToastUtil.showGeneralError(navigator.activity());
+                            ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
 
                             navigator.execute(Transaction.pop());
                         }
@@ -119,7 +120,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         if (isEmptyFileException) {
                             ToastUtil.showEmptyFileError(navigator.activity(), application);
                         } else {
-                            ToastUtil.showGeneralError(navigator.activity());
+                            ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
                         }
                     }
                     navigator.execute(Transaction.pop());
@@ -138,7 +139,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                                      SignatureContainerDataSource signatureContainerDataSource,
                                                                      ImmutableList<FileStream> validFiles) {
         return signatureContainerDataSource
-                .addContainer(validFiles, false)
+                .addContainer(navigator.activity(), validFiles, false)
                 .toObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -151,10 +152,12 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                 SignedFilesUtil.getContainerDataFile(signatureContainerDataSource,
                                                         SignedContainer.open(containerAdd.containerFile())) : null))))
                 .doOnError(throwable1 -> {
-                    Timber.log(Log.ERROR, throwable1,
-                            String.format("Add signed container failed: %s",
-                                    throwable1.getLocalizedMessage()));
-                    ToastUtil.showGeneralError(navigator.activity());
+                    Timber.log(Log.ERROR, throwable1, "Add signed container failed");
+                    if (throwable1 instanceof NoInternetConnectionException) {
+                        ToastUtil.showError(navigator.activity(), R.string.no_internet_connection);
+                    } else {
+                        ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
+                    }
 
                     navigator.execute(Transaction.pop());
                 })

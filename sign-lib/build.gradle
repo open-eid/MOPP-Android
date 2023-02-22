@@ -38,6 +38,10 @@ dependencies {
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
+    implementation ("com.tom-roush:pdfbox-android:${pdfboxVersion}") {
+        exclude group: "org.bouncycastle"
+    }
+
     implementation "commons-io:commons-io:${commonsioVersion}"
 
     implementation project(':common-lib')

@@ -110,7 +110,7 @@ public final class Activity extends AppCompatActivity {
     }
 
     private void handleRootedDevice() {
-        if (CommonUtils.isRooted(getApplicationContext())) {
+        if (CommonUtils.isRooted()) {
             ErrorDialog errorDialog = new ErrorDialog(this);
             errorDialog.setMessage(getResources().getString(R.string.rooted_device));
             errorDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.ok), (dialog, which) -> dialog.cancel());
@@ -271,10 +271,11 @@ public final class Activity extends AppCompatActivity {
             ImmutableList<FileStream> fileStreams;
             File externallyOpenedFilesDir = new File(activity.getFilesDir(), DIR_EXTERNALLY_OPENED_FILES);
             try {
-                fileStreams = IntentUtils.parseGetContentIntent(activity.getContentResolver(), intent, externallyOpenedFilesDir);
+                fileStreams = IntentUtils.parseGetContentIntent(getContext().get(),
+                        activity.getContentResolver(), intent, externallyOpenedFilesDir);
             } catch (Exception e) {
                 Timber.log(Log.ERROR, e, "Unable to open file");
-                ToastUtil.showGeneralError(activity);
+                ToastUtil.showError(getContext().get(), R.string.signature_create_error);
                 return HomeScreen.create(
                         new Intent(Intent.ACTION_MAIN)
                                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -289,7 +290,7 @@ public final class Activity extends AppCompatActivity {
                         return CryptoCreateScreen.open(intent);
                     }
                 } else if (intent.getClipData() != null || intent.getData() != null) {
-                    File file = IntentUtils.parseGetContentIntent(
+                    File file = IntentUtils.parseGetContentIntent(getContext().get(),
                             activity.getContentResolver(), intent.getClipData() != null ?
                                     intent.getClipData().getItemAt(0).getUri() :
                                     intent.getData(),
