@@ -76,6 +76,6 @@ ext {
     junitVersion = '4.13.2'
     truthVersion = '1.1.3'
     mockitoVersion = '4.11.0'
-    jacksonVersion = '2.13.2'
+    jacksonVersion = '2.14.1'
     firebaseCrashlyticsVersion = '31.1.1'
 }
