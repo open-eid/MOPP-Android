@@ -1,6 +1,6 @@
 /*
  * app
- * Copyright 2017 - 2022 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -109,14 +109,12 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                                 intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE);
                         emitter.onNext(SmartIdResponse.challenge(challenge));
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL,
-                                    NOTIFICATION_CHANNEL + "_NAME", NotificationManager.IMPORTANCE_HIGH);
-                            NotificationManager systemService = navigator.activity().getSystemService(NotificationManager.class);
-                            if (systemService != null) {
-                                Timber.log(Log.DEBUG, "Creating notification channel");
-                                systemService.createNotificationChannel(channel);
-                            }
+                        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL,
+                                NOTIFICATION_CHANNEL + "_NAME", NotificationManager.IMPORTANCE_HIGH);
+                        NotificationManager systemService = navigator.activity().getSystemService(NotificationManager.class);
+                        if (systemService != null) {
+                            Timber.log(Log.DEBUG, "Creating notification channel");
+                            systemService.createNotificationChannel(channel);
                         }
                         NotificationCompat.Builder notification = new NotificationCompat
                                 .Builder(navigator.activity(), NOTIFICATION_CHANNEL)

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/main_home_toolbar_logo"
-        android:contentDescription="@null" />
+        android:contentDescription="@string/main_home_logo" />
 
     <ImageButton
         android:id="@id/mainHomeToolbarOverflow"

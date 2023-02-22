@@ -17,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationContentDescription="@string/back"
             app:title="@string/eid_home_code_update_title_pin1_edit" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -59,32 +58,36 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
                 android:layout_marginTop="@dimen/material_content_edge_margin_horizontal"
-                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal">
+                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal"
+                android:minHeight="@dimen/material_baseline_grid_6x"
+                app:errorEnabled="true"
+                app:expandedHintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@id/eidHomeCodeUpdateCurrent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberPassword"
-                    android:maxLength="12"
                     android:minHeight="@dimen/material_baseline_grid_6x" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@id/eidHomeCodeUpdateNewLabel"
+                android:id="@id/eidHomeUpdateNewLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
                 android:layout_marginTop="@dimen/material_baseline_grid_1x"
-                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal">
+                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal"
+                android:minHeight="@dimen/material_baseline_grid_6x"
+                app:errorEnabled="true"
+                app:expandedHintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@id/eidHomeCodeUpdateNew"
+                    android:id="@id/eidHomeUpdateNewText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberPassword"
-                    android:maxLength="12"
                     android:minHeight="@dimen/material_baseline_grid_6x" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -95,14 +98,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
                 android:layout_marginTop="@dimen/material_baseline_grid_1x"
-                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal">
+                android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal"
+                android:minHeight="@dimen/material_baseline_grid_6x"
+                app:errorEnabled="true"
+                app:expandedHintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@id/eidHomeCodeUpdateRepeat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberPassword"
-                    android:maxLength="12"
                     android:minHeight="@dimen/material_baseline_grid_6x" />
 
             </com.google.android.material.textfield.TextInputLayout>

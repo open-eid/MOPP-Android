@@ -2,19 +2,12 @@ package ee.ria.DigiDoc.android.main.home;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build;
 import android.os.Parcelable;
-import android.text.Layout;
-import android.text.SpannableString;
-import android.text.style.AlignmentSpan;
 import android.util.SparseArray;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -22,12 +15,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.internal.BaselineLayout;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
@@ -63,6 +50,10 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
     private final HomeMenuDialog menuDialog;
     private final HomeMenuView menuView;
 
+    BottomNavigationItemView signatureItem;
+    BottomNavigationItemView cryptoItem;
+    BottomNavigationItemView eidItem;
+
     private final HomeViewModel viewModel;
     private final ViewDisposables disposables = new ViewDisposables();
 
@@ -81,12 +72,17 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         navigationContainerView = findViewById(R.id.mainHomeNavigationContainer);
         navigationView = findViewById(R.id.mainHomeNavigation);
 
-        BottomNavigationItemView signatureItem = findViewById(R.id.mainHomeNavigationSignature);
-        BottomNavigationItemView cryptoItem = findViewById(R.id.mainHomeNavigationCrypto);
-        BottomNavigationItemView eidItem = findViewById(R.id.mainHomeNavigationEID);
-        setCustomAccessibilityFeedback(signatureItem, R.string.main_home_navigation_signature, getResources().getString(R.string.signature_content_description, 1, 3));
-        setCustomAccessibilityFeedback(cryptoItem, R.string.main_home_navigation_crypto, getResources().getString(R.string.crypto_content_description, 2, 3));
-        setCustomAccessibilityFeedback(eidItem, R.string.main_home_navigation_eid, getResources().getString(R.string.my_eid_content_description, 3, 3));
+        signatureItem = findViewById(R.id.mainHomeNavigationSignature);
+        cryptoItem = findViewById(R.id.mainHomeNavigationCrypto);
+        eidItem = findViewById(R.id.mainHomeNavigationEID);
+
+        signatureItem.setContentDescription(getResources().getString(R.string.main_home_navigation_signature_accessibility));
+        cryptoItem.setContentDescription(getResources().getString(R.string.main_home_navigation_crypto_accessibility));
+        eidItem.setContentDescription(getResources().getString(R.string.main_home_navigation_myEid_accessibility));
+
+        setCustomAccessibilityFeedback(signatureItem);
+        setCustomAccessibilityFeedback(cryptoItem);
+        setCustomAccessibilityFeedback(eidItem);
 
         setBottomToolbarItemSizes(signatureItem);
         setBottomToolbarItemSizes(cryptoItem);
@@ -97,6 +93,23 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         viewModel = Application.component(context).navigator().viewModel(screenId,
                 HomeViewModel.class);
         viewModel.eidScreenId(eidScreenId);
+    }
+
+    private void setCustomAccessibilityFeedback(BottomNavigationItemView bottomNavigationItemView) {
+        bottomNavigationItemView.setAccessibilityDelegate(new AccessibilityDelegate() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+
+                if (bottomNavigationItemView == signatureItem) {
+                    info.setTooltipText(getResources().getString(R.string.main_home_navigation_signature_accessibility));
+                } else if (bottomNavigationItemView == cryptoItem) {
+                    info.setTooltipText(getResources().getString(R.string.main_home_navigation_crypto_accessibility));
+                } else if (bottomNavigationItemView == eidItem) {
+                    info.setTooltipText(getResources().getString(R.string.main_home_navigation_myEid_accessibility));
+                }
+            }
+        });
     }
 
     private void setBottomToolbarItemSizes(BottomNavigationItemView itemView) {
@@ -212,23 +225,5 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
     public void restoreHierarchyState(SparseArray<Parcelable> container) {
         super.restoreHierarchyState(container);
         this.hierarchyState = container;
-    }
-
-    private void setCustomAccessibilityFeedback(BottomNavigationItemView bottomNavigationItemView, @StringRes int contentDescription, String toolTipText) {
-        bottomNavigationItemView.setAccessibilityDelegate(new AccessibilityDelegate() {
-            @Override
-            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
-                super.onInitializeAccessibilityNodeInfo(host, info);
-                info.setContentDescription(getResources().getString(contentDescription).toLowerCase());
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    info.setTooltipText(toolTipText);
-                } else {
-                    info.setContentDescription(toolTipText);
-                }
-                info.setClassName("");
-                info.setPackageName("");
-                info.setViewIdResourceName("");
-            }
-        });
     }
 }
