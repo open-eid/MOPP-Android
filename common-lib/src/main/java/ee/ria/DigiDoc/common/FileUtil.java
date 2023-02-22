@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.Normalizer;
 
 public class FileUtil {
 
@@ -117,6 +118,10 @@ public class FileUtil {
         }
 
         return sb.toString();
+    }
+
+    public static String normalizeString(String text) {
+        return Normalizer.normalize(text, Normalizer.Form.NFD);
     }
 
     public static Uri normalizePath(String filePath) {

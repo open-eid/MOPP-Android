@@ -5,7 +5,8 @@
     <item type="id" name="appBar" />
     <item type="id" name="toolbar" />
     <item type="id" name="activityIndicator" />
-    <item type="id" name="activityIndicator_mobile_id" />
+    <item type="id" name="activityIndicatorMobileId" />
+    <item type="id" name="activityIndicatorSmartId" />
     <item type="id" name="activityOverlay" />
     <item type="id" name="listEmpty" />
 
@@ -31,6 +32,7 @@
     <item type="id" name="mainHomeMenu" />
     <item type="id" name="mainHomeMenuCloseButton" />
     <item type="id" name="mainHomeMenuHelp" />
+    <item type="id" name="mainHomeMenuAccessibility" />
     <item type="id" name="mainHomeMenuRecent" />
     <item type="id" name="mainHomeMenuSettings" />
     <item type="id" name="mainHomeMenuAbout" />
@@ -40,10 +42,32 @@
     <item type="id" name="mainHomeMenuLocaleRu" />
     <item type="id" name="mainHomeMenuLocaleEn" />
 
+    <!-- Main Accessibility -->
+    <item type="id" name="mainAccessibilityScreen" />
+    <item type="id" name="mainAccessibilityFragment" />
+
+    <item type="id" name="mainAccessibilityIntroduction" />
+    <item type="id" name="mainAccessibilityIntroduction2" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderTitle" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroduction" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroduction2" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroductionApps" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroductionIos" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroductionAndroid" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationTitle" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationIntroduction" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationScreenTools" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationScreenToolsIos" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationScreenToolsAndroid" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationTools" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationToolsIos" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationToolsAndroid" />
+
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsFragment" />
     <item type="id" name="mainSettingsOpenAllFileTypes" />
+    <item type="id" name="mainSettingsAllowScreenshots" />
     <item type="id" name="mainSettingsAccessToSigningService" />
     <item type="id" name="mainSettingsAccessToTimeStampingService" />
 
@@ -234,7 +258,6 @@
     <item type="id" name="signatureUpdateSmartIdCountryText" />
     <item type="id" name="signatureUpdateSmartIdCountryLabel" />
     <item type="id" name="signatureUpdateSmartIdCountry" />
-    <item type="id" name="signatureUpdateSmartIdPersonalCodeText" />
     <item type="id" name="signatureUpdateSmartIdPersonalCodeLabel" />
     <item type="id" name="signatureUpdateSmartIdPersonalCode" />
     <item type="id" name="signatureUpdateSmartIdRememberMe" />
@@ -246,6 +269,7 @@
     <item type="id" name="signatureUpdateIdCardSignMessage" />
     <item type="id" name="signatureUpdateIdCardSignData" />
     <item type="id" name="signatureUpdateIdCardSignPin2" />
+    <item type="id" name="signatureUpdateIdCardSignPin2Label" />
     <item type="id" name="signatureUpdateIdCardSignPin2Error" />
 
     <!-- Signature Add -->
@@ -284,6 +308,7 @@
     <item type="id" name="cryptoRecipientType" />
     <item type="id" name="cryptoRecipientName" />
     <item type="id" name="cryptoRecipientInfo" />
+    <item type="id" name="cryptoRecipientsAddAllButton" />
     <item type="id" name="cryptoRecipientRemoveButton" />
     <item type="id" name="cryptoRecipientAddButton" />
 
@@ -297,6 +322,7 @@
     <item type="id" name="cryptoCreateDecryptContainer" />
     <item type="id" name="cryptoCreateDecryptData" />
     <item type="id" name="cryptoCreateDecryptPin1" />
+    <item type="id" name="cryptoCreateDecryptPin1Label" />
     <item type="id" name="cryptoCreateDecryptPin1Error" />
 
     <!-- EID Home -->
@@ -336,8 +362,8 @@
     <item type="id" name="eidHomeCodeUpdateText" />
     <item type="id" name="eidHomeCodeUpdateCurrentLabel" />
     <item type="id" name="eidHomeCodeUpdateCurrent" />
-    <item type="id" name="eidHomeCodeUpdateNewLabel" />
-    <item type="id" name="eidHomeCodeUpdateNew" />
+    <item type="id" name="eidHomeUpdateNewLabel" />
+    <item type="id" name="eidHomeUpdateNewText" />
     <item type="id" name="eidHomeCodeUpdateRepeatLabel" />
     <item type="id" name="eidHomeCodeUpdateRepeat" />
     <item type="id" name="eidHomeCodeUpdateNegativeButton" />

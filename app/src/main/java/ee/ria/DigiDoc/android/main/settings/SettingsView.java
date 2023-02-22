@@ -64,6 +64,16 @@ public final class SettingsView extends CoordinatorLayout {
                 restartIntent();
             });
         }
+
+        SwitchCompat allowScreenshotsSwitch = findViewById(R.id.mainSettingsAllowScreenshots);
+        if (allowScreenshotsSwitch != null && activityContext != null) {
+            allowScreenshotsSwitch.setChecked(activityContext.getSettingsDataStore().getIsScreenshotAllowed());
+
+            allowScreenshotsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                activityContext.getSettingsDataStore().setIsScreenshotAllowed(isChecked);
+                restartIntent();
+            });
+        }
     }
 
     private TextView getToolbarViewTitle() {
