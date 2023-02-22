@@ -20,6 +20,7 @@
         <item name="textAppearanceListItem">@style/TextAppearance.Application.ListItem</item>
         <item name="textAppearanceListItemSecondary">@style/TextAppearance.Application.ListItemSecondary</item>
         <item name="bottomSheetDialogTheme">@style/Theme.Application.BottomSheetDialog</item>
+        <item name="android:editTextBackground">@drawable/border_background</item>
     </style>
 
     <style name="Theme.Application.Launch" parent="Theme.Application">

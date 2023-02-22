@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:importantForAccessibility="no"
     android:orientation="vertical">
 
     <ImageView
@@ -10,7 +11,7 @@
         android:layout_gravity="center_horizontal"
         android:paddingTop="@dimen/material_content_edge_margin_horizontal"
         android:src="@drawable/main_about_fonds"
-        android:contentDescription="@string/main_about_title" />
+        android:contentDescription="@string/main_about_digidoc_and_el_logos" />
 
     <TextView
         android:id="@id/mainAboutRiaDigiDocVersionTitle"
