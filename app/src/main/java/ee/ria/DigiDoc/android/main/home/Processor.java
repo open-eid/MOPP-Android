@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.util.SparseIntArray;
-import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 
 import androidx.annotation.IdRes;
@@ -23,6 +22,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.main.about.AboutScreen;
+import ee.ria.DigiDoc.android.main.accessibility.AccessibilityScreen;
 import ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen;
 import ee.ria.DigiDoc.android.main.home.Intent.NavigationVisibilityIntent;
 import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
@@ -86,7 +86,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                     && TextUtils.equals(intent.intent().getAction(), ACTION_VIEW)
                     && intent.intent().getData() != null) {
                 ImmutableList<FileStream> fileStreams =
-                        parseGetContentIntent(contentResolver, intent.intent(), fileSystem.getExternallyOpenedFilesDir());
+                        parseGetContentIntent(navigator.activity(), contentResolver, intent.intent(), fileSystem.getExternallyOpenedFilesDir());
                 Screen screen;
                 if (fileStreams.size() == 1
                         && CryptoContainer.isContainerFileName(fileStreams.get(0).displayName())) {
@@ -104,7 +104,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                     localeService.applicationLocale().getLanguage())));
         })
                 .onErrorReturn(throwable -> {
-                    ToastUtil.showGeneralError(navigator.activity());
+                    ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
                     navigator.execute(Transaction.pop());
                     return Result.InitialResult.create(R.id.mainHomeSignature, null);
                 });
@@ -112,11 +112,6 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         navigation = upstream -> upstream.switchMap(action -> {
             if (action.item() != R.id.mainHomeNavigationEID) {
                 clearEidViewModel();
-            } else {
-                View myEidView = navigator.activity().findViewById(R.id.mainHomeNavigationEID);
-                if (myEidView != null) {
-                    myEidView.setContentDescription(application.getResources().getString(R.string.my_eid_content_description, 3, 3));
-                }
             }
             return Observable.just(Result.NavigationResult
                     .create(NAVIGATION_ITEM_VIEWS.get(action.item())));
@@ -178,6 +173,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 null);
             case R.id.mainHomeMenuRecent:
                 return Transaction.push(SignatureListScreen.create());
+            case R.id.mainHomeMenuAccessibility:
+                return Transaction.push(AccessibilityScreen.create());
             case R.id.mainHomeMenuSettings:
                 return Transaction.push(SettingsScreen.create());
             case R.id.mainHomeMenuAbout:

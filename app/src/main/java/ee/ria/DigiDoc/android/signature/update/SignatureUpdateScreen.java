@@ -23,14 +23,12 @@ public final class SignatureUpdateScreen extends ConductorScreen {
     private static final String SIGNATURE_ADD_VISIBLE = "signatureAddVisible";
     private static final String SIGNATURE_ADD_SUCCESS_MESSAGE_VISIBLE =
             "signatureAddSuccessMessageVisible";
-    private static final String IS_SIVA_CONFIRMED = "isSivaConfirmed";
 
     public static SignatureUpdateScreen create(boolean isExistingContainer,
                                                boolean isNestedContainer, File containerFile,
                                                boolean signatureAddVisible,
                                                boolean signatureAddSuccessMessageVisible,
-                                               @Nullable File nestedFile,
-                                               boolean isSivaConfirmed) {
+                                               @Nullable File nestedFile) {
         Bundle args = new Bundle();
         args.putBoolean(IS_EXISTING_CONTAINER, isExistingContainer);
         args.putBoolean(IS_NESTED_CONTAINER, isNestedContainer);
@@ -40,7 +38,6 @@ public final class SignatureUpdateScreen extends ConductorScreen {
         if (nestedFile != null) {
             putFile(args, CONTAINER_FILE_NESTED, nestedFile);
         }
-        args.putBoolean(IS_SIVA_CONFIRMED, isSivaConfirmed);
         return new SignatureUpdateScreen(args);
     }
 
@@ -50,7 +47,6 @@ public final class SignatureUpdateScreen extends ConductorScreen {
     private final boolean signatureAddVisible;
     private final boolean signatureAddSuccessMessageVisible;
     @Nullable private final File nestedFile;
-    private final boolean isSivaConfirmed;
 
     @SuppressWarnings("WeakerAccess")
     public SignatureUpdateScreen(Bundle args) {
@@ -61,13 +57,12 @@ public final class SignatureUpdateScreen extends ConductorScreen {
         signatureAddVisible = args.getBoolean(SIGNATURE_ADD_VISIBLE);
         signatureAddSuccessMessageVisible = args.getBoolean(SIGNATURE_ADD_SUCCESS_MESSAGE_VISIBLE);
         nestedFile = args.getString(CONTAINER_FILE_NESTED) != null ? getFile(args, CONTAINER_FILE_NESTED) : null;
-        isSivaConfirmed = args.getBoolean(IS_SIVA_CONFIRMED);
     }
 
     @Override
     protected View view(Context context) {
         return new SignatureUpdateView(context, getInstanceId(), isExistingContainer,
                 isNestedContainer, containerFile, signatureAddVisible,
-                signatureAddSuccessMessageVisible, nestedFile, isSivaConfirmed);
+                signatureAddSuccessMessageVisible, nestedFile);
     }
 }

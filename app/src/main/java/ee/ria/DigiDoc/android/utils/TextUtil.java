@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.utils;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.content.Context;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.style.AlignmentSpan;
@@ -89,5 +90,10 @@ public class TextUtil {
                 ((View) detailView.getParent()).setVisibility(GONE);
             }
         }
+    }
+
+    public static int convertPxToDp(float size, Context context) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                size, context.getResources().getDisplayMetrics());
     }
 }
