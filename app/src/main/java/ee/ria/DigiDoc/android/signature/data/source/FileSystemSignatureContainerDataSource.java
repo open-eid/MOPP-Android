@@ -27,6 +27,8 @@ import io.reactivex.rxjava3.core.Single;
 import static com.google.common.io.Files.getNameWithoutExtension;
 import static ee.ria.DigiDoc.android.Constants.SIGNATURE_CONTAINER_EXT;
 
+import android.content.Context;
+
 public final class FileSystemSignatureContainerDataSource implements SignatureContainerDataSource {
 
     private final FileSystem fileSystem;
@@ -41,13 +43,13 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
     }
 
     @Override
-    public Single<ContainerAdd> addContainer(ImmutableList<FileStream> fileStreams,
+    public Single<ContainerAdd> addContainer(Context context, ImmutableList<FileStream> fileStreams,
                                              boolean forceCreate) {
         return Single.fromCallable(() -> {
             boolean isExistingContainer;
             File containerFile;
             if (!forceCreate && fileStreams.size() == 1
-                    && SignedContainer.isContainer(fileSystem.cache(fileStreams.get(0)))) {
+                    && SignedContainer.isContainer(context, fileSystem.cache(fileStreams.get(0)))) {
                 FileStream fileStream = fileStreams.get(0);
                 isExistingContainer = true;
                 containerFile = fileSystem.addSignatureContainer(fileStream);
