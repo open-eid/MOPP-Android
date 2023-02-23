@@ -51,7 +51,7 @@ public class FileUtil {
         String fileExtension = FilenameUtils.getExtension(fullFileName);
 
         if (fileName.length() <= 6) {
-            return fileName;
+            return fileName + "." + fileExtension;
         }
 
         return StringUtils.left(fileName, 3) +
