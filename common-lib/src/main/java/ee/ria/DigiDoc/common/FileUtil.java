@@ -8,6 +8,7 @@ import android.webkit.URLUtil;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,6 +37,28 @@ public class FileUtil {
         }
 
         throw new IOException("Invalid file path");
+    }
+
+    /**
+     * Get Smart-ID V2 file name
+     *
+     * @param file File to get name from
+     * @return String with updated file name
+     */
+    public static String getSignDocumentFileName(File file) {
+        String fullFileName = file.getName();
+        String fileName = FilenameUtils.getBaseName(fullFileName);
+        String fileExtension = FilenameUtils.getExtension(fullFileName);
+
+        if (fileName.length() <= 6) {
+            return fileName + "." + fileExtension;
+        }
+
+        return StringUtils.left(fileName, 3) +
+                "..." +
+                StringUtils.right(fileName, 3) +
+                "." +
+                fileExtension;
     }
 
     /**
