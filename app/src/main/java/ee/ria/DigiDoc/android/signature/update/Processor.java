@@ -9,9 +9,9 @@ import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
-import android.widget.Toast;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -30,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
@@ -45,9 +43,11 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
+import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.SignedContainer;
+import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
@@ -85,6 +85,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         Result.SignatureAddResult> signatureAdd;
 
     private final ObservableTransformer<Action.SendAction, Result.SendResult> send;
+
+    private android.content.Intent intent;
 
     @Inject Processor(SignatureContainerDataSource signatureContainerDataSource,
                       SignatureAddSource signatureAddSource, Application application,
@@ -359,7 +361,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
             Boolean existingContainer = action.existingContainer();
             File containerFile = action.containerFile();
             SignatureAddRequest request = action.request();
-            if (method == null) {
+            boolean isCancelled = action.isCancelled();
+            if (method != null) {
+                intent = getSigningIntent(navigator, method);
+            }
+            if (method == null || isCancelled) {
+                if (intent != null) {
+                    Handler handler = new Handler(navigator.activity().getMainLooper());
+                    handler.post(() -> stopSigningService(navigator, intent));
+                }
                 return Observable.just(Result.SignatureAddResult.clear());
             } else if (request == null && existingContainer != null && containerFile != null) {
                 if (SignedContainer.isLegacyContainer(containerFile)) {
@@ -379,7 +389,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     return signatureAddSource.show(method);
                 }
             } else if (existingContainer != null && containerFile != null) {
-                return signatureAddSource.sign(containerFile, request)
+                return signatureAddSource.sign(containerFile, request, navigator, intent)
                         .switchMap(response -> {
                             if (response.container() != null) {
                                 return Observable.fromCallable(() -> {
@@ -475,5 +485,22 @@ final class Processor implements ObservableTransformer<Action, Result> {
         } else {
             AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.file_added);
         }
+    }
+
+    private android.content.Intent getSigningIntent(Navigator navigator, Integer method) {
+        if (method != null) {
+            if (method == R.id.signatureUpdateSignatureAddMethodMobileId) {
+                return new android.content.Intent(navigator.activity(), MobileSignService.class);
+            } else if (method == R.id.signatureUpdateSignatureAddMethodSmartId) {
+                return new android.content.Intent(navigator.activity(), SmartSignService.class);
+            } else if (method == R.id.signatureUpdateSignatureAddMethodIdCard) {
+                return new android.content.Intent();
+            }
+        }
+        return null;
+    }
+
+    private void stopSigningService(Navigator navigator, android.content.Intent intent) {
+        navigator.activity().stopService(intent);
     }
 }

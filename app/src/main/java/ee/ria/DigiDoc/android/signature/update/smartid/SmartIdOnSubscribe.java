@@ -69,7 +69,9 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
     private final String personalCode;
     private final String country;
 
-    public SmartIdOnSubscribe(Navigator navigator, SignedContainer container, String uuid,
+    Intent intent;
+
+    public SmartIdOnSubscribe(Navigator navigator, Intent intent, SignedContainer container, String uuid,
                               String personalCode, String country) {
         this.navigator = navigator;
         this.container = container;
@@ -77,6 +79,8 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         this.uuid = uuid;
         this.personalCode = personalCode;
         this.country = country;
+
+        this.intent = intent;
     }
 
     @Override
@@ -158,7 +162,6 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                         configurationProvider.getSidV2RestUrl(), configurationProvider.getSidSkRestUrl(),
                         configurationProvider.getSidV2SkRestUrl(), country, personalCode, displayMessage);
 
-        android.content.Intent intent = new Intent(navigator.activity(), SmartSignService.class);
         intent.putExtra(CREATE_SIGNATURE_REQUEST, request);
         intent.putStringArrayListExtra(CERTIFICATE_CERT_BUNDLE,
                 new ArrayList<>(configurationProvider.getCertBundle()));

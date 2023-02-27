@@ -236,6 +236,7 @@
     <item type="id" name="signatureUpdateMobileIdContainer" />
     <item type="id" name="signatureUpdateMobileIdChallenge" />
     <item type="id" name="signatureUpdateMobileIdChallengeText" />
+    <item type="id" name="signatureUpdateMobileIdCancelButton" />
     <item type="id" name="signatureUpdateSendButton" />
     <item type="id" name="signatureUpdateButtonSpace" />
     <item type="id" name="signatureUpdateSignatureAddButton" />

@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import android.view.View;
+
 import java.io.File;
 
 import javax.inject.Inject;
@@ -73,7 +75,9 @@ final class SignatureAddSource {
     }
 
     Observable<? extends SignatureAddResponse> sign(File containerFile,
-                                                    SignatureAddRequest request) {
+                                                    SignatureAddRequest request,
+                                                    Navigator navigator,
+                                                    android.content.Intent intent) {
         if (request instanceof MobileIdRequest) {
             MobileIdRequest mobileIdRequest = (MobileIdRequest) request;
             if (mobileIdRequest.rememberMe()) {
@@ -86,13 +90,14 @@ final class SignatureAddSource {
             return signatureContainerDataSource
                     .get(containerFile)
                     .flatMapObservable(container ->
-                            Observable.create(new MobileIdOnSubscribe(navigator, container,
+                            Observable.create(new MobileIdOnSubscribe(navigator, intent, container,
                                             localeService.applicationLocale(),
                                     settingsDataStore.getUuid(), mobileIdRequest.personalCode(),
                                     mobileIdRequest.phoneNo())))
                     .switchMap(response -> {
                         String signature = response.signature();
                         if (signature != null) {
+                            navigator.activity().findViewById(R.id.signatureUpdateMobileIdCancelButton).setVisibility(View.GONE);
                             return signatureContainerDataSource
                                     .addSignature(containerFile, signature)
                                     .toObservable()
@@ -121,10 +126,16 @@ final class SignatureAddSource {
             return signatureContainerDataSource
                     .get(containerFile)
                     .flatMapObservable(container ->
-                            Observable.create(new SmartIdOnSubscribe(navigator, container,
+                            Observable.create(new SmartIdOnSubscribe(navigator, intent, container,
                                     settingsDataStore.getUuid(), smartIdRequest.personalCode(),
                                     smartIdRequest.country())))
-                    .switchMap(Observable::just)
+                    .switchMap(response -> {
+                        SessionStatusResponse.ProcessStatus processStatus = response.status();
+                        if (SessionStatusResponse.ProcessStatus.OK.equals(processStatus)) {
+                            navigator.activity().findViewById(R.id.signatureUpdateSmartIdCancelButton).setVisibility(View.GONE);
+                        }
+                        return Observable.just(response);
+                    })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .startWithItem(SmartIdResponse

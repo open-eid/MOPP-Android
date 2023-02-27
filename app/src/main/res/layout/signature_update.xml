@@ -88,6 +88,18 @@
                     android:gravity="center_horizontal"
                     android:textColor="@color/title" />
 
+                <Button
+                    android:id="@+id/signatureUpdateSmartIdCancelButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
+                    android:layout_marginStart="@dimen/material_baseline_grid_5x"
+                    android:layout_marginEnd="@dimen/material_baseline_grid_5x"
+                    android:text="@string/cancel_button"
+                    android:backgroundTint="@color/error"
+                    android:foregroundTint="@color/primary">
+                </Button>
+
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
@@ -138,6 +150,18 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:textColor="@color/title" />
+
+                <Button
+                    android:id="@id/signatureUpdateMobileIdCancelButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
+                    android:layout_marginStart="@dimen/material_baseline_grid_5x"
+                    android:layout_marginEnd="@dimen/material_baseline_grid_5x"
+                    android:text="@string/cancel_button"
+                    android:backgroundTint="@color/error"
+                    android:foregroundTint="@color/primary">
+                </Button>
 
             </LinearLayout>
 
