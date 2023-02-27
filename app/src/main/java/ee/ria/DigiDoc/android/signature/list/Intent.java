@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.signature.list;
 
+import android.content.Context;
+
 import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
@@ -10,6 +12,8 @@ import java.io.File;
 import ee.ria.DigiDoc.android.utils.SivaUtil;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
 
 interface Intent extends MviIntent {
 
@@ -38,10 +42,12 @@ interface Intent extends MviIntent {
 
         abstract boolean isSivaConfirmed();
 
-        static ContainerOpenIntent confirmation(File containerFile) {
-            boolean isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(
-                    ImmutableList.of(FileStream.create(containerFile)));
-            return create(containerFile, isConfirmationNeeded, false);
+        static Observable<ContainerOpenIntent> confirmation(File containerFile, Context context) {
+            return SivaUtil.isSivaConfirmationNeeded(
+                    ImmutableList.of(FileStream.create(containerFile)), context)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .map(isSivaConfirmationNeeded -> create(containerFile, isSivaConfirmationNeeded, false))
+                    .subscribeOn(AndroidSchedulers.mainThread());
         }
 
         static ContainerOpenIntent open(File containerFile, boolean isSivaConfirmed) {

@@ -193,10 +193,6 @@ public final class Formatter {
 
     @SuppressWarnings("deprecation")
     private static Spanned fromHtml(String source, Html.TagHandler tagHandler) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return Html.fromHtml(source, 0, null, tagHandler);
-        } else {
-            return Html.fromHtml(source, null, tagHandler);
-        }
+        return Html.fromHtml(source, 0, null, tagHandler);
     }
 }

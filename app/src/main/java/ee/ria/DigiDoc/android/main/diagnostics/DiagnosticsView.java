@@ -24,16 +24,18 @@ import android.widget.Toolbar;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,8 +53,8 @@ import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
-import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
@@ -68,12 +70,10 @@ import timber.log.Timber;
 
 public final class DiagnosticsView extends CoordinatorLayout {
 
+    private final Navigator navigator;
     private final SimpleDateFormat dateFormat;
     private final Toolbar toolbarView;
-    private final ConfirmationDialog diagnosticsRestartConfirmationDialog = new ConfirmationDialog(Activity.getContext().get(),
-            R.string.main_diagnostics_restart_message, R.id.mainDiagnosticsRestartConfirmationDialog);
-
-    private final Navigator navigator;
+    private final ConfirmationDialog diagnosticsRestartConfirmationDialog;
 
     private final ViewDisposables disposables;
 
@@ -93,10 +93,15 @@ public final class DiagnosticsView extends CoordinatorLayout {
         View saveDiagnosticsButton = findViewById(R.id.configurationSaveButton);
         navigator = Application.component(context).navigator();
 
+        diagnosticsRestartConfirmationDialog = new ConfirmationDialog(navigator.activity(),
+                R.string.main_diagnostics_restart_message, R.id.mainDiagnosticsRestartConfirmationDialog);
+
         SwitchCompat activateLogFileGenerating = findViewById(R.id.mainDiagnosticsLogging);
         activateLogFileGenerating.setChecked(((Activity) this.getContext()).getSettingsDataStore().getIsLogFileGenerationEnabled());
         Button saveLogFileButton = findViewById(R.id.mainDiagnosticsSaveLoggingButton);
-        saveLogFileButton.setVisibility(FileUtil.logsExist(FileUtil.getLogsDirectory(getContext())) ? VISIBLE : GONE);
+        saveLogFileButton.setVisibility(
+                (activateLogFileGenerating.isChecked() &&
+                        FileUtil.logsExist(FileUtil.getLogsDirectory(getContext()))) ? VISIBLE : GONE);
 
         ConfigurationProvider configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
         disposables = new ViewDisposables();
@@ -231,11 +236,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 if (isCategoryLabel(text)) {
                     diagnosticsText.append("\n\n").append(text).append("\n");
                 } else {
-                    if (!isTSLFile(text) && textView.getId() == -1) {
-                        diagnosticsText.append(text);
-                    } else {
-                        diagnosticsText.append(text).append("\n");
-                    }
+                    diagnosticsText.append(text).append("\n");
                 }
             }
         }
@@ -253,7 +254,9 @@ public final class DiagnosticsView extends CoordinatorLayout {
     private boolean isTitleOrButtonText(String text) {
         return text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_title)) ||
                 text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_configuration_check_for_update_button)) ||
-                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_configuration_save_diagnostics_button));
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_configuration_save_diagnostics_button)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_logging_switch)) ||
+                text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_save_log));
     }
 
     private boolean isCategoryLabel(String text) {
@@ -263,18 +266,9 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 text.equalsIgnoreCase(getResources().getString(R.string.main_diagnostics_tsl_cache_title));
     }
 
-    private boolean isTSLFile(String text) {
-        String diagnosticFileName = text.split(" ")[0];
-        if (diagnosticFileName.contains(".xml")) {
-            File tslCacheDir = new File(getContext().getApplicationContext().getCacheDir().getAbsolutePath() + "/schema");
-            File[] tslFiles = tslCacheDir.listFiles((directory, fileName) -> fileName.endsWith(".xml"));
-            if (tslFiles != null) {
-                Object[] fileNames = Arrays.stream(Arrays.stream(tslFiles)
-                        .filter(File::isFile).map(File::getName).toArray(String[]::new)).toArray();
-                return Arrays.asList(fileNames).contains(diagnosticFileName);
-            }
-        }
-         return false;
+    private String getTSLFileVersion(InputStream tslInputStream, String tslFileName) throws XmlPullParserException, IOException {
+        int version = TSLUtil.readSequenceNumber(tslInputStream);
+        return tslFileName + " (" + version + ")";
     }
 
     private void updateConfiguration() {
@@ -294,8 +288,10 @@ public final class DiagnosticsView extends CoordinatorLayout {
         TextView ldapCorpUrl = findViewById(R.id.mainDiagnosticsLdapCorpUrl);
         TextView mobileIDUrl = findViewById(R.id.mainDiagnosticsMobileIDUrl);
         TextView mobileIDSKUrl = findViewById(R.id.mainDiagnosticsMobileIDSKUrl);
-        TextView smartIDUrl = findViewById(R.id.mainDiagnosticsSmartIDUrl);
-        TextView smartIDSKUrl = findViewById(R.id.mainDiagnosticsSmartIDSKUrl);
+        TextView smartIDUrlV1 = findViewById(R.id.mainDiagnosticsSmartIDUrlV1);
+        TextView smartIDSKUrlV1 = findViewById(R.id.mainDiagnosticsSmartIDSKUrlV1);
+        TextView smartIDUrlV2 = findViewById(R.id.mainDiagnosticsSmartIDUrlV2);
+        TextView smartIDSKUrlV2 = findViewById(R.id.mainDiagnosticsSmartIDSKUrlV2);
         TextView rpUuid = findViewById(R.id.mainDiagnosticsRpUuid);
         TextView centralConfigurationDate = findViewById(R.id.mainDiagnosticsCentralConfigurationDate);
         TextView centralConfigurationSerial = findViewById(R.id.mainDiagnosticsCentralConfigurationSerial);
@@ -329,10 +325,14 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 configurationProvider.getMidRestUrl(), Typeface.DEFAULT));
         mobileIDSKUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_mid_sk_url_title,
                 configurationProvider.getMidSkRestUrl(), Typeface.DEFAULT));
-        smartIDUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_proxy_url_title,
+        smartIDUrlV1.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_v1_proxy_url_title,
                 configurationProvider.getSidRestUrl(), Typeface.DEFAULT));
-        smartIDSKUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_sk_url_title,
+        smartIDSKUrlV1.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_v1_sk_url_title,
                 configurationProvider.getSidSkRestUrl(), Typeface.DEFAULT));
+        smartIDUrlV2.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_v2_proxy_url_title,
+                configurationProvider.getSidV2RestUrl(), Typeface.DEFAULT));
+        smartIDSKUrlV2.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_v2_sk_url_title,
+                configurationProvider.getSidV2SkRestUrl(), Typeface.DEFAULT));
         rpUuid.setText(setDisplayTextWithTitle(R.string.main_diagnostics_rpuuid_title,
                 getRpUuidText(), Typeface.DEFAULT));
 
@@ -367,7 +367,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder().url(tslUrl).build();
             Response response = client.newCall(request).execute();
-            if (response.isSuccessful()) {
+            if (response.isSuccessful() && response.body() != null) {
                  try (InputStream responseBody = response.body().byteStream()) {
                      return TSLUtil.readSequenceNumber(responseBody);
                  }
@@ -403,12 +403,11 @@ public final class DiagnosticsView extends CoordinatorLayout {
             Arrays.sort(tslFiles, (f1, f2) -> f1.getName().compareToIgnoreCase(f2.getName()));
             for (File tslFile : tslFiles) {
                 try (InputStream tslInputStream = new FileInputStream(tslFile)) {
-                    int version = TSLUtil.readSequenceNumber(tslInputStream);
                     TextView tslEntry = new TextView(tslCacheLayout.getContext());
                     tslEntry.setTextAppearance(R.style.MaterialTypography_Dense_Body1);
                     tslEntry.setLayoutParams(new ViewGroup.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-                    String tslEntryText = tslFile.getName() + " (" + version + ")";
-                    tslEntry.setText(FileUtil.normalizeText(tslEntryText));
+                    String tslEntryText = getTSLFileVersion(tslInputStream, tslFile.getName());
+                    tslEntry.setText(Normalizer.normalize(tslEntryText, Normalizer.Form.NFD));
                     tslCacheLayout.addView(tslEntry);
                 } catch (Exception e) {
                     Timber.log(Log.ERROR, e, "Error displaying TSL version for: %s", tslFile.getAbsolutePath());

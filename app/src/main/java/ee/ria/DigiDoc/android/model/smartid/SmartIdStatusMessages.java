@@ -1,6 +1,6 @@
 /*
  * app
- * Copyright 2017 - 2022 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,6 +43,18 @@ public final class SmartIdStatusMessages {
                             R.string.signature_update_smart_id_status_document_unusable)
                     .put(ProcessStatus.WRONG_VC,
                             R.string.signature_update_smart_id_status_wrong_vc)
+                    .put(ProcessStatus.REQUIRED_INTERACTION_NOT_SUPPORTED_BY_APP,
+                            R.string.signature_update_smart_id_required_interaction_not_supported_by_app)
+                    .put(ProcessStatus.USER_REFUSED_DISPLAYTEXTANDPIN,
+                            R.string.signature_update_mobile_id_status_user_cancel)
+                    .put(ProcessStatus.USER_REFUSED_VC_CHOICE,
+                            R.string.signature_update_mobile_id_status_user_cancel)
+                    .put(ProcessStatus.USER_REFUSED_CONFIRMATIONMESSAGE,
+                            R.string.signature_update_mobile_id_status_user_cancel)
+                    .put(ProcessStatus.USER_REFUSED_CONFIRMATIONMESSAGE_WITH_VC_CHOICE,
+                            R.string.signature_update_mobile_id_status_user_cancel)
+                    .put(ProcessStatus.USER_REFUSED_CERT_CHOICE,
+                            R.string.signature_update_mobile_id_status_user_cancel)
                     .put(ProcessStatus.ACCOUNT_NOT_FOUND,
                             R.string.signature_update_smart_id_error_message_account_not_found_or_timeout)
                     .put(ProcessStatus.SESSION_NOT_FOUND,
