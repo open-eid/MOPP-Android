@@ -8,6 +8,7 @@ import android.webkit.URLUtil;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.Normalizer;
 
 public class FileUtil {
 
@@ -35,6 +37,28 @@ public class FileUtil {
         }
 
         throw new IOException("Invalid file path");
+    }
+
+    /**
+     * Get Smart-ID V2 file name
+     *
+     * @param file File to get name from
+     * @return String with updated file name
+     */
+    public static String getSignDocumentFileName(File file) {
+        String fullFileName = file.getName();
+        String fileName = FilenameUtils.getBaseName(fullFileName);
+        String fileExtension = FilenameUtils.getExtension(fullFileName);
+
+        if (fileName.length() <= 6) {
+            return fileName + "." + fileExtension;
+        }
+
+        return StringUtils.left(fileName, 3) +
+                "..." +
+                StringUtils.right(fileName, 3) +
+                "." +
+                fileExtension;
     }
 
     /**
@@ -94,6 +118,10 @@ public class FileUtil {
         }
 
         return sb.toString();
+    }
+
+    public static String normalizeString(String text) {
+        return Normalizer.normalize(text, Normalizer.Form.NFD);
     }
 
     public static Uri normalizePath(String filePath) {

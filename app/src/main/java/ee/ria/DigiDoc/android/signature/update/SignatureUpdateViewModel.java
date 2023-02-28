@@ -64,9 +64,13 @@ public final class SignatureUpdateViewModel extends
                     signatureRemoveIntent.containerFile(), signatureRemoveIntent.signature());
         } else if (intent instanceof Intent.SignatureAddIntent) {
             Intent.SignatureAddIntent signatureAddIntent = (Intent.SignatureAddIntent) intent;
+            if (signatureAddIntent.isCancelled()) {
+                return Action.SignatureAddAction.create(signatureAddIntent.method(),
+                        null, null, null, true);
+            }
             return Action.SignatureAddAction.create(signatureAddIntent.method(),
                     signatureAddIntent.existingContainer(), signatureAddIntent.containerFile(),
-                    signatureAddIntent.request());
+                    signatureAddIntent.request(), false);
         } else if (intent instanceof Intent.SendIntent) {
             return Action.SendAction.create(((Intent.SendIntent) intent).containerFile());
         } else if (intent instanceof Action) {

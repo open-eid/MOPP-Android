@@ -1,6 +1,6 @@
 /*
  * app
- * Copyright 2017 - 2022 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -270,7 +270,11 @@ public final class SmartIdView extends LinearLayout implements
     }
 
     private String getCountryViewAccessibilityText() {
-        return countryViewLabel.getText().toString() + " " + countryView.getSelectedItem().toString();
+        Object selectedCountry = countryView.getSelectedItem();
+        if (selectedCountry != null) {
+            return countryViewLabel.getText().toString() + " " + selectedCountry;
+        }
+        return countryViewLabel.getText().toString();
     }
 
     @Override

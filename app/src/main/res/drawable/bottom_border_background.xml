@@ -4,8 +4,6 @@
         <shape android:shape="rectangle">
             <solid android:color="@android:color/transparent" />
             <stroke android:width="@dimen/material_grid_list_tile_spacing_small" android:color="#8E969D" />
-            <padding android:left="@dimen/material_baseline_grid_0.5x"
-                android:right="@dimen/material_baseline_grid_0.5x" />
         </shape>
     </item>
 </layer-list>

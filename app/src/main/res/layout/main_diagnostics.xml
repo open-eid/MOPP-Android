@@ -194,7 +194,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@id/mainDiagnosticsSmartIDUrl"
+                        android:id="@id/mainDiagnosticsSmartIDUrlV1"
                         style="@style/MaterialTypography.Dense.Body1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -206,7 +206,31 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@id/mainDiagnosticsSmartIDSKUrl"
+                        android:id="@id/mainDiagnosticsSmartIDSKUrlV1"
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@id/mainDiagnosticsSmartIDUrlV2"
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@id/mainDiagnosticsSmartIDSKUrlV2"
                         style="@style/MaterialTypography.Dense.Body1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />

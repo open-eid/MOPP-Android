@@ -30,7 +30,6 @@ import com.bluelinelabs.conductor.Controller;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
-import java.util.Objects;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
@@ -169,7 +168,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     @SuppressWarnings("unchecked")
     private Observable<Intent.DataFileViewIntent> dataFileViewIntent() {
         return Observable.mergeArray(adapter.dataFileClicks()
-                        .map(Intent.DataFileViewIntent::confirmation),
+                        .flatMap(file -> Intent.DataFileViewIntent.confirmation(file, getApplicationContext())),
                 sivaConfirmationDialog.positiveButtonClicks()
                         .map(ignored -> Intent.DataFileViewIntent.open(sivaConfirmation)),
                 sivaConfirmationDialog.cancels()

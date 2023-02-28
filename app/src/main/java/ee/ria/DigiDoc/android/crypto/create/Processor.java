@@ -5,6 +5,7 @@ import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_DATA_FILE_ADD;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_INITIAL;
 import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
+import static ee.ria.DigiDoc.android.utils.Immutables.merge;
 import static ee.ria.DigiDoc.android.utils.Immutables.with;
 import static ee.ria.DigiDoc.android.utils.Immutables.without;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
@@ -100,6 +101,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
     private final ObservableTransformer<Intent.RecipientAddIntent,
             Result.RecipientAddResult> recipientAdd;
+
+    private final ObservableTransformer<Intent.RecipientAddAllIntent,
+            Result.RecipientAddAllResult> recipientAddAll;
 
     private final ObservableTransformer<Intent.RecipientRemoveIntent,
                                         Result.RecipientRemoveResult> recipientRemove;
@@ -206,7 +210,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             return Observable
                                     .fromCallable(() -> {
                                         ImmutableList<FileStream> fileStreams =
-                                                parseGetContentIntent(contentResolver, data, fileSystem.getExternallyOpenedFilesDir());
+                                                parseGetContentIntent(navigator.activity(), contentResolver, data, fileSystem.getExternallyOpenedFilesDir());
                                         ImmutableList.Builder<File> builder =
                                                 ImmutableList.<File>builder().addAll(dataFiles);
                                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(fileStreams);
@@ -289,8 +293,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             ) {
                                 ByteStreams.copy(inputStream, outputStream);
                             }
-                            Toast.makeText(application, navigator.activity().getString(R.string.file_saved),
-                                    Toast.LENGTH_LONG).show();
+                            ToastUtil.showError(navigator.activity(), R.string.file_saved);
                         }
                         return Observable.empty();
                     });
@@ -308,9 +311,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             File file = intent.dataFile();
                             if (CryptoContainer.isContainerFileName(file.getName())) {
                                 return Transaction.push(CryptoCreateScreen.open(file));
-                            } else if (SignedContainer.isContainer(file)) {
+                            } else if (SignedContainer.isContainer(navigator.activity(), file)) {
                                 return Transaction.push(
-                                        SignatureUpdateScreen.create(true, true, file, false, false, null, true));
+                                        SignatureUpdateScreen.create(true, true, file, false, false, null));
                             } else {
                                 return Transaction.activity(
                                         createViewIntent(application, file, mimeType(file)), null);
@@ -348,7 +351,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         });
 
         recipientsSearch = upstream -> upstream.switchMap(intent -> {
-            if (intent.query() == null) {
+            if (intent.query() == null || intent.query().isEmpty()) {
                 return Observable.just(Result.RecipientsSearchResult.clear());
             } else {
                 return Observable
@@ -380,6 +383,12 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         Result.RecipientAddResult.create(with(intent.recipients(), intent.recipient(), false)))
                     .doFinally(() ->
                         AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_added)));
+
+        recipientAddAll = upstream -> upstream.switchMap(intent ->
+                Observable.fromCallable(() ->
+                                Result.RecipientAddAllResult.create(merge(intent.recipients(), intent.addedRecipients())))
+                        .doFinally(() ->
+                                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipients_added)));
 
         recipientRemove = upstream -> upstream.switchMap(intent ->
                 Observable.fromCallable(() ->
@@ -494,6 +503,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .compose(recipientsScreenDoneButtonClick),
                 shared.ofType(Intent.RecipientsSearchIntent.class).compose(recipientsSearch),
                 shared.ofType(Intent.RecipientAddIntent.class).compose(recipientAdd),
+                shared.ofType(Intent.RecipientAddAllIntent.class).compose(recipientAddAll),
                 shared.ofType(Intent.RecipientRemoveIntent.class).compose(recipientRemove),
                 shared.ofType(Intent.EncryptIntent.class).compose(encrypt),
                 shared.ofType(Intent.DecryptionIntent.class).compose(decryption),
@@ -505,7 +515,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         return Observable
                 .fromCallable(() -> {
                     ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
-                            parseGetContentIntent(contentResolver, intent, externallyOpenedFileDir));
+                            parseGetContentIntent(application.getApplicationContext(), contentResolver, intent, externallyOpenedFileDir));
                     ToastUtil.handleEmptyFileError(validFiles, application, application.getApplicationContext());
                     if (validFiles.size() == 1
                             && isContainerFileName(validFiles.get(0).displayName())) {

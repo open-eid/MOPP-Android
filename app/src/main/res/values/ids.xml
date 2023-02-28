@@ -32,6 +32,7 @@
     <item type="id" name="mainHomeMenu" />
     <item type="id" name="mainHomeMenuCloseButton" />
     <item type="id" name="mainHomeMenuHelp" />
+    <item type="id" name="mainHomeMenuAccessibility" />
     <item type="id" name="mainHomeMenuRecent" />
     <item type="id" name="mainHomeMenuSettings" />
     <item type="id" name="mainHomeMenuAbout" />
@@ -40,6 +41,27 @@
     <item type="id" name="mainHomeMenuLocaleEt" />
     <item type="id" name="mainHomeMenuLocaleRu" />
     <item type="id" name="mainHomeMenuLocaleEn" />
+
+    <!-- Main Accessibility -->
+    <item type="id" name="mainAccessibilityScreen" />
+    <item type="id" name="mainAccessibilityFragment" />
+
+    <item type="id" name="mainAccessibilityIntroduction" />
+    <item type="id" name="mainAccessibilityIntroduction2" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderTitle" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroduction" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroduction2" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroductionApps" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroductionIos" />
+    <item type="id" name="mainAccessibilityIntroductionScreenReaderIntroductionAndroid" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationTitle" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationIntroduction" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationScreenTools" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationScreenToolsIos" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationScreenToolsAndroid" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationTools" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationToolsIos" />
+    <item type="id" name="mainAccessibilityIntroductionScreenMagnificationToolsAndroid" />
 
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
@@ -69,8 +91,10 @@
     <item type="id" name="mainDiagnosticsLdapCorpUrl" />
     <item type="id" name="mainDiagnosticsMobileIDUrl" />
     <item type="id" name="mainDiagnosticsMobileIDSKUrl" />
-    <item type="id" name="mainDiagnosticsSmartIDUrl" />
-    <item type="id" name="mainDiagnosticsSmartIDSKUrl" />
+    <item type="id" name="mainDiagnosticsSmartIDUrlV1" />
+    <item type="id" name="mainDiagnosticsSmartIDSKUrlV1" />
+    <item type="id" name="mainDiagnosticsSmartIDUrlV2" />
+    <item type="id" name="mainDiagnosticsSmartIDSKUrlV2" />
     <item type="id" name="mainDiagnosticsRpUuid" />
     <item type="id" name="mainDiagnosticsTslCacheLayout" />
     <item type="id" name="mainDiagnosticsCentralConfigurationDate" />
@@ -212,6 +236,7 @@
     <item type="id" name="signatureUpdateMobileIdContainer" />
     <item type="id" name="signatureUpdateMobileIdChallenge" />
     <item type="id" name="signatureUpdateMobileIdChallengeText" />
+    <item type="id" name="signatureUpdateMobileIdCancelButton" />
     <item type="id" name="signatureUpdateSendButton" />
     <item type="id" name="signatureUpdateButtonSpace" />
     <item type="id" name="signatureUpdateSignatureAddButton" />
@@ -284,6 +309,7 @@
     <item type="id" name="cryptoRecipientType" />
     <item type="id" name="cryptoRecipientName" />
     <item type="id" name="cryptoRecipientInfo" />
+    <item type="id" name="cryptoRecipientsAddAllButton" />
     <item type="id" name="cryptoRecipientRemoveButton" />
     <item type="id" name="cryptoRecipientAddButton" />
 

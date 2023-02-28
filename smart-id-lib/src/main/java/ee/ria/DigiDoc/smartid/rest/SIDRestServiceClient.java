@@ -1,6 +1,6 @@
 /*
  * smart-id-lib
- * Copyright 2017 - 2022 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,9 +38,15 @@ public interface SIDRestServiceClient {
 
     @Headers({ CONTENT_TYPE_HEADER, CONTENT_TYPE_ACCEPT })
     @POST("certificatechoice/pno/{country}/{nationalIdentityNumber}")
-    Call<SessionResponse> getCertificate(
+    Call<SessionResponse> getCertificateV1(
             @Path(value = "country", encoded = true) String country,
             @Path(value = "nationalIdentityNumber", encoded = true) String nationalIdentityNumber,
+            @Body PostCertificateRequest body);
+
+    @Headers({ CONTENT_TYPE_HEADER, CONTENT_TYPE_ACCEPT })
+    @POST("certificatechoice/etsi/{semanticsIdentifier}")
+    Call<SessionResponse> getCertificateV2(
+            @Path(value = "semanticsIdentifier", encoded = true) String semanticsIdentifier,
             @Body PostCertificateRequest body);
 
     @Headers({ CONTENT_TYPE_HEADER, CONTENT_TYPE_ACCEPT })

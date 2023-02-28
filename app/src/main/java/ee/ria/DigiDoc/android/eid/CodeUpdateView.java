@@ -3,11 +3,14 @@ package ee.ria.DigiDoc.android.eid;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toolbar;
@@ -52,6 +55,8 @@ public final class CodeUpdateView extends CoordinatorLayout {
     private final View activityIndicatorView;
     private final ScrollView scrollView;
 
+    private static final int MAXIMUM_PIN_CODE_LENGTH = 12;
+
     public CodeUpdateView(Context context) {
         this(context, null);
     }
@@ -83,7 +88,9 @@ public final class CodeUpdateView extends CoordinatorLayout {
                        @Nullable CodeUpdateResponse response, boolean successMessageVisible) {
         toolbarView.setTitle(action.titleRes());
         toolbarView.setNavigationIcon(R.drawable.ic_clear);
-        toolbarView.setNavigationContentDescription(R.string.close);
+        setToolbarContentDescription(toolbarView,
+                getResources().getString(action.titleRes()).toLowerCase(),
+                getResources().getString(R.string.close));
         successMessageView.setText(action.successMessageRes());
         AccessibilityUtils.setContentDescription(successMessageView, getResources().getString(action.successMessageRes()));
         textView.itemsRes(action.textRowsRes());
@@ -97,6 +104,10 @@ public final class CodeUpdateView extends CoordinatorLayout {
         positiveButton.setContentDescription(getResources().getString(action.positiveButtonRes()).toLowerCase());
         activityOverlayView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);
         activityIndicatorView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);
+
+        checkPinLength(currentView);
+        checkPinLength(newTextView);
+        checkPinLength(repeatView);
 
         int changeButtonDescriptionResId;
         int cancelButtonDescriptionResId;
@@ -264,5 +275,33 @@ public final class CodeUpdateView extends CoordinatorLayout {
         if (appCompatTextView != null) {
             AccessibilityUtils.setContentDescription(appCompatTextView, contentDescription);
         }
+    }
+
+    private void setToolbarContentDescription(Toolbar toolbarView, String titleContentDescription, String imageContentDescription) {
+        for (int i = 0; i < toolbarView.getChildCount(); i++) {
+            View view = toolbarView.getChildAt(i);
+            if (view instanceof TextView) {
+                view.setContentDescription(titleContentDescription);
+            } else if (view instanceof ImageView) {
+                view.setContentDescription(imageContentDescription);
+            }
+        }
+    }
+
+    private void checkPinLength(EditText editText) {
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() >= MAXIMUM_PIN_CODE_LENGTH) {
+                    s.delete(MAXIMUM_PIN_CODE_LENGTH, s.length());
+                }
+            }
+        });
     }
 }

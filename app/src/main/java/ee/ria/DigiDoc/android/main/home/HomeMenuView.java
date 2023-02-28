@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.main.home;
 
+import static android.util.TypedValue.COMPLEX_UNIT_SP;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
 import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
 import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceOrientation;
@@ -26,6 +27,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.common.TextUtil;
 import io.reactivex.rxjava3.core.Observable;
 
@@ -38,6 +40,7 @@ public final class HomeMenuView extends NestedScrollView {
     private final View closeButton;
 
     private final Button helpView;
+    private final Button accessibilityView;
     private final Button recentView;
     private final Button settingsView;
     private final Button aboutView;
@@ -47,33 +50,54 @@ public final class HomeMenuView extends NestedScrollView {
     private final RadioButton englishButton;
     private final RadioButton russianButton;
 
+    private int initializationCount = 0;
+    private final int MAXIMUM_INITIALIZATION_COUNT = 5;
+    private TextToSpeech textToSpeech;
+
     // Estonian TalkBack does not pronounce "dot"
-    private final TextToSpeech textToSpeech = new TextToSpeech(getContext(),
-            new TextToSpeech.OnInitListener() {
+    private final TextToSpeech.OnInitListener textToSpeechListener = new TextToSpeech.OnInitListener() {
         @Override
         public void onInit(int status) {
-            Voice textToSpeechVoice = textToSpeech.getVoice();
-            String language = Locale.getDefault().getLanguage();
-            boolean isESTLanguageAvailable = isTextToSpeechLanguageAvailable(textToSpeech.getAvailableLanguages(),
-                    Set.of(new Locale("est", "EST"), new Locale("et", "ET")));
-            if ((textToSpeechVoice == null && isESTLanguageAvailable) ||
-                    (textToSpeechVoice != null &&
-                            textToSpeechVoice.getLocale().getLanguage().equals("et"))) {
-                language = "et";
-            }
-            if (language.equals("et")) {
-                helpView.setContentDescription(
-                        getResources().getString(R.string.main_home_menu_help) +
-                                " link " +
-                                "w w w punkt i d punkt e e");
+            if (status == TextToSpeech.SUCCESS) {
+                Voice textToSpeechVoice = textToSpeech.getVoice();
+                String language = Locale.getDefault().getLanguage();
+                boolean isESTLanguageAvailable = isTextToSpeechLanguageAvailable(textToSpeech.getAvailableLanguages(),
+                        Set.of(new Locale("est", "EST"), new Locale("et", "ET")));
+                if (textToSpeechVoice != null) {
+                    Locale textToSpeechLocale = textToSpeechVoice.getLocale();
+                    if (textToSpeechLocale != null) {
+                        String textToSpeechLanguage = textToSpeechLocale.getLanguage();
+                        if (isESTLanguageAvailable ||
+                                (textToSpeechLanguage.equals("et") ||
+                                        textToSpeechLanguage.equals("est"))) {
+                            language = "et";
+                        }
+                    }
+                }
+                if (language.equals("et")) {
+                    helpView.setContentDescription(
+                            getResources().getString(R.string.main_home_menu_help) +
+                                    " link " +
+                                    "w w w punkt i d punkt e e");
+                } else {
+                    helpView.setContentDescription(
+                            getResources().getString(R.string.main_home_menu_help) + " " +
+                                    TextUtil.splitTextAndJoin(
+                                            getResources().getString(R.string.main_home_menu_help_url_short), "", " "));
+                }
             } else {
-                helpView.setContentDescription(
-                        getResources().getString(R.string.main_home_menu_help) + " " +
-                                TextUtil.splitTextAndJoin(
-                                        getResources().getString(R.string.main_home_menu_help_url_short), "", " "));
+                retryInitialization();
             }
         }
-    });
+    };
+
+    private void retryInitialization() {
+        if (initializationCount < MAXIMUM_INITIALIZATION_COUNT) {
+            initializationCount++;
+            textToSpeech.shutdown();
+            textToSpeech = new TextToSpeech(getContext(), textToSpeechListener);
+        }
+    }
 
     public HomeMenuView(@NonNull Context context) {
         this(context, null);
@@ -93,6 +117,7 @@ public final class HomeMenuView extends NestedScrollView {
                 getResources().getString(R.string.main_home_menu_help) + " " +
                         TextUtil.splitTextAndJoin(
                                 getResources().getString(R.string.main_home_menu_help_url_short), "", " "));
+        accessibilityView = findViewById(R.id.mainHomeMenuAccessibility);
         recentView = findViewById(R.id.mainHomeMenuRecent);
         settingsView = findViewById(R.id.mainHomeMenuSettings);
         aboutView = findViewById(R.id.mainHomeMenuAbout);
@@ -131,6 +156,7 @@ public final class HomeMenuView extends NestedScrollView {
     public Observable<Integer> itemClicks() {
         return Observable.mergeArray(
                 clicks(helpView).map(ignored -> R.id.mainHomeMenuHelp),
+                clicks(accessibilityView).map(ignored -> R.id.mainHomeMenuAccessibility),
                 clicks(recentView).map(ignored -> R.id.mainHomeMenuRecent),
                 clicks(settingsView).map(ignored -> R.id.mainHomeMenuSettings),
                 clicks(aboutView).map(ignored -> R.id.mainHomeMenuAbout),
@@ -150,9 +176,13 @@ public final class HomeMenuView extends NestedScrollView {
     }
 
     private boolean isTextToSpeechLanguageAvailable(Set<Locale> availableLocales, Set<Locale> locales) {
-        return locales.stream().anyMatch(lo ->
-                availableLocales.stream().anyMatch(al -> al.getLanguage().equals(lo.getLanguage()))
-        );
+        if (availableLocales != null) {
+            return locales.stream().anyMatch(lo ->
+                    availableLocales.stream().anyMatch(al -> al.getLanguage().equals(lo.getLanguage()))
+            );
+        } else {
+            return false;
+        }
     }
 
     private void setFontSize() {

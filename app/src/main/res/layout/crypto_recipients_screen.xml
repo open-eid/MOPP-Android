@@ -32,13 +32,15 @@
             android:layout_height="70dp"
             android:inputType="textFilter|textMultiLine"
             android:autoSizeTextType="uniform"
-            android:minHeight="@dimen/material_baseline_grid_6x" />
+            android:minHeight="@dimen/material_baseline_grid_6x"
+            android:background="@drawable/bottom_border_background" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@id/cryptoRecipientsList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
             android:scrollbars="vertical" />
 
         <Button
