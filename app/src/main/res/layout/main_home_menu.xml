@@ -79,7 +79,7 @@
     <RadioGroup
         android:id="@id/mainHomeMenuLocale"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/material_baseline_grid_12x"
+        android:layout_height="@dimen/material_baseline_grid_9x"
         android:layout_marginStart="?attr/dialogPreferredPadding"
         android:layout_marginEnd="?attr/dialogPreferredPadding"
         android:orientation="horizontal"
@@ -91,9 +91,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textSize="18sp"
-            android:autoSizeMaxTextSize="18sp"
-            android:padding="10dp"
+            android:textSize="@dimen/material_baseline_grid_2.5x"
+            android:padding="14dp"
             android:maxLines="2"
             android:text="@string/main_home_menu_locale_et" />
 
@@ -108,9 +107,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textSize="14sp"
-            android:autoSizeMaxTextSize="14sp"
-            android:padding="1dp"
+            android:textSize="@dimen/material_baseline_grid_2.5x"
+            android:padding="14dp"
             android:maxLines="2"
             android:text="@string/main_home_menu_locale_ru" />
 
@@ -125,12 +123,10 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textSize="20sp"
-            android:autoSizeMaxTextSize="20sp"
-            android:padding="5dp"
+            android:textSize="@dimen/material_baseline_grid_2.5x"
+            android:padding="14dp"
             android:maxLines="1"
             android:text="@string/main_home_menu_locale_en" />
-
     </RadioGroup>
 
 </LinearLayout>
