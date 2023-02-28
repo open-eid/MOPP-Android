@@ -270,7 +270,11 @@ public final class SmartIdView extends LinearLayout implements
     }
 
     private String getCountryViewAccessibilityText() {
-        return countryViewLabel.getText().toString() + " " + countryView.getSelectedItem().toString();
+        Object selectedCountry = countryView.getSelectedItem();
+        if (selectedCountry != null) {
+            return countryViewLabel.getText().toString() + " " + selectedCountry;
+        }
+        return countryViewLabel.getText().toString();
     }
 
     @Override

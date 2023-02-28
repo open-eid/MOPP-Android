@@ -8,6 +8,7 @@ import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnost
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -311,7 +312,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 configurationProvider.getConfigUrl(), Typeface.DEFAULT));
         tslUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsl_url_title,
                 configurationProvider.getTslUrl(), Typeface.DEFAULT));
-        appendTslVersion(tslUrl, configurationProvider.getTslUrl());
+        appendTslVersion(tslUrl, FileUtil.normalizeUri(
+                Uri.parse(configurationProvider.getTslUrl())).toString());
         sivaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_siva_url_title,
                 configurationProvider.getSivaUrl(), Typeface.DEFAULT));
         tsaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsa_url_title,
