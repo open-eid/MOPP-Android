@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toolbar;
@@ -75,6 +78,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     private View activityOverlayView;
     private View activityIndicatorView;
 
+    private String submittedQuery = "";
     private ImmutableList<Certificate> recipients = ImmutableList.of();
 
     @SuppressWarnings("WeakerAccess")
@@ -100,13 +104,20 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                 queryTextChangeEvents(searchView)
                         .filter(SearchViewQueryTextEvent::isSubmitted)
                         .doOnNext(ignored -> {
-                            String trimmed = StringUtils.trim(searchViewInnerText.getText().toString());
-                            searchView.setQuery(trimmed, false);
-                            searchView.clearFocus();
+                            String query = StringUtils.trim(searchView.getQuery().toString());
+                            submittedQuery = query;
+                            setDoneSearchQuery(query);
                         })
                         .map(event ->
-                                Intent.RecipientsSearchIntent.search(StringUtils.trim(event.getQueryText().toString()))),
-                backButtonClicksSubject.map(ignored -> Intent.RecipientsSearchIntent.clear()));
+                                Intent.RecipientsSearchIntent.search(
+                                        StringUtils.trim(event.getQueryText().toString()))),
+                backButtonClicksSubject.map(ignored -> Intent.RecipientsSearchIntent.clear()),
+                clicks(searchView)
+                        .map(ignored -> StringUtils.trim(searchView.getQuery().toString()))
+                        .filter(trimmedQuery -> (trimmedQuery != null &&
+                                !trimmedQuery.isEmpty()) && !submittedQuery.equals(trimmedQuery))
+                        .map(query -> Intent.RecipientsSearchIntent.search(
+                                setSearchQuery(query))));
     }
 
     private Observable<Intent.RecipientAddIntent> recipientAddIntent() {
@@ -131,8 +142,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     }
 
     private void setActivity(boolean activity) {
-        activityOverlayView.setVisibility(activity ? View.VISIBLE : View.GONE);
-        activityIndicatorView.setVisibility(activity ? View.VISIBLE : View.GONE);
+        activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
+        activityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
     }
 
     @Override
@@ -186,6 +197,23 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         if (getResources() != null) {
             searchView.setQueryHint(getResources().getString(R.string.crypto_recipients_search));
             searchView.setIconifiedByDefault(false);
+
+            // Remove ">" search button from the right side of the Search Bar
+            searchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> {
+                if (hasFocus) {
+                    searchView.setSubmitButtonEnabled(false);
+                    if (getResources() != null) {
+                        ImageView rightSearchButton = searchView.findViewById(
+                                getResources()
+                                        .getIdentifier("android:id/search_go_btn", null, null));
+                        if (rightSearchButton != null) {
+                            rightSearchButton.setVisibility(GONE);
+                            rightSearchButton.setImageDrawable(null);
+                            rightSearchButton.setEnabled(false);
+                        }
+                    }
+                }
+            });
             searchViewInnerText = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
             searchViewInnerText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
@@ -227,6 +255,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         }
 
         searchView.setSubmitButtonEnabled(true);
+        searchView.setEnabled(true);
         RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());
@@ -235,6 +264,21 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         return view;
+    }
+
+    private void setDoneSearchQuery(String text) {
+        searchView.setQuery(StringUtils.trim(text), false);
+        searchView.clearFocus();
+    }
+
+    private String setSearchQuery(String text) {
+        if (text != null && !text.isEmpty()) {
+            String trimmed = StringUtils.trim(text);
+            submittedQuery = trimmed;
+            setDoneSearchQuery(trimmed);
+            return trimmed;
+        }
+        return "";
     }
 
     @Override
@@ -250,6 +294,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     protected void onDetach(@NonNull View view) {
         disposables.detach();
         navigator.removeBackButtonClickListener(this);
+        searchView.clearFocus();
+        searchView.setOnCloseListener(null);
         super.onDetach(view);
     }
 }
