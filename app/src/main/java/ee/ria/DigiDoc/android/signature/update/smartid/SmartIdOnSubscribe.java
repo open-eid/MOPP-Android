@@ -50,6 +50,7 @@ import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import timber.log.Timber;
 
+import static ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse.ProcessStatus.NO_RESPONSE;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CERTIFICATE_CERT_BUNDLE;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_CHALLENGE;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_DEVICE;
@@ -99,8 +100,13 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                         ServiceFault serviceFault =
                                 ServiceFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
                         Timber.log(Log.DEBUG, "Got SERVICE_FAULT status: %s", serviceFault.getStatus());
-                        emitter.onError(SmartIdMessageException
-                                .create(navigator.activity(), serviceFault.getStatus(), serviceFault.getDetailMessage()));
+                        if (serviceFault.getStatus() == NO_RESPONSE) {
+                            emitter.onError(SmartIdMessageException
+                                    .create(navigator.activity(), serviceFault.getStatus()));
+                        } else {
+                            emitter.onError(SmartIdMessageException
+                                    .create(navigator.activity(), serviceFault.getStatus(), serviceFault.getDetailMessage()));
+                        }
                         break;
                     }
                     case CREATE_SIGNATURE_DEVICE:
