@@ -245,7 +245,7 @@
     <string name="signature_update_smart_id_error_message_not_qualified">Your Smart-ID certificate level must be qualified to sign documents in RIA DigiDoc mobile application.</string>
     <string name="signature_update_smart_id_error_message_old_api">RIA DigiDoc mobile application needs an upgrade. Please install new version from the mobile app store. Additional info is available ID-helpline (+372) 666 8888.</string>
     <string name="signature_update_smart_id_error_message_under_maintenance">Smart-ID service has encountered technical errors. Please try again later.</string>
-    <string name="signature_update_smart_id_error_message_account_not_found_or_timeout">Failed to sign container. Your Smart-ID transaction has expired or user account not found</string>
+    <string name="signature_update_smart_id_error_message_account_not_found_or_timeout">Your Smart-ID transaction has expired or user account not found</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Session not found</string>
     <string name="signature_update_smart_id_error_message_access_rights">Failed to sign container. Check your Smart-ID service access settings. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
     <string name="signature_update_smart_id_error_technical_error">Failed to send request. Smart-ID service has encountered technical errors. Please try again later.</string>
