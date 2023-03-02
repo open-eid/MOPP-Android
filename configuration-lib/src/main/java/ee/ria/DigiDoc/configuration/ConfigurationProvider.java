@@ -23,8 +23,6 @@ public abstract class ConfigurationProvider implements Parcelable {
     public abstract String getLdapCorpUrl();
     public abstract String getMidRestUrl();
     public abstract String getMidSkRestUrl();
-    public abstract String getSidRestUrl();
-    public abstract String getSidSkRestUrl();
     public abstract String getSidV2RestUrl();
     public abstract String getSidV2SkRestUrl();
     public abstract Map<String, String> getOCSPUrls();
@@ -51,8 +49,6 @@ public abstract class ConfigurationProvider implements Parcelable {
         abstract ConfigurationProviderBuilder setLdapCorpUrl(String ldapCorpUrl);
         abstract ConfigurationProviderBuilder setMidRestUrl(String midRestUrl);
         abstract ConfigurationProviderBuilder setMidSkRestUrl(String midRestUrl);
-        abstract ConfigurationProviderBuilder setSidRestUrl(String sidRestUrl);
-        abstract ConfigurationProviderBuilder setSidSkRestUrl(String sidRestUrl);
         abstract ConfigurationProviderBuilder setSidV2RestUrl(String sidRestUrl);
         abstract ConfigurationProviderBuilder setSidV2SkRestUrl(String sidRestUrl);
         abstract ConfigurationProviderBuilder setOCSPUrls(Map<String, String> OCSPUrls);

@@ -44,7 +44,6 @@ import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
 import ee.ria.DigiDoc.common.exception.SigningCancelledException;
 import ee.ria.DigiDoc.smartid.dto.request.PostCertificateRequest;
-import ee.ria.DigiDoc.smartid.dto.request.PostCreateSignatureRequest;
 import ee.ria.DigiDoc.smartid.dto.request.PostCreateSignatureRequestV2;
 import ee.ria.DigiDoc.smartid.dto.request.RequestAllowedInteractionsOrder;
 import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
@@ -109,15 +108,9 @@ public class SmartSignService extends IntentService {
 
                 try {
                     SessionStatusResponse sessionStatusResponse;
-
-                    if (request.getUrl().contains("v1")) {
-                        sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCertificateV1(
-                                request.getCountry(), request.getNationalIdentityNumber(), getCertificateRequest(request)), true);
-                    } else {
-                        String semanticsIdentifier = "PNO" + request.getCountry() + "-" + request.getNationalIdentityNumber();
-                        sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCertificateV2(
-                                semanticsIdentifier, getCertificateRequest(request)), true);
-                    }
+                    String semanticsIdentifier = "PNO" + request.getCountry() + "-" + request.getNationalIdentityNumber();
+                    sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCertificateV2(
+                            semanticsIdentifier, getCertificateRequest(request)), true);
                     if (sessionStatusResponse == null) {
                         Timber.log(Log.ERROR, "No session status response");
                         return;
@@ -132,12 +125,8 @@ public class SmartSignService extends IntentService {
                         broadcastSmartCreateSignatureChallengeResponse(base64Hash);
                         Thread.sleep(INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS);
 
-                        String requestString;
-                        if (request.getUrl().contains("v1")) {
-                            requestString = MessageUtil.toJsonString(getSignatureRequestV1(request, base64Hash));
-                        } else {
-                            requestString = MessageUtil.toJsonString(getSignatureRequestV2(request, base64Hash));
-                        }
+                        String requestString = MessageUtil.toJsonString(getSignatureRequestV2(request, base64Hash));
+
                         Timber.log(Log.DEBUG, "Request: %s", requestString);
 
                         sessionStatusResponse = doSessionStatusRequestLoop(SIDRestServiceClient.getCreateSignature(
@@ -303,19 +292,6 @@ public class SmartSignService extends IntentService {
         certificateRequest.setRelyingPartyName(request.getRelyingPartyName());
         certificateRequest.setRelyingPartyUUID(request.getRelyingPartyUUID());
         return certificateRequest;
-    }
-
-    private PostCreateSignatureRequest getSignatureRequestV1(
-            SmartIDSignatureRequest request, String hash) {
-        Timber.log(Log.DEBUG, "Signature request V1: %s", request);
-        PostCreateSignatureRequest signatureRequest = new PostCreateSignatureRequest();
-        signatureRequest.setRelyingPartyUUID(request.getRelyingPartyUUID());
-        signatureRequest.setRelyingPartyName(request.getRelyingPartyName());
-        signatureRequest.setHashType(request.getHashType());
-        signatureRequest.setHash(hash);
-        signatureRequest.setDisplayText(request.getDisplayText());
-        signatureRequest.setRequestProperties(new PostCreateSignatureRequest.RequestProperties(true));
-        return signatureRequest;
     }
 
     private PostCreateSignatureRequestV2 getSignatureRequestV2(

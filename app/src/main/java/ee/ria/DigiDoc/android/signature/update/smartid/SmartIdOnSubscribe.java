@@ -164,9 +164,9 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         String displayMessage = navigator.activity()
                 .getString(R.string.signature_update_mobile_id_display_message);
         SmartIDSignatureRequest request = SmartCreateSignatureRequestHelper
-                .create(container, uuid, configurationProvider.getSidRestUrl(),
-                        configurationProvider.getSidV2RestUrl(), configurationProvider.getSidSkRestUrl(),
-                        configurationProvider.getSidV2SkRestUrl(), country, personalCode, displayMessage);
+                .create(container, uuid, configurationProvider.getSidV2RestUrl(),
+                        configurationProvider.getSidV2SkRestUrl(), country,
+                        personalCode, displayMessage);
 
         intent.putExtra(CREATE_SIGNATURE_REQUEST, request);
         intent.putStringArrayListExtra(CERTIFICATE_CERT_BUNDLE,
