@@ -401,7 +401,7 @@ final class CryptoCreateAdapter extends
                 if (TextUtil.isOnlyDigits(nameText)) {
                     nameViewAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
                 } else {
-                    nameViewAccessibility.append(nameText);
+                    nameViewAccessibility.append(nameText).append(" ");
                 }
             }
             nameView.setContentDescription(nameViewAccessibility.toString().toLowerCase());
@@ -429,10 +429,10 @@ final class CryptoCreateAdapter extends
             addButton.setContentDescription(addButton.getText().toString().toLowerCase());
             if (item.addButtonEnabled()) {
                 String addRecipientDescription = addButton.getResources().getString(R.string.add_recipient);
-                addButton.setContentDescription((addRecipientDescription + " " + nameView.getText()).toLowerCase());
+                addButton.setContentDescription((addRecipientDescription + " " + nameViewAccessibility).toLowerCase());
             } else {
                 String addRecipientDescription = addButton.getResources().getString(R.string.crypto_recipient_add_button_added_accessibility);
-                addButton.setContentDescription((addRecipientDescription + " " + nameView.getText()).toLowerCase());
+                addButton.setContentDescription((addRecipientDescription + " " + nameViewAccessibility).toLowerCase());
             }
             clicks(addButton)
                     .map(ignored -> {
