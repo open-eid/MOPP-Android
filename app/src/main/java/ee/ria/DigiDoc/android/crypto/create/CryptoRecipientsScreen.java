@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
@@ -252,6 +253,10 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         View searchTextView = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
         searchTextView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
         searchView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+
+        if (searchTextView instanceof TextView) {
+            AccessibilityUtils.setSingleCharactersContentDescription((TextView) searchTextView);
+        }
 
         hideSearchCloseButton(searchTextView);
 
