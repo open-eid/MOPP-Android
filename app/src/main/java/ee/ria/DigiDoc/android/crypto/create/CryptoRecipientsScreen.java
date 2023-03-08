@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
 import static android.view.View.GONE;
+import static android.view.View.IMPORTANT_FOR_ACCESSIBILITY_YES;
 import static android.view.View.VISIBLE;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
@@ -181,6 +182,59 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         super.onContextUnavailable();
     }
 
+    private void removeDefaultSearchButton(SearchView searchView) {
+        searchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                searchView.setSubmitButtonEnabled(false);
+                if (getResources() != null) {
+                    ImageView rightSearchButton = searchView.findViewById(
+                            getResources()
+                                    .getIdentifier("android:id/search_go_btn", null, null));
+                    if (rightSearchButton != null) {
+                        rightSearchButton.setVisibility(GONE);
+                        rightSearchButton.setImageDrawable(null);
+                        rightSearchButton.setEnabled(false);
+                    }
+                }
+            }
+        });
+    }
+
+    private void setButtonsVisibility(View searchTextView, View searchPlate, int visibility) {
+        ((LinearLayout) searchTextView.getParent()).findViewById(getResources()
+                .getIdentifier("android:id/search_close_btn", null, null))
+                .setVisibility(visibility);
+        ((LinearLayout) searchPlate.getParent()).findViewById(getResources()
+                .getIdentifier("android:id/search_mag_icon", null, null))
+                .setVisibility(visibility);
+    }
+
+    private void setMagIconClickable(View searchTextView, View searchPlate, ImageView searchButton) {
+        searchTextView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+        searchView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+        searchView.requestFocus();
+
+        ((LinearLayout) searchTextView.getParent()).findViewById(getResources()
+                .getIdentifier("android:id/search_close_btn", null, null))
+                .setVisibility(GONE);
+
+        searchButton.setVisibility(VISIBLE);
+        setButtonsVisibility(searchTextView, searchPlate, GONE);
+        ((LinearLayout) searchButton.getParent()).setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+    }
+
+    private void setButtonsVisibilityOnLayoutChange(View searchTextView, View searchPlate, ImageView searchButton) {
+        searchButton.setVisibility(VISIBLE);
+        setButtonsVisibility(searchTextView, searchPlate, GONE);
+        ((LinearLayout) searchButton.getParent()).setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+    }
+
+    private void hideSearchCloseButton(View searchTextView) {
+        ((LinearLayout) searchTextView.getParent()).findViewById(getResources()
+                .getIdentifier("android:id/search_close_btn", null, null))
+                .setVisibility(GONE);
+    }
+
     @NonNull
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
@@ -194,31 +248,38 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         toolbarView.setNavigationContentDescription(R.string.back);
 
         searchView = view.findViewById(R.id.cryptoRecipientsSearch);
+        searchView.setIconifiedByDefault(false);
+        View searchTextView = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
+        searchTextView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+        searchView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+
+        hideSearchCloseButton(searchTextView);
+
+        View searchPlate = searchView.findViewById(getResources().getIdentifier("android:id/search_plate", null, null));
+        ImageView searchButton = searchView.findViewById(getResources().getIdentifier("android:id/search_button", null, null));
+
+        searchButton.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
+                setMagIconClickable(searchTextView, searchPlate, searchButton));
+
+        searchButton.setOnClickListener(v -> {
+            searchView.performClick();
+            setMagIconClickable(searchTextView, searchPlate, searchButton);
+        });
+
         if (getResources() != null) {
             searchView.setQueryHint(getResources().getString(R.string.crypto_recipients_search));
-            searchView.setIconifiedByDefault(false);
 
             // Remove ">" search button from the right side of the Search Bar
-            searchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> {
-                if (hasFocus) {
-                    searchView.setSubmitButtonEnabled(false);
-                    if (getResources() != null) {
-                        ImageView rightSearchButton = searchView.findViewById(
-                                getResources()
-                                        .getIdentifier("android:id/search_go_btn", null, null));
-                        if (rightSearchButton != null) {
-                            rightSearchButton.setVisibility(GONE);
-                            rightSearchButton.setImageDrawable(null);
-                            rightSearchButton.setEnabled(false);
-                        }
-                    }
-                }
-            });
+            removeDefaultSearchButton(searchView);
+
             searchViewInnerText = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
             searchViewInnerText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
                     searchViewInnerText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                    setButtonsVisibilityOnLayoutChange(searchTextView, searchPlate, searchButton);
+
                     if (getResources() != null) {
                         if (searchViewInnerText.getTextSize() > 40) {
                             searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
@@ -294,7 +355,6 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     protected void onDetach(@NonNull View view) {
         disposables.detach();
         navigator.removeBackButtonClickListener(this);
-        searchView.clearFocus();
         searchView.setOnCloseListener(null);
         super.onDetach(view);
     }
