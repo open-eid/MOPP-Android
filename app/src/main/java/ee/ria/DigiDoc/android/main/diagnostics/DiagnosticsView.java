@@ -289,8 +289,6 @@ public final class DiagnosticsView extends CoordinatorLayout {
         TextView ldapCorpUrl = findViewById(R.id.mainDiagnosticsLdapCorpUrl);
         TextView mobileIDUrl = findViewById(R.id.mainDiagnosticsMobileIDUrl);
         TextView mobileIDSKUrl = findViewById(R.id.mainDiagnosticsMobileIDSKUrl);
-        TextView smartIDUrlV1 = findViewById(R.id.mainDiagnosticsSmartIDUrlV1);
-        TextView smartIDSKUrlV1 = findViewById(R.id.mainDiagnosticsSmartIDSKUrlV1);
         TextView smartIDUrlV2 = findViewById(R.id.mainDiagnosticsSmartIDUrlV2);
         TextView smartIDSKUrlV2 = findViewById(R.id.mainDiagnosticsSmartIDSKUrlV2);
         TextView rpUuid = findViewById(R.id.mainDiagnosticsRpUuid);
@@ -327,10 +325,6 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 configurationProvider.getMidRestUrl(), Typeface.DEFAULT));
         mobileIDSKUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_mid_sk_url_title,
                 configurationProvider.getMidSkRestUrl(), Typeface.DEFAULT));
-        smartIDUrlV1.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_v1_proxy_url_title,
-                configurationProvider.getSidRestUrl(), Typeface.DEFAULT));
-        smartIDSKUrlV1.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_v1_sk_url_title,
-                configurationProvider.getSidSkRestUrl(), Typeface.DEFAULT));
         smartIDUrlV2.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_v2_proxy_url_title,
                 configurationProvider.getSidV2RestUrl(), Typeface.DEFAULT));
         smartIDSKUrlV2.setText(setDisplayTextWithTitle(R.string.main_diagnostics_sid_v2_sk_url_title,
