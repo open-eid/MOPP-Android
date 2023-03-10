@@ -1,6 +1,6 @@
 /*
  * app
- * Copyright 2017 - 2022 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -50,6 +50,7 @@ import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import timber.log.Timber;
 
+import static ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse.ProcessStatus.NO_RESPONSE;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CERTIFICATE_CERT_BUNDLE;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_CHALLENGE;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_DEVICE;
@@ -69,7 +70,9 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
     private final String personalCode;
     private final String country;
 
-    public SmartIdOnSubscribe(Navigator navigator, SignedContainer container, String uuid,
+    Intent intent;
+
+    public SmartIdOnSubscribe(Navigator navigator, Intent intent, SignedContainer container, String uuid,
                               String personalCode, String country) {
         this.navigator = navigator;
         this.container = container;
@@ -77,6 +80,8 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         this.uuid = uuid;
         this.personalCode = personalCode;
         this.country = country;
+
+        this.intent = intent;
     }
 
     @Override
@@ -95,8 +100,13 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                         ServiceFault serviceFault =
                                 ServiceFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
                         Timber.log(Log.DEBUG, "Got SERVICE_FAULT status: %s", serviceFault.getStatus());
-                        emitter.onError(SmartIdMessageException
-                                .create(navigator.activity(), serviceFault.getStatus(), serviceFault.getDetailMessage()));
+                        if (serviceFault.getStatus() == NO_RESPONSE) {
+                            emitter.onError(SmartIdMessageException
+                                    .create(navigator.activity(), serviceFault.getStatus()));
+                        } else {
+                            emitter.onError(SmartIdMessageException
+                                    .create(navigator.activity(), serviceFault.getStatus(), serviceFault.getDetailMessage()));
+                        }
                         break;
                     }
                     case CREATE_SIGNATURE_DEVICE:
@@ -109,14 +119,12 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                                 intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE);
                         emitter.onNext(SmartIdResponse.challenge(challenge));
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL,
-                                    NOTIFICATION_CHANNEL + "_NAME", NotificationManager.IMPORTANCE_HIGH);
-                            NotificationManager systemService = navigator.activity().getSystemService(NotificationManager.class);
-                            if (systemService != null) {
-                                Timber.log(Log.DEBUG, "Creating notification channel");
-                                systemService.createNotificationChannel(channel);
-                            }
+                        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL,
+                                NOTIFICATION_CHANNEL + "_NAME", NotificationManager.IMPORTANCE_HIGH);
+                        NotificationManager systemService = navigator.activity().getSystemService(NotificationManager.class);
+                        if (systemService != null) {
+                            Timber.log(Log.DEBUG, "Creating notification channel");
+                            systemService.createNotificationChannel(channel);
                         }
                         NotificationCompat.Builder notification = new NotificationCompat
                                 .Builder(navigator.activity(), NOTIFICATION_CHANNEL)
@@ -157,9 +165,9 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                 .getString(R.string.signature_update_mobile_id_display_message);
         SmartIDSignatureRequest request = SmartCreateSignatureRequestHelper
                 .create(container, uuid, configurationProvider.getSidRestUrl(),
-                        configurationProvider.getSidSkRestUrl(), country, personalCode, displayMessage);
+                        configurationProvider.getSidV2RestUrl(), configurationProvider.getSidSkRestUrl(),
+                        configurationProvider.getSidV2SkRestUrl(), country, personalCode, displayMessage);
 
-        android.content.Intent intent = new Intent(navigator.activity(), SmartSignService.class);
         intent.putExtra(CREATE_SIGNATURE_REQUEST, request);
         intent.putStringArrayListExtra(CERTIFICATE_CERT_BUNDLE,
                 new ArrayList<>(configurationProvider.getCertBundle()));

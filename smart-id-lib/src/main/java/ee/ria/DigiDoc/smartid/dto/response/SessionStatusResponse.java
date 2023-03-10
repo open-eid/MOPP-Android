@@ -1,6 +1,6 @@
 /*
  * smart-id-lib
- * Copyright 2017 - 2022 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -64,6 +64,12 @@ public class SessionStatusResponse {
         DOCUMENT_UNUSABLE,
         WRONG_VC,
 
+        REQUIRED_INTERACTION_NOT_SUPPORTED_BY_APP,
+        USER_REFUSED_DISPLAYTEXTANDPIN,
+        USER_REFUSED_VC_CHOICE,
+        USER_REFUSED_CONFIRMATIONMESSAGE,
+        USER_REFUSED_CONFIRMATIONMESSAGE_WITH_VC_CHOICE,
+        USER_REFUSED_CERT_CHOICE,
         ACCOUNT_NOT_FOUND,
         SESSION_NOT_FOUND,
         MISSING_SESSIONID,

@@ -1,5 +1,14 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import static android.view.View.GONE;
+import static android.view.View.IMPORTANT_FOR_ACCESSIBILITY_YES;
+import static android.view.View.VISIBLE;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
+import static ee.ria.DigiDoc.android.Constants.VOID;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toolbar;
@@ -25,6 +35,8 @@ import com.bluelinelabs.conductor.Controller;
 import com.google.common.collect.ImmutableList;
 import com.jakewharton.rxbinding4.widget.SearchViewQueryTextEvent;
 
+import org.apache.commons.lang3.StringUtils;
+
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -34,15 +46,11 @@ import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
+import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
 import ee.ria.DigiDoc.common.Certificate;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
-
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-import static ee.ria.DigiDoc.android.Constants.VOID;
 
 public final class CryptoRecipientsScreen extends Controller implements Screen,
         MviView<Intent, ViewState>, Navigator.BackButtonClickListener {
@@ -71,6 +79,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     private View activityOverlayView;
     private View activityIndicatorView;
 
+    private String submittedQuery = "";
     private ImmutableList<Certificate> recipients = ImmutableList.of();
 
     @SuppressWarnings("WeakerAccess")
@@ -95,15 +104,31 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         return Observable.merge(
                 queryTextChangeEvents(searchView)
                         .filter(SearchViewQueryTextEvent::isSubmitted)
-                        .doOnNext(ignored -> searchView.clearFocus())
+                        .doOnNext(ignored -> {
+                            String query = StringUtils.trim(searchView.getQuery().toString());
+                            submittedQuery = query;
+                            setDoneSearchQuery(query);
+                        })
                         .map(event ->
-                                Intent.RecipientsSearchIntent.search(event.getQueryText().toString())),
-                backButtonClicksSubject.map(ignored -> Intent.RecipientsSearchIntent.clear()));
+                                Intent.RecipientsSearchIntent.search(
+                                        StringUtils.trim(event.getQueryText().toString()))),
+                backButtonClicksSubject.map(ignored -> Intent.RecipientsSearchIntent.clear()),
+                clicks(searchView)
+                        .map(ignored -> StringUtils.trim(searchView.getQuery().toString()))
+                        .filter(trimmedQuery -> (trimmedQuery != null &&
+                                !trimmedQuery.isEmpty()) && !submittedQuery.equals(trimmedQuery))
+                        .map(query -> Intent.RecipientsSearchIntent.search(
+                                setSearchQuery(query))));
     }
 
     private Observable<Intent.RecipientAddIntent> recipientAddIntent() {
         return adapter.recipientAddClicks()
                 .map(recipient -> Intent.RecipientAddIntent.create(recipients, recipient));
+    }
+
+    private Observable<Intent.RecipientAddAllIntent> recipientAddAllIntent() {
+        return adapter.recipientAddAllClicks()
+                .map(addedRecipients -> Intent.RecipientAddAllIntent.create(recipients, addedRecipients));
     }
 
     private Observable<Intent.RecipientRemoveIntent> recipientRemoveIntent() {
@@ -114,12 +139,12 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(recipientsScreenUpButtonClickIntent(), recipientsScreenDoneButtonClickIntent(),
-                recipientsSearchIntent(), recipientAddIntent(), recipientRemoveIntent());
+                recipientsSearchIntent(), recipientAddIntent(), recipientAddAllIntent(), recipientRemoveIntent());
     }
 
     private void setActivity(boolean activity) {
-        activityOverlayView.setVisibility(activity ? View.VISIBLE : View.GONE);
-        activityIndicatorView.setVisibility(activity ? View.VISIBLE : View.GONE);
+        activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
+        activityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
     }
 
     @Override
@@ -157,6 +182,59 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         super.onContextUnavailable();
     }
 
+    private void removeDefaultSearchButton(SearchView searchView) {
+        searchView.setOnQueryTextFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                searchView.setSubmitButtonEnabled(false);
+                if (getResources() != null) {
+                    ImageView rightSearchButton = searchView.findViewById(
+                            getResources()
+                                    .getIdentifier("android:id/search_go_btn", null, null));
+                    if (rightSearchButton != null) {
+                        rightSearchButton.setVisibility(GONE);
+                        rightSearchButton.setImageDrawable(null);
+                        rightSearchButton.setEnabled(false);
+                    }
+                }
+            }
+        });
+    }
+
+    private void setButtonsVisibility(View searchTextView, View searchPlate, int visibility) {
+        ((LinearLayout) searchTextView.getParent()).findViewById(getResources()
+                .getIdentifier("android:id/search_close_btn", null, null))
+                .setVisibility(visibility);
+        ((LinearLayout) searchPlate.getParent()).findViewById(getResources()
+                .getIdentifier("android:id/search_mag_icon", null, null))
+                .setVisibility(visibility);
+    }
+
+    private void setMagIconClickable(View searchTextView, View searchPlate, ImageView searchButton) {
+        searchTextView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+        searchView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+        searchView.requestFocus();
+
+        ((LinearLayout) searchTextView.getParent()).findViewById(getResources()
+                .getIdentifier("android:id/search_close_btn", null, null))
+                .setVisibility(GONE);
+
+        searchButton.setVisibility(VISIBLE);
+        setButtonsVisibility(searchTextView, searchPlate, GONE);
+        ((LinearLayout) searchButton.getParent()).setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+    }
+
+    private void setButtonsVisibilityOnLayoutChange(View searchTextView, View searchPlate, ImageView searchButton) {
+        searchButton.setVisibility(VISIBLE);
+        setButtonsVisibility(searchTextView, searchPlate, GONE);
+        ((LinearLayout) searchButton.getParent()).setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+    }
+
+    private void hideSearchCloseButton(View searchTextView) {
+        ((LinearLayout) searchTextView.getParent()).findViewById(getResources()
+                .getIdentifier("android:id/search_close_btn", null, null))
+                .setVisibility(GONE);
+    }
+
     @NonNull
     @Override
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
@@ -170,14 +248,38 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         toolbarView.setNavigationContentDescription(R.string.back);
 
         searchView = view.findViewById(R.id.cryptoRecipientsSearch);
+        searchView.setIconifiedByDefault(false);
+        View searchTextView = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
+        searchTextView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+        searchView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+
+        hideSearchCloseButton(searchTextView);
+
+        View searchPlate = searchView.findViewById(getResources().getIdentifier("android:id/search_plate", null, null));
+        ImageView searchButton = searchView.findViewById(getResources().getIdentifier("android:id/search_button", null, null));
+
+        searchButton.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
+                setMagIconClickable(searchTextView, searchPlate, searchButton));
+
+        searchButton.setOnClickListener(v -> {
+            searchView.performClick();
+            setMagIconClickable(searchTextView, searchPlate, searchButton);
+        });
+
         if (getResources() != null) {
             searchView.setQueryHint(getResources().getString(R.string.crypto_recipients_search));
-            searchView.setIconifiedByDefault(false);
+
+            // Remove ">" search button from the right side of the Search Bar
+            removeDefaultSearchButton(searchView);
+
             searchViewInnerText = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
             searchViewInnerText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
                     searchViewInnerText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                    setButtonsVisibilityOnLayoutChange(searchTextView, searchPlate, searchButton);
+
                     if (getResources() != null) {
                         if (searchViewInnerText.getTextSize() > 40) {
                             searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
@@ -196,6 +298,12 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                                     searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
                                 } else {
                                     searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50);
+                                    // Validate personal codes only. Allow company registry numbers and names
+                                    if (searchViewInnerText.getText() != null &&
+                                            searchViewInnerText.getText().length() >= MAXIMUM_PERSONAL_CODE_LENGTH &&
+                                            StringUtils.isNumeric(searchViewInnerText.getText())) {
+                                        PersonalCodeValidator.validatePersonalCode(searchViewInnerText);
+                                    }
                                 }
                             }
 
@@ -208,6 +316,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         }
 
         searchView.setSubmitButtonEnabled(true);
+        searchView.setEnabled(true);
         RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());
@@ -216,6 +325,21 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         return view;
+    }
+
+    private void setDoneSearchQuery(String text) {
+        searchView.setQuery(StringUtils.trim(text), false);
+        searchView.clearFocus();
+    }
+
+    private String setSearchQuery(String text) {
+        if (text != null && !text.isEmpty()) {
+            String trimmed = StringUtils.trim(text);
+            submittedQuery = trimmed;
+            setDoneSearchQuery(trimmed);
+            return trimmed;
+        }
+        return "";
     }
 
     @Override
@@ -231,6 +355,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     protected void onDetach(@NonNull View view) {
         disposables.detach();
         navigator.removeBackButtonClickListener(this);
+        searchView.setOnCloseListener(null);
         super.onDetach(view);
     }
 }

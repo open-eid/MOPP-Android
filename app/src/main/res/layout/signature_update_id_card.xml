@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:parentTag="android.widget.LinearLayout"
     tools:layout_width="match_parent"
     tools:layout_height="match_parent"
@@ -66,14 +67,27 @@
                 android:labelFor="@id/signatureUpdateIdCardSignPin2" />
         </LinearLayout>
 
-        <EditText
-            android:id="@id/signatureUpdateIdCardSignPin2"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@id/signatureUpdateIdCardSignPin2Label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:inputType="numberPassword"
             android:minHeight="@dimen/material_baseline_grid_6x"
-            android:maxLength="12" />
+            app:errorEnabled="true"
+            app:expandedHintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@id/signatureUpdateIdCardSignPin2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberPassword"
+                android:digits="0123456789"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:maxLength="12"
+                android:minHeight="@dimen/material_baseline_grid_6x" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@id/signatureUpdateIdCardSignPin2Error"

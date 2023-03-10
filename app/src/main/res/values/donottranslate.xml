@@ -22,8 +22,12 @@
     <string name="main_settings_country_key">mainSettingsCountry</string>
     <string name="main_settings_postal_code_key">mainSettingsPostalCode</string>
     <string name="main_settings_open_all_filetypes_key">mainSettingsOpenAllFilesTypes</string>
+    <string name="main_settings_allow_screenshots_key">mainSettingsAllowScreenshots</string>
 
+    <string name="mobile_id_country_code_and_phone_number_placeholder">372XXXXXXXX</string>
     <string name="signature_add_mobile_id_challenge_placeholder">____</string>
+    <string name="signature_id_card_pin1">PIN1</string>
+    <string name="signature_id_card_pin2">PIN2</string>
 
     <!-- Main About -->
     <string name="main_about_libdigidocpp_title">libdigidocpp</string>
@@ -112,8 +116,10 @@
     <string name="main_diagnostics_ldap_corp_url_title">LDAP_CORP_URL:\u0020</string>
     <string name="main_diagnostics_mid_proxy_url_title">MID_PROXY_URL:\u0020</string>
     <string name="main_diagnostics_mid_sk_url_title">MID_SK_URL:\u0020</string>
-    <string name="main_diagnostics_sid_proxy_url_title">SID_PROXY_URL:\u0020</string>
-    <string name="main_diagnostics_sid_sk_url_title">SID_SK_URL:\u0020</string>
+    <string name="main_diagnostics_sid_v1_proxy_url_title">SID_PROXY_URL:\u0020</string>
+    <string name="main_diagnostics_sid_v1_sk_url_title">SID_SK_URL:\u0020</string>
+    <string name="main_diagnostics_sid_v2_proxy_url_title">SIDV2_PROXY_URL:\u0020</string>
+    <string name="main_diagnostics_sid_v2_sk_url_title">SIDV2_SK_URL:\u0020</string>
     <string name="main_diagnostics_rpuuid_title">RPUUID:\u0020</string>
 
     <string name="main_diagnostics_date_title">DATE:\u0020</string>

@@ -14,7 +14,6 @@ import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
-import ee.ria.DigiDoc.sign.DataFile;
 
 interface Result extends MviResult<ViewState> {
 
@@ -228,7 +227,7 @@ interface Result extends MviResult<ViewState> {
 
         @State abstract String state();
 
-        abstract ImmutableList<Certificate> result();
+        @Nullable abstract ImmutableList<Certificate> result();
 
         @Nullable abstract Throwable error();
 
@@ -254,11 +253,11 @@ interface Result extends MviResult<ViewState> {
         }
 
         static RecipientsSearchResult clear() {
-            return create(State.IDLE, ImmutableList.of(), null);
+            return create(State.CLEAR, null, null);
         }
 
         private static RecipientsSearchResult create(
-                @State String state, ImmutableList<Certificate> result, @Nullable Throwable error) {
+                @State String state, @Nullable ImmutableList<Certificate> result, @Nullable Throwable error) {
             return new AutoValue_Result_RecipientsSearchResult(state, result, error);
         }
     }
@@ -275,6 +274,21 @@ interface Result extends MviResult<ViewState> {
 
         static RecipientAddResult create(ImmutableList<Certificate> recipients) {
             return new AutoValue_Result_RecipientAddResult(recipients);
+        }
+    }
+
+    @AutoValue
+    abstract class RecipientAddAllResult implements Result {
+
+        abstract ImmutableList<Certificate> recipients();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith().recipients(recipients()).build();
+        }
+
+        static RecipientAddAllResult create(ImmutableList<Certificate> recipients) {
+            return new AutoValue_Result_RecipientAddAllResult(recipients);
         }
     }
 

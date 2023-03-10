@@ -9,15 +9,37 @@
     <string name="main_home_navigation_crypto">КРИПТО</string>
     <string name="main_home_navigation_eid">Мой eID</string>
 
+    <string name="main_home_logo">DigiDoc</string>
     <string name="main_home_menu_title">Меню</string>
     <string name="main_home_menu_button">Меню</string>
     <string name="main_home_menu_help">ПОМОЩЬ</string>
     <string name="main_home_menu_help_url_short">линк www.id.ee</string>
     <string name="main_home_menu_help_url">https://www.id.ee/ru/id-pomoshh/</string>
+    <string name="main_home_menu_accessibility">ДОСТУПНОСТЬ</string>
     <string name="main_home_menu_recent">НЕДАВНИЕ ДОКУМЕНТЫ</string>
     <string name="main_home_menu_settings">НАСТРОЙКИ</string>
     <string name="main_home_menu_about">ИНФОРМАЦИЯ</string>
     <string name="main_home_menu_diagnostics">ДИАГНОСТИКА</string>
+
+    <!-- Main Accessibility -->
+    <string name="main_accessibility_title">Доступность</string>
+
+    <string name="main_accessibility_introduction">Приложение RIA DigiDoc построено таким образом, чтобы оно соответствовало протоколам доступа WCAG 2.1 AA. Это означает, что при разработке RIA DigiDoc соблюдались принципы, позволяющие использовать приложение неспособным видеть и слабовидящим пользователям, лицам с ограничением двигательной функции или силы и т. п.</string>
+    <string name="main_accessibility_introduction_2">Доступность можно исправить путём использования встроенных в смарт-устройство вспомогательных средств. Далее даётся обзор основных вспомогательных средств.</string>
+    <string name="main_accessibility_introduction_screen_reader_title">Экранное считывающее устройство </string>
+    <string name="main_accessibility_introduction_screen_reader_introduction">Экранное считывающее устройство (также программа экранного чтения, или скрин-ридер) – это программа, задачей которой является преобразование изображаемой на экране смарт-устройства информации в подходящий для пользователя вид – например, речь. В первую очередь это вспомогательное средство предназначено для слабовидящих пользователей.</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_2">При построении приложения RIA DigiDoc учитывалась возможность преобразования визуального содержания любого типа в подходящий для пользователя вид. Например, картинки снабжены текстовыми описаниями, расположение и последовательность структурных элементов учитывает перемещение экранного считывающего устройства по экрану и позволят потреблять информацию в логической последовательности.</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_apps">Наиболее распространённые скрин-ридеры для смарт-устройств:</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_ios">VoiceOver (iOS, встроенный) https://support.apple.com/ru-ru/guide/iphone/iph3e2e415f/ios</string>
+    <string name="main_accessibility_introduction_screen_reader_introduction_android">Talkback (Android, встроенный) https://support.google.com/accessibility/android/answer/6007100?hl=ru</string>
+    <string name="main_accessibility_introduction_screen_magnification_title">Увеличение экрана и изменение цветов</string>
+    <string name="main_accessibility_introduction_screen_magnification_introduction">Если слабовидящий пользователь видит достаточно для чтения текста, для более удобного просмотра экрана можно использовать встроенные в смарт-устройство вспомогательные средства. При помощи вспомогательных средств можно изменять размеры текстов, основной тип шрифта, цветовые решения интерфейса пользователя, а также можно увеличивать экран при помощи экранной лупы.</string>
+    <string name="main_accessibility_introduction_screen_magnification_screen_tools">Вспомогательные средства для регулировки цвета экрана и размера текста:</string>
+    <string name="main_accessibility_introduction_screen_magnification_screen_tools_ios">iOS https://support.apple.com/ru-ru/guide/iphone/iph3e2e1fb0/ios</string>
+    <string name="main_accessibility_introduction_screen_magnification_screen_tools_android">Android https://support.google.com/accessibility/android/answer/11183305?hl=ru&amp;ref_topic=9079043</string>
+    <string name="main_accessibility_introduction_screen_magnification_tools">Вспомогательные средства для увеличения экрана:</string>
+    <string name="main_accessibility_introduction_screen_magnification_tools_ios">Zoom (iOS, встроенный) https://support.apple.com/ru-ru/guide/iphone/iph3e2e367e/ios</string>
+    <string name="main_accessibility_introduction_screen_magnification_tools_android">Magnification (Android, встроенный) https://support.google.com/accessibility/android/answer/6006949?hl=ru</string>
 
     <!-- Main Settings -->
     <string name="main_settings_title">Настройки</string>
@@ -33,9 +55,11 @@
     <string name="main_settings_postal_code_title">Почтовый код</string>
     <string name="main_settings_signature_profile_title">Формат файла по умолчанию</string>
     <string name="main_settings_open_all_filetypes_title">Разрешить приложению открывать все типы файлов (потребуется перезапуск приложения)</string>
+    <string name="main_settings_allow_screenshots_title">Разрешить скриншоты (потребуется перезапуск приложения)</string>
 
     <!-- Main About -->
     <string name="main_about_title">Информация</string>
+    <string name="main_about_digidoc_and_el_logos">Проект поддерживается Европейским фондом регионального развития</string>
     <string name="main_about_ria_digidoc_version_title">RIA DigiDoc версия %1$s</string>
     <string name="main_about_software_developed_by_title">Эстонское программное обеспечение ID выпущено Государственным департаментом инфосистем</string>
     <string name="main_about_contact_information_title">Если у вас возникнут вопросы, пожалуйста, обратитесь на id.ee.</string>
@@ -64,6 +88,7 @@
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Выберите файл для подписания или проверки</string>
+    <string name="signature_home_create_text_accessibility">Выберите файл для подписания или проверки</string>
     <string name="signature_home_create_button">ВЫБРАТЬ ФАЙЛ</string>
 
     <!-- Signature List -->
@@ -171,6 +196,10 @@
 
     <string name="signature_update_mobile_id_display_message">Подписать документ</string>
 
+    <string name="signature_update_mobile_id_invalid_country_code">Неверный код страны.</string>
+    <string name="signature_update_mobile_id_invalid_phone_number">Телефонный номер не действителен.</string>
+    <string name="signature_update_mobile_id_invalid_personal_code">Личный код недействителен.</string>
+
     <string name="signature_update_mobile_id_status_request_sent">Запрос на подпись отправлен</string>
     <string name="signature_update_mobile_id_status_request_ok">Запрос принят</string>
     <string name="signature_update_mobile_id_status_no_country_code">Номер телефона должен содержать код страны</string>
@@ -214,13 +243,16 @@
     <string name="signature_update_smart_id_select_device">Для проставления подписи подтвердите устройство в приложении Smart-ID.</string>
     <string name="signature_update_smart_id_status_document_unusable">Не удалось выполнить операцию Smart-ID. Пожалуйста, проверьте приложение Smart-ID или свяжитесь со службой поддержки Smart-ID.</string>
     <string name="signature_update_smart_id_status_wrong_vc">Ошибка: выбран неправильный контрольный код</string>
+    <string name="signature_update_smart_id_required_interaction_not_supported_by_app">Не удалось подписать контейнер. Для подписания с помощью Smart-ID в программе DigiDoc4 клиент нужно обновить приложение Smart-ID.</string>
     <string name="signature_update_smart_id_error_message_not_qualified">Для проставления подписи в мобильном приложении RIA DigiDoc, ваш Smart-ID должен соответствовать уровню "высокий".</string>
     <string name="signature_update_smart_id_error_message_old_api">Мобильное приложение RIA DigiDoc нуждается в обновлении. Пожалуйста, установите новую версию из магазина мобильных приложений. Дополнительную информацию можно получить по телефону (+372) 666 888</string>
     <string name="signature_update_smart_id_error_message_under_maintenance">Технический сбой услуги Smart-ID. Пожалуйста, попробуйте позже.</string>
-    <string name="signature_update_smart_id_error_message_account_not_found_or_timeout">Не удалось подписать контейнер. Срок действия вашей операции Smart-ID истек или учетная запись не найдена</string>
+    <string name="signature_update_smart_id_error_message_account_not_found_or_timeout">Срок действия вашей операции Smart-ID истек или учетная запись не найдена</string>
     <string name="signature_update_smart_id_error_message_session_not_found">Сессия не найден</string>
     <string name="signature_update_smart_id_error_message_access_rights">Не удалось подписать контейнер. Проверьте настройки доступа услуги Smart-ID. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="signature_update_smart_id_error_technical_error">Не удалось отправить запрос. Технический сбой услуги Smart-ID. Пожалуйста, попробуйте позже.</string>
+
+    <string name="signature_update_smart_id_invalid_personal_code">Личный код недействителен.</string>
 
     <string name="signature_update_id_card_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
@@ -232,6 +264,8 @@
     <string name="signature_update_id_card_sign_pin2_invalid">Неверный PIN2. У Вас осталось %1$d попыток.</string>
     <string name="signature_update_id_card_sign_pin2_invalid_final">Неверный PIN2. У Вас осталась 1 попытка до блокировки Вашего PIN2.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 заблокирован. Зайдите в Мой eID, чтобы разблокировать его.</string>
+
+    <string name="id_card_sign_pin_invalid_length">%1$s-код должен быть не менее %2$s символов</string>
 
     <!-- Signature Details -->
     <string name="signature_details_title">Детали подписи</string>
@@ -257,6 +291,7 @@
 
     <!-- Crypto Home -->
     <string name="crypto_home_create_text">Выберите файл для шифрования или расшифровки</string>
+    <string name="crypto_home_create_text_accessibility">Выберите файл для шифрования или расшифровки</string>
     <string name="crypto_home_create_button">ВЫБРАТЬ ФАЙЛ</string>
 
     <!-- Crypto Create -->
@@ -291,6 +326,8 @@
     <string name="crypto_recipients_title">Добавить получателей</string>
     <string name="crypto_recipients_search">Введите личный код, код компании или регистра</string>
     <string name="crypto_recipients_search_result_empty">У человека или компании нет действующего сертификата.\nДля шифрования необходимо иметь действующий сертификат.\nЕсли у вас возникнут вопросы, пожалуйста, обратитесь на id.ee.</string>
+    <string name="crypto_recipients_add_all">ДОБАВИТЬ ВСЕ</string>
+    <string name="crypto_recipients_add_all_accessibility">Добавить все</string>
     <string name="crypto_recipients_selected_subhead">Добавлен получатель</string>
     <string name="crypto_recipients_done_button">ПОДТВЕРДИТЬ</string>
 
@@ -433,9 +470,6 @@
     <string name="eid_home_code_update_repeat_error_mismatch_puk">Новые PUK-коды должны совпадать</string>
 
     <!--  General  -->
-    <string name="signature_content_description">Подпись, вкладка %1$d из %2$d</string>
-    <string name="crypto_content_description">Крипто, вкладка %1$d из %2$d</string>
-    <string name="my_eid_content_description">Мой e-ID, вкладка %1$d из %2$d</string>
 
     <string name="decrypt_content_description">Дешифрировать документ, вкладка %1$d из %2$d</string>
     <string name="sign_send_content_description">Подписать, вкладка %1$d из %2$d</string>
@@ -541,6 +575,7 @@
     <!-- Home -->
     <string name="main_home_navigation_signature_accessibility">Подпись</string>
     <string name="main_home_navigation_crypto_accessibility">Крипто</string>
+    <string name="main_home_navigation_myEid_accessibility">Мой e I D</string>
 
     <!-- Menu -->
     <string name="main_home_menu_help_accessibility">Помощь</string>

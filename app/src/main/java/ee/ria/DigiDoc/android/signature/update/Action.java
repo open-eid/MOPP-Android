@@ -108,12 +108,15 @@ interface Action extends MviAction {
 
         @Nullable abstract SignatureAddRequest request();
 
+        abstract boolean isCancelled();
+
         static SignatureAddAction create(@Nullable Integer method,
                                          @Nullable Boolean existingContainer,
                                          @Nullable File containerFile,
-                                         @Nullable SignatureAddRequest request) {
+                                         @Nullable SignatureAddRequest request,
+                                         boolean isCancelled) {
             return new AutoValue_Action_SignatureAddAction(method, existingContainer, containerFile,
-                    request);
+                    request, isCancelled);
         }
     }
 
