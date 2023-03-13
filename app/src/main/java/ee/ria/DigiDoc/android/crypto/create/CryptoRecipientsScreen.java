@@ -19,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -49,6 +51,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
 import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.common.TextUtil;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
@@ -263,10 +266,13 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         View searchPlate = searchView.findViewById(getResources().getIdentifier("android:id/search_plate", null, null));
         ImageView searchButton = searchView.findViewById(getResources().getIdentifier("android:id/search_button", null, null));
 
-        searchButton.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
-                setMagIconClickable(searchTextView, searchPlate, searchButton));
+        searchButton.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            setupContentDescriptions(searchTextView, submittedQuery);
+            setMagIconClickable(searchTextView, searchPlate, searchButton);
+        });
 
         searchButton.setOnClickListener(v -> {
+            setupContentDescriptions(searchTextView, submittedQuery);
             searchView.performClick();
             setMagIconClickable(searchTextView, searchPlate, searchButton);
         });
@@ -362,5 +368,28 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         navigator.removeBackButtonClickListener(this);
         searchView.setOnCloseListener(null);
         super.onDetach(view);
+    }
+
+    private void setupContentDescriptions(View view, CharSequence contentDescription) {
+        view.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override
+            public void onPopulateAccessibilityEvent(View host, AccessibilityEvent event) {
+                view.setContentDescription(TextUtil.splitTextAndJoin(submittedQuery, "", " "));
+            }
+
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                String splitContentDescription = TextUtil.splitTextAndJoin(contentDescription.toString(), "", " ");
+                info.setContentDescription(splitContentDescription);
+                info.setCheckable(false);
+                info.setClickable(false);
+                info.setClassName("");
+                info.setPackageName("");
+                info.setText(splitContentDescription);
+                info.setViewIdResourceName("");
+                info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_SELECTION);
+            }
+        });
     }
 }
