@@ -101,7 +101,9 @@
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintWidth="100dp"
+                        app:layout_constraintWidth="115dp"
+                        android:autoSizeTextType="uniform"
+                        android:maxLines="1"
                         android:text="@string/cancel_button"
                         android:backgroundTint="@color/error"
                         android:foregroundTint="@color/primary">
@@ -173,7 +175,9 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintWidth="100dp"
+                    app:layout_constraintWidth="115dp"
+                    android:autoSizeTextType="uniform"
+                    android:maxLines="1"
                     android:text="@string/cancel_button"
                     android:backgroundTint="@color/error"
                     android:foregroundTint="@color/primary">
