@@ -85,7 +85,7 @@ public final class Activity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction(intent.getAction());
-            handleIncomingFiles(intent);
+            handleIncomingFiles(intent, this);
         } else if (Intent.ACTION_CONFIGURATION_CHANGED.equals(intent.getAction())) {
             getIntent().setAction(Intent.ACTION_MAIN);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -174,10 +174,10 @@ public final class Activity extends AppCompatActivity {
         }
     }
 
-    private void handleIncomingFiles(Intent intent) {
+    private void handleIncomingFiles(Intent intent, Activity activity) {
         try {
             intent.setDataAndType(FileUtil.normalizeUri(intent.getData()), "*/*");
-            rootScreenFactory.intent(intent, navigator.activity());
+            rootScreenFactory.intent(intent, activity);
         } catch (ActivityNotFoundException e) {
             Timber.log(Log.ERROR, e, "Handling incoming file intent");
         }
