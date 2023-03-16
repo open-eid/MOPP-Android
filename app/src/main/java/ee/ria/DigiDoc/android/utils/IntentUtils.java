@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -178,41 +179,32 @@ public final class IntentUtils {
         Uri uri = FileProvider.getUriForFile(context,
                 context.getString(R.string.file_provider_authority), file);
 
-        Intent shareIntent = new Intent(Intent.ACTION_SEND)
-                .putExtra(Intent.EXTRA_STREAM, uri)
-                .setType(SignedContainer.mimeType(file));
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType(SignedContainer.mimeType(file));
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.setClipData(
+                new ClipData(file.getName(),
+                new String[]{ shareIntent.getType() },
+                new ClipData.Item(uri)
+        ));
+        shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         // Remove app from "Share" menu
-        List<Intent> shareIntentList = new ArrayList<>();
-        List<ResolveInfo> resolveInfos = context.getPackageManager()
-                .queryIntentActivities(shareIntent, 0);
-
-        if (resolveInfos != null && !resolveInfos.isEmpty()) {
-            for (ResolveInfo resolveInfo : resolveInfos) {
-                String appPackageName = context.getPackageName() != null ?
-                        context.getPackageName() : APPLICATION_ID;
-                String packageName = resolveInfo.activityInfo.packageName;
-                String name = resolveInfo.activityInfo.name;
-                if (appPackageName != null && packageName != null && name != null &&
-                        !packageName.equalsIgnoreCase(appPackageName)) {
-                    ComponentName componentName = new ComponentName(packageName, name);
-                    Intent intent = new Intent(Intent.ACTION_SEND)
-                            .putExtra(Intent.EXTRA_STREAM, uri)
-                            .setType(SignedContainer.mimeType(file))
-                            .setComponent(componentName)
-                            .setPackage(packageName);
-                    shareIntentList.add(intent);
-                }
+        ArrayList<ComponentName> excludedExtraComponents = new ArrayList<>();
+        PackageManager packageManager = context.getPackageManager();
+        for (ResolveInfo resolveInfo : packageManager.queryIntentActivities(shareIntent, 0)) {
+            String appPackageName = context.getPackageName() != null ?
+                    context.getPackageName() : APPLICATION_ID;
+            String packageName = resolveInfo.activityInfo.packageName;
+            if (packageName.contains(appPackageName)) {
+                excludedExtraComponents.add(new ComponentName(packageName, resolveInfo.activityInfo.name));
             }
         }
 
-        Intent selfAppIntent = shareIntentList.get(0);
-        Intent chooserIntent = Intent.createChooser(selfAppIntent, null);
-        shareIntentList.remove(selfAppIntent);
-        chooserIntent.putExtra(
-                Intent.EXTRA_INITIAL_INTENTS,
-                shareIntentList.toArray(new Parcelable[0]));
-        return chooserIntent;
+        Intent intentChooser = Intent.createChooser(shareIntent, null);
+        intentChooser.putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, excludedExtraComponents.toArray(new Parcelable[0]));
+        return intentChooser;
     }
 
     public static Intent createSaveIntent(DataFile dataFile) {
