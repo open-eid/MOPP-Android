@@ -493,8 +493,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return new android.content.Intent(navigator.activity(), MobileSignService.class);
             } else if (method == R.id.signatureUpdateSignatureAddMethodSmartId) {
                 return new android.content.Intent(navigator.activity(), SmartSignService.class);
-            } else if (method == R.id.signatureUpdateSignatureAddMethodIdCard) {
-                return new android.content.Intent();
             }
         }
         return null;
