@@ -137,7 +137,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private Observable<Result.ChooseFilesResult> addFilesToContainer(Navigator navigator,
                                                                      SignatureContainerDataSource signatureContainerDataSource,
-                                                                     ImmutableList<FileStream> validFiles) {
+                                                                     ImmutableList<FileStream> validFiles,
+                                                                     boolean isSivaConfirmed) {
         return signatureContainerDataSource
                 .addContainer(navigator.activity(), validFiles, false)
                 .toObservable()
@@ -150,7 +151,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         false,
                                         SignedContainer.isAsicsFile(containerAdd.containerFile().getName()) ?
                                                 SignedFilesUtil.getContainerDataFile(signatureContainerDataSource,
-                                                        SignedContainer.open(containerAdd.containerFile())) : null))))
+                                                        SignedContainer.open(containerAdd.containerFile())) : null, isSivaConfirmed))))
                 .doOnError(throwable1 -> {
                     Timber.log(Log.ERROR, throwable1, "Add signed container failed");
                     if (throwable1 instanceof NoInternetConnectionException) {
@@ -177,7 +178,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 .flatMap(next -> {
                                     if (validFiles.size() == 1 && SignedContainer.isAsicsFile(validFiles.get(0).displayName().toLowerCase())) {
                                         sivaConfirmationDialog.dismiss();
-                                        return addFilesToContainer(navigator, signatureContainerDataSource, validFiles);
+                                        return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, false);
                                     } else {
                                         navigator.execute(Transaction.pop());
                                         return Observable.empty();
@@ -188,12 +189,12 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         sivaConfirmationDialog.positiveButtonClicks()
                                 .flatMap(next -> {
                                     sivaConfirmationDialog.dismiss();
-                                    return addFilesToContainer(navigator, signatureContainerDataSource, validFiles);
+                                    return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, true);
                                 })
                                 .subscribeOn(AndroidSchedulers.mainThread())
                                 .subscribe();
                     } else {
-                        return addFilesToContainer(navigator, signatureContainerDataSource, validFiles);
+                        return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, true);
                     }
                     return Observable.just(Result.ChooseFilesResult.create());
                 });
