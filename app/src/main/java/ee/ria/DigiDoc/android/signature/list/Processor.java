@@ -73,7 +73,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             .create(true, false, containerFile, false, false,
                                     SignedContainer.isAsicsFile(containerFile.getName()) ?
                                             SignedFilesUtil.getContainerDataFile(signatureContainerDataSource,
-                                                    SignedContainer.open(containerFile)) : null)));
+                                                    SignedContainer.open(containerFile)) : null, action.isSivaConfirmed())));
                     SignedContainer signedContainer = SignedContainer.open(containerFile);
                     sendContainerStatusAccessibilityMessage(signedContainer, application.getApplicationContext(), localeService.applicationConfigurationWithLocale(application.getApplicationContext(),
                             localeService.applicationLocale()));

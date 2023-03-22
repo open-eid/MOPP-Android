@@ -79,6 +79,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final boolean signatureAddVisible;
     private final boolean signatureAddSuccessMessageVisible;
     @Nullable private final File nestedFile;
+    private final boolean isSivaConfirmed;
 
     private final Toolbar toolbarView;
     private final NameUpdateDialog nameUpdateDialog;
@@ -138,7 +139,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                                boolean isNestedContainer, File containerFile,
                                boolean signatureAddVisible,
                                boolean signatureAddSuccessMessageVisible,
-                               @Nullable File nestedFile) {
+                               @Nullable File nestedFile,
+                               boolean isSivaConfirmed) {
         super(context);
 
         this.isExistingContainer = isExistingContainer;
@@ -147,6 +149,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         this.signatureAddVisible = signatureAddVisible;
         this.signatureAddSuccessMessageVisible = signatureAddSuccessMessageVisible;
         this.nestedFile = nestedFile;
+        this.isSivaConfirmed = isSivaConfirmed;
 
         navigator = Application.component(context).navigator();
         viewModel = navigator.viewModel(screenId, SignatureUpdateViewModel.class);
@@ -320,7 +323,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 || state.documentRemoveInProgress() || state.signatureRemoveInProgress()
                 || state.signatureAddActivity());
         adapter.setData(navigator.activity(), state.signatureAddSuccessMessageVisible(), isExistingContainer,
-                isNestedContainer, state.container(), nestedFile);
+                isNestedContainer, state.container(), nestedFile, isSivaConfirmed);
 
         if (state.signatureAddSuccessMessageVisible()) {
             showSuccessNotification();
