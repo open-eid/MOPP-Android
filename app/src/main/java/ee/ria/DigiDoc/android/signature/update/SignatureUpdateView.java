@@ -517,10 +517,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private Observable<Intent.DocumentViewIntent> documentViewIntent() {
         return Observable.mergeArray(adapter.documentClicks()
                 .map(document -> Intent.DocumentViewIntent.confirmation(getContext(),
-                        (nestedFile != null) ? nestedFile : containerFile, document)),
+                        (nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, document)),
                         sivaConfirmationDialog.positiveButtonClicks()
                                 .map(ignored -> Intent.DocumentViewIntent.open(
-                                        (nestedFile != null) ? nestedFile : containerFile,
+                                        (nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile,
                                         sivaConfirmation)),
                         sivaConfirmationDialog.cancels()
                                 .map(ignored -> Intent.DocumentViewIntent.cancel()));
