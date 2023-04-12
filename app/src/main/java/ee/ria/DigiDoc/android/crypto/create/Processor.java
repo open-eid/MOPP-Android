@@ -8,21 +8,18 @@ import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
 import static ee.ria.DigiDoc.android.utils.Immutables.merge;
 import static ee.ria.DigiDoc.android.utils.Immutables.with;
 import static ee.ria.DigiDoc.android.utils.Immutables.without;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createActionIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createViewIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 import static ee.ria.DigiDoc.crypto.CryptoContainer.createContainerFileName;
 import static ee.ria.DigiDoc.crypto.CryptoContainer.isContainerFileName;
-import static ee.ria.DigiDoc.sign.SignedContainer.mimeType;
 
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
-import android.widget.Toast;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
@@ -37,7 +34,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
@@ -316,7 +312,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                         SignatureUpdateScreen.create(true, true, file, false, false, null, true));
                             } else {
                                 return Transaction.activity(
-                                        createViewIntent(application, file, mimeType(file)), null);
+                                        createActionIntent(application, file, android.content.Intent.ACTION_VIEW), null);
                             }
                         })
                         .subscribeOn(Schedulers.io())
@@ -479,7 +475,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
         send = upstream -> upstream.switchMap(intent -> {
             navigator.execute(Transaction
-                    .activity(createSendIntent(application, intent.containerFile()), null));
+                    .activity(createActionIntent(application, intent.containerFile(), android.content.Intent.ACTION_SEND), null));
             return Observable.empty();
         });
     }
