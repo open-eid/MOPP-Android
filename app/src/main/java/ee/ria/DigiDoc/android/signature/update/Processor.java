@@ -3,8 +3,8 @@ package ee.ria.DigiDoc.android.signature.update;
 import static android.app.Activity.RESULT_OK;
 import static com.google.common.io.Files.getFileExtension;
 import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createActionIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 import android.app.Application;
@@ -244,8 +244,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 transaction = Transaction.push(CryptoCreateScreen.open(documentFile));
                             } else {
                                 transaction = Transaction.activity(IntentUtils
-                                        .createViewIntent(application, documentFile,
-                                                SignedContainer.mimeType(documentFile)), null);
+                                        .createActionIntent(application, documentFile,
+                                                android.content.Intent.ACTION_VIEW), null);
                             }
                             navigator.execute(transaction);
                             return Result.DocumentViewResult.idle();
@@ -414,7 +414,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
         send = upstream -> upstream
                 .doOnNext(action ->
                         navigator.execute(Transaction.activity(
-                                createSendIntent(application, action.containerFile()), null)))
+                                createActionIntent(application, action.containerFile(), android.content.Intent.ACTION_SEND), null)))
                 .map(action -> Result.SendResult.success())
                 .onErrorReturn(Result.SendResult::failure);
     }

@@ -17,7 +17,6 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import com.google.common.collect.ImmutableList;
@@ -32,7 +31,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -156,41 +154,39 @@ public final class IntentUtils {
     }
 
     /**
-     * Create an intent to send local file to other apps.
+     * Create an intent to send or open a local file in other apps.
      *
      * File path has to be shared with {@link FileProvider}.
      *
      * @param context Context to use for {@link FileProvider#getUriForFile(Context, String, File)}
      *                and to get authority string.
-     * @param file File to send.
-     * @param type Optional type for the content.
-     * @return {@link Intent#ACTION_VIEW View intent} with content Uri of the file.
+     * @param file File to send or open.
+     * @param action Intent action for the content.
+     * @return {@link Intent#ACTION_VIEW View intent} or {@link Intent#ACTION_SEND View intent} with content Uri of the file.
      */
-    public static Intent createViewIntent(Context context, File file, @Nullable String type) {
-        Uri uri = FileProvider.getUriForFile(context,
-                context.getString(R.string.file_provider_authority), file);
-        return Intent
-                .createChooser(new Intent(Intent.ACTION_VIEW)
-                        .setDataAndType(uri, type)
-                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION), null);
-    }
-
-    public static Intent createSendIntent(Context context, File file) {
+    public static Intent createActionIntent(Context context, File file, String action) {
         Uri uri = FileProvider.getUriForFile(context,
                 context.getString(R.string.file_provider_authority), file);
 
         Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.setType(SignedContainer.mimeType(file));
-        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        shareIntent.setClipData(
-                new ClipData(file.getName(),
-                new String[]{ shareIntent.getType() },
-                new ClipData.Item(uri)
-        ));
+        shareIntent.setAction(action);
+
+        if (Intent.ACTION_VIEW.equals(action)) {
+            shareIntent.setDataAndType(uri, SignedContainer.mimeType(file));
+        }
+
+        if (Intent.ACTION_SEND.equals(action)) {
+            shareIntent.setType(SignedContainer.mimeType(file));
+            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            shareIntent.setClipData(
+                    new ClipData(file.getName(),
+                    new String[]{ shareIntent.getType() },
+                    new ClipData.Item(uri)
+            ));
+        }
         shareIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-        // Remove app from "Share" menu
+        // Remove app from "Share" and "Open with" menu
         ArrayList<ComponentName> excludedExtraComponents = new ArrayList<>();
         PackageManager packageManager = context.getPackageManager();
         for (ResolveInfo resolveInfo : packageManager.queryIntentActivities(shareIntent, 0)) {
