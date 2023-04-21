@@ -20,15 +20,29 @@
 
 package ee.ria.DigiDoc.android.signature.update.smartid;
 
+import static androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale;
+import static ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse.ProcessStatus.NO_RESPONSE;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CERTIFICATE_CERT_BUNDLE;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_CHALLENGE;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_DEVICE;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_REQUEST;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_STATUS;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SERVICE_FAULT;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SID_BROADCAST_ACTION;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SID_BROADCAST_TYPE_KEY;
+
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -45,24 +59,20 @@ import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
 import ee.ria.DigiDoc.smartid.dto.response.ServiceFault;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SmartIDServiceResponse;
-import ee.ria.DigiDoc.smartid.service.SmartSignService;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import timber.log.Timber;
-
-import static ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse.ProcessStatus.NO_RESPONSE;
-import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CERTIFICATE_CERT_BUNDLE;
-import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_CHALLENGE;
-import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_DEVICE;
-import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_REQUEST;
-import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_STATUS;
-import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SID_BROADCAST_ACTION;
-import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SID_BROADCAST_TYPE_KEY;
-import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SERVICE_FAULT;
 
 public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdResponse> {
 
+    private CompositeDisposable disposables = new CompositeDisposable();
+
     private static final String NOTIFICATION_CHANNEL = "SMART_ID_CHANNEL";
+    private static final int NOTIFICATION_PERMISSION_CODE = 100;
     private final Navigator navigator;
     private final SignedContainer container;
     private final LocalBroadcastManager broadcastManager;
@@ -90,7 +100,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (navigator.activity() == null) {
-                    Timber.log(Log.ERROR,"Activity is null");
+                    Timber.log(Log.ERROR, "Activity is null");
                     IllegalStateException ise = new IllegalStateException("Activity not found. Please try again after restarting application");
                     emitter.onError(ise);
                 }
@@ -120,7 +130,9 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                         emitter.onNext(SmartIdResponse.challenge(challenge));
 
                         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL,
-                                NOTIFICATION_CHANNEL + "_NAME", NotificationManager.IMPORTANCE_HIGH);
+                                navigator.activity().getResources()
+                                        .getString(R.string.signature_update_signature_add_method_smart_id),
+                                NotificationManager.IMPORTANCE_HIGH);
                         NotificationManager systemService = navigator.activity().getSystemService(NotificationManager.class);
                         if (systemService != null) {
                             Timber.log(Log.DEBUG, "Creating notification channel");
@@ -134,9 +146,41 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                                 .setAutoCancel(true);
-                        NotificationManagerCompat.from(navigator.activity())
-                                .notify(Integer.parseInt(challenge), notification.build());
-                        break;
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            String notificationPermission = Manifest.permission.POST_NOTIFICATIONS;
+                            if (ActivityCompat.checkSelfPermission(
+                                    navigator.activity(),
+                                    notificationPermission) == PackageManager.PERMISSION_GRANTED) {
+                                sendNotification(navigator.activity(), challenge, notification);
+                                break;
+                            } else if (shouldShowRequestPermissionRationale(
+                                    navigator.activity(), notificationPermission)) {
+                                break;
+                            } else {
+                                ActivityCompat.requestPermissions(navigator.activity(),
+                                        new String[]{ notificationPermission },
+                                        NOTIFICATION_PERMISSION_CODE);
+
+                                Disposable disposable = navigator.requestPermissionsResults()
+                                        .filter(requestPermissionsResult ->
+                                                requestPermissionsResult.requestCode()
+                                                        == NOTIFICATION_PERMISSION_CODE)
+                                        .doOnNext(requestPermissionsResult ->
+                                                sendNotification(navigator.activity(), challenge, notification))
+                                        .doOnError(throwable ->
+                                                Timber.log(Log.DEBUG, throwable,
+                                                        "Unable to request notifications permissions"))
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe();
+                                disposables.add(disposable);
+                                break;
+                            }
+                        } else {
+                            sendNotification(navigator.activity(), challenge, notification);
+                            break;
+                        }
                     case CREATE_SIGNATURE_STATUS:
                         NotificationManagerCompat.from(navigator.activity()).cancelAll();
                         SmartIDServiceResponse status =
@@ -157,7 +201,10 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         };
 
         broadcastManager.registerReceiver(receiver, new IntentFilter(SID_BROADCAST_ACTION));
-        emitter.setCancellable(() -> broadcastManager.unregisterReceiver(receiver));
+        emitter.setCancellable(() -> {
+            broadcastManager.unregisterReceiver(receiver);
+            disposables.dispose();
+        });
 
         ConfigurationProvider configurationProvider =
                 ((Application) navigator.activity().getApplication()).getConfigurationProvider();
@@ -172,5 +219,12 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         intent.putStringArrayListExtra(CERTIFICATE_CERT_BUNDLE,
                 new ArrayList<>(configurationProvider.getCertBundle()));
         navigator.activity().startService(intent);
+    }
+
+    private void sendNotification(Context context, String challenge, NotificationCompat.Builder notification) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 || ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            NotificationManagerCompat.from(navigator.activity())
+                    .notify(Integer.parseInt(challenge), notification.build());
+        }
     }
 }

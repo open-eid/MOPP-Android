@@ -1,11 +1,13 @@
 package ee.ria.DigiDoc.android.utils.navigator;
 
 import android.app.Activity;
-import androidx.lifecycle.ViewModel;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModel;
 
 import io.reactivex.rxjava3.core.Observable;
 
@@ -52,6 +54,15 @@ public interface Navigator {
     void onActivityResult(int requestCode, int resultCode, @Nullable Intent data);
 
     /**
+     * Has to be called in {@link Activity#onRequestPermissionsResult(int, String[], int[])}.
+     *
+     * @param requestCode Request code.
+     * @param permissions Permissions list.
+     * @param grantResults Grant results list.
+     */
+    void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults);
+
+    /**
      * Create or return an existing {@link ViewModel view model} for current screen.
      *
      * @param screenId ID of the screen.
@@ -71,6 +82,8 @@ public interface Navigator {
     void execute(Transaction transaction);
 
     Observable<ActivityResult> activityResults();
+
+    Observable<RequestPermissionsResult> requestPermissionsResults();
 
     void addBackButtonClickListener(BackButtonClickListener listener);
 
