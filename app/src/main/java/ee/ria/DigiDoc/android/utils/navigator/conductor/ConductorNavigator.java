@@ -1,16 +1,16 @@
 package ee.ria.DigiDoc.android.utils.navigator.conductor;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
-import android.content.Intent;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import android.util.Log;
-import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.Conductor;
 import com.bluelinelabs.conductor.Controller;
@@ -26,6 +26,7 @@ import java.util.concurrent.Callable;
 
 import ee.ria.DigiDoc.android.utils.navigator.ActivityResult;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.navigator.RequestPermissionsResult;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import io.reactivex.rxjava3.core.Observable;
@@ -39,6 +40,7 @@ public final class ConductorNavigator implements Navigator {
     private final ViewModelProvider.Factory viewModelFactory;
     private final Map<String, ScreenViewModelProvider> viewModelProviders;
     private final Subject<ActivityResult> activityResultSubject;
+    private final Subject<RequestPermissionsResult> requestPermissionsResultSubject;
     private final List<BackButtonClickListener> backButtonClickListeners = new ArrayList<>();
 
     private Router router;
@@ -49,6 +51,7 @@ public final class ConductorNavigator implements Navigator {
         this.viewModelFactory = viewModelFactory;
         this.viewModelProviders = new HashMap<>();
         this.activityResultSubject = PublishSubject.create();
+        this.requestPermissionsResultSubject = PublishSubject.create();
     }
 
     @Override
@@ -97,6 +100,12 @@ public final class ConductorNavigator implements Navigator {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         Timber.log(Log.DEBUG, "onActivityResult: %s, %s, %s", requestCode, resultCode, data);
         activityResultSubject.onNext(ActivityResult.create(requestCode, resultCode, data));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Timber.log(Log.DEBUG, "onRequestPermissionsResult: %s, %s, %s", requestCode, permissions, grantResults);
+        requestPermissionsResultSubject.onNext(RequestPermissionsResult.create(requestCode, permissions, grantResults));
     }
 
     @Override
@@ -149,6 +158,11 @@ public final class ConductorNavigator implements Navigator {
     @Override
     public Observable<ActivityResult> activityResults() {
         return activityResultSubject;
+    }
+
+    @Override
+    public Observable<RequestPermissionsResult> requestPermissionsResults() {
+        return requestPermissionsResultSubject;
     }
 
     @Override
