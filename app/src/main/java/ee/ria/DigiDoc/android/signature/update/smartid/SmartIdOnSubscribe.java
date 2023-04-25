@@ -61,12 +61,9 @@ import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SmartIDServiceResponse;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import timber.log.Timber;
 
 public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdResponse> {
-
-    private final CompositeDisposable disposables = new CompositeDisposable();
 
     private static final String NOTIFICATION_CHANNEL = "SMART_ID_CHANNEL";
     private final Navigator navigator;
@@ -162,10 +159,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         };
 
         broadcastManager.registerReceiver(receiver, new IntentFilter(SID_BROADCAST_ACTION));
-        emitter.setCancellable(() -> {
-            broadcastManager.unregisterReceiver(receiver);
-            disposables.dispose();
-        });
+        emitter.setCancellable(() -> broadcastManager.unregisterReceiver(receiver));
 
         ConfigurationProvider configurationProvider =
                 ((Application) navigator.activity().getApplication()).getConfigurationProvider();
