@@ -373,13 +373,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
             SignatureAddRequest request = action.request();
             boolean isCancelled = action.isCancelled();
             if (method != null) {
-
-                /*isNotificationAllowed(navigator)
-                        .doOnNext(ign -> intent = getSigningIntent(navigator, method))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe();*/
-
                 intent = getSigningIntent(navigator, method);
             }
             if (method == null || isCancelled) {
