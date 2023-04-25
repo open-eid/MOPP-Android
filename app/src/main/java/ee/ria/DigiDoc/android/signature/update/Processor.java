@@ -1,17 +1,24 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import static android.app.Activity.RESULT_OK;
+import static androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale;
 import static com.google.common.io.Files.getFileExtension;
 import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSendIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_PERMISSION_CODE;
 
+import android.Manifest;
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+
+import androidx.core.app.ActivityCompat;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
@@ -53,6 +60,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.core.ObservableTransformer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subjects.PublishSubject;
 import timber.log.Timber;
 
 final class Processor implements ObservableTransformer<Action, Result> {
@@ -85,6 +93,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         Result.SignatureAddResult> signatureAdd;
 
     private final ObservableTransformer<Action.SendAction, Result.SendResult> send;
+
+    private final PublishSubject<Boolean> notificationsPermissionSubject = PublishSubject.create();
 
     private android.content.Intent intent;
 
@@ -363,6 +373,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
             SignatureAddRequest request = action.request();
             boolean isCancelled = action.isCancelled();
             if (method != null) {
+
+                /*isNotificationAllowed(navigator)
+                        .doOnNext(ign -> intent = getSigningIntent(navigator, method))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe();*/
+
                 intent = getSigningIntent(navigator, method);
             }
             if (method == null || isCancelled) {
@@ -389,23 +406,25 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     return signatureAddSource.show(method);
                 }
             } else if (existingContainer != null && containerFile != null) {
-                return signatureAddSource.sign(containerFile, request, navigator, intent)
-                        .switchMap(response -> {
-                            if (response.container() != null) {
-                                return Observable.fromCallable(() -> {
-                                    navigator.execute(Transaction.replace(SignatureUpdateScreen
-                                            .create(true, false, containerFile, false, true, null, true)));
-                                    return Result.SignatureAddResult.method(method, response);
-                                });
-                            } else {
-                                return Observable
-                                        .just(Result.SignatureAddResult.method(method, response));
-                            }
-                        })
+                return askNotificationPermission(navigator, method)
+                        .flatMap(ign -> signatureAddSource.sign(containerFile, request, navigator, intent)
+                                .switchMap(response -> {
+                                    if (response.container() != null) {
+                                        return Observable.fromCallable(() -> {
+                                            navigator.execute(Transaction.replace(SignatureUpdateScreen
+                                                    .create(true, false, containerFile, false, true, null, true)));
+                                            return Result.SignatureAddResult.method(method, response);
+                                        });
+                                    } else {
+                                        return Observable
+                                                .just(Result.SignatureAddResult.method(method, response));
+                                    }
+                                })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .onErrorReturn(Result.SignatureAddResult::failure)
-                        .startWithItem(Result.SignatureAddResult.activity(method));
+                        .startWithItem(Result.SignatureAddResult.activity(method)));
+
             } else {
                 throw new IllegalArgumentException("Can't handle action " + action);
             }
@@ -500,5 +519,58 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private void stopSigningService(Navigator navigator, android.content.Intent intent) {
         navigator.activity().stopService(intent);
+    }
+
+    private Observable<Boolean> askNotificationPermission(Navigator navigator, int method) {
+        if (method == R.id.signatureUpdateSignatureAddMethodMobileId ||
+                method == R.id.signatureUpdateSignatureAddMethodIdCard) {
+            notificationsPermissionSubject.onNext(true);
+            notificationsPermissionSubject.onComplete();
+            return Observable.just(true);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            String notificationPermission = Manifest.permission.POST_NOTIFICATIONS;
+            if (ActivityCompat.checkSelfPermission(
+                    navigator.activity(),
+                    notificationPermission) == PackageManager.PERMISSION_GRANTED) {
+                Timber.log(Log.DEBUG, "Notifications enabled");
+                notificationsPermissionSubject.onNext(true);
+                notificationsPermissionSubject.onComplete();
+                return Observable.just(true);
+            } else if (shouldShowRequestPermissionRationale(
+                    navigator.activity(), notificationPermission)) {
+                Timber.log(Log.DEBUG, "Notifications disabled");
+                notificationsPermissionSubject.onNext(false);
+                notificationsPermissionSubject.onComplete();
+                return Observable.just(false);
+            } else {
+                ActivityCompat.requestPermissions(navigator.activity(),
+                        new String[] { notificationPermission },
+                        NOTIFICATION_PERMISSION_CODE);
+
+                return navigator.requestPermissionsResults()
+                        .filter(requestPermissionsResult ->
+                                requestPermissionsResult.requestCode()
+                                        == NOTIFICATION_PERMISSION_CODE)
+                        .flatMap(requestPermissionsResult -> {
+                            Timber.log(Log.DEBUG, "Permissions: %s",  requestPermissionsResult.permissions());
+                            notificationsPermissionSubject.onNext(true);
+                            notificationsPermissionSubject.onComplete();
+                            return Observable.just(true);
+                        })
+                        .onErrorReturn(throwable -> {
+                                Timber.log(Log.DEBUG, throwable,
+                                        "Unable to request notifications permissions");
+                            notificationsPermissionSubject.onNext(false);
+                            notificationsPermissionSubject.onComplete();
+                            return false;
+                        });
+            }
+        } else {
+            notificationsPermissionSubject.onNext(true);
+            notificationsPermissionSubject.onComplete();
+            return Observable.just(true);
+        }
     }
 }

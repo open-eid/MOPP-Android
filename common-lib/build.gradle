@@ -26,6 +26,8 @@ dependencies {
     api "androidx.annotation:annotation:${androidxVersion}"
     api "com.squareup.okio:okio:${okioVersion}"
 
+    implementation "androidx.appcompat:appcompat:${androidxAppCompatVersion}"
+
     implementation "com.takisoft.preferencex:preferencex:${preferencexVersion}"
 
     implementation "com.github.brake.threegpp:telecom-charsets:${telecomcharsetsVersion}"

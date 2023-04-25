@@ -20,7 +20,6 @@
 
 package ee.ria.DigiDoc.android.signature.update.smartid;
 
-import static androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale;
 import static ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse.ProcessStatus.NO_RESPONSE;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CERTIFICATE_CERT_BUNDLE;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_CHALLENGE;
@@ -32,8 +31,7 @@ import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SID_BROADCAST_AC
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SID_BROADCAST_TYPE_KEY;
 
 import android.Manifest;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -53,26 +51,24 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.model.smartid.SmartIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.common.NotificationUtil;
+import ee.ria.DigiDoc.common.PowerUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
 import ee.ria.DigiDoc.smartid.dto.response.ServiceFault;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SmartIDServiceResponse;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 import timber.log.Timber;
 
 public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdResponse> {
 
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     private static final String NOTIFICATION_CHANNEL = "SMART_ID_CHANNEL";
-    private static final int NOTIFICATION_PERMISSION_CODE = 100;
     private final Navigator navigator;
     private final SignedContainer container;
     private final LocalBroadcastManager broadcastManager;
@@ -129,58 +125,23 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                                 intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE);
                         emitter.onNext(SmartIdResponse.challenge(challenge));
 
-                        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL,
-                                navigator.activity().getResources()
-                                        .getString(R.string.signature_update_signature_add_method_smart_id),
-                                NotificationManager.IMPORTANCE_HIGH);
-                        NotificationManager systemService = navigator.activity().getSystemService(NotificationManager.class);
-                        if (systemService != null) {
+                        if (!PowerUtil.isPowerSavingMode(navigator.activity())) {
                             Timber.log(Log.DEBUG, "Creating notification channel");
-                            systemService.createNotificationChannel(channel);
+                            NotificationUtil.createNotificationChannel(navigator.activity(),
+                                    NOTIFICATION_CHANNEL, navigator.activity()
+                                            .getResources()
+                                            .getString(R.string.signature_update_signature_add_method_smart_id));
                         }
-                        NotificationCompat.Builder notification = new NotificationCompat
-                                .Builder(navigator.activity(), NOTIFICATION_CHANNEL)
-                                .setSmallIcon(R.mipmap.ic_launcher)
-                                .setContentText(challenge)
-                                .setContentTitle(navigator.activity().getString(R.string.smart_id_challenge))
-                                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                                .setCategory(NotificationCompat.CATEGORY_SERVICE)
-                                .setAutoCancel(true);
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            String notificationPermission = Manifest.permission.POST_NOTIFICATIONS;
-                            if (ActivityCompat.checkSelfPermission(
-                                    navigator.activity(),
-                                    notificationPermission) == PackageManager.PERMISSION_GRANTED) {
-                                sendNotification(navigator.activity(), challenge, notification);
-                                break;
-                            } else if (shouldShowRequestPermissionRationale(
-                                    navigator.activity(), notificationPermission)) {
-                                break;
-                            } else {
-                                ActivityCompat.requestPermissions(navigator.activity(),
-                                        new String[]{ notificationPermission },
-                                        NOTIFICATION_PERMISSION_CODE);
+                        String challengeTitle = navigator.activity()
+                                .getResources().getString(R.string.smart_id_challenge);
+                        Notification notification = NotificationUtil.createNotification(navigator.activity(), NOTIFICATION_CHANNEL,
+                                R.mipmap.ic_launcher, challengeTitle, challenge,
+                                NotificationCompat.PRIORITY_HIGH, false);
 
-                                Disposable disposable = navigator.requestPermissionsResults()
-                                        .filter(requestPermissionsResult ->
-                                                requestPermissionsResult.requestCode()
-                                                        == NOTIFICATION_PERMISSION_CODE)
-                                        .doOnNext(requestPermissionsResult ->
-                                                sendNotification(navigator.activity(), challenge, notification))
-                                        .doOnError(throwable ->
-                                                Timber.log(Log.DEBUG, throwable,
-                                                        "Unable to request notifications permissions"))
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe();
-                                disposables.add(disposable);
-                                break;
-                            }
-                        } else {
-                            sendNotification(navigator.activity(), challenge, notification);
-                            break;
-                        }
+                        sendNotification(navigator.activity(), challenge, notification);
+
+                        break;
                     case CREATE_SIGNATURE_STATUS:
                         NotificationManagerCompat.from(navigator.activity()).cancelAll();
                         SmartIDServiceResponse status =
@@ -221,10 +182,10 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         navigator.activity().startService(intent);
     }
 
-    private void sendNotification(Context context, String challenge, NotificationCompat.Builder notification) {
+    private void sendNotification(Context context, String challenge, Notification notification) {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 || ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             NotificationManagerCompat.from(navigator.activity())
-                    .notify(Integer.parseInt(challenge), notification.build());
+                    .notify(Integer.parseInt(challenge), notification);
         }
     }
 }

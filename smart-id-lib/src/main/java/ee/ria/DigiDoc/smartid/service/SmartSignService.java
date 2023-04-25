@@ -21,11 +21,21 @@
 package ee.ria.DigiDoc.smartid.service;
 
 import static ee.ria.DigiDoc.common.SigningUtil.checkSigningCancelled;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_CHANNEL;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_PERMISSION_CODE;
 
+import android.Manifest;
 import android.app.IntentService;
+import android.app.Notification;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.IOException;
@@ -40,9 +50,12 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 
 import ee.ria.DigiDoc.common.ContainerWrapper;
 import ee.ria.DigiDoc.common.MessageUtil;
+import ee.ria.DigiDoc.common.NotificationUtil;
+import ee.ria.DigiDoc.common.PowerUtil;
 import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
 import ee.ria.DigiDoc.common.exception.SigningCancelledException;
+import ee.ria.DigiDoc.smartid.R;
 import ee.ria.DigiDoc.smartid.dto.request.PostCertificateRequest;
 import ee.ria.DigiDoc.smartid.dto.request.PostCreateSignatureRequestV2;
 import ee.ria.DigiDoc.smartid.dto.request.RequestAllowedInteractionsOrder;
@@ -59,6 +72,7 @@ import timber.log.Timber;
 
 public class SmartSignService extends IntentService {
 
+    private static final String NOTIFICATION_NAME = "Smart-ID";
     private static final String PEM_BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
     private static final String PEM_END_CERT = "-----END CERTIFICATE-----";
 
@@ -76,8 +90,32 @@ public class SmartSignService extends IntentService {
         Timber.tag(TAG);
     }
 
+    private void createNotificationChannel() {
+        Timber.log(Log.DEBUG, "Creating notification channel");
+        NotificationUtil.createNotificationChannel(this, NOTIFICATION_CHANNEL, NOTIFICATION_NAME);
+    }
+
+    public void showEmptyNotification() {
+        createNotificationChannel();
+        Notification notification = NotificationUtil.createNotification(this, NOTIFICATION_CHANNEL,
+                R.mipmap.ic_launcher, null, null, NotificationCompat.PRIORITY_MIN, true);
+
+        startForeground(NOTIFICATION_PERMISSION_CODE, notification);
+    }
+
+    private void sendNotification(Context context, String challenge, Notification notification) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 || ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            NotificationManagerCompat.from(this)
+                    .notify(Integer.parseInt(challenge), notification);
+        }
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (PowerUtil.isPowerSavingMode(getApplicationContext())) {
+            showEmptyNotification();
+        }
+
         Timber.log(Log.DEBUG, "Handling smart sign intent");
 
         if (intent != null) {
