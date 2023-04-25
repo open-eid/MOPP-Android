@@ -153,11 +153,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                                     navigator.activity(),
                                     notificationPermission) == PackageManager.PERMISSION_GRANTED) {
                                 sendNotification(navigator.activity(), challenge, notification);
-                                break;
-                            } else if (shouldShowRequestPermissionRationale(
-                                    navigator.activity(), notificationPermission)) {
-                                break;
-                            } else {
+                            } else if (!shouldShowRequestPermissionRationale(navigator.activity(), notificationPermission)) {
                                 ActivityCompat.requestPermissions(navigator.activity(),
                                         new String[]{ notificationPermission },
                                         NOTIFICATION_PERMISSION_CODE);
@@ -175,12 +171,12 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe();
                                 disposables.add(disposable);
-                                break;
                             }
                         } else {
                             sendNotification(navigator.activity(), challenge, notification);
-                            break;
                         }
+
+                        break;
                     case CREATE_SIGNATURE_STATUS:
                         NotificationManagerCompat.from(navigator.activity()).cancelAll();
                         SmartIDServiceResponse status =
