@@ -31,4 +31,7 @@ public interface SmartSignConstants {
     String CREATE_SIGNATURE_CHALLENGE = "ee.ria.mopp.android.smartid.SID_CHALLENGE";
     String CREATE_SIGNATURE_STATUS = "ee.ria.mopp.android.smartid.CREATE_SIGNATURE_STATUS";
     String SERVICE_FAULT = "ee.ria.mopp.android.smartid.SERVICE_FAULT";
+
+    String NOTIFICATION_CHANNEL = "SMART_ID_CHANNEL";
+    int NOTIFICATION_PERMISSION_CODE = 1;
 }
