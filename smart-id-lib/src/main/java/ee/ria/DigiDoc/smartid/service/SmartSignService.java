@@ -81,13 +81,18 @@ public class SmartSignService extends IntentService {
     private static final long INITIAL_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 1000;
     private static final long SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 5 * 1000;
     private static final long TIMEOUT_CANCEL = 80 * 1000;
-    private boolean isCancelled = false;
+    private static boolean isCancelled = false;
 
     private SIDRestServiceClient SIDRestServiceClient;
 
     public SmartSignService() {
         super(TAG);
         Timber.tag(TAG);
+        isCancelled = false;
+    }
+
+    public static void setIsCancelled(boolean isCancelled) {
+        SmartSignService.isCancelled = isCancelled;
     }
 
     private void createNotificationChannel() {
@@ -225,7 +230,6 @@ public class SmartSignService extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        isCancelled = true;
     }
 
     private String getCertificatePem(String cert) {

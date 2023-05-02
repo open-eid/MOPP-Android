@@ -2,5 +2,6 @@
 <paths>
     <cache-path name="cache" path="/" />
     <files-path name="signed_containers" path="signed_containers/" />
+    <files-path name="internal_files" path="internal_files/" />
     <files-path name="external_files" path="external_files/" />
 </paths>

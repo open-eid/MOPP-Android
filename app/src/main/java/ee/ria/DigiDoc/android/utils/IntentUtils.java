@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.utils;
 
 import static ee.ria.DigiDoc.BuildConfig.APPLICATION_ID;
+import static ee.ria.DigiDoc.android.Constants.DIR_INTERNAL_FILES;
 
 import android.content.ClipData;
 import android.content.ComponentName;
@@ -12,7 +13,11 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Parcelable;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
+import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -23,14 +28,19 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,6 +53,8 @@ import ee.ria.DigiDoc.sign.SignedContainer;
 import timber.log.Timber;
 
 public final class IntentUtils {
+
+    private static final String DOCUMENTS_FOLDER = "Documents";
 
     /**
      * Create an intent to choose multiple files of any type.
@@ -212,13 +224,47 @@ public final class IntentUtils {
                         .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION), null);
     }
 
-    public static Intent createSaveIntent(File file, ContentResolver contentResolver) {
-        return Intent
+    public static Intent createSaveIntent(File file, Context context) throws IOException {
+        String storagePath = "";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
+            StorageVolume storageVolume = storageManager.getPrimaryStorageVolume();
+            Intent storageIntent = storageVolume.createOpenDocumentTreeIntent();
+
+            storagePath = storageIntent.getParcelableExtra(DocumentsContract.EXTRA_INITIAL_URI).toString();
+            storagePath = StringUtils.replace(storagePath, "/root/", "/document/");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                storagePath += URLEncoder.encode(":", StandardCharsets.UTF_8) + DOCUMENTS_FOLDER;
+            } else {
+                storagePath += URLEncoder.encode(":") + DOCUMENTS_FOLDER;
+            }
+        }
+        File dir = new File(context.getFilesDir(), DIR_INTERNAL_FILES);
+        File destFile = new File(dir, FileUtil.sanitizeString(file.getName(), ""));
+        try {
+            Files.copy(file, dir);
+        } catch (IOException e) {
+            Timber.log(Log.ERROR, e, "Unable to copy file to internal files folder");
+            return null;
+        }
+
+        Uri fileUri = FileProvider.getUriForFile(context,
+                context.getString(R.string.file_provider_authority), destFile);
+        Intent intent = Intent
                 .createChooser(new Intent(Intent.ACTION_CREATE_DOCUMENT)
                         .addCategory(Intent.CATEGORY_OPENABLE)
                         .putExtra(Intent.EXTRA_TITLE, FileUtil.sanitizeString(file.getName(), ""))
-                        .setType(SignedContainer.mimeType(file))
+                        .putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(storagePath))
+                        .setDataAndType(fileUri, SignedContainer.mimeType(file))
                         .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION), null);
+
+        List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            context.grantUriPermission(packageName, fileUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+
+        return intent;
     }
 
     public static Intent createBrowserIntent(Context context, int stringRes, Configuration configuration) {

@@ -3,7 +3,6 @@ package ee.ria.DigiDoc.android.main.diagnostics;
 import static android.app.Activity.RESULT_OK;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
@@ -45,7 +44,6 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     private final ObservableTransformer<Intent.DiagnosticsLogsSaveIntent, Result> diagnosticsLogsSave;
 
     @Inject Processor(Navigator navigator,
-              ContentResolver contentResolver,
               DiagnosticsDataSource diagnosticsDataSource) {
 
         initial = upstream -> upstream.switchMap(action -> Observable.just(Result.InitialResult.activity()));
@@ -57,7 +55,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return Observable.just(Result.DiagnosticsSaveResult.failure(new EmptyFileException()));
             }
             navigator.execute(Transaction.activityForResult(SAVE_FILE,
-                    createSaveIntent(action.diagnosticsFile(), contentResolver), null));
+                    createSaveIntent(action.diagnosticsFile(), navigator.activity()), null));
             return navigator.activityResults()
                     .filter(activityResult ->
                             activityResult.requestCode() == SAVE_FILE)
@@ -87,7 +85,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return Observable.just(Result.DiagnosticsSaveResult.failure(new EmptyFileException()));
             }
             navigator.execute(Transaction.activityForResult(SAVE_LOGS_FILE,
-                    createSaveIntent(action.logFile(), contentResolver), null));
+                    createSaveIntent(action.logFile(), navigator.activity()), null));
             return navigator.activityResults()
                     .filter(activityResult ->
                             activityResult.requestCode() == SAVE_LOGS_FILE)

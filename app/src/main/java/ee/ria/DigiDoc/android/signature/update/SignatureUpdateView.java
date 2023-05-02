@@ -57,6 +57,7 @@ import ee.ria.DigiDoc.common.ActivityUtil;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.Signature;
+import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
@@ -657,6 +658,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clear());
         }));
         disposables.add(clicks(smartIdCancelButton).subscribe(ignored -> {
+            SmartSignService.setIsCancelled(true);
             resetSignatureAddDialog();
             signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clear());
         }));

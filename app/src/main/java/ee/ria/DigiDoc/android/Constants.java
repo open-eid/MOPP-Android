@@ -19,6 +19,7 @@ public final class Constants {
      * containers.
      */
     public static final String DIR_SIGNATURE_CONTAINERS = "signed_containers";
+    public static final String DIR_INTERNAL_FILES = "internal_files";
     public static final String DIR_EXTERNALLY_OPENED_FILES = "external_files";
 
     public static final String SIGNATURE_CONTAINER_EXT = "asice";

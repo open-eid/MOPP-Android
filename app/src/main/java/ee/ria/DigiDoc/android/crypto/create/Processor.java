@@ -277,7 +277,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
         dataFileSave = upstream -> upstream.switchMap(action -> {
             navigator.execute(Transaction.activityForResult(SAVE_FILE,
-                    createSaveIntent(action.dataFile(), application.getContentResolver()), null));
+                    createSaveIntent(action.dataFile(), application.getApplicationContext()), null));
             return navigator.activityResults()
                     .filter(activityResult ->
                             activityResult.requestCode() == SAVE_FILE)
