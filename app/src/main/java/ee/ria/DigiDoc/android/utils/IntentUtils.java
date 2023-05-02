@@ -224,7 +224,7 @@ public final class IntentUtils {
                         .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION), null);
     }
 
-    public static Intent createSaveIntent(File file, Context context) throws IOException {
+    public static Intent createSaveIntent(File file, Context context) {
         String storagePath = "";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);

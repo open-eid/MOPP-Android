@@ -12,6 +12,7 @@ import com.google.common.io.ByteStreams;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -54,8 +55,13 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 ToastUtil.showError(navigator.activity(), R.string.file_saved_error);
                 return Observable.just(Result.DiagnosticsSaveResult.failure(new EmptyFileException()));
             }
-            navigator.execute(Transaction.activityForResult(SAVE_FILE,
-                    createSaveIntent(action.diagnosticsFile(), navigator.activity()), null));
+            android.content.Intent saveIntent = createSaveIntent(action.diagnosticsFile(), navigator.activity());
+            if (saveIntent == null) {
+                Timber.log(Log.ERROR, "Unable to get save intent");
+                ToastUtil.showError(navigator.activity(), R.string.file_saved_error);
+                return Observable.just(Result.DiagnosticsSaveResult.failure(new FileNotFoundException("Unable to get save intent")));
+            }
+            navigator.execute(Transaction.activityForResult(SAVE_FILE, saveIntent, null));
             return navigator.activityResults()
                     .filter(activityResult ->
                             activityResult.requestCode() == SAVE_FILE)
@@ -84,8 +90,13 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 ToastUtil.showError(navigator.activity(), R.string.file_saved_error);
                 return Observable.just(Result.DiagnosticsSaveResult.failure(new EmptyFileException()));
             }
-            navigator.execute(Transaction.activityForResult(SAVE_LOGS_FILE,
-                    createSaveIntent(action.logFile(), navigator.activity()), null));
+            android.content.Intent saveIntent = createSaveIntent(action.logFile(), navigator.activity());
+            if (saveIntent == null) {
+                Timber.log(Log.ERROR, "Unable to get save intent");
+                ToastUtil.showError(navigator.activity(), R.string.file_saved_error);
+                return Observable.just(Result.DiagnosticsSaveResult.failure(new FileNotFoundException("Unable to get save intent")));
+            }
+            navigator.execute(Transaction.activityForResult(SAVE_LOGS_FILE, saveIntent, null));
             return navigator.activityResults()
                     .filter(activityResult ->
                             activityResult.requestCode() == SAVE_LOGS_FILE)
