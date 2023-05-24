@@ -26,6 +26,42 @@ jobs:
         with:
           distribution: zulu
           java-version: 11
+      - name: Download Libdigidocpp Android (androidarm) artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: build.yml
+          branch: master
+          name: androidarm
+          path: libdigidocpp-androidarm
+          repo: open-eid/libdigidocpp
+      - name: Download Libdigidocpp Android (androidarm64) artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: build.yml
+          branch: master
+          name: androidarm64
+          path: libdigidocpp-androidarm64
+          repo: open-eid/libdigidocpp
+      - name: Download Libdigidocpp Android (androidx86_64) artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: build.yml
+          branch: master
+          name: androidx86_64
+          path: libdigidocpp-androidx86_64
+          repo: open-eid/libdigidocpp
+      - name: Extract libdigidocpp artifacts
+        run: |
+          mkdir libdigidocpp-files/
+          mv libdigidocpp-androidarm/libdigidocpp.androidarm.zip libdigidocpp-files/
+          mv libdigidocpp-androidarm64/libdigidocpp.androidarm64.zip libdigidocpp-files/
+          mv libdigidocpp-androidx86_64/libdigidocpp.androidx86_64.zip libdigidocpp-files/
+          pwd
+          ls -R -laht
+      - name: Update libdigidocpp in project
+        run: |
+          pwd
+          ./gradlew common-lib:updateLibdigidocpp --dir=libdigidocpp-files/
       - name: Setup Gradle and Build
         uses: gradle/gradle-build-action@v2
         with:
