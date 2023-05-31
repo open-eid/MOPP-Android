@@ -1,7 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update.mobileid;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
-import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
+import static ee.ria.DigiDoc.android.utils.ErrorMessageUtil.setTextViewError;
 
 import android.content.Context;
 import android.text.Editable;
@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.List;
 
@@ -41,8 +42,10 @@ public final class MobileIdView extends LinearLayout implements
     private final TextView message;
     private final EditText phoneNoView;
     private final TextInputEditText personalCodeView;
+    private final MaterialTextView personalCodeLabelText;
     private final CheckBox rememberMeView;
     private final TextInputLayout phoneNoLabel;
+    private final MaterialTextView countryAndPhoneNoLabel;
     private final TextInputLayout personalCodeLabel;
 
     public MobileIdView(Context context) {
@@ -68,7 +71,9 @@ public final class MobileIdView extends LinearLayout implements
         rememberMeView = findViewById(R.id.signatureUpdateMobileIdRememberMe);
 
         phoneNoLabel = findViewById(R.id.signatureUpdateMobileIdPhoneNoLabel);
+        countryAndPhoneNoLabel = findViewById(R.id.signatureUpdateMobileIdPhoneMessage);
         personalCodeLabel = findViewById(R.id.signatureUpdateMobileIdPersonalCodeLabel);
+        personalCodeLabelText = findViewById(R.id.signatureUpdateMobileIdPersonalCodeMessage);
 
         AccessibilityUtils.setSingleCharactersContentDescription(phoneNoView);
         AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView);
@@ -86,8 +91,8 @@ public final class MobileIdView extends LinearLayout implements
         AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
 
-        phoneNoView.setError(null);
-        personalCodeView.setError(null);
+        setTextViewError(getContext(), null, countryAndPhoneNoLabel, phoneNoLabel, phoneNoView);
+        setTextViewError(getContext(), null, personalCodeLabelText, personalCodeLabel, personalCodeView);
 
         message.clearFocus();
         phoneNoView.clearFocus();
@@ -153,28 +158,28 @@ public final class MobileIdView extends LinearLayout implements
     }
 
     private void checkPhoneNumberValidity() {
-        phoneNoLabel.setError(null);
+        setTextViewError(getContext(), null, countryAndPhoneNoLabel, phoneNoLabel, null);
 
         Editable phoneNumber = phoneNoView.getText();
 
         if (phoneNumber != null && !phoneNumber.toString().isEmpty()) {
             if (isCountryCodeMissing(phoneNumber.toString())) {
-                phoneNoLabel.setError(getResources().getString(R.string.signature_update_mobile_id_status_no_country_code));
+                setTextViewError(getContext(), getResources().getString(R.string.signature_update_mobile_id_status_no_country_code), countryAndPhoneNoLabel, phoneNoLabel, null);
             } else if (!isCountryCodeCorrect(phoneNoView.getText().toString())) {
-                phoneNoLabel.setError(getResources().getString(R.string.signature_update_mobile_id_invalid_country_code));
+                setTextViewError(getContext(), getResources().getString(R.string.signature_update_mobile_id_invalid_country_code), countryAndPhoneNoLabel, phoneNoLabel, null);
             } else if (!isPhoneNumberCorrect(phoneNoView.getText().toString())) {
-                phoneNoLabel.setError(getResources().getString(R.string.signature_update_mobile_id_invalid_phone_number));
+                setTextViewError(getContext(), getResources().getString(R.string.signature_update_mobile_id_invalid_phone_number), countryAndPhoneNoLabel, phoneNoLabel, null);
             }
         }
     }
 
     private void checkPersonalCodeValidity() {
-        personalCodeLabel.setError(null);
+        setTextViewError(getContext(), null, personalCodeLabelText, personalCodeLabel, null);
 
         if (personalCodeView.getText() != null &&
                 !personalCodeView.getText().toString().isEmpty() &&
                 !isPersonalCodeCorrect(personalCodeView.getText().toString())) {
-            personalCodeLabel.setError(getResources().getString(R.string.signature_update_mobile_id_invalid_personal_code));
+            setTextViewError(getContext(), getResources().getString(R.string.signature_update_mobile_id_invalid_personal_code), personalCodeLabelText, personalCodeLabel, null);
         }
     }
 

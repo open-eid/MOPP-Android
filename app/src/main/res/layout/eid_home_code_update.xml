@@ -52,14 +52,22 @@
                 android:layout_marginTop="@dimen/material_content_edge_margin_horizontal"
                 android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal" />
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@id/eidHomeCodeUpdateCurrentLabelText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginTop="20dp"
+                android:minHeight="@dimen/material_baseline_grid_6x" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@id/eidHomeCodeUpdateCurrentLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
-                android:layout_marginTop="@dimen/material_content_edge_margin_horizontal"
                 android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal"
-                android:minHeight="@dimen/material_baseline_grid_6x"
+                app:hintEnabled="false"
                 app:errorEnabled="true"
                 app:expandedHintEnabled="false">
 
@@ -72,14 +80,22 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@id/eidHomeUpdateNewLabelText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginTop="20dp"
+                android:minHeight="@dimen/material_baseline_grid_6x" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@id/eidHomeUpdateNewLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
-                android:layout_marginTop="@dimen/material_baseline_grid_1x"
                 android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal"
-                android:minHeight="@dimen/material_baseline_grid_6x"
+                app:hintEnabled="false"
                 app:errorEnabled="true"
                 app:expandedHintEnabled="false">
 
@@ -92,14 +108,22 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@id/eidHomeCodeUpdateRepeatLabelText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
+                android:layout_marginTop="20dp"
+                android:minHeight="@dimen/material_baseline_grid_6x" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@id/eidHomeCodeUpdateRepeatLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
-                android:layout_marginTop="@dimen/material_baseline_grid_1x"
                 android:layout_marginEnd="@dimen/material_content_edge_margin_horizontal"
-                android:minHeight="@dimen/material_baseline_grid_6x"
+                app:hintEnabled="false"
                 app:errorEnabled="true"
                 app:expandedHintEnabled="false">
 

@@ -16,13 +16,13 @@ public class DisplayUtil {
     private static final double PORTRAIT_WIDTH_MULTIPLIER = 0.9;
     private static final double LANDSCAPE_WIDTH_MULTIPLIER = 0.8;
 
-    public static int getDisplayMetricsDpToInt(Resources resources, int px) {
+    public static int getDisplayMetricsDpToInt(Resources resources, int dp) {
         final float scale = resources.getDisplayMetrics().density;
-        return (int) (px * scale + 0.5f);
+        return (int) (dp * scale + 0.5f);
     }
 
-    public static int getDisplayMetricsDpToInt(DisplayMetrics displayMetrics, int px) {
-        return (int) (px * displayMetrics.density + 0.5f);
+    public static int getDisplayMetricsDpToInt(DisplayMetrics displayMetrics, int dp) {
+        return (int) (dp * displayMetrics.density + 0.5f);
     }
 
     public static int getDeviceOrientation(Context context) {

@@ -246,10 +246,13 @@
 
     <item type="id" name="signatureUpdateMobileId" />
     <item type="id" name="signatureUpdateMobileIdPhoneNoText" />
+    <item type="id" name="signatureUpdateMobileIdMessage" />
+    <item type="id" name="signatureUpdateMobileIdPhoneMessage" />
     <item type="id" name="signatureUpdateMobileIdPhoneNoLabel" />
     <item type="id" name="signatureUpdateMobileIdPhoneNo" />
     <item type="id" name="signatureUpdateMobileIdPersonalCodeText" />
     <item type="id" name="signatureUpdateMobileIdPersonalCodeLabel" />
+    <item type="id" name="signatureUpdateMobileIdPersonalCodeMessage" />
     <item type="id" name="signatureUpdateMobileIdPersonalCode" />
     <item type="id" name="signatureUpdateMobileIdRememberMe" />
 
@@ -360,10 +363,13 @@
     <item type="id" name="eidHomeCodeUpdateSuccessMessage" />
     <item type="id" name="eidHomeCodeUpdateText" />
     <item type="id" name="eidHomeCodeUpdateCurrentLabel" />
+    <item type="id" name="eidHomeCodeUpdateCurrentLabelText" />
     <item type="id" name="eidHomeCodeUpdateCurrent" />
     <item type="id" name="eidHomeUpdateNewLabel" />
+    <item type="id" name="eidHomeUpdateNewLabelText" />
     <item type="id" name="eidHomeUpdateNewText" />
     <item type="id" name="eidHomeCodeUpdateRepeatLabel" />
+    <item type="id" name="eidHomeCodeUpdateRepeatLabelText" />
     <item type="id" name="eidHomeCodeUpdateRepeat" />
     <item type="id" name="eidHomeCodeUpdateNegativeButton" />
     <item type="id" name="eidHomeCodeUpdatePositiveButton" />
