@@ -158,7 +158,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         adapter.dataForRecipients(state.recipientsSearchState(), state.recipientsSearchResult(), state.recipientsSearchError(),
                 recipients);
         if (doneButton != null) {
-            doneButton.setEnabled(!recipients.isEmpty());
+            doneButton.setVisibility(recipients.isEmpty() ? GONE : VISIBLE);
             if (getApplicationContext() != null) {
                 doneButton.setBackgroundColor(recipients.isEmpty() ? Color.GRAY :
                         ContextCompat.getColor(getApplicationContext(), R.color.bottomNavigation));
