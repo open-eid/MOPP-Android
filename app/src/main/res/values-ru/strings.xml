@@ -300,6 +300,7 @@
     <string name="crypto_create_encrypt_success_message">ШИФРОВАНИЕ УДАЛОСЬ</string>
     <string name="crypto_create_decrypt_success_message">ДЕШИФРОВАНИЕ УДАЛОСЬ</string>
     <string name="crypto_create_name_update_button">Изменить название контейнера</string>
+    <string name="crypto_create_data_file">Зашифрованные файл</string>
     <string name="crypto_create_data_files_title">Зашифрованные файлы</string>
     <string name="crypto_create_data_files_add_error_exists">Файл уже существует в контейнере</string>
     <string name="crypto_create_data_file_remove_button">Удалить файл</string>

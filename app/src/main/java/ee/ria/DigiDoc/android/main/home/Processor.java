@@ -127,7 +127,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 navigator.execute(menuItemToTransaction(application, item,
                         localeService.applicationConfigurationWithLocale(application.getApplicationContext(),
                                 localeService.applicationLocale())));
-                return Observable.just(Result.MenuResult.create(false));
+                return Observable.just(Result.MenuResult.create(true));
             }
             throw new IllegalStateException("Action is in invalid state: " + action);
         });
