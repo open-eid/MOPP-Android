@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -284,6 +285,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
             removeDefaultSearchButton(searchView);
 
             searchViewInnerText = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
+            searchViewInnerText.setImeOptions(EditorInfo.IME_ACTION_DONE);
             searchViewInnerText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
@@ -307,8 +309,10 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                             public void onTextChanged(CharSequence s, int start, int before, int count) {
                                 if (s.length() == 0) {
                                     searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
+                                    searchViewInnerText.setSingleLine(false);
                                 } else {
                                     searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50);
+                                    searchViewInnerText.setSingleLine(true);
                                     // Validate personal codes only. Allow company registry numbers and names
                                     if (searchViewInnerText.getText() != null &&
                                             searchViewInnerText.getText().length() >= MAXIMUM_PERSONAL_CODE_LENGTH &&
@@ -319,7 +323,11 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                             }
 
                             @Override
-                            public void afterTextChanged(Editable s) {}
+                            public void afterTextChanged(Editable s) {
+                                if (s.length() == 1) {
+                                    searchViewInnerText.setSelection(searchViewInnerText.getText().length());
+                                }
+                            }
                         });
                     }
                 }
