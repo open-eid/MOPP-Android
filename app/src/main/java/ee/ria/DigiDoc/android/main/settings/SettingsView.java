@@ -16,12 +16,13 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
-public final class SettingsView extends CoordinatorLayout {
+public final class SettingsView extends CoordinatorLayout implements ContentView  {
 
     private final Toolbar toolbarView;
     private final TextView toolbarTitleView;
@@ -74,6 +75,8 @@ public final class SettingsView extends CoordinatorLayout {
                 restartIntent();
             });
         }
+
+        addInvisibleElement(getContext(), this);
     }
 
     private TextView getToolbarViewTitle() {

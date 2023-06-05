@@ -7,6 +7,7 @@ import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnost
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileSaveClicksSubject;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -52,6 +53,8 @@ import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.TSLException;
 import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.ViewUtil;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
@@ -69,7 +72,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import timber.log.Timber;
 
-public final class DiagnosticsView extends CoordinatorLayout {
+public final class DiagnosticsView extends CoordinatorLayout implements ContentView {
 
     private final Navigator navigator;
     private final SimpleDateFormat dateFormat;
@@ -93,6 +96,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
         toolbarView = findViewById(R.id.toolbar);
         View saveDiagnosticsButton = findViewById(R.id.configurationSaveButton);
         navigator = Application.component(context).navigator();
+
+        addInvisibleElement(getContext(), this);
 
         diagnosticsRestartConfirmationDialog = new ConfirmationDialog(navigator.activity(),
                 R.string.main_diagnostics_restart_message, R.id.mainDiagnosticsRestartConfirmationDialog);

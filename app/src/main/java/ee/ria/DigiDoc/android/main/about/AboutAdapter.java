@@ -15,9 +15,10 @@ import com.google.common.collect.ImmutableList;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.common.TextUtil;
 
-final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ContentView {
 
     private final ImmutableList<Component> components = ImmutableList.<Component>builder()
             .add(Component.create(
@@ -258,6 +259,11 @@ final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             componentViewHolder.licenseUrlView.setText(component.licenseUrl());
             componentViewHolder.licenseUrlView.setContentDescription(getAccessibilityText(
                     resources.getString(component.licenseUrl())) + " link");
+
+            int lastComponent = components.size() - 1;
+            if (component.equals(components.get(lastComponent))) {
+                addInvisibleElement(holder.itemView.getContext(), holder.itemView);
+            }
         }
     }
 

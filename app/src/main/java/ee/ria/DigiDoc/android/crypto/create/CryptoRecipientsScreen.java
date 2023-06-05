@@ -8,6 +8,7 @@ import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEven
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
 import static ee.ria.DigiDoc.android.Constants.VOID;
+import static ee.ria.DigiDoc.android.utils.ViewUtil.moveView;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -47,6 +48,7 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
@@ -56,7 +58,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-public final class CryptoRecipientsScreen extends Controller implements Screen,
+public final class CryptoRecipientsScreen extends Controller implements Screen, ContentView,
         MviView<Intent, ViewState>, Navigator.BackButtonClickListener {
 
     private static final String KEY_CRYPTO_CREATE_SCREEN_ID = "cryptoCreateScreenId";
@@ -335,6 +337,12 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         doneButton = view.findViewById(R.id.cryptoRecipientsDoneButton);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
+
+        addInvisibleElement(getApplicationContext(), doneButton);
+
+        View lastElementView = view.findViewById(R.id.lastInvisibleElement);
+        moveView(lastElementView);
+
         return view;
     }
 

@@ -24,16 +24,18 @@ import ee.ria.DigiDoc.android.signature.home.SignatureHomeView;
 import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
 import static com.jakewharton.rxbinding4.material.RxBottomNavigationView.itemSelections;
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
+import static ee.ria.DigiDoc.android.utils.ViewUtil.moveView;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 @SuppressLint("ViewConstructor")
-public final class HomeView extends LinearLayout implements MviView<Intent, ViewState> {
+public final class HomeView extends LinearLayout implements ContentView, MviView<Intent, ViewState> {
 
     public interface HomeViewChild {
 
@@ -93,6 +95,11 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
         viewModel = Application.component(context).navigator().viewModel(screenId,
                 HomeViewModel.class);
         viewModel.eidScreenId(eidScreenId);
+
+        addInvisibleElement(context, navigationContainerView);
+
+        View lastElementView = findViewById(R.id.lastInvisibleElement);
+        moveView(lastElementView);
     }
 
     private void setCustomAccessibilityFeedback(BottomNavigationItemView bottomNavigationItemView) {

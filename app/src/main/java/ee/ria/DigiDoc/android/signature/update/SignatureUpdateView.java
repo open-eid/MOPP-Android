@@ -5,6 +5,7 @@ import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
 
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
+import static ee.ria.DigiDoc.android.utils.ViewUtil.moveView;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 import android.annotation.SuppressLint;
@@ -49,6 +50,7 @@ import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
@@ -66,7 +68,7 @@ import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
 @SuppressLint("ViewConstructor")
-public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
+public final class SignatureUpdateView extends LinearLayout implements ContentView, MviView<Intent, ViewState> {
 
     private final ImmutableList<String> ASICS_TIMESTAMP_CONTAINERS = ImmutableList.of("asics", "scs");
     private static final ImmutableSet<String> UNSIGNABLE_CONTAINER_EXTENSIONS = ImmutableSet.<String>builder().add("asics", "scs", "ddoc").build();
@@ -203,6 +205,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         setupAccessibilityTabs();
 
         setActionButtonsTextSize();
+
+        addInvisibleElement(getContext(), this);
+
+        View lastElementView = findViewById(R.id.lastInvisibleElement);
+        moveView(lastElementView);
     }
 
     @Override

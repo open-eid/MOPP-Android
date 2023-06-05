@@ -32,13 +32,14 @@ import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeSameAsCurrentError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeTooEasyError;
 import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import io.reactivex.rxjava3.core.Observable;
 
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.utils.InputMethodUtils.hideSoftKeyboard;
 
-public final class CodeUpdateView extends CoordinatorLayout {
+public final class CodeUpdateView extends CoordinatorLayout implements ContentView {
 
     private final Toolbar toolbarView;
     private final TextView successMessageView;
@@ -82,6 +83,8 @@ public final class CodeUpdateView extends CoordinatorLayout {
         activityOverlayView = findViewById(R.id.activityOverlay);
         activityIndicatorView = findViewById(R.id.activityIndicator);
         scrollView = findViewById(R.id.eidHomeCodeUpdateScroll);
+
+        addInvisibleElement(context, this);
     }
 
     public void render(@State String state, CodeUpdateAction action,

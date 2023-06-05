@@ -7,6 +7,7 @@ import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.putFile;
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
+import static ee.ria.DigiDoc.android.utils.ViewUtil.moveView;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 import android.content.Context;
@@ -42,6 +43,7 @@ import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
@@ -54,7 +56,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-public final class CryptoCreateScreen extends Controller implements Screen,
+public final class CryptoCreateScreen extends Controller implements Screen, ContentView,
         MviView<Intent, ViewState> {
 
     private static final String KEY_CONTAINER_FILE = "containerFile";
@@ -419,6 +421,11 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         disposables.attach();
         disposables.add(viewModel.viewStates().subscribe(this::render));
         viewModel.process(intents());
+
+        addInvisibleElement(getApplicationContext(), view);
+
+        View lastElementView = view.findViewById(R.id.lastInvisibleElement);
+        moveView(lastElementView);
 
         return view;
     }

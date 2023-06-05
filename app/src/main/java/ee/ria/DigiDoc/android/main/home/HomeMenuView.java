@@ -28,6 +28,7 @@ import java.util.Set;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.common.TextUtil;
 import io.reactivex.rxjava3.core.Observable;
 
@@ -35,7 +36,7 @@ import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxRadioGroup.checkedChanges;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 
-public final class HomeMenuView extends NestedScrollView {
+public final class HomeMenuView extends NestedScrollView implements ContentView {
 
     private final View closeButton;
 
@@ -139,6 +140,8 @@ public final class HomeMenuView extends NestedScrollView {
         }, 2000);
 
         setFontSize();
+
+        addInvisibleElement(getContext(), this);
     }
 
     @Override

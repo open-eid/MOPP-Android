@@ -9,6 +9,7 @@
     <item type="id" name="activityIndicatorSmartId" />
     <item type="id" name="activityOverlay" />
     <item type="id" name="listEmpty" />
+    <item type="id" name="lastInvisibleElement" />
 
     <item type="id" name="nameUpdateNameLabel" />
     <item type="id" name="nameUpdateName" />
