@@ -69,7 +69,7 @@ import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
 
     private final ImmutableList<String> ASICS_TIMESTAMP_CONTAINERS = ImmutableList.of("asics", "scs");
-    private static final ImmutableSet<String> UNSIGNABLE_CONTAINER_EXTENSIONS = ImmutableSet.<String>builder().add("asics", "scs", "ddoc").build();
+    private static final ImmutableSet<String> UNSIGNABLE_CONTAINER_EXTENSIONS = ImmutableSet.<String>builder().add("adoc", "asics", "scs", "ddoc").build();
 
     private static final String EMPTY_CHALLENGE = "";
 
