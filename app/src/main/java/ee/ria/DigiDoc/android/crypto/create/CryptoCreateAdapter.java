@@ -350,7 +350,7 @@ final class CryptoCreateAdapter extends
                             ((DataFileItem) adapter.items.get(getBindingAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileClicksSubject);
             nameView.setText(FileUtil.sanitizeString(item.dataFile().getName(), ""));
-            String fileNameDescription = nameView.getResources().getString(item.removeButtonVisible() ? R.string.file : R.string.crypto_create_data_file);
+            String fileNameDescription = nameView.getResources().getString(item.saveButtonVisible() ? R.string.file : R.string.crypto_create_data_file);
             nameView.setContentDescription(fileNameDescription + " " + nameView.getText());
 
             String removeButtonText = removeButton.getResources().getString(R.string.crypto_create_data_file_remove_button);

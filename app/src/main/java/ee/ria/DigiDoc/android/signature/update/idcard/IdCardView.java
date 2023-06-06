@@ -279,6 +279,16 @@ public final class IdCardView extends LinearLayout implements
                 info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_SELECTION);
             }
         });
+
+        progressMessageView.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                for (AccessibilityNodeInfo.AccessibilityAction action : info.getActionList()) {
+                    info.removeAction(action);
+                }
+            }
+        });
     }
 
     private void handleAccessibility(RadioGroup methodView) {
