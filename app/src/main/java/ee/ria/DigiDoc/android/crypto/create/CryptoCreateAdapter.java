@@ -34,6 +34,7 @@ import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.common.TextUtil;
 import ee.ria.DigiDoc.crypto.NoInternetConnectionException;
+import ee.ria.DigiDoc.crypto.PersonalCodeException;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
@@ -116,6 +117,8 @@ final class CryptoCreateAdapter extends
                     R.string.crypto_recipients_add_all_accessibility, ImmutableList.copyOf(certificates)));
         } else if (searchError instanceof NoInternetConnectionException) {
             builder.add(EmptyTextItem.create(R.string.no_internet_connection));
+        } else if (searchError instanceof PersonalCodeException) {
+            builder.add(EmptyTextItem.create(R.string.crypto_recipients_search_result_invalid_personal_code));
         } else if (searchResults != null && !searchState.equals(State.ACTIVE)) {
             builder.add(EmptyTextItem.create(R.string.crypto_recipients_search_result_empty));
         }
