@@ -119,8 +119,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                 backButtonClicksSubject.map(ignored -> Intent.RecipientsSearchIntent.clear()),
                 clicks(searchView)
                         .map(ignored -> StringUtils.trim(searchView.getQuery().toString()))
-                        .filter(trimmedQuery -> (trimmedQuery != null &&
-                                !trimmedQuery.isEmpty()) && !submittedQuery.equals(trimmedQuery))
+                        .filter(trimmedQuery -> trimmedQuery != null && !submittedQuery.equals(trimmedQuery))
                         .map(query -> Intent.RecipientsSearchIntent.search(
                                 setSearchQuery(query))));
     }
@@ -307,6 +306,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                             public void onTextChanged(CharSequence s, int start, int before, int count) {
                                 if (s.length() == 0) {
                                     searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
+                                    setSearchQuery("");
+                                    searchView.performClick();
                                 } else {
                                     searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50);
                                     // Validate personal codes only. Allow company registry numbers and names
