@@ -2,10 +2,12 @@ package ee.ria.DigiDoc.android.signature.update.mobileid;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
 import static ee.ria.DigiDoc.android.utils.ErrorMessageUtil.setTextViewError;
+import static ee.ria.DigiDoc.android.utils.TextUtil.removeTextWatcher;
 
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -25,6 +27,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
+import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -47,6 +50,8 @@ public final class MobileIdView extends LinearLayout implements
     private final TextInputLayout phoneNoLabel;
     private final MaterialTextView countryAndPhoneNoLabel;
     private final TextInputLayout personalCodeLabel;
+
+    private final TextWatcher phoneNoTextWatcher;
 
     public MobileIdView(Context context) {
         this(context, null);
@@ -81,6 +86,8 @@ public final class MobileIdView extends LinearLayout implements
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
 
         checkInputsValidity();
+
+        phoneNoTextWatcher = TextUtil.addTextWatcher(phoneNoView);
     }
 
     @Override
@@ -97,6 +104,8 @@ public final class MobileIdView extends LinearLayout implements
         message.clearFocus();
         phoneNoView.clearFocus();
         personalCodeView.clearFocus();
+
+        removeTextWatcher(phoneNoView, phoneNoTextWatcher);
     }
 
     @Override
@@ -143,6 +152,8 @@ public final class MobileIdView extends LinearLayout implements
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+
+        removeTextWatcher(phoneNoView, phoneNoTextWatcher);
     }
 
     private void checkInputsValidity() {

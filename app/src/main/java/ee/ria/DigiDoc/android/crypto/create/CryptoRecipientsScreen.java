@@ -83,6 +83,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     private View activityOverlayView;
     private View activityIndicatorView;
 
+    private TextWatcher searchViewTextWatcher;
+
     private String submittedQuery = "";
     private ImmutableList<Certificate> recipients = ImmutableList.of();
 
@@ -284,6 +286,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
             removeDefaultSearchButton(searchView);
 
             searchViewInnerText = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
+            searchViewTextWatcher = ee.ria.DigiDoc.android.utils.TextUtil.addTextWatcher(searchViewInnerText);
             searchViewInnerText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
@@ -308,7 +311,6 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                                 if (s.length() == 0) {
                                     searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
                                 } else {
-                                    searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50);
                                     // Validate personal codes only. Allow company registry numbers and names
                                     if (searchViewInnerText.getText() != null &&
                                             searchViewInnerText.getText().length() >= MAXIMUM_PERSONAL_CODE_LENGTH &&
@@ -367,6 +369,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         disposables.detach();
         navigator.removeBackButtonClickListener(this);
         searchView.setOnCloseListener(null);
+        ee.ria.DigiDoc.android.utils.TextUtil.removeTextWatcher(searchViewInnerText,searchViewTextWatcher);
         super.onDetach(view);
     }
 
