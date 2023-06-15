@@ -120,8 +120,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                 backButtonClicksSubject.map(ignored -> Intent.RecipientsSearchIntent.clear()),
                 clicks(searchView)
                         .map(ignored -> StringUtils.trim(searchView.getQuery().toString()))
-                        .filter(trimmedQuery -> (trimmedQuery != null &&
-                                !trimmedQuery.isEmpty()) && !submittedQuery.equals(trimmedQuery))
+                        .filter(trimmedQuery -> trimmedQuery != null && !submittedQuery.equals(trimmedQuery))
                         .map(query -> Intent.RecipientsSearchIntent.search(
                                 setSearchQuery(query))));
     }
@@ -310,15 +309,11 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                                 if (s.length() == 0) {
                                     searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
                                     searchViewInnerText.setSingleLine(false);
+                                    setSearchQuery("");
+                                    searchView.performClick();
                                 } else {
                                     searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50);
                                     searchViewInnerText.setSingleLine(true);
-                                    // Validate personal codes only. Allow company registry numbers and names
-                                    if (searchViewInnerText.getText() != null &&
-                                            searchViewInnerText.getText().length() >= MAXIMUM_PERSONAL_CODE_LENGTH &&
-                                            StringUtils.isNumeric(searchViewInnerText.getText())) {
-                                        PersonalCodeValidator.validatePersonalCode(searchViewInnerText);
-                                    }
                                 }
                             }
 
