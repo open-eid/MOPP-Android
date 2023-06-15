@@ -310,12 +310,6 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                                     searchView.performClick();
                                 } else {
                                     searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50);
-                                    // Validate personal codes only. Allow company registry numbers and names
-                                    if (searchViewInnerText.getText() != null &&
-                                            searchViewInnerText.getText().length() >= MAXIMUM_PERSONAL_CODE_LENGTH &&
-                                            StringUtils.isNumeric(searchViewInnerText.getText())) {
-                                        PersonalCodeValidator.validatePersonalCode(searchViewInnerText);
-                                    }
                                 }
                             }
 
