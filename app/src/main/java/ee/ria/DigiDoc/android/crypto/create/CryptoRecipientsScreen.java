@@ -84,6 +84,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     private View activityOverlayView;
     private View activityIndicatorView;
 
+    private TextWatcher searchViewTextWatcher;
+
     private String submittedQuery = "";
     private ImmutableList<Certificate> recipients = ImmutableList.of();
 
@@ -284,6 +286,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
             removeDefaultSearchButton(searchView);
 
             searchViewInnerText = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
+            searchViewTextWatcher = ee.ria.DigiDoc.android.utils.TextUtil.addTextWatcher(searchViewInnerText);
             searchViewInnerText.setImeOptions(EditorInfo.IME_ACTION_DONE);
             searchViewInnerText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
@@ -370,6 +373,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         disposables.detach();
         navigator.removeBackButtonClickListener(this);
         searchView.setOnCloseListener(null);
+        ee.ria.DigiDoc.android.utils.TextUtil.removeTextWatcher(searchViewInnerText,searchViewTextWatcher);
         super.onDetach(view);
     }
 
