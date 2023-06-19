@@ -94,7 +94,7 @@ public final class MobileIdView extends LinearLayout implements
     public void reset(SignatureUpdateViewModel viewModel) {
         phoneNoView.setText(viewModel.phoneNo());
         personalCodeView.setText(viewModel.personalCode());
-        setDefaultCheckBoxToggle(viewModel);
+        setDefaultCheckBoxToggle();
         AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
 
@@ -124,12 +124,8 @@ public final class MobileIdView extends LinearLayout implements
         }
     }
 
-    private void setDefaultCheckBoxToggle(SignatureUpdateViewModel viewModel) {
-        if (viewModel.phoneNo().length() > 0 && viewModel.personalCode().length() > 0) {
-            rememberMeView.setChecked(true);
-        } else {
-            rememberMeView.setChecked(false);
-        }
+    private void setDefaultCheckBoxToggle() {
+        rememberMeView.setChecked(true);
     }
 
     public Observable<Object> positiveButtonState() {

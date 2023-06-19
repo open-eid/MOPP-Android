@@ -241,7 +241,6 @@
     <string name="signature_update_smart_id_select_device">Allkirjastamiseks kinnita seade Smart-ID rakenduses.</string>
     <string name="signature_update_smart_id_status_document_unusable">Sinu Smart-ID toiming ebaõnnestus. Palun kontrolli Smart-ID rakendust või võta ühendust Smart-ID klienditoega.</string>
     <string name="signature_update_smart_id_status_wrong_vc">Viga: valiti vale kontrollkood</string>
-    <string name="signature_update_smart_id_required_interaction_not_supported_by_app">Ümbriku allkirjastamine ebaõnnestus. DigiDoc4 kliendis allkirjastamiseks pead Smart-ID rakendust uuendama.</string>
     <string name="signature_update_smart_id_error_message_not_qualified">RIA DigiDoc mobiilirakenduses allkirjastamiseks peab sinu Smart-ID vastama tasemele kõrge.</string>
     <string name="signature_update_smart_id_error_message_old_api">RIA DigiDoc mobiilirakendus vajab uuendamist. Paigalda uus versioon mobiilirakenduse poest. Lisainfo ID-abiliini telefonil (+372) 666 8888.</string>
     <string name="signature_update_smart_id_error_message_under_maintenance">Smart-ID teenuses esinevad tehnilised tõrked. Palun proovi mõne aja pärast uuesti.</string>
@@ -323,6 +322,7 @@
 
     <string name="crypto_recipients_title">Adressaatide lisamine</string>
     <string name="crypto_recipients_search">Sisesta isikukood, asutus või registrikood</string>
+    <string name="crypto_recipients_search_result_invalid_personal_code">Isikukood pole korrektne!</string>
     <string name="crypto_recipients_search_result_empty">Isikul või asutusel puudub kehtiv sertifikaat. \nKrüpteerimiseks on vaja kehtivat sertikaati.\nKüsimuste korral pöördu id.ee.</string>
     <string name="crypto_recipients_add_all">LISA KÕIK</string>
     <string name="crypto_recipients_add_all_accessibility">Lisa kõik</string>
