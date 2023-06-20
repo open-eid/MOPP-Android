@@ -19,6 +19,8 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import net.cachapa.expandablelayout.ExpandableLayout;
+
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.common.TextUtil;
 
@@ -140,6 +142,24 @@ public class AccessibilityUtils {
     public static boolean isLargeFontEnabled(Resources resources) {
         Configuration configuration = resources.getConfiguration();
         return configuration.fontScale > 1;
+    }
+
+    public static void setCustomClickAccessibilityFeedBack(TextView titleView, ExpandableLayout containerView) {
+        ViewCompat.setAccessibilityDelegate(titleView, new AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                String message;
+                if (containerView.isExpanded()) {
+                    message = "deactivate";
+                } else {
+                    message = "activate";
+                }
+                AccessibilityNodeInfoCompat.AccessibilityActionCompat customClick = new AccessibilityNodeInfoCompat.AccessibilityActionCompat(
+                        AccessibilityNodeInfoCompat.ACTION_CLICK, message);
+                info.addAction(customClick);
+            }
+        });
     }
 
     private static String combineMessages(CharSequence... messages) {

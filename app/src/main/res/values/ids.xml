@@ -118,6 +118,14 @@
 
     <!-- Signature Details -->
     <item type="id" name="signatureDetailScreen" />
+
+    <item type="id" name="signersCertificateErrorContainer" />
+    <item type="id" name="signersCertificateErrorTitle" />
+    <item type="id" name="signersCertificateErrorDetails" />
+    <item type="id" name="signersCertificateTechnicalInformationButtonTitle" />
+    <item type="id" name="signersCertificateTechnicalInformationContainerView" />
+    <item type="id" name="signersCertificateTechnicalInformationText" />
+
     <item type="id" name="signersCertificateIssuerTitle" />
     <item type="id" name="signersCertificateTitle" />
     <item type="id" name="signatureDetailSignersCertificateIssuer" />
