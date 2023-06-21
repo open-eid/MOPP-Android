@@ -26,7 +26,7 @@ public class SivaUtil {
 
     public static Observable<Boolean> isSivaConfirmationNeeded(ImmutableList<FileStream> files, Context context) throws IllegalStateException {
         return Observable.fromCallable(() -> {
-            if (files.size() > 1) {
+            if (files.size() != 1) {
                 return false;
             }
 
