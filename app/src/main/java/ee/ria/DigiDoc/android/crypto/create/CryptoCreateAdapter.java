@@ -247,6 +247,7 @@ final class CryptoCreateAdapter extends
         @Override
         void bind(CryptoCreateAdapter adapter, SuccessItem item) {
             messageView.setText(item.message());
+            messageView.setContentDescription(messageView.getText().toString().toLowerCase());
         }
     }
 

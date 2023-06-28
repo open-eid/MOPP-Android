@@ -702,8 +702,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 1, 2));
             signatureAddButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 2, 2));
         } else {
-            sendButton.setContentDescription(getResources().getString(R.string.signature_update_send_button));
-            signatureAddButton.setContentDescription(getResources().getString(R.string.signature_update_signature_add_button));
+            sendButton.setContentDescription(getResources().getString(R.string.signature_update_send_button).toLowerCase());
+            signatureAddButton.setContentDescription(getResources().getString(R.string.signature_update_signature_add_button).toLowerCase());
         }
     }
 }

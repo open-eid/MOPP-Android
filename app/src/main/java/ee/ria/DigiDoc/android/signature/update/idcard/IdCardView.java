@@ -37,6 +37,9 @@ import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
 import static ee.ria.DigiDoc.android.Constants.VOID;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class IdCardView extends LinearLayout implements
         SignatureAddView<IdCardRequest, IdCardResponse> {
 
@@ -284,7 +287,9 @@ public final class IdCardView extends LinearLayout implements
             @Override
             public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
-                for (AccessibilityNodeInfo.AccessibilityAction action : info.getActionList()) {
+                List<AccessibilityNodeInfo.AccessibilityAction> actionList = new ArrayList<>(info.getActionList());
+
+                for (AccessibilityNodeInfo.AccessibilityAction action : actionList) {
                     info.removeAction(action);
                 }
             }
