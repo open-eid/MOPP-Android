@@ -80,11 +80,13 @@ final class CryptoCreateAdapter extends
         if (name != null) {
             builder.add(NameItem.create(name, containerFile == null));
         }
-        if (recipientsAddEnabled) {
-            builder.add(SubheadItem.create(R.string.signature_update_documents_title));
-        } else {
+
+        if (!recipientsAddEnabled && !dataFilesAddEnabled && !dataFilesViewEnabled) {
             builder.add(SubheadItem.create(R.string.crypto_create_data_files_title));
+        } else {
+            builder.add(SubheadItem.create(R.string.signature_update_documents_title));
         }
+
         for (File dataFile : dataFiles) {
             builder.add(DataFileItem.create(dataFile, dataFilesRemoveEnabled, dataFilesViewEnabled));
         }
