@@ -221,7 +221,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
             // Reset sequence
             if (Math.abs(d) == 9) {
-                delta = null;
                 if ((currentNumber == 9 && nextNumber == 0)) {
                     d = -1;
                 } else if ((currentNumber == 0 && nextNumber == 9)) {
