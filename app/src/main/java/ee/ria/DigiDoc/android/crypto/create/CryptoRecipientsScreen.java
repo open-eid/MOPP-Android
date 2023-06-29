@@ -315,7 +315,6 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                                     setSearchQuery("");
                                     searchView.performClick();
                                 } else {
-                                    searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50);
                                     searchViewInnerText.setSingleLine(true);
                                 }
                             }
