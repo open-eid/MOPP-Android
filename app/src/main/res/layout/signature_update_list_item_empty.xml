@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/material_subheader_padding_start"
+    android:padding="@dimen/material_chip_simple_label_padding_start"
+    android:layout_marginBottom="@dimen/material_list_dense_padding_vertical"
     android:orientation="vertical"
     android:background="@color/warning">
 
