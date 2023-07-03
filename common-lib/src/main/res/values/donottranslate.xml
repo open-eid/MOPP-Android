@@ -2,4 +2,5 @@
 <resources>
     <string name="main_diagnostics_logging_key">main_diagnostics_logging</string>
     <string name="main_diagnostics_logging_running_key">main_diagnostics_logging_running</string>
+    <string name="main_settings_tsa_cert_key">main_settings_tsa_cert</string>
 </resources>

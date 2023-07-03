@@ -70,6 +70,13 @@
     <item type="id" name="mainSettingsAllowScreenshots" />
     <item type="id" name="mainSettingsAccessToSigningService" />
     <item type="id" name="mainSettingsAccessToTimeStampingService" />
+    <item type="id" name="mainSettingsTsaCertificateContainer" />
+    <item type="id" name="mainSettingsTsaCertificateIssuedTo" />
+    <item type="id" name="mainSettingsTsaCertificateValidTo" />
+    <item type="id" name="mainSettingsTsaCertificateAddCertificateButton" />
+    <item type="id" name="mainSettingsTsaCertificateShowCertificateButton" />
+    <item type="id" name="mainSettingsChooseFileScreen" />
+
 
     <!-- Main About -->
     <item type="id" name="mainAboutList" />
