@@ -331,6 +331,7 @@
     <item type="id" name="eidHomeCoordinator" />
     <item type="id" name="eidHomeCodeUpdate" />
     <item type="id" name="eidHomeScroll" />
+    <item type="id" name="eidHomeProgressLayout" />
     <item type="id" name="eidHomeProgressMessage" />
     <item type="id" name="eidHomeData" />
     <item type="id" name="eidHomeDataType" />
