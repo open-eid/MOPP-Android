@@ -111,7 +111,7 @@
     <string name="signature_update_name_update_name">Ümbriku nimi</string>
     <string name="signature_update_name_update_error_exists">Sellise nimega ümbrik on juba olemas</string>
     <string name="signature_update_name_update_error_invalid">Ümbriku nimi on vigane</string>
-    <string name="signature_update_documents_title">Ümbriku sisu</string>
+    <string name="signature_update_documents_title">Ümbriku failid</string>
     <string name="signature_update_documents_add_error_exists">Fail on juba ümbrikus olemas</string>
     <string name="signature_update_document_remove_button">Eemalda fail ümbrikust</string>
     <string name="signature_update_document_save_button">Salvesta fail ümbrikust</string>
