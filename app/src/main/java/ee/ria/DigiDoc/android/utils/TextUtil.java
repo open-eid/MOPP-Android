@@ -1,15 +1,20 @@
 package ee.ria.DigiDoc.android.utils;
 
+import static android.util.TypedValue.COMPLEX_UNIT_PX;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.content.Context;
+import android.text.Editable;
 import android.text.Layout;
 import android.text.SpannableString;
+import android.text.TextPaint;
+import android.text.TextWatcher;
 import android.text.style.AlignmentSpan;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -95,5 +100,59 @@ public class TextUtil {
     public static int convertPxToDp(float size, Context context) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 size, context.getResources().getDisplayMetrics());
+    }
+
+    public static TextWatcher addTextWatcher(EditText editText) {
+
+        float defaultTextSize = editText.getTextSize();
+
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                TextPaint textPaint = editText.getPaint();
+                float currentTextSize = editText.getTextSize();
+
+                String currentText = editText.getText().toString();
+                float viewWidth = editText.getWidth() - 80;
+
+                float measureText = textPaint.measureText(currentText);
+
+                while (measureText > viewWidth) {
+                    measureText = textPaint.measureText(currentText);
+                    currentTextSize -= 0.5;
+                    editText.setTextSize(COMPLEX_UNIT_PX, currentTextSize);
+                }
+
+                while (measureText < viewWidth && currentTextSize <= defaultTextSize) {
+                    measureText = textPaint.measureText(currentText);
+                    currentTextSize += 0.5;
+                    if (currentTextSize <= defaultTextSize) {
+                        editText.setTextSize(COMPLEX_UNIT_PX, currentTextSize);
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        };
+
+        editText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                editText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                editText.addTextChangedListener(textWatcher);
+            }
+        });
+
+        return textWatcher;
+    }
+
+    public static void removeTextWatcher(EditText editText, TextWatcher textWatcher) {
+        if (textWatcher != null) {
+            editText.removeTextChangedListener(textWatcher);
+        }
     }
 }

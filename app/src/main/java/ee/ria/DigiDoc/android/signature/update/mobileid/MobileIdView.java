@@ -1,11 +1,13 @@
 package ee.ria.DigiDoc.android.signature.update.mobileid;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
-import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
+import static ee.ria.DigiDoc.android.utils.ErrorMessageUtil.setTextViewError;
+import static ee.ria.DigiDoc.android.utils.TextUtil.removeTextWatcher;
 
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -17,6 +19,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.List;
 
@@ -24,6 +27,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
+import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -41,9 +45,13 @@ public final class MobileIdView extends LinearLayout implements
     private final TextView message;
     private final EditText phoneNoView;
     private final TextInputEditText personalCodeView;
+    private final MaterialTextView personalCodeLabelText;
     private final CheckBox rememberMeView;
     private final TextInputLayout phoneNoLabel;
+    private final MaterialTextView countryAndPhoneNoLabel;
     private final TextInputLayout personalCodeLabel;
+
+    private final TextWatcher phoneNoTextWatcher;
 
     public MobileIdView(Context context) {
         this(context, null);
@@ -68,7 +76,9 @@ public final class MobileIdView extends LinearLayout implements
         rememberMeView = findViewById(R.id.signatureUpdateMobileIdRememberMe);
 
         phoneNoLabel = findViewById(R.id.signatureUpdateMobileIdPhoneNoLabel);
+        countryAndPhoneNoLabel = findViewById(R.id.signatureUpdateMobileIdPhoneMessage);
         personalCodeLabel = findViewById(R.id.signatureUpdateMobileIdPersonalCodeLabel);
+        personalCodeLabelText = findViewById(R.id.signatureUpdateMobileIdPersonalCodeMessage);
 
         AccessibilityUtils.setSingleCharactersContentDescription(phoneNoView);
         AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView);
@@ -76,22 +86,26 @@ public final class MobileIdView extends LinearLayout implements
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
 
         checkInputsValidity();
+
+        phoneNoTextWatcher = TextUtil.addTextWatcher(phoneNoView);
     }
 
     @Override
     public void reset(SignatureUpdateViewModel viewModel) {
         phoneNoView.setText(viewModel.phoneNo());
         personalCodeView.setText(viewModel.personalCode());
-        setDefaultCheckBoxToggle(viewModel);
+        setDefaultCheckBoxToggle();
         AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
 
-        phoneNoView.setError(null);
-        personalCodeView.setError(null);
+        setTextViewError(getContext(), null, countryAndPhoneNoLabel, phoneNoLabel, phoneNoView);
+        setTextViewError(getContext(), null, personalCodeLabelText, personalCodeLabel, personalCodeView);
 
         message.clearFocus();
         phoneNoView.clearFocus();
         personalCodeView.clearFocus();
+
+        removeTextWatcher(phoneNoView, phoneNoTextWatcher);
     }
 
     @Override
@@ -110,12 +124,8 @@ public final class MobileIdView extends LinearLayout implements
         }
     }
 
-    private void setDefaultCheckBoxToggle(SignatureUpdateViewModel viewModel) {
-        if (viewModel.phoneNo().length() > 0 && viewModel.personalCode().length() > 0) {
-            rememberMeView.setChecked(true);
-        } else {
-            rememberMeView.setChecked(false);
-        }
+    private void setDefaultCheckBoxToggle() {
+        rememberMeView.setChecked(true);
     }
 
     public Observable<Object> positiveButtonState() {
@@ -138,6 +148,8 @@ public final class MobileIdView extends LinearLayout implements
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+
+        removeTextWatcher(phoneNoView, phoneNoTextWatcher);
     }
 
     private void checkInputsValidity() {
@@ -153,28 +165,28 @@ public final class MobileIdView extends LinearLayout implements
     }
 
     private void checkPhoneNumberValidity() {
-        phoneNoLabel.setError(null);
+        setTextViewError(getContext(), null, countryAndPhoneNoLabel, phoneNoLabel, null);
 
         Editable phoneNumber = phoneNoView.getText();
 
         if (phoneNumber != null && !phoneNumber.toString().isEmpty()) {
             if (isCountryCodeMissing(phoneNumber.toString())) {
-                phoneNoLabel.setError(getResources().getString(R.string.signature_update_mobile_id_status_no_country_code));
+                setTextViewError(getContext(), getResources().getString(R.string.signature_update_mobile_id_status_no_country_code), countryAndPhoneNoLabel, phoneNoLabel, null);
             } else if (!isCountryCodeCorrect(phoneNoView.getText().toString())) {
-                phoneNoLabel.setError(getResources().getString(R.string.signature_update_mobile_id_invalid_country_code));
+                setTextViewError(getContext(), getResources().getString(R.string.signature_update_mobile_id_invalid_country_code), countryAndPhoneNoLabel, phoneNoLabel, null);
             } else if (!isPhoneNumberCorrect(phoneNoView.getText().toString())) {
-                phoneNoLabel.setError(getResources().getString(R.string.signature_update_mobile_id_invalid_phone_number));
+                setTextViewError(getContext(), getResources().getString(R.string.signature_update_mobile_id_invalid_phone_number), countryAndPhoneNoLabel, phoneNoLabel, null);
             }
         }
     }
 
     private void checkPersonalCodeValidity() {
-        personalCodeLabel.setError(null);
+        setTextViewError(getContext(), null, personalCodeLabelText, personalCodeLabel, null);
 
         if (personalCodeView.getText() != null &&
                 !personalCodeView.getText().toString().isEmpty() &&
                 !isPersonalCodeCorrect(personalCodeView.getText().toString())) {
-            personalCodeLabel.setError(getResources().getString(R.string.signature_update_mobile_id_invalid_personal_code));
+            setTextViewError(getContext(), getResources().getString(R.string.signature_update_mobile_id_invalid_personal_code), personalCodeLabelText, personalCodeLabel, null);
         }
     }
 

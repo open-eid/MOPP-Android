@@ -23,7 +23,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/material_content_edge_margin_horizontal"
@@ -37,70 +37,79 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@id/mainSettingsFragment"
-                android:name="ee.ria.DigiDoc.android.main.settings.SettingsFragment"
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@id/mainSettingsFragment"
+                    android:name="ee.ria.DigiDoc.android.main.settings.SettingsFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="18dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textSize="16sp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_settings_open_all_filetypes_title"
+                    android:layout_weight="2">
+                </TextView>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/mainSettingsOpenAllFileTypes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:layout_gravity="end">
+                </androidx.appcompat.widget.SwitchCompat>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="18dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textSize="16sp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_settings_allow_screenshots_title"
+                    android:layout_weight="2">
+                </TextView>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/mainSettingsAllowScreenshots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:layout_gravity="end">
+                </androidx.appcompat.widget.SwitchCompat>
+            </LinearLayout>
+
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="18dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="8dp"
-            android:orientation="horizontal">
+    </ScrollView>
 
-            <TextView
-                style="@style/MaterialTypography.Dense.Body1"
-                android:textSize="16sp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/main_settings_open_all_filetypes_title"
-                android:layout_weight="2">
-            </TextView>
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/mainSettingsOpenAllFileTypes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="0dp"
-                android:paddingEnd="0dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:layout_gravity="end">
-            </androidx.appcompat.widget.SwitchCompat>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="18dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="8dp"
-            android:orientation="horizontal">
-
-            <TextView
-                style="@style/MaterialTypography.Dense.Body1"
-                android:textSize="16sp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/main_settings_allow_screenshots_title"
-                android:layout_weight="2">
-            </TextView>
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/mainSettingsAllowScreenshots"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="0dp"
-                android:paddingEnd="0dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:layout_gravity="end">
-            </androidx.appcompat.widget.SwitchCompat>
-        </LinearLayout>
-
-    </LinearLayout>
 </merge>

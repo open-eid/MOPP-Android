@@ -116,7 +116,7 @@ public final class SmartIdView extends LinearLayout implements
         countryView.setSelection(COUNTRY_LIST.indexOf(viewModel.country()));
         setPersonalCodeViewFilters(countryView.getSelectedItemPosition());
         personalCodeView.setText(viewModel.sidPersonalCode());
-        rememberMeView.setChecked(personalCodeView.getText() != null && personalCodeView.getText().length() > 0);
+        rememberMeView.setChecked(true);
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
 
         message.clearFocus();
