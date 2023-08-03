@@ -170,6 +170,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     .add(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyy")))
                     .add(dateOfBirth.format(DateTimeFormatter.ofPattern("MMdd")))
                     .add(dateOfBirth.format(DateTimeFormatter.ofPattern("ddMM")))
+                    .add(dateOfBirth.format(DateTimeFormatter.ofPattern("ddMMyyyy")))
+                    .add(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyyMM")))
                     .add(dateOfBirth.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         }
         ImmutableSet<String> dateOfBirthValues = dateOfBirthValuesBuilder.build();
