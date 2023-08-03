@@ -1,7 +1,10 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static ee.ria.DigiDoc.android.Constants.VOID;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceLayoutWidth;
+
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.view.View;
 import android.view.Window;
@@ -18,14 +21,6 @@ import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.ObservableDialogClickListener;
 import io.reactivex.rxjava3.core.Observable;
-
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static ee.ria.DigiDoc.android.Constants.VOID;
-import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceLayoutWidth;
-import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceOrientation;
-import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceWidth;
-import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDialogLandscapeWidth;
-import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDialogPortraitWidth;
 
 public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
 
@@ -49,7 +44,12 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
                 getContext().getString(R.string.signature_update_signature_add_positive_button),
                 positiveButtonClicks = new ObservableDialogClickListener());
         Button signButton = getButton(BUTTON_POSITIVE);
-        signButton.setContentDescription(signButton.getText().toString().toLowerCase());
+        if (signButton != null) {
+            String signButtonText = signButton.getText() != null ?
+                    signButton.getText().toString().toLowerCase() : null;
+            signButton.setContentDescription(signButtonText != null ? signButtonText :
+                    getContext().getString(R.string.signature_update_signature_add_positive_button));
+        }
         setButton(BUTTON_NEGATIVE, getContext().getString(android.R.string.cancel),
                 (dialog, which) -> {
                     cancel();

@@ -19,6 +19,7 @@ import static ee.ria.DigiDoc.crypto.CryptoContainer.isContainerFileName;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
@@ -41,6 +42,7 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
+import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
@@ -120,9 +122,14 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
     @Inject Processor(Navigator navigator, RecipientRepository recipientRepository,
                       ContentResolver contentResolver, FileSystem fileSystem,
-                      Application application, IdCardService idCardService) {
+                      Application application, IdCardService idCardService,
+                      LocaleService localeService) {
         this.contentResolver = contentResolver;
         this.fileSystem = fileSystem;
+
+        Configuration configuration = localeService.applicationConfigurationWithLocale(application.getApplicationContext(),
+                localeService.applicationLocale());
+        Context configurationContext = application.getApplicationContext().createConfigurationContext(configuration);
 
         initial = upstream -> upstream.switchMap(intent -> {
             File containerFile = intent.containerFile();
@@ -136,7 +143,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .startWithItem(Result.InitialResult.activity());
             } else if (androidIntent != null) {
-                return parseIntent(androidIntent, application, fileSystem.getExternallyOpenedFilesDir());
+                return parseIntent(androidIntent, application, fileSystem.getExternallyOpenedFilesDir(), configurationContext);
             } else {
                 navigator.execute(Transaction.activityForResult(RC_CRYPTO_CREATE_INITIAL,
                         createGetContentIntent(), null));
@@ -146,7 +153,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .switchMap(activityResult -> {
                             android.content.Intent data = activityResult.data();
                             if (activityResult.resultCode() == RESULT_OK && data != null) {
-                                return parseIntent(data, application, fileSystem.getExternallyOpenedFilesDir())
+                                return parseIntent(data, application, fileSystem.getExternallyOpenedFilesDir(), configurationContext)
                                         .onErrorReturn(throwable -> {
                                             if (throwable instanceof EmptyFileException) {
                                                 ToastUtil.showEmptyFileError(navigator.activity(), application);
@@ -226,9 +233,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                             builder.add(dataFile);
                                         }
                                         if (fileStreams.size() > 1) {
-                                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.files_added);
+                                            AccessibilityUtils.sendAccessibilityEvent(configurationContext, TYPE_ANNOUNCEMENT, R.string.files_added);
                                         } else {
-                                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.file_added);
+                                            AccessibilityUtils.sendAccessibilityEvent(configurationContext, TYPE_ANNOUNCEMENT, R.string.file_added);
                                         }
                                         return builder.build();
                                     })
@@ -418,7 +425,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 if (dataFiles.size() > 1) {
                                     AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.files_encrypted);
                                 } else {
-                                    AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.crypto_create_encrypt_success_message);
+                                    AccessibilityUtils.sendAccessibilityEvent(configurationContext, TYPE_ANNOUNCEMENT, R.string.crypto_create_encrypt_success_message);
                                 }
                                 return file;
                             } catch (Exception e) {
@@ -520,7 +527,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.SendIntent.class).compose(send)));
     }
 
-    private Observable<Result.InitialResult> parseIntent(android.content.Intent intent, Application application, File externallyOpenedFileDir) {
+    private Observable<Result.InitialResult> parseIntent(android.content.Intent intent, Application application, File externallyOpenedFileDir, Context configurationContext) {
         return Observable
                 .fromCallable(() -> {
                     ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
@@ -539,9 +546,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         File file = fileSystem.generateSignatureContainerFile(
                                 createContainerFileName(dataFiles.get(0).getName()));
                         if (dataFiles.size() > 1) {
-                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.files_added);
+                            AccessibilityUtils.sendAccessibilityEvent(configurationContext, TYPE_ANNOUNCEMENT, R.string.files_added);
                         } else {
-                            AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.file_added);
+                            AccessibilityUtils.sendAccessibilityEvent(configurationContext, TYPE_ANNOUNCEMENT, R.string.file_added);
                         }
                         return Result.InitialResult.success(file, dataFiles);
                     }
