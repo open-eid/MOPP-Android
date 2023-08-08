@@ -23,12 +23,20 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@id/signatureList"
+    <LinearLayout
+        android:id="@id/signatureListLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:scrollbars="vertical" />
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@id/signatureList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:paddingVertical="@dimen/material_list_normal_padding_vertical"
+            android:scrollbars="vertical" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

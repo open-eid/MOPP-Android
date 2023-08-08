@@ -84,7 +84,7 @@ public final class CodeUpdateView extends CoordinatorLayout implements ContentVi
         activityIndicatorView = findViewById(R.id.activityIndicator);
         scrollView = findViewById(R.id.eidHomeCodeUpdateScroll);
 
-        addInvisibleElement(context, this);
+        ContentView.addInvisibleElement(context, this);
     }
 
     public void render(@State String state, CodeUpdateAction action,

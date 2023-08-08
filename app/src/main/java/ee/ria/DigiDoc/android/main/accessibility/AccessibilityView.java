@@ -46,7 +46,7 @@ public class AccessibilityView extends CoordinatorLayout implements ContentView 
         toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
         toolbarView.setNavigationContentDescription(R.string.back);
 
-        addInvisibleElement(getContext(), this);
+        ContentView.addInvisibleElement(getContext(), this);
     }
 
     @Override

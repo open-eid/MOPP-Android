@@ -259,11 +259,6 @@ final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             componentViewHolder.licenseUrlView.setText(component.licenseUrl());
             componentViewHolder.licenseUrlView.setContentDescription(getAccessibilityText(
                     resources.getString(component.licenseUrl())) + " link");
-
-            int lastComponent = components.size() - 1;
-            if (component.equals(components.get(lastComponent))) {
-                addInvisibleElement(holder.itemView.getContext(), holder.itemView);
-            }
         }
     }
 

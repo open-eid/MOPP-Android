@@ -141,7 +141,7 @@ public final class HomeMenuView extends NestedScrollView implements ContentView 
 
         setFontSize();
 
-        addInvisibleElement(getContext(), this);
+        ContentView.addInvisibleElement(getContext(), this);
     }
 
     @Override

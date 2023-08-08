@@ -1,16 +1,25 @@
 package ee.ria.DigiDoc.android.signature.list;
 
-import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.utils.navigator.ContentView.addInvisibleElementScrollListener;
+import static ee.ria.DigiDoc.android.utils.navigator.ContentView.addInvisibleElementToObject;
+import static ee.ria.DigiDoc.android.utils.navigator.ContentView.removeInvisibleElementScrollListener;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bluelinelabs.conductor.Controller;
 import com.google.common.io.Files;
@@ -27,11 +36,6 @@ import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.core.Observable;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
 public final class SignatureListScreen extends Controller implements Screen,
         MviView<Intent, ViewState> {
@@ -183,6 +187,12 @@ public final class SignatureListScreen extends Controller implements Screen,
         emptyView = view.findViewById(R.id.listEmpty);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
+
+        LinearLayout signatureLayout = view.findViewById(R.id.signatureListLayout);
+        addInvisibleElementToObject(getApplicationContext(), signatureLayout);
+        View lastElementView = view.findViewById(R.id.lastInvisibleElement);
+        addInvisibleElementScrollListener(listView, lastElementView);
+
         return view;
     }
 
@@ -190,6 +200,7 @@ public final class SignatureListScreen extends Controller implements Screen,
     protected void onDestroyView(@NonNull View view) {
         removeConfirmationDialog.dismiss();
         sivaConfirmationDialog.dismiss();
+        removeInvisibleElementScrollListener(listView);
         super.onDestroyView(view);
     }
 

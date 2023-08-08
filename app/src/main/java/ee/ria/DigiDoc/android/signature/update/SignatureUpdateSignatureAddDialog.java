@@ -1,7 +1,6 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.view.View;
 import android.view.Window;
@@ -23,10 +22,6 @@ import io.reactivex.rxjava3.core.Observable;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static ee.ria.DigiDoc.android.Constants.VOID;
 import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceLayoutWidth;
-import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceOrientation;
-import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceWidth;
-import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDialogLandscapeWidth;
-import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDialogPortraitWidth;
 
 public final class SignatureUpdateSignatureAddDialog extends AlertDialog implements ContentView {
 

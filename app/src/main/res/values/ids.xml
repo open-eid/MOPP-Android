@@ -73,6 +73,7 @@
     <item type="id" name="mainSettingsAccessToTimeStampingService" />
 
     <!-- Main About -->
+    <item type="id" name="mainAboutListLayout" />
     <item type="id" name="mainAboutList" />
     <item type="id" name="mainAboutRiaDigiDocVersionTitle" />
     <item type="id" name="mainAboutComponentName" />
@@ -113,6 +114,7 @@
 
     <!-- Signature List -->
     <item type="id" name="signatureListScreen" />
+    <item type="id" name="signatureListLayout" />
     <item type="id" name="signatureList" />
     <item type="id" name="signatureListItemName" />
     <item type="id" name="signatureListItemRemoveButton" />

@@ -6,7 +6,6 @@ import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ViewUtil {
@@ -43,9 +42,13 @@ public class ViewUtil {
 
     public static void moveView(View view) {
         if (view != null) {
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.setMargins(layoutParams.leftMargin, -100, layoutParams.rightMargin, layoutParams.bottomMargin);
-            view.setLayoutParams(layoutParams);
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+
+            if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) layoutParams;
+                marginLayoutParams.setMargins(marginLayoutParams.leftMargin, -100, marginLayoutParams.rightMargin, marginLayoutParams.bottomMargin);
+                view.setLayoutParams(layoutParams);
+            }
         }
     }
 }

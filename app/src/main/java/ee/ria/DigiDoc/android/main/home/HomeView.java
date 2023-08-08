@@ -96,7 +96,7 @@ public final class HomeView extends LinearLayout implements ContentView, MviView
                 HomeViewModel.class);
         viewModel.eidScreenId(eidScreenId);
 
-        addInvisibleElement(context, navigationContainerView);
+        ContentView.addInvisibleElement(getContext(), navigationContainerView);
 
         View lastElementView = findViewById(R.id.lastInvisibleElement);
         moveView(lastElementView);

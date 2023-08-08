@@ -97,7 +97,7 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
         View saveDiagnosticsButton = findViewById(R.id.configurationSaveButton);
         navigator = Application.component(context).navigator();
 
-        addInvisibleElement(getContext(), this);
+        ContentView.addInvisibleElement(getContext(), this);
 
         diagnosticsRestartConfirmationDialog = new ConfirmationDialog(navigator.activity(),
                 R.string.main_diagnostics_restart_message, R.id.mainDiagnosticsRestartConfirmationDialog);

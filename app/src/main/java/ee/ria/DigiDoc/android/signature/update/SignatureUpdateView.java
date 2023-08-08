@@ -3,9 +3,9 @@ package ee.ria.DigiDoc.android.signature.update;
 import static android.util.TypedValue.COMPLEX_UNIT_SP;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
-
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
-import static ee.ria.DigiDoc.android.utils.ViewUtil.moveView;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 import android.annotation.SuppressLint;
@@ -16,7 +16,6 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -63,9 +62,6 @@ import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
-
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements ContentView, MviView<Intent, ViewState> {
@@ -206,10 +202,12 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
 
         setActionButtonsTextSize();
 
-        addInvisibleElement(getContext(), this);
+        ContentView.addInvisibleElement(getContext(), this);
 
         View lastElementView = findViewById(R.id.lastInvisibleElement);
-        moveView(lastElementView);
+        lastElementView.setVisibility(VISIBLE);
+
+        ContentView.addInvisibleElementScrollListener(listView, lastElementView);
     }
 
     @Override
@@ -684,6 +682,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         isTitleViewFocused = false;
         SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
         SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
+        ContentView.removeInvisibleElementScrollListener(listView);
         super.onDetachedFromWindow();
     }
 

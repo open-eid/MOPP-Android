@@ -29,7 +29,7 @@ public final class SignatureCreateView extends FrameLayout implements ContentVie
                 .viewModel(screenId, SignatureCreateViewModel.class);
         inflate(context, R.layout.signature_create, this);
 
-        addInvisibleElement(getContext(), this);
+        ContentView.addInvisibleElement(getContext(), this);
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {

@@ -79,7 +79,7 @@ public final class CertificateDetailView extends CoordinatorLayout implements Co
 
         setData(certificate);
 
-        addInvisibleElement(context, this);
+        ContentView.addInvisibleElement(context, this);
     }
 
 

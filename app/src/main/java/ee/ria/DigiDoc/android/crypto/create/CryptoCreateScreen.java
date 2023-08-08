@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import static android.view.View.GONE;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
@@ -7,7 +8,6 @@ import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.putFile;
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
-import static ee.ria.DigiDoc.android.utils.ViewUtil.moveView;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 import android.content.Context;
@@ -295,12 +295,12 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
             sivaConfirmationDialog.dismiss();
         }
 
-        encryptButton.setVisibility(state.encryptButtonVisible() ? View.VISIBLE : View.GONE);
-        decryptButton.setVisibility(state.decryptButtonVisible() ? View.VISIBLE : View.GONE);
-        sendButton.setVisibility(state.sendButtonVisible() ? View.VISIBLE : View.GONE);
+        encryptButton.setVisibility(state.encryptButtonVisible() ? View.VISIBLE : GONE);
+        decryptButton.setVisibility(state.decryptButtonVisible() ? View.VISIBLE : GONE);
+        sendButton.setVisibility(state.sendButtonVisible() ? View.VISIBLE : GONE);
         buttonSpaceView.setVisibility(state.sendButtonVisible() &&
                 (state.encryptButtonVisible() || state.decryptButtonVisible())
-                ? View.VISIBLE : View.GONE);
+                ? View.VISIBLE : GONE);
 
         decryptionIdCardDataResponse = state.decryptionIdCardDataResponse();
         boolean decryptionPin1Locked = false;
@@ -364,8 +364,8 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
     }
 
     private void setActivity(boolean activity) {
-        activityOverlayView.setVisibility(activity ? View.VISIBLE : View.GONE);
-        activityIndicatorView.setVisibility(activity ? View.VISIBLE : View.GONE);
+        activityOverlayView.setVisibility(activity ? View.VISIBLE : GONE);
+        activityIndicatorView.setVisibility(activity ? View.VISIBLE : GONE);
         encryptButton.setEnabled(!activity);
         decryptButton.setEnabled(!activity);
         sendButton.setEnabled(!activity);
@@ -422,10 +422,11 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         disposables.add(viewModel.viewStates().subscribe(this::render));
         viewModel.process(intents());
 
-        addInvisibleElement(getApplicationContext(), view);
+        ContentView.addInvisibleElement(getApplicationContext(), view);
 
         View lastElementView = view.findViewById(R.id.lastInvisibleElement);
-        moveView(lastElementView);
+
+        ContentView.addInvisibleElementScrollListener(listView, lastElementView);
 
         return view;
     }
@@ -435,6 +436,7 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         decryptDialog.dismiss();
         errorDialog.dismiss();
         sivaConfirmationDialog.dismiss();
+        ContentView.removeInvisibleElementScrollListener(listView);
         disposables.detach();
         super.onDestroyView(view);
     }

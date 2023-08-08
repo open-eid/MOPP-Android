@@ -76,7 +76,7 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
             });
         }
 
-        addInvisibleElement(getContext(), this);
+        ContentView.addInvisibleElement(getContext(), this);
     }
 
     private TextView getToolbarViewTitle() {

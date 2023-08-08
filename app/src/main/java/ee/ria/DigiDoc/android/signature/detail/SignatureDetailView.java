@@ -68,7 +68,7 @@ public final class SignatureDetailView extends CoordinatorLayout implements Cont
 
         setData(signature, signedContainer);
 
-        addInvisibleElement(context, this);
+        ContentView.addInvisibleElement(context, this);
     }
 
     private String getContainerMimeType(SignedContainer signedContainer) {

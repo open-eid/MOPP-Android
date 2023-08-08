@@ -80,6 +80,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
     private Toolbar toolbarView;
     private SearchView searchView;
     private EditText searchViewInnerText;
+    private RecyclerView listView;
     private CryptoCreateAdapter adapter;
     private View doneButton;
     private View activityOverlayView;
@@ -330,7 +331,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
 
         searchView.setSubmitButtonEnabled(true);
         searchView.setEnabled(true);
-        RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
+        listView = view.findViewById(R.id.cryptoRecipientsList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());
         listView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
@@ -338,10 +339,11 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
 
-        addInvisibleElement(getApplicationContext(), doneButton);
+        ContentView.addInvisibleElement(getApplicationContext(), view);
 
         View lastElementView = view.findViewById(R.id.lastInvisibleElement);
-        moveView(lastElementView);
+
+        ContentView.addInvisibleElementScrollListener(listView, lastElementView);
 
         return view;
     }
@@ -375,6 +377,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
         disposables.detach();
         navigator.removeBackButtonClickListener(this);
         searchView.setOnCloseListener(null);
+        ContentView.removeInvisibleElementScrollListener(listView);
         super.onDetach(view);
     }
 
