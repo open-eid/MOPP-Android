@@ -2,15 +2,11 @@ apply plugin: 'com.android.library'
 
 android {
     namespace 'ee.ria.DigiDoc.crypto'
-    compileSdkVersion project.compileSdkVersion
+    compileSdk project.compileSdkVersion
 
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
-    }
-
-    lintOptions {
-        lintConfig file('../lint.xml')
     }
 
     compileOptions {
@@ -20,6 +16,14 @@ android {
 
     testOptions {
         unitTests.returnDefaultValues = true
+    }
+
+    lint {
+        lintConfig file('../lint.xml')
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
