@@ -34,7 +34,7 @@ ext {
     targetSdkVersion = 33
 
     androidxVersion = '1.5.0'
-    androidxAppCompatVersion = '1.5.1'
+    androidxAppCompatVersion = '1.6.1'
     androidxLifecycleVersion = '2.5.1'
     androidMaterialVersion = '1.7.0'
     androidxRecyclerviewVersion = '1.2.1'
