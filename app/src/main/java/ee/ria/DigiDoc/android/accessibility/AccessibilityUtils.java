@@ -142,6 +142,11 @@ public class AccessibilityUtils {
         return configuration.fontScale > 1;
     }
 
+    public static boolean isSmallFontEnabled(Resources resources) {
+        Configuration configuration = resources.getConfiguration();
+        return configuration.fontScale < 1;
+    }
+
     private static String combineMessages(CharSequence... messages) {
         StringBuilder combinedMessage = new StringBuilder();
         for (CharSequence message : messages) {

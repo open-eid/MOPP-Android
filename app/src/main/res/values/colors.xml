@@ -7,7 +7,7 @@
     <color name="error">#981E32</color>
     <color name="warning">#FFEABD</color>
     <color name="warningText">#DDCC00</color>
-    <color name="success">#8CC368</color>
+    <color name="success">#577F34</color>
     <color name="bottomNavigation">#023664</color>
     <color name="windowBackground">@color/material_color_white</color>
     <color name="activityOverlayBackground">#66ffffff</color>

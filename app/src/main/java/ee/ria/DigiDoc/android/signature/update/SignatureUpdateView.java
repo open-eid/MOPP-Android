@@ -3,7 +3,10 @@ package ee.ria.DigiDoc.android.signature.update;
 import static android.util.TypedValue.COMPLEX_UNIT_SP;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
+import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isSmallFontEnabled;
 import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDisplayMetricsDpToInt;
@@ -63,9 +66,6 @@ import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
-
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
@@ -218,19 +218,19 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         signatureAddButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
         sendButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
-        mobileIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
-        smartIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
+        mobileIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f);
+        smartIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f);
 
-        if (isLargeFontEnabled(getResources())) {
+        if (isLargeFontEnabled(getResources()) || isSmallFontEnabled(getResources())) {
             signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
             sendButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
-            mobileIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
-            smartIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
+            mobileIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 20, 1, COMPLEX_UNIT_SP);
+            smartIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 20, 1, COMPLEX_UNIT_SP);
         } else {
             signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
             sendButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
-            mobileIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
-            smartIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
+            mobileIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f);
+            smartIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.0f);
         }
     }
 
