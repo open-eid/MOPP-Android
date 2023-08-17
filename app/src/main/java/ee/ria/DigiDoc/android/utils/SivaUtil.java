@@ -26,14 +26,14 @@ public class SivaUtil {
 
     public static Observable<Boolean> isSivaConfirmationNeeded(ImmutableList<FileStream> files, Context context) throws IllegalStateException {
         return Observable.fromCallable(() -> {
-            for (FileStream file : files) {
-                String extension = getFileExtension(FilenameUtils.getName(file.displayName())).toLowerCase(Locale.US);
-                if (SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension) || ("pdf".equals(extension) &&
-                        SignedContainer.isSignedPDFFile(file.source(), context, file.displayName()))) {
-                    return true;
-                }
+            if (files.size() != 1) {
+                return false;
             }
-            return false;
+
+            FileStream fileStream = files.get(0);
+            String extension = getFileExtension(FilenameUtils.getName(fileStream.displayName())).toLowerCase(Locale.US);
+            return SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension) || ("pdf".equals(extension) &&
+                    SignedContainer.isSignedPDFFile(fileStream.source(), context, fileStream.displayName()));
         });
     }
 
