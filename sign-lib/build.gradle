@@ -5,16 +5,12 @@ apply plugin: LibdigidocppPlugin
 
 android {
     namespace 'ee.ria.DigiDoc.sign'
-    compileSdkVersion project.compileSdkVersion
+    compileSdk project.compileSdkVersion
 
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-    }
-
-    lintOptions {
-        lintConfig file('../lint.xml')
     }
 
     testOptions {
@@ -24,6 +20,14 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+
+    lint {
+        lintConfig file('../lint.xml')
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
