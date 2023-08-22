@@ -168,6 +168,7 @@
     <string name="signature_update_signature_add_method_mobile_id">Mobile-ID</string>
     <string name="signature_update_signature_add_method_smart_id">Smart-ID</string>
     <string name="signature_update_signature_add_method_id_card">ID-card</string>
+    <string name="signature_update_signature_add_method_nfc">NFC</string>
     <string name="signature_update_signature_add_positive_button">SIGN</string>
     <string name="signature_update_signature_add_success">SIGNATURE ADDED</string>
     <string name="signature_update_signature_add_error">Something went wrong</string>
@@ -268,6 +269,10 @@
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 blocked. Go to My eID to unblock it.</string>
 
     <string name="id_card_sign_pin_invalid_length">%1$s code must be at least %2$s digits long</string>
+
+    <string name="signature_update_nfc_message">Enter your CAN number and PIN 2 code to sign with ID-Card using NFC</string>
+    <string name="signature_update_nfc_can">CAN code on card</string>
+    <string name="signature_update_nfc_pin2">PIN 2 code</string>
 
     <!-- Signature Details -->
     <string name="signature_error_details_title">Warnings</string>
@@ -627,4 +632,5 @@
     <string name="eid_home_certificate_data_valid_accessibility">Certificate is valid until </string>
     <string name="signature_update_id_card_sign_pin2_invalid_accessibility">Wrong pin2. You have %1$d attempts left.</string>
     <string name="signature_update_id_card_sign_pin2_invalid_final_accessibility">Wrong pin2. You have 1 attempt left until your pin2 is blocked.</string>
+    <string name="signature_update_signature_selected_method_nfc">Signing option NFC, tab %1$d of %2$d</string>
 </resources>

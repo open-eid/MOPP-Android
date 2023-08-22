@@ -169,6 +169,7 @@
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>
     <string name="signature_update_signature_add_method_smart_id">Smart-ID</string>
     <string name="signature_update_signature_add_method_id_card">ID-kaart</string>
+    <string name="signature_update_signature_add_method_nfc">NFC</string>
     <string name="signature_update_signature_add_positive_button">ALLKIRJASTA</string>
     <string name="signature_update_signature_add_success">ALLKIRI LISATUD</string>
     <string name="signature_update_signature_add_error">Midagi läks valesti</string>
@@ -268,6 +269,10 @@
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 on lukus. Mine Minu eID, et avada.</string>
 
     <string name="id_card_sign_pin_invalid_length">%1$s-kood peab olema vähemalt %2$s-kohaline</string>
+
+    <string name="signature_update_nfc_message">Enter your CAN number and PIN 2 code to sign with ID-Card using NFC</string>
+    <string name="signature_update_nfc_can">CAN code on card</string>
+    <string name="signature_update_nfc_pin2">PIN 2 code</string>
 
     <!-- Signature Details -->
     <string name="signature_error_details_title">Hoiatused</string>

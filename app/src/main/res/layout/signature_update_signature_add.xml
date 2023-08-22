@@ -56,6 +56,15 @@
                     android:maxLines="1"
                     android:text="@string/signature_update_signature_add_method_id_card" />
 
+
+                <RadioButton
+                    android:id="@id/signatureUpdateSignatureAddMethodNFC"
+                    style="@style/Widget.Application.SignatureAddMethod"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:text="@string/signature_update_signature_add_method_nfc" />
             </RadioGroup>
 
 
@@ -72,6 +81,12 @@
 
             <ee.ria.DigiDoc.android.signature.update.idcard.IdCardView
                 android:id="@id/signatureUpdateIdCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <ee.ria.DigiDoc.android.signature.update.nfc.NFCView
+                android:id="@id/signatureUpdateNFC"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />

@@ -630,6 +630,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             return getResources().getString(R.string.signature_update_signature_add_method_smart_id);
         } else if (method == R.id.signatureUpdateSignatureAddMethodIdCard) {
             return getResources().getString(R.string.signature_update_signature_add_method_id_card);
+        } else if (method == R.id.signatureUpdateSignatureAddMethodNFC) {
+            return getResources().getString(R.string.signature_update_signature_add_method_nfc);
         }
         return null;
     }

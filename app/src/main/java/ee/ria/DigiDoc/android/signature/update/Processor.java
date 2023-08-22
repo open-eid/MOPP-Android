@@ -55,6 +55,7 @@ import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartid.service.SmartSignService;
+import ee.ria.DigiDoc.nfc.service.NFCSignService;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
@@ -505,6 +506,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 return new android.content.Intent(navigator.activity(), MobileSignService.class);
             } else if (method == R.id.signatureUpdateSignatureAddMethodSmartId) {
                 return new android.content.Intent(navigator.activity(), SmartSignService.class);
+            } else if (method == R.id.signatureUpdateSignatureAddMethodNFC) {
+                return new android.content.Intent(navigator.activity(), NFCSignService.class);
             }
         }
         return null;

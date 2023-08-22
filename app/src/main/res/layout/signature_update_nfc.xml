@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@id/signatureUpdateNFCMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/signature_update_nfc_message" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@id/signatureUpdateNFCCANLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="20dp"
+            android:minHeight="@dimen/material_baseline_grid_6x"
+            android:text="@string/signature_update_nfc_can" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@id/signatureUpdateNFCCANLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:hint="@string/signature_update_nfc_can"
+            app:hintEnabled="false"
+            app:errorEnabled="true"
+            app:expandedHintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@id/signatureUpdateNFCCAN"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:digits="0123456789"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:accessibilityTraversalAfter="@id/signatureUpdateNFCCANText"
+                android:minHeight="@dimen/material_baseline_grid_6x"
+                android:background="@drawable/bottom_border_background"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/signatureUpdateNFCPIN2Label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="20dp"
+            android:minHeight="@dimen/material_baseline_grid_6x"
+            android:text="@string/signature_update_nfc_pin2" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@id/signatureUpdateNFCPIN2Layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:hint="@string/signature_update_nfc_pin2"
+            app:hintEnabled="false"
+            app:errorEnabled="true"
+            app:expandedHintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@id/signatureUpdateNFCPIN2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:accessibilityTraversalAfter="@id/signatureUpdateNFCPIN2Text"
+                android:background="@drawable/bottom_border_background"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:maxLines="1"
+                android:minHeight="@dimen/material_baseline_grid_6x"
+                android:password="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+</ScrollView>

@@ -258,6 +258,7 @@
     <item type="id" name="signatureUpdateSignatureAddMethodMobileId" />
     <item type="id" name="signatureUpdateSignatureAddMethodSmartId" />
     <item type="id" name="signatureUpdateSignatureAddMethodIdCard" />
+    <item type="id" name="signatureUpdateSignatureAddMethodNFC" />
 
     <item type="id" name="signatureUpdateMobileId" />
     <item type="id" name="signatureUpdateMobileIdPhoneNoText" />
@@ -294,6 +295,17 @@
     <item type="id" name="signatureUpdateIdCardSignPin2Error" />
     <item type="id" name="signatureUpdateIdCardCancelButton" />
     <item type="id" name="signatureUpdateIdCardSignButton" />
+
+    <item type="id" name="signatureUpdateNFC" />
+    <item type="id" name="signatureUpdateNFCMessage" />
+    <item type="id" name="signatureUpdateNFCCAN" />
+    <item type="id" name="signatureUpdateNFCCANLayout" />
+    <item type="id" name="signatureUpdateNFCCANLabel" />
+    <item type="id" name="signatureUpdateNFCCANText" />
+    <item type="id" name="signatureUpdateNFCPIN2" />
+    <item type="id" name="signatureUpdateNFCPIN2Layout" />
+    <item type="id" name="signatureUpdateNFCPIN2Label" />
+    <item type="id" name="signatureUpdateNFCPIN2Text" />
 
     <!-- Signature Add -->
     <item type="id" name="signatureAdd" />

@@ -170,6 +170,7 @@
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>
     <string name="signature_update_signature_add_method_smart_id">Smart-ID</string>
     <string name="signature_update_signature_add_method_id_card">ID-карта</string>
+    <string name="signature_update_signature_add_method_nfc">NFC</string>
     <string name="signature_update_signature_add_positive_button">ПОДПИСАТЬ</string>
     <string name="signature_update_signature_add_success">ПОДПИСЬ ДОБАВЛЕНА</string>
     <string name="signature_update_signature_add_error">Что-то пошло не так</string>
@@ -270,6 +271,10 @@
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 заблокирован. Зайдите в Мой eID, чтобы разблокировать его.</string>
 
     <string name="id_card_sign_pin_invalid_length">%1$s-код должен быть не менее %2$s символов</string>
+
+    <string name="signature_update_nfc_message">Enter your CAN number and PIN 2 code to sign with ID-Card using NFC</string>
+    <string name="signature_update_nfc_can">CAN code on card</string>
+    <string name="signature_update_nfc_pin2">PIN 2 code</string>
 
     <!-- Signature Details -->
     <string name="signature_error_details_title">Предупреждения</string>
