@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/signature_update_id_card_sign_pin2"
-                android:minHeight="@dimen/material_baseline_grid_6x"
+                android:minHeight="@dimen/material_baseline_grid_2x"
                 android:importantForAccessibility="no"
                 android:labelFor="@id/signatureUpdateIdCardSignPin2" />
         </LinearLayout>
@@ -72,7 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:minHeight="@dimen/material_baseline_grid_6x"
+            android:minHeight="@dimen/material_baseline_grid_2x"
             app:errorEnabled="true"
             app:expandedHintEnabled="false">
 
@@ -80,12 +80,10 @@
                 android:id="@id/signatureUpdateIdCardSignPin2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 android:inputType="numberPassword"
-                android:digits="0123456789"
-                android:imeOptions="actionDone"
-                android:maxLines="1"
                 android:maxLength="12"
-                android:minHeight="@dimen/material_baseline_grid_6x" />
+                android:minHeight="@dimen/material_baseline_grid_4x" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -98,6 +96,33 @@
             android:text="@string/signature_update_id_card_sign_pin2_invalid"
             android:contentDescription="@string/signature_update_id_card_sign_pin2_invalid_accessibility"
             android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/signatureUpdateIdCardCancelButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/cancel_button" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/signatureUpdateIdCardSignButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/signature_update_signature_add_positive_button" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -3,6 +3,8 @@ package ee.ria.DigiDoc.android.signature.update;
 import static android.util.TypedValue.COMPLEX_UNIT_SP;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
 import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
@@ -21,6 +23,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
@@ -63,9 +66,6 @@ import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
-
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
@@ -212,6 +212,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         super.onConfigurationChanged(newConfig);
 
         setActionButtonsTextSize();
+
+        signatureAddDialog.setButtonsBasedOnOrientation(newConfig.orientation);
     }
 
     private void setActionButtonsTextSize() {
