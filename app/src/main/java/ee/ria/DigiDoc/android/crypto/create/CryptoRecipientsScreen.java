@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -86,6 +87,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
     private View activityOverlayView;
     private View activityIndicatorView;
 
+    private TextWatcher searchViewTextWatcher;
+
     private String submittedQuery = "";
     private ImmutableList<Certificate> recipients = ImmutableList.of();
 
@@ -122,8 +125,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
                 backButtonClicksSubject.map(ignored -> Intent.RecipientsSearchIntent.clear()),
                 clicks(searchView)
                         .map(ignored -> StringUtils.trim(searchView.getQuery().toString()))
-                        .filter(trimmedQuery -> (trimmedQuery != null &&
-                                !trimmedQuery.isEmpty()) && !submittedQuery.equals(trimmedQuery))
+                        .filter(trimmedQuery -> trimmedQuery != null && !submittedQuery.equals(trimmedQuery))
                         .map(query -> Intent.RecipientsSearchIntent.search(
                                 setSearchQuery(query))));
     }
@@ -161,7 +163,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
         adapter.dataForRecipients(state.recipientsSearchState(), state.recipientsSearchResult(), state.recipientsSearchError(),
                 recipients);
         if (doneButton != null) {
-            doneButton.setEnabled(!recipients.isEmpty());
+            doneButton.setVisibility(recipients.isEmpty() ? GONE : VISIBLE);
             if (getApplicationContext() != null) {
                 doneButton.setBackgroundColor(recipients.isEmpty() ? Color.GRAY :
                         ContextCompat.getColor(getApplicationContext(), R.color.bottomNavigation));
@@ -287,6 +289,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
             removeDefaultSearchButton(searchView);
 
             searchViewInnerText = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
+            searchViewTextWatcher = ee.ria.DigiDoc.android.utils.TextUtil.addTextWatcher(searchViewInnerText);
+            searchViewInnerText.setImeOptions(EditorInfo.IME_ACTION_DONE);
             searchViewInnerText.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
@@ -310,19 +314,20 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
                             public void onTextChanged(CharSequence s, int start, int before, int count) {
                                 if (s.length() == 0) {
                                     searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
+                                    searchViewInnerText.setSingleLine(false);
+                                    setSearchQuery("");
+                                    searchView.performClick();
                                 } else {
-                                    searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 50);
-                                    // Validate personal codes only. Allow company registry numbers and names
-                                    if (searchViewInnerText.getText() != null &&
-                                            searchViewInnerText.getText().length() >= MAXIMUM_PERSONAL_CODE_LENGTH &&
-                                            StringUtils.isNumeric(searchViewInnerText.getText())) {
-                                        PersonalCodeValidator.validatePersonalCode(searchViewInnerText);
-                                    }
+                                    searchViewInnerText.setSingleLine(true);
                                 }
                             }
 
                             @Override
-                            public void afterTextChanged(Editable s) {}
+                            public void afterTextChanged(Editable s) {
+                                if (s.length() == 1) {
+                                    searchViewInnerText.setSelection(searchViewInnerText.getText().length());
+                                }
+                            }
                         });
                     }
                 }
@@ -378,6 +383,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
         navigator.removeBackButtonClickListener(this);
         searchView.setOnCloseListener(null);
         ContentView.removeInvisibleElementScrollListener(listView);
+        ee.ria.DigiDoc.android.utils.TextUtil.removeTextWatcher(searchViewInnerText,searchViewTextWatcher);
         super.onDetach(view);
     }
 

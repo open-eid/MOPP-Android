@@ -243,7 +243,6 @@
     <string name="signature_update_smart_id_select_device">Для проставления подписи подтвердите устройство в приложении Smart-ID.</string>
     <string name="signature_update_smart_id_status_document_unusable">Не удалось выполнить операцию Smart-ID. Пожалуйста, проверьте приложение Smart-ID или свяжитесь со службой поддержки Smart-ID.</string>
     <string name="signature_update_smart_id_status_wrong_vc">Ошибка: выбран неправильный контрольный код</string>
-    <string name="signature_update_smart_id_required_interaction_not_supported_by_app">Не удалось подписать контейнер. Для подписания с помощью Smart-ID в программе DigiDoc4 клиент нужно обновить приложение Smart-ID.</string>
     <string name="signature_update_smart_id_error_message_not_qualified">Для проставления подписи в мобильном приложении RIA DigiDoc, ваш Smart-ID должен соответствовать уровню "высокий".</string>
     <string name="signature_update_smart_id_error_message_old_api">Мобильное приложение RIA DigiDoc нуждается в обновлении. Пожалуйста, установите новую версию из магазина мобильных приложений. Дополнительную информацию можно получить по телефону (+372) 666 888</string>
     <string name="signature_update_smart_id_error_message_under_maintenance">Технический сбой услуги Smart-ID. Пожалуйста, попробуйте позже.</string>
@@ -325,6 +324,7 @@
 
     <string name="crypto_recipients_title">Добавить получателей</string>
     <string name="crypto_recipients_search">Введите личный код, код компании или регистра</string>
+    <string name="crypto_recipients_search_result_invalid_personal_code">Личный код недействителен!</string>
     <string name="crypto_recipients_search_result_empty">У человека или компании нет действующего сертификата.\nДля шифрования необходимо иметь действующий сертификат.\nЕсли у вас возникнут вопросы, пожалуйста, обратитесь на id.ee.</string>
     <string name="crypto_recipients_add_all">ДОБАВИТЬ ВСЕ</string>
     <string name="crypto_recipients_add_all_accessibility">Добавить все</string>

@@ -68,7 +68,7 @@ final class SignatureUpdateAdapter extends
     final Subject<Signature> signatureRemoveClicksSubject = PublishSubject.create();
 
     private final ImmutableList<String> ASICS_TIMESTAMP_CONTAINERS = ImmutableList.of("asics", "scs");
-    private final ImmutableList<String> NO_REMOVE_SIGNATURE_BUTTON_FILE_EXTENSIONS = ImmutableList.of("ddoc", "asics", "scs", "pdf");
+    private final ImmutableList<String> NO_REMOVE_SIGNATURE_BUTTON_FILE_EXTENSIONS = ImmutableList.of("adoc", "ddoc", "asics", "scs", "pdf");
 
     private ImmutableList<Item> items = ImmutableList.of();
 
@@ -361,7 +361,7 @@ final class SignatureUpdateAdapter extends
         @Override
         void bind(SignatureUpdateAdapter adapter, NameItem item) {
             if (item.name().startsWith(".")) {
-                nameView.setText("newFile" + FileUtil.sanitizeString(item.name(), ""));
+                nameView.setText(FileUtil.DEFAULT_FILENAME + FileUtil.sanitizeString(item.name(), ""));
             } else {
                 nameView.setText(FileUtil.sanitizeString(item.name(), ""));
             }

@@ -95,6 +95,7 @@ public class UpdateLibdigidocppTask extends DefaultTask {
         if (generateJar.getAndSet(false) && getProject().getName().equals("common-lib")) {
             log("Generating %s from %s", JAR, zipFile);
             File sourceDir = new File(cacheDir, "include");
+            keepFolder(sourceDir, "ee");
             File jarFile = new File(cacheDir, JAR);
             compile(sourceDir);
             jar(sourceDir, jarFile);
@@ -144,6 +145,18 @@ public class UpdateLibdigidocppTask extends DefaultTask {
 
     private void log(String message, Object... parameters) {
         getLogger().lifecycle(String.format(message, parameters));
+    }
+
+    private static void keepFolder(File folder, String keepFolderName) throws IOException {
+        File[] files = folder.listFiles();
+
+        if (files != null && files.length > 0) {
+            for (File file : files) {
+                if (file.isDirectory() && !file.getName().equals(keepFolderName)) {
+                    delete(file);
+                }
+            }
+        }
     }
 
     private static void delete(File file) throws IOException {

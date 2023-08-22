@@ -16,10 +16,10 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.textview.MaterialTextView;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -30,13 +30,13 @@ import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodePartOfPersonalCodeError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeRepeatMismatchError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeSameAsCurrentError;
 import ee.ria.DigiDoc.android.eid.CodeUpdateError.CodeTooEasyError;
-import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import io.reactivex.rxjava3.core.Observable;
 
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static ee.ria.DigiDoc.android.utils.ErrorMessageUtil.setTextViewError;
 import static ee.ria.DigiDoc.android.utils.InputMethodUtils.hideSoftKeyboard;
 
 public final class CodeUpdateView extends CoordinatorLayout implements ContentView {
@@ -45,10 +45,13 @@ public final class CodeUpdateView extends CoordinatorLayout implements ContentVi
     private final TextView successMessageView;
     private final OrderedListView textView;
     private final TextInputLayout currentLabelView;
+    private final MaterialTextView currentLabelViewText;
     private final EditText currentView;
     private final TextInputLayout newLabelView;
+    private final MaterialTextView newLabelViewText;
     private final EditText newTextView;
     private final TextInputLayout repeatLabelView;
+    private final MaterialTextView repeatLabelViewText;
     private final EditText repeatView;
     private final Button negativeButton;
     private final Button positiveButton;
@@ -73,10 +76,13 @@ public final class CodeUpdateView extends CoordinatorLayout implements ContentVi
         successMessageView = findViewById(R.id.eidHomeCodeUpdateSuccessMessage);
         textView = findViewById(R.id.eidHomeCodeUpdateText);
         currentLabelView = findViewById(R.id.eidHomeCodeUpdateCurrentLabel);
+        currentLabelViewText = findViewById(R.id.eidHomeCodeUpdateCurrentLabelText);
         currentView = findViewById(R.id.eidHomeCodeUpdateCurrent);
         newLabelView = findViewById(R.id.eidHomeUpdateNewLabel);
+        newLabelViewText = findViewById(R.id.eidHomeUpdateNewLabelText);
         newTextView = findViewById(R.id.eidHomeUpdateNewText);
         repeatLabelView = findViewById(R.id.eidHomeCodeUpdateRepeatLabel);
+        repeatLabelViewText = findViewById(R.id.eidHomeCodeUpdateRepeatLabelText);
         repeatView = findViewById(R.id.eidHomeCodeUpdateRepeat);
         negativeButton = findViewById(R.id.eidHomeCodeUpdateNegativeButton);
         positiveButton = findViewById(R.id.eidHomeCodeUpdatePositiveButton);
@@ -98,11 +104,17 @@ public final class CodeUpdateView extends CoordinatorLayout implements ContentVi
         AccessibilityUtils.setContentDescription(successMessageView, getResources().getString(action.successMessageRes()));
         textView.itemsRes(action.textRowsRes());
         currentLabelView.setHint(getResources().getString(action.currentRes()));
+        currentLabelViewText.setText(getResources().getString(action.currentRes()));
         AccessibilityUtils.setContentDescription(currentLabelView, getResources().getString(action.currentRes()));
+        AccessibilityUtils.setContentDescription(currentLabelViewText, getResources().getString(action.currentRes()));
         newLabelView.setHint(getResources().getString(action.newRes(), action.newMinLength()));
+        newLabelViewText.setText(getResources().getString(action.newRes(), action.newMinLength()));
         AccessibilityUtils.setContentDescription(newLabelView, getResources().getString(action.newRes(), action.newMinLength()));
+        AccessibilityUtils.setContentDescription(newLabelViewText, getResources().getString(action.newRes(), action.newMinLength()));
         repeatLabelView.setHint(getResources().getString(action.repeatRes()));
+        repeatLabelViewText.setText(getResources().getString(action.repeatRes()));
         AccessibilityUtils.setContentDescription(repeatLabelView, getResources().getString(action.repeatRes()));
+        AccessibilityUtils.setContentDescription(repeatLabelViewText, getResources().getString(action.repeatRes()));
         positiveButton.setText(action.positiveButtonRes());
         positiveButton.setContentDescription(getResources().getString(action.positiveButtonRes()).toLowerCase());
         activityOverlayView.setVisibility(state.equals(State.ACTIVE) ? VISIBLE : GONE);
@@ -166,65 +178,64 @@ public final class CodeUpdateView extends CoordinatorLayout implements ContentVi
         }
 
         if (response == null) {
-            currentLabelView.setError(null);
-            newLabelView.setError(null);
-            repeatLabelView.setError(null);
+            setTextViewError(getContext(), null, currentLabelViewText, currentLabelView, currentView);
+            setTextViewError(getContext(), null, newLabelViewText, newLabelView, newTextView);
+            setTextViewError(getContext(), null, repeatLabelViewText, repeatLabelView, repeatView);
         } else {
             CodeUpdateError currentError = response.currentError();
             CodeUpdateError newError = response.newError();
             CodeUpdateError repeatError = response.repeatError();
 
             if (currentError == null) {
-                currentLabelView.setError(null);
+                setTextViewError(getContext(), null, currentLabelViewText, currentLabelView, currentView);
             } else if (currentError instanceof CodeMinLengthError) {
-                currentLabelView.setError(
-                        getResources().getString(action.currentMinLengthErrorRes(),
-                                ((CodeMinLengthError) currentError).minLength()));
-                setViewContentDescription(currentLabelView, getResources().getString(
+                setTextViewError(getContext(), getResources().getString(action.currentMinLengthErrorRes(),
+                        ((CodeMinLengthError) currentError).minLength()), currentLabelViewText, currentLabelView, currentView);
+                setViewContentDescription(currentLabelViewText, getResources().getString(
                         action.currentMinLengthErrorRes(), ((CodeMinLengthError) currentError).minLength()));
             } else if (currentError instanceof CodeInvalidError) {
                 int retryCount = ((CodeInvalidError) currentError).retryCount();
                 if (retryCount == 1) {
-                    currentLabelView.setError(getResources().getString(
-                            action.currentInvalidFinalErrorRes()));
-                    setViewContentDescription(currentLabelView, getResources().getString(
+                    setTextViewError(getContext(), getResources().getString(
+                            action.currentInvalidFinalErrorRes()), currentLabelViewText, currentLabelView, currentView);
+                    setViewContentDescription(currentLabelViewText, getResources().getString(
                             action.currentInvalidFinalErrorRes()));
                 } else {
-                    currentLabelView.setError(getResources().getString(
-                            action.currentInvalidErrorRes(), retryCount));
-                    setViewContentDescription(currentLabelView, getResources().getString(
+                    setTextViewError(getContext(), getResources().getString(
+                            action.currentInvalidErrorRes(), retryCount), currentLabelViewText, currentLabelView, currentView);
+                    setViewContentDescription(currentLabelViewText, getResources().getString(
                             action.currentInvalidErrorRes(), retryCount));
                 }
             }
 
             if (newError == null) {
-                 newLabelView.setError(null);
+                setTextViewError(getContext(), null, newLabelViewText, newLabelView, newTextView);
             } else if (newError instanceof CodeMinLengthError) {
-                repeatLabelView.setError(getResources().getString(action.newMinLengthErrorRes(),
-                        ((CodeMinLengthError) newError).minLength()));
-                setViewContentDescription(repeatLabelView, getResources().getString(action.newMinLengthErrorRes(),
+                setTextViewError(getContext(), getResources().getString(action.newMinLengthErrorRes(),
+                        ((CodeMinLengthError) newError).minLength()), repeatLabelViewText, repeatLabelView, repeatView);
+                setViewContentDescription(repeatLabelViewText, getResources().getString(action.newMinLengthErrorRes(),
                         ((CodeMinLengthError) newError).minLength()));
             } else if (newError instanceof CodePartOfPersonalCodeError) {
-                repeatLabelView.setError(getResources().getString(action.newPersonalCodeErrorRes()));
-                setViewContentDescription(repeatLabelView, getResources().getString(action.newPersonalCodeErrorRes()));
+                setTextViewError(getContext(), getResources().getString(action.newPersonalCodeErrorRes()), repeatLabelViewText, repeatLabelView, repeatView);
+                setViewContentDescription(repeatLabelViewText, getResources().getString(action.newPersonalCodeErrorRes()));
             } else if (newError instanceof CodePartOfDateOfBirthError) {
-                repeatLabelView.setError(getResources().getString(action.newDateOfBirthErrorRes()));
-                setViewContentDescription(repeatLabelView, getResources().getString(action.newDateOfBirthErrorRes()));
+                setTextViewError(getContext(), getResources().getString(action.newDateOfBirthErrorRes()), repeatLabelViewText, repeatLabelView, repeatView);
+                setViewContentDescription(repeatLabelViewText, getResources().getString(action.newDateOfBirthErrorRes()));
             } else if (newError instanceof CodeTooEasyError) {
-                repeatLabelView.setError(getResources().getString(action.newTooEasyErrorRes()));
-                setViewContentDescription(repeatLabelView, getResources().getString(action.newTooEasyErrorRes()));
+                setTextViewError(getContext(), getResources().getString(action.newTooEasyErrorRes()), repeatLabelViewText, repeatLabelView, repeatView);
+                setViewContentDescription(repeatLabelViewText, getResources().getString(action.newTooEasyErrorRes()));
             } else if (newError instanceof CodeSameAsCurrentError) {
-                repeatLabelView.setError(getResources().getString(action.newSameAsCurrentErrorRes()));
-                setViewContentDescription(repeatLabelView, getResources().getString(action.newSameAsCurrentErrorRes()));
+                setTextViewError(getContext(), getResources().getString(action.newSameAsCurrentErrorRes()), repeatLabelViewText, repeatLabelView, repeatView);
+                setViewContentDescription(repeatLabelViewText, getResources().getString(action.newSameAsCurrentErrorRes()));
             }
 
             if (repeatError instanceof CodeRepeatMismatchError) {
-                repeatLabelView.setError(getResources().getString(action.repeatMismatchErrorRes()));
-                setViewContentDescription(repeatLabelView, getResources().getString(action.repeatMismatchErrorRes()));
+                setTextViewError(getContext(), getResources().getString(action.repeatMismatchErrorRes()), repeatLabelViewText, repeatLabelView, repeatView);
+                setViewContentDescription(repeatLabelViewText, getResources().getString(action.repeatMismatchErrorRes()));
             }
 
             if (newError != null || repeatError != null) {
-                newLabelView.setError(" ");
+                setTextViewError(getContext(), " ", newLabelViewText, newLabelView, newTextView);
             }
         }
 
@@ -254,9 +265,12 @@ public final class CodeUpdateView extends CoordinatorLayout implements ContentVi
 
     public Observable<CodeUpdateRequest> requests() {
         return clicks(positiveButton)
-                .map(ignored -> CodeUpdateRequest.create(currentView.getText().toString().trim(),
-                        newTextView.getText().toString().trim(),
-                        repeatView.getText().toString().trim()));
+                .map(ignored -> {
+                    hideSoftKeyboard(this);
+                    return CodeUpdateRequest.create(currentView.getText().toString().trim(),
+                            newTextView.getText().toString().trim(),
+                            repeatView.getText().toString().trim());
+                });
     }
 
     @Override
@@ -273,11 +287,8 @@ public final class CodeUpdateView extends CoordinatorLayout implements ContentVi
         super.onDetachedFromWindow();
     }
 
-    private void setViewContentDescription(TextInputLayout textInputLayout, String contentDescription) {
-        AppCompatTextView appCompatTextView = TextUtil.getTextInputLayoutAppCompatTextView(textInputLayout);
-        if (appCompatTextView != null) {
-            AccessibilityUtils.setContentDescription(appCompatTextView, contentDescription);
-        }
+    private void setViewContentDescription(TextView textView, String contentDescription) {
+        AccessibilityUtils.setContentDescription(textView, contentDescription);
     }
 
     private void setToolbarContentDescription(Toolbar toolbarView, String titleContentDescription, String imageContentDescription) {

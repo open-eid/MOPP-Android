@@ -25,6 +25,12 @@ public class PersonalCodeValidator {
         }
     }
 
+    public static boolean validatePersonalCode(String personalCode) {
+        return personalCode == null ||
+                personalCode.length() < MAXIMUM_PERSONAL_CODE_LENGTH ||
+                isPersonalCodeValid(personalCode);
+    }
+
     public static boolean isPersonalCodeValid(String personalCode) {
         return (isPersonalCodeLengthValid(personalCode) && isBirthDateValid(personalCode) &&
                 isChecksumValid(personalCode)) ||

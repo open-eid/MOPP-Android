@@ -5,7 +5,10 @@ import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
+import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDisplayMetricsDpToInt;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 import android.annotation.SuppressLint;
@@ -24,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -67,7 +71,7 @@ import io.reactivex.rxjava3.subjects.Subject;
 public final class SignatureUpdateView extends LinearLayout implements ContentView, MviView<Intent, ViewState> {
 
     private final ImmutableList<String> ASICS_TIMESTAMP_CONTAINERS = ImmutableList.of("asics", "scs");
-    private static final ImmutableSet<String> UNSIGNABLE_CONTAINER_EXTENSIONS = ImmutableSet.<String>builder().add("asics", "scs", "ddoc").build();
+    private static final ImmutableSet<String> UNSIGNABLE_CONTAINER_EXTENSIONS = ImmutableSet.<String>builder().add("adoc", "asics", "scs", "ddoc").build();
 
     private static final String EMPTY_CHALLENGE = "";
 
@@ -215,23 +219,50 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         super.onConfigurationChanged(newConfig);
 
         setActionButtonsTextSize();
+
+        signatureAddDialog.setButtonsBasedOnOrientation(newConfig.orientation);
     }
 
     private void setActionButtonsTextSize() {
-        Configuration configuration = getResources().getConfiguration();
-        float fontScale = configuration.fontScale;
 
         signatureAddButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
         sendButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
+        mobileIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
+        smartIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
 
-        if (fontScale > 1) {
+        if (isLargeFontEnabled(getResources())) {
             signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
             sendButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
+            mobileIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
+            smartIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
         } else {
             signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
             sendButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
+            mobileIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
+            smartIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
         }
     }
+
+    private void setSigningModalSize(View view) {
+        if (isLargeFontEnabled(getResources())) {
+            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) view.getLayoutParams();
+            int marginTop = getDisplayMetricsDpToInt(getResources(), 4);
+            int marginBottom = getDisplayMetricsDpToInt(getResources(), 4);
+            layoutParams.setMargins(layoutParams.leftMargin, marginTop, layoutParams.rightMargin, marginBottom);
+            view.setLayoutParams(layoutParams);
+            int padding = convertPxToDp(4, getContext());
+            view.setPadding(padding, padding, padding, padding);
+        } else {
+            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) view.getLayoutParams();
+            int marginTop = getResources().getDimensionPixelSize(R.dimen.material_dialog_screen_edge_margin_minimum_vertical);
+            int marginBottom = getResources().getDimensionPixelSize(R.dimen.material_dialog_screen_edge_margin_minimum_vertical);
+            int padding = getResources().getDimensionPixelSize(R.dimen.material_card_title_block_padding_horizontal);
+            layoutParams.setMargins(layoutParams.leftMargin, marginTop, layoutParams.rightMargin, marginBottom);
+            view.setLayoutParams(layoutParams);
+            view.setPadding(padding, padding, padding, padding);
+        }
+    }
+
 
     @SuppressWarnings("unchecked")
     @Override
@@ -379,6 +410,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                         ? VISIBLE
                         : GONE);
         if (signatureAddResponse instanceof MobileIdResponse) {
+            setSigningModalSize(mobileIdContainerView);
             MobileIdResponse mobileIdResponse = (MobileIdResponse) signatureAddResponse;
             String mobileIdChallenge = mobileIdResponse.challenge();
             if (mobileIdChallenge != null) {
@@ -429,6 +461,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             smartIdContainerView.setFocusedByDefault(true);
             smartIdContainerView.setFocusable(true);
             smartIdContainerView.setFocusableInTouchMode(true);
+            setSigningModalSize(smartIdContainerView);
 
             if (smartIdProgressBar.getProgress() == 0) {
                 SignatureUpdateProgressBar.startProgressBar(smartIdProgressBar);

@@ -11,20 +11,28 @@
 
 
         <TextView
-            android:id="@+id/signatureUpdateMobileIdMessage"
+            android:id="@id/signatureUpdateMobileIdMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="@string/signature_update_mobile_id_message" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@id/signatureUpdateMobileIdPhoneMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="20dp"
+            android:minHeight="@dimen/material_baseline_grid_6x"
+            android:text="@string/signature_update_mobile_id_phone_no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateMobileIdPhoneNoLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginTop="20dp"
-            android:minHeight="@dimen/material_baseline_grid_6x"
             android:hint="@string/signature_update_mobile_id_phone_no"
+            app:hintEnabled="false"
             app:errorEnabled="true"
             app:expandedHintEnabled="false">
 
@@ -43,14 +51,22 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/signatureUpdateMobileIdPersonalCodeMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="20dp"
+            android:minHeight="@dimen/material_baseline_grid_6x"
+            android:text="@string/signature_update_mobile_id_personal_code" />
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateMobileIdPersonalCodeLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginTop="20dp"
-            android:minHeight="@dimen/material_baseline_grid_6x"
             android:hint="@string/signature_update_mobile_id_personal_code"
+            app:hintEnabled="false"
             app:errorEnabled="true"
             app:expandedHintEnabled="false">
 
@@ -74,6 +90,32 @@
             android:checked="false"
             android:text="@string/signature_update_mobile_id_remember_me" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/signatureUpdateMobileIdCancelSigningButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/cancel_button" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/signatureUpdateMobileIdSignButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/signature_update_signature_add_positive_button" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
