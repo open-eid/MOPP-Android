@@ -255,6 +255,8 @@
     <item type="id" name="signatureUpdateMobileIdPersonalCodeMessage" />
     <item type="id" name="signatureUpdateMobileIdPersonalCode" />
     <item type="id" name="signatureUpdateMobileIdRememberMe" />
+    <item type="id" name="signatureUpdateMobileIdCancelSigningButton" />
+    <item type="id" name="signatureUpdateMobileIdSignButton" />
 
     <item type="id" name="signatureUpdateSmartId" />
     <item type="id" name="signatureUpdateSmartIdCountryText" />
@@ -263,6 +265,8 @@
     <item type="id" name="signatureUpdateSmartIdPersonalCodeLabel" />
     <item type="id" name="signatureUpdateSmartIdPersonalCode" />
     <item type="id" name="signatureUpdateSmartIdRememberMe" />
+    <item type="id" name="signatureUpdateSmartIdCancelSigningButton" />
+    <item type="id" name="signatureUpdateSmartIdSignButton" />
 
     <item type="id" name="signatureUpdateIdCard" />
     <item type="id" name="signatureUpdateIdCardProgressContainer" />
@@ -273,6 +277,8 @@
     <item type="id" name="signatureUpdateIdCardSignPin2" />
     <item type="id" name="signatureUpdateIdCardSignPin2Label" />
     <item type="id" name="signatureUpdateIdCardSignPin2Error" />
+    <item type="id" name="signatureUpdateIdCardCancelButton" />
+    <item type="id" name="signatureUpdateIdCardSignButton" />
 
     <!-- Signature Add -->
     <item type="id" name="signatureAdd" />
