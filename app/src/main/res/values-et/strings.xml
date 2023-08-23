@@ -349,6 +349,7 @@
     <string name="crypto_recipient_add_button_added">LISATUD</string>
 
     <string name="crypto_recipients_title">Adressaatide lisamine</string>
+    <string name="crypto_recipients_search_icon_voice_title">Otsi</string>
     <string name="crypto_recipients_search">Sisesta isikukood, asutus või registrikood</string>
     <string name="crypto_recipients_search_result_invalid_personal_code">Isikukood pole korrektne!</string>
     <string name="crypto_recipients_search_result_empty">Isikul või asutusel puudub kehtiv sertifikaat. \nKrüpteerimiseks on vaja kehtivat sertikaati.\nKüsimuste korral pöördu id.ee.</string>

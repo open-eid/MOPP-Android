@@ -350,6 +350,7 @@
     <string name="crypto_recipient_add_button_added">ADDED</string>
 
     <string name="crypto_recipients_title">Add recipients</string>
+    <string name="crypto_recipients_search_icon_voice_title">Search</string>
     <string name="crypto_recipients_search">Enter personal code, company or registry code</string>
     <string name="crypto_recipients_search_result_invalid_personal_code">Personal code is not valid!</string>
     <string name="crypto_recipients_search_result_empty">Person or company does not own a valid certificate.\nIt is necessary to have a valid certificate for encryption.\nIn case of questions please contact our support via id.ee.</string>

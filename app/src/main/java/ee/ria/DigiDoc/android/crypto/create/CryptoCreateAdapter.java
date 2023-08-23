@@ -285,6 +285,15 @@ final class CryptoCreateAdapter extends
             nameView.setText(FileUtil.sanitizeString(item.name(), ""));
             updateButton.setVisibility(item.updateButtonVisible() ? View.VISIBLE : View.GONE);
             saveButton.setVisibility(isContainerEncryptedOrDecrypted(adapter) ? View.VISIBLE : View.GONE);
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                updateButton.setContentDescription(itemView.getResources()
+                        .getString(R.string.crypto_create_name_update_button)
+                );
+            } else {
+                updateButton.setContentDescription(itemView.getResources()
+                        .getString(R.string.signature_update_name_update_voice_button)
+                );
+            }
             clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
             clicks(saveButton).subscribe(adapter.saveContainerClicksSubject);
         }
@@ -362,8 +371,8 @@ final class CryptoCreateAdapter extends
     static final class DataFileViewHolder extends CreateViewHolder<DataFileItem> {
 
         private final TextView nameView;
-        private final View saveButton;
-        private final View removeButton;
+        private final ImageButton saveButton;
+        private final ImageButton removeButton;
 
         DataFileViewHolder(View itemView) {
             super(itemView);
@@ -387,16 +396,30 @@ final class CryptoCreateAdapter extends
             String fileNameDescription = nameView.getResources().getString(item.saveButtonVisible() ? R.string.file : R.string.crypto_create_data_file);
             nameView.setContentDescription(fileNameDescription + " " + nameView.getText());
 
-            String removeButtonText = removeButton.getResources().getString(R.string.crypto_create_data_file_remove_button);
-            removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                String removeButtonText = removeButton.getResources().getString(R.string.signature_update_document_remove_button);
+                removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
+            } else {
+                removeButton.setContentDescription(
+                        removeButton.getResources()
+                                .getString(R.string.signature_update_document_remove_voice_button)
+                );
+            }
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton)
                     .map(ignored ->
                             ((DataFileItem) adapter.items.get(getBindingAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileRemoveClicksSubject);
 
-            String saveButtonText = saveButton.getResources().getString(R.string.crypto_create_data_file_save_button);
-            saveButton.setContentDescription(saveButtonText + " " + nameView.getText());
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                String saveButtonText = saveButton.getResources().getString(R.string.signature_update_document_save_button);
+                saveButton.setContentDescription(saveButtonText + " " + nameView.getText());
+            } else {
+                saveButton.setContentDescription(
+                        saveButton.getResources()
+                                .getString(R.string.signature_update_document_save_voice_button)
+                );
+            }
             saveButton.setVisibility(item.saveButtonVisible() ? View.VISIBLE: View.GONE);
             clicks(saveButton)
                     .map(ignored ->
@@ -427,7 +450,7 @@ final class CryptoCreateAdapter extends
 
         private final TextView nameView;
         private final TextView infoView;
-        private final View removeButton;
+        private final ImageButton removeButton;
         private final Button addButton;
 
         RecipientViewHolder(View itemView) {
@@ -465,9 +488,15 @@ final class CryptoCreateAdapter extends
                     R.string.crypto_recipient_info, formatter.eidType(item.recipient().type()),
                     formatter.instantAccessibility(item.recipient().notAfter(), true)));
 
-            String removeRecipientDescription = removeButton.getResources().getString(R.string.crypto_recipient_remove_button);
-            removeButton.setContentDescription(removeRecipientDescription + " " +
-                    nameView.getText().toString().toLowerCase());
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                String removeRecipientDescription = removeButton.getResources().getString(R.string.crypto_recipient_remove_button);
+                removeButton.setContentDescription(removeRecipientDescription + " " + nameView.getText().toString().toLowerCase());
+            } else {
+                removeButton.setContentDescription(
+                        removeButton.getResources()
+                                .getString(R.string.signature_update_document_remove_voice_button)
+                );
+            }
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton)
                     .map(ignored ->
