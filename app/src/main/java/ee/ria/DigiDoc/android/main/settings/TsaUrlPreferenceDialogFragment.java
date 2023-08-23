@@ -50,6 +50,8 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
 
                 checkBox.setChecked(TextUtils.isEmpty(tsaUrlPreference.getText()));
 
+                SettingsView.setTsaCertificateViewVisibleValue(!checkBox.isChecked());
+
                 ViewGroup parent = ((ViewGroup) appCompatEditText.getParent());
                 View oldCheckBox = appCompatEditText.findViewById(checkBox.getId());
                 if (oldCheckBox != null) {

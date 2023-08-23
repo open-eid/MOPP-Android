@@ -12,6 +12,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
+import ee.ria.DigiDoc.common.FileUtil;
 
 public final class NameUpdateView extends TextInputLayout {
 
@@ -43,7 +44,7 @@ public final class NameUpdateView extends TextInputLayout {
 
     public void name(String name) {
         if (name.startsWith(".")) {
-            editText.setText(nameWithoutExtension("newFile" + name));
+            editText.setText(nameWithoutExtension(FileUtil.DEFAULT_FILENAME + name));
         } else {
             editText.setText(nameWithoutExtension(name));
         }

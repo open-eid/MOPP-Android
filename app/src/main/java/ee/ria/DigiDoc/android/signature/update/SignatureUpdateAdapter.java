@@ -373,7 +373,7 @@ final class SignatureUpdateAdapter extends
         @Override
         void bind(SignatureUpdateAdapter adapter, NameItem item) {
             if (item.name().startsWith(".")) {
-                nameView.setText("newFile" + FileUtil.sanitizeString(item.name(), ""));
+                nameView.setText(FileUtil.DEFAULT_FILENAME + FileUtil.sanitizeString(item.name(), ""));
             } else {
                 nameView.setText(FileUtil.sanitizeString(item.name(), ""));
             }

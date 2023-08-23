@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.common;
 
+import static ee.ria.DigiDoc.common.CommonConstants.DIR_TSA_CERT;
+
 import android.content.Context;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
@@ -23,6 +25,7 @@ public class FileUtil {
     public static final String RESTRICTED_FILENAME_CHARACTERS_AS_STRING = "@%:^?[]\\'\"”’{}#&`\\\\~«»/´";
     public static final String RTL_CHARACTERS_AS_STRING = "" + '\u200E' + '\u200F' + '\u202E' + '\u202A' + '\u202B';
     public static final String RESTRICTED_FILENAME_CHARACTERS_AND_RTL_CHARACTERS_AS_STRING = RESTRICTED_FILENAME_CHARACTERS_AS_STRING + RTL_CHARACTERS_AS_STRING;
+    public static final String DEFAULT_FILENAME = "newFile";
     private static final String ALLOWED_URL_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_,.:/%;+=@?&!()";
 
     /**
@@ -73,11 +76,16 @@ public class FileUtil {
             return null;
         }
 
-        StringBuilder sb = new StringBuilder(input.length());
+        String trimmed = input.trim();
+        if (trimmed.startsWith(".")) {
+            trimmed = DEFAULT_FILENAME + trimmed;
+        }
 
-        if (!URLUtil.isValidUrl(input) && !isRawUrl(input)) {
-            for (int offset = 0; offset < input.length(); offset++) {
-                char c = input.charAt(offset);
+        StringBuilder sb = new StringBuilder(trimmed.length());
+
+        if (!URLUtil.isValidUrl(trimmed) && !isRawUrl(trimmed)) {
+            for (int offset = 0; offset < trimmed.length(); offset++) {
+                char c = trimmed.charAt(offset);
 
                 if (RESTRICTED_FILENAME_CHARACTERS_AND_RTL_CHARACTERS_AS_STRING.indexOf(c) != -1) {
                     sb.append(replacement);
@@ -85,13 +93,13 @@ public class FileUtil {
                     sb.append(c);
                 }
             }
-        } else if (!isRawUrl(input)) {
-            return normalizeUri(Uri.parse(input)).toString();
+        } else if (!isRawUrl(trimmed)) {
+            return normalizeUri(Uri.parse(trimmed)).toString();
         }
 
         return !sb.toString().equals("") ?
                 FilenameUtils.getName(FilenameUtils.normalize(sb.toString())) :
-                FilenameUtils.normalize(input);
+                FilenameUtils.normalize(trimmed);
     }
 
     public static Uri normalizeUri(Uri uri) {
@@ -179,6 +187,21 @@ public class FileUtil {
 
     public static File getLogsDirectory(Context context) {
         return new File(context.getFilesDir() + "/logs");
+    }
+
+    public static File getTSAFile(Context context, String tsaCertName) {
+        File tsaCertFolder = new File(context.getFilesDir(), DIR_TSA_CERT);
+
+        File[] files = tsaCertFolder.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile() && file.getName().equals(tsaCertName)) {
+                    return file;
+                }
+            }
+        }
+        return null;
     }
 
     private static boolean isRawUrl(String url) {

@@ -65,7 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:minHeight="@dimen/material_baseline_grid_6x"
+                android:minHeight="@dimen/material_baseline_grid_2x"
                 app:errorEnabled="true"
                 app:expandedHintEnabled="false">
 
@@ -73,12 +73,10 @@
                     android:id="@id/cryptoCreateDecryptPin1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
                     android:inputType="numberPassword"
-                    android:digits="0123456789"
-                    android:imeOptions="actionDone"
-                    android:maxLines="1"
                     android:maxLength="12"
-                    android:minHeight="@dimen/material_baseline_grid_6x" />
+                    android:minHeight="@dimen/material_baseline_grid_4x" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

@@ -137,6 +137,66 @@
                 </androidx.appcompat.widget.SwitchCompat>
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@id/mainSettingsTsaCertificateContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="18dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textSize="16sp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:text="@string/main_settings_timestamp_cert_title"
+                    android:layout_weight="2">
+                </TextView>
+
+                <TextView
+                    android:id="@id/mainSettingsTsaCertificateIssuedTo"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textSize="16sp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:text="@string/main_settings_timestamp_cert_issued_to_title"
+                    android:layout_weight="2">
+                </TextView>
+
+                <TextView
+                    android:id="@id/mainSettingsTsaCertificateValidTo"
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textSize="16sp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:text="@string/main_settings_timestamp_cert_valid_to_title"
+                    android:layout_weight="2">
+                </TextView>
+
+                <Button
+                    android:id="@id/mainSettingsTsaCertificateAddCertificateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/main_settings_timestamp_cert_add_certificate_button" />
+
+                <Button
+                    android:id="@id/mainSettingsTsaCertificateShowCertificateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/main_settings_timestamp_cert_show_certificate_button" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>

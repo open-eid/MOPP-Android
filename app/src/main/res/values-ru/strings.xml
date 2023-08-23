@@ -57,6 +57,11 @@
     <string name="main_settings_signature_profile_title">Формат файла по умолчанию</string>
     <string name="main_settings_open_all_filetypes_title">Разрешить приложению открывать все типы файлов (потребуется перезапуск приложения)</string>
     <string name="main_settings_allow_screenshots_title">Разрешить скриншоты (потребуется перезапуск приложения)</string>
+    <string name="main_settings_timestamp_cert_title">SSL сертификат службы отметок времени</string>
+    <string name="main_settings_timestamp_cert_issued_to_title">Выдан: </string>
+    <string name="main_settings_timestamp_cert_valid_to_title">Действительно до: </string>
+    <string name="main_settings_timestamp_cert_add_certificate_button">ДОБАВИТЬ СЕРТИФИКАТ</string>
+    <string name="main_settings_timestamp_cert_show_certificate_button">ПОКАЗАТЬ СЕРТИФИКАТ</string>
 
     <!-- Main About -->
     <string name="main_about_title">Информация</string>
