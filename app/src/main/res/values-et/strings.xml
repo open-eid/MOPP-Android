@@ -56,6 +56,11 @@
     <string name="main_settings_signature_profile_title">Vaikimisi faili tüüp</string>
     <string name="main_settings_open_all_filetypes_title">Luba rakendusel avada kõiki failitüüpe (vajab rakenduse taaskäivitamist)</string>
     <string name="main_settings_allow_screenshots_title">Luba ekraanipildistamine (vajab rakenduse taaskäivitamist)</string>
+    <string name="main_settings_timestamp_cert_title">Ajatempliteenuse SSL sertifikaat</string>
+    <string name="main_settings_timestamp_cert_issued_to_title">Kellele väljastatud: </string>
+    <string name="main_settings_timestamp_cert_valid_to_title">Kehtib kuni: </string>
+    <string name="main_settings_timestamp_cert_add_certificate_button">LISA SERTIFIKAAT</string>
+    <string name="main_settings_timestamp_cert_show_certificate_button">NÄITA SERTIFIKAATI</string>
 
 
     <!-- Main About -->

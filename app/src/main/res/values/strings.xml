@@ -56,6 +56,11 @@
     <string name="main_settings_signature_profile_title">Default file type</string>
     <string name="main_settings_open_all_filetypes_title">Allow app to use all file types (requires app restart)</string>
     <string name="main_settings_allow_screenshots_title">Allow screenshots (requires app restart)</string>
+    <string name="main_settings_timestamp_cert_title">Time-Stamping service SSL certificate</string>
+    <string name="main_settings_timestamp_cert_issued_to_title">Issued to: </string>
+    <string name="main_settings_timestamp_cert_valid_to_title">Valid to: </string>
+    <string name="main_settings_timestamp_cert_add_certificate_button">ADD CERTIFICATE</string>
+    <string name="main_settings_timestamp_cert_show_certificate_button">SHOW CERTIFICATE</string>
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
