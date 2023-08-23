@@ -2,19 +2,24 @@ apply plugin: 'com.android.library'
 
 android {
     namespace 'ee.ria.DigiDoc.mobileid'
-    compileSdkVersion project.compileSdkVersion
+    compileSdk project.compileSdkVersion
 
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
     }
 
-    lintOptions {
-        lintConfig file('../lint.xml')
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+
+    lint {
+        lintConfig file('../lint.xml')
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 

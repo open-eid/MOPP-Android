@@ -24,6 +24,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
@@ -212,6 +213,8 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         super.onConfigurationChanged(newConfig);
 
         setActionButtonsTextSize();
+
+        signatureAddDialog.setButtonsBasedOnOrientation(newConfig.orientation);
     }
 
     private void setActionButtonsTextSize() {
