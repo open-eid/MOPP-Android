@@ -119,13 +119,16 @@
     <string name="signature_update_title_created">Подписание</string>
     <string name="signature_update_title_existing">Проверка контейнера</string>
     <string name="signature_update_name_update_button">Изменить название контейнера</string>
+    <string name="signature_update_name_update_voice_button">Изменить</string>
     <string name="signature_update_name_update_name">Название контейнера</string>
     <string name="signature_update_name_update_error_exists">Контейнер с таким названием уже существует</string>
     <string name="signature_update_name_update_error_invalid">Неверное название контейнера</string>
     <string name="signature_update_documents_title">Файлы контейнера</string>
     <string name="signature_update_documents_add_error_exists">Файл уже существует в контейнере</string>
     <string name="signature_update_document_remove_button">Удалить файл</string>
+    <string name="signature_update_document_remove_voice_button">Удалить</string>
     <string name="signature_update_document_save_button">Сохраните файл</string>
+    <string name="signature_update_document_save_voice_button">Сохраните</string>
     <string name="signature_update_remove_document_confirmation_message">Удалить файл из контейнера?</string>
     <string name="signature_update_remove_last_document_confirmation_message">Вы собираетесь удалить последний файл в контейнере, он удаляется вместе с контейнером.</string>
     <string name="signature_update_cancel_file_removal_button">Отменить удаление файла</string>
