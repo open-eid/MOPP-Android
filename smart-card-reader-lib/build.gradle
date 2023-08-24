@@ -35,7 +35,7 @@ dependencies {
             'libs/androidSCardV1.2.jar' // Identiv
     )
 
-    testImplementation "junit:junit:${junitVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testImplementation "com.google.truth:truth:${truthVersion}"
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
 }

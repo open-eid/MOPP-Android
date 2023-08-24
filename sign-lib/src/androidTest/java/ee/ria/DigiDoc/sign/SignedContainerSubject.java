@@ -63,7 +63,7 @@ public final class SignedContainerSubject extends Subject {
 
     private void hasDataFiles(ImmutableList<DataFile> dataFiles) {
         DataFile dataFile = DataFile.create("text.txt", "text.txt", 3, "application/octet-stream");
-        List<DataFile> filesList = new ArrayList<>(Arrays.asList(dataFile));
+        List<DataFile> filesList = new ArrayList<>(List.of(dataFile));
         List<DataFile> dataFilesList = Collections.unmodifiableList(filesList);
 
         Truth.assertThat(dataFiles)
@@ -82,7 +82,7 @@ public final class SignedContainerSubject extends Subject {
     }
 
     private void hasSignatures(ImmutableList<Signature> signatures) {
-        List<String> signature0Roles = new ArrayList<>(Arrays.asList("Roll"));
+        List<String> signature0Roles = new ArrayList<>(List.of("Roll"));
         Signature signature0 = Signature.create("S0",
                 "MARY ÄNN O'CONNEŽ-ŠUSLIK TESTNUMBER",
                 Instant.parse("2022-03-21T12:03:22Z"),
@@ -134,7 +134,7 @@ public final class SignedContainerSubject extends Subject {
                 "",
                 "");
 
-        List<Signature> signatureList = new ArrayList<>(Arrays.asList(signature0, signature1));
+        List<Signature> signatureList = new ArrayList<>(List.of(signature0, signature1));
 
         Truth.assertThat(signatureList)
                         .hasSize(signatures.size());

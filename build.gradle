@@ -74,7 +74,7 @@ ext {
     ldapSdkVersion = '6.0.7'
     cdoc4jVersion = '1.4'
     slf4jVersion = '1.7.36'
-    junitVersion = '4.13.2'
+    junitVersion = '5.10.0'
     truthVersion = '1.1.3'
     mockitoVersion = '4.11.0'
     jacksonVersion = '2.14.1'

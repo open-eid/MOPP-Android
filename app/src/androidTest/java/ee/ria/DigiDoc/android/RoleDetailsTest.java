@@ -20,7 +20,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import ee.ria.DigiDoc.sign.Signature;
@@ -62,24 +61,12 @@ public class RoleDetailsTest {
     public void signature_role_and_address_data_correct_for_signature_with_role() {
         SignedContainer signedContainer = getSignedContainerFromPath(CONTAINER_FILENAME);
         Signature signature = signedContainer.signatures().get(0);
-        List<String> roles = new ArrayList<>(Arrays.asList("Roll"));
+        List<String> roles = new ArrayList<>(List.of("Roll"));
         assertEquals(roles, signature.roles());
         assertEquals("Linn", signature.city());
         assertEquals("Maakond", signature.state());
         assertEquals("EE", signature.country());
         assertEquals("12345", signature.zip());
-    }
-
-    @Test
-    public void signature_role_and_address_data_not_incorrect_for_signature_with_role() {
-        SignedContainer signedContainer = getSignedContainerFromPath(CONTAINER_FILENAME);
-        Signature signature = signedContainer.signatures().get(0);
-        List<String> roles = new ArrayList<>(Arrays.asList("No role"));
-        assertNotEquals(roles, signature.roles());
-        assertNotEquals("No City", signature.city());
-        assertNotEquals("No State", signature.state());
-        assertNotEquals("No Country", signature.country());
-        assertNotEquals("No 12345", signature.zip());
     }
 
     @Test
@@ -92,18 +79,6 @@ public class RoleDetailsTest {
         assertEquals("", signature.state());
         assertEquals("", signature.country());
         assertEquals("", signature.zip());
-    }
-
-    @Test
-    public void signature_role_and_address_data_not_incorrect_for_signature_without_role() {
-        SignedContainer signedContainer = getSignedContainerFromPath(CONTAINER_FILENAME);
-        Signature signature = signedContainer.signatures().get(1);
-        List<String> roles = new ArrayList<>(Arrays.asList("No role"));
-        assertNotEquals(roles, signature.roles());
-        assertNotEquals("No City", signature.city());
-        assertNotEquals("No State", signature.state());
-        assertNotEquals("No country", signature.country());
-        assertNotEquals("No 12345", signature.zip());
     }
 
     private SignedContainer getSignedContainerFromPath(String name) {

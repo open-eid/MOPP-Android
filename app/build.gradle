@@ -139,7 +139,7 @@ dependencies {
     androidTestImplementation "androidx.test:runner:${androidxTestCoreVersion}"
 
     testAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
-    androidTestImplementation "junit:junit:${junitVersion}"
+    androidTestImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     androidTestImplementation "androidx.test.ext:junit:${androidxTestVersion}"
     androidTestImplementation "androidx.test:rules:${androidxTestRulesVersion}"
 }
