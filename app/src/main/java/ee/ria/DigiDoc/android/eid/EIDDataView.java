@@ -29,6 +29,7 @@ import ee.ria.DigiDoc.idcard.CodeType;
 import io.reactivex.rxjava3.core.Observable;
 
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.setCustomClickAccessibilityFeedBack;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 
 import java.time.LocalDate;
@@ -126,7 +127,7 @@ public final class EIDDataView extends LinearLayout {
                 : R.drawable.ic_icon_accordion_collapsed;
         certificatesTitleView.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, 0, 0, 0);
         tintCompoundDrawables(certificatesTitleView);
-        setCustomClickAccessibilityFeedBack(certificatesTitleView);
+        setCustomClickAccessibilityFeedBack(certificatesTitleView, certificatesContainerView);
 
         certificatesContainerView.setExpanded(certificateContainerExpanded);
 
@@ -177,23 +178,5 @@ public final class EIDDataView extends LinearLayout {
                         .map(ignored ->
                                 CodeUpdateAction.create(CodeType.PUK, CodeUpdateType.UNBLOCK))
         );
-    }
-
-    private void setCustomClickAccessibilityFeedBack(TextView certificatesTitleView) {
-        ViewCompat.setAccessibilityDelegate(certificatesTitleView, new AccessibilityDelegateCompat() {
-            @Override
-            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
-                super.onInitializeAccessibilityNodeInfo(host, info);
-                String message;
-                if (certificatesContainerView.isExpanded()) {
-                    message = "deactivate";
-                } else {
-                    message = "activate";
-                }
-                AccessibilityNodeInfoCompat.AccessibilityActionCompat customClick = new AccessibilityNodeInfoCompat.AccessibilityActionCompat(
-                        AccessibilityNodeInfoCompat.ACTION_CLICK, message);
-                info.addAction(customClick);
-            }
-        });
     }
 }

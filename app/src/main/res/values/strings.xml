@@ -270,6 +270,15 @@
     <string name="id_card_sign_pin_invalid_length">%1$s code must be at least %2$s digits long</string>
 
     <!-- Signature Details -->
+    <string name="signature_error_details_title">Warnings</string>
+    <string name="signature_error_details_invalid_reason">This is an invalid signature or malformed digitally signed file. The signature is not valid.</string>
+    <string name="signature_error_details_reason_weak">The signature is technically correct, but it is based on the currently weak hash algorithm SHA-1, therefore it is not protected against forgery or alteration.</string>
+    <string name="signature_error_details_reason_warning">The signature is valid, but the container has a specific feature. Usually, this feature has arisen accidentally when containers were created. However, as it is not possible to edit a container without invalidating the signature, a warning is displayed.\nAdditional information: https://www.id.ee/en/article/digital-signing-and-electronic-signatures/</string>
+    <string name="signature_error_details_reason_nonqscd">This e-Signature is not equivalent with handwritten signature and therefore can be used only in transactions where Qualified e-Signature is not required.</string>
+    <string name="signature_error_details_reason_unknown">Signature status is displayed \"unknown\" if you don\'t have all validity confirmation service certificates and/or certificate authority certificates installed into your computer.\nAdditional information: https://www.id.ee/en/article/digidoc4-client-error-ocsp-responder-is-not-trusted-no-certificate-for-this-responder-in-local-certstore</string>
+    <string name="signature_error_details_button">TECHNICAL INFORMATION</string>
+    <string name="signature_error_details_button_accessibility">technical information</string>
+
     <string name="signature_details_title">Signature details</string>
     <string name="signer_certificate_issuer_label">Signer\'s Certificate issuer:</string>
     <string name="signers_certificate_label">Signer\'s Certificate:</string>
