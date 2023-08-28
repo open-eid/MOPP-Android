@@ -15,10 +15,7 @@ import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 public abstract class NFCResponse implements SignatureAddResponse {
 
     @Nullable public abstract SessionStatusResponse.ProcessStatus status();
-
-    @Nullable public abstract IdCardDataResponse dataResponse();
-
-    @Nullable public abstract IdCardSignResponse signResponse();
+    @Nullable public abstract String message();
 
     @Override
     public boolean active() {
@@ -27,7 +24,7 @@ public abstract class NFCResponse implements SignatureAddResponse {
 
     @Override
     public boolean showDialog() {
-        return true;
+        return false;
     }
 
     @Override
@@ -36,31 +33,21 @@ public abstract class NFCResponse implements SignatureAddResponse {
     }
 
     public static NFCResponse initial() {
-        return data(IdCardDataResponse.initial());
-    }
-
-    public static NFCResponse data(IdCardDataResponse dataResponse) {
-        return create(null, null, dataResponse, null);
-    }
-
-    public static NFCResponse sign(IdCardSignResponse signResponse) {
-        return create(null, null, null, signResponse);
+        return create(null, null, null);
     }
 
     public static NFCResponse success(SignedContainer container) {
-        return create(container, null, null, null);
+        return create(container, null, null);
     }
 
     private static NFCResponse create(@Nullable SignedContainer container,
                                       @Nullable SessionStatusResponse.ProcessStatus status,
-                                         @Nullable IdCardDataResponse dataResponse,
-                                         @Nullable IdCardSignResponse signResponse) {
-        return new AutoValue_NFCResponse(container, status, dataResponse, signResponse);
+                                         @Nullable String message) {
+        return new AutoValue_NFCResponse(container, status, message);
     }
 
     /* fixme: copy-pasted (Lauris) */
-    public static NFCResponse status(
-            SessionStatusResponse.ProcessStatus status) {
-        return create(null, null, null, null);
+    public static NFCResponse createWithStatus(SessionStatusResponse.ProcessStatus status) {
+        return create(null, status, null);
     }
 }

@@ -29,7 +29,7 @@ class NFCView @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr, defStyleRes),
     SignatureAddView<NFCRequest, NFCResponse?> {
-    private var token: Token? = null
+    //private var token: Token? = null
     private val positiveButtonStateSubject: Subject<Any> = PublishSubject.create()
     private val message by lazy { findViewById<TextView>(R.id.signatureUpdateNFCMessage) }
     private val canView by lazy { findViewById<EditText>(R.id.signatureUpdateNFCCAN) }
@@ -75,21 +75,6 @@ class NFCView @JvmOverloads constructor(
     }
 
     override fun response(response: NFCResponse?, methodView: RadioGroup?) {
-        val dataResponse = response?.dataResponse()
-        val signResponse = response?.signResponse()
-        if (signResponse != null) {
-            if (signResponse.state() == State.CLEAR) {
-                reset(null)
-            }
-        }
-        var data = dataResponse?.data()
-        if (data == null && signResponse != null) {
-            data = signResponse.data()
-        }
-        token = dataResponse?.token()
-        if (token == null && signResponse != null) {
-            token = signResponse.token()
-        }
         positiveButtonStateSubject.onNext(Constants.VOID)
     }
 
@@ -115,5 +100,9 @@ class NFCView @JvmOverloads constructor(
 
     private fun isPinLengthEnough(pin: String): Boolean {
         return pin.length >= PinConstants.PIN2_MIN_LENGTH
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
     }
 }

@@ -17,6 +17,7 @@ import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -45,6 +46,8 @@ import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
+import ee.ria.DigiDoc.android.signature.update.nfc.NFCDialog;
+import ee.ria.DigiDoc.android.signature.update.nfc.NFCResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
@@ -66,6 +69,7 @@ import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
+import timber.log.Timber;
 
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
@@ -90,15 +94,21 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final SignatureUpdateAdapter adapter;
     private final View mobileIdActivityIndicatorView;
     private final View smartIdActivityIndicatorView;
+    private final View NFCActivityIndicatorView;
     private final View activityOverlayView;
     private final View mobileIdContainerView;
     private final TextView mobileIdChallengeView;
     private final TextView mobileIdChallengeTextView;
     private final Button mobileIdCancelButton;
+
     private final View smartIdContainerView;
     private final TextView smartIdInfo;
     private final TextView smartIdChallengeView;
     private final Button smartIdCancelButton;
+
+    private final View NFCContainerView;
+    private final NFCDialog nfcDialog;
+
     private final Button sendButton;
     private final View buttonSpace;
     private final Button signatureAddButton;
@@ -136,6 +146,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final ProgressBar documentAddProgressBar;
     private final ProgressBar mobileIdProgressBar;
     private final ProgressBar smartIdProgressBar;
+    private final ProgressBar NFCProgressBar;
     boolean isTitleViewFocused = false;
 
     public SignatureUpdateView(Context context, String screenId, boolean isExistingContainer,
@@ -164,6 +175,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         listView = findViewById(R.id.signatureUpdateList);
         mobileIdActivityIndicatorView = findViewById(R.id.activityIndicatorMobileId);
         smartIdActivityIndicatorView = findViewById(R.id.activityIndicatorSmartId);
+        NFCActivityIndicatorView = findViewById(R.id.activityIndicatorNFC);
         activityOverlayView = findViewById(R.id.activityOverlay);
         mobileIdContainerView = findViewById(R.id.signatureUpdateMobileIdContainer);
         mobileIdChallengeView = findViewById(R.id.signatureUpdateMobileIdChallenge);
@@ -172,6 +184,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         smartIdChallengeView = findViewById(R.id.signatureUpdateSmartIdChallenge);
         smartIdCancelButton = findViewById(R.id.signatureUpdateSmartIdCancelButton);
         smartIdCancelButton.setContentDescription(getResources().getString(R.string.cancel_button_accessibility));
+
+        NFCContainerView = findViewById(R.id.signatureUpdateNFCContainer);
+        nfcDialog = new NFCDialog(context, R.string.signature_update_nfc_hold, R.id.documentRemovalDialog);
+
         sendButton = findViewById(R.id.signatureUpdateSendButton);
         sendButton.setContentDescription(getResources().getString(R.string.share_container));
         buttonSpace = findViewById(R.id.signatureUpdateButtonSpace);
@@ -200,6 +216,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         mobileIdProgressBar = (ProgressBar) mobileIdActivityIndicatorView;
         smartIdProgressBar = (ProgressBar) smartIdActivityIndicatorView;
+        NFCProgressBar = (ProgressBar) NFCActivityIndicatorView;
         documentAddProgressBar.setVisibility(GONE);
 
         setupAccessibilityTabs();
@@ -288,6 +305,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             navigator.execute(Transaction.pop());
             SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
             SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
+            SignatureUpdateProgressBar.stopProgressBar(NFCProgressBar);
             return;
         }
 
@@ -486,6 +504,31 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             }
         }
 
+        NFCContainerView.setVisibility(
+                signatureAddResponse instanceof NFCResponse ? VISIBLE : GONE);
+        if (NFCContainerView.getVisibility() == VISIBLE) {
+            NFCContainerView.setFocusedByDefault(true);
+            NFCContainerView.setFocusable(true);
+            NFCContainerView.setFocusableInTouchMode(true);
+            setSigningModalSize(NFCContainerView);
+
+            if (NFCProgressBar.getProgress() == 0) {
+                SignatureUpdateProgressBar.startProgressBar(NFCProgressBar);
+            }
+
+            if (!signingInfoDelegated) {
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_mobile_id_status_request_sent);
+                signingInfoDelegated = true;
+            }
+
+            if (signatureAddResponse instanceof NFCResponse) {
+                NFCResponse nfcResponse = (NFCResponse) signatureAddResponse;
+                Timber.log(Log.DEBUG, "NFC:SignatureUpdateView.render, status %s", nfcResponse.status().toString());
+                // fixme: Is this the correct place to add modal dialog (Lauris)?
+                nfcDialog.show();
+            }
+        }
+
         setupAccessibilityTabs();
     }
 
@@ -508,18 +551,21 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private void setActivity(boolean activity) {
         mobileIdActivityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
         smartIdActivityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
+        NFCActivityIndicatorView.setVisibility(activity ? VISIBLE : GONE);
         activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
         sendButton.setEnabled(!activity);
         signatureAddButton.setEnabled(!activity);
         if (!activity) {
             SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
             SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
+            SignatureUpdateProgressBar.stopProgressBar(NFCProgressBar);
         }
     }
 
     private void resetSignatureAddDialog() {
         SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
         SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
+        SignatureUpdateProgressBar.stopProgressBar(NFCProgressBar);
         signatureAddView.reset(viewModel);
     }
 
@@ -595,6 +641,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 signatureAddDialog.positiveButtonClicks().map(ignored -> {
                     SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
                     SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
+                    SignatureUpdateProgressBar.stopProgressBar(NFCProgressBar);
                     return Intent.SignatureAddIntent.sign(signatureAddView.method(),
                             isExistingContainer, containerFile, signatureAddView.request());
                 }),
@@ -707,9 +754,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         errorDialog.setOnDismissListener(null);
         errorDialog.dismiss();
         nameUpdateDialog.dismiss();
+        nfcDialog.dismiss();
         isTitleViewFocused = false;
         SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
         SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
+        SignatureUpdateProgressBar.stopProgressBar(NFCProgressBar);
         super.onDetachedFromWindow();
     }
 

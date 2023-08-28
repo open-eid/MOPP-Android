@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.View;
 
@@ -152,21 +154,34 @@ final class SignatureAddSource {
         } else if (request instanceof NFCRequest) {
             NFCRequest nfcRequest = (NFCRequest) request;
             /* fixme: Should we remember card? (Lauris) */
+
+            //NFCDialog dlg = new NFCDialog(navigator.activity().getApplicationContext());
+            //AlertDialog.Builder builder = new AlertDialog.Builder(navigator.activity());
+            // fixme: Proper messages
+            //builder.setPositiveButton("Cancel", (dialog, id) -> {
+                // User cancelled the dialog
+                //adapter.disableReaderMode(navigator.activity());
+                //Timber.log(Log.ERROR, "User cancelles NFC signing");
+                //emitter.onNext(NFCResponse.initial());
+            //});
+            //builder.setMessage("Please hold");
+            //your ID card against the phone until completion of the signing process")
+            //builder.setTitle("Start signing");
+            //AlertDialog dialog = builder.show();
+            //dlg.show();
+
+
             Single<SignedContainer> s = signatureContainerDataSource.get(containerFile);
             Observable<NFCResponse> obs = s.flatMapObservable(container -> {
                         return Observable.create(new NFCOnSubscribe(navigator, intent, container, settingsDataStore.getUuid(), nfcRequest.getCan(), nfcRequest.getPin2()));
                 });
             return obs.switchMap(response -> {
                         SessionStatusResponse.ProcessStatus processStatus = response.status();
-                        //if (SessionStatusResponse.ProcessStatus.OK.equals(processStatus)) {
-                        //    navigator.activity().findViewById(R.id.signatureUpdateNFCCancelButton).setVisibility(View.GONE);
-                        //}
                         return Observable.just(response);
                     })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .startWithItem(NFCResponse
-                            .status(SessionStatusResponse.ProcessStatus.OK))
+                    .startWithItem(NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.OK))
                     .onErrorResumeNext(Observable::error);
         } else if (request instanceof IdCardRequest) {
             IdCardRequest idCardRequest = (IdCardRequest) request;
