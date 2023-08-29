@@ -181,7 +181,7 @@ final class SignatureAddSource {
                     })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .startWithItem(NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.OK))
+                    .startWithItem(NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.OK, null))
                     .onErrorResumeNext(Observable::error);
         } else if (request instanceof IdCardRequest) {
             IdCardRequest idCardRequest = (IdCardRequest) request;

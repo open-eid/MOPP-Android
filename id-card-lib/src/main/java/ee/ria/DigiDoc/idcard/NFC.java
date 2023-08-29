@@ -3,8 +3,6 @@ package ee.ria.DigiDoc.idcard;
 import android.nfc.tech.IsoDep;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.macs.CMac;
@@ -16,7 +14,6 @@ import org.bouncycastle.util.encoders.Hex;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -117,6 +114,7 @@ public class NFC {
         }
     }
 
+    private static final byte[] CMD_SELECT_DF = Hex.decode("00a4010c");
     private static final byte[] CMD_READ_BINARY = Hex.decode("00B00000");
     private static final byte[] CMD_SIGN = Hex.decode("002A9E9A");
 
@@ -309,9 +307,20 @@ public class NFC {
      * @return decrypted file contents
      */
     private byte[] readFile(byte[] FID, String info) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, IOException {
-        selectFile(FID, info);
+        //selectFile(FID, info);
+
+        Result result = communicate(CMD_SELECT_DF, FID);
+        //byte[] APDU = createSecureAPDU(selectFile[1], selectFile[2], selectFile[3], FID);
+        //byte[] response = card.transceive(APDU);
+        if (result.code != 0x9000) {
+            throw new RuntimeException(String.format("Could not select %s", info));
+        }
+
         //byte[] APDU = createSecureAPDU(CMD_READ_BINARY[1], CMD_READ_BINARY[2], CMD_READ_BINARY[3], null);
-        Result result = communicate(CMD_READ_BINARY, null);
+        result = communicate(CMD_READ_BINARY, null);
+        if (result.code != 0x9000) {
+            throw new RuntimeException(String.format("Could not read %s", info));
+        }
         return result.data;
         //byte[] response = getResponse(new byte[0], readFile, "Read binary");
         //if (response[response.length - 2] != (byte) 0x90 || response[response.length - 1] != 0x00) {
@@ -335,47 +344,6 @@ public class NFC {
         cipher = Cipher.getInstance("AES/CBC/NoPadding");
         cipher.init(mode, secretKeySpec, new IvParameterSpec(iv));
         return cipher.doFinal(data);
-    }
-
-    /**
-     * Constructs APDUs suitable for the secure channel.
-     *
-     * @param data       the data to be encrypted
-     * @param incomplete the array to be used as a template
-     * @return the constructed APDU
-     */
-    private byte[] createSecureAPDU(byte[] data, byte[] incomplete) throws NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-
-        ssc++;
-        byte[] encryptedData = new byte[0];
-        int length = 16 * (1 + data.length / 16);
-
-        // construct the required array and calculate the MAC based on it
-        byte[] macData = new byte[data.length > 0 ? 48 + length : 48];
-        macData[15] = ssc; // first block contains the ssc
-        System.arraycopy(incomplete, 0, macData, 16, 4); // second block has the command
-        macData[20] = (byte) 0x80; // elements are terminated by 0x80 and zero-padded to the next block
-        System.arraycopy(incomplete, 5, macData, 32, 3); // third block contains appropriately encapsulated data/Le
-        if (data.length > 0) { // if the APDU has data, add padding and encrypt it
-            byte[] paddedData = Arrays.copyOf(data, length);
-            paddedData[data.length] = (byte) 0x80;
-            encryptedData = encryptDecryptData(paddedData, Cipher.ENCRYPT_MODE);
-            System.arraycopy(encryptedData, 0, macData, 35, encryptedData.length);
-        }
-        macData[35 + encryptedData.length] = (byte) 0x80;
-        Timber.log(Log.DEBUG, "MAC2:%s", Hex.toHexString(macData));
-        byte[] MAC = getMAC(macData, keyMAC);
-
-        // construct the APDU using the encrypted data and the MAC
-        byte[] APDU = Arrays.copyOf(incomplete, incomplete.length + encryptedData.length + MAC.length + 3);
-        if (encryptedData.length > 0) {
-            System.arraycopy(encryptedData, 0, APDU, incomplete.length, encryptedData.length);
-        }
-        System.arraycopy(new byte[]{(byte) 0x8E, 0x08}, 0, APDU, incomplete.length + encryptedData.length, 2); // MAC is encapsulated using the tag 0x8E
-        System.arraycopy(MAC, 0, APDU, incomplete.length + encryptedData.length + 2, MAC.length);
-        ssc++;
-        return APDU;
-
     }
 
     private byte[] createSecureAPDU(byte INS, byte P1, byte P2, byte[] data) throws NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
@@ -427,18 +395,6 @@ public class NFC {
     }
 
     /**
-     * Selects a FILE by its identifier
-     *
-     */
-    private void selectFile(byte[] FID, String info) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, IOException {
-        Timber.log(Log.DEBUG, "Select file: %s", Hex.toHexString(FID));
-        byte[] response = getResponse(FID, selectFile, String.format("Select %s", info));
-        if (response[response.length - 2] != (byte) 0x90 || response[response.length - 1] != 0x00) {
-            throw new RuntimeException(String.format("Could not select %s", info));
-        }
-    }
-
-    /**
      * Gets the contents of the personal data dedicated file
      *
      * @param lastBytes   the last bytes of the personal data file identifiers (0 < x < 16)
@@ -449,11 +405,11 @@ public class NFC {
         String[] personalData = new String[lastBytes.length];
         int stringIndex = 0;
 
-        // select the master application
-        selectFile(IASECCFID, "the master application");
+        Result result = communicate(CMD_SELECT_DF, IASECCFID);
 
         // select the personal data dedicated file
-        selectFile(personalDF, "the personal data DF");
+        // selectFile(personalDF, "the personal data DF");
+        result = communicate(CMD_SELECT_DF, personalDF);
 
         byte[] FID = Arrays.copyOf(personalDF, personalDF.length);
         // select and read the personal data elementary files
@@ -462,37 +418,11 @@ public class NFC {
             if (index > 15 || index < 1) throw new RuntimeException("Invalid personal data FID.");
             FID[1] = index;
 
-            personalData[stringIndex++] = new String(readFile(FID, "a personal data EF"));
+            byte[] data = readFile(FID, "a personal data EF");
+            personalData[stringIndex++] = new String(data);
         }
         return personalData;
 
-    }
-
-    /**
-     * Attempts to verify the selected PIN
-     *
-     * @param PIN user-provided PIN
-     * @param oneOrTwo true for PIN1, false for PIN2
-     */
-    private void verifyPIN(byte[] PIN, boolean oneOrTwo) throws NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, IOException {
-
-        selectFile(IASECCFID, "the master application");
-        if (!oneOrTwo) {
-            selectFile(QSCD, "the application");
-        }
-
-        // pad the PIN and use the chip for verification
-        byte[] paddedPIN = Hex.decode("ffffffffffffffffffffffff");
-        System.arraycopy(PIN, 0, paddedPIN, 0, PIN.length);
-        byte[] response = getResponse(paddedPIN, oneOrTwo ? verifyPIN1 : verifyPIN2, "PIN verification");
-
-        if (response[response.length - 2] != (byte) 0x90 || response[response.length - 1] != 0x00) {
-            if (response[response.length - 2] == 0x69 && response[response.length - 1] == (byte) 0x83) {
-                throw new RuntimeException("Invalid PIN. Authentication method blocked.");
-            } else {
-                throw new RuntimeException(String.format("Invalid PIN. Attempts left: %d.", response[response.length - 1] + 64));
-            }
-        }
     }
 
     /**
@@ -503,11 +433,14 @@ public class NFC {
      */
     public byte[] getCertificate(boolean authOrSign) throws NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, IOException {
 
-        selectFile(IASECCFID, "the master application");
+        // selectFile(IASECCFID, "the master application");
+        Result result = communicate(CMD_SELECT_DF, IASECCFID);
 
-        selectFile(authOrSign ? AWP : QSCD, "the application");
+        // selectFile(authOrSign ? AWP : QSCD, "the application");
+        result = communicate(CMD_SELECT_DF, authOrSign ? AWP : QSCD);
 
-        selectFile(authOrSign ? authCert : signCert, "the certificate");
+        // selectFile(authOrSign ? authCert : signCert, "the certificate");
+        result = communicate(CMD_SELECT_DF, authOrSign ? authCert : signCert);
 
         byte[] certificate = new byte[0];
         byte[] readCert = Arrays.copyOf(readFile, readFile.length);
@@ -539,39 +472,6 @@ public class NFC {
 
     }
 
-    /**
-     * Signs the authentication token hash
-     *
-     * @param PIN1  PIN1
-     * @param token the token hash to be signed
-     * @return authentication token hash signature
-     */
-    public byte[] authenticate(String PIN1, byte[] token) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, IOException {
-
-        verifyPIN(PIN1.getBytes(StandardCharsets.UTF_8), true);
-
-        selectFile(AWP, "the AWP application");
-
-        byte[] response = getResponse(Env, MSESetEnv, "Set environment");
-        if (response[response.length - 2] != (byte) 0x90 || response[response.length - 1] != 0x00) {
-            throw new RuntimeException("Setting the environment failed.");
-        }
-
-        InternalAuthenticate[4] = (byte) (0x1d + 16 * (token.length / 16));
-        InternalAuthenticate[6] = (byte) (0x11 + 16 * (token.length / 16));
-        response = getResponse(token, InternalAuthenticate, "Internal Authenticate");
-
-        if (response[response.length - 2] != (byte) 0x90 || response[response.length - 1] != 0x00) {
-            throw new RuntimeException("Signing the token failed.");
-        }
-
-        byte[] signature = encryptDecryptData(Arrays.copyOfRange(response, 3, 115), Cipher.DECRYPT_MODE);
-        int indexOfTerminator = Hex.toHexString(signature).lastIndexOf("80") / 2;
-
-        return Arrays.copyOf(signature, indexOfTerminator);
-    }
-
-
     private byte[] getResponse(byte[] data, byte[] command, String log) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, IOException {
         byte[] APDU = createSecureAPDU(command[1], command[2], command[3], data);
         byte[] response = card.transceive(APDU);
@@ -593,19 +493,7 @@ public class NFC {
 
     private static final byte[] dataForMACIncomplete = Hex.decode("7f494f060a04007f000702020402048641");
 
-    private static final byte[] selectFile = Hex.decode("0ca4010c1d871101");
-
     private static final byte[] readFile = Hex.decode("0cb000000d970100");
-
-    private static final byte[] verifyPIN1 = Hex.decode("0c2000011d871101");
-
-    private static final byte[] verifyPIN2 = Hex.decode("0c2000851d871101");
-
-    private static final byte[] MSESetEnv = Hex.decode("0c2241A41d871101");
-
-    private static final byte[] Env = Hex.decode("8004FF200800840181");
-
-    private static final byte[] InternalAuthenticate = Hex.decode("0c8800001d871101");
 
     private static final byte[] IASECCFID = {0x3f, 0x00};
     private static final byte[] personalDF = {0x50, 0x00};

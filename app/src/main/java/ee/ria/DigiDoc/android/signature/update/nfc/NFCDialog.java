@@ -1,9 +1,11 @@
 package ee.ria.DigiDoc.android.signature.update.nfc;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 
@@ -15,8 +17,8 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Constants;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog;
-import ee.ria.DigiDoc.sign.utils.UrlMessage;
 
+import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
@@ -35,8 +37,25 @@ public final class NFCDialog extends AlertDialog implements
         setMessage(context.getString(message));
         //setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
         setButton(BUTTON_NEGATIVE, context.getString(android.R.string.cancel), this);
+        //this.getButton(BUTTON_POSITIVE).setVisibility(GONE);
+        //this.getButton(BUTTON_NEGATIVE).setVisibility(VISIBLE);
 
         this.action = action;
+    }
+
+    public void showStatus(NFCResponse response) {
+        if (response.status() != SessionStatusResponse.ProcessStatus.OK) {
+            Button btn = getButton(BUTTON_POSITIVE);
+            if (btn != null) btn.setText(android.R.string.ok);
+        } else {
+            Button btn = getButton(BUTTON_POSITIVE);
+            if (btn != null) btn.setText(android.R.string.cancel);
+        }
+        if (response.message() != null) {
+            setMessage(response.message());
+        } else {
+            setMessage(getContext().getString(R.string.signature_update_nfc_hold));
+        }
     }
 
     @Override

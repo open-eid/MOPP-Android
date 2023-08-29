@@ -65,6 +65,7 @@ import ee.ria.DigiDoc.common.ActivityUtil;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.Signature;
+import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -524,6 +525,9 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             if (signatureAddResponse instanceof NFCResponse) {
                 NFCResponse nfcResponse = (NFCResponse) signatureAddResponse;
                 Timber.log(Log.DEBUG, "NFC:SignatureUpdateView.render, status %s", nfcResponse.status().toString());
+                //if (nfcResponse.status() != SessionStatusResponse.ProcessStatus.OK) {
+                    nfcDialog.showStatus(nfcResponse);
+                //}
                 // fixme: Is this the correct place to add modal dialog (Lauris)?
                 nfcDialog.show();
             }

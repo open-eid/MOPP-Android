@@ -97,9 +97,9 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
         Timber.log(Log.DEBUG, "Successfully created NFC adapter");
         adapter.enableReaderMode(navigator.activity(),
                 tag -> {
-                    SessionStatusResponse.ProcessStatus status = onTagDiscovered(adapter, tag);
+                    NFCResponse response = onTagDiscovered(adapter, tag);
                     Timber.log(Log.DEBUG, "NFC::completed");
-                    emitter.onNext((status == SessionStatusResponse.ProcessStatus.OK) ? NFCResponse.success(container) : NFCResponse.createWithStatus(status));
+                    emitter.onNext((response != null) ? response : NFCResponse.success(container));
                     emitter.onComplete();
                     }, NfcAdapter.FLAG_READER_NFC_A, null);
 
@@ -116,9 +116,10 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
 
     @Nullable private IsoDep card;
 
-    private SessionStatusResponse.ProcessStatus onTagDiscovered(NfcAdapter adapter, Tag tag) {
+    private NFCResponse onTagDiscovered(NfcAdapter adapter, Tag tag) {
         Timber.log(Log.DEBUG, "Tag discovered: %s", tag.toString());
         card = IsoDep.get(tag);
+        NFCResponse result = null;
         SessionStatusResponse.ProcessStatus status = SessionStatusResponse.ProcessStatus.OK;
         try {
             card.connect();
@@ -168,17 +169,17 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
                     cert.ellipticCurve())));
         } catch (TagLostException exc) {
             Timber.log(Log.ERROR, exc.getMessage());
-            status = SessionStatusResponse.ProcessStatus.GENERAL_ERROR;
+            result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, exc.getMessage());
         } catch (IOException exc) {
             Timber.log(Log.ERROR, exc.getMessage());
-            status = SessionStatusResponse.ProcessStatus.GENERAL_ERROR;
+            result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, exc.getMessage());
         } catch (Exception exc) {
             Timber.log(Log.ERROR, exc.getMessage());
-            status = SessionStatusResponse.ProcessStatus.GENERAL_ERROR;
+            result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, exc.getMessage());
         } finally {
             adapter.disableReaderMode(navigator.activity());
             card = null;
         }
-        return status;
+        return result;
     }
 }

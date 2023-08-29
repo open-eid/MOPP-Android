@@ -47,7 +47,7 @@ public abstract class NFCResponse implements SignatureAddResponse {
     }
 
     /* fixme: copy-pasted (Lauris) */
-    public static NFCResponse createWithStatus(SessionStatusResponse.ProcessStatus status) {
-        return create(null, status, null);
+    public static NFCResponse createWithStatus(SessionStatusResponse.ProcessStatus status, String message) {
+        return create(null, status, message);
     }
 }
