@@ -1,15 +1,14 @@
 package ee.ria.DigiDoc.configuration;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 
 public class ConfigurationParseTest {
 
@@ -35,8 +34,7 @@ public class ConfigurationParseTest {
             "  }" +
             "}";
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+
 
     @Test
     public void parseStringValue() {
@@ -47,10 +45,10 @@ public class ConfigurationParseTest {
 
     @Test
     public void parseMissingStringValue() {
-        expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Failed to parse parameter 'MISSING-VALUE' from configuration json");
-        ConfigurationParser configurationParser = new ConfigurationParser(TEST_JSON);
-        assertNull(configurationParser.parseStringValue("MISSING-VALUE"));
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            ConfigurationParser configurationParser = new ConfigurationParser(TEST_JSON);
+            assertNull(configurationParser.parseStringValue("MISSING-VALUE"));
+        }, "Failed to parse parameter 'MISSING-VALUE' from configuration json");
     }
 
     @Test

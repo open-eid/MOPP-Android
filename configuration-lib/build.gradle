@@ -30,6 +30,10 @@ android {
     }
 }
 
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
 dependencies {
     api "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
     api "com.squareup.okhttp3:okhttp:${okhttpVersion}"
@@ -44,6 +48,9 @@ dependencies {
     annotationProcessor "com.ryanharter.auto.value:auto-value-parcel:${autoValueParcelVersion}"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
 
     testImplementation "com.google.code.gson:gson:${gsonVersion}"
