@@ -1,5 +1,8 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
+
 import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
@@ -7,15 +10,12 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 
-import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.navigator.TransactionAction;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
-
-import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 
 interface Action extends MviAction {
 
@@ -52,12 +52,12 @@ interface Action extends MviAction {
     }
 
     @AutoValue
-    abstract class RoleDetailsAction implements Action {
+    abstract class SignatureRoleDetailsAction implements Action {
 
         abstract Signature signature();
 
-        static RoleDetailsAction create(Signature signature) {
-            return new AutoValue_Action_RoleDetailsAction(signature);
+        static SignatureRoleDetailsAction create(Signature signature) {
+            return new AutoValue_Action_SignatureRoleDetailsAction(signature);
         }
     }
 

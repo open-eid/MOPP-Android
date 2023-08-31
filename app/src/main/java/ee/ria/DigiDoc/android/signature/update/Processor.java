@@ -81,7 +81,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
     private final ObservableTransformer<Intent.DocumentSaveIntent,
             Result> documentSave;
 
-    private final ObservableTransformer<Action.RoleDetailsAction,
+    private final ObservableTransformer<Action.SignatureRoleDetailsAction,
             Result.RoleDetailsResult> roleDetailsView;
 
     private final ObservableTransformer<Action.DocumentRemoveAction,
@@ -459,7 +459,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.DocumentRemoveAction.class).compose(documentRemove),
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
                 shared.ofType(Action.SignatureViewAction.class).compose(signatureView),
-                shared.ofType(Action.RoleDetailsAction.class).compose(roleDetailsView),
+                shared.ofType(Action.SignatureRoleDetailsAction.class).compose(roleDetailsView),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd),
                 shared.ofType(Action.SendAction.class).compose(send)));
     }

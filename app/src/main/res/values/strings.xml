@@ -175,6 +175,7 @@
     <string name="signature_update_signature_add_error_title">Failed to sign container</string>
 
     <string name="signature_update_signature_role_and_address_title">ROLE AND ADDRESS</string>
+    <string name="signature_update_signature_role_and_address_title_accessibility">Role and address</string>
     <string name="signature_update_signature_role_and_address_info_title">Enter your role and address info</string>
 
     <string name="signature_update_signature_error_message_additional_information">Additional information</string>

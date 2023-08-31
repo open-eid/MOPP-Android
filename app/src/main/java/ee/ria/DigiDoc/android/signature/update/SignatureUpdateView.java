@@ -400,15 +400,24 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         }
 
         Integer signatureAddMethod = state.signatureAddMethod();
-        if (signatureAddMethod == null || isRoleViewShown) {
+        if (signatureAddMethod == null) {
             signatureAddDialog.dismiss();
         } else {
             signatureAddDialog.show();
             signatureAddView.method(signatureAddMethod);
         }
 
+        boolean roleAddEnabled = state.roleAddConfirmation();
+        if (roleAddEnabled) {
+            roleAddDialog.show();
+        } else {
+            roleAddDialog.dismiss();
+        }
+
         SignatureAddResponse signatureAddResponse = state.signatureAddResponse();
-        signatureAddView.response(signatureAddResponse);
+        if (!roleAddEnabled) {
+            signatureAddView.response(signatureAddResponse);
+        }
 
         // should be in the MobileIdView in dialog
         mobileIdContainerView.setVisibility(
@@ -605,7 +614,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                         .map(ignored -> {
                             int method = viewModel.signatureAddMethod();
                             return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile,
-                                    activity.getSettingsDataStore().getIsRoleAskingEnabled() && !isRoleViewShown);
+                                    false);
                         }),
                 cancels(signatureAddDialog)
                         .doOnNext(ignored -> resetSignatureAddDialog())
@@ -614,7 +623,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                         viewModel.setSignatureAddMethod(method);
                         sendMethodSelectionAccessibilityEvent(method);
                         return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile,
-                                activity.getSettingsDataStore().getIsRoleAskingEnabled() && !isRoleViewShown);
+                                false);
                 }),
                 signatureAddDialog.positiveButtonClicks().map(ignored -> {
                     SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);

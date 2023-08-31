@@ -17,7 +17,7 @@
         android:layout_marginStart="@dimen/material_list_icon_first_position_margin_start"
         android:layout_marginEnd="@dimen/material_list_icon_first_position_margin_start"
         android:src="@drawable/ic_icon_signature"
-        android:tint="?android:attr/textColorPrimary"
+        app:tint="?android:attr/textColorPrimary"
         android:contentDescription="@string/signature_update_signature_type_signature" />
 
     <LinearLayout
@@ -88,23 +88,33 @@
 
     </LinearLayout>
 
-    <ImageButton
-        android:id="@id/signatureUpdateListSignatureRoleDetailsButton"
-        style="@style/Widget.Application.Button.Borderless.Colored"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_info_outline"
-        app:tint="@color/accent"
-        android:contentDescription="@string/signature_update_signature_role_and_address_title" />
+        android:orientation="horizontal">
 
-    <ImageButton
-        android:id="@id/signatureUpdateListSignatureRemoveButton"
-        style="@style/Widget.Application.Button.Borderless.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/material_list_icon_last_position_margin_horizontal"
-        android:src="@drawable/ic_icon_remove"
-        android:tint="@color/error"
-        android:contentDescription="@string/signature_update_signature_remove_button" />
+        <ImageButton
+            android:id="@id/signatureUpdateListSignatureRoleDetailsButton"
+            style="@style/Widget.Application.Button.Borderless.Colored"
+            android:layout_marginVertical="10dp"
+            android:layout_width="@dimen/material_baseline_grid_3.5x"
+            android:layout_height="@dimen/material_baseline_grid_3.5x"
+            android:src="@drawable/ic_info_outline"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            app:tint="@color/accent"
+            android:contentDescription="@string/signature_update_signature_role_and_address_title_accessibility" />
+
+        <ImageButton
+            android:id="@id/signatureUpdateListSignatureRemoveButton"
+            style="@style/Widget.Application.Button.Borderless.Colored"
+            android:layout_width="@dimen/material_baseline_grid_4x"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/material_list_icon_last_position_margin_horizontal"
+            android:src="@drawable/ic_icon_remove"
+            app:tint="@color/error"
+            android:contentDescription="@string/signature_update_signature_remove_button" />
+
+    </LinearLayout>
 
 </LinearLayout>

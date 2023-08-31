@@ -177,6 +177,7 @@
     <string name="signature_update_signature_add_error_title">Не удалось подписать контейнер</string>
 
     <string name="signature_update_signature_role_and_address_title">РОЛЬ И АДРЕС</string>
+    <string name="signature_update_signature_role_and_address_title_accessibility">Роль и адрес</string>
     <string name="signature_update_signature_role_and_address_info_title">Введите свою роль и адрес</string>
 
     <string name="signature_update_signature_error_message_additional_information">Дополнительная информация</string>

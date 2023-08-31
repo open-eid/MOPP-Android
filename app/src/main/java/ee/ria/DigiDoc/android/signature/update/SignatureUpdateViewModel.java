@@ -73,6 +73,8 @@ public final class SignatureUpdateViewModel extends
                     signatureAddIntent.existingContainer(), signatureAddIntent.containerFile(),
                     signatureAddIntent.request(), false, signatureAddIntent.showRoleAddingView(),
                     signatureAddIntent.roleData());
+        } else if (intent instanceof Intent.SignatureRoleViewIntent) {
+            return Action.SignatureRoleDetailsAction.create(((Intent.SignatureRoleViewIntent) intent).signature());
         } else if (intent instanceof Intent.SendIntent) {
             return Action.SendAction.create(((Intent.SendIntent) intent).containerFile());
         } else if (intent instanceof Action) {
