@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.main.settings;
 
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarViewTitle;
 
@@ -21,6 +22,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 public final class SettingsView extends CoordinatorLayout {
 
     private final Toolbar toolbarView;
+    private final Button accessCategory;
 
     private final Navigator navigator;
 
@@ -42,12 +44,7 @@ public final class SettingsView extends CoordinatorLayout {
         navigator = Application.component(context).navigator();
         disposables = new ViewDisposables();
 
-        Button accessCategory = findViewById(R.id.mainSettingsAccessCategory);
-
-        accessCategory.setOnClickListener(view ->
-                navigator.execute(
-                        Transaction.push(SettingsAccessScreen.create()))
-        );
+        accessCategory = findViewById(R.id.mainSettingsAccessCategory);
 
         toolbarView.setTitle(R.string.main_settings_title);
         toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
@@ -64,6 +61,10 @@ public final class SettingsView extends CoordinatorLayout {
         disposables.attach();
         disposables.add(navigationClicks(toolbarView).subscribe(o ->
                 navigator.execute(Transaction.pop())));
+        disposables.add(clicks(accessCategory).subscribe(o ->
+                navigator.execute(
+                        Transaction.push(SettingsAccessScreen.create())))
+        );
     }
 
     @Override
