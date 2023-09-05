@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.main.settings;
+package ee.ria.DigiDoc.android.main.settings.access;
 
 import android.os.Bundle;
 import android.view.View;
@@ -24,7 +24,7 @@ public final class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
-        setPreferencesFromResource(R.xml.main_settings, null);
+        setPreferencesFromResource(R.xml.main_settings_access, null);
     }
 
     @Override

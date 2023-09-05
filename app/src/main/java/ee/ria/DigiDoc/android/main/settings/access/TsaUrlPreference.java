@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.main.settings;
+package ee.ria.DigiDoc.android.main.settings.access;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
@@ -16,6 +16,7 @@ import com.takisoft.preferencex.EditTextPreference;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessView;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 
 public class TsaUrlPreference extends EditTextPreference {
@@ -49,7 +50,7 @@ public class TsaUrlPreference extends EditTextPreference {
         setViewId(R.id.mainSettingsAccessToTimeStampingService);
 
         setOnPreferenceChangeListener((preference, newValue) -> {
-            SettingsView.setTsaCertificateViewVisibleValue(!checkBox.isChecked());
+            SettingsAccessView.setTsaCertificateViewVisibleValue(!checkBox.isChecked());
             AccessibilityUtils.sendAccessibilityEvent(context, TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
             return true;
         });
