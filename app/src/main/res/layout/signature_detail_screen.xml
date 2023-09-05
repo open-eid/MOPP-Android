@@ -37,6 +37,68 @@
                 android:orientation="vertical"
                 android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
 
+                <LinearLayout
+                    android:id="@id/signersCertificateErrorContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/material_baseline_grid_2.5x"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@id/signersCertificateErrorTitle"
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="@dimen/material_baseline_grid_1x"
+                        android:text="@string/signature_error_details_title" />
+
+                    <TextView
+                        android:id="@id/signersCertificateErrorDetails"
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="" />
+
+                    <TextView
+                        android:id="@id/signersCertificateTechnicalInformationButtonTitle"
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/material_baseline_grid_1x"
+                        android:minHeight="@dimen/material_button_touch_target_height_minimum"
+                        android:gravity="center_vertical"
+                        android:background="?attr/selectableItemBackground"
+                        android:text="@string/signature_error_details_button"
+                        android:contentDescription="@string/signature_error_details_button_accessibility"
+                        app:drawableStartCompat="@drawable/ic_icon_accordion_collapsed" />
+
+                    <net.cachapa.expandablelayout.ExpandableLayout
+                        android:id="@id/signersCertificateTechnicalInformationContainerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:el_expanded="false">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/material_baseline_grid_1x"
+                            android:paddingBottom="@dimen/material_baseline_grid_1x"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@id/signersCertificateTechnicalInformationText"
+                                style="@style/MaterialTypography.Dense.Body1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="" />
+
+                        </LinearLayout>
+
+                    </net.cachapa.expandablelayout.ExpandableLayout>
+
+                </LinearLayout>
+
                 <TextView
                     android:id="@id/signersCertificateIssuerTitle"
                     style="@style/MaterialTypography.Dense.Body1"

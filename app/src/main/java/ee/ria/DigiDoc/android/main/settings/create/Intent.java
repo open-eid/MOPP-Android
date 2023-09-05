@@ -17,4 +17,16 @@ public interface Intent extends MviIntent {
             return new AutoValue_Intent_ChooseFileIntent();
         }
     }
+
+    @AutoValue
+    class OpenAccessIntent implements Intent {
+
+        public static OpenAccessIntent clear() {
+            return null;
+        }
+
+        public OpenAccessIntent create() {
+            return new AutoValue_Intent_OpenAccessIntent();
+        }
+    }
 }

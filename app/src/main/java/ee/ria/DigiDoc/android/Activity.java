@@ -32,6 +32,7 @@ import com.google.firebase.crashlytics.internal.common.CommonUtils;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -241,6 +242,14 @@ public final class Activity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // If user selects a file from provider menu (Open from -> RIA DigiDoc), it starts a new activity
+        // Replace the main activity after the new file has been selected
+        if (Optional.ofNullable(data)
+                .map(Intent::getAction)
+                .filter(action -> action.equals(Intent.ACTION_GET_CONTENT))
+                .isPresent()) {
+            navigator.onCreate(this, findViewById(android.R.id.content), null);
+        }
         navigator.onActivityResult(requestCode, resultCode, data);
     }
 

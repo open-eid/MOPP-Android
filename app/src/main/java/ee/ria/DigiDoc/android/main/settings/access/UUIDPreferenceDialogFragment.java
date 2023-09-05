@@ -1,7 +1,25 @@
-package ee.ria.DigiDoc.android.main.settings;
+/*
+ * app
+ * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
 
+package ee.ria.DigiDoc.android.main.settings.access;
 
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 import android.app.Dialog;
@@ -16,41 +34,36 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.preference.EditTextPreferenceDialogFragmentCompat;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
-import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 
-public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
+public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
 
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        TsaUrlPreference tsaUrlPreference = getTsaUrlPreference();
-        if (tsaUrlPreference != null) {
-            ConfigurationProvider configurationProvider = ((Application) getContext().getApplicationContext()).getConfigurationProvider();
-            CheckBox checkBox = tsaUrlPreference.getCheckBox();
+        UUIDPreference uuidPreference = getUUIDPreference();
+        if (uuidPreference != null) {
+            CheckBox checkBox = uuidPreference.getCheckBox();
 
             AppCompatEditText appCompatEditText = TextUtil.getTextView(view);
 
-            tsaUrlPreference.setOnBindEditTextListener(editText -> {
+            uuidPreference.setOnBindEditTextListener(editText -> {
                 checkBox.setChecked(false);
-                editText.setText(tsaUrlPreference.getText());
+                editText.setText(uuidPreference.getText());
             });
 
             if (appCompatEditText != null) {
                 checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     appCompatEditText.setEnabled(!isChecked);
                     if (isChecked) {
-                        disableTextViewOnChecked(appCompatEditText, configurationProvider);
+                        disableTextViewOnChecked(appCompatEditText);
                     }
                 });
 
-                checkBox.setChecked(TextUtils.isEmpty(tsaUrlPreference.getText()));
-
-                SettingsView.setTsaCertificateViewVisibleValue(!checkBox.isChecked());
+                checkBox.setChecked(TextUtils.isEmpty(uuidPreference.getText()));
 
                 ViewGroup parent = ((ViewGroup) appCompatEditText.getParent());
                 View oldCheckBox = appCompatEditText.findViewById(checkBox.getId());
@@ -63,16 +76,15 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
                         ((ViewGroup) oldParent).removeView(checkBox);
                     }
                     parent.addView(checkBox, ViewGroup.LayoutParams.MATCH_PARENT,
-                            WRAP_CONTENT);
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
                 }
             }
         }
     }
 
-    private void disableTextViewOnChecked(AppCompatEditText appCompatEditText,
-                                          ConfigurationProvider configurationProvider) {
+    private void disableTextViewOnChecked(AppCompatEditText appCompatEditText) {
         appCompatEditText.setText(null);
-        appCompatEditText.setHint(configurationProvider.getTsaUrl());
+        appCompatEditText.setHint("00000000-0000-0000-0000-000000000000");
         appCompatEditText.clearFocus();
     }
 
@@ -83,8 +95,8 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
         return dialog;
     }
 
-    private TsaUrlPreference getTsaUrlPreference() {
-        return (TsaUrlPreference) this.getPreference();
+    private UUIDPreference getUUIDPreference() {
+        return (UUIDPreference) this.getPreference();
     }
 
     @Override

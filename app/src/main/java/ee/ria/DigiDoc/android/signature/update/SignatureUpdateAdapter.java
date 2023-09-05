@@ -1,15 +1,21 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static androidx.core.content.res.ResourcesCompat.getColor;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static ee.ria.DigiDoc.android.Constants.VOID;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.DOCUMENT;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.SIGNATURE;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.TIMESTAMP;
+import static ee.ria.DigiDoc.android.utils.Immutables.containsType;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -31,9 +37,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.time.Instant;
 import java.time.Month;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
@@ -51,16 +54,6 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 import timber.log.Timber;
-
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static android.view.accessibility.AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED;
-import static androidx.core.content.res.ResourcesCompat.getColor;
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-import static ee.ria.DigiDoc.android.Constants.VOID;
-import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.DOCUMENT;
-import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.SIGNATURE;
-import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.TIMESTAMP;
-import static ee.ria.DigiDoc.android.utils.Immutables.containsType;
 
 final class SignatureUpdateAdapter extends
         RecyclerView.Adapter<SignatureUpdateAdapter.UpdateViewHolder<SignatureUpdateAdapter.Item>> {
@@ -460,6 +453,7 @@ final class SignatureUpdateAdapter extends
         private final Formatter formatter;
 
         private final ColorStateList colorValid;
+        private final ColorStateList colorWarning;
         private final ColorStateList colorInvalid;
 
         private final TextView nameView;
@@ -477,6 +471,7 @@ final class SignatureUpdateAdapter extends
             formatter = Application.component(itemView.getContext()).formatter();
             Resources resources = itemView.getResources();
             colorValid = ColorStateList.valueOf(getColor(resources, R.color.success, null));
+            colorWarning = ColorStateList.valueOf(getColor(resources, R.color.warningText, null));
             colorInvalid = ColorStateList.valueOf(getColor(resources, R.color.error, null));
             nameView = itemView.findViewById(R.id.signatureUpdateListSignatureName);
             statusView = itemView.findViewById(R.id.signatureUpdateListSignatureStatus);
@@ -525,6 +520,7 @@ final class SignatureUpdateAdapter extends
                 case NON_QSCD:
                     statusCautionView.setVisibility(View.VISIBLE);
                     statusCautionView.setText(R.string.signature_update_signature_status_non_qscd);
+                    statusCautionView.setTextColor(colorWarning);
                     break;
                 default:
                     statusCautionView.setVisibility(View.GONE);
@@ -599,6 +595,7 @@ final class SignatureUpdateAdapter extends
         private final Formatter formatter;
 
         private final ColorStateList colorValid;
+        private final ColorStateList colorWarning;
         private final ColorStateList colorInvalid;
 
         private final TextView nameView;
@@ -606,13 +603,12 @@ final class SignatureUpdateAdapter extends
         private final TextView statusCautionView;
         private final TextView createdAtView;
 
-        private final Activity activityContext = (Activity)Activity.getContext().get();
-
         TimestampViewHolder(View itemView) {
             super(itemView);
             formatter = Application.component(itemView.getContext()).formatter();
             Resources resources = itemView.getResources();
             colorValid = ColorStateList.valueOf(getColor(resources, R.color.success, null));
+            colorWarning = ColorStateList.valueOf(getColor(resources, R.color.warningText, null));
             colorInvalid = ColorStateList.valueOf(getColor(resources, R.color.error, null));
             nameView = itemView.findViewById(R.id.signatureUpdateListSignatureName);
             statusView = itemView.findViewById(R.id.signatureUpdateListSignatureStatus);
@@ -647,6 +643,7 @@ final class SignatureUpdateAdapter extends
                 case NON_QSCD:
                     statusCautionView.setVisibility(View.VISIBLE);
                     statusCautionView.setText(R.string.signature_update_signature_status_non_qscd);
+                    statusCautionView.setTextColor(colorWarning);
                     break;
                 default:
                     statusCautionView.setVisibility(View.GONE);

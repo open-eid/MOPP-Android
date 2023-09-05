@@ -65,7 +65,12 @@
 
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
+    <item type="id" name="mainSettingsAccessScreen" />
     <item type="id" name="mainSettingsFragment" />
+    <item type="id" name="mainSettingsAccessCategory" />
+    <item type="id" name="mainSettingsRoleAndAddressCategory" />
+    <item type="id" name="mainSettingsProxyCategory" />
+    <item type="id" name="mainSettingsSSLCertificateCategory" />
     <item type="id" name="mainSettingsOpenAllFileTypes" />
     <item type="id" name="mainSettingsAllowScreenshots" />
     <item type="id" name="mainSettingsAccessToSigningService" />
@@ -126,6 +131,14 @@
 
     <!-- Signature Details -->
     <item type="id" name="signatureDetailScreen" />
+
+    <item type="id" name="signersCertificateErrorContainer" />
+    <item type="id" name="signersCertificateErrorTitle" />
+    <item type="id" name="signersCertificateErrorDetails" />
+    <item type="id" name="signersCertificateTechnicalInformationButtonTitle" />
+    <item type="id" name="signersCertificateTechnicalInformationContainerView" />
+    <item type="id" name="signersCertificateTechnicalInformationText" />
+
     <item type="id" name="signersCertificateIssuerTitle" />
     <item type="id" name="signersCertificateTitle" />
     <item type="id" name="signatureDetailSignersCertificateIssuer" />
