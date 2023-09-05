@@ -398,4 +398,23 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_SendResult(error);
         }
     }
+
+    @AutoValue
+    abstract class EncryptResult implements Result {
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state;
+        }
+
+        static EncryptResult success() {
+            return new AutoValue_Result_EncryptResult(null);
+        }
+
+        static EncryptResult failure(Throwable error) {
+            return new AutoValue_Result_EncryptResult(error);
+        }
+    }
 }

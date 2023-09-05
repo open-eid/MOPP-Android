@@ -208,21 +208,6 @@
         android:background="@color/accent">
 
         <Button
-            android:id="@id/signatureUpdateSendButton"
-            style="@style/Widget.Application.Button.Container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:maxLines="1"
-            android:text="@string/signature_update_send_button"
-            android:drawableTop="@drawable/ic_icon_share" />
-
-        <Space
-            android:id="@id/signatureUpdateButtonSpace"
-            android:layout_width="1px"
-            android:layout_height="wrap_content" />
-
-        <Button
             android:id="@id/signatureUpdateSignatureAddButton"
             style="@style/Widget.Application.Button.Container"
             android:layout_width="match_parent"
@@ -231,6 +216,36 @@
             android:maxLines="1"
             android:text="@string/signature_update_signature_add_button"
             android:drawableTop="@drawable/ic_icon_signature" />
+
+        <Space
+            android:id="@id/signatureUpdateSignatureButtonSpace"
+            android:layout_width="1px"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@id/signatureUpdateSignatureEncryptButton"
+            style="@style/Widget.Application.Button.Container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/crypto_create_encrypt_button"
+            android:drawableTop="@drawable/ic_icon_crypto" />
+
+        <Space
+            android:id="@id/signatureUpdateEncryptButtonSpace"
+            android:layout_width="1px"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@id/signatureUpdateSendButton"
+            style="@style/Widget.Application.Button.Container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/signature_update_send_button"
+            android:drawableTop="@drawable/ic_icon_share" />
 
     </LinearLayout>
 

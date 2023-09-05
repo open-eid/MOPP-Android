@@ -1,5 +1,8 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
+
 import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
@@ -12,9 +15,6 @@ import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.navigator.TransactionAction;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
-
-import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 
 interface Action extends MviAction {
 
@@ -127,6 +127,16 @@ interface Action extends MviAction {
 
         static SendAction create(File containerFile) {
             return new AutoValue_Action_SendAction(containerFile);
+        }
+    }
+
+    @AutoValue
+    abstract class EncryptAction implements Action {
+
+        abstract File containerFile();
+
+        static EncryptAction create(File containerFile) {
+            return new AutoValue_Action_EncryptAction(containerFile);
         }
     }
 }

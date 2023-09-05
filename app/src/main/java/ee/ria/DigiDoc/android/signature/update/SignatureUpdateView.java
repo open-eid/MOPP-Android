@@ -3,6 +3,8 @@ package ee.ria.DigiDoc.android.signature.update;
 import static android.util.TypedValue.COMPLEX_UNIT_SP;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
 import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
@@ -64,9 +66,6 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
 
@@ -100,8 +99,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private final TextView smartIdChallengeView;
     private final Button smartIdCancelButton;
     private final Button sendButton;
-    private final View buttonSpace;
+    private final View signatureButtonSpace;
+    private final View encryptButtonSpace;
     private final Button signatureAddButton;
+    private final Button signatureEncryptButton;
     private final SignatureUpdateErrorDialog errorDialog;
     private final ConfirmationDialog sivaConfirmationDialog;
     private final ConfirmationDialog documentRemoveConfirmationDialog;
@@ -174,8 +175,10 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         smartIdCancelButton.setContentDescription(getResources().getString(R.string.cancel_button_accessibility));
         sendButton = findViewById(R.id.signatureUpdateSendButton);
         sendButton.setContentDescription(getResources().getString(R.string.share_container));
-        buttonSpace = findViewById(R.id.signatureUpdateButtonSpace);
+        signatureButtonSpace = findViewById(R.id.signatureUpdateSignatureButtonSpace);
+        encryptButtonSpace = findViewById(R.id.signatureUpdateEncryptButtonSpace);
         signatureAddButton = findViewById(R.id.signatureUpdateSignatureAddButton);
+        signatureEncryptButton = findViewById(R.id.signatureUpdateSignatureEncryptButton);
         mobileIdChallengeTextView = findViewById(R.id.signatureUpdateMobileIdChallengeText);
         mobileIdCancelButton = findViewById(R.id.signatureUpdateMobileIdCancelButton);
         mobileIdCancelButton.setContentDescription(getResources().getString(R.string.cancel_button_accessibility));
@@ -217,17 +220,20 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     private void setActionButtonsTextSize() {
 
         signatureAddButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
+        signatureEncryptButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
         sendButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
         mobileIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
         smartIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
 
         if (isLargeFontEnabled(getResources())) {
             signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
+            signatureEncryptButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
             sendButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
             mobileIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
             smartIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
         } else {
             signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
+            signatureEncryptButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
             sendButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
             mobileIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
             smartIdCancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
@@ -260,7 +266,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), addDocumentsIntent(),
                 documentViewIntent(), documentSaveIntent(), documentRemoveIntent(), signatureRemoveIntent(),
-                signatureAddIntent(), signatureViewIntent(), sendIntent());
+                signatureAddIntent(), signatureViewIntent(), encryptIntent(), sendIntent());
     }
 
     private void checkIfDdocParentContainerIsTimestamped(ImmutableList<Signature> signatures, ImmutableList<DataFile> dataFiles) {
@@ -316,11 +322,15 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         if (isNestedContainer) {
             sendButton.setVisibility(GONE);
-            buttonSpace.setVisibility(GONE);
+            signatureButtonSpace.setVisibility(GONE);
+            encryptButtonSpace.setVisibility(GONE);
             signatureAddButton.setVisibility(GONE);
+            signatureEncryptButton.setVisibility(GONE);
         } else {
+            signatureEncryptButton.setVisibility(isExistingContainer ? VISIBLE : GONE);
             sendButton.setVisibility(isExistingContainer ? VISIBLE : GONE);
-            buttonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
+            signatureButtonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
+            encryptButtonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
             if (UNSIGNABLE_CONTAINER_EXTENSIONS.contains(
                     Files.getFileExtension(containerFile.getName()).toLowerCase()) ||
                     FileSystem.isEmptyDataFileInContainer(navigator.activity(), containerFile)) {
@@ -338,6 +348,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
             dataFiles = state.container().dataFiles();
         }
         signatureAddButton.setContentDescription(getResources().getString(R.string.sign_container_button_description));
+        signatureEncryptButton.setContentDescription(getResources().getString(R.string.crypto_create_encrypt_button_description));
 
         if (state.containerLoadInProgress() || state.documentsAddInProgress() ||
                 state.documentRemoveInProgress() || state.signatureRemoveInProgress()) {
@@ -422,6 +433,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
         tintCompoundDrawables(sendButton);
         tintCompoundDrawables(signatureAddButton);
+        tintCompoundDrawables(signatureEncryptButton);
 
         if (mobileIdContainerView.getVisibility() == VISIBLE) {
             mobileIdContainerView.setFocusedByDefault(true);
@@ -509,6 +521,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         activityOverlayView.setVisibility(activity ? VISIBLE : GONE);
         sendButton.setEnabled(!activity);
         signatureAddButton.setEnabled(!activity);
+        signatureEncryptButton.setEnabled(!activity);
         if (!activity) {
             SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
             SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
@@ -598,6 +611,11 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
                 }),
                 signatureAddIntentSubject
         );
+    }
+
+    private Observable<Intent.EncryptIntent> encryptIntent() {
+        return clicks(signatureEncryptButton)
+                .map(ignored -> Intent.EncryptIntent.create(containerFile));
     }
 
     private Observable<Intent.SendIntent> sendIntent() {
@@ -727,12 +745,15 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
     }
 
     private void setupAccessibilityTabs() {
-        if (sendButton.getVisibility() == VISIBLE && signatureAddButton.getVisibility() == VISIBLE) {
-            sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 1, 2));
-            signatureAddButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 2, 2));
+        if (sendButton.getVisibility() == VISIBLE && signatureAddButton.getVisibility() == VISIBLE &&
+                signatureEncryptButton.getVisibility() == VISIBLE) {
+            signatureAddButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 1, 3));
+            signatureEncryptButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 2, 3));
+            sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 3, 3));
         } else {
             sendButton.setContentDescription(getResources().getString(R.string.signature_update_send_button));
             signatureAddButton.setContentDescription(getResources().getString(R.string.signature_update_signature_add_button));
+            signatureEncryptButton.setContentDescription(getResources().getString(R.string.crypto_create_encrypt_button));
         }
     }
 }

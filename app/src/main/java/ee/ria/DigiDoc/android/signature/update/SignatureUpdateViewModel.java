@@ -73,6 +73,8 @@ public final class SignatureUpdateViewModel extends
                     signatureAddIntent.request(), false);
         } else if (intent instanceof Intent.SendIntent) {
             return Action.SendAction.create(((Intent.SendIntent) intent).containerFile());
+        } else if (intent instanceof Intent.EncryptIntent) {
+            return Action.EncryptAction.create(((Intent.EncryptIntent) intent).containerFile());
         } else if (intent instanceof Action) {
             return (Action) intent;
         } else {
