@@ -251,7 +251,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 transaction = Transaction.push(SignatureUpdateScreen
                                         .create(true, true, documentFile, false, false, null, true));
                             } else if (CryptoContainer.isContainerFileName(documentFile.getName())) {
-                                transaction = Transaction.push(CryptoCreateScreen.open(documentFile));
+                                transaction = Transaction.push(CryptoCreateScreen.open(documentFile, true));
                             } else {
                                 transaction = Transaction.activity(IntentUtils
                                         .createActionIntent(application, documentFile,
@@ -429,6 +429,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 createActionIntent(application, action.containerFile(), android.content.Intent.ACTION_SEND), null)))
                 .map(action -> Result.SendResult.success())
                 .onErrorReturn(Result.SendResult::failure);
+
+        encrypt = upstream -> upstream
+                .doOnNext(action -> {
+                    navigator.execute(Transaction.push(CryptoCreateScreen.open(action.containerFile(), false)));
+                })
+                .map(action -> Result.EncryptResult.success())
+                .onErrorReturn(Result.EncryptResult::failure);
     }
 
     @SuppressWarnings("unchecked")

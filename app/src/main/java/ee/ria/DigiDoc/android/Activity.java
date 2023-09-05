@@ -1,10 +1,10 @@
 package ee.ria.DigiDoc.android;
 
 import static ee.ria.DigiDoc.android.Constants.DIR_EXTERNALLY_OPENED_FILES;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.setIntentData;
 
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
-import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,7 +20,6 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.common.util.CollectionUtils;
@@ -345,17 +344,6 @@ public final class Activity extends AppCompatActivity {
                 }
             }
         }
-
-        private static Intent setIntentData(Intent intent, Path filePath, android.app.Activity activity) {
-            intent.setData(Uri.parse(filePath.toUri().toString()));
-            intent.setClipData(ClipData.newRawUri(filePath.getFileName().toString(), FileProvider.getUriForFile(
-                    activity,
-                    activity.getString(R.string.file_provider_authority),
-                    filePath.toFile())));
-            return intent;
-        }
-
-
     }
 
 
