@@ -66,8 +66,10 @@
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsAccessScreen" />
+    <item type="id" name="mainSettingsRoleAndAddressScreen" />
     <item type="id" name="mainSettingsFragment" />
     <item type="id" name="mainSettingsAccessCategory" />
+    <item type="id" name="mainSettingsRoleAndAddressCategory" />
     <item type="id" name="mainSettingsOpenAllFileTypes" />
     <item type="id" name="mainSettingsAllowScreenshots" />
     <item type="id" name="mainSettingsAccessToSigningService" />

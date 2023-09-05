@@ -44,6 +44,7 @@
     <!-- Main Settings -->
     <string name="main_settings_title">Настройки</string>
     <string name="main_settings_access_button">Доступ</string>
+    <string name="main_settings_role_and_address_button">Роль и адрес</string>
     <string name="main_settings_phone_no_title">Код страны и телефонный номер</string>
     <string name="main_settings_personal_code_title">Личный код</string>
     <string name="main_settings_tsa_url_title">Доступ к услугам отметки времени</string>

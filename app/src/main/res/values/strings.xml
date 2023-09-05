@@ -44,6 +44,7 @@
     <!-- Main Settings -->
     <string name="main_settings_title">Settings</string>
     <string name="main_settings_access_button">Access</string>
+    <string name="main_settings_role_and_address_button">Role and address</string>
     <string name="main_settings_phone_no_title">Country code and phone number</string>
     <string name="main_settings_personal_code_title">Personal code</string>
     <string name="main_settings_tsa_url_title">Access to Time-Stamping service</string>
