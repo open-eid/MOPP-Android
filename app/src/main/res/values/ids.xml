@@ -70,6 +70,13 @@
     <item type="id" name="mainSettingsAllowScreenshots" />
     <item type="id" name="mainSettingsAccessToSigningService" />
     <item type="id" name="mainSettingsAccessToTimeStampingService" />
+    <item type="id" name="mainSettingsTsaCertificateContainer" />
+    <item type="id" name="mainSettingsTsaCertificateIssuedTo" />
+    <item type="id" name="mainSettingsTsaCertificateValidTo" />
+    <item type="id" name="mainSettingsTsaCertificateAddCertificateButton" />
+    <item type="id" name="mainSettingsTsaCertificateShowCertificateButton" />
+    <item type="id" name="mainSettingsChooseFileScreen" />
+
 
     <!-- Main About -->
     <item type="id" name="mainAboutList" />
@@ -118,6 +125,14 @@
 
     <!-- Signature Details -->
     <item type="id" name="signatureDetailScreen" />
+
+    <item type="id" name="signersCertificateErrorContainer" />
+    <item type="id" name="signersCertificateErrorTitle" />
+    <item type="id" name="signersCertificateErrorDetails" />
+    <item type="id" name="signersCertificateTechnicalInformationButtonTitle" />
+    <item type="id" name="signersCertificateTechnicalInformationContainerView" />
+    <item type="id" name="signersCertificateTechnicalInformationText" />
+
     <item type="id" name="signersCertificateIssuerTitle" />
     <item type="id" name="signersCertificateTitle" />
     <item type="id" name="signatureDetailSignersCertificateIssuer" />
@@ -255,6 +270,8 @@
     <item type="id" name="signatureUpdateMobileIdPersonalCodeMessage" />
     <item type="id" name="signatureUpdateMobileIdPersonalCode" />
     <item type="id" name="signatureUpdateMobileIdRememberMe" />
+    <item type="id" name="signatureUpdateMobileIdCancelSigningButton" />
+    <item type="id" name="signatureUpdateMobileIdSignButton" />
 
     <item type="id" name="signatureUpdateSmartId" />
     <item type="id" name="signatureUpdateSmartIdCountryText" />
@@ -263,6 +280,8 @@
     <item type="id" name="signatureUpdateSmartIdPersonalCodeLabel" />
     <item type="id" name="signatureUpdateSmartIdPersonalCode" />
     <item type="id" name="signatureUpdateSmartIdRememberMe" />
+    <item type="id" name="signatureUpdateSmartIdCancelSigningButton" />
+    <item type="id" name="signatureUpdateSmartIdSignButton" />
 
     <item type="id" name="signatureUpdateIdCard" />
     <item type="id" name="signatureUpdateIdCardProgressContainer" />
@@ -273,6 +292,8 @@
     <item type="id" name="signatureUpdateIdCardSignPin2" />
     <item type="id" name="signatureUpdateIdCardSignPin2Label" />
     <item type="id" name="signatureUpdateIdCardSignPin2Error" />
+    <item type="id" name="signatureUpdateIdCardCancelButton" />
+    <item type="id" name="signatureUpdateIdCardSignButton" />
 
     <!-- Signature Add -->
     <item type="id" name="signatureAdd" />
@@ -333,6 +354,7 @@
     <item type="id" name="eidHomeCoordinator" />
     <item type="id" name="eidHomeCodeUpdate" />
     <item type="id" name="eidHomeScroll" />
+    <item type="id" name="eidHomeProgressLayout" />
     <item type="id" name="eidHomeProgressMessage" />
     <item type="id" name="eidHomeData" />
     <item type="id" name="eidHomeDataType" />

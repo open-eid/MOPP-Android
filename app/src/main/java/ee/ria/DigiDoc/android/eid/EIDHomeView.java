@@ -3,11 +3,13 @@ package ee.ria.DigiDoc.android.eid;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
-import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -49,6 +51,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
 
     private final CoordinatorLayout coordinatorView;
     private final HomeToolbar toolbarView;
+    private final LinearLayout progressLayout;
     private final TextView progressMessageView;
     private final EIDDataView dataView;
     private final ErrorDialog errorDialog;
@@ -72,6 +75,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
         inflate(context, R.layout.eid_home, this);
         coordinatorView = findViewById(R.id.eidHomeCoordinator);
         toolbarView = findViewById(R.id.toolbar);
+        progressLayout = findViewById(R.id.eidHomeProgressLayout);
         progressMessageView = findViewById(R.id.eidHomeProgressMessage);
         dataView = findViewById(R.id.eidHomeData);
 
@@ -133,7 +137,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
         if (data != null) {
             dataView.render(data, state.certificatesContainerExpanded());
         }
-        progressMessageView.setVisibility(data == null ? VISIBLE : GONE);
+        progressLayout.setVisibility(data == null ? VISIBLE : GONE);
         dataView.setVisibility(data == null ? GONE : VISIBLE);
 
         codeUpdateAction = state.codeUpdateAction();

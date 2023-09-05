@@ -143,7 +143,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return parseIntent(androidIntent, application, fileSystem.getExternallyOpenedFilesDir());
             } else {
                 navigator.execute(Transaction.activityForResult(RC_CRYPTO_CREATE_INITIAL,
-                        createGetContentIntent(), null));
+                        createGetContentIntent(true), null));
                 return navigator.activityResults()
                         .filter(activityResult ->
                                 activityResult.requestCode() == RC_CRYPTO_CREATE_INITIAL)
@@ -205,7 +205,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             }
 
             navigator.execute(Transaction.activityForResult(RC_CRYPTO_CREATE_DATA_FILE_ADD,
-                    createGetContentIntent(), null));
+                    createGetContentIntent(true), null));
             return navigator.activityResults()
                     .filter(activityResult ->
                             activityResult.requestCode() == RC_CRYPTO_CREATE_DATA_FILE_ADD)
