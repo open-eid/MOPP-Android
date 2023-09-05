@@ -56,6 +56,11 @@
     <string name="main_settings_signature_profile_title">Формат файла по умолчанию</string>
     <string name="main_settings_open_all_filetypes_title">Разрешить приложению открывать все типы файлов (потребуется перезапуск приложения)</string>
     <string name="main_settings_allow_screenshots_title">Разрешить скриншоты (потребуется перезапуск приложения)</string>
+    <string name="main_settings_timestamp_cert_title">SSL сертификат службы отметок времени</string>
+    <string name="main_settings_timestamp_cert_issued_to_title">Выдан: </string>
+    <string name="main_settings_timestamp_cert_valid_to_title">Действительно до: </string>
+    <string name="main_settings_timestamp_cert_add_certificate_button">ДОБАВИТЬ СЕРТИФИКАТ</string>
+    <string name="main_settings_timestamp_cert_show_certificate_button">ПОКАЗАТЬ СЕРТИФИКАТ</string>
 
     <!-- Main About -->
     <string name="main_about_title">Информация</string>
@@ -267,6 +272,15 @@
     <string name="id_card_sign_pin_invalid_length">%1$s-код должен быть не менее %2$s символов</string>
 
     <!-- Signature Details -->
+    <string name="signature_error_details_title">Предупреждения</string>
+    <string name="signature_error_details_invalid_reason">Повреждена подпись или подписанный файл. Данная подпись недействительна.</string>
+    <string name="signature_error_details_reason_weak">Подпись технически верна, но так как она основана на слабом на данный момент алгоритме хеширования SHA-1, то не защищена от подделки или изменения.</string>
+    <string name="signature_error_details_reason_warning">Подпись действительна, но у контейнера имеется какая-то особенность. Чаще всего, такая особенность возникает при изготовлении контейнеров случайно. Однако поскольку контейнер невозможно изменить без потери действительности подписи, то отображается предупреждение.\nДополнительная информация: https://www.id.ee/ru/artikkel/czifrovoe-podpisanie-i-elektronnye-podpisi/</string>
+    <string name="signature_error_details_reason_nonqscd">Эта электронная подпись не эквивалентна рукописной подписи и поэтому может использоваться только в тех случаях, когда не требуется квалифицированная электронная подпись.</string>
+    <string name="signature_error_details_reason_unknown">Статус подписи отображается как \"неизвестный\", если на компьютере не установлены необходимые для проверки подписи сертификаты сертифицирующей организации и/или услуги подтверждения действительности.\nДополнительная информация: https://www.id.ee/ru/artikkel/digidoc4-klient-oshibka-ocsp-responder-is-not-trusted-no-certificate-for-this-responder-in-local-certstore</string>
+    <string name="signature_error_details_button">ТЕХНИЧЕСКАЯ ИНФОРМАЦИЯ</string>
+    <string name="signature_error_details_button_accessibility">техническая информация</string>
+
     <string name="signature_details_title">Детали подписи</string>
     <string name="signer_certificate_issuer_label">Организация, выдавшая сертификат подписавшего</string>
     <string name="signers_certificate_label">Сертификат пользователя</string>

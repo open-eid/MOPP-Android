@@ -6,10 +6,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -52,6 +49,7 @@ public class TsaUrlPreference extends EditTextPreference {
         setViewId(R.id.mainSettingsAccessToTimeStampingService);
 
         setOnPreferenceChangeListener((preference, newValue) -> {
+            SettingsView.setTsaCertificateViewVisibleValue(!checkBox.isChecked());
             AccessibilityUtils.sendAccessibilityEvent(context, TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
             return true;
         });

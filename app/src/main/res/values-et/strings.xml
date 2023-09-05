@@ -56,6 +56,11 @@
     <string name="main_settings_signature_profile_title">Vaikimisi faili tüüp</string>
     <string name="main_settings_open_all_filetypes_title">Luba rakendusel avada kõiki failitüüpe (vajab rakenduse taaskäivitamist)</string>
     <string name="main_settings_allow_screenshots_title">Luba ekraanipildistamine (vajab rakenduse taaskäivitamist)</string>
+    <string name="main_settings_timestamp_cert_title">Ajatempliteenuse SSL sertifikaat</string>
+    <string name="main_settings_timestamp_cert_issued_to_title">Kellele väljastatud: </string>
+    <string name="main_settings_timestamp_cert_valid_to_title">Kehtib kuni: </string>
+    <string name="main_settings_timestamp_cert_add_certificate_button">LISA SERTIFIKAAT</string>
+    <string name="main_settings_timestamp_cert_show_certificate_button">NÄITA SERTIFIKAATI</string>
 
 
     <!-- Main About -->
@@ -265,6 +270,15 @@
     <string name="id_card_sign_pin_invalid_length">%1$s-kood peab olema vähemalt %2$s-kohaline</string>
 
     <!-- Signature Details -->
+    <string name="signature_error_details_title">Hoiatused</string>
+    <string name="signature_error_details_invalid_reason">See allkiri või allkirjastatud fail on vigane. Allkiri ei ole kehtiv.</string>
+    <string name="signature_error_details_reason_weak">Allkiri on tehniliselt korrektne, kuid põhineb praeguseks nõrgaks hinnatud räsialgoritmil SHA-1, mistõttu ei ole see kaitstud võltsimise või muutmise eest.</string>
+    <string name="signature_error_details_reason_warning">Allkiri on kehtiv, aga ümbrikul on mingi eripära. Tavaliselt on selline eripära tekkinud ümbriku loomisel. Kuna ümbrikku ei ole võimalik muuta ilma, et allkiri kehtetuks muutuks, näidatakse selliste ümbrike puhul hoiatust.\nLisainfo: https://www.id.ee/artikkel/digitaalne-allkirjastamine-ja-elektroonilised-allkirjad</string>
+    <string name="signature_error_details_reason_nonqscd">See e-allkiri ei ole käsitsi kirjutatud allkirjadega samaväärne ja seetõttu saab seda kasutada ainult tehingute puhul, kus kvalifitseeritud e-allkiri pole kohustuslik.</string>
+    <string name="signature_error_details_reason_unknown">Allkirja staatust kuvatakse \"teadmata\", kui Sinu arvutisse pole lisatud kõiki kehtivuskinnituse teenuse sertifikaate ja/või nende kontrolliks vajalikke sertifikaate.\nLisainfo: https://www.id.ee/artikkel/digidoc4-klient-viga-ocsp-responder-is-not-trusted-no-certificate-for-this-responder-in-local-certstore</string>
+    <string name="signature_error_details_button">TEHNILINE INFORMATSIOON</string>
+    <string name="signature_error_details_button_accessibility">tehniline informatsioon</string>
+
     <string name="signature_details_title">Allkirja detailid</string>
     <string name="signer_certificate_issuer_label">Allkirjastaja sertifikaadi väljaandja</string>
     <string name="signers_certificate_label">Allkirjastaja sertifikaat</string>

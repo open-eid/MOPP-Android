@@ -219,7 +219,7 @@ public final class CodeUpdateView extends CoordinatorLayout {
                 setTextViewError(getContext(), getResources().getString(action.newDateOfBirthErrorRes()), repeatLabelViewText, repeatLabelView, repeatView);
                 setViewContentDescription(repeatLabelViewText, getResources().getString(action.newDateOfBirthErrorRes()));
             } else if (newError instanceof CodeTooEasyError) {
-                setTextViewError(getContext(), getResources().getString(action.newDateOfBirthErrorRes()), repeatLabelViewText, repeatLabelView, repeatView);
+                setTextViewError(getContext(), getResources().getString(action.newTooEasyErrorRes()), repeatLabelViewText, repeatLabelView, repeatView);
                 setViewContentDescription(repeatLabelViewText, getResources().getString(action.newTooEasyErrorRes()));
             } else if (newError instanceof CodeSameAsCurrentError) {
                 setTextViewError(getContext(), getResources().getString(action.newSameAsCurrentErrorRes()), repeatLabelViewText, repeatLabelView, repeatView);

@@ -1,19 +1,20 @@
 package ee.ria.DigiDoc.android.main.sharing;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.FileProvider;
-
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toolbar;
-import android.widget.Toast;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -116,24 +117,21 @@ public final class SharingScreenView extends CoordinatorLayout {
             File requestFile = containerFilesList.get(position);
 
             try {
-                Activity activity = (Activity) getContext();
-
                 Uri fileProviderUri = FileProvider.getUriForFile(getContext(),
-                        activity.getString(R.string.file_provider_authority),
+                        navigator.activity().getString(R.string.file_provider_authority),
                         requestFile);
 
-                Intent returnIntent = new Intent(Intent.ACTION_VIEW);
+                Intent returnIntent = navigator.activity().getIntent();
 
                 if (fileProviderUri != null) {
                     returnIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     returnIntent.setDataAndType(fileProviderUri, getFileExtensionFromFileUri(fileProviderUri));
-                    activity.setResult(Activity.RESULT_OK, returnIntent);
-
-                    returnToParentApplication(activity, returnIntent);
+                    navigator.activity().setResult(RESULT_OK, returnIntent);
+                    navigator.activity().finish();
                 } else {
                     returnIntent.setDataAndType(null, "");
-                    activity.setResult(Activity.RESULT_CANCELED, returnIntent);
-                    activity.finish();
+                    navigator.activity().setResult(Activity.RESULT_CANCELED, returnIntent);
+                    navigator.activity().finish();
                     restartToMainApp();
                 }
             } catch (IllegalArgumentException e) {

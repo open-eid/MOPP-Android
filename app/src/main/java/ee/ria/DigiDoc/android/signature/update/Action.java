@@ -45,7 +45,7 @@ interface Action extends MviAction {
         static DocumentsAddAction create(@Nullable File containerFile) {
             return new AutoValue_Action_DocumentsAddAction(
                     Transaction.activityForResult(RC_SIGNATURE_UPDATE_DOCUMENTS_ADD,
-                            createGetContentIntent(), null),
+                            createGetContentIntent(true), null),
                     containerFile);
         }
     }

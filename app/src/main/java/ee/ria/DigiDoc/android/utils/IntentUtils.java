@@ -61,13 +61,13 @@ public final class IntentUtils {
      *
      * @return Intent to use with {@link android.app.Activity#startActivityForResult(Intent, int)}.
      */
-    public static Intent createGetContentIntent() {
+    public static Intent createGetContentIntent(Boolean allowMultiple) {
         return Intent
                 .createChooser(new Intent(Intent.ACTION_GET_CONTENT)
                         .setType("*/*")
                         .addCategory(Intent.CATEGORY_OPENABLE)
                         .putExtra(Intent.EXTRA_REFERRER, R.string.application_name)
-                        .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true), null);
+                        .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, allowMultiple), null);
     }
 
     /**
