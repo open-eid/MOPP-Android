@@ -21,6 +21,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
+import javax.annotation.Nonnull;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -38,7 +39,13 @@ public class NFC {
     private byte[] keyMAC;
     private byte ssc;
 
-    public final class Result {
+    public final static class NFCException extends IOException {
+        public NFCException(String message) {
+            super(message);
+        }
+    }
+
+    public final static class Result {
         public final int code;
         public final byte[] data;
 
@@ -61,13 +68,13 @@ public class NFC {
         }
     }
 
-    private final class TLV {
+    private static final class TLV {
         public final byte[] data;
         public final int tag;
         public final int start;
         public final int end;
 
-        public TLV(byte[] data, int start, int end) throws IOException {
+        public TLV(byte[] data, int start, int end) throws NFCException {
             this.data = data;
             int pos = start;
             //this.dataLength = dataLength;
@@ -84,7 +91,7 @@ public class NFC {
                 int numberOfLengthBytes = length & 0x7F;
                 if (numberOfLengthBytes > 4) {
                     // fixme: use proper exception type (Lauris)
-                    throw new IOException("TLV Message size invalid");
+                    throw new NFCException("TLV Message size invalid");
                 }
                 length = 0;
                 for (int i = 0; i < numberOfLengthBytes; ++i) {
@@ -98,6 +105,52 @@ public class NFC {
 
         public TLV(byte[] data) throws IOException {
             this(data, 0, data.length);
+        }
+
+        public static byte[] wrap (@Nonnull byte[] cmd, byte[] data) {
+            // fixme: long lengths
+            int len = (data != null) ? data.length : 0;
+            byte[] r = new byte[cmd.length + 1 + len];
+            System.arraycopy(cmd, 0, r, 0, cmd.length);
+            r[cmd.length] = (byte) len;
+            if (data != null) System.arraycopy(data, 0, r, cmd.length + 1, data.length);
+            return r;
+        }
+
+        public static byte[] wrap (int cmd, byte[] data) {
+            // fixme: long lengths
+            int len = (data != null) ? data.length : 0;
+            byte[] r = new byte[1 + 1 + len];
+            r[0] = (byte) cmd;
+            r[1] = (byte) len;
+            if (data != null) System.arraycopy(data, 0, r, 1 + 1, data.length);
+            return r;
+        }
+
+        public static TLV decode(String context, byte[] data, int start, int end, int...tags) throws NFCException {
+            TLV tlv = null;
+            for (int tag: tags) {
+                tlv = new TLV(data, start, end);
+                if (tlv.tag != tag) throw new NFCException(context + String.format(": Invalid tag - expected %x, got %x", tag, tlv.tag));
+                start = tlv.start;
+                end = tlv.end;
+            }
+            return tlv;
+        }
+
+        public static TLV decodeResult(String context, byte[] data, int... tags) throws NFCException {
+            int code = (((int) data[data.length - 2] & 0xff) << 8) | ((int) data[data.length - 1] & 0xff);
+            if (code != 0x9000) throw new NFCException(context + String.format(": Invalid result %x", code));
+            int start = 0;
+            int end = data.length - 2;
+            TLV tlv = null;
+            for (int tag: tags) {
+                tlv = new TLV(data, start, end);
+                if (tlv.tag != tag) throw new NFCException(context + String.format(": Invalid tag - expected %x, got %x", tag, tlv.tag));
+                start = tlv.start;
+                end = tlv.end;
+            }
+            return tlv;
         }
     }
 
@@ -114,18 +167,32 @@ public class NFC {
         }
     }
 
+    private static final byte[] CMD_SEL_MASTER = Hex.decode("00a4040c");
+    private static final byte[] SEL_MAIN_AID = Hex.decode("a000000077010800070000fe00000100");
+
     private static final byte[] CMD_SELECT_DF = Hex.decode("00a4010c");
     private static final byte[] CMD_READ_BINARY = Hex.decode("00B00000");
     private static final byte[] CMD_SIGN = Hex.decode("002A9E9A");
 
-    public byte[] calculateSignature(byte[] pin2, byte[] data, boolean q) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+    public byte[] calculateSignature(byte[] pin2, byte[] data) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
 
-        Result r = communicate(CMD_SIGN, data);
+        Result r = communicateSecure(CMD_SIGN, data);
         Timber.log(Log.DEBUG, "SIGN:%x %s", r.code, Hex.toHexString(r.data));
         return r.data;
     }
 
-    public Result communicate(byte[] cmd, byte[] data) {
+    private Result communicate(byte[] APDU) throws IOException {
+        byte[] response = card.transceive(APDU);
+        return new Result(response);
+    }
+
+    private Result communicatePlain(byte[] cmd, byte[] data) throws IOException {
+        byte[] APDU = createPlainAPDU(cmd[1], cmd[2], cmd[3], data, false);
+        byte[] response = card.transceive(APDU);
+        return new Result(response);
+    }
+
+    public Result communicateSecure(byte[] cmd, byte[] data) {
         byte [] response = null;
         try {
             byte[] APDU = createSecureAPDU(cmd[1], cmd[2], cmd[3], data);
@@ -235,21 +302,23 @@ public class NFC {
         return cipher.doFinal(encryptedNonce);
     }
 
-    /**
-     * Communicates with the card and logs the response
-     *
-     * @param APDU  The command
-     * @param log   Information for logging
-     * @return The response
-     */
-    private byte[] getResponse(byte[] APDU, String log) throws IOException {
-        byte[] response = card.transceive(APDU);
-        if (response[response.length - 2] != (byte) 0x90 || response[response.length - 1] != 0x00) {
-            throw new RuntimeException(String.format("%s failed.", log));
-        }
-        Timber.log(Log.DEBUG, Hex.toHexString(response));
-        return response;
-    }
+    private static final byte[] MSE_SET_AT_PACE = Hex.decode("0022c1a4");
+    private static final byte[] MSE_SET_AT_PACE_DATA = Hex.decode("800a04007f00070202040204830102");
+
+    private static final byte[] GA_GET_NONCE = Hex.decode("10860000");
+    private static final byte[] GA_GET_NONCE_DATA = Hex.decode("7c00");
+
+    private static final byte[] GA_MAP_NONCE = Hex.decode("10860000");
+
+    private static final byte[] GA_KEY_AGREEMENT = Hex.decode("10860000");
+
+    private static final byte[] dataForMACIncomplete = Hex.decode("7f494f060a04007f000702020402048641");
+
+    private static final byte[] GAMutualAuthenticationIncomplete = Hex.decode("008600000c7c0a8508");
+    private static final byte[] GAMutualAuthentication = Hex.decode("008600000c7c0a8508");
+    private static final byte[] GAMutualAuthentication_DATA = Hex.decode("7c0a8508");
+
+    private static final byte DYN_AUTH_DATA = 0x7c;
 
     /**
      * Attempts to use the PACE protocol to create a secure channel with an Estonian ID-card
@@ -258,75 +327,73 @@ public class NFC {
      */
     private byte[][] PACE(byte[] CAN) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
 
-        // select the IAS-ECC application on the chip
-        getResponse(selectMaster, "Select the master application");
+        // Select Master AID
+        Result res = communicatePlain(CMD_SEL_MASTER, SEL_MAIN_AID);
+        // Select PACE
+        res = communicatePlain(MSE_SET_AT_PACE, MSE_SET_AT_PACE_DATA);
 
-        // initiate PACE
-        getResponse(MSESetAT, "Set authentication template");
+        // Get nonce
+        byte[] APDU = createPlainAPDU(GA_GET_NONCE[1], GA_GET_NONCE[2], GA_GET_NONCE[3], GA_GET_NONCE_DATA, true);
+        APDU[0] = 0x10;
+        res = communicate(APDU);
+        Timber.log(Log.DEBUG, "Get nonce:%s", Hex.toHexString(res.data));
+        TLV tlv_nonce = TLV.decodeResult("Get nonce", res.data, DYN_AUTH_DATA, 0x80);
+        byte[] decryptedNonce = decryptNonce(Arrays.copyOfRange(tlv_nonce.data, tlv_nonce.start, tlv_nonce.end), CAN);
 
-        // get nonce
-        byte[] response = getResponse(GAGetNonce, "Get nonce");
-        byte[] decryptedNonce = decryptNonce(Arrays.copyOfRange(response, 4, response.length - 2), CAN);
-
-        // generate an EC keypair and exchange public keys with the chip
+        // Generate an EC keypair and exchange public keys with the chip
         ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec("secp256r1");
         BigInteger privateKey = new BigInteger(255, new SecureRandom()).add(BigInteger.ONE); // should be in [1, spec.getN()-1], but this is good enough for this application
         ECPoint publicKey = spec.getG().multiply(privateKey).normalize();
-        response = getResponse(createAPDU(GAMapNonceIncomplete, publicKey.getEncoded(false), 66), "Map nonce");
-        ECPoint cardPublicKey = spec.getCurve().decodePoint(Arrays.copyOfRange(response, 4, 69));
+
+        byte[] pk = publicKey.getEncoded(false);
+        APDU = createPlainAPDU(GA_MAP_NONCE[1], GA_MAP_NONCE[2], GA_MAP_NONCE[3], TLV.wrap(DYN_AUTH_DATA, TLV.wrap(0x81, pk)));
+        APDU[0] = 0x10;
+        Timber.log(Log.DEBUG, "APDU2: %s", Hex.toHexString(APDU));
+        res = communicate(APDU);
+        Timber.log(Log.DEBUG, "Map nonce:%s", Hex.toHexString(res.data));
+        ECPoint cardPublicKey = spec.getCurve().decodePoint(Arrays.copyOfRange(res.data, 4, 69));
 
         // calculate the new base point, use it to generate a new keypair, and exchange public keys
         ECPoint sharedSecret = cardPublicKey.multiply(privateKey);
         ECPoint mappedECBasePoint = spec.getG().multiply(new BigInteger(1, decryptedNonce)).add(sharedSecret).normalize();
         privateKey = new BigInteger(255, new SecureRandom()).add(BigInteger.ONE);
         publicKey = mappedECBasePoint.multiply(privateKey).normalize();
-        response = getResponse(createAPDU(GAKeyAgreementIncomplete, publicKey.getEncoded(false), 66), "Key agreement");
-        cardPublicKey = spec.getCurve().decodePoint(Arrays.copyOfRange(response, 4, 69));
+        byte[] pk2 = publicKey.getEncoded(false);
+        byte[] APDU2 = createPlainAPDU(GA_KEY_AGREEMENT[1], GA_KEY_AGREEMENT[2], GA_KEY_AGREEMENT[3], TLV.wrap(DYN_AUTH_DATA, TLV.wrap(0x83, pk2)));
+        APDU2[0] = 0x10;
+        Timber.log(Log.DEBUG, "APDU2: %s", Hex.toHexString(APDU2));
+
+        res = communicate(APDU2);
+        Timber.log(Log.DEBUG, "Key agreement:%s", Hex.toHexString(res.data));
+        TLV tlv_key = TLV.decodeResult("Key agreement", res.data, DYN_AUTH_DATA, 0x84);
+        cardPublicKey = spec.getCurve().decodePoint(Arrays.copyOfRange(tlv_key.data, tlv_key.start, tlv_key.end));
 
         // generate the session keys and exchange MACs to verify them
         byte[] secret = cardPublicKey.multiply(privateKey).normalize().getAffineXCoord().getEncoded();
         byte[] keyEnc = createKey(secret, (byte) 1);
         byte[] keyMAC = createKey(secret, (byte) 2);
-        byte[] MAC = getMAC(createAPDU(dataForMACIncomplete, cardPublicKey.getEncoded(false), 65), keyMAC);
-        response = getResponse(createAPDU(GAMutualAuthenticationIncomplete, MAC, 9), "Mutual authentication");
+        byte[] pk3 = cardPublicKey.getEncoded(false);
+        APDU = createAPDU(dataForMACIncomplete, pk3, 65);
+        byte[] MAC = getMAC(APDU, keyMAC);
+        //APDU = createAPDU(GAMutualAuthenticationIncomplete, MAC, 9);
+        //Timber.log(Log.DEBUG, "APDU1: %s", Hex.toHexString(APDU));
+        APDU2 = createPlainAPDU(GAMutualAuthentication[1], GAMutualAuthentication[2], GAMutualAuthentication[3], GAMutualAuthentication_DATA, MAC);
+        Timber.log(Log.DEBUG, "APDU2: %s", Hex.toHexString(APDU2));
+        //response = getResponse(APDU, "Mutual authentication");
+        res = communicate(APDU2);
+        Timber.log(Log.DEBUG, "Mutual authentication:%s", Hex.toHexString(res.data));
+        TLV tlv_mac = TLV.decodeResult("Mutual authentication", res.data, DYN_AUTH_DATA, 0x86);
 
         // verify chip's MAC and return session keys
-        MAC = getMAC(createAPDU(dataForMACIncomplete, publicKey.getEncoded(false), 65), keyMAC);
-        if (!Hex.toHexString(response, 4, 8).equals(Hex.toHexString(MAC))) {
+        byte[] pk4 = publicKey.getEncoded(false);
+        APDU = createAPDU(dataForMACIncomplete, pk4, 65);
+        MAC = getMAC(APDU, keyMAC);
+        if (!Arrays.equals(MAC, Arrays.copyOfRange(tlv_mac.data, tlv_mac.start, tlv_mac.end))) {
+        //if (!Hex.toHexString(res.data, 4, 8).equals(Hex.toHexString(MAC))) {
             throw new RuntimeException("Could not verify chip's MAC."); // *Should* never happen.
         }
         return new byte[][]{keyEnc, keyMAC};
 
-    }
-
-    /**
-     * Selects a file and reads its contents
-     *
-     * @param FID   file identifier of the required file
-     * @param info  string for logging
-     * @return decrypted file contents
-     */
-    private byte[] readFile(byte[] FID, String info) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, IOException {
-        //selectFile(FID, info);
-
-        Result result = communicate(CMD_SELECT_DF, FID);
-        //byte[] APDU = createSecureAPDU(selectFile[1], selectFile[2], selectFile[3], FID);
-        //byte[] response = card.transceive(APDU);
-        if (result.code != 0x9000) {
-            throw new RuntimeException(String.format("Could not select %s", info));
-        }
-
-        //byte[] APDU = createSecureAPDU(CMD_READ_BINARY[1], CMD_READ_BINARY[2], CMD_READ_BINARY[3], null);
-        result = communicate(CMD_READ_BINARY, null);
-        if (result.code != 0x9000) {
-            throw new RuntimeException(String.format("Could not read %s", info));
-        }
-        return result.data;
-        //byte[] response = getResponse(new byte[0], readFile, "Read binary");
-        //if (response[response.length - 2] != (byte) 0x90 || response[response.length - 1] != 0x00) {
-        //    throw new RuntimeException(String.format("Could not read %s", info));
-        //}
-        //return encryptDecryptData(Arrays.copyOfRange(response, 3, 19), Cipher.DECRYPT_MODE);
     }
 
     /**
@@ -344,6 +411,32 @@ public class NFC {
         cipher = Cipher.getInstance("AES/CBC/NoPadding");
         cipher.init(mode, secretKeySpec, new IvParameterSpec(iv));
         return cipher.doFinal(data);
+    }
+
+    private byte[] createPlainAPDU(byte INS, byte P1, byte P2, byte[] data, boolean hasResponse) {
+        byte[] APDU = new byte[4 + 1 + data.length + ((hasResponse) ? 1 : 0)];
+        APDU[1] = INS;
+        APDU[2] = P1;
+        APDU[3] = P2;
+        APDU[4] = (byte) data.length;
+        System.arraycopy(data, 0, APDU, 5, data.length);
+        return APDU;
+    }
+
+    private byte[] createPlainAPDU(byte INS, byte P1, byte P2, byte[]... data) {
+        int len = 0;
+        for (byte[] d : data) len += d.length;
+        byte[] APDU = new byte[4 + 1 + len + 1]; // Add LE
+        APDU[1] = INS;
+        APDU[2] = P1;
+        APDU[3] = P2;
+        APDU[4] = (byte) len;
+        int pos = 5;
+        for (byte[] d : data) {
+            System.arraycopy(d, 0, APDU, pos, d.length);
+            pos += d.length;
+        }
+        return APDU;
     }
 
     private byte[] createSecureAPDU(byte INS, byte P1, byte P2, byte[] data) throws NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
@@ -372,7 +465,6 @@ public class NFC {
             System.arraycopy(enc, 0, mac_buf, 35, enc_len);
         }
         mac_buf[35 + enc_len] = (byte) 0x80;
-        Timber.log(Log.DEBUG, "MAC1:%s", Hex.toHexString(mac_buf));
         byte[] MAC = getMAC(mac_buf, keyMAC);
 
         int apdu_len = 4 + 1 + 3 + enc_len + 2 + 8 + 1;
@@ -405,21 +497,28 @@ public class NFC {
         String[] personalData = new String[lastBytes.length];
         int stringIndex = 0;
 
-        Result result = communicate(CMD_SELECT_DF, IASECCFID);
+        Result result = communicateSecure(CMD_SELECT_DF, IASECCFID);
 
-        // select the personal data dedicated file
-        // selectFile(personalDF, "the personal data DF");
-        result = communicate(CMD_SELECT_DF, personalDF);
+        byte[] FID = new byte[2];
+        FID[0] = personalDF[0];
 
-        byte[] FID = Arrays.copyOf(personalDF, personalDF.length);
+        // Select the personal data DF
+        result = communicateSecure(CMD_SELECT_DF, personalDF);
+
+        //Arrays.copyOf(personalDF, personalDF.length);
         // select and read the personal data elementary files
         for (byte index : lastBytes) {
-
             if (index > 15 || index < 1) throw new RuntimeException("Invalid personal data FID.");
             FID[1] = index;
-
-            byte[] data = readFile(FID, "a personal data EF");
-            personalData[stringIndex++] = new String(data);
+            result = communicateSecure(CMD_SELECT_DF, FID);
+            if (result.code != 0x9000) {
+                throw new RuntimeException(String.format("Could not select %d", index));
+            }
+            result = communicateSecure(CMD_READ_BINARY, null);
+            if (result.code != 0x9000) {
+                throw new RuntimeException(String.format("Could not read %d", index));
+            }
+            personalData[stringIndex++] = new String(result.data);
         }
         return personalData;
 
@@ -434,13 +533,13 @@ public class NFC {
     public byte[] getCertificate(boolean authOrSign) throws NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, IOException {
 
         // selectFile(IASECCFID, "the master application");
-        Result result = communicate(CMD_SELECT_DF, IASECCFID);
+        Result result = communicateSecure(CMD_SELECT_DF, IASECCFID);
 
         // selectFile(authOrSign ? AWP : QSCD, "the application");
-        result = communicate(CMD_SELECT_DF, authOrSign ? AWP : QSCD);
+        result = communicateSecure(CMD_SELECT_DF, authOrSign ? AWP : QSCD);
 
         // selectFile(authOrSign ? authCert : signCert, "the certificate");
-        result = communicate(CMD_SELECT_DF, authOrSign ? authCert : signCert);
+        result = communicateSecure(CMD_SELECT_DF, authOrSign ? authCert : signCert);
 
         byte[] certificate = new byte[0];
         byte[] readCert = Arrays.copyOf(readFile, readFile.length);
@@ -479,19 +578,7 @@ public class NFC {
         return response;
     }
 
-    private static final byte[] selectMaster = Hex.decode("00a4040c10a000000077010800070000fe00000100");
 
-    private static final byte[] MSESetAT = Hex.decode("0022c1a40f800a04007f0007020204020483010200");
-
-    private static final byte[] GAGetNonce = Hex.decode("10860000027c0000");
-
-    private static final byte[] GAMapNonceIncomplete = Hex.decode("10860000457c438141");
-
-    private static final byte[] GAKeyAgreementIncomplete = Hex.decode("10860000457c438341");
-
-    private static final byte[] GAMutualAuthenticationIncomplete = Hex.decode("008600000c7c0a8508");
-
-    private static final byte[] dataForMACIncomplete = Hex.decode("7f494f060a04007f000702020402048641");
 
     private static final byte[] readFile = Hex.decode("0cb000000d970100");
 

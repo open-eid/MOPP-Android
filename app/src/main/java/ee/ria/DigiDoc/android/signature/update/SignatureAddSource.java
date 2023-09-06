@@ -155,22 +155,6 @@ final class SignatureAddSource {
             NFCRequest nfcRequest = (NFCRequest) request;
             /* fixme: Should we remember card? (Lauris) */
 
-            //NFCDialog dlg = new NFCDialog(navigator.activity().getApplicationContext());
-            //AlertDialog.Builder builder = new AlertDialog.Builder(navigator.activity());
-            // fixme: Proper messages
-            //builder.setPositiveButton("Cancel", (dialog, id) -> {
-                // User cancelled the dialog
-                //adapter.disableReaderMode(navigator.activity());
-                //Timber.log(Log.ERROR, "User cancelles NFC signing");
-                //emitter.onNext(NFCResponse.initial());
-            //});
-            //builder.setMessage("Please hold");
-            //your ID card against the phone until completion of the signing process")
-            //builder.setTitle("Start signing");
-            //AlertDialog dialog = builder.show();
-            //dlg.show();
-
-
             Single<SignedContainer> s = signatureContainerDataSource.get(containerFile);
             Observable<NFCResponse> obs = s.flatMapObservable(container -> {
                         return Observable.create(new NFCOnSubscribe(navigator, intent, container, settingsDataStore.getUuid(), nfcRequest.getCan(), nfcRequest.getPin2()));

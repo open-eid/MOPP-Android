@@ -35,20 +35,17 @@ public final class NFCDialog extends AlertDialog implements
         SecureUtil.markAsSecure(context, getWindow());
 
         setMessage(context.getString(message));
-        //setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), this);
         setButton(BUTTON_NEGATIVE, context.getString(android.R.string.cancel), this);
-        //this.getButton(BUTTON_POSITIVE).setVisibility(GONE);
-        //this.getButton(BUTTON_NEGATIVE).setVisibility(VISIBLE);
 
         this.action = action;
     }
 
     public void showStatus(NFCResponse response) {
         if (response.status() != SessionStatusResponse.ProcessStatus.OK) {
-            Button btn = getButton(BUTTON_POSITIVE);
+            Button btn = getButton(BUTTON_NEGATIVE);
             if (btn != null) btn.setText(android.R.string.ok);
         } else {
-            Button btn = getButton(BUTTON_POSITIVE);
+            Button btn = getButton(BUTTON_NEGATIVE);
             if (btn != null) btn.setText(android.R.string.cancel);
         }
         if (response.message() != null) {
