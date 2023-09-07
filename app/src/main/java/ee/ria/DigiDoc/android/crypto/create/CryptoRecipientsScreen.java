@@ -42,7 +42,7 @@ import com.jakewharton.rxbinding4.widget.SearchViewQueryTextEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
@@ -177,9 +177,9 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     protected void onContextAvailable(@NonNull Context context) {
         super.onContextAvailable(context);
-        viewModel = Application.component(context).navigator()
+        viewModel = ApplicationApp.component(context).navigator()
                 .viewModel(cryptoCreateScreenId, CryptoCreateViewModel.class);
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
     }
 
     @Override

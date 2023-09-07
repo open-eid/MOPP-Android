@@ -37,75 +37,33 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
 
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@id/mainSettingsFragment"
-                    android:name="ee.ria.DigiDoc.android.main.settings.SettingsFragment"
+                <Button
+                    android:id="@id/mainSettingsAccessCategory"
+                    style="@style/MaterialTypography.Regular.Body2"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="18dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="8dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/MaterialTypography.Dense.Body1"
-                    android:textSize="16sp"
-                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/main_settings_open_all_filetypes_title"
-                    android:layout_weight="2">
-                </TextView>
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/mainSettingsOpenAllFileTypes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
-                    android:minWidth="0dp"
+                    android:drawableStart="@drawable/ic_icon_access_padded"
+                    android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_right_24"
+                    android:textColor="@color/material_color_black"
+                    android:textSize="@dimen/material_baseline_grid_2x"
+                    android:textAllCaps="false"
+                    android:drawableTint="@color/material_color_black"
+                    android:background="@null"
+                    android:padding="0dp"
+                    android:layout_margin="0dp"
                     android:minHeight="0dp"
-                    android:layout_gravity="end">
-                </androidx.appcompat.widget.SwitchCompat>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="18dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="8dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/MaterialTypography.Dense.Body1"
-                    android:textSize="16sp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/main_settings_allow_screenshots_title"
-                    android:layout_weight="2">
-                </TextView>
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/mainSettingsAllowScreenshots"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
                     android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:layout_gravity="end">
-                </androidx.appcompat.widget.SwitchCompat>
+                    android:gravity="center_vertical"
+                    android:contentDescription="@string/main_settings_access_button"
+                    android:text="@string/main_settings_access_button" />
+
             </LinearLayout>
 
         </LinearLayout>

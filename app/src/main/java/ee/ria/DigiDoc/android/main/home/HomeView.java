@@ -17,7 +17,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.internal.BaselineLayout;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.crypto.home.CryptoHomeView;
 import ee.ria.DigiDoc.android.eid.EIDHomeView;
 import ee.ria.DigiDoc.android.signature.home.SignatureHomeView;
@@ -90,7 +90,7 @@ public final class HomeView extends LinearLayout implements MviView<Intent, View
 
         menuDialog = new HomeMenuDialog(context);
         menuView = menuDialog.getMenuView();
-        viewModel = Application.component(context).navigator().viewModel(screenId,
+        viewModel = ApplicationApp.component(context).navigator().viewModel(screenId,
                 HomeViewModel.class);
         viewModel.eidScreenId(eidScreenId);
     }

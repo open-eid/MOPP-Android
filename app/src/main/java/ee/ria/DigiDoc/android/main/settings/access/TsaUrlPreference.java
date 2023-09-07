@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.main.settings;
+package ee.ria.DigiDoc.android.main.settings.access;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
@@ -6,10 +6,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -17,8 +14,9 @@ import androidx.appcompat.widget.AppCompatCheckBox;
 import com.takisoft.preferencex.EditTextPreference;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessView;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 
 public class TsaUrlPreference extends EditTextPreference {
@@ -41,7 +39,7 @@ public class TsaUrlPreference extends EditTextPreference {
     public TsaUrlPreference(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                             int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
+        configurationProvider = ((ApplicationApp) context.getApplicationContext()).getConfigurationProvider();
         checkBox = new AppCompatCheckBox(context);
         checkBox.setId(android.R.id.checkbox);
         checkBox.setText(R.string.main_settings_tsa_url_use_default);
@@ -52,6 +50,7 @@ public class TsaUrlPreference extends EditTextPreference {
         setViewId(R.id.mainSettingsAccessToTimeStampingService);
 
         setOnPreferenceChangeListener((preference, newValue) -> {
+            SettingsAccessView.setTsaCertificateViewVisibleValue(!checkBox.isChecked());
             AccessibilityUtils.sendAccessibilityEvent(context, TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
             return true;
         });
