@@ -13,7 +13,7 @@ import android.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessScreen;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -40,8 +40,8 @@ public final class SettingsView extends CoordinatorLayout {
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.main_settings, this);
         toolbarView = findViewById(R.id.toolbar);
+        navigator = ApplicationApp.component(context).navigator();
         TextView toolbarTitleView = getToolbarViewTitle(toolbarView);
-        navigator = Application.component(context).navigator();
         disposables = new ViewDisposables();
 
         accessCategory = findViewById(R.id.mainSettingsAccessCategory);

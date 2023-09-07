@@ -34,8 +34,8 @@ ext {
     targetSdkVersion = 33
 
     androidxVersion = '1.6.0'
-    androidxAppCompatVersion = '1.5.1'
-    androidxLifecycleVersion = '2.5.1'
+    androidxAppCompatVersion = '1.6.1'
+    androidxLifecycleVersion = '2.6.1'
     androidMaterialVersion = '1.9.0'
     androidxRecyclerviewVersion = '1.2.1'
     androidxCardviewVersion = '1.0.0'
@@ -46,6 +46,8 @@ ext {
     androidxTestEspressoVersion = '3.5.1'
     androidxConstraintlayoutVersion = '2.1.4'
     androidxCoreVersion = '1.10.1'
+    androidxWorkRuntime = '2.8.1'
+    androidxPreference = '1.2.0'
     androidSupportTestVersion = '1.0.2'
     preferencexVersion = '1.1.0'
     guavaVersion = '31.1-android'

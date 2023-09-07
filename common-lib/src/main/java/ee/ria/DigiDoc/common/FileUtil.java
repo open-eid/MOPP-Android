@@ -35,11 +35,11 @@ public class FileUtil {
      * @return Boolean indicating if file is in the cache directory.
      */
     public static File getFileInDirectory(File file, File directory) throws IOException {
-        if (file.getCanonicalPath().startsWith(directory.getCanonicalPath())) {
-            return file;
+        if (!file.toPath().normalize().startsWith(directory.toPath())) {
+            throw new IOException("Invalid path: " + file.getCanonicalPath());
         }
 
-        throw new IOException("Invalid file path");
+        return file;
     }
 
     /**
@@ -97,7 +97,7 @@ public class FileUtil {
             return normalizeUri(Uri.parse(trimmed)).toString();
         }
 
-        return !sb.toString().equals("") ?
+        return !sb.toString().isEmpty() ?
                 FilenameUtils.getName(FilenameUtils.normalize(sb.toString())) :
                 FilenameUtils.normalize(trimmed);
     }

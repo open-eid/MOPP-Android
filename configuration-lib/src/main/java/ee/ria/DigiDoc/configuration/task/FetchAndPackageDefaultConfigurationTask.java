@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.configuration.task;
 
+import android.util.Log;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +16,7 @@ import ee.ria.DigiDoc.configuration.loader.ConfigurationLoader;
 import ee.ria.DigiDoc.configuration.loader.DefaultConfigurationLoader;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
 import ee.ria.DigiDoc.configuration.verify.ConfigurationSignatureVerifier;
+import timber.log.Timber;
 
 /**
  * Task for loading configuration from central configuration service and storing it to assets folder.
@@ -34,6 +37,7 @@ public class FetchAndPackageDefaultConfigurationTask {
     private static final String DEFAULT_CONFIGURATION_PROPERTIES_FILE_NAME = "default-configuration.properties";
     private static Properties properties = new Properties();
     private static String buildVariant;
+    private static final int DEFAULT_UPDATE_INTERVAL = 4;
 
     public static void main(String[] args) {
         loadResourcesProperties();
@@ -75,10 +79,15 @@ public class FetchAndPackageDefaultConfigurationTask {
     }
 
     private static int determineConfigurationUpdateInterval(String[] args) {
-        if (args.length > 1) {
-            return Integer.parseInt(args[1]);
-        } else {
-            return Integer.parseInt(properties.getProperty(ConfigurationProperties.CONFIGURATION_UPDATE_INTERVAL_PROPERTY));
+        try {
+            if (args.length > 1) {
+                return Integer.parseInt(args[1]);
+            } else {
+                return Integer.parseInt(properties.getProperty(ConfigurationProperties.CONFIGURATION_UPDATE_INTERVAL_PROPERTY));
+            }
+        } catch (NumberFormatException nfe) {
+            Timber.log(Log.ERROR, nfe, "Unable to determine configuration update interval");
+            return DEFAULT_UPDATE_INTERVAL;
         }
     }
 

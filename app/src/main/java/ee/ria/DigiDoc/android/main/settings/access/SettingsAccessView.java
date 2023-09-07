@@ -33,7 +33,7 @@ import java.util.Locale;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.main.settings.create.ChooseFileScreen;
 import ee.ria.DigiDoc.android.main.settings.create.TSACertificateAddViewModel;
@@ -81,13 +81,13 @@ public final class SettingsAccessView extends CoordinatorLayout {
 
     public SettingsAccessView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        viewModel = Application.component(context).navigator()
+        viewModel = ApplicationApp.component(context).navigator()
                 .viewModel(viewId, TSACertificateAddViewModel.class);
         inflate(context, R.layout.main_settings_access, this);
         toolbarView = findViewById(R.id.toolbar);
         TextView toolbarTitleView = getToolbarViewTitle(toolbarView);
-        navigator = Application.component(context).navigator();
-        settingsDataStore = Application.component(context).settingsDataStore();
+        navigator = ApplicationApp.component(context).navigator();
+        settingsDataStore = ApplicationApp.component(context).settingsDataStore();
         disposables = new ViewDisposables();
 
         toolbarView.setTitle(R.string.main_settings_access_button);

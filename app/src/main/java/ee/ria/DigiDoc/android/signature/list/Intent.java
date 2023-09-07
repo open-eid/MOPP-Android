@@ -2,9 +2,6 @@ package ee.ria.DigiDoc.android.signature.list;
 
 import android.content.Context;
 
-import androidx.annotation.Nullable;
-
-import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
@@ -16,83 +13,104 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 
 interface Intent extends MviIntent {
+    Action action();
+}
 
-    @AutoValue
-    abstract class InitialIntent implements Intent {
+class InitialIntent implements Intent {
+    private InitialIntent() {}
 
-        static InitialIntent create() {
-            return new AutoValue_Intent_InitialIntent();
-        }
+    static InitialIntent create() {
+        return new InitialIntent();
     }
 
-    @AutoValue
-    abstract class UpButtonIntent implements Intent {
+    @Override
+    public Action action() {
+        return Action.ContainersLoadAction.create(true);
+    }
+}
 
-        static UpButtonIntent create() {
-            return new AutoValue_Intent_UpButtonIntent();
-        }
+class UpButtonIntent implements Intent {
+    private UpButtonIntent() {}
+
+    static UpButtonIntent create() {
+        return new UpButtonIntent();
     }
 
-    @AutoValue
-    abstract class ContainerOpenIntent implements Intent, Action {
+    @Override
+    public Action action() {
+        return Action.NavigateUpAction.create();
+    }
+}
 
-        @Nullable abstract File containerFile();
+class ContainerOpenIntent implements Intent {
+    private final File containerFile;
+    private final boolean confirmation;
+    private final boolean isSivaConfirmed;
 
-        abstract boolean confirmation();
-
-        abstract boolean isSivaConfirmed();
-
-        static Observable<ContainerOpenIntent> confirmation(File containerFile, Context context) {
-            return SivaUtil.isSivaConfirmationNeeded(
-                    ImmutableList.of(FileStream.create(containerFile)), context)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .map(isSivaConfirmationNeeded -> create(containerFile, isSivaConfirmationNeeded, false))
-                    .subscribeOn(AndroidSchedulers.mainThread());
-        }
-
-        static ContainerOpenIntent open(File containerFile, boolean isSivaConfirmed) {
-            return create(containerFile, false, isSivaConfirmed);
-        }
-
-        static ContainerOpenIntent cancel() {
-            return create(null, false, true);
-        }
-
-        private static ContainerOpenIntent create(@Nullable File containerFile, boolean confirmation, boolean isSivaConfirmed) {
-            return new AutoValue_Intent_ContainerOpenIntent(containerFile, confirmation, isSivaConfirmed);
-        }
+    private ContainerOpenIntent(File containerFile, boolean confirmation, boolean isSivaConfirmed) {
+        this.containerFile = containerFile;
+        this.confirmation = confirmation;
+        this.isSivaConfirmed = isSivaConfirmed;
     }
 
-    @AutoValue
-    abstract class ContainerRemoveIntent implements Intent {
-
-        @Nullable abstract File containerFile();
-
-        abstract boolean confirmation();
-
-        static ContainerRemoveIntent confirmation(File containerFile) {
-            return create(containerFile, true);
-        }
-
-        static ContainerRemoveIntent remove(File containerFile) {
-            return create(containerFile, false);
-        }
-
-        static ContainerRemoveIntent cancel() {
-            return create(null, false);
-        }
-
-        private static ContainerRemoveIntent create(@Nullable File containerFile,
-                                                    boolean confirmation) {
-            return new AutoValue_Intent_ContainerRemoveIntent(containerFile, confirmation);
-        }
+    static Observable<ContainerOpenIntent> confirmation(File containerFile, Context context) {
+        return SivaUtil.isSivaConfirmationNeeded(
+                        ImmutableList.of(FileStream.create(containerFile)), context)
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(isSivaConfirmationNeeded -> new ContainerOpenIntent(containerFile, isSivaConfirmationNeeded, false))
+                .subscribeOn(AndroidSchedulers.mainThread());
     }
 
-    @AutoValue
-    abstract class RefreshIntent implements Intent {
+    static ContainerOpenIntent open(File containerFile, boolean isSivaConfirmed) {
+        return new ContainerOpenIntent(containerFile, false, isSivaConfirmed);
+    }
 
-        static RefreshIntent create() {
-            return new AutoValue_Intent_RefreshIntent();
-        }
+    static ContainerOpenIntent cancel() {
+        return new ContainerOpenIntent(null, false, true);
+    }
+
+    @Override
+    public Action action() {
+        return Action.ContainerOpenAction.create(containerFile, confirmation, isSivaConfirmed);
+    }
+}
+
+class ContainerRemoveIntent implements Intent {
+    private final File containerFile;
+    private final boolean confirmation;
+
+    private ContainerRemoveIntent(File containerFile, boolean confirmation) {
+        this.containerFile = containerFile;
+        this.confirmation = confirmation;
+    }
+
+    static ContainerRemoveIntent confirmation(File containerFile) {
+        return new ContainerRemoveIntent(containerFile, true);
+    }
+
+    static ContainerRemoveIntent remove(File containerFile) {
+        return new ContainerRemoveIntent(containerFile, false);
+    }
+
+    static ContainerRemoveIntent cancel() {
+        return new ContainerRemoveIntent(null, false);
+    }
+
+    @Override
+    public Action action() {
+        return Action.ContainerRemoveAction.create(containerFile, confirmation);
+    }
+}
+
+class RefreshIntent implements Intent {
+    private RefreshIntent() {}
+
+    static RefreshIntent create() {
+        return new RefreshIntent();
+    }
+
+    @Override
+    public Action action() {
+        return Action.ContainersLoadAction.create(false);
     }
 }

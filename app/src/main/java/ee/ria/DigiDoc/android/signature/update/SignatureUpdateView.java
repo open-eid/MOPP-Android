@@ -7,6 +7,8 @@ import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
 import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDisplayMetricsDpToInt;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
@@ -42,7 +44,7 @@ import java.time.Month;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
@@ -59,6 +61,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.android.utils.widget.NotificationDialog;
 import ee.ria.DigiDoc.common.ActivityUtil;
+import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.Signature;
@@ -115,17 +118,17 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
 
     private final Activity activity = (Activity) getContext();
 
-    private final Subject<Intent.DocumentsAddIntent> documentsAddIntentSubject =
+    private final Subject<DocumentsAddIntent> documentsAddIntentSubject =
             PublishSubject.create();
-    private final Subject<Intent.DocumentSaveIntent> documentSaveIntentSubject =
+    private final Subject<DocumentSaveIntent> documentSaveIntentSubject =
             PublishSubject.create();
-    private final Subject<Intent.DocumentRemoveIntent> documentRemoveIntentSubject =
+    private final Subject<DocumentRemoveIntent> documentRemoveIntentSubject =
             PublishSubject.create();
-    private final Subject<Intent.SignatureViewIntent> signatureViewIntentSubject =
+    private final Subject<SignatureViewIntent> signatureViewIntentSubject =
             PublishSubject.create();
-    private final Subject<Intent.SignatureRemoveIntent> signatureRemoveIntentSubject =
+    private final Subject<SignatureRemoveIntent> signatureRemoveIntentSubject =
             PublishSubject.create();
-    private final Subject<Intent.SignatureAddIntent> signatureAddIntentSubject =
+    private final Subject<SignatureAddIntent> signatureAddIntentSubject =
             PublishSubject.create();
 
     @Nullable private DataFile sivaConfirmation;
@@ -154,7 +157,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         this.nestedFile = nestedFile;
         this.isSivaConfirmed = isSivaConfirmed;
 
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
         viewModel = navigator.viewModel(screenId, SignatureUpdateViewModel.class);
 
         setOrientation(VERTICAL);
@@ -523,88 +526,88 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         signatureAddView.reset(viewModel);
     }
 
-    private Observable<Intent.InitialIntent> initialIntent() {
-        return Observable.just(Intent.InitialIntent.create(isExistingContainer, containerFile,
+    private Observable<InitialIntent> initialIntent() {
+        return Observable.just(InitialIntent.create(isExistingContainer, containerFile,
                 signatureAddVisible ? viewModel.signatureAddMethod() : null,
                 signatureAddSuccessMessageVisible));
     }
 
     @SuppressWarnings("unchecked")
-    private Observable<Intent.NameUpdateIntent> nameUpdateIntent() {
+    private Observable<NameUpdateIntent> nameUpdateIntent() {
         return Observable.mergeArray(
-                adapter.nameUpdateClicks().map(ignored -> Intent.NameUpdateIntent.show(containerFile)),
+                adapter.nameUpdateClicks().map(ignored -> NameUpdateIntent.show(containerFile)),
                 cancels(nameUpdateDialog).map(ignored -> {
                     AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.container_name_change_cancelled);
-                    return Intent.NameUpdateIntent.clear();
+                    return NameUpdateIntent.clear();
                 }),
-                nameUpdateDialog.updates().map(name -> Intent.NameUpdateIntent.update(containerFile, name)));
+                nameUpdateDialog.updates().map(name -> NameUpdateIntent.update(containerFile, name)));
     }
 
-    private Observable<Intent.DocumentsAddIntent> addDocumentsIntent() {
+    private Observable<DocumentsAddIntent> addDocumentsIntent() {
         return adapter.documentAddClicks()
-                .map(ignored -> Intent.DocumentsAddIntent.create(containerFile))
+                .map(ignored -> DocumentsAddIntent.create(containerFile))
                 .mergeWith(documentsAddIntentSubject);
     }
 
-    private Observable<Intent.DocumentViewIntent> documentViewIntent() {
+    private Observable<DocumentViewIntent> documentViewIntent() {
         return Observable.mergeArray(adapter.documentClicks()
-                .map(document -> Intent.DocumentViewIntent.confirmation(getContext(),
+                .map(document -> DocumentViewIntent.confirmation(getContext(),
                         (nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, document)),
                         sivaConfirmationDialog.positiveButtonClicks()
-                                .map(ignored -> Intent.DocumentViewIntent.open(
+                                .map(ignored -> DocumentViewIntent.open(
                                         (nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile,
                                         sivaConfirmation)),
                         sivaConfirmationDialog.cancels()
-                                .map(ignored -> Intent.DocumentViewIntent.cancel()));
+                                .map(ignored -> DocumentViewIntent.cancel()));
     }
 
-    private Observable<Intent.DocumentSaveIntent> documentSaveIntent() {
+    private Observable<DocumentSaveIntent> documentSaveIntent() {
         return documentSaveIntentSubject;
     }
 
-    private Observable<Intent.DocumentRemoveIntent> documentRemoveIntent() {
+    private Observable<DocumentRemoveIntent> documentRemoveIntent() {
         return documentRemoveIntentSubject;
     }
 
-    private Observable<Intent.SignatureViewIntent> signatureViewIntent() {
+    private Observable<SignatureViewIntent> signatureViewIntent() {
         return adapter.signatureClicks()
-                .map(document -> Intent.SignatureViewIntent.create(containerFile, document));
+                .map(document -> SignatureViewIntent.create(containerFile, document));
     }
 
-    private Observable<Intent.SignatureRemoveIntent> signatureRemoveIntent() {
+    private Observable<SignatureRemoveIntent> signatureRemoveIntent() {
         return signatureRemoveIntentSubject;
     }
 
     @SuppressWarnings("unchecked")
-    private Observable<Intent.SignatureAddIntent> signatureAddIntent() {
+    private Observable<SignatureAddIntent> signatureAddIntent() {
         return Observable.mergeArray(
                 clicks(signatureAddButton)
                         .doOnNext(ignored -> resetSignatureAddDialog())
                         .map(ignored -> {
                             int method = viewModel.signatureAddMethod();
-                            return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile);
+                            return SignatureAddIntent.show(method, isExistingContainer, containerFile);
                         }),
                 cancels(signatureAddDialog)
                         .doOnNext(ignored -> resetSignatureAddDialog())
-                        .map(ignored -> Intent.SignatureAddIntent.clear()),
+                        .map(ignored -> SignatureAddIntent.clear()),
                 signatureAddView.methodChanges().map(method -> {
                         viewModel.setSignatureAddMethod(method);
                         sendMethodSelectionAccessibilityEvent(method);
-                        return Intent.SignatureAddIntent.show(method, isExistingContainer, containerFile);
+                        return SignatureAddIntent.show(method, isExistingContainer, containerFile);
                 }),
                 signatureAddDialog.positiveButtonClicks().map(ignored -> {
                     SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
                     SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
-                    return Intent.SignatureAddIntent.sign(signatureAddView.method(),
+                    return SignatureAddIntent.sign(signatureAddView.method(),
                             isExistingContainer, containerFile, signatureAddView.request());
                 }),
                 signatureAddIntentSubject
         );
     }
 
-    private Observable<Intent.SendIntent> sendIntent() {
+    private Observable<SendIntent> sendIntent() {
         return clicks(sendButton)
-                .map(ignored -> Intent.SendIntent.create(containerFile));
+                .map(ignored -> SendIntent.create(containerFile));
     }
 
     private void sendMethodSelectionAccessibilityEvent(int method) {
@@ -658,40 +661,41 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         }));
         disposables.add(adapter.scrollToTop().subscribe(ignored -> listView.scrollToPosition(0)));
         disposables.add(adapter.documentSaveClicks().subscribe(document ->
-                documentSaveIntentSubject.onNext(Intent.DocumentSaveIntent
+                documentSaveIntentSubject.onNext(DocumentSaveIntent
                         .create((nestedFile != null) ? nestedFile : containerFile, document))));
         disposables.add(adapter.signatureClicks().subscribe(signature ->
-                signatureViewIntentSubject.onNext(Intent.SignatureViewIntent
+                signatureViewIntentSubject.onNext(SignatureViewIntent
                         .create(containerFile, signature))));
         disposables.add(adapter.documentRemoveClicks().subscribe(document ->
-                documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent
+                documentRemoveIntentSubject.onNext(DocumentRemoveIntent
                         .showConfirmation(containerFile, dataFiles, document))));
         disposables.add(documentRemoveConfirmationDialog.positiveButtonClicks().subscribe(ignored ->
-                documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent
+                documentRemoveIntentSubject.onNext(DocumentRemoveIntent
                         .remove(containerFile, dataFiles, documentRemoveConfirmation))));
         disposables.add(documentRemoveConfirmationDialog.cancels().subscribe(ignored -> {
                     AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.document_removal_cancelled);
-                    documentRemoveIntentSubject.onNext(Intent.DocumentRemoveIntent.clear());
+                    documentRemoveIntentSubject.onNext(DocumentRemoveIntent.clear());
                 }));
         disposables.add(adapter.signatureRemoveClicks().subscribe(signature ->
-                signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent
+                signatureRemoveIntentSubject.onNext(SignatureRemoveIntent
                         .showConfirmation(containerFile, signature))));
         disposables.add(signatureRemoveConfirmationDialog.positiveButtonClicks()
                 .subscribe(ignored -> signatureRemoveIntentSubject
-                        .onNext(Intent.SignatureRemoveIntent
+                        .onNext(SignatureRemoveIntent
                                 .remove(containerFile, signatureRemoveConfirmation))));
         disposables.add(signatureRemoveConfirmationDialog.cancels().subscribe(ignored -> {
                     AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_removal_cancelled);
-                    signatureRemoveIntentSubject.onNext(Intent.SignatureRemoveIntent.clear());
+                    signatureRemoveIntentSubject.onNext(SignatureRemoveIntent.clear());
                 }));
         disposables.add(clicks(mobileIdCancelButton).subscribe(ignored -> {
+            MobileSignService.setIsCancelled(true);
             resetSignatureAddDialog();
-            signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clear());
+            signatureAddIntentSubject.onNext(SignatureAddIntent.clear());
         }));
         disposables.add(clicks(smartIdCancelButton).subscribe(ignored -> {
             SmartSignService.setIsCancelled(true);
             resetSignatureAddDialog();
-            signatureAddIntentSubject.onNext(Intent.SignatureAddIntent.clear());
+            signatureAddIntentSubject.onNext(SignatureAddIntent.clear());
         }));
     }
 

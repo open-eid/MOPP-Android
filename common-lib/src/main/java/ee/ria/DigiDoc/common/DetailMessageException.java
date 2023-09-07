@@ -1,22 +1,21 @@
-package ee.ria.DigiDoc.sign;
+package ee.ria.DigiDoc.common;
 
 import android.content.Context;
 import android.text.Spanned;
 
 import ee.ria.DigiDoc.common.exception.SignatureUpdateDetailError;
+import ee.ria.DigiDoc.common.exception.SignatureUpdateError;
 
-public class TooManyRequestsException extends Exception implements SignatureUpdateDetailError {
+public class DetailMessageException implements SignatureUpdateError, SignatureUpdateDetailError {
 
     private Spanned detailMessage;
     private String message;
 
-    public TooManyRequestsException() {}
-
-    public TooManyRequestsException(Spanned detailMessage) {
+    public DetailMessageException(Spanned detailMessage) {
         this.detailMessage = detailMessage;
     }
 
-    public TooManyRequestsException(String message) {
+    public DetailMessageException(String message) {
         this.message = message;
     }
 

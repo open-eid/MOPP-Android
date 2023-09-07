@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -61,7 +61,7 @@ public final class ChooseFileScreen extends ConductorScreen implements Screen, M
     @Override
     protected void onContextAvailable(@NonNull Context context) {
         super.onContextAvailable(context);
-        viewModel = Application.component(context).navigator()
+        viewModel = ApplicationApp.component(context).navigator()
                 .viewModel(getInstanceId(), TSACertificateAddViewModel.class);
     }
 
@@ -75,7 +75,7 @@ public final class ChooseFileScreen extends ConductorScreen implements Screen, M
     public void render(ViewState state) {
 
         if (state.context() != null) {
-            Navigator navigator = Application.component(state.context()).navigator();
+            Navigator navigator = ApplicationApp.component(state.context()).navigator();
             navigator.execute(Transaction.pop());
         }
     }

@@ -58,13 +58,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 .switchMap(action -> {
                     if (action.intent() != null) {
                         throw new ActivityResultException(ActivityResult.create(
-                                action.transaction().requestCode(), RESULT_OK, action.intent()));
+                                action.transaction().getRequestCode(), RESULT_OK, action.intent()));
                     }
                     navigator.execute(action.transaction());
                     return navigator.activityResults()
                             .filter(activityResult ->
                                     activityResult.requestCode()
-                                            == action.transaction().requestCode())
+                                            == action.transaction().getRequestCode())
                             .doOnNext(activityResult -> {
                                 throw new ActivityResultException(activityResult);
                             })
@@ -77,11 +77,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     ActivityResult activityResult = ((ActivityResultException) throwable)
                             .activityResult;
                     if (activityResult.resultCode() == RESULT_OK) {
-
                         if (activityResult.data() != null) {
                             ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
                                     parseGetContentIntent(navigator.activity(), application.getContentResolver(), activityResult.data(), fileSystem.getExternallyOpenedFilesDir()));
-                            ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
+                            ToastUtil.handleEmptyFileError(validFiles, navigator.activity());
 
                             return handleFiles(navigator, signatureContainerDataSource, validFiles)
                                     .observeOn(AndroidSchedulers.mainThread())
@@ -117,7 +116,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         boolean isEmptyFileException = exceptions.stream().anyMatch(exception ->
                                 (exception instanceof EmptyFileException));
                         if (isEmptyFileException) {
-                            ToastUtil.showEmptyFileError(navigator.activity(), application);
+                            ToastUtil.showEmptyFileError(navigator.activity());
                         } else {
                             ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
                         }

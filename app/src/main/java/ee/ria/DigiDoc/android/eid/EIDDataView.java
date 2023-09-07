@@ -19,8 +19,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import net.cachapa.expandablelayout.ExpandableLayout;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.common.TextUtil;
@@ -33,7 +32,6 @@ import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.setCustomC
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public final class EIDDataView extends LinearLayout {
 
@@ -75,7 +73,7 @@ public final class EIDDataView extends LinearLayout {
     public EIDDataView(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                        int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        formatter = Application.component(context).formatter();
+        formatter = ApplicationApp.component(context).formatter();
         setOrientation(VERTICAL);
         inflate(context, R.layout.eid_home_data, this);
         typeView = findViewById(R.id.eidHomeDataType);

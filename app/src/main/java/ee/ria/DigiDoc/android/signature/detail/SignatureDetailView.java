@@ -33,7 +33,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -70,7 +70,7 @@ public final class SignatureDetailView extends CoordinatorLayout {
         inflate(context, R.layout.signature_detail_screen, this);
         AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.signature_details_title);
 
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
         toolbarView = findViewById(R.id.toolbar);
 
         errorContainer = findViewById(R.id.signersCertificateErrorContainer);
