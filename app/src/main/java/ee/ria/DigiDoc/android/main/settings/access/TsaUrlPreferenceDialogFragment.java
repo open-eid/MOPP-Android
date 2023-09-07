@@ -16,7 +16,7 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.preference.EditTextPreferenceDialogFragmentCompat;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.TextUtil;
@@ -30,7 +30,7 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
         super.onBindDialogView(view);
         TsaUrlPreference tsaUrlPreference = getTsaUrlPreference();
         if (tsaUrlPreference != null) {
-            ConfigurationProvider configurationProvider = ((Application) getContext().getApplicationContext()).getConfigurationProvider();
+            ConfigurationProvider configurationProvider = ((ApplicationApp) getContext().getApplicationContext()).getConfigurationProvider();
             CheckBox checkBox = tsaUrlPreference.getCheckBox();
 
             AppCompatEditText appCompatEditText = TextUtil.getTextView(view);

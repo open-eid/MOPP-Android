@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
+import androidx.work.WorkManager;
 
 import com.google.android.gms.common.util.CollectionUtils;
 import com.google.android.gms.tasks.Task;
@@ -79,6 +80,8 @@ public final class Activity extends AppCompatActivity {
         SecureUtil.markAsSecure(this, getWindow());
 
         handleCrashOnPreviousExecution();
+
+        WorkManager.getInstance(this).cancelAllWork();
 
         Intent intent = sanitizeIntent(getIntent());
 
@@ -189,8 +192,10 @@ public final class Activity extends AppCompatActivity {
             Uri normalizedUri = FileUtil.normalizeUri(Uri.parse(intent.getDataString()));
             intent.setDataAndNormalize(normalizedUri);
         }
-        if (intent.getExtras() != null && !(intent.getExtras().containsKey(Intent.EXTRA_REFERRER) &&
-                intent.getExtras().get(Intent.EXTRA_REFERRER).equals(R.string.application_name))) {
+        if (intent.getExtras() != null) {
+            if (intent.getExtras().containsKey(Intent.EXTRA_REFERRER)) {
+                intent.getExtras().getString(Intent.EXTRA_REFERRER);
+            }
             intent.replaceExtras(new Bundle());
         }
         return intent;
@@ -215,7 +220,7 @@ public final class Activity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        Application.ApplicationComponent component = Application.component(newBase);
+        ApplicationApp.ApplicationComponent component = ApplicationApp.component(newBase);
         navigator = component.navigator();
         rootScreenFactory = component.rootScreenFactory();
         settingsDataStore = component.settingsDataStore();

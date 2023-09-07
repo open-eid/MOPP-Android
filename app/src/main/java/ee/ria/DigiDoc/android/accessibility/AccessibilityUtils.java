@@ -44,7 +44,7 @@ public class AccessibilityUtils {
     public static void sendAccessibilityEvent(Context context, int eventType, CharSequence message) {
         AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(ACCESSIBILITY_SERVICE);
         if (accessibilityManager.isEnabled()) {
-            AccessibilityEvent event = AccessibilityEvent.obtain();
+            AccessibilityEvent event = getAccessibilityEvent();
             event.setEventType(eventType);
             event.getText().add(message);
             accessibilityManager.sendAccessibilityEvent(event);
@@ -54,7 +54,7 @@ public class AccessibilityUtils {
     public static void sendAccessibilityEvent(Context context, int eventType, CharSequence... messages) {
         AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(ACCESSIBILITY_SERVICE);
         if (accessibilityManager.isEnabled()) {
-            AccessibilityEvent event = AccessibilityEvent.obtain();
+            AccessibilityEvent event = getAccessibilityEvent();
             event.setEventType(eventType);
             event.getText().add(combineMessages(messages));
             accessibilityManager.sendAccessibilityEvent(event);
@@ -64,7 +64,7 @@ public class AccessibilityUtils {
     public static void sendDelayedAccessibilityEvent(Context context, int eventType, CharSequence message) {
         AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(ACCESSIBILITY_SERVICE);
         if (accessibilityManager.isEnabled()) {
-            AccessibilityEvent event = AccessibilityEvent.obtain();
+            AccessibilityEvent event = getAccessibilityEvent();
             event.setEventType(eventType);
             event.getText().add(message);
             accessibilityManager.sendAccessibilityEvent(event);
@@ -168,5 +168,13 @@ public class AccessibilityUtils {
             combinedMessage.append(message).append(", ");
         }
         return combinedMessage.toString();
+    }
+
+    private static AccessibilityEvent getAccessibilityEvent() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            return new AccessibilityEvent();
+        } else {
+            return AccessibilityEvent.obtain();
+        }
     }
 }

@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.idcard.CertificateType;
@@ -45,7 +45,7 @@ public final class CertificateDataView extends LinearLayout {
     public CertificateDataView(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                                int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        formatter = Application.component(context).formatter();
+        formatter = ApplicationApp.component(context).formatter();
         setOrientation(VERTICAL);
         inflate(context, R.layout.eid_home_certificate_data, this);
         titleView = findViewById(R.id.eidHomeCertificateDataTitle);

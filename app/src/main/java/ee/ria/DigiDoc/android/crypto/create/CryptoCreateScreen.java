@@ -4,6 +4,7 @@ import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
+import static ee.ria.DigiDoc.android.utils.BundleUtils.putBoolean;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.putFile;
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
@@ -33,7 +34,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
@@ -68,7 +69,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     public static CryptoCreateScreen open(File containerFile, boolean isFromSignatureView) {
         Bundle args = new Bundle();
         putFile(args, KEY_CONTAINER_FILE, containerFile);
-        args.putBoolean(KEY_IS_FROM_SIGNATURE_VIEW, isFromSignatureView);
+        putBoolean(args, KEY_IS_FROM_SIGNATURE_VIEW, isFromSignatureView);
         return new CryptoCreateScreen(args);
     }
 
@@ -121,7 +122,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         containerFile = args.containsKey(KEY_CONTAINER_FILE)
                 ? getFile(args, KEY_CONTAINER_FILE)
                 : null;
-        intent = args.getParcelable(KEY_INTENT);
+        intent = getIntent(args);
         isFromSignatureView = args.getBoolean(KEY_IS_FROM_SIGNATURE_VIEW);
     }
 
@@ -387,7 +388,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     @Override
     protected void onContextAvailable(@NonNull Context context) {
         super.onContextAvailable(context);
-        viewModel = Application.component(context).navigator()
+        viewModel = ApplicationApp.component(context).navigator()
                 .viewModel(getInstanceId(), CryptoCreateViewModel.class);
     }
 
@@ -449,5 +450,13 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         sivaConfirmationDialog.dismiss();
         disposables.detach();
         super.onDestroyView(view);
+    }
+
+    private android.content.Intent getIntent(Bundle bundle) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            return bundle.getParcelable(KEY_INTENT, android.content.Intent.class);
+        } else {
+            return bundle.getParcelable(KEY_INTENT);
+        }
     }
 }

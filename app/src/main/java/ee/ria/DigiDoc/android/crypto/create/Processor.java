@@ -153,7 +153,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 return parseIntent(data, application, fileSystem.getExternallyOpenedFilesDir())
                                         .onErrorReturn(throwable -> {
                                             if (throwable instanceof EmptyFileException) {
-                                                ToastUtil.showEmptyFileError(navigator.activity(), application);
+                                                ToastUtil.showEmptyFileError(navigator.activity());
                                             }
                                             navigator.execute(Transaction.pop());
                                             return Result.InitialResult.failure(throwable);
@@ -219,7 +219,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                         ImmutableList.Builder<File> builder =
                                                 ImmutableList.<File>builder().addAll(dataFiles);
                                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(fileStreams);
-                                        ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
+                                        ToastUtil.handleEmptyFileError(validFiles, navigator.activity());
                                         for (FileStream fileStream : validFiles) {
                                             File dataFile = fileSystem.cache(fileStream);
                                             if (dataFiles.contains(dataFile)) {
@@ -537,7 +537,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 .fromCallable(() -> {
                     ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
                             parseGetContentIntent(application.getApplicationContext(), contentResolver, intent, externallyOpenedFileDir));
-                    ToastUtil.handleEmptyFileError(validFiles, application, application.getApplicationContext());
+                    ToastUtil.handleEmptyFileError(validFiles, application.getApplicationContext());
                     if (validFiles.size() == 1
                             && isContainerFileName(validFiles.get(0).displayName())) {
                         File file = fileSystem.addSignatureContainer(validFiles.get(0));
