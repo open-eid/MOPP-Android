@@ -26,4 +26,18 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_ChooseFileResult(context);
         }
     }
+
+    @AutoValue
+    abstract class OpenAccessResult implements Result {
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .build();
+        }
+
+        static OpenAccessResult create() {
+            return new AutoValue_Result_OpenAccessResult();
+        }
+    }
 }
