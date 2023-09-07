@@ -251,7 +251,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 transaction = Transaction.push(SignatureUpdateScreen
                                         .create(true, true, documentFile, false, false, null, true));
                             } else if (CryptoContainer.isContainerFileName(documentFile.getName())) {
-                                transaction = Transaction.push(CryptoCreateScreen.open(documentFile));
+                                transaction = Transaction.push(CryptoCreateScreen.open(documentFile, true));
                             } else {
                                 transaction = Transaction.activity(IntentUtils
                                         .createActionIntent(application, documentFile,
@@ -262,7 +262,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         })
                         .onErrorReturn(throwable -> {
                             if (throwable instanceof NoInternetConnectionException) {
-                                ToastUtil.showError(navigator.activity(),R.string.no_internet_connection);
+                                ToastUtil.showError(navigator.activity(), R.string.no_internet_connection);
                             } else {
                                 ToastUtil.showError(navigator.activity(), R.string.signature_update_container_load_error);
                             }
@@ -417,7 +417,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .onErrorReturn(Result.SignatureAddResult::failure)
                         .startWithItem(Result.SignatureAddResult.activity(method)));
-
             } else {
                 throw new IllegalArgumentException("Can't handle action " + action);
             }

@@ -13,6 +13,7 @@ import static ee.ria.DigiDoc.android.utils.IntentUtils.createActionIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.setIntentData;
 import static ee.ria.DigiDoc.crypto.CryptoContainer.createContainerFileName;
 import static ee.ria.DigiDoc.crypto.CryptoContainer.isContainerFileName;
 
@@ -40,6 +41,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardDataResponse;
 import ee.ria.DigiDoc.android.model.idcard.IdCardService;
+import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
@@ -117,6 +119,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     private final ObservableTransformer<Intent.DecryptIntent, Result.DecryptResult> decrypt;
 
     private final ObservableTransformer<Intent.SendIntent, Result> send;
+
+    private final ObservableTransformer<Intent.SignIntent, Result> sign;
 
     @Inject Processor(Navigator navigator, RecipientRepository recipientRepository,
                       ContentResolver contentResolver, FileSystem fileSystem,
@@ -311,7 +315,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .fromCallable(() -> {
                             File file = intent.dataFile();
                             if (CryptoContainer.isContainerFileName(file.getName())) {
-                                return Transaction.push(CryptoCreateScreen.open(file));
+                                return Transaction.push(CryptoCreateScreen.open(file, false));
                             } else if (SignedContainer.isContainer(navigator.activity(), file)) {
                                 return Transaction.push(
                                         SignatureUpdateScreen.create(true, true, file, false, false, null, true));
@@ -491,6 +495,13 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                     .activity(createActionIntent(application, intent.containerFile(), android.content.Intent.ACTION_SEND), null));
             return Observable.empty();
         });
+
+        sign = upstream -> upstream.switchMap(signIntent -> {
+            android.content.Intent intent = new android.content.Intent();
+            android.content.Intent intentWithData = setIntentData(intent, signIntent.containerFile().toPath(), navigator.activity());
+            navigator.execute(Transaction.push(SignatureCreateScreen.create(intentWithData)));
+            return Observable.empty();
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -517,6 +528,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.EncryptIntent.class).compose(encrypt),
                 shared.ofType(Intent.DecryptionIntent.class).compose(decryption),
                 shared.ofType(Intent.DecryptIntent.class).compose(decrypt),
+                shared.ofType(Intent.SignIntent.class).compose(sign),
                 shared.ofType(Intent.SendIntent.class).compose(send)));
     }
 

@@ -59,14 +59,16 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
     private static final String KEY_CONTAINER_FILE = "containerFile";
     private static final String KEY_INTENT = "intent";
+    private static final String KEY_IS_FROM_SIGNATURE_VIEW = "isFromSignatureView";
 
     public static CryptoCreateScreen create() {
         return new CryptoCreateScreen(Bundle.EMPTY);
     }
 
-    public static CryptoCreateScreen open(File containerFile) {
+    public static CryptoCreateScreen open(File containerFile, boolean isFromSignatureView) {
         Bundle args = new Bundle();
         putFile(args, KEY_CONTAINER_FILE, containerFile);
+        args.putBoolean(KEY_IS_FROM_SIGNATURE_VIEW, isFromSignatureView);
         return new CryptoCreateScreen(args);
     }
 
@@ -78,6 +80,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
     @Nullable private File containerFile;
     @Nullable private final android.content.Intent intent;
+    private final boolean isFromSignatureView;
 
     private final Subject<Boolean> idCardTokenAvailableSubject = PublishSubject.create();
 
@@ -95,8 +98,10 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     private Button encryptButton;
     private RecyclerView listView;
     private TextView decryptButton;
+    private TextView signButton;
     private TextView sendButton;
-    private View buttonSpaceView;
+    private View cryptoButtonSpaceView;
+    private View signatureButtonSpaceView;
     private DecryptDialog decryptDialog;
     private ErrorDialog errorDialog;
 
@@ -117,10 +122,11 @@ public final class CryptoCreateScreen extends Controller implements Screen,
                 ? getFile(args, KEY_CONTAINER_FILE)
                 : null;
         intent = args.getParcelable(KEY_INTENT);
+        isFromSignatureView = args.getBoolean(KEY_IS_FROM_SIGNATURE_VIEW);
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
-        return Observable.just(Intent.InitialIntent.create(containerFile, intent));
+        return Observable.just(Intent.InitialIntent.create(containerFile, intent, isFromSignatureView));
     }
 
     @SuppressWarnings("unchecked")
@@ -216,6 +222,10 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         return clicks(sendButton).map(ignored -> Intent.SendIntent.create(containerFile));
     }
 
+    private Observable<Intent.SignIntent> signIntent() {
+        return clicks(signButton).map(ignored -> Intent.SignIntent.create(containerFile));
+    }
+
     private Observable<Intent> errorIntents() {
         return cancels(errorDialog)
                 .map(ignored -> {
@@ -236,7 +246,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), upButtonClickIntent(), dataFilesAddIntent(),
                 dataFileRemoveIntent(), dataFileSaveIntent(), dataFileViewIntent(), recipientsAddButtonClickIntent(),
                 recipientRemoveIntent(), encryptIntent(), decryptionIntent(), decryptIntent(),
-                sendIntent(), errorIntents());
+                signIntent(), sendIntent(), errorIntents());
     }
 
     @Override
@@ -295,10 +305,14 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
         encryptButton.setVisibility(state.encryptButtonVisible() ? View.VISIBLE : View.GONE);
         decryptButton.setVisibility(state.decryptButtonVisible() ? View.VISIBLE : View.GONE);
+        signButton.setVisibility(state.decryptButtonVisible() && !isFromSignatureView ? View.VISIBLE : View.GONE);
         sendButton.setVisibility(state.sendButtonVisible() ? View.VISIBLE : View.GONE);
-        buttonSpaceView.setVisibility(state.sendButtonVisible() &&
+        cryptoButtonSpaceView.setVisibility(state.sendButtonVisible() &&
                 (state.encryptButtonVisible() || state.decryptButtonVisible())
                 ? View.VISIBLE : View.GONE);
+        signatureButtonSpaceView.setVisibility(
+                state.sendButtonVisible() &&
+                        state.decryptButtonVisible() ? View.VISIBLE : View.GONE);
 
         decryptionIdCardDataResponse = state.decryptionIdCardDataResponse();
         boolean decryptionPin1Locked = false;
@@ -366,6 +380,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         activityIndicatorView.setVisibility(activity ? View.VISIBLE : View.GONE);
         encryptButton.setEnabled(!activity);
         decryptButton.setEnabled(!activity);
+        signButton.setEnabled(!activity);
         sendButton.setEnabled(!activity);
     }
 
@@ -397,9 +412,11 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         encryptButton = view.findViewById(R.id.cryptoCreateEncryptButton);
         decryptButton = view.findViewById(R.id.cryptoCreateDecryptButton);
+        signButton = view.findViewById(R.id.cryptoCreateSignatureButton);
         sendButton = view.findViewById(R.id.cryptoCreateSendButton);
         sendButton.setContentDescription(getResources().getString(R.string.share_container));
-        buttonSpaceView = view.findViewById(R.id.cryptoCreateButtonSpace);
+        cryptoButtonSpaceView = view.findViewById(R.id.cryptoCreateCryptoButtonSpace);
+        signatureButtonSpaceView = view.findViewById(R.id.cryptoCreateSignatureButtonSpace);
         decryptDialog = new DecryptDialog(inflater.getContext());
 
         this.errorDialog = new ErrorDialog(inflater.getContext());
@@ -411,10 +428,12 @@ public final class CryptoCreateScreen extends Controller implements Screen,
 
         tintCompoundDrawables(encryptButton, true);
         tintCompoundDrawables(decryptButton, true);
+        tintCompoundDrawables(signButton, true);
         tintCompoundDrawables(sendButton, true);
 
-        decryptButton.setContentDescription(getResources().getString(R.string.decrypt_content_description, 1, 2));
-        sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 2, 2));
+        decryptButton.setContentDescription(getResources().getString(R.string.decrypt_content_description, 1, 3));
+        signButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 2, 3));
+        sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 3, 3));
 
         disposables.attach();
         disposables.add(viewModel.viewStates().subscribe(this::render));

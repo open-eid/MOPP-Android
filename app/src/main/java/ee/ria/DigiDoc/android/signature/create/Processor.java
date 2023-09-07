@@ -174,7 +174,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     if (isSivaConfirmationNeeded) {
                         sivaConfirmationDialog.show();
                         ClickableDialogUtil.makeLinksInDialogClickable(sivaConfirmationDialog);
-                        return sivaConfirmationDialog.cancels()
+                        sivaConfirmationDialog.cancels()
                                 .flatMap(next -> {
                                     if (validFiles.size() == 1 && SignedContainer.isAsicsFile(validFiles.get(0).displayName().toLowerCase())) {
                                         sivaConfirmationDialog.dismiss();
@@ -184,13 +184,19 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         return Observable.empty();
                                     }
                                 })
+                                .subscribeOn(AndroidSchedulers.mainThread())
+                                .subscribe();
+                        sivaConfirmationDialog.positiveButtonClicks()
                                 .flatMap(next -> {
                                     sivaConfirmationDialog.dismiss();
                                     return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, true);
-                                });
+                                })
+                                .subscribeOn(AndroidSchedulers.mainThread())
+                                .subscribe();
                     } else {
                         return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, true);
                     }
+                    return Observable.just(Result.ChooseFilesResult.create());
                 })
                 .onErrorResumeNext(throwable -> {
                     if (throwable instanceof NoInternetConnectionException) {
