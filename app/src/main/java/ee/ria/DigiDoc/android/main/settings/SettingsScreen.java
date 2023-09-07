@@ -25,19 +25,4 @@ public final class SettingsScreen extends ConductorScreen {
     protected View view(Context context) {
         return new SettingsView(context);
     }
-
-    @Override
-    protected void onDestroyView(@NonNull View view) {
-        FragmentActivity activity = (FragmentActivity) getActivity();
-        if (activity != null) {
-            FragmentManager fragmentManager = activity.getSupportFragmentManager();
-            Fragment fragment = fragmentManager.findFragmentById(R.id.mainSettingsFragment);
-            if (fragment != null) {
-                fragmentManager.beginTransaction()
-                        .remove(fragment)
-                        .commitAllowingStateLoss();
-            }
-        }
-        super.onDestroyView(view);
-    }
 }

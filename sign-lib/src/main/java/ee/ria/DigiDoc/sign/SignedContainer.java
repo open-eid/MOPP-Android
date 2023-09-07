@@ -392,6 +392,7 @@ public abstract class SignedContainer {
         String name = signatureName(signature);
         Instant createdAt = Instant.parse(signature.trustedSigningTime());
         SignatureStatus status = signatureStatus(signature);
+        String diagnosticsInfo = getDiagnosticsInfo(signature);
         String profile = signature.profile();
 
         String signersCertificateIssuer = "";
@@ -436,7 +437,7 @@ public abstract class SignedContainer {
 
         String signersMobileTimeUTC = getFormattedDateTime(signature.claimedSigningTime(), true);
 
-        return Signature.create(id, name, createdAt, status, profile, signersCertificateIssuer,
+        return Signature.create(id, name, createdAt, status, diagnosticsInfo, profile, signersCertificateIssuer,
                 signingCertificate, signatureMethod, signatureFormat, signatureTimestamp,
                 signatureTimestampUTC, hashValueOfSignature, tsCertificateIssuer, tsCertificate,
                 ocspCertificateIssuer, ocspCertificate, ocspTime, ocspTimeUTC, signersMobileTimeUTC);
@@ -485,6 +486,11 @@ public abstract class SignedContainer {
         } else {
             return SignatureStatus.UNKNOWN;
         }
+    }
+
+    private static String getDiagnosticsInfo(ee.ria.libdigidocpp.Signature signature) {
+        Validator validator = new Validator(signature);
+        return validator.diagnostics();
     }
 
     @NonNull
