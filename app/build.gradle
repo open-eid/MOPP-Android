@@ -4,7 +4,7 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 android {
     namespace 'ee.ria.DigiDoc'
-    compileSdkVersion project.compileSdkVersion
+    compileSdk project.compileSdkVersion
 
     defaultConfig {
         minSdkVersion project.minSdkVersion
@@ -59,15 +59,19 @@ android {
         }
     }
 
-    lintOptions {
-        lintConfig file('../lint.xml')
-        checkReleaseBuilds false
-        abortOnError false
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+        lintConfig file('../lint.xml')
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -78,6 +82,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:${androidxRecyclerviewVersion}"
     implementation "androidx.cardview:cardview:${androidxCardviewVersion}"
     implementation "androidx.lifecycle:lifecycle-viewmodel:${androidxLifecycleVersion}"
+    implementation "androidx.work:work-runtime:${androidxWorkRuntime}"
 
     implementation "com.takisoft.preferencex:preferencex:${preferencexVersion}"
 

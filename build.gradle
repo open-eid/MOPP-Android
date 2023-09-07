@@ -6,9 +6,9 @@ allprojects {
             jcenter()
         }
         dependencies {
-            classpath 'com.android.tools.build:gradle:7.2.2'
+            classpath 'com.android.tools.build:gradle:8.1.0'
             classpath "com.google.gms:google-services:4.3.15"
-            classpath "com.google.firebase:firebase-crashlytics-gradle:2.9.2"
+            classpath "com.google.firebase:firebase-crashlytics-gradle:2.9.8"
         }
     }
     repositories {
@@ -33,10 +33,10 @@ ext {
     minSdkVersion = 28
     targetSdkVersion = 33
 
-    androidxVersion = '1.5.0'
+    androidxVersion = '1.6.0'
     androidxAppCompatVersion = '1.6.1'
-    androidxLifecycleVersion = '2.5.1'
-    androidMaterialVersion = '1.7.0'
+    androidxLifecycleVersion = '2.6.1'
+    androidMaterialVersion = '1.9.0'
     androidxRecyclerviewVersion = '1.2.1'
     androidxCardviewVersion = '1.0.0'
     androidxLocalBroadcastManagerVersion = '1.1.0'
@@ -45,37 +45,39 @@ ext {
     androidxTestRulesVersion = '1.5.0'
     androidxTestEspressoVersion = '3.5.1'
     androidxConstraintlayoutVersion = '2.1.4'
-    androidxCoreVersion = '1.9.0'
+    androidxCoreVersion = '1.10.1'
+    androidxWorkRuntime = '2.8.1'
+    androidxPreference = '1.2.0'
     androidSupportTestVersion = '1.0.2'
     preferencexVersion = '1.1.0'
     guavaVersion = '31.1-android'
     gsonVersion = '2.10.1'
-    okioVersion = '3.3.0'
+    okioVersion = '3.5.0'
     commonsioVersion = '2.11.0'
     commonsTextVersion = '1.10.0'
     timberVersion = '5.0.1'
-    okhttpVersion = '4.10.0'
+    okhttpVersion = '4.11.0'
     retrofitVersion = '2.9.0'
     bouncycastleVersion = '1.70'
     materialValuesVersion = '1.1.1'
     lombokVersion = '1.18.24'
-    daggerVersion = '2.44.2'
+    daggerVersion = '2.47'
     conductorVersion = '3.1.8'
-    rxJavaVersion = '3.1.5'
+    rxJavaVersion = '3.1.6'
     rxAndroidVersion = '3.0.2'
     rxBindingVersion = '4.0.0'
     pdfboxVersion = '2.0.27.0'
     telecomcharsetsVersion = '1.0.1'
     autoValueVersion = '1.10.1'
     autoValueParcelVersion = '0.2.9'
-    logbackAndroidVersion = '2.0.0'
+    logbackAndroidVersion = '3.0.0'
     expandablelayoutVersion = '2.9.2'
-    ldapSdkVersion = '6.0.7'
+    ldapSdkVersion = '6.0.9'
     cdoc4jVersion = '1.4'
-    slf4jVersion = '1.7.36'
+    slf4jVersion = '2.0.7'
     junitVersion = '4.13.2'
     truthVersion = '1.1.3'
-    mockitoVersion = '4.11.0'
+    mockitoVersion = '5.4.0'
     jacksonVersion = '2.14.1'
-    firebaseCrashlyticsVersion = '31.1.1'
+    firebaseCrashlyticsVersion = '32.2.2'
 }

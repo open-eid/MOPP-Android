@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.main.settings;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
@@ -182,4 +183,23 @@ public final class SettingsDataStore {
         editor.commit();
     }
 
+    public void setTSACertName(String cert) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_tsa_cert_key), cert);
+        editor.commit();
+    }
+
+    public String getTSACertName() {
+        return preferences.getString(resources.getString(R.string.main_settings_tsa_cert_key), "");
+    }
+
+    public void setIsTsaCertificateViewVisible(boolean isVisible) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(resources.getString(R.string.main_settings_tsa_cert_view), isVisible);
+        editor.commit();
+    }
+
+    public boolean getIsTsaCertificateViewVisible() {
+        return preferences.getBoolean(resources.getString(R.string.main_settings_tsa_cert_view), false);
+    }
 }
