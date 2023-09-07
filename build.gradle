@@ -62,7 +62,7 @@ ext {
     materialValuesVersion = '1.1.1'
     lombokVersion = '1.18.24'
     daggerVersion = '2.47'
-    conductorVersion = '3.1.8'
+    conductorVersion = '3.2.0'
     rxJavaVersion = '3.1.6'
     rxAndroidVersion = '3.0.2'
     rxBindingVersion = '4.0.0'
