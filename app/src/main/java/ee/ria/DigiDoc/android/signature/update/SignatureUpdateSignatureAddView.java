@@ -1,16 +1,13 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static com.jakewharton.rxbinding4.widget.RxRadioGroup.checkedChanges;
+
 import android.content.Context;
 import android.content.res.Configuration;
-import android.text.Layout;
-import android.text.SpannableString;
-import android.text.style.AlignmentSpan;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityEvent;
-import android.view.ViewTreeObserver;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -20,7 +17,6 @@ import android.widget.RadioGroup;
 import androidx.annotation.Nullable;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardView;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
@@ -29,10 +25,6 @@ import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdView;
 import ee.ria.DigiDoc.android.utils.TextUtil;
 import io.reactivex.rxjava3.core.Observable;
-
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static com.jakewharton.rxbinding4.widget.RxRadioGroup.checkedChanges;
 
 public final class SignatureUpdateSignatureAddView extends LinearLayout {
 

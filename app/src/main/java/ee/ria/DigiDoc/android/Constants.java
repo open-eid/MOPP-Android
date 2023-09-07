@@ -13,6 +13,7 @@ public final class Constants {
     public static final int RC_CRYPTO_CREATE_INITIAL = 2;
     public static final int RC_CRYPTO_CREATE_DATA_FILE_ADD = 3;
     public static final int SAVE_FILE = 4;
+    public static final int RC_TSA_CERT_ADD = 5;
 
     /**
      * Sub-directory name in {@link android.content.Context#getFilesDir() files dir} for signature

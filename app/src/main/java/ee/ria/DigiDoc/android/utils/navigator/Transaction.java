@@ -1,12 +1,167 @@
 package ee.ria.DigiDoc.android.utils.navigator;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 
+import com.bluelinelabs.conductor.Controller;
+import com.bluelinelabs.conductor.Router;
+import com.bluelinelabs.conductor.RouterTransaction;
 import com.google.auto.value.AutoValue;
 
 public abstract class Transaction {
+
+    public abstract void execute(Router router, Activity activity);
+
+    public static RootTransaction root(Screen screen) {
+        return new RootTransaction(screen);
+    }
+
+    public static PushTransaction push(Screen screen) {
+        return new PushTransaction(screen);
+    }
+
+    public static PopTransaction pop() {
+        return new PopTransaction();
+    }
+
+    public static ReplaceTransaction replace(Screen screen) {
+        return new ReplaceTransaction(screen);
+    }
+
+    public static ActivityTransaction activity(Intent intent, Bundle options) {
+        return new ActivityTransaction(intent, options);
+    }
+
+    public static ActivityForResultTransaction activityForResult(int requestCode, Intent intent,
+                                                                 @Nullable Bundle options) {
+        return new ActivityForResultTransaction(requestCode, intent, options);
+    }
+
+    private static RouterTransaction routerTransaction(Screen screen) {
+        return RouterTransaction.with((Controller) screen);
+    }
+
+    public static class RootTransaction extends Transaction {
+        private final Screen screen;
+
+        public RootTransaction(Screen screen) {
+            this.screen = screen;
+        }
+
+        public Screen getScreen() {
+            return screen;
+        }
+
+        @Override
+        public void execute(Router router, Activity activity) {
+            router.setRoot(routerTransaction(screen));
+        }
+    }
+
+    public static class PushTransaction extends Transaction {
+        private final Screen screen;
+
+        public PushTransaction(Screen screen) {
+            this.screen = screen;
+        }
+
+        public Screen getScreen() {
+            return screen;
+        }
+
+        @Override
+        public void execute(Router router, Activity activity) {
+            router.pushController(routerTransaction(screen));
+        }
+    }
+
+    public static class PopTransaction extends Transaction {
+        @Override
+        public void execute(Router router, Activity activity) {
+            if (activity != null) {
+                activity.onBackPressed();
+            }
+        }
+    }
+
+    public static class ReplaceTransaction extends Transaction {
+        private final Screen screen;
+
+        public ReplaceTransaction(Screen screen) {
+            this.screen = screen;
+        }
+
+        public Screen getScreen() {
+            return screen;
+        }
+
+        @Override
+        public void execute(Router router, Activity activity) {
+            router.replaceTopController(routerTransaction(screen));
+        }
+    }
+
+    public static class ActivityTransaction extends Transaction {
+        private final Intent intent;
+        @Nullable private final Bundle options;
+
+        public ActivityTransaction(Intent intent, @Nullable Bundle options) {
+            this.intent = intent;
+            this.options = options;
+        }
+
+        public Intent getIntent() {
+            return intent;
+        }
+
+        @Nullable
+        public Bundle getOptions() {
+            return options;
+        }
+
+        @Override
+        public void execute(Router router, Activity activity) {
+            activity.startActivity(intent, options);
+        }
+    }
+
+    public static class ActivityForResultTransaction extends Transaction {
+        private final int requestCode;
+        private final Intent intent;
+        @Nullable private final Bundle options;
+
+        public ActivityForResultTransaction(int requestCode, Intent intent,
+                                            @Nullable Bundle options) {
+            this.requestCode = requestCode;
+            this.intent = intent;
+            this.options = options;
+        }
+
+        public int getRequestCode() {
+            return requestCode;
+        }
+
+        public Intent getIntent() {
+            return intent;
+        }
+
+        @Nullable
+        public Bundle getOptions() {
+            return options;
+        }
+
+        @Override
+        public void execute(Router router, Activity activity) {
+            activity.startActivityForResult(intent, requestCode, options);
+        }
+    }
+}
+
+
+
+/*public abstract class Transaction {
 
     public static RootTransaction root(Screen screen) {
         return RootTransaction.create(screen);
@@ -98,4 +253,4 @@ public abstract class Transaction {
                     options);
         }
     }
-}
+}*/

@@ -65,7 +65,12 @@ public class PersonalCodeValidator {
         int pos2 = 3;
 
         while (i < 10) {
-            int personalCodeNumber = Integer.parseInt(personalCode.substring(i, i + 1));
+            int personalCodeNumber = 0;
+            try {
+                personalCodeNumber = Integer.parseInt(personalCode.substring(i, i + 1));
+            } catch (NumberFormatException nfe) {
+                Timber.log(Log.ERROR, nfe, "Unable to parse personal code number");
+            }
             sum1 += personalCodeNumber * pos1;
             sum2 += personalCodeNumber * pos2;
             pos1 = pos1 == 9 ? 1 : pos1 + 1;

@@ -19,12 +19,34 @@
 
 package ee.ria.DigiDoc.idcard;
 
+import android.content.Context;
+
+import ee.ria.DigiDoc.common.exception.SignatureUpdateError;
+
 /**
  * PIN1/PIN2/PUK code verification failed.
  */
-public class CodeVerificationException extends IdCardException {
+public class CodeVerificationException extends IdCardException implements SignatureUpdateError {
+
+    private CodeType type;
+    private String message;
 
     CodeVerificationException(CodeType type) {
         super(type + " verification failed");
+    }
+
+    public CodeVerificationException(CodeType type, String message) {
+        super(type + " verification failed");
+        this.type = type;
+        this.message = message;
+    }
+
+    public CodeType getType() {
+        return type;
+    }
+
+    @Override
+    public String getMessage(Context context) {
+        return message;
     }
 }
