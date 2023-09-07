@@ -262,7 +262,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         })
                         .onErrorReturn(throwable -> {
                             if (throwable instanceof NoInternetConnectionException) {
-                                ToastUtil.showError(navigator.activity(),R.string.no_internet_connection);
+                                ToastUtil.showError(navigator.activity(), R.string.no_internet_connection);
                             } else {
                                 ToastUtil.showError(navigator.activity(), R.string.signature_update_container_load_error);
                             }
@@ -417,7 +417,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .onErrorReturn(Result.SignatureAddResult::failure)
                         .startWithItem(Result.SignatureAddResult.activity(method)));
-
             } else {
                 throw new IllegalArgumentException("Can't handle action " + action);
             }
@@ -429,13 +428,6 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 createActionIntent(application, action.containerFile(), android.content.Intent.ACTION_SEND), null)))
                 .map(action -> Result.SendResult.success())
                 .onErrorReturn(Result.SendResult::failure);
-
-        encrypt = upstream -> upstream
-                .doOnNext(action -> {
-                    navigator.execute(Transaction.push(CryptoCreateScreen.open(action.containerFile(), false)));
-                })
-                .map(action -> Result.EncryptResult.success())
-                .onErrorReturn(Result.EncryptResult::failure);
     }
 
     @SuppressWarnings("unchecked")
