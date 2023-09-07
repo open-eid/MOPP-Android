@@ -50,7 +50,7 @@ ext {
     preferencexVersion = '1.1.0'
     guavaVersion = '31.1-android'
     gsonVersion = '2.10.1'
-    okioVersion = '3.3.0'
+    okioVersion = '3.5.0'
     commonsioVersion = '2.11.0'
     commonsTextVersion = '1.10.0'
     timberVersion = '5.0.1'
