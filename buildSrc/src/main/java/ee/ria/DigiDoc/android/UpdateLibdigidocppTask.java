@@ -207,7 +207,8 @@ public class UpdateLibdigidocppTask extends DefaultTask {
     private static void jar(File path, File jar) throws IOException {
         Manifest manifest = new Manifest();
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
-        try (JarOutputStream outputStream = new JarOutputStream(new FileOutputStream(jar), manifest)) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(jar);
+             JarOutputStream outputStream = new JarOutputStream(fileOutputStream, manifest)) {
             for (File file : files(path)) {
                 if (!file.getName().endsWith(".class")) {
                     continue;

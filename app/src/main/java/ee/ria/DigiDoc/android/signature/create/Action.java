@@ -1,6 +1,10 @@
 package ee.ria.DigiDoc.android.signature.create;
 
+import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_CREATE_DOCUMENTS_ADD;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
+
 import android.content.Intent;
+
 import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
@@ -8,9 +12,6 @@ import com.google.auto.value.AutoValue;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.navigator.TransactionAction;
-
-import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_CREATE_DOCUMENTS_ADD;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 
 interface Action extends MviAction {
 
@@ -22,7 +23,7 @@ interface Action extends MviAction {
 
         static ChooseFilesAction create(@Nullable Intent intent) {
             return new AutoValue_Action_ChooseFilesAction(Transaction.activityForResult(
-                    RC_SIGNATURE_CREATE_DOCUMENTS_ADD, createGetContentIntent(), null), intent);
+                    RC_SIGNATURE_CREATE_DOCUMENTS_ADD, createGetContentIntent(true), null), intent);
         }
     }
 }

@@ -2,11 +2,13 @@ package ee.ria.DigiDoc.sign;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
 import com.google.common.io.ByteStreams;
 
@@ -15,6 +17,7 @@ import org.bouncycastle.util.encoders.Base64;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,7 +25,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
+import ee.ria.DigiDoc.configuration.util.FileUtils;
 import ee.ria.libdigidocpp.Conf;
 import ee.ria.libdigidocpp.DigiDocConf;
 import ee.ria.libdigidocpp.digidoc;
@@ -36,7 +41,10 @@ public final class SignLib {
     private static final String SCHEMA_DIR = "schema";
     private static final int LIBDIGIDOCPP_LOG_LEVEL = 4; // Debug messages
 
+    private static List<String> certBundle = new ArrayList<>();
+
     private static SharedPreferences.OnSharedPreferenceChangeListener tsaUrlChangeListener;
+    private static SharedPreferences.OnSharedPreferenceChangeListener tsCertChangeListener;
 
     /**
      * Initialize sign-lib.
@@ -79,7 +87,8 @@ public final class SignLib {
             ZipEntry entry;
             while ((entry = inputStream.getNextEntry()) != null) {
                 File entryFile = new File(schemaDir, entry.getName());
-                if (!isChild(schemaDir, entryFile)) {
+                if (!entryFile.toPath().normalize().startsWith(schemaDir.toPath()) ||
+                        !isChild(schemaDir, entryFile)) {
                     throw new ZipException("Bad zip entry: " + entry.getName());
                 }
                 FileOutputStream outputStream = new FileOutputStream(entryFile);
@@ -120,6 +129,9 @@ public final class SignLib {
             initLibDigiDocLogging(context);
         }
 
+        String tsaCertPreferenceKey = context.getResources().getString(R.string.main_settings_tsa_cert_key);
+        certBundle = configurationProvider.getCertBundle();
+
         forcePKCS12Certificate();
         overrideTSLUrl(configurationProvider.getTslUrl());
         overrideTSLCert(configurationProvider.getTslCerts());
@@ -127,10 +139,22 @@ public final class SignLib {
         overrideOCSPUrls(configurationProvider.getOCSPUrls());
         overrideVerifyServiceCert(configurationProvider.getCertBundle());
         initTsaUrl(context, tsaUrlPreferenceKey, configurationProvider.getTsaUrl());
+        initTsCert(context, tsaCertPreferenceKey, "");
     }
 
     private static void forcePKCS12Certificate() {
         DigiDocConf.instance().setPKCS12Cert("798.p12");
+    }
+
+    private static void overrideTSCerts(List<String> certBundle, @Nullable String customTsCert) {
+        DigiDocConf.instance().setTSCert(new byte[0]); // Clear existing TS certificates list
+        for (String tsCert : certBundle) {
+            DigiDocConf.instance().addTSCert(Base64.decode(tsCert));
+        }
+
+        if (customTsCert != null) {
+            DigiDocConf.instance().addTSCert(Base64.decode(customTsCert));
+        }
     }
 
     private static void overrideTSLUrl(String TSLUrl) {
@@ -173,6 +197,17 @@ public final class SignLib {
         tsaUrlChangeListener.onSharedPreferenceChanged(preferences, preferenceKey);
     }
 
+    private static void initTsCert(Context context, String preferenceKey, String defaultValue) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if (tsCertChangeListener != null) {
+            preferences.unregisterOnSharedPreferenceChangeListener(tsCertChangeListener);
+        }
+
+        tsCertChangeListener = new TsCertChangeListener(context, preferenceKey, defaultValue);
+        preferences.registerOnSharedPreferenceChangeListener(tsCertChangeListener);
+        tsCertChangeListener.onSharedPreferenceChanged(preferences, preferenceKey);
+    }
+
     private static File getSchemaDir(Context context) {
         File schemaDir = new File(context.getCacheDir(), SCHEMA_DIR);
         boolean isDirsCreated = schemaDir.mkdirs();
@@ -184,12 +219,26 @@ public final class SignLib {
 
     private static boolean isChild(File parent, File potentialChild) {
         try {
-            String destDirCanonicalPath = parent.getCanonicalPath();
-            String potentialChildCanonicalPath = potentialChild.getCanonicalPath();
-            return potentialChildCanonicalPath.startsWith(destDirCanonicalPath);
+            if (!potentialChild.toPath().normalize().startsWith(parent.toPath())) {
+                throw new IOException("Invalid path: " + potentialChild.getCanonicalPath());
+            }
+
+            return true;
         } catch (IOException e) {
             return false;
         }
+    }
+
+    private static String getCustomTSAFile(Context context, String fileName) {
+        File tsaFile = FileUtil.getTSAFile(context, fileName);
+        if (tsaFile != null) {
+            String fileContents = FileUtils.readFileContent(tsaFile.getPath());
+            return fileContents
+                    .replace("-----BEGIN CERTIFICATE-----", "")
+                    .replace("-----END CERTIFICATE-----", "")
+                    .replaceAll("\\s", "");
+        }
+        return null;
     }
 
     private SignLib() {
@@ -210,6 +259,27 @@ public final class SignLib {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (TextUtils.equals(key, preferenceKey)) {
                 DigiDocConf.instance().setTSUrl(sharedPreferences.getString(key, defaultValue));
+            }
+        }
+    }
+
+    private static final class TsCertChangeListener implements
+            SharedPreferences.OnSharedPreferenceChangeListener {
+
+        private final Context context;
+        private final String preferenceKey;
+        private final String defaultValue;
+
+        TsCertChangeListener(Context context, String preferenceKey, String defaultValue) {
+            this.context = context;
+            this.preferenceKey = preferenceKey;
+            this.defaultValue = defaultValue;
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (TextUtils.equals(key, preferenceKey)) {
+                overrideTSCerts(certBundle, getCustomTSAFile(context, sharedPreferences.getString(key, defaultValue)));
             }
         }
     }
