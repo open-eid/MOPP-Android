@@ -2,26 +2,35 @@ apply plugin: 'com.android.library'
 
 android {
     namespace 'ee.ria.DigiDoc.smartid'
-    compileSdkVersion project.compileSdkVersion
+    compileSdk project.compileSdkVersion
 
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
     }
 
-    lintOptions {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
         lintConfig file('../lint.xml')
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
 dependencies {
     implementation "androidx.annotation:annotation:${androidxVersion}"
     implementation "androidx.appcompat:appcompat:${androidxAppCompatVersion}"
-    implementation  "androidx.localbroadcastmanager:localbroadcastmanager:${androidxLocalBroadcastManagerVersion}"
+    implementation "androidx.localbroadcastmanager:localbroadcastmanager:${androidxLocalBroadcastManagerVersion}"
+    implementation "androidx.work:work-runtime:${androidxWorkRuntime}"
+    implementation "androidx.preference:preference:${androidxPreference}"
+
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
 

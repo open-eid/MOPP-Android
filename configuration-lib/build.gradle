@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     namespace 'ee.ria.DigiDoc.configuration'
-    compileSdkVersion project.compileSdkVersion
+    compileSdk project.compileSdkVersion
 
     defaultConfig {
         minSdkVersion project.minSdkVersion
@@ -11,18 +11,22 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-    }
-
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     testOptions {
         unitTests.returnDefaultValues = true
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 

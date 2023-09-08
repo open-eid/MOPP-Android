@@ -67,7 +67,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
             } else {
                 File containerFile = action.containerFile();
                 if (CryptoContainer.isContainerFileName(containerFile.getName())) {
-                    navigator.execute(Transaction.push(CryptoCreateScreen.open(containerFile)));
+                    navigator.execute(Transaction.push(CryptoCreateScreen.open(containerFile, false)));
                 } else {
                     navigator.execute(Transaction.push(SignatureUpdateScreen
                             .create(true, false, containerFile, false, false,

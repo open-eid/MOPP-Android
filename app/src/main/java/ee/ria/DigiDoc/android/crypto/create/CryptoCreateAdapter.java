@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
@@ -388,7 +388,7 @@ final class CryptoCreateAdapter extends
 
         RecipientViewHolder(View itemView) {
             super(itemView);
-            formatter = Application.component(itemView.getContext()).formatter();
+            formatter = ApplicationApp.component(itemView.getContext()).formatter();
             AccessibilityUtils.disableDoubleTapToActivateFeedback(itemView.findViewById(R.id.cryptoRecipient));
             nameView = itemView.findViewById(R.id.cryptoRecipientName);
             infoView = itemView.findViewById(R.id.cryptoRecipientInfo);

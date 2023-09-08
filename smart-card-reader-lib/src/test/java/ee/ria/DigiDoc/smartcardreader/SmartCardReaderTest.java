@@ -1,27 +1,31 @@
 package ee.ria.DigiDoc.smartcardreader;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import static com.google.common.truth.Truth.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
+import org.mockito.MockMakers;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public final class SmartCardReaderTest {
 
     @Rule public final ExpectedException exception = ExpectedException.none();
 
+    @Mock(mockMaker = MockMakers.SUBCLASS)
     private SmartCardReader smartCardReader;
 
     @Before
     public void before() throws Exception {
-        smartCardReader = mock(SmartCardReader.class);
+        smartCardReader = mock(SmartCardReader.class, withSettings().mockMaker(MockMakers.SUBCLASS));
         when(smartCardReader.transmit(any()))
                 .thenReturn(new byte[] {(byte) 0x90, 0x00});
     }
