@@ -261,6 +261,7 @@
     <item type="id" name="signatureUpdateSmartIdCountryLabel" />
     <item type="id" name="signatureUpdateSmartIdCountry" />
     <item type="id" name="signatureUpdateSmartIdPersonalCodeLabel" />
+    <item type="id" name="signatureUpdateSmartIdPersonalCodeLayoutLabel" />
     <item type="id" name="signatureUpdateSmartIdPersonalCode" />
     <item type="id" name="signatureUpdateSmartIdRememberMe" />
 
