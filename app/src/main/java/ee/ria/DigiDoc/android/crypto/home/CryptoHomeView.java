@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.main.home.HomeToolbar;
@@ -43,7 +43,7 @@ public final class CryptoHomeView extends CoordinatorLayout implements HomeView.
         inflate(context, R.layout.crypto_home, this);
         toolbarView = findViewById(R.id.toolbar);
         createButton = findViewById(R.id.cryptoHomeCreateButton);
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
         AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.main_home_navigation_crypto);
 
         createButton.postDelayed(() -> {

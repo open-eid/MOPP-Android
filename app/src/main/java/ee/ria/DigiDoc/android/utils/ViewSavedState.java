@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.utils;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -37,7 +38,7 @@ public final class ViewSavedState implements Parcelable {
     }
 
     private ViewSavedState(Parcel source, ClassLoader loader) {
-        superState = source.readParcelable(loader);
+        superState = getParcelable(source, loader);
         state = source.createByteArray();
     }
 
@@ -66,4 +67,12 @@ public final class ViewSavedState implements Parcelable {
             return new ViewSavedState[size];
         }
     };
+
+    private Parcelable getParcelable(Parcel source, ClassLoader loader) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return source.readParcelable(loader, Parcelable.class);
+        } else {
+            return source.readParcelable(loader);
+        }
+    }
 }

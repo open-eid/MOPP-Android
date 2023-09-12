@@ -18,7 +18,7 @@
  *
  */
 
-package ee.ria.DigiDoc.android.main.settings;
+package ee.ria.DigiDoc.android.main.settings.access;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 

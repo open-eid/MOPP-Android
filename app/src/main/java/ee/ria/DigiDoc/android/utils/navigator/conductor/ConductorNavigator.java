@@ -127,32 +127,7 @@ public final class ConductorNavigator implements Navigator {
     @Override
     public void execute(Transaction transaction) {
         Timber.log(Log.DEBUG, "Execute: %s", transaction);
-        if (transaction instanceof Transaction.RootTransaction) {
-            router.setRoot(routerTransaction(((Transaction.RootTransaction) transaction).screen()));
-        } else if (transaction instanceof Transaction.PushTransaction) {
-            router.pushController(routerTransaction(
-                    ((Transaction.PushTransaction) transaction).screen()));
-        } else if (transaction instanceof Transaction.PopTransaction) {
-            Activity activity = router.getActivity();
-            if (activity != null) {
-                activity.onBackPressed();
-            }
-        } else if (transaction instanceof Transaction.ReplaceTransaction) {
-            router.replaceTopController(routerTransaction(
-                    ((Transaction.ReplaceTransaction) transaction).screen()));
-        } else if (transaction instanceof Transaction.ActivityTransaction) {
-            Transaction.ActivityTransaction activityTransaction =
-                    (Transaction.ActivityTransaction) transaction;
-            activity().startActivity(activityTransaction.intent(), activityTransaction.options());
-        } else if (transaction instanceof Transaction.ActivityForResultTransaction) {
-            Transaction.ActivityForResultTransaction activityForResultTransaction =
-                    (Transaction.ActivityForResultTransaction) transaction;
-            activity().startActivityForResult(activityForResultTransaction.intent(),
-                    activityForResultTransaction.requestCode(),
-                    activityForResultTransaction.options());
-        } else {
-            throw new IllegalArgumentException("Unknown transaction " + transaction);
-        }
+        transaction.execute(router, activity());
     }
 
     @Override

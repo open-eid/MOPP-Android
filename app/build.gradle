@@ -60,8 +60,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     lint {
@@ -82,6 +82,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:${androidxRecyclerviewVersion}"
     implementation "androidx.cardview:cardview:${androidxCardviewVersion}"
     implementation "androidx.lifecycle:lifecycle-viewmodel:${androidxLifecycleVersion}"
+    implementation "androidx.work:work-runtime:${androidxWorkRuntime}"
 
     implementation "com.takisoft.preferencex:preferencex:${preferencexVersion}"
 

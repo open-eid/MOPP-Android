@@ -46,7 +46,7 @@ import java.util.List;
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.TSLException;
@@ -92,7 +92,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
         AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.main_diagnostics_title);
         toolbarView = findViewById(R.id.toolbar);
         View saveDiagnosticsButton = findViewById(R.id.configurationSaveButton);
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
 
         diagnosticsRestartConfirmationDialog = new ConfirmationDialog(navigator.activity(),
                 R.string.main_diagnostics_restart_message, R.id.mainDiagnosticsRestartConfirmationDialog);
@@ -104,7 +104,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 (activateLogFileGenerating.isChecked() &&
                         FileUtil.logsExist(FileUtil.getLogsDirectory(getContext()))) ? VISIBLE : GONE);
 
-        ConfigurationProvider configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
+        ConfigurationProvider configurationProvider = ((ApplicationApp) context.getApplicationContext()).getConfigurationProvider();
         disposables = new ViewDisposables();
 
         toolbarView.setTitle(R.string.main_diagnostics_title);
@@ -273,8 +273,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
     }
 
     private void updateConfiguration() {
-        Application application = (Application) getContext().getApplicationContext();
-        application.updateConfiguration(this);
+        ApplicationApp applicationApp = (ApplicationApp) getContext().getApplicationContext();
+        applicationApp.updateConfiguration(this);
     }
 
     private void setData(ConfigurationProvider configurationProvider) {
