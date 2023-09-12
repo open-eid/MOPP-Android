@@ -1,10 +1,10 @@
 package ee.ria.DigiDoc.android;
 
 import static ee.ria.DigiDoc.android.Constants.DIR_EXTERNALLY_OPENED_FILES;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.setIntentData;
 
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
-import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,8 +20,8 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 import androidx.preference.PreferenceManager;
+import androidx.work.WorkManager;
 
 import com.google.android.gms.common.util.CollectionUtils;
 import com.google.android.gms.tasks.Task;
@@ -32,6 +32,7 @@ import com.google.firebase.crashlytics.internal.common.CommonUtils;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -79,6 +80,8 @@ public final class Activity extends AppCompatActivity {
         SecureUtil.markAsSecure(this, getWindow());
 
         handleCrashOnPreviousExecution();
+
+        WorkManager.getInstance(this).cancelAllWork();
 
         Intent intent = sanitizeIntent(getIntent());
 
@@ -189,8 +192,10 @@ public final class Activity extends AppCompatActivity {
             Uri normalizedUri = FileUtil.normalizeUri(Uri.parse(intent.getDataString()));
             intent.setDataAndNormalize(normalizedUri);
         }
-        if (intent.getExtras() != null && !(intent.getExtras().containsKey(Intent.EXTRA_REFERRER) &&
-                intent.getExtras().get(Intent.EXTRA_REFERRER).equals(R.string.application_name))) {
+        if (intent.getExtras() != null) {
+            if (intent.getExtras().containsKey(Intent.EXTRA_REFERRER)) {
+                intent.getExtras().getString(Intent.EXTRA_REFERRER);
+            }
             intent.replaceExtras(new Bundle());
         }
         return intent;
@@ -215,7 +220,7 @@ public final class Activity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        Application.ApplicationComponent component = Application.component(newBase);
+        ApplicationApp.ApplicationComponent component = ApplicationApp.component(newBase);
         navigator = component.navigator();
         rootScreenFactory = component.rootScreenFactory();
         settingsDataStore = component.settingsDataStore();
@@ -232,6 +237,14 @@ public final class Activity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // If user selects a file from provider menu (Open from -> RIA DigiDoc), it starts a new activity
+        // Replace the main activity after the new file has been selected
+        if (Optional.ofNullable(data)
+                .map(Intent::getAction)
+                .filter(action -> action.equals(Intent.ACTION_GET_CONTENT))
+                .isPresent()) {
+            navigator.onCreate(this, findViewById(android.R.id.content), null);
+        }
         navigator.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -345,17 +358,6 @@ public final class Activity extends AppCompatActivity {
                 }
             }
         }
-
-        private static Intent setIntentData(Intent intent, Path filePath, android.app.Activity activity) {
-            intent.setData(Uri.parse(filePath.toUri().toString()));
-            intent.setClipData(ClipData.newRawUri(filePath.getFileName().toString(), FileProvider.getUriForFile(
-                    activity,
-                    activity.getString(R.string.file_provider_authority),
-                    filePath.toFile())));
-            return intent;
-        }
-
-
     }
 
 

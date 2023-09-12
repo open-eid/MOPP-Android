@@ -8,7 +8,6 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.URLUtil;
-import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -46,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -69,7 +68,7 @@ public final class CertificateDetailView extends CoordinatorLayout {
         inflate(context, R.layout.certificate_details_screen, this);
         AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.certificate_details_title);
 
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
         toolbarView = findViewById(R.id.toolbar);
 
         toolbarView.setTitle(R.string.certificate_details_title);

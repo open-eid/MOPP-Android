@@ -18,8 +18,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     lint {
@@ -36,6 +36,8 @@ dependencies {
 
     api "com.google.guava:guava:${guavaVersion}"
     api "com.squareup.okio:okio:${okioVersion}"
+
+    implementation "androidx.preference:preference:${androidxPreference}"
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
 

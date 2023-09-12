@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.home.HomeToolbar;
 import ee.ria.DigiDoc.android.main.home.HomeView;
@@ -43,7 +43,7 @@ public final class SignatureHomeView extends CoordinatorLayout implements HomeVi
         inflate(context, R.layout.signature_home, this);
         toolbarView = findViewById(R.id.toolbar);
         createButton = findViewById(R.id.signatureHomeCreateButton);
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
         disposables = new ViewDisposables();
         AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.main_home_navigation_signature);
 

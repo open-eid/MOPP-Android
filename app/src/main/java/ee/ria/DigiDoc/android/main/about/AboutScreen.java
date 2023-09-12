@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bluelinelabs.conductor.Controller;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
@@ -51,7 +51,7 @@ public final class AboutScreen extends Controller implements Screen {
 
         disposables.attach();
         disposables.add(navigationClicks(toolbarView).subscribe(ignored ->
-                Application.component(container.getContext()).navigator().execute(Transaction.pop())));
+                ApplicationApp.component(container.getContext()).navigator().execute(Transaction.pop())));
 
         return view;
     }
