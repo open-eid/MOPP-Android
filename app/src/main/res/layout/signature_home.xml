@@ -39,12 +39,13 @@
                 android:textAppearance="@style/TextAppearance.Application.Value"
                 android:gravity="center_horizontal"
                 android:text="@string/signature_home_create_text"
+                android:textSize="@dimen/material_subheader_text_size"
                 android:importantForAccessibility="no" />
 
             <Button
                 android:id="@id/signatureHomeCreateButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/material_typography_dense_display_3_text_size"
                 android:text="@string/signature_home_create_button"
                 android:contentDescription="@string/signature_home_create_text_accessibility" />
 

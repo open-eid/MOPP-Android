@@ -38,9 +38,11 @@
                 <LinearLayout
                     android:id="@id/eidHomeProgressLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_gravity="center">
+                    android:layout_height="match_parent"
+                    android:padding="@dimen/material_content_edge_margin_horizontal"
+                    android:textAppearance="@style/TextAppearance.Application.Value"
+                    android:textSize="@dimen/material_subheader_text_size"
+                    android:gravity="center" />
 
                     <TextView
                         android:id="@id/eidHomeProgressMessage"

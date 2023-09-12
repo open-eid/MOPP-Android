@@ -144,6 +144,11 @@ public class AccessibilityUtils {
         return configuration.fontScale > 1;
     }
 
+    public static boolean isSmallFontEnabled(Resources resources) {
+        Configuration configuration = resources.getConfiguration();
+        return configuration.fontScale < 1;
+    }
+    
     public static void setCustomClickAccessibilityFeedBack(TextView titleView, ExpandableLayout containerView) {
         ViewCompat.setAccessibilityDelegate(titleView, new AccessibilityDelegateCompat() {
             @Override
