@@ -11,6 +11,7 @@ import android.view.accessibility.AccessibilityManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.view.AccessibilityDelegateCompat;
@@ -102,7 +103,7 @@ public class AccessibilityUtils {
     public static void disableDoubleTapToActivateFeedback(View view) {
         ViewCompat.setAccessibilityDelegate(view, new AccessibilityDelegateCompat() {
             @Override
-            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 info.addAction(AccessibilityNodeInfoCompat.ACTION_FOCUS);
                 info.removeAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK);
@@ -113,7 +114,7 @@ public class AccessibilityUtils {
     public static void setSingleCharactersContentDescription(TextView textView) {
         ViewCompat.setAccessibilityDelegate(textView, new AccessibilityDelegateCompat() {
             @Override
-            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 StringBuilder textViewAccessibility = new StringBuilder();
                 String[] personalCodeTextSplit = textView.getText().toString().split(",");
