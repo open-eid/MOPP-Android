@@ -47,6 +47,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -167,12 +168,17 @@ public final class SmartIdView extends LinearLayout implements
         setTextViewError(getContext(), null, personalCodeViewLabel, personalCodeViewLayoutLabel, null);
         personalCodeViewLabel.setError(null);
 
-        Editable personalCode = personalCodeView.getText();
+        Optional<String> personalCode = Optional
+                .ofNullable(personalCodeView.getText())
+                .map(Editable::toString);
 
-        if (personalCode != null && !personalCode.toString().isEmpty() &&
-                !isPersonalCodeCorrect(personalCode.toString())) {
+
+        if (personalCode.filter(text -> !text.isEmpty())
+                .map(CharSequence::toString)
+                .filter(text -> !isPersonalCodeCorrect(text))
+                .isPresent()) {
             setTextViewError(getContext(), getResources().getString(
-                    R.string.signature_update_smart_id_invalid_personal_code),
+                            R.string.signature_update_smart_id_invalid_personal_code),
                     personalCodeViewLabel, personalCodeViewLayoutLabel, null);
         }
     }
