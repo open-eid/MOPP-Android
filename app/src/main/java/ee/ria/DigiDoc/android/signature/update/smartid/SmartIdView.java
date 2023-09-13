@@ -168,14 +168,9 @@ public final class SmartIdView extends LinearLayout implements
         setTextViewError(getContext(), null, personalCodeViewLabel, personalCodeViewLayoutLabel, null);
         personalCodeViewLabel.setError(null);
 
-        Optional<String> personalCode = Optional
-                .ofNullable(personalCodeView.getText())
-                .map(Editable::toString);
-
-
-        if (personalCode.filter(text -> !text.isEmpty())
-                .map(CharSequence::toString)
-                .filter(text -> !isPersonalCodeCorrect(text))
+        if (Optional.ofNullable(personalCodeView.getText())
+                .map(Editable::toString)
+                .filter(text -> !text.isEmpty() && !isPersonalCodeCorrect(text))
                 .isPresent()) {
             setTextViewError(getContext(), getResources().getString(
                             R.string.signature_update_smart_id_invalid_personal_code),
