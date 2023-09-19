@@ -6,7 +6,6 @@ import static android.view.View.VISIBLE;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
 import static ee.ria.DigiDoc.android.Constants.VOID;
 
 import android.content.Context;
@@ -14,7 +13,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +48,6 @@ import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
-import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.TextUtil;
 import io.reactivex.rxjava3.core.Observable;
@@ -296,12 +293,11 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                     setButtonsVisibilityOnLayoutChange(searchTextView, searchPlate, searchButton);
 
                     if (getResources() != null) {
-                        if (searchViewInnerText.getTextSize() > 40) {
-                            searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
-                        }
                         searchViewInnerText.setLayoutParams(
                                 new LinearLayout.LayoutParams((int) (searchView.getWidth() / 1.5), DisplayUtil.getDisplayMetricsDpToInt(getResources(), 70))
                         );
+
+                        ee.ria.DigiDoc.android.utils.TextUtil.setSearchViewTextSizeConstraints(searchView, searchViewInnerText);
 
                         searchViewInnerText.addTextChangedListener(new TextWatcher() {
                             @Override
@@ -310,7 +306,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                             @Override
                             public void onTextChanged(CharSequence s, int start, int before, int count) {
                                 if (s.length() == 0) {
-                                    searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
+                                    ee.ria.DigiDoc.android.utils.TextUtil.setSearchViewTextSizeConstraints(searchView, searchViewInnerText);
                                     searchViewInnerText.setSingleLine(false);
                                     setSearchQuery("");
                                     searchView.performClick();

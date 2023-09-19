@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -100,6 +101,34 @@ public class TextUtil {
     public static int convertPxToDp(float size, Context context) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 size, context.getResources().getDisplayMetrics());
+    }
+
+    public static void setSearchViewTextSizeConstraints(SearchView searchView, TextView searchEditText) {
+        float maxTextSize = 16;
+        float minTextSize = 11;
+        String queryHint = "";
+
+        if (searchView.getQueryHint() != null) {
+            queryHint = searchView.getQueryHint().toString();
+        }
+
+        int maxWidth = searchView.getWidth();
+
+        TextPaint textPaint = new TextPaint();
+        textPaint.setTextSize(maxTextSize);
+        textPaint.setAntiAlias(true);
+
+        float textWidth = textPaint.measureText(queryHint);
+
+        while (textWidth > maxWidth) {
+            if (!(textPaint.getTextSize() < minTextSize)) {
+                maxTextSize--;
+                textPaint.setTextSize(maxTextSize);
+                textWidth = textPaint.measureText(queryHint);
+            }
+        }
+
+        searchEditText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, maxTextSize);
     }
 
     public static TextWatcher addTextWatcher(EditText editText) {
