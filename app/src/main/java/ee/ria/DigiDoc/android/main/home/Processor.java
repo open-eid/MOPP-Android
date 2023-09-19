@@ -1,5 +1,9 @@
 package ee.ria.DigiDoc.android.main.home;
 
+import static android.content.Intent.ACTION_VIEW;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createBrowserIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
+
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -39,10 +43,6 @@ import ee.ria.DigiDoc.crypto.CryptoContainer;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.core.ObservableTransformer;
-
-import static android.content.Intent.ACTION_VIEW;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createBrowserIntent;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 final class Processor implements ObservableTransformer<Intent, Result> {
 

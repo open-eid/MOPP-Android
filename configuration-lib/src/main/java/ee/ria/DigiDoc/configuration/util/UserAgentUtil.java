@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.configuration.util;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
@@ -68,16 +69,24 @@ public final class UserAgentUtil {
     private static StringBuilder getAppVersion(Context context) {
         StringBuilder versionName = new StringBuilder();
         try {
-            versionName.append(context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0).versionName)
+            versionName.append(getPackageInfo(context).getLongVersionCode())
                     .append(".")
-                    .append(context.getPackageManager()
-                            .getPackageInfo(context.getPackageName(), 0).versionCode);
+                    .append(getPackageInfo(context).getLongVersionCode());
         } catch (PackageManager.NameNotFoundException e) {
             Timber.log(Log.ERROR, e, "Failed getting app version from package info");
         }
 
         return versionName;
+    }
+
+    private static PackageInfo getPackageInfo(Context context) throws PackageManager.NameNotFoundException {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), PackageManager.PackageInfoFlags.of(0));
+        } else {
+            return context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+        }
     }
 
 }

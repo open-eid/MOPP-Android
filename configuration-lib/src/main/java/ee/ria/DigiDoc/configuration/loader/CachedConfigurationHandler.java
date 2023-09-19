@@ -46,11 +46,16 @@ public class CachedConfigurationHandler {
     }
 
     public Integer getConfigurationVersionSerial() {
-        String versionSerial = loadProperty(CONFIGURATION_VERSION_SERIAL_PROPERTY_NAME);
-        if (versionSerial == null) {
+        try {
+            String versionSerial = loadProperty(CONFIGURATION_VERSION_SERIAL_PROPERTY_NAME);
+            if (versionSerial == null) {
+                return null;
+            }
+            return Integer.parseInt(versionSerial);
+        } catch (NumberFormatException nfe) {
+            Timber.log(Log.ERROR, nfe, "Unable to get configuration version serial");
             return null;
         }
-        return Integer.parseInt(versionSerial);
     }
 
     public Date getConfLastUpdateCheckDate() {

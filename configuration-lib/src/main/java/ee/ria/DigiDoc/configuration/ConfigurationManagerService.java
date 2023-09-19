@@ -2,6 +2,8 @@ package ee.ria.DigiDoc.configuration;
 
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import androidx.annotation.NonNull;
@@ -33,9 +35,17 @@ public class ConfigurationManagerService extends PatchedJobIntentService {
         configurationManager = new ConfigurationManager(this, configurationProperties, cachedConfigurationHandler, UserAgentUtil.getUserAgent(getApplicationContext()));
     }
 
+    private ResultReceiver getConfigurationResultReceiver(Intent intent) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            return intent.getParcelableExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER, ResultReceiver.class);
+        } else {
+            return intent.getParcelableExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER);
+        }
+    }
+
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        ResultReceiver confResultReceiver = intent.getParcelableExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER);
+        ResultReceiver confResultReceiver = getConfigurationResultReceiver(intent);
         Bundle bundle = new Bundle();
 
         ConfigurationProvider configurationProvider = getConfiguration(intent);

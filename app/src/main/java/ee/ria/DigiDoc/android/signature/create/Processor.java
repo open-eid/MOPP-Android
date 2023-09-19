@@ -14,7 +14,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
@@ -37,7 +36,6 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.core.ObservableTransformer;
 import io.reactivex.rxjava3.exceptions.CompositeException;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 import timber.log.Timber;
 
 final class Processor implements ObservableTransformer<Action, Result> {
@@ -60,13 +58,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 .switchMap(action -> {
                     if (action.intent() != null) {
                         throw new ActivityResultException(ActivityResult.create(
-                                action.transaction().requestCode(), RESULT_OK, action.intent()));
+                                action.transaction().getRequestCode(), RESULT_OK, action.intent()));
                     }
                     navigator.execute(action.transaction());
                     return navigator.activityResults()
                             .filter(activityResult ->
                                     activityResult.requestCode()
-                                            == action.transaction().requestCode())
+                                            == action.transaction().getRequestCode())
                             .doOnNext(activityResult -> {
                                 throw new ActivityResultException(activityResult);
                             })
@@ -82,11 +80,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         if (activityResult.data() != null) {
                             ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
                                     parseGetContentIntent(navigator.activity(), application.getContentResolver(), activityResult.data(), fileSystem.getExternallyOpenedFilesDir()));
-                            ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
+                            ToastUtil.handleEmptyFileError(validFiles, navigator.activity());
 
                             return handleFiles(navigator, signatureContainerDataSource, validFiles)
-                                    .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribeOn(AndroidSchedulers.mainThread())
                                     .doOnError(throwable1 -> {
                                         Timber.log(Log.ERROR, throwable1,
                                                 String.format("Unable to add file to container. Error: %s",
@@ -118,7 +116,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         boolean isEmptyFileException = exceptions.stream().anyMatch(exception ->
                                 (exception instanceof EmptyFileException));
                         if (isEmptyFileException) {
-                            ToastUtil.showEmptyFileError(navigator.activity(), application);
+                            ToastUtil.showEmptyFileError(navigator.activity());
                         } else {
                             ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
                         }
@@ -142,8 +140,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
         return signatureContainerDataSource
                 .addContainer(navigator.activity(), validFiles, false)
                 .toObservable()
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .doOnNext(containerAdd ->
                         navigator.execute(Transaction.replace(SignatureUpdateScreen
                                 .create(containerAdd.isExistingContainer(), false,
@@ -170,6 +168,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                              ImmutableList<FileStream> validFiles) {
         return SivaUtil.isSivaConfirmationNeeded(validFiles, navigator.activity())
                 .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .flatMap(isSivaConfirmationNeeded -> {
                     if (isSivaConfirmationNeeded) {
                         sivaConfirmationDialog.show();
@@ -196,6 +195,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     } else {
                         return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, true);
                     }
+                    return Observable.just(Result.ChooseFilesResult.create());
+                })
+                .onErrorResumeNext(throwable -> {
+                    if (throwable instanceof NoInternetConnectionException) {
+                        ToastUtil.showError(navigator.activity(), R.string.no_internet_connection);
+                    } else {
+                        ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
+                    }
+                    navigator.execute(Transaction.pop());
                     return Observable.just(Result.ChooseFilesResult.create());
                 });
     }
