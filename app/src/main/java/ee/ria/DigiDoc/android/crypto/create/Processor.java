@@ -429,7 +429,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 if (dataFiles.size() > 1) {
                                     AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.files_encrypted);
                                 } else {
-                                    AccessibilityUtils.sendAccessibilityEvent(configurationContext, TYPE_ANNOUNCEMENT, R.string.crypto_create_encrypt_success_message);
+                                    AccessibilityUtils.sendAccessibilityEvent(configurationContext, TYPE_ANNOUNCEMENT,
+                                            navigator.activity().getString(R.string.crypto_create_encrypt_success_message).toLowerCase());
                                 }
                                 return file;
                             } catch (Exception e) {
