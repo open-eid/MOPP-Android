@@ -45,7 +45,6 @@ import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.Formatter;
-import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.common.TextUtil;
 import ee.ria.DigiDoc.sign.DataFile;
