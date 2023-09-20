@@ -25,7 +25,8 @@
             android:gravity="start"
             android:layout_marginTop="20dp"
             android:minHeight="@dimen/material_baseline_grid_6x"
-            android:text="@string/signature_update_mobile_id_phone_no" />
+            android:text="@string/signature_update_mobile_id_phone_no"
+            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateMobileIdPhoneNoLabel"
@@ -59,7 +60,8 @@
             android:gravity="start"
             android:layout_marginTop="20dp"
             android:minHeight="@dimen/material_baseline_grid_6x"
-            android:text="@string/signature_update_mobile_id_personal_code" />
+            android:text="@string/signature_update_mobile_id_personal_code"
+            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateMobileIdPersonalCodeLabel"

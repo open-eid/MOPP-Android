@@ -501,7 +501,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             }
 
             if (!mobileIdChallengeView.getText().equals(EMPTY_CHALLENGE)) {
-                AccessibilityUtils.setSingleCharactersContentDescription(mobileIdChallengeView);
+                AccessibilityUtils.setSingleCharactersContentDescription(mobileIdChallengeView, null);
                 String mobileIdChallengeDescription = getResources().getString(R.string.mobile_id_challenge) +
                         AccessibilityUtils.getTextAsSingleCharacters(mobileIdChallengeView.getText().toString());
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, mobileIdChallengeDescription);

@@ -261,7 +261,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
         searchView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
 
         if (searchTextView instanceof TextView) {
-            AccessibilityUtils.setSingleCharactersContentDescription((TextView) searchTextView);
+            AccessibilityUtils.setSingleCharactersContentDescription((TextView) searchTextView, null);
         }
 
         hideSearchCloseButton(searchTextView);

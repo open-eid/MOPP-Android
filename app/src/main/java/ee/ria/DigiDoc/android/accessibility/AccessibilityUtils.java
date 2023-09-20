@@ -39,6 +39,19 @@ public class AccessibilityUtils {
         return accessibilityManager.isTouchExplorationEnabled();
     }
 
+    public static AccessibilityManager.TouchExplorationStateChangeListener addAccessibilityStateChanged(AccessibilityManager.TouchExplorationStateChangeListener listener) {
+        Activity activity = (Activity) Activity.getContext().get();
+        AccessibilityManager accessibilityManager = (AccessibilityManager) activity.getSystemService(Context.ACCESSIBILITY_SERVICE);
+        accessibilityManager.addTouchExplorationStateChangeListener(listener);
+        return listener;
+    }
+
+    public static void removeAccessibilityStateChanged(AccessibilityManager.TouchExplorationStateChangeListener listener) {
+        Activity activity = (Activity) Activity.getContext().get();
+        AccessibilityManager accessibilityManager = (AccessibilityManager) activity.getSystemService(Context.ACCESSIBILITY_SERVICE);
+        accessibilityManager.removeTouchExplorationStateChangeListener(listener);
+    }
+
     public static void sendAccessibilityEvent(Context context, int eventType, @StringRes int messageResId) {
         sendAccessibilityEvent(context, eventType, context.getString(messageResId));
     }
@@ -117,23 +130,51 @@ public class AccessibilityUtils {
         });
     }
 
-    public static void setSingleCharactersContentDescription(TextView textView) {
+    public static StringBuilder getTextViewAccessibility(TextView textView) {
+        StringBuilder textViewAccessibility = new StringBuilder();
+        String[] personalCodeTextSplit = textView.getText().toString().split(",");
+        for (String nameText : personalCodeTextSplit) {
+            if (TextUtil.isOnlyDigits(nameText)) {
+                textViewAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
+            } else {
+                textViewAccessibility.append(nameText);
+            }
+        }
+
+        return textViewAccessibility;
+    }
+
+    public static void setSingleCharactersContentDescription(TextView textView, @Nullable String title) {
         ViewCompat.setAccessibilityDelegate(textView, new AccessibilityDelegateCompat() {
             @Override
             public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
-                StringBuilder textViewAccessibility = new StringBuilder();
-                String[] personalCodeTextSplit = textView.getText().toString().split(",");
-                for (String nameText : personalCodeTextSplit) {
-                    if (TextUtil.isOnlyDigits(nameText)) {
-                        textViewAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
-                    } else {
-                        textViewAccessibility.append(nameText);
-                    }
+                StringBuilder textViewAccessibility = getTextViewAccessibility(textView);
+
+                if (title != null) {
+                    info.setText(title + " " + textViewAccessibility);
+                    info.setContentDescription(title + " " + textViewAccessibility);
+                    host.setContentDescription(title + " " + textViewAccessibility);
+                } else {
+                    info.setText(textViewAccessibility);
+                    info.setContentDescription(textViewAccessibility);
+                    host.setContentDescription(textViewAccessibility);
                 }
-                info.setText(textViewAccessibility);
-                info.setContentDescription(textViewAccessibility);
-                host.setContentDescription(textViewAccessibility);
+            }
+        });
+    }
+
+    public static void setJoinedCharactersContentDescription(TextView textView) {
+        ViewCompat.setAccessibilityDelegate(textView, new AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+
+                String joinedText = TextUtil.joinText(textView.getText().toString());
+
+                info.setText(joinedText);
+                info.setContentDescription(joinedText);
+                host.setContentDescription(joinedText);
             }
         });
     }
