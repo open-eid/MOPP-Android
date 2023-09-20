@@ -19,6 +19,7 @@
                 android:id="@id/cryptoCreateDecryptProgressMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/signingNavigation"
                 android:gravity="center_horizontal" />
 
             <ProgressBar
@@ -44,12 +45,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
+                    android:textColor="@color/signingNavigation"
                     android:text="@string/crypto_create_decrypt_message" />
 
                 <TextView
                     android:id="@id/cryptoCreateDecryptData"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/signingNavigation"
                     android:gravity="center_horizontal" />
 
                 <TextView
@@ -57,6 +60,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:text="@string/crypto_create_decrypt_pin1"
+                    android:textColor="@color/signingNavigation"
                     android:labelFor="@id/cryptoCreateDecryptPin1" />
             </LinearLayout>
 
