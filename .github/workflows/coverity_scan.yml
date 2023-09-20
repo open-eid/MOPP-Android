@@ -7,7 +7,25 @@ jobs:
     if: contains(github.repository, 'open-eid/MOPP-Android') && contains(github.ref, 'coverity_scan')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Setup environment
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          cd ${{ github.workspace }}/app
+          echo -n "$GOOGLE_SERVICES_JSON" | base64 --decode > "google-services.json"
+          cd ${{ github.workspace }}
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 17
+
       - name: Build and send to Coverity
         continue-on-error: true
         run: |
@@ -19,5 +37,5 @@ jobs:
           COVERITY_SCAN_PROJECT_NAME: 'open-eid/MOPP-Android'
           COVERITY_SCAN_NOTIFICATION_EMAIL: 'eid-teenusehaldus@ria.ee'
           COVERITY_SCAN_BRANCH_PATTERN: 'coverity_scan'
-          COVERITY_SCAN_BUILD_COMMAND: './gradlew app:assembleDebug -x app:processDebugGoogleServices -x app:uploadCrashlyticsMappingFileDebug --no-daemon'
+          COVERITY_SCAN_BUILD_COMMAND: './gradlew clean --no-daemon fetchAndPackageDefaultConfiguration assemble --debug'
           COVERITY_SCAN_TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
