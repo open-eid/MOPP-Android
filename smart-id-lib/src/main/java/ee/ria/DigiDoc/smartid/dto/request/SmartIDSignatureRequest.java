@@ -20,6 +20,8 @@
 
 package ee.ria.DigiDoc.smartid.dto.request;
 
+import com.google.gson.Gson;
+
 import java.io.Serializable;
 
 import lombok.Data;
@@ -37,4 +39,8 @@ public class SmartIDSignatureRequest implements Serializable {
 
     private String hashType;
     private String displayText;
+
+    public static String toJson(SmartIDSignatureRequest request) {
+        return new Gson().toJson(request);
+    }
 }

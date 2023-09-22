@@ -5,9 +5,8 @@ import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 
-import java.time.Instant;
-
 import java.security.cert.X509Certificate;
+import java.time.Instant;
 
 @AutoValue
 public abstract class Signature {
@@ -31,6 +30,11 @@ public abstract class Signature {
      * Status of the signature.
      */
     public abstract SignatureStatus status();
+
+    /**
+     * Diagnostics info.
+     */
+    public abstract String diagnosticsInfo();
 
     /**
      * Whether this signature is valid or invalid.
@@ -136,6 +140,7 @@ public abstract class Signature {
      * @param name Signature display name.
      * @param createdAt Signature created date and time.
      * @param status Signature status.
+     * @param diagnosticsInfo Diagnostics info.
      * @param profile Signature profile.
      * @param signersCertificateIssuer Signer's certificate issuer.
      * @param signingCertificate Signing certificate.
@@ -154,13 +159,13 @@ public abstract class Signature {
      *
      */
     public static Signature create(String id, String name, Instant createdAt,
-                                   SignatureStatus status, String profile, String signersCertificateIssuer,
+                                   SignatureStatus status, String diagnosticsInfo, String profile, String signersCertificateIssuer,
                                    X509Certificate signingCertificate, String signatureMethod,
                                    String signatureFormat, String signatureTimestamp, String signatureTimestampUTC,
                                    String hashValueOfSignature, String tsCertificateIssuer, X509Certificate tsCertificate,
                                    String ocspCertificateIssuer, X509Certificate ocspCertificate,
                                    String ocspTime, String ocspTimeUTC, String signersMobileTimeUTC) {
-        return new AutoValue_Signature(id, name, createdAt, status, profile,
+        return new AutoValue_Signature(id, name, createdAt, status, diagnosticsInfo, profile,
                 signersCertificateIssuer, signingCertificate, signatureMethod,
                 signatureFormat, signatureTimestamp, signatureTimestampUTC,
                 hashValueOfSignature, tsCertificateIssuer, tsCertificate, ocspCertificateIssuer,
@@ -175,6 +180,7 @@ public abstract class Signature {
                 ", name=" + name() +
                 ", createdAt=" + createdAt() +
                 ", status=" + status() +
+                ", diagnosticsInfo=" + diagnosticsInfo() +
                 ", profile=" + profile() +
                 ", signersCertificateIssuer=" + signersCertificateIssuer() +
                 ", signingCertificate exists=" + (signingCertificate() != null) +

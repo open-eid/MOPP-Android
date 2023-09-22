@@ -19,8 +19,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import net.cachapa.expandablelayout.ExpandableLayout;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
-import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.common.TextUtil;
@@ -29,10 +28,10 @@ import ee.ria.DigiDoc.idcard.CodeType;
 import io.reactivex.rxjava3.core.Observable;
 
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.setCustomClickAccessibilityFeedBack;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public final class EIDDataView extends LinearLayout {
 
@@ -74,7 +73,7 @@ public final class EIDDataView extends LinearLayout {
     public EIDDataView(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                        int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        formatter = Application.component(context).formatter();
+        formatter = ApplicationApp.component(context).formatter();
         setOrientation(VERTICAL);
         inflate(context, R.layout.eid_home_data, this);
         typeView = findViewById(R.id.eidHomeDataType);
@@ -126,7 +125,7 @@ public final class EIDDataView extends LinearLayout {
                 : R.drawable.ic_icon_accordion_collapsed;
         certificatesTitleView.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, 0, 0, 0);
         tintCompoundDrawables(certificatesTitleView);
-        setCustomClickAccessibilityFeedBack(certificatesTitleView);
+        setCustomClickAccessibilityFeedBack(certificatesTitleView, certificatesContainerView);
 
         certificatesContainerView.setExpanded(certificateContainerExpanded);
 
@@ -177,23 +176,5 @@ public final class EIDDataView extends LinearLayout {
                         .map(ignored ->
                                 CodeUpdateAction.create(CodeType.PUK, CodeUpdateType.UNBLOCK))
         );
-    }
-
-    private void setCustomClickAccessibilityFeedBack(TextView certificatesTitleView) {
-        ViewCompat.setAccessibilityDelegate(certificatesTitleView, new AccessibilityDelegateCompat() {
-            @Override
-            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
-                super.onInitializeAccessibilityNodeInfo(host, info);
-                String message;
-                if (certificatesContainerView.isExpanded()) {
-                    message = "deactivate";
-                } else {
-                    message = "activate";
-                }
-                AccessibilityNodeInfoCompat.AccessibilityActionCompat customClick = new AccessibilityNodeInfoCompat.AccessibilityActionCompat(
-                        AccessibilityNodeInfoCompat.ACTION_CLICK, message);
-                info.addAction(customClick);
-            }
-        });
     }
 }

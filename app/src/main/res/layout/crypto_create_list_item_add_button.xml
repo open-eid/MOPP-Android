@@ -2,7 +2,7 @@
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@id/cryptoCreateAddButton"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/material_typography_dense_display_3_text_size"
     android:layout_marginStart="@dimen/material_list_normal_padding_vertical"
     android:layout_marginEnd="@dimen/material_list_normal_padding_vertical"
     android:text="@string/documents_add_button"

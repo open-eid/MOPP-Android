@@ -13,7 +13,7 @@ import android.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -39,7 +39,7 @@ public class AccessibilityView extends CoordinatorLayout implements ContentView 
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.main_accessibility, this);
         toolbarView = findViewById(R.id.toolbar);
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
         disposables = new ViewDisposables();
 
         toolbarView.setTitle(R.string.main_accessibility_title);

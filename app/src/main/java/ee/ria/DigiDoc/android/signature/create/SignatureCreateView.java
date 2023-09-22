@@ -7,7 +7,7 @@ import androidx.annotation.Nullable;
 import android.widget.FrameLayout;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
@@ -25,7 +25,7 @@ public final class SignatureCreateView extends FrameLayout implements ContentVie
                                @Nullable android.content.Intent intent) {
         super(context);
         this.intent = intent;
-        viewModel = Application.component(context).navigator()
+        viewModel = ApplicationApp.component(context).navigator()
                 .viewModel(screenId, SignatureCreateViewModel.class);
         inflate(context, R.layout.signature_create, this);
 

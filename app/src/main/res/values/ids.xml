@@ -66,11 +66,20 @@
 
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
+    <item type="id" name="mainSettingsAccessScreen" />
     <item type="id" name="mainSettingsFragment" />
+    <item type="id" name="mainSettingsAccessCategory" />
     <item type="id" name="mainSettingsOpenAllFileTypes" />
     <item type="id" name="mainSettingsAllowScreenshots" />
     <item type="id" name="mainSettingsAccessToSigningService" />
     <item type="id" name="mainSettingsAccessToTimeStampingService" />
+    <item type="id" name="mainSettingsTsaCertificateContainer" />
+    <item type="id" name="mainSettingsTsaCertificateIssuedTo" />
+    <item type="id" name="mainSettingsTsaCertificateValidTo" />
+    <item type="id" name="mainSettingsTsaCertificateAddCertificateButton" />
+    <item type="id" name="mainSettingsTsaCertificateShowCertificateButton" />
+    <item type="id" name="mainSettingsChooseFileScreen" />
+
 
     <!-- Main About -->
     <item type="id" name="mainAboutListLayout" />
@@ -121,6 +130,14 @@
 
     <!-- Signature Details -->
     <item type="id" name="signatureDetailScreen" />
+
+    <item type="id" name="signersCertificateErrorContainer" />
+    <item type="id" name="signersCertificateErrorTitle" />
+    <item type="id" name="signersCertificateErrorDetails" />
+    <item type="id" name="signersCertificateTechnicalInformationButtonTitle" />
+    <item type="id" name="signersCertificateTechnicalInformationContainerView" />
+    <item type="id" name="signersCertificateTechnicalInformationText" />
+
     <item type="id" name="signersCertificateIssuerTitle" />
     <item type="id" name="signersCertificateTitle" />
     <item type="id" name="signatureDetailSignersCertificateIssuer" />
@@ -300,8 +317,10 @@
     <item type="id" name="cryptoCreateList" />
     <item type="id" name="cryptoCreateEncryptButton" />
     <item type="id" name="cryptoCreateDecryptButton" />
+    <item type="id" name="cryptoCreateSignatureButton" />
     <item type="id" name="cryptoCreateSendButton" />
-    <item type="id" name="cryptoCreateButtonSpace" />
+    <item type="id" name="cryptoCreateCryptoButtonSpace" />
+    <item type="id" name="cryptoCreateSignatureButtonSpace" />
     <item type="id" name="cryptoCreateSuccessMessage" />
     <item type="id" name="cryptoCreateName" />
     <item type="id" name="cryptoCreateNameUpdateButton" />
@@ -340,6 +359,7 @@
     <item type="id" name="eidHomeCoordinator" />
     <item type="id" name="eidHomeCodeUpdate" />
     <item type="id" name="eidHomeScroll" />
+    <item type="id" name="eidHomeProgressLayout" />
     <item type="id" name="eidHomeProgressMessage" />
     <item type="id" name="eidHomeData" />
     <item type="id" name="eidHomeDataType" />

@@ -23,11 +23,19 @@ public final class HomeScreen extends ConductorScreen {
     @SuppressWarnings("WeakerAccess")
     public HomeScreen(Bundle args) {
         super(R.id.mainHomeScreen, args);
-        intent = args.getParcelable(KEY_INTENT);
+        intent = getIntent(args);
     }
 
     @Override
     protected View view(Context context) {
         return new HomeView(context, intent, getInstanceId());
+    }
+
+    private android.content.Intent getIntent(Bundle bundle) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            return bundle.getParcelable(KEY_INTENT, android.content.Intent.class);
+        } else {
+            return bundle.getParcelable(KEY_INTENT);
+        }
     }
 }

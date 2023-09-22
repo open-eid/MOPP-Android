@@ -28,7 +28,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
@@ -63,20 +63,20 @@ public final class SignatureListScreen extends Controller implements Screen,
     public SignatureListScreen() {
     }
 
-    private Observable<Intent.InitialIntent> initialIntent() {
-        return Observable.just(Intent.InitialIntent.create());
+    private Observable<InitialIntent> initialIntent() {
+        return Observable.just(InitialIntent.create());
     }
 
-    private Observable<Intent.UpButtonIntent> upButtonIntent() {
+    private Observable<UpButtonIntent> upButtonIntent() {
         return navigationClicks(toolbarView)
-                .map(ignored -> Intent.UpButtonIntent.create());
+                .map(ignored -> UpButtonIntent.create());
     }
 
-    private Observable<Intent.ContainerOpenIntent> containerOpenIntent() {
+    private Observable<ContainerOpenIntent> containerOpenIntent() {
         return Observable.merge(adapter.itemClicks()
-                .flatMap(file -> Intent.ContainerOpenIntent.confirmation(file, getApplicationContext())),
+                .flatMap(file -> ContainerOpenIntent.confirmation(file, getApplicationContext())),
                 sivaConfirmationDialog.positiveButtonClicks()
-                    .map(ignored -> Intent.ContainerOpenIntent.open(sivaConfirmationContainerFile, true)),
+                    .map(ignored -> ContainerOpenIntent.open(sivaConfirmationContainerFile, true)),
                 sivaConfirmationDialog.cancels()
                         .map(ignored -> {
                             if (sivaConfirmationContainerFile != null &&
@@ -85,31 +85,31 @@ public final class SignatureListScreen extends Controller implements Screen,
                                 SignedContainer signedContainer = SignedContainer.open(sivaConfirmationContainerFile);
                                 if (signedContainer.dataFiles().size() == 1 &&
                                         Files.getFileExtension(signedContainer.dataFiles().get(0).name()).equalsIgnoreCase("ddoc")) {
-                                    return Intent.ContainerOpenIntent.open(sivaConfirmationContainerFile, false);
+                                    return ContainerOpenIntent.open(sivaConfirmationContainerFile, false);
                                 }
                             }
-                            return Intent.ContainerOpenIntent.cancel();
+                            return ContainerOpenIntent.cancel();
                         }));
     }
 
-    private Observable<Intent.ContainerRemoveIntent> containerRemoveIntent() {
+    private Observable<ContainerRemoveIntent> containerRemoveIntent() {
         return Observable.merge(
                 adapter.removeButtonClicks()
-                        .map(Intent.ContainerRemoveIntent::confirmation),
+                        .map(ContainerRemoveIntent::confirmation),
                 removeConfirmationDialog.positiveButtonClicks()
-                        .map(ignored -> Intent.ContainerRemoveIntent
+                        .map(ignored -> ContainerRemoveIntent
                                 .remove(removeConfirmationContainerFile)),
                 removeConfirmationDialog.cancels()
                         .map(ignored -> {
                             if (getApplicationContext() != null) {
                                 AccessibilityUtils.sendAccessibilityEvent(getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.document_removal_cancelled);
                             }
-                            return Intent.ContainerRemoveIntent.cancel();
+                            return ContainerRemoveIntent.cancel();
                         }));
     }
 
-    private Observable<Intent.RefreshIntent> refreshIntent() {
-        return Observable.just(Intent.RefreshIntent.create());
+    private Observable<RefreshIntent> refreshIntent() {
+        return Observable.just(RefreshIntent.create());
     }
 
     @SuppressWarnings("unchecked")
@@ -157,7 +157,7 @@ public final class SignatureListScreen extends Controller implements Screen,
     @Override
     protected void onContextAvailable(@NonNull Context context) {
         super.onContextAvailable(context);
-        viewModel = Application.component(context).navigator()
+        viewModel = ApplicationApp.component(context).navigator()
                 .viewModel(getInstanceId(), SignatureListViewModel.class);
     }
 

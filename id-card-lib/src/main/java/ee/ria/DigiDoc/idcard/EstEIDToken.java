@@ -149,7 +149,7 @@ abstract class EstEIDToken implements Token {
             }
             stream.write(reader.transmit(0x00, 0xB0, i, 0x00, null, remaining));
             return stream.toByteArray();
-        } catch (IOException e) {
+        } catch (IOException | NumberFormatException e) {
             throw new SmartCardReaderException(e);
         }
     }
