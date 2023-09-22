@@ -26,7 +26,6 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
@@ -57,6 +56,7 @@ import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
@@ -72,7 +72,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
 @SuppressLint("ViewConstructor")
-public final class SignatureUpdateView extends LinearLayout implements MviView<Intent, ViewState> {
+public final class SignatureUpdateView extends LinearLayout implements ContentView, MviView<Intent, ViewState> {
 
     private final ImmutableList<String> ASICS_TIMESTAMP_CONTAINERS = ImmutableList.of("asics", "scs");
     private static final ImmutableSet<String> UNSIGNABLE_CONTAINER_EXTENSIONS = ImmutableSet.<String>builder().add("adoc", "asics", "scs", "ddoc").build();
@@ -209,6 +209,13 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         setupAccessibilityTabs();
 
         setActionButtonsTextSize();
+
+        ContentView.addInvisibleElement(getContext(), this);
+
+        View lastElementView = findViewById(R.id.lastInvisibleElement);
+        lastElementView.setVisibility(VISIBLE);
+
+        ContentView.addInvisibleElementScrollListener(listView, lastElementView);
     }
 
     @Override
@@ -713,6 +720,7 @@ public final class SignatureUpdateView extends LinearLayout implements MviView<I
         isTitleViewFocused = false;
         SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
         SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
+        ContentView.removeInvisibleElementScrollListener(listView);
         super.onDetachedFromWindow();
     }
 

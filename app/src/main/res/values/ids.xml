@@ -9,6 +9,7 @@
     <item type="id" name="activityIndicatorSmartId" />
     <item type="id" name="activityOverlay" />
     <item type="id" name="listEmpty" />
+    <item type="id" name="lastInvisibleElement" />
 
     <item type="id" name="nameUpdateNameLabel" />
     <item type="id" name="nameUpdateName" />
@@ -81,6 +82,7 @@
 
 
     <!-- Main About -->
+    <item type="id" name="mainAboutListLayout" />
     <item type="id" name="mainAboutList" />
     <item type="id" name="mainAboutRiaDigiDocVersionTitle" />
     <item type="id" name="mainAboutComponentName" />
@@ -121,6 +123,7 @@
 
     <!-- Signature List -->
     <item type="id" name="signatureListScreen" />
+    <item type="id" name="signatureListLayout" />
     <item type="id" name="signatureList" />
     <item type="id" name="signatureListItemName" />
     <item type="id" name="signatureListItemRemoveButton" />

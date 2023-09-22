@@ -15,9 +15,10 @@ import com.google.common.collect.ImmutableList;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.common.TextUtil;
 
-final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ContentView {
 
     private final ImmutableList<Component> components = ImmutableList.<Component>builder()
             .add(Component.create(
