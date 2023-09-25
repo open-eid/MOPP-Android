@@ -64,7 +64,9 @@ public class InvisibleView implements ContentView {
     }
 
     public static void removeInvisibleElementScrollListener(RecyclerView recyclerView) {
-        recyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
+        if (recyclerViewOnScrollListener != null) {
+            recyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
+        }
         hasInvisibleElementMoved = false;
     }
 }

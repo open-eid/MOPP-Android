@@ -14,7 +14,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -42,8 +42,8 @@ public final class SettingsRoleAndAddressView extends CoordinatorLayout {
         inflate(context, R.layout.main_settings_role_and_address, this);
         toolbarView = findViewById(R.id.toolbar);
         TextView toolbarTitleView = getToolbarViewTitle(toolbarView);
-        navigator = Application.component(context).navigator();
-        settingsDataStore = Application.component(context).settingsDataStore();
+        navigator = ApplicationApp.component(context).navigator();
+        settingsDataStore = ApplicationApp.component(context).settingsDataStore();
         disposables = new ViewDisposables();
 
         toolbarView.setTitle(R.string.main_settings_role_and_address_button);

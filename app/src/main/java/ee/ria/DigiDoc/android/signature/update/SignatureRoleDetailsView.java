@@ -11,7 +11,7 @@ import android.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
@@ -34,7 +34,7 @@ public final class SignatureRoleDetailsView extends CoordinatorLayout {
         inflate(context, R.layout.signature_role_details_screen, this);
         AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.signature_update_signature_role_and_address_title);
 
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
         toolbarView = findViewById(R.id.toolbar);
 
         toolbarView.setTitle(TextUtil.capitalizeString(

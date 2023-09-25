@@ -47,8 +47,8 @@ public class ContainerWrapper {
     public String prepareSignature(String cert, @Nullable RoleData roleData) throws CertificateException {
         if (roleData != null) {
             signature = container.prepareWebSignature(CertificateUtil.x509Certificate(cert).getEncoded(), SIGNATURE_PROFILE_TS,
-                    new StringVector(TextUtil.removeEmptyStrings(roleData.roles())), roleData.city(),
-                    roleData.state(), roleData.zip(), roleData.country());
+                    new StringVector(TextUtil.removeEmptyStrings(roleData.getRoles())), roleData.getCity(),
+                    roleData.getState(), roleData.getZip(), roleData.getCountry());
         } else {
             signature = container.prepareWebSignature(CertificateUtil.x509Certificate(cert).getEncoded(), SIGNATURE_PROFILE_TS);
         }

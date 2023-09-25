@@ -40,16 +40,16 @@ public final class RoleViewModel extends
     }
 
     void setRoleData(RoleData roleData) {
-        settingsDataStore.setRoles(roleData.roles());
-        settingsDataStore.setRoleCity(roleData.city());
-        settingsDataStore.setRoleState(roleData.state());
-        settingsDataStore.setRoleCountry(roleData.country());
-        settingsDataStore.setRoleZip(roleData.zip());
+        settingsDataStore.setRoles(roleData.getRoles());
+        settingsDataStore.setRoleCity(roleData.getCity());
+        settingsDataStore.setRoleState(roleData.getState());
+        settingsDataStore.setRoleCountry(roleData.getCountry());
+        settingsDataStore.setRoleZip(roleData.getZip());
     }
 
     @Override
     protected Class<? extends Intent> initialIntentType() {
-        return Intent.InitialIntent.class;
+        return InitialIntent.class;
     }
 
     @Override

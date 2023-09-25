@@ -207,8 +207,8 @@ public abstract class SignedContainer {
             ee.ria.libdigidocpp.Signature signature;
             if (roleData != null) {
                 signature = container.prepareWebSignature(certificate.toByteArray(), signatureProfile(),
-                        new StringVector(TextUtil.removeEmptyStrings(roleData.roles())), roleData.city(),
-                        roleData.state(), roleData.zip(), roleData.country());
+                        new StringVector(TextUtil.removeEmptyStrings(roleData.getRoles())), roleData.getCity(),
+                        roleData.getState(), roleData.getZip(), roleData.getCountry());
             } else {
                 signature = container.prepareWebSignature(certificate.toByteArray(), signatureProfile());
             }
