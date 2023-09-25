@@ -9,6 +9,7 @@
     <item type="id" name="activityIndicatorSmartId" />
     <item type="id" name="activityOverlay" />
     <item type="id" name="listEmpty" />
+    <item type="id" name="lastInvisibleElement" />
 
     <item type="id" name="nameUpdateNameLabel" />
     <item type="id" name="nameUpdateName" />
@@ -84,6 +85,7 @@
 
 
     <!-- Main About -->
+    <item type="id" name="mainAboutListLayout" />
     <item type="id" name="mainAboutList" />
     <item type="id" name="mainAboutRiaDigiDocVersionTitle" />
     <item type="id" name="mainAboutComponentName" />
@@ -124,6 +126,7 @@
 
     <!-- Signature List -->
     <item type="id" name="signatureListScreen" />
+    <item type="id" name="signatureListLayout" />
     <item type="id" name="signatureList" />
     <item type="id" name="signatureListItemName" />
     <item type="id" name="signatureListItemRemoveButton" />
@@ -347,8 +350,10 @@
     <item type="id" name="cryptoCreateList" />
     <item type="id" name="cryptoCreateEncryptButton" />
     <item type="id" name="cryptoCreateDecryptButton" />
+    <item type="id" name="cryptoCreateSignatureButton" />
     <item type="id" name="cryptoCreateSendButton" />
-    <item type="id" name="cryptoCreateButtonSpace" />
+    <item type="id" name="cryptoCreateCryptoButtonSpace" />
+    <item type="id" name="cryptoCreateSignatureButtonSpace" />
     <item type="id" name="cryptoCreateSuccessMessage" />
     <item type="id" name="cryptoCreateName" />
     <item type="id" name="cryptoCreateNameUpdateButton" />

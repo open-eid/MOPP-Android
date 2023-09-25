@@ -2,9 +2,11 @@ package ee.ria.DigiDoc.android.utils;
 
 import static android.util.TypedValue.COMPLEX_UNIT_PX;
 import static android.view.View.GONE;
+import static android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO;
 import static android.view.View.VISIBLE;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.Layout;
 import android.text.SpannableString;
@@ -25,6 +27,8 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.google.android.material.textfield.TextInputLayout;
+
+import ee.ria.DigiDoc.R;
 
 public class TextUtil {
 
@@ -100,6 +104,22 @@ public class TextUtil {
     public static int convertPxToDp(float size, Context context) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 size, context.getResources().getDisplayMetrics());
+    }
+
+    public static TextView getInvisibleElementTextView(Context context) {
+        TextView textView = new TextView(context);
+        textView.setText(R.string.last_invisible_element_name);
+        textView.setTextColor(Color.GRAY);
+        textView.setId(R.id.lastInvisibleElement);
+        textView.setTag(R.string.last_invisible_element_tag);
+        textView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+        textView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        textView.setEnabled(false);
+        textView.setAlpha(0.001f);
+
+        return textView;
     }
 
     public static TextWatcher addTextWatcher(EditText editText) {

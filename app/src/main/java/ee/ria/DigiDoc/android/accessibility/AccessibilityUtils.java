@@ -11,6 +11,7 @@ import android.view.accessibility.AccessibilityManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.view.AccessibilityDelegateCompat;
@@ -44,7 +45,7 @@ public class AccessibilityUtils {
     public static void sendAccessibilityEvent(Context context, int eventType, CharSequence message) {
         AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(ACCESSIBILITY_SERVICE);
         if (accessibilityManager.isEnabled()) {
-            AccessibilityEvent event = AccessibilityEvent.obtain();
+            AccessibilityEvent event = getAccessibilityEvent();
             event.setEventType(eventType);
             event.getText().add(message);
             accessibilityManager.sendAccessibilityEvent(event);
@@ -54,7 +55,7 @@ public class AccessibilityUtils {
     public static void sendAccessibilityEvent(Context context, int eventType, CharSequence... messages) {
         AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(ACCESSIBILITY_SERVICE);
         if (accessibilityManager.isEnabled()) {
-            AccessibilityEvent event = AccessibilityEvent.obtain();
+            AccessibilityEvent event = getAccessibilityEvent();
             event.setEventType(eventType);
             event.getText().add(combineMessages(messages));
             accessibilityManager.sendAccessibilityEvent(event);
@@ -64,7 +65,7 @@ public class AccessibilityUtils {
     public static void sendDelayedAccessibilityEvent(Context context, int eventType, CharSequence message) {
         AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(ACCESSIBILITY_SERVICE);
         if (accessibilityManager.isEnabled()) {
-            AccessibilityEvent event = AccessibilityEvent.obtain();
+            AccessibilityEvent event = getAccessibilityEvent();
             event.setEventType(eventType);
             event.getText().add(message);
             accessibilityManager.sendAccessibilityEvent(event);
@@ -102,7 +103,7 @@ public class AccessibilityUtils {
     public static void disableDoubleTapToActivateFeedback(View view) {
         ViewCompat.setAccessibilityDelegate(view, new AccessibilityDelegateCompat() {
             @Override
-            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 info.addAction(AccessibilityNodeInfoCompat.ACTION_FOCUS);
                 info.removeAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK);
@@ -113,7 +114,7 @@ public class AccessibilityUtils {
     public static void setSingleCharactersContentDescription(TextView textView) {
         ViewCompat.setAccessibilityDelegate(textView, new AccessibilityDelegateCompat() {
             @Override
-            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 StringBuilder textViewAccessibility = new StringBuilder();
                 String[] personalCodeTextSplit = textView.getText().toString().split(",");
@@ -144,6 +145,11 @@ public class AccessibilityUtils {
         return configuration.fontScale > 1;
     }
 
+    public static boolean isSmallFontEnabled(Resources resources) {
+        Configuration configuration = resources.getConfiguration();
+        return configuration.fontScale < 1;
+    }
+    
     public static void setCustomClickAccessibilityFeedBack(TextView titleView, ExpandableLayout containerView) {
         ViewCompat.setAccessibilityDelegate(titleView, new AccessibilityDelegateCompat() {
             @Override
@@ -168,5 +174,13 @@ public class AccessibilityUtils {
             combinedMessage.append(message).append(", ");
         }
         return combinedMessage.toString();
+    }
+
+    private static AccessibilityEvent getAccessibilityEvent() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            return new AccessibilityEvent();
+        } else {
+            return AccessibilityEvent.obtain();
+        }
     }
 }

@@ -16,16 +16,24 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.util.Log;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
-import java.util.ArrayList;
+import com.google.gson.Gson;
+
 import java.util.Locale;
+import java.util.UUID;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.common.RoleData;
@@ -33,11 +41,11 @@ import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileIdServiceResponse;
 import ee.ria.DigiDoc.mobileid.dto.response.RESTServiceFault;
+import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
-import timber.log.Timber;
 
 public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileIdResponse> {
 
@@ -50,12 +58,11 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
     private final String phoneNo;
     @Nullable private final RoleData roleData;
 
-    private final Intent intent;
+    private static final String SIGNING_TAG = "MobileId";
 
-    public MobileIdOnSubscribe(Navigator navigator, Intent intent, SignedContainer container, Locale locale,
+    public MobileIdOnSubscribe(Navigator navigator, SignedContainer container, Locale locale,
                                String uuid, String personalCode, String phoneNo, @Nullable RoleData roleData) {
         this.navigator = navigator;
-        this.intent = intent;
         this.container = container;
         this.locale = locale;
         this.broadcastManager = LocalBroadcastManager.getInstance(navigator.activity());
@@ -70,47 +77,42 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (navigator.activity() == null) {
-                    Timber.log(Log.ERROR,"Activity is null");
-                    IllegalStateException ise = new IllegalStateException("Activity not found. Please try again after restarting application");
-                    emitter.onError(ise);
-                }
                 switch (intent.getStringExtra(MID_BROADCAST_TYPE_KEY)) {
-                    case SERVICE_FAULT:
+                    case SERVICE_FAULT -> {
                         RESTServiceFault fault = RESTServiceFault
                                 .fromJson(intent.getStringExtra(SERVICE_FAULT));
+                        Configuration configuration = context.getResources().getConfiguration();
+                        configuration.setLocale(locale);
+                        Context configuredContext = context.createConfigurationContext(configuration);
                         if (fault.getStatus() != null) {
                             emitter.onError(MobileIdMessageException
-                                    .create(navigator.activity(), fault.getStatus(), fault.getDetailMessage()));
+                                    .create(configuredContext, fault.getStatus(), fault.getDetailMessage()));
                         } else {
                             emitter.onError(MobileIdMessageException
-                                    .create(navigator.activity(), fault.getResult(), fault.getDetailMessage()));
+                                    .create(configuredContext, fault.getResult(), fault.getDetailMessage()));
                         }
-                        break;
-                    case CREATE_SIGNATURE_CHALLENGE:
+                    }
+                    case CREATE_SIGNATURE_CHALLENGE -> {
                         String challenge =
                                 intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE);
                         emitter.onNext(MobileIdResponse.challenge(challenge));
-                        break;
-                    case CREATE_SIGNATURE_STATUS:
+                    }
+                    case CREATE_SIGNATURE_STATUS -> {
                         MobileIdServiceResponse status =
                                 MobileIdServiceResponse.fromJson(
                                         intent.getStringExtra(CREATE_SIGNATURE_STATUS));
                         switch (status.getStatus()) {
-                            case USER_CANCELLED:
-                                emitter.onNext(MobileIdResponse.status(status.getStatus()));
-                                break;
-                            case OK:
+                            case USER_CANCELLED ->
+                                    emitter.onNext(MobileIdResponse.status(status.getStatus()));
+                            case OK -> {
                                 emitter.onNext(MobileIdResponse.signature(status.getSignature()));
                                 emitter.onNext(MobileIdResponse.success(container));
                                 emitter.onComplete();
-                                break;
-                            default:
-                                emitter.onError(MobileIdMessageException
-                                        .create(navigator.activity(), status.getStatus(), null));
-                                break;
+                            }
+                            default -> emitter.onError(MobileIdMessageException
+                                    .create(context, status.getStatus(), null));
                         }
-                        break;
+                    }
                 }
             }
         };
@@ -119,19 +121,35 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         emitter.setCancellable(() -> broadcastManager.unregisterReceiver(receiver));
 
         ConfigurationProvider configurationProvider =
-                ((Application) navigator.activity().getApplication()).getConfigurationProvider();
+                ((ApplicationApp) navigator.activity().getApplication()).getConfigurationProvider();
         String displayMessage = navigator.activity()
                 .getString(R.string.signature_update_mobile_id_display_message);
         MobileCreateSignatureRequest request = MobileCreateSignatureRequestHelper
                 .create(container, uuid, configurationProvider.getMidRestUrl(),
                         configurationProvider.getMidSkRestUrl(), locale, personalCode, phoneNo, displayMessage);
 
-        intent.putExtra(CREATE_SIGNATURE_REQUEST, toJson(request));
-        intent.putExtra(ACCESS_TOKEN_PASS, SignLib.accessTokenPass());
-        intent.putExtra(ACCESS_TOKEN_PATH, SignLib.accessTokenPath());
-        intent.putStringArrayListExtra(CERTIFICATE_CERT_BUNDLE,
-                new ArrayList<>(configurationProvider.getCertBundle()));
-        intent.putExtra(SIGNING_ROLE_DATA, roleData);
-        navigator.activity().startService(intent);
+        Gson gson = new Gson();
+        String certBundleList = gson.toJson(configurationProvider.getCertBundle());
+
+        // WorkManager has 10KB data limit. Saving certs to SharedPreferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(navigator.activity());
+        sharedPreferences.edit().putString(CERTIFICATE_CERT_BUNDLE, certBundleList).commit();
+
+        UUID uuid = UUID.randomUUID();
+        Data inputData = new Data.Builder()
+                .putString(CREATE_SIGNATURE_REQUEST, toJson(request))
+                .putString(ACCESS_TOKEN_PASS, SignLib.accessTokenPass())
+                .putString(ACCESS_TOKEN_PATH, SignLib.accessTokenPath())
+                .putString(SIGNING_ROLE_DATA, RoleData.toJson(roleData))
+                .build();
+
+
+        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MobileSignService.class)
+                .addTag(SIGNING_TAG + uuid)
+                .setId(uuid)
+                .setInputData(inputData)
+                .build();
+
+        WorkManager.getInstance(navigator.activity()).enqueueUniqueWork(uuid.toString(), ExistingWorkPolicy.REPLACE, workRequest);
     }
 }

@@ -20,6 +20,7 @@
 
 package ee.ria.DigiDoc.android.signature.update.smartid;
 
+import static ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest.toJson;
 import static ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse.ProcessStatus.NO_RESPONSE;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CERTIFICATE_CERT_BUNDLE;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_CHALLENGE;
@@ -37,7 +38,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.util.Log;
 
@@ -46,11 +49,19 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
-import java.util.ArrayList;
+import com.google.gson.Gson;
+
+import java.util.Locale;
+import java.util.UUID;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.model.smartid.SmartIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.common.NotificationUtil;
@@ -62,6 +73,7 @@ import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
 import ee.ria.DigiDoc.smartid.dto.response.ServiceFault;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.smartid.dto.response.SmartIDServiceResponse;
+import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import timber.log.Timber;
@@ -72,23 +84,24 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
     private final Navigator navigator;
     private final SignedContainer container;
     private final LocalBroadcastManager broadcastManager;
+    private final Locale locale;
     private final String uuid;
     private final String personalCode;
     private final String country;
-    @Nullable RoleData roleData;
 
-    Intent intent;
+    @Nullable RoleData roleData;    
 
-    public SmartIdOnSubscribe(Navigator navigator, Intent intent, SignedContainer container, String uuid,
-                              String personalCode, String country, @Nullable RoleData roleData) {
+    private static final String SIGNING_TAG = "SmartId";
+
+    public SmartIdOnSubscribe(Navigator navigator, SignedContainer container, Locale locale,
+                              String uuid, String personalCode, String country, @Nullable RoleData roleData) {
         this.navigator = navigator;
         this.container = container;
         this.broadcastManager = LocalBroadcastManager.getInstance(navigator.activity());
+        this.locale = locale;
         this.uuid = uuid;
         this.personalCode = personalCode;
         this.country = country;
-
-        this.intent = intent;
         this.roleData = roleData;
     }
 
@@ -97,55 +110,52 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (navigator.activity() == null) {
-                    Timber.log(Log.ERROR, "Activity is null");
-                    IllegalStateException ise = new IllegalStateException("Activity not found. Please try again after restarting application");
-                    emitter.onError(ise);
-                }
                 switch (intent.getStringExtra(SID_BROADCAST_TYPE_KEY)) {
-                    case SERVICE_FAULT: {
+                    case SERVICE_FAULT -> {
                         NotificationManagerCompat.from(navigator.activity()).cancelAll();
                         ServiceFault serviceFault =
                                 ServiceFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
                         Timber.log(Log.DEBUG, "Got SERVICE_FAULT status: %s", serviceFault.getStatus());
+                        Configuration configuration = context.getResources().getConfiguration();
+                        configuration.setLocale(locale);
+                        Context configuredContext = context.createConfigurationContext(configuration);
                         if (serviceFault.getStatus() == NO_RESPONSE) {
                             emitter.onError(SmartIdMessageException
-                                    .create(navigator.activity(), serviceFault.getStatus()));
+                                    .create(configuredContext, serviceFault.getStatus()));
                         } else {
                             emitter.onError(SmartIdMessageException
-                                    .create(navigator.activity(), serviceFault.getStatus(), serviceFault.getDetailMessage()));
+                                    .create(configuredContext, serviceFault.getStatus(), serviceFault.getDetailMessage()));
                         }
-                        break;
                     }
-                    case CREATE_SIGNATURE_DEVICE:
+                    case CREATE_SIGNATURE_DEVICE -> {
                         Timber.log(Log.DEBUG, "Selecting device (CREATE_SIGNATURE_DEVICE)");
                         emitter.onNext(SmartIdResponse.selectDevice(true));
-                        break;
-                    case CREATE_SIGNATURE_CHALLENGE:
+                    }
+                    case CREATE_SIGNATURE_CHALLENGE -> {
                         Timber.log(Log.DEBUG, "Signature challenge (CREATE_SIGNATURE_CHALLENGE)");
                         String challenge =
                                 intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE);
                         emitter.onNext(SmartIdResponse.challenge(challenge));
-
-                        if (!PowerUtil.isPowerSavingMode(navigator.activity())) {
+                        if (!PowerUtil.isPowerSavingMode(context)) {
                             Timber.log(Log.DEBUG, "Creating notification channel");
-                            NotificationUtil.createNotificationChannel(navigator.activity(),
+                            NotificationUtil.createNotificationChannel(context,
                                     NOTIFICATION_CHANNEL, navigator.activity()
                                             .getResources()
                                             .getString(R.string.signature_update_signature_add_method_smart_id));
                         }
-
                         String challengeTitle = navigator.activity()
                                 .getResources().getString(R.string.smart_id_challenge);
-                        Notification notification = NotificationUtil.createNotification(navigator.activity(), NOTIFICATION_CHANNEL,
+                        Notification notification = NotificationUtil.createNotification(context, NOTIFICATION_CHANNEL,
                                 R.mipmap.ic_launcher, challengeTitle, challenge,
                                 NotificationCompat.PRIORITY_HIGH, false);
-
-                        sendNotification(navigator.activity(), challenge, notification);
-
-                        break;
-                    case CREATE_SIGNATURE_STATUS:
-                        NotificationManagerCompat.from(navigator.activity()).cancelAll();
+                        try {
+                            sendNotification(context, challenge, notification);
+                        } catch (NumberFormatException nfe) {
+                            Timber.log(Log.ERROR, nfe, "Unable to send notification");
+                        }
+                    }
+                    case CREATE_SIGNATURE_STATUS -> {
+                        NotificationManagerCompat.from(context).cancelAll();
                         SmartIDServiceResponse status =
                                 SmartIDServiceResponse.fromJson(
                                         intent.getStringExtra(CREATE_SIGNATURE_STATUS));
@@ -156,9 +166,9 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                         } else {
                             Timber.log(Log.DEBUG, "Got CREATE_SIGNATURE_STATUS error status: %s", status.getStatus());
                             emitter.onError(SmartIdMessageException
-                                    .create(navigator.activity(), status.getStatus()));
+                                    .create(context, status.getStatus()));
                         }
-                        break;
+                    }
                 }
             }
         };
@@ -167,7 +177,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         emitter.setCancellable(() -> broadcastManager.unregisterReceiver(receiver));
 
         ConfigurationProvider configurationProvider =
-                ((Application) navigator.activity().getApplication()).getConfigurationProvider();
+                ((ApplicationApp) navigator.activity().getApplication()).getConfigurationProvider();
         String displayMessage = navigator.activity()
                 .getString(R.string.signature_update_mobile_id_display_message);
         SmartIDSignatureRequest request = SmartCreateSignatureRequestHelper
@@ -175,14 +185,29 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                         configurationProvider.getSidV2SkRestUrl(), country,
                         personalCode, displayMessage);
 
-        intent.putExtra(CREATE_SIGNATURE_REQUEST, request);
-        intent.putStringArrayListExtra(CERTIFICATE_CERT_BUNDLE,
-                new ArrayList<>(configurationProvider.getCertBundle()));
-        intent.putExtra(SIGNING_ROLE_DATA, roleData);
-        navigator.activity().startService(intent);
+        Gson gson = new Gson();
+        String certBundleList = gson.toJson(configurationProvider.getCertBundle());
+
+        // WorkManager has 10KB data limit. Saving certs to SharedPreferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(navigator.activity());
+        sharedPreferences.edit().putString(CERTIFICATE_CERT_BUNDLE, certBundleList).commit();
+
+        UUID uuid = UUID.randomUUID();
+        Data inputData = new Data.Builder()
+                .putString(CREATE_SIGNATURE_REQUEST, toJson(request))
+                .putString(SIGNING_ROLE_DATA, RoleData.toJson(roleData))
+                .build();
+
+        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(SmartSignService.class)
+                .addTag(SIGNING_TAG + uuid)
+                .setId(uuid)
+                .setInputData(inputData)
+                .build();
+
+        WorkManager.getInstance(navigator.activity()).enqueueUniqueWork(uuid.toString(), ExistingWorkPolicy.REPLACE, workRequest);
     }
 
-    private void sendNotification(Context context, String challenge, Notification notification) {
+    private void sendNotification(Context context, String challenge, Notification notification) throws NumberFormatException {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 || ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             NotificationManagerCompat.from(navigator.activity())
                     .notify(Integer.parseInt(challenge), notification);

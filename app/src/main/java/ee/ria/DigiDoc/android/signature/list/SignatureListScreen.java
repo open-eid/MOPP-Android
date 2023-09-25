@@ -1,16 +1,25 @@
 package ee.ria.DigiDoc.android.signature.list;
 
-import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.utils.navigator.ContentView.addInvisibleElementScrollListener;
+import static ee.ria.DigiDoc.android.utils.navigator.ContentView.addInvisibleElementToObject;
+import static ee.ria.DigiDoc.android.utils.navigator.ContentView.removeInvisibleElementScrollListener;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bluelinelabs.conductor.Controller;
 import com.google.common.io.Files;
@@ -19,7 +28,7 @@ import java.io.File;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
@@ -27,11 +36,6 @@ import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.core.Observable;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
 public final class SignatureListScreen extends Controller implements Screen,
         MviView<Intent, ViewState> {
@@ -59,20 +63,20 @@ public final class SignatureListScreen extends Controller implements Screen,
     public SignatureListScreen() {
     }
 
-    private Observable<Intent.InitialIntent> initialIntent() {
-        return Observable.just(Intent.InitialIntent.create());
+    private Observable<InitialIntent> initialIntent() {
+        return Observable.just(InitialIntent.create());
     }
 
-    private Observable<Intent.UpButtonIntent> upButtonIntent() {
+    private Observable<UpButtonIntent> upButtonIntent() {
         return navigationClicks(toolbarView)
-                .map(ignored -> Intent.UpButtonIntent.create());
+                .map(ignored -> UpButtonIntent.create());
     }
 
-    private Observable<Intent.ContainerOpenIntent> containerOpenIntent() {
+    private Observable<ContainerOpenIntent> containerOpenIntent() {
         return Observable.merge(adapter.itemClicks()
-                .flatMap(file -> Intent.ContainerOpenIntent.confirmation(file, getApplicationContext())),
+                .flatMap(file -> ContainerOpenIntent.confirmation(file, getApplicationContext())),
                 sivaConfirmationDialog.positiveButtonClicks()
-                    .map(ignored -> Intent.ContainerOpenIntent.open(sivaConfirmationContainerFile, true)),
+                    .map(ignored -> ContainerOpenIntent.open(sivaConfirmationContainerFile, true)),
                 sivaConfirmationDialog.cancels()
                         .map(ignored -> {
                             if (sivaConfirmationContainerFile != null &&
@@ -81,31 +85,31 @@ public final class SignatureListScreen extends Controller implements Screen,
                                 SignedContainer signedContainer = SignedContainer.open(sivaConfirmationContainerFile);
                                 if (signedContainer.dataFiles().size() == 1 &&
                                         Files.getFileExtension(signedContainer.dataFiles().get(0).name()).equalsIgnoreCase("ddoc")) {
-                                    return Intent.ContainerOpenIntent.open(sivaConfirmationContainerFile, false);
+                                    return ContainerOpenIntent.open(sivaConfirmationContainerFile, false);
                                 }
                             }
-                            return Intent.ContainerOpenIntent.cancel();
+                            return ContainerOpenIntent.cancel();
                         }));
     }
 
-    private Observable<Intent.ContainerRemoveIntent> containerRemoveIntent() {
+    private Observable<ContainerRemoveIntent> containerRemoveIntent() {
         return Observable.merge(
                 adapter.removeButtonClicks()
-                        .map(Intent.ContainerRemoveIntent::confirmation),
+                        .map(ContainerRemoveIntent::confirmation),
                 removeConfirmationDialog.positiveButtonClicks()
-                        .map(ignored -> Intent.ContainerRemoveIntent
+                        .map(ignored -> ContainerRemoveIntent
                                 .remove(removeConfirmationContainerFile)),
                 removeConfirmationDialog.cancels()
                         .map(ignored -> {
                             if (getApplicationContext() != null) {
                                 AccessibilityUtils.sendAccessibilityEvent(getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.document_removal_cancelled);
                             }
-                            return Intent.ContainerRemoveIntent.cancel();
+                            return ContainerRemoveIntent.cancel();
                         }));
     }
 
-    private Observable<Intent.RefreshIntent> refreshIntent() {
-        return Observable.just(Intent.RefreshIntent.create());
+    private Observable<RefreshIntent> refreshIntent() {
+        return Observable.just(RefreshIntent.create());
     }
 
     @SuppressWarnings("unchecked")
@@ -153,7 +157,7 @@ public final class SignatureListScreen extends Controller implements Screen,
     @Override
     protected void onContextAvailable(@NonNull Context context) {
         super.onContextAvailable(context);
-        viewModel = Application.component(context).navigator()
+        viewModel = ApplicationApp.component(context).navigator()
                 .viewModel(getInstanceId(), SignatureListViewModel.class);
     }
 
@@ -183,6 +187,12 @@ public final class SignatureListScreen extends Controller implements Screen,
         emptyView = view.findViewById(R.id.listEmpty);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
+
+        LinearLayout signatureLayout = view.findViewById(R.id.signatureListLayout);
+        addInvisibleElementToObject(getApplicationContext(), signatureLayout);
+        View lastElementView = view.findViewById(R.id.lastInvisibleElement);
+        addInvisibleElementScrollListener(listView, lastElementView);
+
         return view;
     }
 
@@ -190,6 +200,7 @@ public final class SignatureListScreen extends Controller implements Screen,
     protected void onDestroyView(@NonNull View view) {
         removeConfirmationDialog.dismiss();
         sivaConfirmationDialog.dismiss();
+        removeInvisibleElementScrollListener(listView);
         super.onDestroyView(view);
     }
 

@@ -2,13 +2,13 @@ package ee.ria.DigiDoc.sign;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
 import com.google.common.io.ByteStreams;
 
@@ -87,7 +87,8 @@ public final class SignLib {
             ZipEntry entry;
             while ((entry = inputStream.getNextEntry()) != null) {
                 File entryFile = new File(schemaDir, entry.getName());
-                if (!isChild(schemaDir, entryFile)) {
+                if (!entryFile.toPath().normalize().startsWith(schemaDir.toPath()) ||
+                        !isChild(schemaDir, entryFile)) {
                     throw new ZipException("Bad zip entry: " + entry.getName());
                 }
                 FileOutputStream outputStream = new FileOutputStream(entryFile);
@@ -136,6 +137,7 @@ public final class SignLib {
         overrideTSLCert(configurationProvider.getTslCerts());
         overrideSignatureValidationServiceUrl(configurationProvider.getSivaUrl());
         overrideOCSPUrls(configurationProvider.getOCSPUrls());
+        overrideTSCerts(configurationProvider.getCertBundle());
         overrideVerifyServiceCert(configurationProvider.getCertBundle());
         initTsaUrl(context, tsaUrlPreferenceKey, configurationProvider.getTsaUrl());
         initTsCert(context, tsaCertPreferenceKey, "");
@@ -164,6 +166,13 @@ public final class SignLib {
         DigiDocConf.instance().setTSLCert(new byte[0]); // Clear existing TSL certificates list
         for (String tslCert : tslCerts) {
             DigiDocConf.instance().addTSLCert(Base64.decode(tslCert));
+        }
+    }
+
+    private static void overrideTSCerts(List<String> certBundle) {
+        DigiDocConf.instance().setTSCert(new byte[0]);
+        for (String cert : certBundle) {
+            DigiDocConf.instance().addTSCert(Base64.decode(cert));
         }
     }
 
@@ -218,9 +227,11 @@ public final class SignLib {
 
     private static boolean isChild(File parent, File potentialChild) {
         try {
-            String destDirCanonicalPath = parent.getCanonicalPath();
-            String potentialChildCanonicalPath = potentialChild.getCanonicalPath();
-            return potentialChildCanonicalPath.startsWith(destDirCanonicalPath);
+            if (!potentialChild.toPath().normalize().startsWith(parent.toPath())) {
+                throw new IOException("Invalid path: " + potentialChild.getCanonicalPath());
+            }
+
+            return true;
         } catch (IOException e) {
             return false;
         }

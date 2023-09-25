@@ -18,10 +18,11 @@ import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.Constants;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -44,7 +45,7 @@ public final class SharingScreenView extends CoordinatorLayout {
         super(context);
         inflate(context, R.layout.sharing_choose_container_file, this);
         toolbarView = findViewById(R.id.toolbar);
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
 
         disposables = new ViewDisposables();
 
@@ -151,9 +152,12 @@ public final class SharingScreenView extends CoordinatorLayout {
     }
 
     private boolean isIntentWithExtraReferrer(Activity activity) {
-        return activity.getIntent() != null && activity.getIntent().getExtras() != null &&
-                activity.getIntent().getExtras().get(Intent.EXTRA_REFERRER) != null &&
-                activity.getIntent().getExtras().get(Intent.EXTRA_REFERRER).equals(R.string.application_name);
+        return Optional
+                .ofNullable(activity.getIntent())
+                .map(Intent::getExtras)
+                .map(extras -> extras.get(Intent.EXTRA_REFERRER))
+                .filter(extraReferrer -> extraReferrer.equals(R.string.application_name))
+                .isPresent();
     }
 
     private String getFileExtensionFromFileUri(Uri uri) {

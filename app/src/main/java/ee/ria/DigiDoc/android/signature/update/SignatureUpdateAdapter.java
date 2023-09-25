@@ -40,7 +40,7 @@ import java.time.Month;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.Formatter;
@@ -468,7 +468,7 @@ final class SignatureUpdateAdapter extends
 
         SignatureViewHolder(View itemView) {
             super(itemView);
-            formatter = Application.component(itemView.getContext()).formatter();
+            formatter = ApplicationApp.component(itemView.getContext()).formatter();
             Resources resources = itemView.getResources();
             colorValid = ColorStateList.valueOf(getColor(resources, R.color.success, null));
             colorWarning = ColorStateList.valueOf(getColor(resources, R.color.warningText, null));
@@ -605,7 +605,7 @@ final class SignatureUpdateAdapter extends
 
         TimestampViewHolder(View itemView) {
             super(itemView);
-            formatter = Application.component(itemView.getContext()).formatter();
+            formatter = ApplicationApp.component(itemView.getContext()).formatter();
             Resources resources = itemView.getResources();
             colorValid = ColorStateList.valueOf(getColor(resources, R.color.success, null));
             colorWarning = ColorStateList.valueOf(getColor(resources, R.color.warningText, null));

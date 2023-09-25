@@ -26,8 +26,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.ResultReceiver;
 import android.os.StrictMode;
 import android.util.Log;
@@ -100,7 +102,7 @@ import ee.ria.DigiDoc.smartcardreader.identiv.IdentivSmartCardReader;
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
 import timber.log.Timber;
 
-public class Application extends android.app.Application {
+public class ApplicationApp extends android.app.Application {
 
     private static ConfigurationProvider configurationProvider;
 
@@ -225,11 +227,11 @@ public class Application extends android.app.Application {
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, configurationProvider);
-        ConfigurationProviderReceiver confProviderReceiver = new ConfigurationProviderReceiver(new Handler());
+        ConfigurationProviderReceiver confProviderReceiver = new ConfigurationProviderReceiver(new Handler(Looper.getMainLooper()));
         confProviderReceiver.send(ConfigurationManagerService.NEW_CONFIGURATION_LOADED, bundle);
 
         // Load configuration again in asynchronous manner, from central if needed or cache if present.
-        initAsyncConfigurationLoad(new ConfigurationProviderReceiver(new Handler()), false);
+        initAsyncConfigurationLoad(new ConfigurationProviderReceiver(new Handler(Looper.getMainLooper())), false);
     }
 
     private boolean isDefaultConfNewerThanCachedConf(ConfigurationProperties confProperties, CachedConfigurationHandler cachedConfHandler) {
@@ -240,7 +242,7 @@ public class Application extends android.app.Application {
 
     // Following configuration updating should be asynchronous
     public void updateConfiguration(DiagnosticsView diagnosticsView) {
-        ConfigurationProviderReceiver confProviderReceiver = new ConfigurationProviderReceiver(new Handler());
+        ConfigurationProviderReceiver confProviderReceiver = new ConfigurationProviderReceiver(new Handler(Looper.getMainLooper()));
         confProviderReceiver.setDiagnosticView(diagnosticsView);
         initAsyncConfigurationLoad(confProviderReceiver, true);
     }
@@ -303,7 +305,11 @@ public class Application extends android.app.Application {
 
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
-            configurationProvider = resultData.getParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                configurationProvider = resultData.getParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, ConfigurationProvider.class);
+            } else {
+                configurationProvider = resultData.getParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER);
+            }
             if (resultCode == ConfigurationManagerService.NEW_CONFIGURATION_LOADED) {
                 setupSignLib();
             }
@@ -318,13 +324,13 @@ public class Application extends android.app.Application {
     private ApplicationComponent component;
 
     private void setupDagger() {
-        component = DaggerApplication_ApplicationComponent.builder()
+        component = DaggerApplicationApp_ApplicationComponent.builder()
                 .application(this)
                 .build();
     }
 
     public static ApplicationComponent component(Context context) {
-        return ((Application) context.getApplicationContext()).component;
+        return ((ApplicationApp) context.getApplicationContext()).component;
     }
 
     @Singleton

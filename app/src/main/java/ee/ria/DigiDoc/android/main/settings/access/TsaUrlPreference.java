@@ -14,7 +14,7 @@ import androidx.appcompat.widget.AppCompatCheckBox;
 import com.takisoft.preferencex.EditTextPreference;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessView;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
@@ -39,7 +39,7 @@ public class TsaUrlPreference extends EditTextPreference {
     public TsaUrlPreference(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                             int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
+        configurationProvider = ((ApplicationApp) context.getApplicationContext()).getConfigurationProvider();
         checkBox = new AppCompatCheckBox(context);
         checkBox.setId(android.R.id.checkbox);
         checkBox.setText(R.string.main_settings_tsa_url_use_default);

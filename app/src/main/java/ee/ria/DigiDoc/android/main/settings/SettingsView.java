@@ -13,10 +13,11 @@ import android.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessScreen;
 import ee.ria.DigiDoc.android.main.settings.role.SettingsRoleAndAddressScreen;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -24,7 +25,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import kotlin.Unit;
 
-public final class SettingsView extends CoordinatorLayout {
+public final class SettingsView extends CoordinatorLayout implements ContentView  {
 
     private final Toolbar toolbarView;
 
@@ -47,8 +48,8 @@ public final class SettingsView extends CoordinatorLayout {
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.main_settings, this);
         toolbarView = findViewById(R.id.toolbar);
+        navigator = ApplicationApp.component(context).navigator();
         TextView toolbarTitleView = getToolbarViewTitle(toolbarView);
-        navigator = Application.component(context).navigator();
         disposables = new ViewDisposables();
 
         accessCategory = findViewById(R.id.mainSettingsAccessCategory);

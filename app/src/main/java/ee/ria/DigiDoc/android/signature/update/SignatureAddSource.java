@@ -84,7 +84,6 @@ final class SignatureAddSource {
     Observable<? extends SignatureAddResponse> sign(File containerFile,
                                                     SignatureAddRequest request,
                                                     Navigator navigator,
-                                                    android.content.Intent intent,
                                                     @Nullable RoleData roleData) {
         if (request instanceof MobileIdRequest) {
             MobileIdRequest mobileIdRequest = (MobileIdRequest) request;
@@ -98,7 +97,7 @@ final class SignatureAddSource {
             return signatureContainerDataSource
                     .get(containerFile)
                     .flatMapObservable(container ->
-                            Observable.create(new MobileIdOnSubscribe(navigator, intent, container,
+                            Observable.create(new MobileIdOnSubscribe(navigator, container,
                                             localeService.applicationLocale(),
                                     settingsDataStore.getUuid(), mobileIdRequest.personalCode(),
                                     mobileIdRequest.phoneNo(), roleData)))
@@ -134,9 +133,9 @@ final class SignatureAddSource {
             return signatureContainerDataSource
                     .get(containerFile)
                     .flatMapObservable(container ->
-                            Observable.create(new SmartIdOnSubscribe(navigator, intent, container,
-                                    settingsDataStore.getUuid(), smartIdRequest.personalCode(),
-                                    smartIdRequest.country(), roleData)))
+                            Observable.create(new SmartIdOnSubscribe(navigator, container,
+                                    localeService.applicationLocale(), settingsDataStore.getUuid(),
+                                    smartIdRequest.personalCode(), smartIdRequest.country(), roleData)))
                     .switchMap(response -> {
                         SessionStatusResponse.ProcessStatus processStatus = response.status();
                         if (SessionStatusResponse.ProcessStatus.OK.equals(processStatus)) {

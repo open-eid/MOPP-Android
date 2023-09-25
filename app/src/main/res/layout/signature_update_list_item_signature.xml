@@ -110,7 +110,7 @@
             style="@style/Widget.Application.Button.Borderless.Colored"
             android:layout_width="@dimen/material_baseline_grid_4x"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/material_list_icon_last_position_margin_horizontal"
+            android:layout_marginEnd="@dimen/material_button_padding_horizontal"
             android:src="@drawable/ic_icon_remove"
             app:tint="@color/error"
             android:contentDescription="@string/signature_update_signature_remove_button" />
