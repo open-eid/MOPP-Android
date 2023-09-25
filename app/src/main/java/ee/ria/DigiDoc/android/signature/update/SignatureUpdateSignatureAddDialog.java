@@ -25,10 +25,11 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.ObservableDialogClickListener;
 import io.reactivex.rxjava3.core.Observable;
 
-public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
+public final class SignatureUpdateSignatureAddDialog extends AlertDialog implements ContentView {
 
     private final SignatureUpdateSignatureAddView view;
     private final ObservableDialogClickListener positiveButtonClicks;
@@ -99,6 +100,12 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
                     WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
             setCustomLayoutChangeListener(window);
             view.addOnLayoutChangeListener(getCustomLayoutChangeListener());
+
+            View parentPanel = findViewById(R.id.parentPanel);
+            int lastInvisibleElement = R.id.lastInvisibleElement;
+            if (parentPanel != null && parentPanel.findViewById(lastInvisibleElement) == null) {
+                ContentView.addInvisibleElementToObject(getContext(), findViewById(R.id.parentPanel));
+            }
         }
     }
 

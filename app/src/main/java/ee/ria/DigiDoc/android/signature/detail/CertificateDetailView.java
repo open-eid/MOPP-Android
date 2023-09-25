@@ -50,12 +50,13 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import timber.log.Timber;
 
 @SuppressLint("ViewConstructor")
-public final class CertificateDetailView extends CoordinatorLayout {
+public final class CertificateDetailView extends CoordinatorLayout implements ContentView {
 
     private final Navigator navigator;
     private final Toolbar toolbarView;
@@ -76,6 +77,8 @@ public final class CertificateDetailView extends CoordinatorLayout {
         toolbarView.setNavigationContentDescription(R.string.back);
 
         setData(certificate);
+
+        ContentView.addInvisibleElement(context, this);
     }
 
 
