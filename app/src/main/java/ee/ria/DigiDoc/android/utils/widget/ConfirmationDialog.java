@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Constants;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog;
 import ee.ria.DigiDoc.sign.utils.UrlMessage;
 
@@ -21,7 +22,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-public final class ConfirmationDialog extends AlertDialog implements
+public final class ConfirmationDialog extends AlertDialog implements ContentView,
         DialogInterface.OnClickListener {
 
     private final Subject<Integer> buttonClicksSubject = PublishSubject.create();

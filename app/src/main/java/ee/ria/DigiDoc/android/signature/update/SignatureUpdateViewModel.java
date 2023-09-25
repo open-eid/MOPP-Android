@@ -37,46 +37,15 @@ public final class SignatureUpdateViewModel extends
 
     @Override
     protected Class<? extends Intent> initialIntentType() {
-        return Intent.InitialIntent.class;
+        return InitialIntent.class;
     }
 
     @Override
     protected Action action(Intent intent) {
-        if (intent instanceof Intent.InitialIntent) {
-            Intent.InitialIntent initialIntent = (Intent.InitialIntent) intent;
-            return Action.ContainerLoadAction
-                    .create(initialIntent.containerFile(), initialIntent.signatureAddMethod(),
-                            initialIntent.signatureAddSuccessMessageVisible(), initialIntent.isExistingContainer());
-        } else if (intent instanceof Intent.DocumentsAddIntent) {
-            return Action.DocumentsAddAction
-                    .create(((Intent.DocumentsAddIntent) intent).containerFile());
-        } else if (intent instanceof Intent.DocumentRemoveIntent) {
-            Intent.DocumentRemoveIntent documentRemoveIntent = (Intent.DocumentRemoveIntent) intent;
-            return Action.DocumentRemoveAction.create(documentRemoveIntent.showConfirmation(),
-                    documentRemoveIntent.containerFile(), documentRemoveIntent.documents(), documentRemoveIntent.document());
-        } else if (intent instanceof Intent.SignatureViewIntent) {
-            Intent.SignatureViewIntent signatureViewIntent = (Intent.SignatureViewIntent) intent;
-            return Action.SignatureViewAction.create(signatureViewIntent.containerFile(), signatureViewIntent.signature());
-        } else if (intent instanceof Intent.SignatureRemoveIntent) {
-            Intent.SignatureRemoveIntent signatureRemoveIntent =
-                    (Intent.SignatureRemoveIntent) intent;
-            return Action.SignatureRemoveAction.create(signatureRemoveIntent.showConfirmation(),
-                    signatureRemoveIntent.containerFile(), signatureRemoveIntent.signature());
-        } else if (intent instanceof Intent.SignatureAddIntent) {
-            Intent.SignatureAddIntent signatureAddIntent = (Intent.SignatureAddIntent) intent;
-            if (signatureAddIntent.isCancelled()) {
-                return Action.SignatureAddAction.create(signatureAddIntent.method(),
-                        null, null, null, true);
-            }
-            return Action.SignatureAddAction.create(signatureAddIntent.method(),
-                    signatureAddIntent.existingContainer(), signatureAddIntent.containerFile(),
-                    signatureAddIntent.request(), false);
-        } else if (intent instanceof Intent.SendIntent) {
-            return Action.SendAction.create(((Intent.SendIntent) intent).containerFile());
-        } else if (intent instanceof Action) {
+        if (intent instanceof Action) {
             return (Action) intent;
         } else {
-            throw new IllegalArgumentException("Unknown intent " + intent);
+            return intent.action();
         }
     }
 

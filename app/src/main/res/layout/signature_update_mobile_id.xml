@@ -92,6 +92,32 @@
             android:textColor="@color/textLabel"
             android:text="@string/signature_update_mobile_id_remember_me" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/signatureUpdateMobileIdCancelSigningButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/cancel_button" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/signatureUpdateMobileIdSignButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/signature_update_signature_add_positive_button" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

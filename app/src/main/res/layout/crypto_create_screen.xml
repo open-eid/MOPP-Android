@@ -90,7 +90,26 @@
             android:drawableTop="@drawable/ic_icon_crypto" />
 
         <Space
-            android:id="@id/cryptoCreateButtonSpace"
+            android:id="@id/cryptoCreateCryptoButtonSpace"
+            android:layout_width="1px"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@id/cryptoCreateSignatureButton"
+            style="@style/Widget.Application.Button.Container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/signature_update_signature_add_button"
+            android:autoSizeTextType="uniform"
+            android:lines="1"
+            android:autoSizeMinTextSize="11dp"
+            android:autoSizeMaxTextSize="24dp"
+            android:autoSizeStepGranularity="1dp"
+            android:drawableTop="@drawable/ic_icon_signature" />
+
+        <Space
+            android:id="@id/cryptoCreateSignatureButtonSpace"
             android:layout_width="1px"
             android:layout_height="wrap_content" />
 

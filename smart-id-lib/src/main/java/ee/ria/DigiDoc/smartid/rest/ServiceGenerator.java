@@ -60,7 +60,7 @@ public class ServiceGenerator {
             throws CertificateException, NoSuchAlgorithmException {
         Timber.log(Log.DEBUG, "Creating new retrofit instance");
         return new Retrofit.Builder()
-                .baseUrl(sidSignServiceUrl + "/")
+                .baseUrl(sidSignServiceUrl)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(buildHttpClient(sidSignServiceUrl, certBundle, context))

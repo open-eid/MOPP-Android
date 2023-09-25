@@ -8,7 +8,6 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.URLUtil;
-import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -46,17 +45,18 @@ import java.util.List;
 import java.util.Map;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import timber.log.Timber;
 
 @SuppressLint("ViewConstructor")
-public final class CertificateDetailView extends CoordinatorLayout {
+public final class CertificateDetailView extends CoordinatorLayout implements ContentView {
 
     private final Navigator navigator;
     private final Toolbar toolbarView;
@@ -69,7 +69,7 @@ public final class CertificateDetailView extends CoordinatorLayout {
         inflate(context, R.layout.certificate_details_screen, this);
         AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.certificate_details_title);
 
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
         toolbarView = findViewById(R.id.toolbar);
 
         toolbarView.setTitle(R.string.certificate_details_title);
@@ -77,6 +77,8 @@ public final class CertificateDetailView extends CoordinatorLayout {
         toolbarView.setNavigationContentDescription(R.string.back);
 
         setData(certificate);
+
+        ContentView.addInvisibleElement(context, this);
     }
 
 
