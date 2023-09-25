@@ -33,11 +33,12 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewSavedState;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.sign.Signature;
@@ -48,7 +49,7 @@ import io.reactivex.rxjava3.core.Observable;
 import timber.log.Timber;
 
 @SuppressLint("ViewConstructor")
-public final class SignatureDetailView extends CoordinatorLayout {
+public final class SignatureDetailView extends CoordinatorLayout implements ContentView {
 
     private final Navigator navigator;
     private final Toolbar toolbarView;
@@ -70,7 +71,7 @@ public final class SignatureDetailView extends CoordinatorLayout {
         inflate(context, R.layout.signature_detail_screen, this);
         AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.signature_details_title);
 
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
         toolbarView = findViewById(R.id.toolbar);
 
         errorContainer = findViewById(R.id.signersCertificateErrorContainer);
@@ -111,6 +112,8 @@ public final class SignatureDetailView extends CoordinatorLayout {
         setExpandedState(false);
         setWarningsData(signature);
         setData(signature, signedContainer);
+
+        ContentView.addInvisibleElement(context, this);
     }
 
     private String getContainerMimeType(SignedContainer signedContainer) {

@@ -14,7 +14,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import com.google.common.collect.ImmutableMap;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.home.HomeToolbar;
 import ee.ria.DigiDoc.android.main.home.HomeView;
@@ -87,7 +87,7 @@ public final class EIDHomeView extends FrameLayout implements MviView<Intent, Vi
         codeUpdateErrorDialog = new ErrorDialog(context);
         codeUpdateErrorDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.ok), (dialog, which) -> dialog.cancel());
         
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {

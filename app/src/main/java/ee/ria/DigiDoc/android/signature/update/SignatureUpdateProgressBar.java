@@ -16,10 +16,12 @@ class SignatureUpdateProgressBar {
             progressBar.setMax((int) (isMobileIdProgressBar(progressBar) ? (MOBILE_ID_PROGRESS_BAR_TIMEOUT_CANCEL / 1000) : (SMART_ID_PROGRESS_BAR_TIMEOUT_CANCEL / 1000)));
             timeoutTimer = new CountDownTimer(isMobileIdProgressBar(progressBar) ? MOBILE_ID_PROGRESS_BAR_TIMEOUT_CANCEL : SMART_ID_PROGRESS_BAR_TIMEOUT_CANCEL, 1000) {
 
+                @Override
                 public void onTick(long millisUntilFinished) {
                     progressBar.incrementProgressBy(1);
                 }
 
+                @Override
                 public void onFinish() {
                     stopProgressBar(progressBar);
                 }

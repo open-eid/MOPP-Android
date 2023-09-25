@@ -43,6 +43,7 @@
 
     <!-- Main Settings -->
     <string name="main_settings_title">Seaded</string>
+    <string name="main_settings_access_button">Ligipääs</string>
     <string name="main_settings_phone_no_title">Riigikood ja telefoninumber</string>
     <string name="main_settings_personal_code_title">Isikukood</string>
     <string name="main_settings_tsa_url_title">Ligipääs ajatempliteenusele</string>

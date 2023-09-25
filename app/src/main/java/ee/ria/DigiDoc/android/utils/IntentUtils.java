@@ -272,6 +272,15 @@ public final class IntentUtils {
         return new Intent(Intent.ACTION_VIEW, Uri.parse(localizedUrl));
     }
 
+    public static Intent setIntentData(Intent intent, Path filePath, android.app.Activity activity) {
+        intent.setData(Uri.parse(filePath.toUri().toString()));
+        intent.setClipData(ClipData.newRawUri(filePath.getFileName().toString(), FileProvider.getUriForFile(
+                activity,
+                activity.getString(R.string.file_provider_authority),
+                filePath.toFile())));
+        return intent;
+    }
+
     private static String getDataFileMimetype(DataFile dataFile) {
         int extensionIndex = dataFile.name().lastIndexOf(".");
         String extension = extensionIndex != -1 ? dataFile.name().substring(extensionIndex + 1) : "";

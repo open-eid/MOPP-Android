@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.main.settings;
+package ee.ria.DigiDoc.android.main.settings.access;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
@@ -14,8 +14,9 @@ import androidx.appcompat.widget.AppCompatCheckBox;
 import com.takisoft.preferencex.EditTextPreference;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessView;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 
 public class TsaUrlPreference extends EditTextPreference {
@@ -38,7 +39,7 @@ public class TsaUrlPreference extends EditTextPreference {
     public TsaUrlPreference(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                             int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
+        configurationProvider = ((ApplicationApp) context.getApplicationContext()).getConfigurationProvider();
         checkBox = new AppCompatCheckBox(context);
         checkBox.setId(android.R.id.checkbox);
         checkBox.setText(R.string.main_settings_tsa_url_use_default);
@@ -49,7 +50,7 @@ public class TsaUrlPreference extends EditTextPreference {
         setViewId(R.id.mainSettingsAccessToTimeStampingService);
 
         setOnPreferenceChangeListener((preference, newValue) -> {
-            SettingsView.setTsaCertificateViewVisibleValue(!checkBox.isChecked());
+            SettingsAccessView.setTsaCertificateViewVisibleValue(!checkBox.isChecked());
             AccessibilityUtils.sendAccessibilityEvent(context, TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
             return true;
         });
