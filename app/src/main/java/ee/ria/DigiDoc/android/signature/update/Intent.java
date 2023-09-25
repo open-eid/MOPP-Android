@@ -324,14 +324,22 @@ class SendIntent implements Intent {
     public Action action() {
         return Action.SendAction.create(containerFile);
     }
+}
 
-    @AutoValue
-    abstract class EncryptIntent implements Intent {
+class EncryptIntent implements Intent {
 
-        abstract File containerFile();
+    File containerFile;
 
-        static EncryptIntent create(File containerFile) {
-            return new AutoValue_Intent_EncryptIntent(containerFile);
-        }
+    public EncryptIntent(File containerFile) {
+        this.containerFile = containerFile;
+    }
+
+    static EncryptIntent create(File containerFile) {
+        return new EncryptIntent(containerFile);
+    }
+
+    @Override
+    public Action action() {
+        return Action.EncryptAction.create(containerFile);
     }
 }

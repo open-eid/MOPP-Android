@@ -421,7 +421,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
         encrypt = upstream -> upstream
                 .doOnNext(action -> {
-                    navigator.execute(Transaction.push(CryptoCreateScreen.open(action.containerFile())));
+                    navigator.execute(Transaction.push(CryptoCreateScreen.open(action.containerFile(), false)));
                 })
                 .map(action -> Result.EncryptResult.success())
                 .onErrorReturn(Result.EncryptResult::failure);
