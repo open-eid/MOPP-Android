@@ -8,6 +8,7 @@ import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEven
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
 import static ee.ria.DigiDoc.android.Constants.VOID;
+import static ee.ria.DigiDoc.android.utils.ViewUtil.moveView;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -48,6 +49,7 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
@@ -57,7 +59,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-public final class CryptoRecipientsScreen extends Controller implements Screen,
+public final class CryptoRecipientsScreen extends Controller implements Screen, ContentView,
         MviView<Intent, ViewState>, Navigator.BackButtonClickListener {
 
     private static final String KEY_CRYPTO_CREATE_SCREEN_ID = "cryptoCreateScreenId";
@@ -79,6 +81,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     private Toolbar toolbarView;
     private SearchView searchView;
     private EditText searchViewInnerText;
+    private RecyclerView listView;
     private CryptoCreateAdapter adapter;
     private View doneButton;
     private View activityOverlayView;
@@ -333,13 +336,20 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
         searchView.setSubmitButtonEnabled(true);
         searchView.setEnabled(true);
-        RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
+        listView = view.findViewById(R.id.cryptoRecipientsList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());
         listView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         doneButton = view.findViewById(R.id.cryptoRecipientsDoneButton);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
+
+        ContentView.addInvisibleElement(getApplicationContext(), view);
+
+        View lastElementView = view.findViewById(R.id.lastInvisibleElement);
+
+        ContentView.addInvisibleElementScrollListener(listView, lastElementView);
+
         return view;
     }
 
@@ -372,6 +382,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         disposables.detach();
         navigator.removeBackButtonClickListener(this);
         searchView.setOnCloseListener(null);
+        ContentView.removeInvisibleElementScrollListener(listView);
         ee.ria.DigiDoc.android.utils.TextUtil.removeTextWatcher(searchViewInnerText,searchViewTextWatcher);
         super.onDetach(view);
     }
