@@ -124,7 +124,7 @@ public class TextUtil {
 
         float textWidth = textPaint.measureText(queryHint);
 
-        while (textWidth > maxWidth) {
+        while (textWidth > (float) maxWidth) {
             if (!(textPaint.getTextSize() < minTextSize)) {
                 maxTextSize--;
                 textPaint.setTextSize(maxTextSize);
