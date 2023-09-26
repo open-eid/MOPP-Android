@@ -287,7 +287,7 @@ public class MobileSignService extends Worker {
             keyStore.load(key, accessTokenPass.toCharArray());
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
             kmf.init(keyStore, null);
-            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+            SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.createSSLEngine().setEnabledProtocols(new String [] { "TLSv1.2", "TLSv1.3" });
             sslContext.init(kmf.getKeyManagers(), trustManagers, null);
             return sslContext;

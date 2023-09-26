@@ -1,6 +1,12 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
+if (project.hasProperty('skipGoogleServices')) {
+    project.logger.lifecycle('Skipping Google Services')
+} else {
+    project.logger.lifecycle('Including Google Services')
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.crashlytics'
+}
+
 
 android {
     namespace 'ee.ria.DigiDoc'
