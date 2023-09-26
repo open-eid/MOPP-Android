@@ -7,6 +7,7 @@ import org.gradle.api.tasks.options.Option;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -189,8 +190,13 @@ public class UpdateLibdigidocppTask extends DefaultTask {
                 if (!entryFile.toPath().normalize().startsWith(destination.toPath())) {
                     throw new ZipException("Bad zip entry: " + entry.getName());
                 }
-                Files.createDirectories(entryFile.getParentFile().toPath());
-                Files.copy(inputStream, entryFile.toPath());
+                File parentFile = entryFile.getParentFile();
+                if (parentFile != null) {
+                    Files.createDirectories(parentFile.toPath());
+                    Files.copy(inputStream, entryFile.toPath());
+                } else {
+                    throw new FileNotFoundException("Unable to get file to make directories");
+                }
             }
         }
     }

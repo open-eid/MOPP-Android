@@ -274,7 +274,7 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
 
     private String getTSLFileVersion(InputStream tslInputStream, String tslFileName) throws XmlPullParserException, IOException {
         int version = TSLUtil.readSequenceNumber(tslInputStream);
-        return tslFileName + " (" + version + ")";
+        return FileUtil.normalizeText(tslFileName) + " (" + version + ")";
     }
 
     private void updateConfiguration() {

@@ -1,5 +1,10 @@
 package ee.ria.DigiDoc.configuration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 import android.content.res.AssetManager;
 
 import org.junit.Test;
@@ -8,11 +13,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import java.io.InputStream;
+import java.util.Objects;
+import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigurationPropertiesTest {
@@ -22,9 +25,18 @@ public class ConfigurationPropertiesTest {
 
     @Test
     public void loadProperties() throws IOException {
-        when(assetManager.open(anyString())).thenReturn(getClass().getClassLoader().getResourceAsStream(ConfigurationProperties.PROPERTIES_FILE_NAME));
-        ConfigurationProperties configurationProperties = new ConfigurationProperties(assetManager);
-        assertEquals("https://id.eesti.ee/", configurationProperties.getCentralConfigurationServiceUrl());
-        assertSame(4, configurationProperties.getConfigurationUpdateInterval());
+        ClassLoader classLoader = Optional.ofNullable(getClass().getClassLoader())
+                .orElseThrow(() -> new IllegalStateException("Unable to get ClassLoader"));
+        try (InputStream inputStream = Objects.requireNonNull(
+                classLoader.getResourceAsStream(ConfigurationProperties.PROPERTIES_FILE_NAME),
+                        "Unable to open properties file"
+                )) {
+            when(assetManager.open(anyString())).thenReturn(inputStream);
+
+            ConfigurationProperties configurationProperties = new ConfigurationProperties(assetManager);
+
+            assertEquals("https://id.eesti.ee/", configurationProperties.getCentralConfigurationServiceUrl());
+            assertSame(4, configurationProperties.getConfigurationUpdateInterval());
+        }
     }
 }
