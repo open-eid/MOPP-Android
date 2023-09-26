@@ -52,7 +52,7 @@ public final class HomeMenuView extends NestedScrollView implements ContentView 
     private final RadioButton russianButton;
 
     private int initializationCount = 0;
-    private final int MAXIMUM_INITIALIZATION_COUNT = 5;
+    private static final int MAXIMUM_INITIALIZATION_COUNT = 5;
     private TextToSpeech textToSpeech;
 
     // Estonian TalkBack does not pronounce "dot"

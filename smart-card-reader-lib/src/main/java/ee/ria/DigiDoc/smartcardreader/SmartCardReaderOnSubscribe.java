@@ -43,7 +43,7 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
             public void onReceive(Context context, Intent intent) {
                 UsbDevice device = getUsbDevice(intent);
                 Timber.log(Log.DEBUG, "Smart card device attached: %s", device);
-                if (smartCardReaderManager.supports(device)) {
+                if (device != null && smartCardReaderManager.supports(device)) {
                     requestPermission(device);
                 }
             }
@@ -53,7 +53,8 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
             public void onReceive(Context context, Intent intent) {
                 UsbDevice device = getUsbDevice(intent);
                 Timber.log(Log.DEBUG, "Smart card device detached: %s", device);
-                if (currentDevice != null && currentDevice.getDeviceId() == device.getDeviceId()) {
+                if (device != null && currentDevice != null &&
+                        currentDevice.getDeviceId() == device.getDeviceId()) {
                     clearCurrent();
                     emitter.onNext(Optional.absent());
                 }
