@@ -231,12 +231,18 @@ public final class IntentUtils {
             StorageVolume storageVolume = storageManager.getPrimaryStorageVolume();
             Intent storageIntent = storageVolume.createOpenDocumentTreeIntent();
 
-            storagePath = storageIntent.getParcelableExtra(DocumentsContract.EXTRA_INITIAL_URI).toString();
-            storagePath = StringUtils.replace(storagePath, "/root/", "/document/");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                storagePath += URLEncoder.encode(":", StandardCharsets.UTF_8) + DOCUMENTS_FOLDER;
+            Parcelable initialUri = storageIntent.getParcelableExtra(DocumentsContract.EXTRA_INITIAL_URI);
+            if (initialUri != null) {
+                storagePath = initialUri.toString();
+                storagePath = StringUtils.replace(storagePath, "/root/", "/document/");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    storagePath += URLEncoder.encode(":", StandardCharsets.UTF_8) + DOCUMENTS_FOLDER;
+                } else {
+                    storagePath += URLEncoder.encode(":") + DOCUMENTS_FOLDER;
+                }
             } else {
-                storagePath += URLEncoder.encode(":") + DOCUMENTS_FOLDER;
+                Timber.log(Log.ERROR, "Unable to get initial URL");
+                return null;
             }
         }
         File dir = new File(context.getFilesDir(), DIR_INTERNAL_FILES);
