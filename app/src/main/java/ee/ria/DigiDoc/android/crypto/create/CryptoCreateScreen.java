@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import static android.view.View.GONE;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
@@ -43,6 +44,7 @@ import ee.ria.DigiDoc.android.utils.container.NameUpdateDialog;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
@@ -55,7 +57,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-public final class CryptoCreateScreen extends Controller implements Screen,
+public final class CryptoCreateScreen extends Controller implements Screen, ContentView,
         MviView<Intent, ViewState> {
 
     private static final String KEY_CONTAINER_FILE = "containerFile";
@@ -377,8 +379,8 @@ public final class CryptoCreateScreen extends Controller implements Screen,
     }
 
     private void setActivity(boolean activity) {
-        activityOverlayView.setVisibility(activity ? View.VISIBLE : View.GONE);
-        activityIndicatorView.setVisibility(activity ? View.VISIBLE : View.GONE);
+        activityOverlayView.setVisibility(activity ? View.VISIBLE : GONE);
+        activityIndicatorView.setVisibility(activity ? View.VISIBLE : GONE);
         encryptButton.setEnabled(!activity);
         decryptButton.setEnabled(!activity);
         signButton.setEnabled(!activity);
@@ -440,6 +442,12 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         disposables.add(viewModel.viewStates().subscribe(this::render));
         viewModel.process(intents());
 
+        ContentView.addInvisibleElement(getApplicationContext(), view);
+
+        View lastElementView = view.findViewById(R.id.lastInvisibleElement);
+
+        ContentView.addInvisibleElementScrollListener(listView, lastElementView);
+
         return view;
     }
 
@@ -448,6 +456,7 @@ public final class CryptoCreateScreen extends Controller implements Screen,
         decryptDialog.dismiss();
         errorDialog.dismiss();
         sivaConfirmationDialog.dismiss();
+        ContentView.removeInvisibleElementScrollListener(listView);
         disposables.detach();
         super.onDestroyView(view);
     }

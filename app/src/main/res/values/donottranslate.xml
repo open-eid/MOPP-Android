@@ -5,6 +5,9 @@
 
     <string name="file_provider_authority">ee.ria.digidoc.fileprovider</string>
 
+    <string name="last_invisible_element_name">Invisible element</string>
+    <string name="last_invisible_element_tag">lastInvisibleElement</string>
+
     <string name="main_home_menu_locale_et">Eesti keel</string>
     <string name="main_home_menu_locale_ru">Русский</string>
     <string name="main_home_menu_locale_en">English</string>

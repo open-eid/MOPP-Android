@@ -16,10 +16,11 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessScreen;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 
-public final class SettingsView extends CoordinatorLayout {
+public final class SettingsView extends CoordinatorLayout implements ContentView  {
 
     private final Toolbar toolbarView;
     private final Button accessCategory;

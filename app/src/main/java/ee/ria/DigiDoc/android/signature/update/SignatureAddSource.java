@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update;
 
 import android.view.View;
+import android.widget.Button;
 
 import java.io.File;
 
@@ -95,8 +96,9 @@ final class SignatureAddSource {
                                     mobileIdRequest.phoneNo())))
                     .switchMap(response -> {
                         String signature = response.signature();
-                        if (signature != null) {
-                            navigator.activity().findViewById(R.id.signatureUpdateMobileIdCancelButton).setVisibility(View.GONE);
+                        Button mobileIdCancelButton = navigator.activity().findViewById(R.id.signatureUpdateMobileIdCancelButton);
+                        if (mobileIdCancelButton != null && signature != null) {
+                            mobileIdCancelButton.setVisibility(View.GONE);
                             return signatureContainerDataSource
                                     .addSignature(containerFile, signature)
                                     .toObservable()
@@ -130,8 +132,9 @@ final class SignatureAddSource {
                                     smartIdRequest.personalCode(), smartIdRequest.country())))
                     .switchMap(response -> {
                         SessionStatusResponse.ProcessStatus processStatus = response.status();
-                        if (SessionStatusResponse.ProcessStatus.OK.equals(processStatus)) {
-                            navigator.activity().findViewById(R.id.signatureUpdateSmartIdCancelButton).setVisibility(View.GONE);
+                        Button smartIdCancelButton = navigator.activity().findViewById(R.id.signatureUpdateSmartIdCancelButton);
+                        if (smartIdCancelButton != null && SessionStatusResponse.ProcessStatus.OK.equals(processStatus)) {
+                            smartIdCancelButton.setVisibility(View.GONE);
                         }
                         return Observable.just(response);
                     })
