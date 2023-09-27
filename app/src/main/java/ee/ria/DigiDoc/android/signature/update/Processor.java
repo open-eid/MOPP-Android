@@ -91,6 +91,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Action.SendAction, Result.SendResult> send;
 
+    private final ObservableTransformer<Action.EncryptAction, Result.EncryptResult> encrypt;
+
     private final PublishSubject<Boolean> notificationsPermissionSubject = PublishSubject.create();
 
     @Inject Processor(SignatureContainerDataSource signatureContainerDataSource,
@@ -416,6 +418,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 createActionIntent(application, action.containerFile(), android.content.Intent.ACTION_SEND), null)))
                 .map(action -> Result.SendResult.success())
                 .onErrorReturn(Result.SendResult::failure);
+
+        encrypt = upstream -> upstream
+                .doOnNext(action -> {
+                    navigator.execute(Transaction.push(CryptoCreateScreen.open(action.containerFile(), false)));
+                })
+                .map(action -> Result.EncryptResult.success())
+                .onErrorReturn(Result.EncryptResult::failure);
     }
 
     @SuppressWarnings("unchecked")
@@ -431,6 +440,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.SignatureRemoveAction.class).compose(signatureRemove),
                 shared.ofType(Action.SignatureViewAction.class).compose(signatureView),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd),
+                shared.ofType(Action.EncryptAction.class).compose(encrypt),
                 shared.ofType(Action.SendAction.class).compose(send)));
     }
 

@@ -197,7 +197,7 @@
     <string name="signature_update_mobile_id_phone_no">Riigikood ja telefoninumber</string>
     <string name="signature_update_mobile_id_personal_code">Isikukood</string>
     <string name="signature_update_mobile_id_remember_me">Pea mind meeles</string>
-    <string name="signature_update_mobile_id_info">Veendu kontrollkoodi õiguses ja sisesta telefonil mobiil-ID PIN2-kood.</string>
+    <string name="signature_update_mobile_id_info">Veendu kontrollkoodi õigsuses ja sisesta telefonil mobiil-ID PIN2-kood.</string>
     <string name="signature_update_mobile_id_display_message">Allkirjasta dokument</string>
 
     <string name="signature_update_mobile_id_invalid_country_code">Vigane riigikood.</string>
