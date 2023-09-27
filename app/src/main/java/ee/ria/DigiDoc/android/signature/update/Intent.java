@@ -325,3 +325,21 @@ class SendIntent implements Intent {
         return Action.SendAction.create(containerFile);
     }
 }
+
+class EncryptIntent implements Intent {
+
+    File containerFile;
+
+    public EncryptIntent(File containerFile) {
+        this.containerFile = containerFile;
+    }
+
+    static EncryptIntent create(File containerFile) {
+        return new EncryptIntent(containerFile);
+    }
+
+    @Override
+    public Action action() {
+        return Action.EncryptAction.create(containerFile);
+    }
+}
