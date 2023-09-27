@@ -61,6 +61,14 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog impleme
         setButton(BUTTON_POSITIVE,
                 getContext().getString(R.string.signature_update_signature_add_positive_button),
                 positiveButtonClicks);
+        Button signButton = getButton(BUTTON_POSITIVE);
+        if (signButton != null) {
+            String signButtonText = signButton.getText() != null ?
+                    signButton.getText().toString().toLowerCase() : null;
+            signButton.setContentDescription(signButtonText != null ? signButtonText :
+                    getContext().getString(R.string.signature_update_signature_add_positive_button));
+        }
+
         setButton(BUTTON_NEGATIVE, getContext().getString(android.R.string.cancel),
                 (dialog, which) -> {
                     cancel();

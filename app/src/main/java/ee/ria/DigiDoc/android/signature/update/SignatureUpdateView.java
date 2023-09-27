@@ -8,8 +8,6 @@ import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isSmallFontEnabled;
 import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDisplayMetricsDpToInt;
 import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
@@ -767,9 +765,9 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             signatureEncryptButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 2, 3));
             sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 3, 3));
         } else {
-            sendButton.setContentDescription(getResources().getString(R.string.signature_update_send_button));
-            signatureAddButton.setContentDescription(getResources().getString(R.string.signature_update_signature_add_button));
-            signatureEncryptButton.setContentDescription(getResources().getString(R.string.crypto_create_encrypt_button));
+            sendButton.setContentDescription(getResources().getString(R.string.signature_update_send_button).toLowerCase());
+            signatureAddButton.setContentDescription(getResources().getString(R.string.signature_update_signature_add_button).toLowerCase());
+            signatureEncryptButton.setContentDescription(getResources().getString(R.string.crypto_create_encrypt_button).toLowerCase());
         }
     }
 }
