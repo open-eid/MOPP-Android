@@ -131,7 +131,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         initial = upstream -> upstream.switchMap(intent -> {
             File containerFile = intent.containerFile();
             android.content.Intent androidIntent = intent.intent();
-            if (containerFile != null) {
+            if (containerFile != null && !CryptoContainer.isCryptoContainer(containerFile)) {
+                return parseFiles(ImmutableList.of(FileStream.create(containerFile)), application);
+            } else if (containerFile != null) {
                 return Observable
                         .fromCallable(() -> CryptoContainer.open(containerFile))
                         .map(Result.InitialResult::success)
@@ -532,11 +534,18 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.SendIntent.class).compose(send)));
     }
 
-    private Observable<Result.InitialResult> parseIntent(android.content.Intent intent, Application application, File externallyOpenedFileDir) {
+    private Observable<Result.InitialResult> parseIntent(android.content.Intent intent, Application application, File externallyOpenedFileDir) throws IOException {
+        ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
+                parseGetContentIntent(application.getApplicationContext(), contentResolver, intent, externallyOpenedFileDir));
+        return parseFiles(validFiles, application)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .startWithItem(Result.InitialResult.activity());
+    }
+
+    private Observable<Result.InitialResult> parseFiles(ImmutableList<FileStream> validFiles, Application application) {
         return Observable
                 .fromCallable(() -> {
-                    ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
-                            parseGetContentIntent(application.getApplicationContext(), contentResolver, intent, externallyOpenedFileDir));
                     ToastUtil.handleEmptyFileError(validFiles, application.getApplicationContext());
                     if (validFiles.size() == 1
                             && isContainerFileName(validFiles.get(0).displayName())) {
@@ -557,10 +566,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         }
                         return Result.InitialResult.success(file, dataFiles);
                     }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .startWithItem(Result.InitialResult.activity());
+                });
     }
 
     private String assignName(String oldName, String newName) {
