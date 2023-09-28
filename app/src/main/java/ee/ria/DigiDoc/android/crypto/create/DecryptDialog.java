@@ -1,5 +1,8 @@
 package ee.ria.DigiDoc.android.crypto.create;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
 import static ee.ria.DigiDoc.common.PinConstants.PIN1_MIN_LENGTH;
 
 import android.annotation.SuppressLint;
@@ -32,11 +35,6 @@ import ee.ria.DigiDoc.idcard.Token;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
-
-
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
 
 final class DecryptDialog extends AlertDialog {
 
@@ -139,6 +137,9 @@ final class DecryptDialog extends AlertDialog {
             dataView.setText(getContext().getString(R.string.crypto_create_decrypt_data,
                     data.personalData().givenNames(), data.personalData().surname(),
                     data.personalData().personalCode()));
+            dataView.setContentDescription(getContext().getString(R.string.crypto_create_decrypt_data,
+                    data.personalData().givenNames(), data.personalData().surname(),
+                    AccessibilityUtils.getTextAsSingleCharacters(data.personalData().personalCode())));
         }
 
         if (progressContainerView.getVisibility() == View.VISIBLE) {
@@ -152,7 +153,7 @@ final class DecryptDialog extends AlertDialog {
             if (data != null) {
                 CharSequence signerInfo = getContext().getString(R.string.crypto_create_decrypt_data,
                         data.personalData().givenNames(), data.personalData().surname(),
-                        " Personal code " + data.personalData().personalCode());
+                        AccessibilityUtils.getTextAsSingleCharacters(data.personalData().personalCode()));
                 String enterPin1Desc = containerView.getResources().getString(R.string.crypto_create_decrypt_pin1);
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, readyToSignDesc, signerInfo, enterPin1Desc);
             }

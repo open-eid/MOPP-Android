@@ -39,7 +39,7 @@ public final class ErrorMessageUtil {
             textView.setTextColor(errorColor);
             textInputLayout.setError(error);
         } else {
-            int defaultTextColor = context.getColor(android.R.color.tab_indicator_text);
+            int defaultTextColor = context.getColor(R.color.textLabel);
             textView.setTextColor(defaultTextColor);
             textInputLayout.setError(null);
             if (editText != null) {

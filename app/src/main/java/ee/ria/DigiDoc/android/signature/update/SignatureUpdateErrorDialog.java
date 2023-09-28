@@ -9,15 +9,20 @@ import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceLayoutWi
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
+import androidx.core.content.ContextCompat;
 
 import java.io.FileNotFoundException;
 import java.lang.annotation.Retention;
@@ -72,7 +77,7 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                                Subject<SignatureRemoveIntent> signatureRemoveIntentSubject,
                                SignatureUpdateSignatureAddDialog signatureAddDialog,
                                View view) {
-        super(context);
+        super(context, R.style.UniformDialog);
         this.documentsAddIntentSubject = documentsAddIntentSubject;
         this.documentRemoveIntentSubject = documentRemoveIntentSubject;
         this.signatureAddIntentSubject = signatureAddIntentSubject;

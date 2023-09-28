@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:textColor="@color/signingNavigation"
             android:text="@string/signature_update_smart_id_message" />
 
         <TextView
@@ -29,6 +30,7 @@
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
             android:text="@string/signature_update_smart_id_country"
+            android:textColor="@color/textLabel"
             android:paddingTop="1px"
             android:importantForAccessibility="no" />
 
@@ -49,14 +51,22 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@id/signatureUpdateSmartIdPersonalCodeLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="20dp"
+            android:minHeight="@dimen/material_baseline_grid_2x"
+            android:text="@string/signature_update_mobile_id_personal_code" />
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/signatureUpdateSmartIdPersonalCodeLabel"
+            android:id="@id/signatureUpdateSmartIdPersonalCodeLayoutLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginTop="20dp"
-            android:minHeight="@dimen/material_baseline_grid_6x"
             android:hint="@string/signature_update_mobile_id_personal_code"
+            app:hintEnabled="false"
             app:errorEnabled="true"
             app:expandedHintEnabled="false">
 
@@ -78,6 +88,7 @@
             android:layout_width="200dp"
             android:layout_height="70dp"
             android:checked="false"
+            android:textColor="@color/textLabel"
             android:text="@string/signature_update_mobile_id_remember_me" />
 
         <LinearLayout

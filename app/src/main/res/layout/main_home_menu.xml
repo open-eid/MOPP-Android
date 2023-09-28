@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/main_home_menu_accessibility"
-        android:contentDescription="@string/main_home_menu_recent_accessibility"
+        android:contentDescription="@string/main_accessibility_title"
         android:drawableStart="@drawable/ic_icon_accessibility" />
 
     <Button

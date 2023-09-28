@@ -197,7 +197,7 @@
     <string name="signature_update_mobile_id_phone_no">Riigikood ja telefoninumber</string>
     <string name="signature_update_mobile_id_personal_code">Isikukood</string>
     <string name="signature_update_mobile_id_remember_me">Pea mind meeles</string>
-    <string name="signature_update_mobile_id_info">Veendu kontrollkoodi õiguses ja sisesta telefonil mobiil-ID PIN2-kood.</string>
+    <string name="signature_update_mobile_id_info">Veendu kontrollkoodi õigsuses ja sisesta telefonil mobiil-ID PIN2-kood.</string>
     <string name="signature_update_mobile_id_display_message">Allkirjasta dokument</string>
 
     <string name="signature_update_mobile_id_invalid_country_code">Vigane riigikood.</string>
@@ -312,6 +312,7 @@
     <string name="crypto_create_encrypt_success_message">KRÜPTEERIMINE ÕNNESTUS</string>
     <string name="crypto_create_decrypt_success_message">DEKRÜPTEERIMINE ÕNNESTUS</string>
     <string name="crypto_create_name_update_button">Muuda ümbriku nime</string>
+    <string name="crypto_create_data_file">Krüpteeritud fail</string>
     <string name="crypto_create_data_files_title">Krüpteeritud failid</string>
     <string name="crypto_create_data_files_add_error_exists">Fail on juba ümbrikus olemas</string>
     <string name="crypto_create_data_file_remove_button">Eemalda fail</string>
@@ -489,7 +490,7 @@
     <string name="decrypt_send_content_description">Jaga, vahekaart %1$d / %2$d</string>
 
     <string name="document">Dokument</string>
-    <string name="container_has">Ümbrikus on</string>
+    <string name="container_has">Ümbrikus </string>
     <string name="file">Fail</string>
 
     <string name="container_title">ÜMBRIK:</string>

@@ -256,8 +256,10 @@
     <item type="id" name="signatureUpdateMobileIdChallengeText" />
     <item type="id" name="signatureUpdateMobileIdCancelButton" />
     <item type="id" name="signatureUpdateSendButton" />
-    <item type="id" name="signatureUpdateButtonSpace" />
+    <item type="id" name="signatureUpdateSignatureButtonSpace" />
+    <item type="id" name="signatureUpdateEncryptButtonSpace" />
     <item type="id" name="signatureUpdateSignatureAddButton" />
+    <item type="id" name="signatureUpdateSignatureEncryptButton" />
     <item type="id" name="signatureUpdateSignatureAdd" />
     <item type="id" name="signatureUpdateSignatureAddMethod" />
     <item type="id" name="signatureUpdateSignatureAddMethodMobileId" />
@@ -283,6 +285,7 @@
     <item type="id" name="signatureUpdateSmartIdCountryLabel" />
     <item type="id" name="signatureUpdateSmartIdCountry" />
     <item type="id" name="signatureUpdateSmartIdPersonalCodeLabel" />
+    <item type="id" name="signatureUpdateSmartIdPersonalCodeLayoutLabel" />
     <item type="id" name="signatureUpdateSmartIdPersonalCode" />
     <item type="id" name="signatureUpdateSmartIdRememberMe" />
     <item type="id" name="signatureUpdateSmartIdCancelSigningButton" />
