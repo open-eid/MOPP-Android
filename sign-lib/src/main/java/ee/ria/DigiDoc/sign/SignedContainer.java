@@ -331,6 +331,7 @@ public abstract class SignedContainer {
             } catch (Exception e) {
                 if (e instanceof NoInternetConnectionException) {
                     if (isSignedPDF(context, file)) {
+                        Timber.log(Log.ERROR, e, "Unable to check if PDF is signed. No Internet connection");
                         throw e;
                     }
                 }
@@ -499,7 +500,7 @@ public abstract class SignedContainer {
         try {
             container = Container.open(file.getAbsolutePath());
         } catch (Exception e) {
-            if (e.getMessage().startsWith("Failed to connect to host")) {
+            if (e.getMessage() != null && e.getMessage().startsWith("Failed to connect to host")) {
                 throw new NoInternetConnectionException();
             }
             throw new IOException(e.getMessage());

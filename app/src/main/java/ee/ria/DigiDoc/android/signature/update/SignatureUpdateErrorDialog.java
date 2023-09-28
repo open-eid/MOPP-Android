@@ -1,5 +1,12 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENT_REMOVE;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_ADD;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_REMOVE;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceLayoutWidth;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Html;
@@ -12,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 
+import java.io.FileNotFoundException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -34,13 +42,6 @@ import ee.ria.DigiDoc.sign.OcspInvalidTimeSlotException;
 import ee.ria.DigiDoc.sign.TooManyRequestsException;
 import ee.ria.DigiDoc.sign.utils.UrlMessage;
 import io.reactivex.rxjava3.subjects.Subject;
-
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
-import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENT_REMOVE;
-import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_ADD;
-import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_REMOVE;
-import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceLayoutWidth;
 
 public final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInterface.OnDismissListener {
 
@@ -97,6 +98,15 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
             type = DOCUMENTS_ADD;
             if (documentsAddError instanceof EmptyFileException) {
                 updateError = new EmptyFileException();
+            } else if (documentsAddError instanceof NoInternetConnectionException) {
+                updateError = new NoInternetConnectionException();
+            } else if (documentsAddError instanceof FileNotFoundException) {
+                if (documentsAddError.getMessage() != null &&
+                        documentsAddError.getMessage().contains("connection_failure")) {
+                    updateError = new NoInternetConnectionException();
+                } else {
+                    updateError = new EmptyFileException();
+                }
             } else {
                 updateError = new DocumentExistsException();
             }
