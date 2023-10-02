@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update.idcard;
 
+import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
+import static ee.ria.DigiDoc.android.Constants.VOID;
 import static ee.ria.DigiDoc.common.PinConstants.PIN2_MIN_LENGTH;
 
 import android.content.Context;
@@ -19,6 +21,9 @@ import androidx.annotation.Nullable;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.model.idcard.IdCardData;
@@ -32,10 +37,6 @@ import ee.ria.DigiDoc.smartcardreader.SmartCardReaderStatus;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
-
-import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
-import static ee.ria.DigiDoc.android.Constants.VOID;
 
 public final class IdCardView extends LinearLayout implements
         SignatureAddView<IdCardRequest, IdCardResponse> {
@@ -146,6 +147,14 @@ public final class IdCardView extends LinearLayout implements
             signDataView.setText(getResources().getString(
                     R.string.signature_update_id_card_sign_data, data.personalData().givenNames(),
                     data.personalData().surname(), data.personalData().personalCode()));
+            signDataView.setContentDescription(getResources().getString(
+                    R.string.signature_update_id_card_sign_data, data.personalData().givenNames(),
+                    data.personalData().surname(), AccessibilityUtils.getTextAsSingleCharacters(data.personalData().personalCode())));
+            signContainerMessage.setContentDescription(
+                    getResources().getString(R.string.signature_update_id_card_sign_message) + ". " +
+                            signDataView.getContentDescription() + ". " +
+                            getResources().getString(R.string.signature_update_id_card_sign_pin2)
+            );
             signPin2ErrorView.setVisibility(VISIBLE);
             signDataView.clearFocus();
             progressMessageView.clearFocus();
@@ -171,6 +180,14 @@ public final class IdCardView extends LinearLayout implements
             signDataView.setText(getResources().getString(
                     R.string.signature_update_id_card_sign_data, data.personalData().givenNames(),
                     data.personalData().surname(), data.personalData().personalCode()));
+            signDataView.setContentDescription(getResources().getString(
+                    R.string.signature_update_id_card_sign_data, data.personalData().givenNames(),
+                    data.personalData().surname(), AccessibilityUtils.getTextAsSingleCharacters(data.personalData().personalCode())));
+            signContainerMessage.setContentDescription(
+                    getResources().getString(R.string.signature_update_id_card_sign_message) + ". " +
+                            signDataView.getContentDescription() + ". " +
+                            getResources().getString(R.string.signature_update_id_card_sign_pin2)
+            );
             signPin2ErrorView.setVisibility(GONE);
         } else if (dataResponse != null
                 && dataResponse.status().equals(SmartCardReaderStatus.CARD_DETECTED)) {
@@ -277,6 +294,18 @@ public final class IdCardView extends LinearLayout implements
                 info.setText(contentDescription);
                 info.setViewIdResourceName("");
                 info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_SELECTION);
+            }
+        });
+
+        progressMessageView.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                List<AccessibilityNodeInfo.AccessibilityAction> actionList = new ArrayList<>(info.getActionList());
+
+                for (AccessibilityNodeInfo.AccessibilityAction action : actionList) {
+                    info.removeAction(action);
+                }
             }
         });
     }

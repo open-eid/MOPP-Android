@@ -1,16 +1,28 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENT_REMOVE;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_ADD;
+import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_REMOVE;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceLayoutWidth;
+
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
+import androidx.core.content.ContextCompat;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -34,13 +46,6 @@ import ee.ria.DigiDoc.sign.OcspInvalidTimeSlotException;
 import ee.ria.DigiDoc.sign.TooManyRequestsException;
 import ee.ria.DigiDoc.sign.utils.UrlMessage;
 import io.reactivex.rxjava3.subjects.Subject;
-
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
-import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENT_REMOVE;
-import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_ADD;
-import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.SIGNATURE_REMOVE;
-import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceLayoutWidth;
 
 public final class SignatureUpdateErrorDialog extends ErrorDialog implements DialogInterface.OnDismissListener {
 
@@ -73,7 +78,7 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                                Subject<SignatureRemoveIntent> signatureRemoveIntentSubject,
                                SignatureUpdateSignatureAddDialog signatureAddDialog,
                                View view) {
-        super(context);
+        super(context, R.style.UniformDialog);
         this.documentsAddIntentSubject = documentsAddIntentSubject;
         this.documentRemoveIntentSubject = documentRemoveIntentSubject;
         this.signatureAddIntentSubject = signatureAddIntentSubject;

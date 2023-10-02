@@ -4,7 +4,7 @@
     <item>
         <selector>
             <item android:state_checked="true">
-                <color android:color="?attr/colorControlActivated" />
+                <color android:color="@color/signingNavigation" />
             </item>
         </selector>
     </item>

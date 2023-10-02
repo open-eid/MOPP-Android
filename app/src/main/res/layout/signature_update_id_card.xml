@@ -18,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:textColor="@color/signingNavigation"
             android:text="@string/signature_update_id_card_progress_message_initial"
             android:contentDescription="@string/signature_update_id_card_progress_message_initial" />
 
@@ -47,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/signature_update_id_card_sign_message"
+                android:textColor="@color/signingNavigation"
                 android:importantForAccessibility="no"
                 android:contentDescription="@string/signature_update_id_card_sign_message" />
 
@@ -54,6 +56,7 @@
                 android:id="@id/signatureUpdateIdCardSignData"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/signingNavigation"
                 android:importantForAccessibility="no"
                 android:gravity="center_horizontal" />
 
@@ -62,6 +65,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="@string/signature_update_id_card_sign_pin2"
+                android:textColor="@color/signingNavigation"
                 android:minHeight="@dimen/material_baseline_grid_2x"
                 android:importantForAccessibility="no"
                 android:labelFor="@id/signatureUpdateIdCardSignPin2" />

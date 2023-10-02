@@ -318,6 +318,7 @@
     <string name="crypto_create_encrypt_success_message">ENCRYPTION SUCCEEDED</string>
     <string name="crypto_create_decrypt_success_message">DECRYPTION SUCCESSFUL</string>
     <string name="crypto_create_name_update_button">Edit container name</string>
+    <string name="crypto_create_data_file">Encrypted file</string>
     <string name="crypto_create_data_files_title">Encrypted files</string>
     <string name="crypto_create_data_files_add_error_exists">File already exists in the container</string>
     <string name="crypto_create_data_file_remove_button">Remove file</string>

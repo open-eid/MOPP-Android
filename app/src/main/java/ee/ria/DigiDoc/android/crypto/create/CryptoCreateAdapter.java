@@ -14,11 +14,16 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,8 +46,6 @@ import io.reactivex.rxjava3.subjects.Subject;
 
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static ee.ria.DigiDoc.android.Constants.VOID;
-
-import org.apache.commons.lang3.StringUtils;
 
 final class CryptoCreateAdapter extends
         RecyclerView.Adapter<CryptoCreateAdapter.CreateViewHolder<CryptoCreateAdapter.Item>> {
@@ -253,6 +256,7 @@ final class CryptoCreateAdapter extends
         @Override
         void bind(CryptoCreateAdapter adapter, SuccessItem item) {
             messageView.setText(item.message());
+            messageView.setContentDescription(messageView.getText().toString().toLowerCase());
         }
     }
 
@@ -356,7 +360,7 @@ final class CryptoCreateAdapter extends
                             ((DataFileItem) adapter.items.get(getBindingAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileClicksSubject);
             nameView.setText(FileUtil.sanitizeString(item.dataFile().getName(), ""));
-            String fileNameDescription = nameView.getResources().getString(R.string.file);
+            String fileNameDescription = nameView.getResources().getString(item.saveButtonVisible() ? R.string.file : R.string.crypto_create_data_file);
             nameView.setContentDescription(fileNameDescription + " " + nameView.getText());
 
             String removeButtonText = removeButton.getResources().getString(R.string.crypto_create_data_file_remove_button);
@@ -374,6 +378,22 @@ final class CryptoCreateAdapter extends
                     .map(ignored ->
                             ((DataFileItem) adapter.items.get(getBindingAdapterPosition())).dataFile())
                     .subscribe(adapter.dataFileSaveClicksSubject);
+
+            if (AccessibilityUtils.isAccessibilityEnabled()) {
+                ViewCompat.setAccessibilityDelegate(itemView, new AccessibilityDelegateCompat() {
+                    @Override
+                    public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+                        super.onInitializeAccessibilityNodeInfo(host, info);
+                        if (!item.removeButtonVisible() && info.getActionList().contains(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK)) {
+                            info.removeAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK);
+                            info.setClickable(false);
+                        } else if (item.removeButtonVisible()) {
+                            info.addAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK);
+                            info.setClickable(true);
+                        }
+                    }
+                });
+            }
         }
     }
 

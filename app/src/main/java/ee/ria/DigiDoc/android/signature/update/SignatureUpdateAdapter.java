@@ -340,8 +340,10 @@ final class SignatureUpdateAdapter extends
 
             unknownView.setText(resources.getQuantityString(
                     R.plurals.signature_update_signatures_unknown, unknownCount, unknownCount));
+            unknownView.setContentDescription(unknownView.getText().toString().toLowerCase());
             invalidView.setText(resources.getQuantityString(
                     R.plurals.signature_update_signatures_invalid, invalidCount, invalidCount));
+            invalidView.setContentDescription(invalidView.getText().toString().toLowerCase());
 
             String containerHasDesc = unknownView.getResources().getString(R.string.container_has);
             unknownView.setContentDescription(containerHasDesc + " " + unknownView.getText());

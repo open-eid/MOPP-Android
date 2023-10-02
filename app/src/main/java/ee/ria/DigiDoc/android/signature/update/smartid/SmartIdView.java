@@ -22,6 +22,7 @@ package ee.ria.DigiDoc.android.signature.update.smartid;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
 import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
+import static ee.ria.DigiDoc.android.utils.ErrorMessageUtil.setTextViewError;
 
 import android.content.Context;
 import android.text.Editable;
@@ -33,7 +34,6 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -47,6 +47,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -65,7 +66,8 @@ public final class SmartIdView extends LinearLayout implements
     private final TextView message;
     private final TextView countryViewLabel;
     private final Spinner countryView;
-    private final TextInputLayout personalCodeViewLabel;
+    private final TextView personalCodeViewLabel;
+    private final TextInputLayout personalCodeViewLayoutLabel;
     private final TextInputEditText personalCodeView;
     private final CheckBox rememberMeView;
 
@@ -90,6 +92,7 @@ public final class SmartIdView extends LinearLayout implements
         countryViewLabel = findViewById(R.id.signatureUpdateSmartIdCountryText);
         countryView = findViewById(R.id.signatureUpdateSmartIdCountry);
         personalCodeViewLabel = findViewById(R.id.signatureUpdateSmartIdPersonalCodeLabel);
+        personalCodeViewLayoutLabel = findViewById(R.id.signatureUpdateSmartIdPersonalCodeLayoutLabel);
         personalCodeView = findViewById(R.id.signatureUpdateSmartIdPersonalCode);
         rememberMeView = findViewById(R.id.signatureUpdateSmartIdRememberMe);
         countryView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -118,6 +121,8 @@ public final class SmartIdView extends LinearLayout implements
         personalCodeView.setText(viewModel.sidPersonalCode());
         rememberMeView.setChecked(true);
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
+
+        setTextViewError(getContext(), null, personalCodeViewLabel, personalCodeViewLayoutLabel, personalCodeView);
 
         message.clearFocus();
         countryView.clearFocus();
@@ -160,15 +165,16 @@ public final class SmartIdView extends LinearLayout implements
     }
 
     private void checkPersonalCodeValidity() {
+        setTextViewError(getContext(), null, personalCodeViewLabel, personalCodeViewLayoutLabel, null);
         personalCodeViewLabel.setError(null);
 
-        EditText personalCode = personalCodeViewLabel.getEditText();
-
-        if (personalCode != null && personalCode.getText() != null &&
-                !personalCode.getText().toString().isEmpty() &&
-                !isPersonalCodeCorrect(personalCode.getText().toString())) {
-            personalCodeViewLabel.setError(getResources().getString(
-                    R.string.signature_update_smart_id_invalid_personal_code));
+        if (Optional.ofNullable(personalCodeView.getText())
+                .map(Editable::toString)
+                .filter(text -> !text.isEmpty() && !isPersonalCodeCorrect(text))
+                .isPresent()) {
+            setTextViewError(getContext(), getResources().getString(
+                            R.string.signature_update_smart_id_invalid_personal_code),
+                    personalCodeViewLabel, personalCodeViewLayoutLabel, null);
         }
     }
 
