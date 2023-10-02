@@ -10,6 +10,7 @@ import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATU
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MID_BROADCAST_ACTION;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MID_BROADCAST_TYPE_KEY;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SERVICE_FAULT;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SIGNING_ROLE_DATA;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
+import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 import androidx.work.Data;
@@ -34,6 +36,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.model.mobileid.MobileIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileIdServiceResponse;
@@ -53,10 +56,12 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
     private final String uuid;
     private final String personalCode;
     private final String phoneNo;
+    @Nullable private final RoleData roleData;
+
     private static final String SIGNING_TAG = "MobileId";
 
     public MobileIdOnSubscribe(Navigator navigator, SignedContainer container, Locale locale,
-                               String uuid, String personalCode, String phoneNo) {
+                               String uuid, String personalCode, String phoneNo, @Nullable RoleData roleData) {
         this.navigator = navigator;
         this.container = container;
         this.locale = locale;
@@ -64,6 +69,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         this.uuid = uuid;
         this.personalCode = personalCode;
         this.phoneNo = phoneNo;
+        this.roleData = roleData;
     }
 
     @Override
@@ -72,7 +78,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
             @Override
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getStringExtra(MID_BROADCAST_TYPE_KEY)) {
-                    case SERVICE_FAULT:
+                    case SERVICE_FAULT -> {
                         RESTServiceFault fault = RESTServiceFault
                                 .fromJson(intent.getStringExtra(SERVICE_FAULT));
                         Configuration configuration = context.getResources().getConfiguration();
@@ -85,31 +91,28 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                             emitter.onError(MobileIdMessageException
                                     .create(configuredContext, fault.getResult(), fault.getDetailMessage()));
                         }
-                        break;
-                    case CREATE_SIGNATURE_CHALLENGE:
+                    }
+                    case CREATE_SIGNATURE_CHALLENGE -> {
                         String challenge =
                                 intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE);
                         emitter.onNext(MobileIdResponse.challenge(challenge));
-                        break;
-                    case CREATE_SIGNATURE_STATUS:
+                    }
+                    case CREATE_SIGNATURE_STATUS -> {
                         MobileIdServiceResponse status =
                                 MobileIdServiceResponse.fromJson(
                                         intent.getStringExtra(CREATE_SIGNATURE_STATUS));
                         switch (status.getStatus()) {
-                            case USER_CANCELLED:
-                                emitter.onNext(MobileIdResponse.status(status.getStatus()));
-                                break;
-                            case OK:
+                            case USER_CANCELLED ->
+                                    emitter.onNext(MobileIdResponse.status(status.getStatus()));
+                            case OK -> {
                                 emitter.onNext(MobileIdResponse.signature(status.getSignature()));
                                 emitter.onNext(MobileIdResponse.success(container));
                                 emitter.onComplete();
-                                break;
-                            default:
-                                emitter.onError(MobileIdMessageException
-                                        .create(context, status.getStatus(), null));
-                                break;
+                            }
+                            default -> emitter.onError(MobileIdMessageException
+                                    .create(context, status.getStatus(), null));
                         }
-                        break;
+                    }
                 }
             }
         };
@@ -137,6 +140,7 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                 .putString(CREATE_SIGNATURE_REQUEST, toJson(request))
                 .putString(ACCESS_TOKEN_PASS, SignLib.accessTokenPass())
                 .putString(ACCESS_TOKEN_PATH, SignLib.accessTokenPath())
+                .putString(SIGNING_ROLE_DATA, RoleData.toJson(roleData))
                 .build();
 
 

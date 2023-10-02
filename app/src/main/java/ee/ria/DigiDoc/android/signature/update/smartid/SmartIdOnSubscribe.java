@@ -30,6 +30,7 @@ import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SERVICE_FAULT;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SID_BROADCAST_ACTION;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SID_BROADCAST_TYPE_KEY;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SIGNING_ROLE_DATA;
 
 import android.Manifest;
 import android.app.Notification;
@@ -43,6 +44,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -64,6 +66,7 @@ import ee.ria.DigiDoc.android.model.smartid.SmartIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.common.NotificationUtil;
 import ee.ria.DigiDoc.common.PowerUtil;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartid.dto.request.SmartIDSignatureRequest;
@@ -85,10 +88,13 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
     private final String uuid;
     private final String personalCode;
     private final String country;
+
+    @Nullable RoleData roleData;    
+
     private static final String SIGNING_TAG = "SmartId";
 
     public SmartIdOnSubscribe(Navigator navigator, SignedContainer container, Locale locale,
-                              String uuid, String personalCode, String country) {
+                              String uuid, String personalCode, String country, @Nullable RoleData roleData) {
         this.navigator = navigator;
         this.container = container;
         this.broadcastManager = LocalBroadcastManager.getInstance(navigator.activity());
@@ -96,6 +102,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         this.uuid = uuid;
         this.personalCode = personalCode;
         this.country = country;
+        this.roleData = roleData;
     }
 
     @Override
@@ -104,7 +111,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
             @Override
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getStringExtra(SID_BROADCAST_TYPE_KEY)) {
-                    case SERVICE_FAULT: {
+                    case SERVICE_FAULT -> {
                         NotificationManagerCompat.from(navigator.activity()).cancelAll();
                         ServiceFault serviceFault =
                                 ServiceFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
@@ -119,18 +126,16 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                             emitter.onError(SmartIdMessageException
                                     .create(configuredContext, serviceFault.getStatus(), serviceFault.getDetailMessage()));
                         }
-                        break;
                     }
-                    case CREATE_SIGNATURE_DEVICE:
+                    case CREATE_SIGNATURE_DEVICE -> {
                         Timber.log(Log.DEBUG, "Selecting device (CREATE_SIGNATURE_DEVICE)");
                         emitter.onNext(SmartIdResponse.selectDevice(true));
-                        break;
-                    case CREATE_SIGNATURE_CHALLENGE:
+                    }
+                    case CREATE_SIGNATURE_CHALLENGE -> {
                         Timber.log(Log.DEBUG, "Signature challenge (CREATE_SIGNATURE_CHALLENGE)");
                         String challenge =
                                 intent.getStringExtra(CREATE_SIGNATURE_CHALLENGE);
                         emitter.onNext(SmartIdResponse.challenge(challenge));
-
                         if (!PowerUtil.isPowerSavingMode(context)) {
                             Timber.log(Log.DEBUG, "Creating notification channel");
                             NotificationUtil.createNotificationChannel(context,
@@ -138,21 +143,18 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                                             .getResources()
                                             .getString(R.string.signature_update_signature_add_method_smart_id));
                         }
-
                         String challengeTitle = navigator.activity()
                                 .getResources().getString(R.string.smart_id_challenge);
                         Notification notification = NotificationUtil.createNotification(context, NOTIFICATION_CHANNEL,
                                 R.mipmap.ic_launcher, challengeTitle, challenge,
                                 NotificationCompat.PRIORITY_HIGH, false);
-
                         try {
                             sendNotification(context, challenge, notification);
                         } catch (NumberFormatException nfe) {
                             Timber.log(Log.ERROR, nfe, "Unable to send notification");
                         }
-
-                        break;
-                    case CREATE_SIGNATURE_STATUS:
+                    }
+                    case CREATE_SIGNATURE_STATUS -> {
                         NotificationManagerCompat.from(context).cancelAll();
                         SmartIDServiceResponse status =
                                 SmartIDServiceResponse.fromJson(
@@ -166,7 +168,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                             emitter.onError(SmartIdMessageException
                                     .create(context, status.getStatus()));
                         }
-                        break;
+                    }
                 }
             }
         };
@@ -193,6 +195,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         UUID uuid = UUID.randomUUID();
         Data inputData = new Data.Builder()
                 .putString(CREATE_SIGNATURE_REQUEST, toJson(request))
+                .putString(SIGNING_ROLE_DATA, RoleData.toJson(roleData))
                 .build();
 
         OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(SmartSignService.class)

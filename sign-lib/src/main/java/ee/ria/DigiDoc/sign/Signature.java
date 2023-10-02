@@ -7,6 +7,7 @@ import com.google.auto.value.AutoValue;
 
 import java.security.cert.X509Certificate;
 import java.time.Instant;
+import java.util.List;
 
 @AutoValue
 public abstract class Signature {
@@ -133,6 +134,31 @@ public abstract class Signature {
      */
     public abstract String signersMobileTimeUTC();
 
+    /*
+     * Signature roles.
+     */
+    public abstract List<String> roles();
+
+    /**
+     * Signature role city.
+     */
+    public abstract String city();
+
+    /**
+     * Signature role state / county.
+     */
+    public abstract String state();
+
+    /**
+     * Signature role country.
+     */
+    public abstract String country();
+
+    /**
+     * Signature role zip / postal code.
+     */
+    public abstract String zip();
+
     /**
      * Creates a new signature object.
      *
@@ -156,20 +182,29 @@ public abstract class Signature {
      * @param ocspTime OCSP time.
      * @param ocspTimeUTC OCSP time UTC.
      * @param signersMobileTimeUTC Signer's mobile time UTC.
+     * @param roles Signature roles.
+     * @param city Signature city.
+     * @param state Signature state / county.
+     * @param country Signature country.
+     * @param zip Signature zip / postal code.
      *
      */
     public static Signature create(String id, String name, Instant createdAt,
-                                   SignatureStatus status, String diagnosticsInfo, String profile, String signersCertificateIssuer,
-                                   X509Certificate signingCertificate, String signatureMethod,
-                                   String signatureFormat, String signatureTimestamp, String signatureTimestampUTC,
+                                   SignatureStatus status, String diagnosticsInfo, String profile,
+                                   String signersCertificateIssuer, X509Certificate signingCertificate,
+                                   String signatureMethod, String signatureFormat,
+                                   String signatureTimestamp, String signatureTimestampUTC,
                                    String hashValueOfSignature, String tsCertificateIssuer, X509Certificate tsCertificate,
                                    String ocspCertificateIssuer, X509Certificate ocspCertificate,
-                                   String ocspTime, String ocspTimeUTC, String signersMobileTimeUTC) {
+                                   String ocspTime, String ocspTimeUTC, String signersMobileTimeUTC,
+                                   List<String> roles, String city, String state,
+                                   String country, String zip) {
         return new AutoValue_Signature(id, name, createdAt, status, diagnosticsInfo, profile,
                 signersCertificateIssuer, signingCertificate, signatureMethod,
                 signatureFormat, signatureTimestamp, signatureTimestampUTC,
-                hashValueOfSignature, tsCertificateIssuer, tsCertificate, ocspCertificateIssuer,
-                ocspCertificate, ocspTime, ocspTimeUTC, signersMobileTimeUTC);
+                hashValueOfSignature, tsCertificateIssuer, tsCertificate,
+                ocspCertificateIssuer, ocspCertificate, ocspTime, ocspTimeUTC,
+                signersMobileTimeUTC, roles, city, state, country, zip);
     }
 
     @NonNull
@@ -196,6 +231,11 @@ public abstract class Signature {
                 ", ocspTime=" + ocspTime() +
                 ", ocspTimeUTC=" + ocspTimeUTC() +
                 ", signersMobileTimeUTC=" + signersMobileTimeUTC() +
+                ", roles=" + roles() +
+                ", city=" + city() +
+                ", state=" + state() +
+                ", country=" + country() +
+                ", zip=" + zip() +
                 "}";
     }
 }

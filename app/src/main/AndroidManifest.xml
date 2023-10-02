@@ -26,7 +26,8 @@
             android:name=".android.Activity"
             android:exported="true"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|locale"
-            android:screenOrientation="user">
+            android:screenOrientation="user"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>

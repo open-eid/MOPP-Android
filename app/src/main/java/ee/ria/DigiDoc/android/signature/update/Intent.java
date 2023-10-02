@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import ee.ria.DigiDoc.android.utils.SivaUtil;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignedContainer;
@@ -263,6 +264,24 @@ class SignatureRemoveIntent implements Intent {
     }
 }
 
+
+class SignatureRoleViewIntent implements Intent {
+    Signature signature;
+
+    public SignatureRoleViewIntent(Signature signature) {
+        this.signature = signature;
+    }
+
+    static SignatureRoleViewIntent create(Signature signature) {
+        return new SignatureRoleViewIntent(signature);
+    }
+
+    @Override
+    public Action action() {
+        return Action.SignatureRoleDetailsAction.create(signature);
+    }
+}
+
 class SignatureAddIntent implements Intent {
 
     @Nullable Integer method;
@@ -270,41 +289,48 @@ class SignatureAddIntent implements Intent {
     @Nullable File containerFile;
     @Nullable SignatureAddRequest request;
     boolean isCancelled;
+    boolean showRoleAddingView;
+    @Nullable RoleData roleData;
 
     public SignatureAddIntent(@Nullable Integer method, @Nullable Boolean existingContainer,
                               @Nullable File containerFile, @Nullable SignatureAddRequest request,
-                              boolean isCancelled) {
+                              boolean isCancelled, boolean showRoleAddingView, @Nullable RoleData roleData) {
         this.method = method;
         this.existingContainer = existingContainer;
         this.containerFile = containerFile;
         this.request = request;
         this.isCancelled = isCancelled;
+        this.showRoleAddingView = showRoleAddingView;
+        this.roleData = roleData;
     }
 
-    static SignatureAddIntent show(int method, boolean existingContainer, File containerFile) {
-        return create(method, existingContainer, containerFile, null, false);
+    static SignatureAddIntent show(int method, boolean existingContainer, File containerFile, boolean showRoleAddingView) {
+        return create(method, existingContainer, containerFile, null, false, showRoleAddingView, null);
     }
 
     static SignatureAddIntent sign(int method, boolean existingContainer, File containerFile,
-                                   SignatureAddRequest request) {
-        return create(method, existingContainer, containerFile, request, false);
+                                   SignatureAddRequest request, RoleData roleData) {
+        return create(method, existingContainer, containerFile, request, false, false, roleData);
     }
 
     static SignatureAddIntent clear() {
-        return create(null, null, null, null, true);
+        return create(null, null, null, null, true, false, null);
     }
 
     private static SignatureAddIntent create(@Nullable Integer method,
                                              @Nullable Boolean existingContainer,
                                              @Nullable File containerFile,
                                              @Nullable SignatureAddRequest request,
-                                             boolean isCancelled) {
-        return new SignatureAddIntent(method, existingContainer, containerFile, request, isCancelled);
+                                             boolean isCancelled,
+                                             boolean showRoleAddingView,
+                                             @Nullable RoleData roleData) {
+        return new SignatureAddIntent(method, existingContainer, containerFile, request, isCancelled, showRoleAddingView, roleData);
     }
 
     @Override
     public Action action() {
-        return Action.SignatureAddAction.create(method, existingContainer, containerFile, request, isCancelled);
+        return Action.SignatureAddAction.create(method, existingContainer, containerFile, request,
+                isCancelled, showRoleAddingView, roleData);
     }
 }
 

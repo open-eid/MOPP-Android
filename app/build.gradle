@@ -20,6 +20,8 @@ android {
         versionCode Integer.parseInt(appVersionCode)
         versionName appVersionName
 
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+
         multiDexEnabled true
 
         ndk {
@@ -34,6 +36,10 @@ android {
         debug {
             storeFile file('../debug.keystore')
         }
+    }
+
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 
     buildTypes {
@@ -135,8 +141,12 @@ dependencies {
     implementation project(':mobile-id-lib')
     implementation project(':smart-id-lib')
 
+    androidTestAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+    androidTestImplementation "androidx.test:core:${androidxTestCoreVersion}"
+    androidTestImplementation "androidx.test:runner:${androidxTestCoreVersion}"
+
     testAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
-    androidTestImplementation "junit:junit:${junitVersion}"
+    androidTestImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     androidTestImplementation "androidx.test.ext:junit:${androidxTestVersion}"
     androidTestImplementation "androidx.test:rules:${androidxTestRulesVersion}"
 }

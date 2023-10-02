@@ -446,6 +446,7 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
 
         View lastElementView = view.findViewById(R.id.lastInvisibleElement);
 
+        ContentView.removeInvisibleElementScrollListener(listView);
         ContentView.addInvisibleElementScrollListener(listView, lastElementView);
 
         return view;

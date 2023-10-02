@@ -25,6 +25,7 @@ import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CERTIFICATE_CERT
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_REQUEST;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_CHANNEL;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_PERMISSION_CODE;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SIGNING_ROLE_DATA;
 
 import android.app.Notification;
 import android.content.Context;
@@ -60,6 +61,7 @@ import ee.ria.DigiDoc.common.ContainerWrapper;
 import ee.ria.DigiDoc.common.MessageUtil;
 import ee.ria.DigiDoc.common.NotificationUtil;
 import ee.ria.DigiDoc.common.PowerUtil;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
 import ee.ria.DigiDoc.common.exception.SigningCancelledException;
@@ -90,6 +92,7 @@ public class SmartSignService extends Worker {
     private static final long SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 5 * 1000;
     private static final long TIMEOUT_CANCEL = 80 * 1000;
     private static boolean isCancelled = false;
+    private final String roleData;
 
     private SIDRestServiceClient SIDRestServiceClient;
 
@@ -101,6 +104,8 @@ public class SmartSignService extends Worker {
         Timber.tag(TAG);
 
         isCancelled = false;
+
+        roleData = workerParameters.getInputData().getString(SIGNING_ROLE_DATA);
 
         signatureRequest = workerParameters.getInputData().getString(CREATE_SIGNATURE_REQUEST);
 
@@ -138,6 +143,7 @@ public class SmartSignService extends Worker {
         Timber.log(Log.DEBUG, "Handling smart sign intent");
 
         SmartIDSignatureRequest request = getRequestFromData(signatureRequest);
+        RoleData roleDataRequest = getRoleDataFromData(roleData);
             if (request != null) {
                 try {
                     if (certificateCertBundle != null) {
@@ -171,7 +177,7 @@ public class SmartSignService extends Worker {
                     Timber.log(Log.DEBUG, "Session status response: %s", sessionStatusResponse.toString());
 
                     ContainerWrapper containerWrapper = new ContainerWrapper(request.getContainerPath());
-                    String base64Hash = containerWrapper.prepareSignature(getCertificatePem(sessionStatusResponse.getCert().getValue()));
+                    String base64Hash = containerWrapper.prepareSignature(getCertificatePem(sessionStatusResponse.getCert().getValue()), roleDataRequest);
                     if (base64Hash != null && !base64Hash.isEmpty()) {
                         Timber.log(Log.DEBUG, "Broadcasting signature challenge response");
                         broadcastSmartCreateSignatureChallengeResponse(base64Hash);
@@ -417,6 +423,20 @@ public class SmartSignService extends Worker {
         } catch (JsonProcessingException e) {
             broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR));
             Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID. Failed to process signature request JSON. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+        }
+
+        return null;
+    }
+
+    private RoleData getRoleDataFromData(String roleData) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            RoleData roleDataRequest = objectMapper.readValue(roleData, RoleData.class);
+            Timber.log(Log.DEBUG, "Role data from data: %s", roleDataRequest != null ? roleDataRequest.toString() : "No role data");
+            return roleDataRequest;
+        } catch (JsonProcessingException e) {
+            broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR));
+            Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID. Failed to process role data request JSON. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
         }
 
         return null;

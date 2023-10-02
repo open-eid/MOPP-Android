@@ -59,6 +59,6 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:${androidxTestEspressoVersion}"
     androidTestImplementation "com.google.truth:truth:${truthVersion}"
 
-    testImplementation "junit:junit:${junitVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     api project(':configuration-lib')
 }

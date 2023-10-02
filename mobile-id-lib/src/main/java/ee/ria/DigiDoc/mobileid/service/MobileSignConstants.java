@@ -24,6 +24,8 @@ public interface MobileSignConstants {
     String MID_BROADCAST_ACTION = "ee.ria.mopp.androidmobileid.MID_BROADCAST_ACTION";
     String MID_BROADCAST_TYPE_KEY = "ee.ria.mopp.androidmobileid.MID_BROADCAST_TYPE_KEY";
 
+    String SIGNING_ROLE_DATA = "ee.ria.mopp.androidmobileid.SIGNING_ROLE_DATA";
+
     String CREATE_SIGNATURE_REQUEST = "ee.ria.mopp.androidmobileid.CREATE_SIGNATURE_REQUEST";
     String ACCESS_TOKEN_PASS = "ee.ria.mopp.androidmobileid.ACCESS_TOKEN_PASS";
     String ACCESS_TOKEN_PATH = "ee.ria.mopp.androidmobileid.ACCESS_TOKEN_PATH";

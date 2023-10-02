@@ -10,6 +10,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.base.Splitter;
@@ -59,12 +60,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.common.RoleData;
+import ee.ria.DigiDoc.common.TextUtil;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
 import ee.ria.DigiDoc.sign.utils.Function;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
 import ee.ria.libdigidocpp.Signature.Validator;
 import ee.ria.libdigidocpp.Signatures;
+import ee.ria.libdigidocpp.StringVector;
 import okio.ByteString;
 import timber.log.Timber;
 
@@ -195,14 +199,19 @@ public abstract class SignedContainer {
     }
 
     public final SignedContainer sign(ByteString certificate,
-                                      Function<ByteString, ByteString> signFunction) throws
-            Exception {
-
+                                      Function<ByteString, ByteString> signFunction,
+                                      @Nullable RoleData roleData) throws Exception {
         try {
             Container container = container(file());
-
-            ee.ria.libdigidocpp.Signature signature = container
-                    .prepareWebSignature(certificate.toByteArray(), signatureProfile());
+          
+            ee.ria.libdigidocpp.Signature signature;
+            if (roleData != null) {
+                signature = container.prepareWebSignature(certificate.toByteArray(), signatureProfile(),
+                        new StringVector(TextUtil.removeEmptyStrings(roleData.getRoles())), roleData.getCity(),
+                        roleData.getState(), roleData.getZip(), roleData.getCountry());
+            } else {
+                signature = container.prepareWebSignature(certificate.toByteArray(), signatureProfile());
+            }
             if (signature != null) {
                 ByteString signatureData = signFunction.apply(ByteString.of(signature.dataToSign()));
                 signature.setSignatureValue(signatureData.toByteArray());
@@ -437,10 +446,17 @@ public abstract class SignedContainer {
 
         String signersMobileTimeUTC = getFormattedDateTime(signature.claimedSigningTime(), true);
 
+        StringVector roles = signature.signerRoles();
+        String city = signature.city();
+        String state = signature.stateOrProvince();
+        String country = signature.countryName();
+        String zip = signature.postalCode();
+
         return Signature.create(id, name, createdAt, status, diagnosticsInfo, profile, signersCertificateIssuer,
                 signingCertificate, signatureMethod, signatureFormat, signatureTimestamp,
                 signatureTimestampUTC, hashValueOfSignature, tsCertificateIssuer, tsCertificate,
-                ocspCertificateIssuer, ocspCertificate, ocspTime, ocspTimeUTC, signersMobileTimeUTC);
+                ocspCertificateIssuer, ocspCertificate, ocspTime, ocspTimeUTC, signersMobileTimeUTC,
+                roles, city, state, country, zip);
     }
 
     private static String getFormattedDateTime(String dateTimeString, boolean isUTC) {

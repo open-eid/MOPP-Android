@@ -15,19 +15,26 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessScreen;
+import ee.ria.DigiDoc.android.main.settings.role.SettingsRoleAndAddressScreen;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import kotlin.Unit;
 
 public final class SettingsView extends CoordinatorLayout implements ContentView  {
 
     private final Toolbar toolbarView;
-    private final Button accessCategory;
 
     private final Navigator navigator;
 
     private final ViewDisposables disposables;
+
+    private final Button accessCategory;
+    private final Button roleAndAddressCategory;
 
     public SettingsView(Context context) {
         this(context, null);
@@ -46,6 +53,7 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
         disposables = new ViewDisposables();
 
         accessCategory = findViewById(R.id.mainSettingsAccessCategory);
+        roleAndAddressCategory = findViewById(R.id.mainSettingsRoleAndAddressCategory);
 
         toolbarView.setTitle(R.string.main_settings_title);
         toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
@@ -64,8 +72,10 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
                 navigator.execute(Transaction.pop())));
         disposables.add(clicks(accessCategory).subscribe(o ->
                 navigator.execute(
-                        Transaction.push(SettingsAccessScreen.create())))
-        );
+                        Transaction.push(SettingsAccessScreen.create()))));
+        disposables.add(clicks(roleAndAddressCategory).subscribe(o ->
+                navigator.execute(
+                        Transaction.push(SettingsRoleAndAddressScreen.create()))));
     }
 
     @Override

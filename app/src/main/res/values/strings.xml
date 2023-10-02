@@ -44,16 +44,18 @@
     <!-- Main Settings -->
     <string name="main_settings_title">Settings</string>
     <string name="main_settings_access_button">Access</string>
+    <string name="main_settings_role_and_address_button">Role and address</string>
     <string name="main_settings_phone_no_title">Country code and phone number</string>
     <string name="main_settings_personal_code_title">Personal code</string>
     <string name="main_settings_tsa_url_title">Access to Time-Stamping service</string>
     <string name="main_settings_uuid_title">Access to mobile-ID and Smart-ID service</string>
     <string name="main_settings_tsa_url_use_default">Use default</string>
-    <string name="main_settings_role_title">Role</string>
+    <string name="main_settings_ask_role_and_address_title">Ask role and address info on signing</string>
+    <string name="main_settings_role_title">Role / resolution</string>
     <string name="main_settings_city_title">City</string>
     <string name="main_settings_county_title">State</string>
     <string name="main_settings_country_title">Country</string>
-    <string name="main_settings_postal_code_title">ZIP code</string>
+    <string name="main_settings_postal_code_title">Zip</string>
     <string name="main_settings_signature_profile_title">Default file type</string>
     <string name="main_settings_open_all_filetypes_title">Allow app to use all file types (requires app restart)</string>
     <string name="main_settings_allow_screenshots_title">Allow screenshots (requires app restart)</string>
@@ -173,6 +175,10 @@
     <string name="signature_update_signature_add_success">SIGNATURE ADDED</string>
     <string name="signature_update_signature_add_error">Something went wrong</string>
     <string name="signature_update_signature_add_error_title">Failed to sign container</string>
+
+    <string name="signature_update_signature_role_and_address_title">ROLE AND ADDRESS</string>
+    <string name="signature_update_signature_role_and_address_title_accessibility">Role and address</string>
+    <string name="signature_update_signature_role_and_address_info_title">Enter your role and address info</string>
 
     <string name="signature_update_signature_error_message_additional_information">Additional information</string>
     <string name="signature_update_signature_error_message_details">Details</string>

@@ -23,14 +23,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup environment
-        env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: |
-          cd ${{ github.workspace }}/app
-          echo -n "$GOOGLE_SERVICES_JSON" | base64 --decode > "google-services.json"
-          cd ${{ github.workspace }}
-
       - name: Get RIA DigiDoc version
         run: |
           echo "APP_VERSION_NAME=$(grep 'appVersionName=' gradle.properties | cut -d'=' -f 2 | cut -d'-' -f 1)" >> $GITHUB_ENV

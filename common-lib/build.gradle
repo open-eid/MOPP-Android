@@ -50,6 +50,6 @@ dependencies {
 
     api files('libs/libdigidocpp.jar')
 
-    testImplementation "junit:junit:${junitVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testImplementation "com.google.truth:truth:${truthVersion}"
 }

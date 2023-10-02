@@ -24,6 +24,7 @@ import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_P
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CERTIFICATE_CERT_BUNDLE;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SIGNING_ROLE_DATA;
 
 import android.content.Context;
 import android.content.Intent;
@@ -66,6 +67,7 @@ import javax.net.ssl.TrustManager;
 
 import ee.ria.DigiDoc.common.ContainerWrapper;
 import ee.ria.DigiDoc.common.MessageUtil;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.common.TrustManagerUtil;
 import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
@@ -98,6 +100,7 @@ public class MobileSignService extends Worker {
     private static final long SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 5 * 1000;
     private static final long TIMEOUT_CANCEL = 120 * 1000;
     private static boolean isCancelled = false;
+    private final String roleData;
     private long timeout;
 
     private ContainerWrapper containerWrapper;
@@ -115,6 +118,8 @@ public class MobileSignService extends Worker {
         Timber.tag(TAG);
 
         isCancelled = false;
+
+        roleData = workerParameters.getInputData().getString(SIGNING_ROLE_DATA);
 
         signatureRequest = workerParameters.getInputData().getString(CREATE_SIGNATURE_REQUEST);
         accessTokenPath = workerParameters.getInputData().getString(ACCESS_TOKEN_PATH);
@@ -142,6 +147,7 @@ public class MobileSignService extends Worker {
 
         timeout = 0;
         MobileCreateSignatureRequest request = getRequestFromData(signatureRequest);
+        RoleData roleDataRequest = getRoleDataFromData(roleData);
         if (request != null) {
             PostMobileCreateSignatureCertificateRequest certificateRequest = getCertificateRequest(request);
             Timber.log(Log.DEBUG, "Certificate request: %s", certificateRequest.toString());
@@ -202,7 +208,7 @@ public class MobileSignService extends Worker {
                         return Result.failure();
                     }
                     containerWrapper = new ContainerWrapper(request.getContainerPath());
-                    String base64Hash = containerWrapper.prepareSignature(getCertificatePem(response.getCert()));
+                    String base64Hash = containerWrapper.prepareSignature(getCertificatePem(response.getCert()), roleDataRequest);
                     if (base64Hash != null && !base64Hash.isEmpty()) {
                         Timber.log(Log.DEBUG, "Broadcasting create signature response");
                         broadcastMobileCreateSignatureResponse(base64Hash);
@@ -426,6 +432,20 @@ public class MobileSignService extends Worker {
         } catch (JsonProcessingException e) {
             broadcastFault(defaultError(e.getMessage()));
             Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID. Failed to process signature request JSON. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+        }
+
+        return null;
+    }
+
+    private RoleData getRoleDataFromData(String roleData) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            RoleData roleDataRequest = objectMapper.readValue(roleData, RoleData.class);
+            Timber.log(Log.DEBUG, "Role data from data: %s", roleDataRequest != null ? roleDataRequest.toString() : "No role data");
+            return roleDataRequest;
+        } catch (JsonProcessingException e) {
+            broadcastFault(defaultError(e.getMessage()));
+            Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID. Failed to process role data request JSON. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
         }
 
         return null;

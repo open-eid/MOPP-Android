@@ -26,6 +26,7 @@ import androidx.annotation.StringRes;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.common.util.CollectionUtils;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -65,6 +66,7 @@ final class SignatureUpdateAdapter extends
     final Subject<DataFile> documentRemoveClicksSubject = PublishSubject.create();
     final Subject<Signature> signatureClicksSubject = PublishSubject.create();
     final Subject<Signature> signatureRemoveClicksSubject = PublishSubject.create();
+    final Subject<Signature> signatureRoleDetailsClicksSubject = PublishSubject.create();
 
     private final ImmutableList<String> ASICS_TIMESTAMP_CONTAINERS = ImmutableList.of("asics", "scs");
     private final ImmutableList<String> NO_REMOVE_SIGNATURE_BUTTON_FILE_EXTENSIONS = ImmutableList.of("adoc", "ddoc", "asics", "scs", "pdf");
@@ -215,6 +217,10 @@ final class SignatureUpdateAdapter extends
 
     Observable<Signature> signatureRemoveClicks() {
         return signatureRemoveClicksSubject;
+    }
+
+    Observable<Signature> signatureRoleDetailsClicks() {
+        return signatureRoleDetailsClicksSubject;
     }
 
     Item getItem(int position) {
@@ -455,8 +461,10 @@ final class SignatureUpdateAdapter extends
         private final TextView nameView;
         private final TextView statusView;
         private final TextView statusCautionView;
+        private final TextView roleView;
         private final TextView createdAtView;
         private final ImageButton removeButton;
+        private final ImageButton roleDetailsButton;
 
         private final Activity activityContext = (Activity)Activity.getContext().get();
 
@@ -471,8 +479,10 @@ final class SignatureUpdateAdapter extends
             statusView = itemView.findViewById(R.id.signatureUpdateListSignatureStatus);
             statusCautionView = itemView
                     .findViewById(R.id.signatureUpdateListSignatureStatusCaution);
+            roleView = itemView.findViewById(R.id.signatureUpdateListSignatureRole);
             createdAtView = itemView.findViewById(R.id.signatureUpdateListSignatureCreatedAt);
             removeButton = itemView.findViewById(R.id.signatureUpdateListSignatureRemoveButton);
+            roleDetailsButton = itemView.findViewById(R.id.signatureUpdateListSignatureRoleDetailsButton);
         }
 
         @Override
@@ -533,6 +543,13 @@ final class SignatureUpdateAdapter extends
                 removeCautionView();
             }
 
+            if (!CollectionUtils.isEmpty(item.signature().roles())) {
+                roleView.setText(String.join(" / ", item.signature().roles()));
+                roleView.setVisibility(View.VISIBLE);
+            } else {
+                roleView.setVisibility(View.GONE);
+            }
+
             createdAtView.setText(itemView.getResources().getString(
                     R.string.signature_update_signature_created_at,
                     formatter.instant(item.signature().createdAt())));
@@ -543,11 +560,24 @@ final class SignatureUpdateAdapter extends
             clicks(removeButton).map(ignored ->
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureRemoveClicksSubject);
+
+            String roleDetailsButtonText = roleDetailsButton.getResources().getString(R.string.signature_update_signature_role_and_address_title);
+            roleDetailsButton.setContentDescription(roleDetailsButtonText + " " + nameView.getText());
+            roleDetailsButton.setVisibility(isRoleEmpty(item.signature()) ? View.GONE : View.VISIBLE);
+            clicks(roleDetailsButton).map(ignored ->
+                    ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
+                    .subscribe(adapter.signatureRoleDetailsClicksSubject);
         }
 
         private void removeCautionView() {
             statusCautionView.setVisibility(View.GONE);
             statusCautionView.setText("");
+        }
+
+        private boolean isRoleEmpty(Signature signature) {
+            return CollectionUtils.isEmpty(signature.roles()) && TextUtil.isEmpty(signature.city()) &&
+                    TextUtil.isEmpty(signature.state()) &&
+                    TextUtil.isEmpty(signature.country()) && TextUtil.isEmpty(signature.zip());
         }
     }
 

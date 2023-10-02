@@ -111,10 +111,13 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     private final ConfirmationDialog documentRemoveConfirmationDialog;
     private final ConfirmationDialog signatureRemoveConfirmationDialog;
     private final SignatureUpdateSignatureAddDialog signatureAddDialog;
+    private final RoleAddDialog roleAddDialog;
     private final SignatureUpdateSignatureAddView signatureAddView;
+    private final RoleAddView roleAddView;
 
     private final Navigator navigator;
     private final SignatureUpdateViewModel viewModel;
+    private final RoleViewModel roleViewModel;
     private final ViewDisposables disposables = new ViewDisposables();
 
     private final Activity activity = (Activity) getContext();
@@ -129,6 +132,8 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             PublishSubject.create();
     private final Subject<SignatureRemoveIntent> signatureRemoveIntentSubject =
             PublishSubject.create();
+    private final Subject<SignatureRoleViewIntent> signatureRoleDetailsIntentSubject =
+            PublishSubject.create();    
     private final Subject<SignatureAddIntent> signatureAddIntentSubject =
             PublishSubject.create();
 
@@ -136,6 +141,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     @Nullable private DataFile documentRemoveConfirmation;
     @Nullable private Signature signatureRemoveConfirmation;
 
+    private boolean isRoleViewShown = false;
     private boolean signingInfoDelegated = false;
     private final ProgressBar documentAddProgressBar;
     private final ProgressBar mobileIdProgressBar;
@@ -160,6 +166,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
 
         navigator = ApplicationApp.component(context).navigator();
         viewModel = navigator.viewModel(screenId, SignatureUpdateViewModel.class);
+        roleViewModel = navigator.viewModel(screenId, RoleViewModel.class);
 
         setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update, this);
@@ -200,9 +207,14 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         signatureAddView = signatureAddDialog.view();
         resetSignatureAddDialog();
 
+        roleAddDialog = new RoleAddDialog(context);
+        roleAddView = roleAddDialog.view();
+        resetRoleAddDialog();
+
         errorDialog = new SignatureUpdateErrorDialog(context, documentsAddIntentSubject,
                 documentRemoveIntentSubject, signatureAddIntentSubject,
-                signatureRemoveIntentSubject, signatureAddDialog, this);
+                signatureRoleDetailsIntentSubject, signatureRemoveIntentSubject,
+                signatureAddDialog, this);
 
         mobileIdProgressBar = (ProgressBar) mobileIdActivityIndicatorView;
         smartIdProgressBar = (ProgressBar) smartIdActivityIndicatorView;
@@ -217,6 +229,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         View lastElementView = findViewById(R.id.lastInvisibleElement);
         lastElementView.setVisibility(VISIBLE);
 
+        ContentView.removeInvisibleElementScrollListener(listView);
         ContentView.addInvisibleElementScrollListener(listView, lastElementView);
     }
 
@@ -277,7 +290,8 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), addDocumentsIntent(),
-                documentViewIntent(), documentSaveIntent(), documentRemoveIntent(), signatureRemoveIntent(),
+                documentViewIntent(), documentSaveIntent(), documentRemoveIntent(), 
+                signatureRoleViewIntent(), signatureRemoveIntent(),
                 signatureAddIntent(), signatureViewIntent(), encryptIntent(), sendIntent());
     }
 
@@ -415,8 +429,17 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             signatureAddView.method(signatureAddMethod);
         }
 
+        boolean roleAddEnabled = state.roleAddConfirmation();
+        if (roleAddEnabled) {
+            roleAddDialog.show();
+        } else {
+            roleAddDialog.dismiss();
+        }
+
         SignatureAddResponse signatureAddResponse = state.signatureAddResponse();
-        signatureAddView.response(signatureAddResponse);
+        if (!roleAddEnabled) {
+            signatureAddView.response(signatureAddResponse);
+        }
 
         // should be in the MobileIdView in dialog
         mobileIdContainerView.setVisibility(
@@ -544,6 +567,11 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
         SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
         signatureAddView.reset(viewModel);
+        isRoleViewShown = false;
+    }
+
+    private void resetRoleAddDialog() {
+        roleAddView.reset(roleViewModel);
     }
 
     private Observable<InitialIntent> initialIntent() {
@@ -598,6 +626,10 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         return signatureRemoveIntentSubject;
     }
 
+    private Observable<SignatureRoleViewIntent> signatureRoleViewIntent() {
+        return signatureRoleDetailsIntentSubject;
+    }
+
     @SuppressWarnings("unchecked")
     private Observable<SignatureAddIntent> signatureAddIntent() {
         return Observable.mergeArray(
@@ -605,7 +637,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                         .doOnNext(ignored -> resetSignatureAddDialog())
                         .map(ignored -> {
                             int method = viewModel.signatureAddMethod();
-                            return SignatureAddIntent.show(method, isExistingContainer, containerFile);
+                            return SignatureAddIntent.show(method, isExistingContainer, containerFile, false);
                         }),
                 cancels(signatureAddDialog)
                         .doOnNext(ignored -> resetSignatureAddDialog())
@@ -613,13 +645,31 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                 signatureAddView.methodChanges().map(method -> {
                         viewModel.setSignatureAddMethod(method);
                         sendMethodSelectionAccessibilityEvent(method);
-                        return SignatureAddIntent.show(method, isExistingContainer, containerFile);
+                        return SignatureAddIntent.show(method, isExistingContainer, containerFile, false);
                 }),
                 signatureAddDialog.positiveButtonClicks().map(ignored -> {
                     SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
                     SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
+                    boolean isRoleAskingEnabled = activity.getSettingsDataStore().getIsRoleAskingEnabled();
+                    if (isRoleAskingEnabled) {
+                        roleAddDialog.show();
+                        return SignatureAddIntent.show(signatureAddView.method(),
+                                isExistingContainer, containerFile, true);
+                    }
                     return SignatureAddIntent.sign(signatureAddView.method(),
-                            isExistingContainer, containerFile, signatureAddView.request());
+                            isExistingContainer, containerFile, signatureAddView.request(),
+                            activity.getSettingsDataStore().getIsRoleAskingEnabled() ? roleAddView.request() : null);
+                }),
+                cancels(roleAddDialog)
+                    .doOnNext(ignored -> resetSignatureAddDialog())
+                    .map(ignored -> SignatureAddIntent.clear()),
+                roleAddDialog.positiveButtonClicks().map(ignored -> {
+                    isRoleViewShown = true;
+                    roleViewModel.setRoleData(roleAddView.request());
+                    roleAddDialog.dismiss();
+                    return SignatureAddIntent.sign(signatureAddView.method(),
+                            isExistingContainer, containerFile, signatureAddView.request(),
+                            activity.getSettingsDataStore().getIsRoleAskingEnabled() ? roleAddView.request() : null);
                 }),
                 signatureAddIntentSubject
         );
@@ -704,6 +754,9 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         disposables.add(adapter.signatureRemoveClicks().subscribe(signature ->
                 signatureRemoveIntentSubject.onNext(SignatureRemoveIntent
                         .showConfirmation(containerFile, signature))));
+        disposables.add(adapter.signatureRoleDetailsClicks().subscribe(signature ->
+                signatureRoleDetailsIntentSubject.onNext(SignatureRoleViewIntent
+                        .create(signature))));
         disposables.add(signatureRemoveConfirmationDialog.positiveButtonClicks()
                 .subscribe(ignored -> signatureRemoveIntentSubject
                         .onNext(SignatureRemoveIntent
@@ -729,6 +782,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         disposables.detach();
         signatureAddDialog.dismiss();
         sivaConfirmationDialog.dismiss();
+        roleAddDialog.dismiss();
         signatureRemoveConfirmationDialog.dismiss();
         documentRemoveConfirmationDialog.dismiss();
         errorDialog.setOnDismissListener(null);
@@ -737,6 +791,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         isTitleViewFocused = false;
         SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
         SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
+        isRoleViewShown = false;
         ContentView.removeInvisibleElementScrollListener(listView);
         super.onDetachedFromWindow();
     }
@@ -746,6 +801,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         return ViewSavedState.onSaveInstanceState(super.onSaveInstanceState(), parcel -> {
             parcel.writeBundle(signatureAddDialog.onSaveInstanceState());
             parcel.writeBundle(nameUpdateDialog.onSaveInstanceState());
+            parcel.writeBundle(roleAddDialog.onSaveInstanceState());
         });
     }
 
@@ -755,6 +811,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             signatureAddDialog.onRestoreInstanceState(
                     parcel.readBundle(getClass().getClassLoader()));
             nameUpdateDialog.onRestoreInstanceState(parcel.readBundle(getClass().getClassLoader()));
+            roleAddDialog.onRestoreInstanceState(parcel.readBundle(getClass().getClassLoader()));
         }));
     }
 

@@ -25,6 +25,8 @@ public interface SmartSignConstants {
     String SID_BROADCAST_ACTION = "ee.ria.mopp.android.smartid.SID_BROADCAST_ACTION";
     String SID_BROADCAST_TYPE_KEY = "ee.ria.mopp.android.smartid.SID_BROADCAST_TYPE_KEY";
 
+    String SIGNING_ROLE_DATA = "ee.ria.mopp.android.smartid.SIGNING_ROLE_DATA";
+
     String CREATE_SIGNATURE_REQUEST = "ee.ria.mopp.android.smartid.CREATE_SIGNATURE_REQUEST";
     String CERTIFICATE_CERT_BUNDLE = "ee.ria.mopp.android.smartid.CERTIFICATE_CERT_BUNDLE";
     String CREATE_SIGNATURE_DEVICE = "ee.ria.mopp.android.smartid.SID_DEVICE";

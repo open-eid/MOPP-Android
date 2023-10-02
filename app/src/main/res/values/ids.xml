@@ -67,12 +67,15 @@
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
     <item type="id" name="mainSettingsAccessScreen" />
+    <item type="id" name="mainSettingsRoleAndAddressScreen" />
     <item type="id" name="mainSettingsFragment" />
     <item type="id" name="mainSettingsAccessCategory" />
+    <item type="id" name="mainSettingsRoleAndAddressCategory" />
     <item type="id" name="mainSettingsOpenAllFileTypes" />
     <item type="id" name="mainSettingsAllowScreenshots" />
     <item type="id" name="mainSettingsAccessToSigningService" />
     <item type="id" name="mainSettingsAccessToTimeStampingService" />
+    <item type="id" name="mainSettingsAskRoleAndAddress" />
     <item type="id" name="mainSettingsTsaCertificateContainer" />
     <item type="id" name="mainSettingsTsaCertificateIssuedTo" />
     <item type="id" name="mainSettingsTsaCertificateValidTo" />
@@ -248,7 +251,9 @@
     <item type="id" name="signatureUpdateListSignatureName" />
     <item type="id" name="signatureUpdateListSignatureStatus" />
     <item type="id" name="signatureUpdateListSignatureStatusCaution" />
+    <item type="id" name="signatureUpdateListSignatureRole" />
     <item type="id" name="signatureUpdateListSignatureCreatedAt" />
+    <item type="id" name="signatureUpdateListSignatureRoleDetailsButton" />
     <item type="id" name="signatureUpdateListSignatureRemoveButton" />
     <item type="id" name="signatureUpdateListDocumentsAddButton" />
     <item type="id" name="signatureUpdateMobileIdContainer" />
@@ -310,6 +315,34 @@
     <item type="id" name="signatureAddPersonalCodeLabel" />
     <item type="id" name="signatureAddPersonalCode" />
     <item type="id" name="signatureAddRememberMe" />
+
+    <!-- Role and Address -->
+    <item type="id" name="signatureUpdateRoleAdd" />
+    <item type="id" name="signatureRoleScreen" />
+    <item type="id" name="roleAndAddressContainer" />
+    <item type="id" name="signatureUpdateRole" />
+    <item type="id" name="signatureUpdateRoleCity" />
+    <item type="id" name="signatureUpdateRoleState" />
+    <item type="id" name="signatureUpdateRoleCountry" />
+    <item type="id" name="signatureUpdateRoleZip" />
+
+    <item type="id" name="signatureUpdateRoleLabel" />
+    <item type="id" name="signatureUpdateRoleCityLabel" />
+    <item type="id" name="signatureUpdateRoleStateLabel" />
+    <item type="id" name="signatureUpdateRoleCountryLabel" />
+    <item type="id" name="signatureUpdateRoleZipLabel" />
+
+    <item type="id" name="signatureUpdateRoleText" />
+    <item type="id" name="signatureUpdateRoleCityText" />
+    <item type="id" name="signatureUpdateRoleStateText" />
+    <item type="id" name="signatureUpdateRoleCountryText" />
+    <item type="id" name="signatureUpdateRoleZipText" />
+
+    <item type="id" name="signatureUpdateRoleDetailLabel" />
+    <item type="id" name="signatureUpdateRoleCityDetailLabel" />
+    <item type="id" name="signatureUpdateRoleStateDetailLabel" />
+    <item type="id" name="signatureUpdateRoleCountryDetailLabel" />
+    <item type="id" name="signatureUpdateRoleZipDetailLabel" />
 
     <!-- Crypto Home -->
     <item type="id" name="cryptoHomeCreateButton" />

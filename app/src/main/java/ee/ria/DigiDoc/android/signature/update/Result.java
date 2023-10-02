@@ -197,6 +197,33 @@ interface Result extends MviResult<ViewState> {
     }
 
     @AutoValue
+    abstract class RoleDetailsResult implements Result {
+
+        @State abstract String state();
+
+        abstract Signature signature();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state.buildWith()
+                    .documentViewState(state())
+                    .build();
+        }
+
+        static RoleDetailsResult activity() {
+            return create(State.ACTIVE, null);
+        }
+
+        static RoleDetailsResult idle() {
+            return create(State.IDLE, null);
+        }
+
+        private static RoleDetailsResult create(@State String state, Signature signature) {
+            return new AutoValue_Result_RoleDetailsResult(state, signature);
+        }
+    }
+
+    @AutoValue
     abstract class DocumentRemoveResult implements Result {
 
         @Nullable abstract DataFile showConfirmation();
@@ -320,6 +347,8 @@ interface Result extends MviResult<ViewState> {
 
         @Nullable abstract SignedContainer container();
 
+        abstract boolean showRoleView();
+
         @Nullable abstract Throwable error();
 
         @Override
@@ -332,6 +361,7 @@ interface Result extends MviResult<ViewState> {
                     .signatureAddMethod(method())
                     .signatureAddActivity(active())
                     .signatureAddResponse(response)
+                    .roleAddConfirmation(showRoleView())
                     .signatureAddError(error());
             if (container() != null) {
                 builder.signatureAddSuccessMessageVisible(true)
@@ -343,39 +373,43 @@ interface Result extends MviResult<ViewState> {
         }
 
         static SignatureAddResult show(int method) {
-            return create(method, false, null, null, null);
+            return create(method, false, null, null, false, null);
+        }
+
+        static SignatureAddResult showRoleView(int method) {
+            return create(method, false, null, null, true, null);
         }
 
         static SignatureAddResult activity() {
-            return create(null, true, null, null, null);
+            return create(null, true, null, null, false, null);
         }
 
         static SignatureAddResult activity(int method) {
-            return create(method, true, null, null, null);
+            return create(method, true, null, null, false, null);
         }
 
         static SignatureAddResult method(int method, SignatureAddResponse response) {
-            return create(response.showDialog() ? method : null, response.active(), response, null,
-                    null);
+            return create(response.showDialog() ? method : null, response.active(), response, null, false, null);
         }
 
         static SignatureAddResult success(SignedContainer container) {
-            return create(null, false, null, container, null);
+            return create(null, false, null, container, false, null);
         }
 
         static SignatureAddResult failure(Throwable error) {
-            return create(null, false, null, null, error);
+            return create(null, false, null, null, false, error);
         }
 
         static SignatureAddResult clear() {
-            return create(null, false, null, null, null);
+            return create(null, false, null, null, false, null);
         }
 
         private static SignatureAddResult create(@Nullable Integer method, boolean active,
                                                  @Nullable SignatureAddResponse response,
                                                  @Nullable SignedContainer container,
+                                                 boolean showRoleView,
                                                  @Nullable Throwable error) {
-            return new AutoValue_Result_SignatureAddResult(method, active, response, container,
+            return new AutoValue_Result_SignatureAddResult(method, active, response, container, showRoleView,
                     error);
         }
     }
