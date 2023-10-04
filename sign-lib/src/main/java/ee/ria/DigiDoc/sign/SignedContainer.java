@@ -318,25 +318,13 @@ public abstract class SignedContainer {
      * @param file File to check.
      * @return True if it is a container, false otherwise.
      */
-    public static boolean isContainer(Context context, File file) throws Exception {
+    public static boolean isContainer(Context context, File file) {
         String extension = getFileExtension(file.getName()).toLowerCase();
         if (EXTENSIONS.contains(extension)) {
             return true;
         }
         if (PDF_EXTENSION.equals(extension)) {
-            try {
-                if (container(file).signatures().size() > 0) {
-                    return true;
-                }
-            } catch (Exception e) {
-                if (e instanceof NoInternetConnectionException) {
-                    if (isSignedPDF(context, file)) {
-                        Timber.log(Log.ERROR, e, "Unable to check if PDF is signed. No Internet connection");
-                        throw e;
-                    }
-                }
-                return false;
-            }
+            return isSignedPDF(context, file);
         }
         return false;
     }
