@@ -20,21 +20,19 @@ import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.disposables.Disposable;
-import kotlin.Unit;
 
 public final class SettingsView extends CoordinatorLayout implements ContentView  {
 
     private final Toolbar toolbarView;
 
     private final Navigator navigator;
+    private final SettingsDataStore settingsDataStore;
 
     private final ViewDisposables disposables;
 
     private final Button accessCategory;
     private final Button roleAndAddressCategory;
+    private final Button defaultSettingsButton;
 
     public SettingsView(Context context) {
         this(context, null);
@@ -49,11 +47,13 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
         inflate(context, R.layout.main_settings, this);
         toolbarView = findViewById(R.id.toolbar);
         navigator = ApplicationApp.component(context).navigator();
+        settingsDataStore = ApplicationApp.component(context).settingsDataStore();
         TextView toolbarTitleView = getToolbarViewTitle(toolbarView);
         disposables = new ViewDisposables();
 
         accessCategory = findViewById(R.id.mainSettingsAccessCategory);
         roleAndAddressCategory = findViewById(R.id.mainSettingsRoleAndAddressCategory);
+        defaultSettingsButton = findViewById(R.id.mainSettingsUseDefaultSettings);
 
         toolbarView.setTitle(R.string.main_settings_title);
         toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
@@ -62,6 +62,14 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
         if (toolbarTitleView != null) {
             toolbarTitleView.setContentDescription("\u202F");
         }
+    }
+
+    private void resetToDefaultSettings(SettingsDataStore settingsDataStore) {
+        settingsDataStore.setUuid("");
+        settingsDataStore.setTsaUrl("");
+        settingsDataStore.setIsOpenAllFileTypesEnabled(true);
+        settingsDataStore.setIsScreenshotAllowed(false);
+        settingsDataStore.setIsRoleAskingEnabled(false);
     }
 
     @Override
@@ -76,6 +84,9 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
         disposables.add(clicks(roleAndAddressCategory).subscribe(o ->
                 navigator.execute(
                         Transaction.push(SettingsRoleAndAddressScreen.create()))));
+        disposables.add(clicks(defaultSettingsButton).subscribe(o ->
+                resetToDefaultSettings(settingsDataStore)
+        ));
     }
 
     @Override

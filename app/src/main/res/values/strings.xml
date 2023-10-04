@@ -43,6 +43,7 @@
 
     <!-- Main Settings -->
     <string name="main_settings_title">Settings</string>
+    <string name="main_settings_use_default_settings_button_title">USE DEFAULT SETTINGS</string>
     <string name="main_settings_access_button">Access</string>
     <string name="main_settings_role_and_address_button">Role and address</string>
     <string name="main_settings_phone_no_title">Country code and phone number</string>

@@ -95,6 +95,22 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <Button
+                    android:id="@id/mainSettingsUseDefaultSettings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/material_baseline_grid_3x"
+                    android:text="@string/main_settings_use_default_settings_button_title" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>
