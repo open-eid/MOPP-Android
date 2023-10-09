@@ -357,8 +357,13 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
                 errorDialog.setMessage(errorDialog.getContext().getString(
                         R.string.empty_file_error));
             } else {
-                errorDialog.setMessage(errorDialog.getContext().getString(
-                        R.string.crypto_create_data_files_add_error_exists));
+                if (dataFilesAddError.getMessage() != null && dataFilesAddError.getMessage().contains("connection_failure")) {
+                    errorDialog.setMessage(errorDialog.getContext().getString(
+                            R.string.signature_update_signature_error_invalid_ssl_handshake));
+                } else {
+                    errorDialog.setMessage(errorDialog.getContext().getString(
+                            R.string.crypto_create_data_files_add_error_exists));
+                }
             }
             errorDialog.show();
         } else {
