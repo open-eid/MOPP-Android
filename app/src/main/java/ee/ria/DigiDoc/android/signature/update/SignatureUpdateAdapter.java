@@ -62,6 +62,7 @@ final class SignatureUpdateAdapter extends
 
     final Subject<Object> scrollToTopSubject = PublishSubject.create();
     final Subject<Object> nameUpdateClicksSubject = PublishSubject.create();
+    final Subject<Object> saveContainerClicksSubject = PublishSubject.create();
     final Subject<DataFile> documentClicksSubject = PublishSubject.create();
     final Subject<Object> documentAddClicksSubject = PublishSubject.create();
     final Subject<DataFile> documentSaveClicksSubject = PublishSubject.create();
@@ -199,6 +200,10 @@ final class SignatureUpdateAdapter extends
 
     Observable<Object> nameUpdateClicks() {
         return nameUpdateClicksSubject;
+    }
+
+    Observable<Object> saveContainerClicks() {
+        return saveContainerClicksSubject;
     }
 
     Observable<DataFile> documentClicks() {
@@ -363,12 +368,14 @@ final class SignatureUpdateAdapter extends
     static final class NameViewHolder extends UpdateViewHolder<NameItem> {
 
         private final TextView nameView;
-        private final View updateButton;
+        private final ImageButton updateButton;
+        private final ImageButton saveButton;
 
         NameViewHolder(View itemView) {
             super(itemView);
             nameView = itemView.findViewById(R.id.signatureUpdateListName);
             updateButton = itemView.findViewById(R.id.signatureUpdateListNameUpdateButton);
+            saveButton = itemView.findViewById(R.id.signatureUpdateListNameSaveButton);
         }
 
         @Override
@@ -379,7 +386,9 @@ final class SignatureUpdateAdapter extends
                 nameView.setText(FileUtil.sanitizeString(item.name(), ""));
             }
             updateButton.setVisibility(item.updateButtonVisible() && !isContainerSigned(adapter) ? View.VISIBLE : View.GONE);
+            saveButton.setVisibility(isContainerSigned(adapter) ? View.VISIBLE : View.GONE);
             clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
+            clicks(saveButton).subscribe(adapter.saveContainerClicksSubject);
         }
 
         private boolean isContainerSigned(SignatureUpdateAdapter adapter) {

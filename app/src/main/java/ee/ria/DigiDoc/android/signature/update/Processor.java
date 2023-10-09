@@ -95,6 +95,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
     private final ObservableTransformer<Action.SendAction, Result.SendResult> send;
 
+    private final ObservableTransformer<Action.ContainerSaveAction, Result.ContainerSaveResult> containerSave;
+
     private final ObservableTransformer<Action.EncryptAction, Result.EncryptResult> encrypt;
 
     private final PublishSubject<Boolean> notificationsPermissionSubject = PublishSubject.create();
@@ -419,10 +421,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                 .just(Result.SignatureAddResult.method(method, response));
                                     }
                                 })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .onErrorReturn(Result.SignatureAddResult::failure)
-                        .startWithItem(Result.SignatureAddResult.activity(method)));
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .onErrorReturn(Result.SignatureAddResult::failure)
+                                .startWithItem(Result.SignatureAddResult.activity(method)));
+
             } else {
                 throw new IllegalArgumentException("Can't handle action " + action);
             }
@@ -434,6 +437,26 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 createActionIntent(application, action.containerFile(), android.content.Intent.ACTION_SEND), null)))
                 .map(action -> Result.SendResult.success())
                 .onErrorReturn(Result.SendResult::failure);
+
+        containerSave = upstream -> upstream.switchMap(action -> {
+            navigator.execute(Transaction.activityForResult(SAVE_FILE,
+                    createSaveIntent(action.containerFile(), application.getApplicationContext()), null));
+            return navigator.activityResults()
+                    .filter(activityResult ->
+                            activityResult.requestCode() == SAVE_FILE)
+                    .switchMap(activityResult -> {
+                        if (activityResult.resultCode() == RESULT_OK) {
+                            try (
+                                    InputStream inputStream = new FileInputStream(action.containerFile());
+                                    OutputStream outputStream = application.getContentResolver().openOutputStream(activityResult.data().getData())
+                            ) {
+                                ByteStreams.copy(inputStream, outputStream);
+                            }
+                            ToastUtil.showError(navigator.activity(), R.string.file_saved);
+                        }
+                        return Observable.empty();
+                    });
+        });
 
         encrypt = upstream -> upstream
                 .doOnNext(action -> {
@@ -457,6 +480,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 shared.ofType(Action.SignatureViewAction.class).compose(signatureView),
                 shared.ofType(Action.SignatureRoleDetailsAction.class).compose(roleDetailsView),
                 shared.ofType(Action.SignatureAddAction.class).compose(signatureAdd),
+                shared.ofType(Action.SendAction.class).compose(send),
+                shared.ofType(Action.ContainerSaveAction.class).compose(containerSave),
                 shared.ofType(Action.EncryptAction.class).compose(encrypt),
                 shared.ofType(Action.SendAction.class).compose(send)));
     }

@@ -257,8 +257,8 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
             signatureEncryptButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
             sendButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
-            mobileIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 20, 1, COMPLEX_UNIT_SP);
-            smartIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 20, 1, COMPLEX_UNIT_SP);
+            mobileIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
+            smartIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
         } else {
             signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
             signatureEncryptButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
@@ -295,7 +295,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), addDocumentsIntent(),
                 documentViewIntent(), documentSaveIntent(), documentRemoveIntent(), 
                 signatureRoleViewIntent(), signatureRemoveIntent(),
-                signatureAddIntent(), signatureViewIntent(), encryptIntent(), sendIntent());
+                signatureAddIntent(), signatureViewIntent(), encryptIntent(), saveIntent(), sendIntent());
     }
 
     private void checkIfDdocParentContainerIsTimestamped(ImmutableList<Signature> signatures, ImmutableList<DataFile> dataFiles) {
@@ -698,6 +698,10 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     private Observable<SendIntent> sendIntent() {
         return clicks(sendButton)
                 .map(ignored -> SendIntent.create(containerFile));
+    }
+
+    private Observable<ContainerSaveIntent> saveIntent() {
+        return adapter.saveContainerClicks().map(ignored -> ContainerSaveIntent.create(containerFile));
     }
 
     private void sendMethodSelectionAccessibilityEvent(int method) {

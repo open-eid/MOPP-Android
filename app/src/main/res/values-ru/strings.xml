@@ -165,6 +165,7 @@
     <string name="signature_update_signature_remove_error">Не удалось удалить подпись из контейнера</string>
     <string name="signature_update_container_load_error">Ошибка при открывании контейнера</string>
     <string name="signature_update_send_button">ПОДЕЛИТЬСЯ</string>
+    <string name="signature_update_save_button">СОХРАНИТЕ</string>
     <string name="signature_update_signature_add_button">ПОДПИСАТЬ</string>
 
     <string name="signature_update_signature_type_timestamp">Временные штампы контейнерa</string>
@@ -337,6 +338,7 @@
     <string name="crypto_create_encrypt_error_no_recipients">Не добавлено ни одного получателя</string>
     <string name="crypto_create_decrypt_button">ДЕШИФРОВАТЬ</string>
     <string name="crypto_create_decrypt_positive_button">Дешифровать</string>
+    <string name="crypto_create_save_button">СОХРАНИТЕ</string>
     <string name="crypto_create_send_button">ПОДЕЛИТЬСЯ</string>
     <string name="crypto_create_error">Что-то пошло не так с шифрованием</string>
 
@@ -497,6 +499,7 @@
 
     <string name="decrypt_content_description">Дешифрировать документ, вкладка %1$d из %2$d</string>
     <string name="sign_send_content_description">Подписать, вкладка %1$d из %2$d</string>
+    <string name="sign_save_content_description">Сохраните, вкладка %1$d из %2$d</string>
     <string name="decrypt_send_content_description">Поделиться, вкладка %1$d из %2$d</string>
 
     <string name="yes_button">ДА</string>

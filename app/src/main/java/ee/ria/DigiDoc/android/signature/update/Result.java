@@ -451,4 +451,23 @@ interface Result extends MviResult<ViewState> {
             return new AutoValue_Result_EncryptResult(error);
         }
     }
+
+    @AutoValue
+    abstract class ContainerSaveResult implements Result {
+
+        @Nullable abstract Throwable error();
+
+        @Override
+        public ViewState reduce(ViewState state) {
+            return state;
+        }
+
+        static ContainerSaveResult success() {
+            return new AutoValue_Result_ContainerSaveResult(null);
+        }
+
+        static ContainerSaveResult failure(Throwable error) {
+            return new AutoValue_Result_ContainerSaveResult(error);
+        }
+    }
 }

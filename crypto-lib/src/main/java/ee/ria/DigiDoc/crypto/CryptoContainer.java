@@ -38,6 +38,8 @@ public abstract class CryptoContainer {
 
     private static final String EXTENSION = "cdoc";
 
+    private static final String MIME_TYPE = "application/octet-stream";
+
     /**
      * Location of the container.
      */
@@ -197,5 +199,9 @@ public abstract class CryptoContainer {
     public static boolean isCryptoContainer(File file) {
         String extension = getFileExtension(file.getName()).toLowerCase();
         return "cdoc".equals(extension);
+    }
+
+    public static String getMimeType() {
+        return MIME_TYPE;
     }
 }
