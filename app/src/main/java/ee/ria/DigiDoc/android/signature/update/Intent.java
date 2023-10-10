@@ -121,7 +121,7 @@ class DocumentViewIntent implements Intent, Action {
         this.confirmation = confirmation;
     }
 
-    static DocumentViewIntent confirmation(Context context, File containerFile, DataFile document) throws Exception {
+    static DocumentViewIntent confirmation(Context context, File containerFile, DataFile document) {
         String containerFileExtension = getFileExtension(containerFile.getName()).toLowerCase(Locale.US);
         String documentFileExtension = getFileExtension(document.name()).toLowerCase(Locale.US);
         if (!containerFileExtension.equals("pdf") && SignedContainer.isContainer(context, containerFile)) {

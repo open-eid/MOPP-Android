@@ -44,9 +44,11 @@ import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.common.TextUtil;
 import ee.ria.DigiDoc.sign.DataFile;
+import ee.ria.DigiDoc.sign.SSLHandshakeException;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignatureStatus;
 import ee.ria.DigiDoc.sign.SignedContainer;
@@ -74,7 +76,7 @@ final class SignatureUpdateAdapter extends
     private ImmutableList<Item> items = ImmutableList.of();
 
     void setData(Context context, boolean isSuccess, boolean isExistingContainer, boolean isNestedContainer,
-                 @Nullable SignedContainer container, @Nullable File nestedFile, boolean isSivaConfirmed) {
+                 @Nullable SignedContainer container, @Nullable File nestedFile, boolean isSivaConfirmed) throws Exception {
         boolean signaturesValid = container == null || container.signaturesValid();
         boolean isEmptyFileInContainer = container != null && container.hasEmptyFiles();
         String name = container == null ? null : FileUtil.sanitizeString(container.name(), "");
@@ -111,8 +113,12 @@ final class SignatureUpdateAdapter extends
                         }
                     } catch (Exception e) {
                         Timber.log(Log.ERROR, e, "Unable to get nested container file to show timestamp signature");
-                        createRegularDataFilesView(builder, name, container, isNestedContainer, isExistingContainer);
-                        createRegularSignatureView(builder, container, isNestedContainer);
+                        if (e instanceof SSLHandshakeException) {
+                            throw e;
+                        } else {
+                            createRegularDataFilesView(builder, name, container, isNestedContainer, isExistingContainer);
+                            createRegularSignatureView(builder, container, isNestedContainer);
+                        }
                     }
                 } else {
                     if (ASICS_TIMESTAMP_CONTAINERS.contains(Files.getFileExtension(container.name()).toLowerCase())) {

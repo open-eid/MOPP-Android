@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.main.settings.create;
 
 import static android.app.Activity.RESULT_OK;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
+import static ee.ria.DigiDoc.common.CommonConstants.DIR_SIVA_CERT;
 import static ee.ria.DigiDoc.common.CommonConstants.DIR_TSA_CERT;
 
 import android.app.Application;
@@ -38,15 +39,18 @@ import timber.log.Timber;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
-    private final ObservableTransformer<Action.ChooseFileAction, Result.ChooseFileResult>
-            chooseFile;
+    private final ObservableTransformer<Action.ChooseTSAFileAction, Result.ChooseFileResult>
+            chooseTSAFile;
+
+    private final ObservableTransformer<Action.ChooseSivaFileAction, Result.ChooseFileResult>
+            chooseSivaFile;
 
     @Inject Processor(Navigator navigator,
                       Application application,
                       SettingsDataStore settingsDataStore,
                       FileSystem fileSystem) {
 
-        chooseFile = upstream -> upstream
+        chooseTSAFile = upstream -> upstream
                 .switchMap(action -> {
                     if (action.intent() != null) {
                         throw new ActivityResultException(ActivityResult.create(
@@ -131,11 +135,98 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     navigator.execute(Transaction.pop());
                     return Result.ChooseFileResult.create(navigator.activity());
                 });
+
+        chooseSivaFile = upstream -> upstream
+                .switchMap(action -> {
+                    if (action.intent() != null) {
+                        throw new ActivityResultException(ActivityResult.create(
+                                action.transaction().getRequestCode(), RESULT_OK, action.intent()));
+                    }
+                    navigator.execute(action.transaction());
+                    return navigator.activityResults()
+                            .filter(activityResult ->
+                                    activityResult.requestCode()
+                                            == action.transaction().getRequestCode())
+                            .doOnNext(activityResult -> {
+                                throw new ActivityResultException(activityResult);
+                            })
+                            .map(activityResult -> Result.ChooseFileResult.create(navigator.activity()));
+                })
+                .onErrorResumeNext(throwable -> {
+                    if (!(throwable instanceof ActivityResultException)) {
+                        return Observable.error(throwable);
+                    }
+                    ActivityResult activityResult = ((ActivityResultException) throwable)
+                            .activityResult;
+                    if (activityResult.resultCode() == RESULT_OK) {
+                        if (activityResult.data() != null) {
+                            ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
+                                    parseGetContentIntent(navigator.activity(), application.getContentResolver(), activityResult.data(), fileSystem.getExternallyOpenedFilesDir()));
+                            ToastUtil.handleEmptyFileError(validFiles, navigator.activity());
+
+                            try (InputStream initialStream = application.getContentResolver().openInputStream(activityResult.data().getData())) {
+                                DocumentFile documentFile = DocumentFile.fromSingleUri(navigator.activity(), activityResult.data().getData());
+                                if (documentFile != null) {
+                                    File sivaCertFolder = new File(navigator.activity().getFilesDir(), DIR_SIVA_CERT);
+                                    if (!sivaCertFolder.exists()) {
+                                        boolean isFolderCreated = sivaCertFolder.mkdirs();
+                                        Timber.log(Log.DEBUG, String.format("SiVa cert folder created: %s", isFolderCreated));
+                                    }
+
+                                    String fileName = documentFile.getName();
+                                    if (fileName == null || fileName.isEmpty()) {
+                                        fileName = "sivaCert";
+                                    }
+                                    File sivaFile = new File(sivaCertFolder, fileName);
+
+                                    FileUtils.copyInputStreamToFile(initialStream, sivaFile);
+
+                                    settingsDataStore.setSivaCertName(sivaFile.getName());
+
+                                    return Observable.just(Result.ChooseFileResult.create(navigator.activity()));
+                                }
+                            } catch (Exception e) {
+                                Timber.log(Log.ERROR, e, "Unable to read SiVa certificate file data");
+                            }
+
+                            return Observable.just(Result.ChooseFileResult.create(navigator.activity()));
+                        } else {
+                            Timber.log(Log.ERROR, "Data from file chooser is empty");
+                            ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
+
+                            navigator.execute(Transaction.pop());
+                        }
+                    } else {
+                        if (ActivityUtil.isExternalFileOpened(navigator.activity())) {
+                            ActivityUtil.restartActivity(application.getApplicationContext(), navigator.activity());
+                        } else {
+                            navigator.execute(Transaction.pop());
+                        }
+                        return Observable.just(Result.ChooseFileResult.create(navigator.activity()));
+                    }
+
+                    return Observable.empty();
+                })
+                .onErrorReturn(throwable -> {
+                    List<Throwable> exceptions = ((CompositeException) throwable).getExceptions();
+                    if (!exceptions.isEmpty()) {
+                        boolean isEmptyFileException = exceptions.stream().anyMatch(exception ->
+                                (exception instanceof EmptyFileException));
+                        if (isEmptyFileException) {
+                            ToastUtil.showEmptyFileError(navigator.activity());
+                        } else {
+                            ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
+                        }
+                    }
+                    navigator.execute(Transaction.pop());
+                    return Result.ChooseFileResult.create(navigator.activity());
+                });
     }
 
     @Override
     public ObservableSource<Result> apply(Observable<Action> upstream) {
         return upstream.publish(shared -> Observable.mergeArray(
-                shared.ofType(Action.ChooseFileAction.class).compose(chooseFile)));
+                shared.ofType(Action.ChooseTSAFileAction.class).compose(chooseTSAFile),
+                shared.ofType(Action.ChooseSivaFileAction.class).compose(chooseSivaFile)));
     }
 }

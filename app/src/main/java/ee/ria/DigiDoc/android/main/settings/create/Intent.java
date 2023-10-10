@@ -5,28 +5,55 @@ import com.google.auto.value.AutoValue;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 
 public interface Intent extends MviIntent {
+    Action action();
+}
 
-    @AutoValue
-    class ChooseFileIntent implements Intent {
+class InitialIntent implements Intent {
 
-        public static ChooseFileIntent clear() {
-            return null;
-        }
-
-        public ChooseFileIntent create() {
-            return new AutoValue_Intent_ChooseFileIntent();
-        }
+    public static InitialIntent clear() {
+        return null;
     }
 
-    @AutoValue
-    class OpenAccessIntent implements Intent {
+    static InitialIntent create() {
+        return new InitialIntent();
+    }
 
-        public static OpenAccessIntent clear() {
-            return null;
-        }
+    @Override
+    public Action action() {
+        return Action.InitialAction.create();
+    }
+}
 
-        public OpenAccessIntent create() {
-            return new AutoValue_Intent_OpenAccessIntent();
-        }
+@AutoValue
+class ChooseTSAFileIntent implements Intent {
+
+    public static ChooseTSAFileIntent clear() {
+        return null;
+    }
+
+    static ChooseTSAFileIntent create() {
+        return new ChooseTSAFileIntent();
+    }
+
+    @Override
+    public Action action() {
+        return Action.ChooseTSAFileAction.create();
+    }
+}
+
+@AutoValue
+class ChooseSivaFileIntent implements Intent {
+
+    public static ChooseSivaFileIntent clear() {
+        return null;
+    }
+
+    static ChooseSivaFileIntent create() {
+        return new ChooseSivaFileIntent();
+    }
+
+    @Override
+    public Action action() {
+        return Action.ChooseSivaFileAction.create();
     }
 }

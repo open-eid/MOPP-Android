@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.main.settings.create;
 
+import static ee.ria.DigiDoc.android.Constants.RC_SIVA_CERT_ADD;
 import static ee.ria.DigiDoc.android.Constants.RC_TSA_CERT_ADD;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 
@@ -22,14 +23,26 @@ interface Action extends MviAction {
     }
 
     @AutoValue
-    abstract class ChooseFileAction implements Action,
+    abstract class ChooseTSAFileAction implements Action,
             TransactionAction<Transaction.ActivityForResultTransaction> {
 
         @Nullable abstract android.content.Intent intent();
 
-        static ChooseFileAction create() {
-            return new AutoValue_Action_ChooseFileAction(Transaction.activityForResult(
+        static ChooseTSAFileAction create() {
+            return new AutoValue_Action_ChooseTSAFileAction(Transaction.activityForResult(
                     RC_TSA_CERT_ADD, createGetContentIntent(false), null), null);
+        }
+    }
+
+    @AutoValue
+    abstract class ChooseSivaFileAction implements Action,
+            TransactionAction<Transaction.ActivityForResultTransaction> {
+
+        @Nullable abstract android.content.Intent intent();
+
+        static ChooseSivaFileAction create() {
+            return new AutoValue_Action_ChooseSivaFileAction(Transaction.activityForResult(
+                    RC_SIVA_CERT_ADD, createGetContentIntent(false), null), null);
         }
     }
 }

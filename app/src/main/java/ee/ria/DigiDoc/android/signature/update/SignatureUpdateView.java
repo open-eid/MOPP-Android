@@ -18,6 +18,7 @@ import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -63,11 +64,13 @@ import ee.ria.DigiDoc.common.ActivityUtil;
 import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
+import ee.ria.DigiDoc.sign.SSLHandshakeException;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
+import timber.log.Timber;
 
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements ContentView, MviView<Intent, ViewState> {
@@ -314,6 +317,10 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         if (state.containerLoadError() != null) {
             int messageId = state.containerLoadError() instanceof NoInternetConnectionException
                     ? R.string.no_internet_connection : R.string.signature_update_container_load_error;
+            if (state.containerLoadError() instanceof SSLHandshakeException) {
+                Timber.log(Log.ERROR, state.containerLoadError(), "Unable to open container. SSL handshake was not successful");
+                messageId = ((SSLHandshakeException) state.containerLoadError()).getMessageId();
+            }
             ToastUtil.showError(getContext(), messageId);
             navigator.execute(Transaction.pop());
             SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
@@ -387,8 +394,16 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                 || state.documentViewState().equals(State.ACTIVE)
                 || state.documentRemoveInProgress() || state.signatureRemoveInProgress()
                 || state.signatureAddActivity());
-        adapter.setData(navigator.activity(), state.signatureAddSuccessMessageVisible(), isExistingContainer,
-                isNestedContainer, state.container(), nestedFile, isSivaConfirmed);
+        try {
+            adapter.setData(navigator.activity(), state.signatureAddSuccessMessageVisible(), isExistingContainer,
+                    isNestedContainer, state.container(), nestedFile, isSivaConfirmed);
+        } catch (Exception e) {
+            Timber.log(Log.ERROR, e, "Unable to set adapter data");
+            if (e instanceof SSLHandshakeException) {
+                ToastUtil.showError(navigator.activity(), ((SSLHandshakeException) e).getMessageId());
+            }
+            navigator.execute(Transaction.pop());
+        }
 
         if (state.signatureAddSuccessMessageVisible()) {
             showSuccessNotification();

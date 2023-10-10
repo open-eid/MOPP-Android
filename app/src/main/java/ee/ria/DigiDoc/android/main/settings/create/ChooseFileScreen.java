@@ -21,13 +21,24 @@ import io.reactivex.rxjava3.core.Observable;
 
 public final class ChooseFileScreen extends ConductorScreen implements Screen, MviView<Intent, ViewState> {
 
-    public static ChooseFileScreen create() {
-        return new ChooseFileScreen();
+    private final boolean isTsa;
+    private final boolean isSiva;
+
+    public static ChooseFileScreen create(boolean isTsa, boolean isSiva) {
+        return new ChooseFileScreen(isTsa, isSiva);
+    }
+
+    public ChooseFileScreen() {
+        super(R.id.mainSettingsChooseFileScreen);
+        this.isTsa = false;
+        this.isSiva = false;
     }
 
     @SuppressWarnings("WeakerAccess")
-    public ChooseFileScreen() {
+    public ChooseFileScreen(boolean isTsa, boolean isSiva) {
         super(R.id.mainSettingsChooseFileScreen);
+        this.isTsa = isTsa;
+        this.isSiva = isSiva;
     }
 
     @Override
@@ -42,11 +53,11 @@ public final class ChooseFileScreen extends ConductorScreen implements Screen, M
 
     @Override
     public Observable<Intent> intents() {
-        return Observable.mergeArray(chooseFileIntent());
+        return Observable.mergeArray(initialIntent(), chooseTSAFileIntent(), chooseSivaFileIntent());
     }
 
     private final ViewDisposables disposables = new ViewDisposables();
-    private TSACertificateAddViewModel viewModel;
+    private CertificateAddViewModel viewModel;
 
     @NonNull
     @Override
@@ -62,7 +73,7 @@ public final class ChooseFileScreen extends ConductorScreen implements Screen, M
     protected void onContextAvailable(@NonNull Context context) {
         super.onContextAvailable(context);
         viewModel = ApplicationApp.component(context).navigator()
-                .viewModel(getInstanceId(), TSACertificateAddViewModel.class);
+                .viewModel(getInstanceId(), CertificateAddViewModel.class);
     }
 
     @Override
@@ -80,7 +91,21 @@ public final class ChooseFileScreen extends ConductorScreen implements Screen, M
         }
     }
 
-    private Observable<Intent.ChooseFileIntent> chooseFileIntent() {
-        return Observable.just(new Intent.ChooseFileIntent().create());
+    private Observable<InitialIntent> initialIntent() {
+        return Observable.just(InitialIntent.create());
+    }
+
+    private Observable<ChooseTSAFileIntent> chooseTSAFileIntent() {
+        if (isTsa) {
+            return Observable.just(ChooseTSAFileIntent.create());
+        }
+        return Observable.empty();
+    }
+
+    private Observable<ChooseSivaFileIntent> chooseSivaFileIntent() {
+        if (isSiva) {
+            return Observable.just(ChooseSivaFileIntent.create());
+        }
+        return Observable.empty();
     }
 }
