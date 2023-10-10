@@ -359,7 +359,7 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
             } else {
                 if (dataFilesAddError.getMessage() != null && dataFilesAddError.getMessage().contains("connection_failure")) {
                     errorDialog.setMessage(errorDialog.getContext().getString(
-                            R.string.signature_update_signature_error_invalid_ssl_handshake));
+                            R.string.no_internet_connection));
                 } else {
                     errorDialog.setMessage(errorDialog.getContext().getString(
                             R.string.crypto_create_data_files_add_error_exists));
