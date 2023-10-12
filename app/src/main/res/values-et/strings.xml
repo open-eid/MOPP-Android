@@ -64,7 +64,10 @@
     <string name="main_settings_timestamp_cert_valid_to_title">Kehtib kuni: </string>
     <string name="main_settings_timestamp_cert_add_certificate_button">LISA SERTIFIKAAT</string>
     <string name="main_settings_timestamp_cert_show_certificate_button">NÄITA SERTIFIKAATI</string>
-
+    <string name="main_settings_siva_service_title">Ligipääs valideerimisteenusele SiVa</string>
+    <string name="main_settings_siva_default_access_title">Kasutan vaikimisi määratud ligipääsu</string>
+    <string name="main_settings_siva_default_manual_access_title">Kasutan käsitsi määratud ligipääsu</string>
+    <string name="main_settings_siva_certificate_title">Valideerimisteenuse SiVa SSL sertifikaat</string>
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
@@ -188,8 +191,6 @@
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Päringu saatmine ebaõnnestus. Sellelt IP-aadressilt on ebaõnnestunud päringute arv ületatud. Palun proovige mõne aja pärast uuesti.</string>
     <string name="signature_update_signature_error_message_invalid_time_slot">Palun kontrolli oma nutiseadme kellaaega. https://www.id.ee/artikkel/ria-digidoc-viga-palun-kontrollige-oma-nutiseadme-kellaaega/</string>
     <string name="signature_update_signature_error_message_certificate_revoked">Sertifikaat on kehtetu</string>
-
-    <string name="signature_update_signature_error_invalid_ssl_handshake">SSL ühenduskanali loomine ebaõnnestus. Kontrolli rakenduse seadeid või tarkvara uuendusi</string>
 
     <string name="signature_update_signature_selected_method_mobile_id">Allkirjastamise viisiks on Mobiil-ID, vahekaart %1$d / %2$d</string>
     <string name="signature_update_signature_selected_method_smart_id">Allkirjastamise viisiks on Smart-ID, vahekaart %1$d / %2$d</string>
@@ -583,8 +584,6 @@
     <string name="crash_report_dialog_send_button">Saada</string>
     <string name="crash_report_dialog_always_send_button">Saada Alati</string>
     <string name="crash_report_dialog_dont_send_button">Ära saada</string>
-
-    <string name="no_internet_connection">Palun kontrolli internetiühendust</string>
 
     <string name="rooted_device">Tuvastasime, et sinu nutiseade võib olla ruuditud. Turvalisuse kaalutlustel ei soovita me kasutada seda rakendust ruuditud seadmel.</string>
 

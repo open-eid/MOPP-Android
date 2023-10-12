@@ -82,6 +82,17 @@
     <item type="id" name="mainSettingsTsaCertificateAddCertificateButton" />
     <item type="id" name="mainSettingsTsaCertificateShowCertificateButton" />
     <item type="id" name="mainSettingsChooseFileScreen" />
+    <item type="id" name="mainSettingsSivaServiceContainer" />
+    <item type="id" name="mainSettingsSivaServiceCertificateContainer" />
+    <item type="id" name="mainSettingsSivaServiceChoiceGroup" />
+    <item type="id" name="mainSettingsSivaServiceDefaultChoice" />
+    <item type="id" name="mainSettingsSivaServiceManualChoice" />
+    <item type="id" name="mainSettingsSivaServiceUrlLayout" />
+    <item type="id" name="mainSettingsSivaServiceUrl" />
+    <item type="id" name="mainSettingsSivaCertificateIssuedTo" />
+    <item type="id" name="mainSettingsSivaCertificateValidTo" />
+    <item type="id" name="mainSettingsSivaCertificateAddCertificateButton" />
+    <item type="id" name="mainSettingsSivaCertificateShowCertificateButton" />
 
 
     <!-- Main About -->

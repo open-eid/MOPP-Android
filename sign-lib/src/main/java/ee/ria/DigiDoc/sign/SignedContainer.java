@@ -506,6 +506,9 @@ public abstract class SignedContainer {
         } catch (Exception e) {
             if (e.getMessage() != null && e.getMessage().startsWith("Failed to connect to host")) {
                 throw new NoInternetConnectionException();
+            } else if (e.getMessage() != null &&
+                    e.getMessage().startsWith("Failed to create ssl connection with host")) {
+                throw new SSLHandshakeException();
             }
             throw new IOException(e.getMessage());
         }

@@ -29,6 +29,8 @@
     <string name="main_settings_ask_role_and_address_key">mainSettingsAskRoleAndAddress</string>
     <string name="main_settings_tsa_cert_view">mainSettingsTSACertView</string>
 
+    <string name="main_settings_siva_setting_key">mainSettingsSivaSetting</string>
+
     <string name="mobile_id_country_code_and_phone_number_placeholder">372XXXXXXXX</string>
     <string name="signature_add_mobile_id_challenge_placeholder">____</string>
     <string name="signature_id_card_pin1">PIN1</string>

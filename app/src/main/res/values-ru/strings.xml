@@ -64,6 +64,10 @@
     <string name="main_settings_timestamp_cert_valid_to_title">Действительно до: </string>
     <string name="main_settings_timestamp_cert_add_certificate_button">ДОБАВИТЬ СЕРТИФИКАТ</string>
     <string name="main_settings_timestamp_cert_show_certificate_button">ПОКАЗАТЬ СЕРТИФИКАТ</string>
+    <string name="main_settings_siva_service_title">Доступ к услуге валидации SiVa</string>
+    <string name="main_settings_siva_default_access_title">Использовать доступ, назначенный по умолчанию</string>
+    <string name="main_settings_siva_default_manual_access_title">Использовать доступ, назначенный вручную</string>
+    <string name="main_settings_siva_certificate_title">Сертификат услуги валидации SiVa SSL</string>
 
     <!-- Main About -->
     <string name="main_about_title">Информация</string>
@@ -189,8 +193,6 @@
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Не удалось отправить запрос. Превышено количество неудачных запросов с этого IP-адреса. Пожалуйста, попробуйте позже.</string>
     <string name="signature_update_signature_error_message_invalid_time_slot">Пожалуйста, проверьте время на своем смарт-устройстве. https://www.id.ee/ru/artikkel/oshibka-ria-digidoc-pozhalujsta-proverte-vremya-na-svoem-smart-ustrojstve/</string>
     <string name="signature_update_signature_error_message_certificate_revoked">Сертификат недействителен</string>
-
-    <string name="signature_update_signature_error_invalid_ssl_handshake">Не удалось создать SSL канал передачи данных. Проверьте настройки вашего приложения или обновления программного обеспечения.</string>
 
     <string name="signature_update_signature_selected_method_mobile_id">Метод подписи – Mobiil-ID, вкладка %1$d из %2$d</string>
     <string name="signature_update_signature_selected_method_smart_id">Метод подписи – Smart-ID, вкладка %1$d из %2$d</string>
@@ -582,8 +584,6 @@
     <string name="crash_report_dialog_send_button">Отправить</string>
     <string name="crash_report_dialog_always_send_button">Всегда отправлять</string>
     <string name="crash_report_dialog_dont_send_button">Не отправлять</string>
-
-    <string name="no_internet_connection">Пожалуйста проверьте подключение к интернету</string>
 
     <string name="rooted_device">Мы обнаружили, что ваше интеллектуальное устройство может быть рутировано. По соображениям безопасности мы не рекомендуем использовать это приложение на рутированом устройстве.</string>
 

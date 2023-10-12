@@ -32,6 +32,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.signature.update.exception.DocumentExistsException;
 import ee.ria.DigiDoc.android.signature.update.exception.DocumentRemoveException;
 import ee.ria.DigiDoc.android.signature.update.exception.GeneralSignatureUpdateException;
+import ee.ria.DigiDoc.sign.SSLHandshakeException;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
@@ -131,6 +132,8 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                 );
             } else if (signatureAddError instanceof NoInternetConnectionException) {
                 updateError = new NoInternetConnectionException();
+            } else if (signatureAddError instanceof SSLHandshakeException) {
+                updateError = new SSLHandshakeException();
             } else if (signatureAddError instanceof DetailMessageSource) {
                 String link = ErrorMessageUtil.extractLink(signatureAddError.getMessage());
                 if (!link.isEmpty()) {
