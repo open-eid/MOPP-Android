@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -60,6 +61,7 @@ import ee.ria.DigiDoc.crypto.PersonalCodeException;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.idcard.Token;
+import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -163,6 +165,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                         .onErrorReturn(throwable -> {
                                             if (throwable instanceof EmptyFileException) {
                                                 ToastUtil.showEmptyFileError(navigator.activity());
+                                            } else if (throwable instanceof NoInternetConnectionException ||
+                                                    (throwable instanceof FileNotFoundException &&
+                                                            throwable.getMessage() != null &&
+                                                            throwable.getMessage().contains("connection_failure"))) {
+                                                ToastUtil.showError(navigator.activity(), R.string.no_internet_connection);
                                             }
                                             navigator.execute(Transaction.pop());
                                             return Result.InitialResult.failure(throwable);

@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 import androidx.core.content.ContextCompat;
 
+import java.io.FileNotFoundException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -105,6 +106,15 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
             type = DOCUMENTS_ADD;
             if (documentsAddError instanceof EmptyFileException) {
                 updateError = new EmptyFileException();
+            } else if (documentsAddError instanceof NoInternetConnectionException) {
+                updateError = new NoInternetConnectionException();
+            } else if (documentsAddError instanceof FileNotFoundException) {
+                if (documentsAddError.getMessage() != null &&
+                        documentsAddError.getMessage().contains("connection_failure")) {
+                    updateError = new NoInternetConnectionException();
+                } else {
+                    updateError = new EmptyFileException();
+                }
             } else {
                 updateError = new DocumentExistsException();
             }
