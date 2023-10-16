@@ -344,7 +344,9 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
 
         View lastElementView = view.findViewById(R.id.lastInvisibleElement);
 
-        ContentView.addInvisibleElementScrollListener(listView, lastElementView);
+        if (lastElementView != null) {
+            ContentView.addInvisibleElementScrollListener(listView, lastElementView);
+        }
 
         return view;
     }

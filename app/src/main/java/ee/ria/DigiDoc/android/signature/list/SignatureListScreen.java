@@ -191,7 +191,9 @@ public final class SignatureListScreen extends Controller implements Screen,
         LinearLayout signatureLayout = view.findViewById(R.id.signatureListLayout);
         addInvisibleElementToObject(getApplicationContext(), signatureLayout);
         View lastElementView = view.findViewById(R.id.lastInvisibleElement);
-        addInvisibleElementScrollListener(listView, lastElementView);
+        if (lastElementView != null) {
+            addInvisibleElementScrollListener(listView, lastElementView);
+        }
 
         return view;
     }

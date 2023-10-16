@@ -57,37 +57,18 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog impleme
 
         positiveButtonClicks = new ObservableDialogClickListener();
 
-        // Buttons to show when in portrait mode
-        setButton(BUTTON_POSITIVE,
-                getContext().getString(R.string.signature_update_signature_add_positive_button),
-                positiveButtonClicks);
-        Button signButton = getButton(BUTTON_POSITIVE);
-        if (signButton != null) {
-            String signButtonText = signButton.getText() != null ?
-                    signButton.getText().toString().toLowerCase() : null;
-            signButton.setContentDescription(signButtonText != null ? signButtonText :
-                    getContext().getString(R.string.signature_update_signature_add_positive_button));
-        }
-
-        setButton(BUTTON_NEGATIVE, getContext().getString(android.R.string.cancel),
-                (dialog, which) -> {
-                    cancel();
-                    AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.signing_cancelled);
-                }
-        );
-
-        // Buttons to show when in landscape mode (to give more room for TextViews)
+        // Buttons to show instead of default Dialog view (to give more room for TextViews and for better large text support)
         mobileIdPositiveButton = view.findViewById(R.id.signatureUpdateMobileIdSignButton);
         mobileIdCancelButton = view.findViewById(R.id.signatureUpdateMobileIdCancelSigningButton);
-        setLandscapeButtons(getContext(), mobileIdPositiveButton, mobileIdCancelButton, positiveButtonClicks);
+        setCustomActionButtons(getContext(), mobileIdPositiveButton, mobileIdCancelButton, positiveButtonClicks);
 
         smartIdPositiveButton = view.findViewById(R.id.signatureUpdateSmartIdSignButton);
         smartIdCancelButton = view.findViewById(R.id.signatureUpdateSmartIdCancelSigningButton);
-        setLandscapeButtons(getContext(), smartIdPositiveButton, smartIdCancelButton, positiveButtonClicks);
+        setCustomActionButtons(getContext(), smartIdPositiveButton, smartIdCancelButton, positiveButtonClicks);
 
         idCardPositiveButton = view.findViewById(R.id.signatureUpdateIdCardSignButton);
         idCardCancelButton = view.findViewById(R.id.signatureUpdateIdCardCancelButton);
-        setLandscapeButtons(getContext(), idCardPositiveButton, idCardCancelButton, positiveButtonClicks);
+        setCustomActionButtons(getContext(), idCardPositiveButton, idCardCancelButton, positiveButtonClicks);
     }
 
     public SignatureUpdateSignatureAddView view() {
@@ -124,7 +105,7 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog impleme
         confirmButton.setContentDescription(getContext().getString(R.string.sign_container));
         Button cancelButton = getButton(BUTTON_NEGATIVE);
         cancelButton.setContentDescription(getContext().getString(R.string.cancel_signing_process));
-        setButtonsBasedOnOrientation(getContext().getResources().getConfiguration().orientation);
+        setActionButtons();
         mobileIdCancelButton.setTextColor(ContextCompat.getColor(getContext(), R.color.accent));
         smartIdCancelButton.setTextColor(ContextCompat.getColor(getContext(), R.color.accent));
         idCardCancelButton.setTextColor(ContextCompat.getColor(getContext(), R.color.accent));
@@ -159,29 +140,28 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog impleme
         layoutChangeListener = null;
     }
 
-    void setButtonsBasedOnOrientation(int orientation) {
+    void setActionButtons() {
         Button confirmButton = getButton(BUTTON_POSITIVE);
         Button cancelButton = getButton(BUTTON_NEGATIVE);
 
         if (confirmButton != null && cancelButton != null) {
-            confirmButton.setVisibility(orientation == Configuration.ORIENTATION_PORTRAIT ? VISIBLE : GONE);
-            cancelButton.setVisibility(orientation == Configuration.ORIENTATION_PORTRAIT ? VISIBLE : GONE);
+            confirmButton.setVisibility(GONE);
+            cancelButton.setVisibility(GONE);
         }
 
         if (mobileIdPositiveButton != null && mobileIdCancelButton != null &&
                 smartIdPositiveButton != null && smartIdCancelButton != null &&
                 idCardPositiveButton != null && idCardCancelButton != null) {
-            int visibility = orientation == Configuration.ORIENTATION_LANDSCAPE ? VISIBLE : GONE;
-            mobileIdPositiveButton.setVisibility(visibility);
-            mobileIdCancelButton.setVisibility(visibility);
-            smartIdPositiveButton.setVisibility(visibility);
-            smartIdCancelButton.setVisibility(visibility);
-            idCardPositiveButton.setVisibility(visibility);
-            idCardCancelButton.setVisibility(visibility);
+            mobileIdPositiveButton.setVisibility(VISIBLE);
+            mobileIdCancelButton.setVisibility(VISIBLE);
+            smartIdPositiveButton.setVisibility(VISIBLE);
+            smartIdCancelButton.setVisibility(VISIBLE);
+            idCardPositiveButton.setVisibility(VISIBLE);
+            idCardCancelButton.setVisibility(VISIBLE);
         }
     }
 
-    private void setLandscapeButtons(Context context, Button positiveButton, Button cancelButton, ObservableDialogClickListener clickListener) {
+    private void setCustomActionButtons(Context context, Button positiveButton, Button cancelButton, ObservableDialogClickListener clickListener) {
         positiveButton.setText(getContext().getString(R.string.signature_update_signature_add_positive_button));
         positiveButton.setOnClickListener(v -> clickListener.onClick(this, DialogInterface.BUTTON_POSITIVE));
 

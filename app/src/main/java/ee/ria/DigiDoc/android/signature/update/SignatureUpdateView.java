@@ -230,10 +230,12 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         ContentView.addInvisibleElement(getContext(), this);
 
         View lastElementView = findViewById(R.id.lastInvisibleElement);
-        lastElementView.setVisibility(VISIBLE);
+        if (lastElementView != null) {
+            lastElementView.setVisibility(VISIBLE);
 
-        ContentView.removeInvisibleElementScrollListener(listView);
-        ContentView.addInvisibleElementScrollListener(listView, lastElementView);
+            ContentView.removeInvisibleElementScrollListener(listView);
+            ContentView.addInvisibleElementScrollListener(listView, lastElementView);
+        }
     }
 
     @Override
@@ -241,8 +243,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         super.onConfigurationChanged(newConfig);
 
         setActionButtonsTextSize();
-
-        signatureAddDialog.setButtonsBasedOnOrientation(newConfig.orientation);
     }
 
     private void setActionButtonsTextSize() {
