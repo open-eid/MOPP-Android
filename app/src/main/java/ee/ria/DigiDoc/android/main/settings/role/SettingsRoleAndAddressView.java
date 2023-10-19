@@ -65,6 +65,10 @@ public final class SettingsRoleAndAddressView extends CoordinatorLayout {
         }
     }
 
+    public static void resetSettings(SettingsDataStore settingsDataStore) {
+        settingsDataStore.setIsRoleAskingEnabled(false);
+    }
+
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();

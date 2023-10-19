@@ -162,8 +162,7 @@ public final class SettingsAccessView extends CoordinatorLayout {
                     Timber.log(Log.ERROR, e, "Unable to get TSA certificate");
 
                     // Remove invalid files
-                    FileUtils.removeFile(tsaFile.getPath());
-                    settingsDataStore.setTSACertName(null);
+                    removeCertificate(tsaFile, settingsDataStore);
 
                     tsaCertIssuedTo.setText(getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title));
                     tsaCertValidTo.setText(getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title));
@@ -234,6 +233,23 @@ public final class SettingsAccessView extends CoordinatorLayout {
 
     public static Observable<Boolean> observeTsaCertificateViewVisibleChanges() {
         return isTsaCertificateViewVisibleSubject;
+    }
+
+    public static void resetSettings(Context context, SettingsDataStore settingsDataStore) {
+        settingsDataStore.setUuid("");
+        settingsDataStore.setTsaUrl("");
+        settingsDataStore.setIsOpenAllFileTypesEnabled(true);
+        settingsDataStore.setIsScreenshotAllowed(false);
+        File tsaFile = FileUtil.getTSAFile(context, settingsDataStore.getTSACertName());
+        removeCertificate(tsaFile, settingsDataStore);
+        setTsaCertificateViewVisibleValue(false);
+    }
+
+    private static void removeCertificate(File tsaFile, SettingsDataStore settingsDataStore) {
+        if (tsaFile != null) {
+            FileUtils.removeFile(tsaFile.getPath());
+        }
+        settingsDataStore.setTSACertName(null);
     }
 
     private void setTSAContainerViewVisibility(boolean isVisible) {

@@ -15,7 +15,9 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessScreen;
+import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessView;
 import ee.ria.DigiDoc.android.main.settings.role.SettingsRoleAndAddressScreen;
+import ee.ria.DigiDoc.android.main.settings.role.SettingsRoleAndAddressView;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -65,11 +67,8 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
     }
 
     private void resetToDefaultSettings(SettingsDataStore settingsDataStore) {
-        settingsDataStore.setUuid("");
-        settingsDataStore.setTsaUrl("");
-        settingsDataStore.setIsOpenAllFileTypesEnabled(true);
-        settingsDataStore.setIsScreenshotAllowed(false);
-        settingsDataStore.setIsRoleAskingEnabled(false);
+        SettingsAccessView.resetSettings(getContext(), settingsDataStore);
+        SettingsRoleAndAddressView.resetSettings(settingsDataStore);
     }
 
     @Override
