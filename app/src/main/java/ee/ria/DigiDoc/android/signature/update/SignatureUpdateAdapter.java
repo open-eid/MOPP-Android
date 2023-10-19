@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -96,7 +97,7 @@ final class SignatureUpdateAdapter extends
 
         if (container != null) {
             if (nestedFile == null || !isSivaConfirmed) {
-                createRegularDataFilesView(builder, name, container, isNestedContainer, isExistingContainer);
+                createRegularDataFilesView(builder, context, name, container, isNestedContainer, isExistingContainer);
             }
 
             if (isExistingContainer) {
@@ -105,7 +106,7 @@ final class SignatureUpdateAdapter extends
                         SignedContainer signedContainerNested = SignedContainer.open(nestedFile);
                         if (!container.dataFiles().isEmpty() && container.dataFiles().size() == 1 &&
                                 Files.getFileExtension(nestedFile.getName()).equalsIgnoreCase("ddoc")) {
-                            createAsicsDataFilesView(builder, name, container, signedContainerNested, isNestedContainer);
+                            createAsicsDataFilesView(builder, context, name, container, signedContainerNested, isNestedContainer);
                             createAsicsTimestampView(builder, container);
                         }
 
@@ -150,9 +151,9 @@ final class SignatureUpdateAdapter extends
         }
     }
 
-    private void createRegularDataFilesView(ImmutableList.Builder<Item> builder, String name, SignedContainer container,
+    private void createRegularDataFilesView(ImmutableList.Builder<Item> builder, Context context, String name, SignedContainer container,
                                      boolean isNestedContainer, boolean isExistingContainer) {
-        builder.add(NameItem.create(name, !isNestedContainer))
+        builder.add(NameItem.create(context, name, !isNestedContainer))
                 .add(SubheadItem.create(DOCUMENT,
                         isExistingContainer && !isNestedContainer
                                 && container.dataFileAddEnabled()))
@@ -173,10 +174,10 @@ final class SignatureUpdateAdapter extends
         }
     }
 
-    private void createAsicsDataFilesView(ImmutableList.Builder<Item> builder, String name,
+    private void createAsicsDataFilesView(ImmutableList.Builder<Item> builder, Context context, String name,
                                           SignedContainer container, SignedContainer signedContainerNested,
                                           boolean isNestedContainer) {
-        builder.add(NameItem.create(name, false))
+        builder.add(NameItem.create(context, name, false))
                 .add(SubheadItem.create(DOCUMENT,
                         !isNestedContainer
                                 && container.dataFileAddEnabled()))
@@ -389,6 +390,11 @@ final class SignatureUpdateAdapter extends
             saveButton.setVisibility(isContainerSigned(adapter) ? View.VISIBLE : View.GONE);
             clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
             clicks(saveButton).subscribe(adapter.saveContainerClicksSubject);
+            if (AccessibilityUtils.isLargeFontEnabled(item.context().getResources())) {
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) saveButton.getLayoutParams();
+                params.topMargin = 25;
+                saveButton.setLayoutParams(params);
+            }
         }
 
         private boolean isContainerSigned(SignatureUpdateAdapter adapter) {
@@ -734,13 +740,15 @@ final class SignatureUpdateAdapter extends
     @AutoValue
     static abstract class NameItem extends Item {
 
+        abstract Context context();
+
         abstract String name();
 
         abstract boolean updateButtonVisible();
 
-        static NameItem create(String name, boolean updateButtonVisible) {
+        static NameItem create(Context context, String name, boolean updateButtonVisible) {
             return new AutoValue_SignatureUpdateAdapter_NameItem(
-                    R.layout.signature_update_list_item_name, name, updateButtonVisible);
+                    R.layout.signature_update_list_item_name, context, name, updateButtonVisible);
         }
     }
 
