@@ -7,7 +7,6 @@ import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.Constants.VOID;
-import static ee.ria.DigiDoc.android.utils.ViewUtil.moveView;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -78,6 +77,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
     private Toolbar toolbarView;
     private SearchView searchView;
     private EditText searchViewInnerText;
+    private TextView searchViewLabel;
     private RecyclerView listView;
     private CryptoCreateAdapter adapter;
     private View doneButton;
@@ -254,6 +254,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
         toolbarView.setNavigationContentDescription(R.string.back);
 
         searchView = view.findViewById(R.id.cryptoRecipientsSearch);
+        searchViewLabel = view.findViewById(R.id.cryptoRecipientsSearchLabel);
         searchView.setIconifiedByDefault(false);
         View searchTextView = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
         searchTextView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
@@ -275,12 +276,12 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
 
         searchButton.setOnClickListener(v -> {
             setupContentDescriptions(searchTextView, submittedQuery);
+            searchViewLabel.setVisibility(GONE);
             searchView.performClick();
             setMagIconClickable(searchTextView, searchPlate, searchButton);
         });
 
         if (getResources() != null) {
-            searchView.setQueryHint(getResources().getString(R.string.crypto_recipients_search));
 
             // Remove ">" search button from the right side of the Search Bar
             removeDefaultSearchButton(searchView);
@@ -302,6 +303,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
 
                         ee.ria.DigiDoc.android.utils.TextUtil.setSearchViewTextSizeConstraints(searchView, searchViewInnerText);
 
+                        searchViewInnerText.setSingleLine(true);
+
                         searchViewInnerText.addTextChangedListener(new TextWatcher() {
                             @Override
                             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -310,11 +313,9 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
                             public void onTextChanged(CharSequence s, int start, int before, int count) {
                                 if (s.length() == 0) {
                                     ee.ria.DigiDoc.android.utils.TextUtil.setSearchViewTextSizeConstraints(searchView, searchViewInnerText);
-                                    searchViewInnerText.setSingleLine(false);
                                     setSearchQuery("");
+                                    searchViewLabel.setVisibility(VISIBLE);
                                     searchView.performClick();
-                                } else {
-                                    searchViewInnerText.setSingleLine(true);
                                 }
                             }
 
@@ -350,6 +351,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
     }
 
     private void setDoneSearchQuery(String text) {
+        searchViewLabel.setVisibility(GONE);
         searchView.setQuery(StringUtils.trim(text), false);
         searchView.clearFocus();
     }
@@ -359,6 +361,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
             String trimmed = StringUtils.trim(text);
             submittedQuery = trimmed;
             setDoneSearchQuery(trimmed);
+            searchViewLabel.setVisibility(GONE);
             return trimmed;
         }
         return "";

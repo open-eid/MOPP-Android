@@ -391,6 +391,7 @@
 
     <item type="id" name="cryptoRecipientsScreen" />
     <item type="id" name="cryptoRecipientsSearch" />
+    <item type="id" name="cryptoRecipientsSearchLabel" />
     <item type="id" name="cryptoRecipientsList" />
     <item type="id" name="cryptoRecipientsDoneButton" />
 
