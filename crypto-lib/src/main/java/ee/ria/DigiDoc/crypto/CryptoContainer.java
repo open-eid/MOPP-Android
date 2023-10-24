@@ -1,5 +1,8 @@
 package ee.ria.DigiDoc.crypto;
 
+import static com.google.common.io.Files.getFileExtension;
+import static com.google.common.io.Files.getNameWithoutExtension;
+
 import androidx.annotation.WorkerThread;
 
 import com.google.auto.value.AutoValue;
@@ -22,9 +25,6 @@ import java.util.Locale;
 
 import ee.ria.DigiDoc.common.Certificate;
 import okio.ByteString;
-
-import static com.google.common.io.Files.getFileExtension;
-import static com.google.common.io.Files.getNameWithoutExtension;
 
 /**
  * Handles working with CDOC containers.

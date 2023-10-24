@@ -42,6 +42,7 @@ import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.common.TextUtil;
+import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.crypto.NoInternetConnectionException;
 import ee.ria.DigiDoc.crypto.PersonalCodeException;
 import io.reactivex.rxjava3.core.Observable;
@@ -290,9 +291,10 @@ final class CryptoCreateAdapter extends
 
         private boolean isContainerEncryptedOrDecrypted(CryptoCreateAdapter adapter) {
             for (CryptoCreateAdapter.Item cryptoItem : adapter.items) {
-                if (cryptoItem instanceof CryptoCreateAdapter.DataFileItem &&
+                if ((cryptoItem instanceof CryptoCreateAdapter.DataFileItem &&
                         !((CryptoCreateAdapter.DataFileItem) cryptoItem).removeButtonVisible()
-                ) {
+                ) || (cryptoItem instanceof NameItem &&
+                        CryptoContainer.isContainerFileName(((NameItem) cryptoItem).name()))) {
                     return true;
                 }
             }
