@@ -119,13 +119,16 @@
     <string name="signature_update_title_created">Allkirjastamine</string>
     <string name="signature_update_title_existing">Ümbriku valideerimine</string>
     <string name="signature_update_name_update_button">Muuda ümbriku nime</string>
+    <string name="signature_update_name_update_voice_button">Muuda</string>
     <string name="signature_update_name_update_name">Ümbriku nimi</string>
     <string name="signature_update_name_update_error_exists">Sellise nimega ümbrik on juba olemas</string>
     <string name="signature_update_name_update_error_invalid">Ümbriku nimi on vigane</string>
     <string name="signature_update_documents_title">Ümbriku failid</string>
     <string name="signature_update_documents_add_error_exists">Fail on juba ümbrikus olemas</string>
     <string name="signature_update_document_remove_button">Eemalda fail ümbrikust</string>
+    <string name="signature_update_document_remove_voice_button">Eemalda</string>
     <string name="signature_update_document_save_button">Salvesta fail ümbrikust</string>
+    <string name="signature_update_document_save_voice_button">Salvesta</string>
     <string name="signature_update_remove_document_confirmation_message">Soovid eemaldada faili ümbrikust?</string>
     <string name="signature_update_remove_last_document_confirmation_message">Oled kustutamas viimast faili ümbrikus, koos sellega eemaldatakse ka ümbrik.</string>
     <string name="signature_update_cancel_file_removal_button">Katkesta faili eemaldamine</string>
@@ -346,6 +349,7 @@
     <string name="crypto_recipient_add_button_added">LISATUD</string>
 
     <string name="crypto_recipients_title">Adressaatide lisamine</string>
+    <string name="crypto_recipients_search_icon_voice_title">Otsi</string>
     <string name="crypto_recipients_search">Sisesta isikukood, asutus või registrikood</string>
     <string name="crypto_recipients_search_result_invalid_personal_code">Isikukood pole korrektne!</string>
     <string name="crypto_recipients_search_result_empty">Isikul või asutusel puudub kehtiv sertifikaat. \nKrüpteerimiseks on vaja kehtivat sertikaati.\nKüsimuste korral pöördu id.ee.</string>

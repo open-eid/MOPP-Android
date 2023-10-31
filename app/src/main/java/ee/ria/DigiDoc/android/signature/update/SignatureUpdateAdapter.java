@@ -377,6 +377,15 @@ final class SignatureUpdateAdapter extends
             nameView = itemView.findViewById(R.id.signatureUpdateListName);
             updateButton = itemView.findViewById(R.id.signatureUpdateListNameUpdateButton);
             saveButton = itemView.findViewById(R.id.signatureUpdateListNameSaveButton);
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                updateButton.setContentDescription(itemView.getResources()
+                        .getString(R.string.signature_update_name_update_button)
+                );
+            } else {
+                updateButton.setContentDescription(itemView.getResources()
+                        .getString(R.string.signature_update_name_update_voice_button)
+                );
+            }
         }
 
         @Override
@@ -455,15 +464,30 @@ final class SignatureUpdateAdapter extends
             String fileNameDescription = nameView.getResources().getString(R.string.file);
             nameView.setContentDescription(fileNameDescription + " " + nameView.getText());
 
-            String saveButtonText = saveButton.getResources().getString(R.string.signature_update_document_save_button);
-            saveButton.setContentDescription(saveButtonText + " " + nameView.getText());
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                String saveButtonText = saveButton.getResources().getString(R.string.signature_update_document_save_button);
+                saveButton.setContentDescription(saveButtonText + " " + nameView.getText());
+            } else {
+                saveButton.setContentDescription(
+                        saveButton.getResources()
+                                .getString(R.string.signature_update_document_save_voice_button)
+                );
+            }
             saveButton.setVisibility(View.VISIBLE);
             clicks(saveButton).map(ignored ->
                     ((DocumentItem) adapter.getItem(getBindingAdapterPosition())).document())
                     .subscribe(adapter.documentSaveClicksSubject);
 
-            String removeButtonText = removeButton.getResources().getString(R.string.signature_update_document_remove_button);
-            removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                String removeButtonText = removeButton.getResources().getString(R.string.signature_update_document_remove_button);
+                removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
+            } else {
+                removeButton.setContentDescription(
+                        removeButton.getResources()
+                                .getString(R.string.signature_update_document_remove_voice_button)
+                );
+            }
+
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton).map(ignored ->
                     ((DocumentItem) adapter.getItem(getBindingAdapterPosition())).document())
@@ -575,8 +599,16 @@ final class SignatureUpdateAdapter extends
                     R.string.signature_update_signature_created_at,
                     formatter.instant(item.signature().createdAt())));
 
-            String removeButtonText = removeButton.getResources().getString(R.string.signature_update_signature_remove_button);
-            removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                String removeButtonText = removeButton.getResources().getString(R.string.signature_update_signature_remove_button);
+                removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
+            } else {
+                removeButton.setContentDescription(
+                        removeButton.getResources()
+                                .getString(R.string.signature_update_document_remove_voice_button)
+                );
+            }
+
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton).map(ignored ->
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())

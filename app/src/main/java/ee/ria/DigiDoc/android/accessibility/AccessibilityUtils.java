@@ -33,6 +33,12 @@ public class AccessibilityUtils {
         return accessibilityManager.isEnabled();
     }
 
+    public static boolean isTalkBackEnabled() {
+        Activity activity = (Activity) Activity.getContext().get();
+        AccessibilityManager accessibilityManager = (AccessibilityManager) activity.getSystemService(ACCESSIBILITY_SERVICE);
+        return accessibilityManager.isTouchExplorationEnabled();
+    }
+
     public static void sendAccessibilityEvent(Context context, int eventType, @StringRes int messageResId) {
         sendAccessibilityEvent(context, eventType, context.getString(messageResId));
     }

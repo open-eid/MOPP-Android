@@ -119,13 +119,16 @@
     <string name="signature_update_title_created">Signing</string>
     <string name="signature_update_title_existing">Container verification</string>
     <string name="signature_update_name_update_button">Edit container name</string>
+    <string name="signature_update_name_update_voice_button">Edit</string>
     <string name="signature_update_name_update_name">Container name</string>
     <string name="signature_update_name_update_error_exists">Container with this name already exists</string>
     <string name="signature_update_name_update_error_invalid">Container name invalid</string>
     <string name="signature_update_documents_title">Container files</string>
     <string name="signature_update_documents_add_error_exists">File already exists in the container</string>
     <string name="signature_update_document_remove_button">Remove file</string>
+    <string name="signature_update_document_remove_voice_button">Remove</string>
     <string name="signature_update_document_save_button">Save file</string>
+    <string name="signature_update_document_save_voice_button">Save</string>
     <string name="signature_update_remove_document_confirmation_message">Remove file from container?</string>
     <string name="signature_update_remove_last_document_confirmation_message">You are about to remove the last file in the container, it is removed along with the container.</string>
     <string name="signature_update_cancel_file_removal_button">Cancel file removal</string>
@@ -347,6 +350,7 @@
     <string name="crypto_recipient_add_button_added">ADDED</string>
 
     <string name="crypto_recipients_title">Add recipients</string>
+    <string name="crypto_recipients_search_icon_voice_title">Search</string>
     <string name="crypto_recipients_search">Enter personal code, company or registry code</string>
     <string name="crypto_recipients_search_result_invalid_personal_code">Personal code is not valid!</string>
     <string name="crypto_recipients_search_result_empty">Person or company does not own a valid certificate.\nIt is necessary to have a valid certificate for encryption.\nIn case of questions please contact our support via id.ee.</string>

@@ -269,6 +269,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
         View searchPlate = searchView.findViewById(getResources().getIdentifier("android:id/search_plate", null, null));
         ImageView searchButton = searchView.findViewById(getResources().getIdentifier("android:id/search_button", null, null));
 
+        searchButton.setContentDescription(getResources().getString(R.string.crypto_recipients_search_icon_voice_title));
+
         searchButton.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
             setupContentDescriptions(searchTextView, submittedQuery);
             setMagIconClickable(searchTextView, searchPlate, searchButton);
