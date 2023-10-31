@@ -163,6 +163,7 @@
     <string name="signature_update_signature_remove_error">Allkirja eemaldamine ebaõnnestus</string>
     <string name="signature_update_container_load_error">Ümbriku laadimine ebaõnnestus</string>
     <string name="signature_update_send_button">JAGA</string>
+    <string name="signature_update_save_button">SALVESTA</string>
     <string name="signature_update_signature_add_button">ALLKIRJASTA</string>
 
     <string name="signature_update_signature_type_timestamp">Ümbriku ajatemplid</string>
@@ -334,6 +335,7 @@
     <string name="crypto_create_encrypt_error_no_recipients">Ühtegi adressaati ei ole lisatud</string>
     <string name="crypto_create_decrypt_button">DEKRÜPTEERI</string>
     <string name="crypto_create_decrypt_positive_button">Dekrüpteeri</string>
+    <string name="crypto_create_save_button">SALVESTA</string>
     <string name="crypto_create_send_button">JAGA</string>
     <string name="crypto_create_error">Midagi läks krüpteerimisel valesti</string>
 
@@ -494,6 +496,7 @@
 
     <string name="decrypt_content_description">Dekrüpteeri dokument, vahekaart %1$d / %2$d</string>
     <string name="sign_send_content_description">Allkirjasta, vahekaart %1$d / %2$d</string>
+    <string name="sign_save_content_description">Salvesta, vahekaart %1$d / %2$d</string>
     <string name="decrypt_send_content_description">Jaga, vahekaart %1$d / %2$d</string>
 
     <string name="document">Dokument</string>

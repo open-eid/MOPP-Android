@@ -148,6 +148,16 @@ interface Action extends MviAction {
     }
 
     @AutoValue
+    abstract class ContainerSaveAction implements Action {
+
+        abstract File containerFile();
+
+        static ContainerSaveAction create(File containerFile) {
+            return new AutoValue_Action_ContainerSaveAction(containerFile);
+        }
+    }
+
+    @AutoValue
     abstract class EncryptAction implements Action {
 
         abstract File containerFile();

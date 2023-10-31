@@ -163,6 +163,7 @@
     <string name="signature_update_signature_remove_error">Could not remove signature from the container</string>
     <string name="signature_update_container_load_error">Error opening container</string>
     <string name="signature_update_send_button">SHARE</string>
+    <string name="signature_update_save_button">SAVE</string>
     <string name="signature_update_signature_add_button">SIGN</string>
 
     <string name="signature_update_signature_type_timestamp">Container timestamps</string>
@@ -335,6 +336,7 @@
     <string name="crypto_create_encrypt_error_no_recipients">No recipients specified</string>
     <string name="crypto_create_decrypt_button">DECRYPT</string>
     <string name="crypto_create_decrypt_positive_button">Decrypt</string>
+    <string name="crypto_create_save_button">SAVE</string>
     <string name="crypto_create_send_button">SHARE</string>
     <string name="crypto_create_error">Something went wrong with encryption</string>
 
@@ -494,6 +496,7 @@
     <!--  General  -->
     <string name="decrypt_content_description">Decrypt document, tab %1$d of %2$d</string>
     <string name="sign_send_content_description">Sign, tab %1$d of %2$d</string>
+    <string name="sign_save_content_description">Save, tab %1$d of %2$d</string>
     <string name="decrypt_send_content_description">Share, tab %1$d of %2$d</string>
 
     <string name="yes_button">YES</string>

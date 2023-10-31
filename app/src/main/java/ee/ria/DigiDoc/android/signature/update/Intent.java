@@ -352,6 +352,25 @@ class SendIntent implements Intent {
     }
 }
 
+
+class ContainerSaveIntent implements Intent {
+
+    File containerFile;
+
+    public ContainerSaveIntent(File containerFile) {
+        this.containerFile = containerFile;
+    }
+
+    static ContainerSaveIntent create(File containerFile) {
+        return new ContainerSaveIntent(containerFile);
+    }
+
+    @Override
+    public Action action() {
+        return Action.ContainerSaveAction.create(containerFile);
+    }
+}
+
 class EncryptIntent implements Intent {
 
     File containerFile;

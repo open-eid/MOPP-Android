@@ -8,7 +8,7 @@
       android:fillType="evenOdd"
       android:pathData="M7.5,7.5m-7,0a7,7 0,1 1,14 0a7,7 0,1 1,-14 0"
       android:strokeColor="#000000"
-      android:strokeWidth="0.7" />
+      android:strokeWidth="0.5" />
   <path
       android:fillColor="#00000000"
       android:fillType="evenOdd"
@@ -32,6 +32,6 @@
       android:fillType="evenOdd"
       android:pathData="M5,11.6L10,11.6"
       android:strokeColor="#000000"
-      android:strokeWidth="1" />
+      android:strokeWidth="0.7" />
 
 </vector>

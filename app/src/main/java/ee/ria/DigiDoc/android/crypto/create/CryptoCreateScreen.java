@@ -225,6 +225,11 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         return clicks(sendButton).map(ignored -> Intent.SendIntent.create(containerFile));
     }
 
+    private Observable<Intent.ContainerSaveIntent> containerSaveIntent() {
+        return adapter.saveContainerClicks()
+                .map(ignored -> Intent.ContainerSaveIntent.create(containerFile));
+    }
+
     private Observable<Intent.SignIntent> signIntent() {
         return clicks(signButton).map(ignored -> Intent.SignIntent.create(containerFile));
     }
@@ -249,7 +254,7 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), upButtonClickIntent(), dataFilesAddIntent(),
                 dataFileRemoveIntent(), dataFileSaveIntent(), dataFileViewIntent(), recipientsAddButtonClickIntent(),
                 recipientRemoveIntent(), encryptIntent(), decryptionIntent(), decryptIntent(),
-                signIntent(), sendIntent(), errorIntents());
+                containerSaveIntent(), signIntent(), sendIntent(), errorIntents());
     }
 
     @Override
@@ -436,8 +441,11 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
 
         tintCompoundDrawables(encryptButton, true);
         tintCompoundDrawables(decryptButton, true);
-        tintCompoundDrawables(signButton, true);
         tintCompoundDrawables(sendButton, true);
+        tintCompoundDrawables(signButton, true);
+
+        decryptButton.setContentDescription(getResources().getString(R.string.decrypt_content_description, 1, 2));
+        sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 2, 2));
 
         decryptButton.setContentDescription(getResources().getString(R.string.decrypt_content_description, 1, 3));
         signButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 2, 3));
