@@ -118,7 +118,7 @@ final class SignatureUpdateAdapter extends
                         if (e instanceof SSLHandshakeException) {
                             throw e;
                         } else {
-                            createRegularDataFilesView(builder, name, container, isNestedContainer, isExistingContainer);
+                            createRegularDataFilesView(builder, context, name, container, isNestedContainer, isExistingContainer);
                             createRegularSignatureView(builder, container, isNestedContainer);
                         }
                     }
