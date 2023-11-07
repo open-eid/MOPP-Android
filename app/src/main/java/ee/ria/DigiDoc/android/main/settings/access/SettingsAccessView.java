@@ -104,6 +104,9 @@ public final class SettingsAccessView extends CoordinatorLayout {
         addCertificateButton = findViewById(R.id.mainSettingsTsaCertificateAddCertificateButton);
         showCertificateButton = findViewById(R.id.mainSettingsTsaCertificateShowCertificateButton);
 
+        addCertificateButton.setContentDescription(addCertificateButton.getText().toString().toLowerCase());
+        showCertificateButton.setContentDescription(showCertificateButton.getText().toString().toLowerCase());
+
         if (settingsDataStore != null) {
             isTsaCertificateViewVisible = settingsDataStore.getIsTsaCertificateViewVisible();
             setTSAContainerViewVisibility(isTsaCertificateViewVisible);

@@ -57,6 +57,9 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
         roleAndAddressCategory = findViewById(R.id.mainSettingsRoleAndAddressCategory);
         defaultSettingsButton = findViewById(R.id.mainSettingsUseDefaultSettings);
 
+        defaultSettingsButton.setContentDescription(
+                defaultSettingsButton.getText().toString().toLowerCase());
+
         toolbarView.setTitle(R.string.main_settings_title);
         toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
         toolbarView.setNavigationContentDescription(R.string.back);

@@ -78,6 +78,7 @@
     <item type="id" name="mainSettingsAccessToTimeStampingService" />
     <item type="id" name="mainSettingsAskRoleAndAddress" />
     <item type="id" name="mainSettingsTsaCertificateContainer" />
+    <item type="id" name="mainSettingsTsaCertificateTitle" />
     <item type="id" name="mainSettingsTsaCertificateIssuedTo" />
     <item type="id" name="mainSettingsTsaCertificateValidTo" />
     <item type="id" name="mainSettingsTsaCertificateAddCertificateButton" />
