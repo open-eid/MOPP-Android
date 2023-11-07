@@ -52,6 +52,7 @@ public final class MobileIdView extends LinearLayout implements
     private final TextInputLayout personalCodeLabel;
 
     private final TextWatcher phoneNoTextWatcher;
+    private final TextWatcher personalCodeTextWatcher;
 
     public MobileIdView(Context context) {
         this(context, null);
@@ -88,6 +89,7 @@ public final class MobileIdView extends LinearLayout implements
         checkInputsValidity();
 
         phoneNoTextWatcher = TextUtil.addTextWatcher(phoneNoView);
+        personalCodeTextWatcher = TextUtil.addTextWatcher(personalCodeView);
     }
 
     @Override
@@ -106,6 +108,7 @@ public final class MobileIdView extends LinearLayout implements
         personalCodeView.clearFocus();
 
         removeTextWatcher(phoneNoView, phoneNoTextWatcher);
+        removeTextWatcher(personalCodeView, personalCodeTextWatcher);
     }
 
     @Override
@@ -150,6 +153,7 @@ public final class MobileIdView extends LinearLayout implements
         super.onDetachedFromWindow();
 
         removeTextWatcher(phoneNoView, phoneNoTextWatcher);
+        removeTextWatcher(personalCodeView, personalCodeTextWatcher);
     }
 
     private void checkInputsValidity() {

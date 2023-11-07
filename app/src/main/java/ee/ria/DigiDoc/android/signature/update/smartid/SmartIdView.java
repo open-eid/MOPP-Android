@@ -23,10 +23,12 @@ package ee.ria.DigiDoc.android.signature.update.smartid;
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
 import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
 import static ee.ria.DigiDoc.android.utils.ErrorMessageUtil.setTextViewError;
+import static ee.ria.DigiDoc.android.utils.TextUtil.removeTextWatcher;
 
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -53,6 +55,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
+import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -70,6 +73,8 @@ public final class SmartIdView extends LinearLayout implements
     private final TextInputLayout personalCodeViewLayoutLabel;
     private final TextInputEditText personalCodeView;
     private final CheckBox rememberMeView;
+
+    private final TextWatcher personalCodeTextWatcher;
 
     public SmartIdView(Context context) {
         this(context, null);
@@ -112,6 +117,8 @@ public final class SmartIdView extends LinearLayout implements
 
         checkForDoneButtonClick();
         checkInputsValidity();
+
+        personalCodeTextWatcher = TextUtil.addTextWatcher(personalCodeView);
     }
 
     @Override
@@ -128,6 +135,8 @@ public final class SmartIdView extends LinearLayout implements
         countryView.clearFocus();
         personalCodeView.clearFocus();
         rememberMeView.clearFocus();
+
+        removeTextWatcher(personalCodeView, personalCodeTextWatcher);
     }
 
     @Override
@@ -286,5 +295,7 @@ public final class SmartIdView extends LinearLayout implements
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+
+        removeTextWatcher(personalCodeView, personalCodeTextWatcher);
     }
 }
