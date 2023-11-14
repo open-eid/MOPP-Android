@@ -158,9 +158,15 @@ public final class SettingsAccessView extends CoordinatorLayout {
                     tsaCertIssuedTo.setText(String.format("%s %s",
                             getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title),
                             issuer));
+                    tsaCertIssuedTo.setContentDescription(String.format("%s %s",
+                            getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title),
+                            issuer).toLowerCase());
                     tsaCertValidTo.setText(String.format("%s %s",
                             getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title),
                             getFormattedDateTime(certificateHolder.getNotAfter())));
+                    tsaCertValidTo.setContentDescription(String.format("%s %s",
+                            getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title),
+                            getFormattedDateTime(certificateHolder.getNotAfter())).toLowerCase());
                 } catch (CertificateException e) {
                     Timber.log(Log.ERROR, e, "Unable to get TSA certificate");
 

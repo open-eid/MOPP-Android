@@ -8,11 +8,17 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
+        android:touchscreenBlocksFocus="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <android.widget.Toolbar
             android:id="@id/toolbar"
+            android:nextFocusDown="@+id/certificateDetailSubjectDataTitle"
+            android:nextFocusUp="@+id/certificateDetailFingerprintsSHA1"
+            android:touchscreenBlocksFocus="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.Application.ActionBar" />
@@ -41,6 +47,8 @@
                 <TextView
                     android:id="@id/certificateDetailSubjectDataTitle"
                     style="@style/MaterialTypography.Dense.Subheading"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -57,6 +65,8 @@
                 <TextView
                     android:id="@id/certificateDetailCountryTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/country_or_region"
                     android:layout_width="wrap_content"
@@ -65,6 +75,8 @@
                 <TextView
                     android:id="@id/certificateDetailCountry"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -79,6 +91,8 @@
                 <TextView
                     android:id="@id/certificateDetailOrganizationTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/organization"
                     android:layout_width="wrap_content"
@@ -87,6 +101,8 @@
                 <TextView
                     android:id="@id/certificateDetailOrganization"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -101,6 +117,8 @@
                 <TextView
                     android:id="@id/certificateDetailOrganizationalUnitTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/organizational_unit"
                     android:layout_width="wrap_content"
@@ -109,6 +127,8 @@
                 <TextView
                     android:id="@id/certificateDetailOrganizationalUnit"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -123,6 +143,8 @@
                 <TextView
                     android:id="@id/certificateDetailCommonNameTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/common_name"
                     android:layout_width="wrap_content"
@@ -131,6 +153,8 @@
                 <TextView
                     android:id="@id/certificateDetailCommonName"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -145,6 +169,8 @@
                 <TextView
                     android:id="@id/certificateDetailSurnameTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/surname"
                     android:layout_width="wrap_content"
@@ -153,6 +179,8 @@
                 <TextView
                     android:id="@id/certificateDetailSurname"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -167,6 +195,8 @@
                 <TextView
                     android:id="@id/certificateDetailGivenNameTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/given_name"
                     android:layout_width="wrap_content"
@@ -175,6 +205,8 @@
                 <TextView
                     android:id="@id/certificateDetailGivenName"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -189,6 +221,8 @@
                 <TextView
                     android:id="@id/certificateDetailSerialCodeTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/serial_number"
                     android:layout_width="wrap_content"
@@ -197,6 +231,8 @@
                 <TextView
                     android:id="@id/certificateDetailSerialCode"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -212,6 +248,8 @@
                 <TextView
                     android:id="@id/certificateDetailIssuerDataTitle"
                     style="@style/MaterialTypography.Dense.Subheading"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/title"
                     android:text="@string/issuer_name"
                     android:layout_width="wrap_content"
@@ -228,6 +266,8 @@
                 <TextView
                     android:id="@id/certificateDetailIssuerCountryTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/country_or_region"
                     android:layout_width="wrap_content"
@@ -236,6 +276,8 @@
                 <TextView
                     android:id="@id/certificateDetailIssuerCountry"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -250,6 +292,8 @@
                 <TextView
                     android:id="@id/certificateDetailIssuerOrganizationTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/organization"
                     android:layout_width="wrap_content"
@@ -258,6 +302,8 @@
                 <TextView
                     android:id="@id/certificateDetailIssuerOrganization"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -272,6 +318,8 @@
                 <TextView
                     android:id="@id/certificateDetailIssuerCommonNameTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/common_name"
                     android:layout_width="wrap_content"
@@ -280,6 +328,8 @@
                 <TextView
                     android:id="@id/certificateDetailIssuerCommonName"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -294,6 +344,8 @@
                 <TextView
                     android:id="@id/certificateDetailIssuerEmailTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/email_address"
                     android:layout_width="wrap_content"
@@ -302,6 +354,8 @@
                 <TextView
                     android:id="@id/certificateDetailIssuerEmail"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -316,6 +370,8 @@
                 <TextView
                     android:id="@id/certificateDetailIssuerOrganizationIdentifierTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/other_name"
                     android:layout_width="wrap_content"
@@ -324,6 +380,8 @@
                 <TextView
                     android:id="@id/certificateDetailIssuerOrganizationIdentifier"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -338,6 +396,8 @@
                 <TextView
                     android:id="@id/certificateDetailSerialNumberTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/serial_number"
                     android:layout_width="wrap_content"
@@ -346,6 +406,8 @@
                 <TextView
                     android:id="@id/certificateDetailSerialNumber"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -360,6 +422,8 @@
                 <TextView
                     android:id="@id/certificateDetailVersionTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/version"
                     android:layout_width="wrap_content"
@@ -368,6 +432,8 @@
                 <TextView
                     android:id="@id/certificateDetailVersion"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -382,6 +448,8 @@
                 <TextView
                     android:id="@id/certificateDetailSignatureAlgorithmTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/signature_algorithm"
                     android:layout_width="wrap_content"
@@ -390,6 +458,8 @@
                 <TextView
                     android:id="@id/certificateDetailSignatureAlgorithm"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -404,6 +474,8 @@
                 <TextView
                     android:id="@id/certificateDetailSignatureParametersTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/parameters"
                     android:layout_width="wrap_content"
@@ -412,6 +484,8 @@
                 <TextView
                     android:id="@id/certificateDetailSignatureParameters"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -426,6 +500,8 @@
                 <TextView
                     android:id="@id/certificateDetailNotValidBeforeTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/not_valid_before"
                     android:layout_width="wrap_content"
@@ -434,6 +510,8 @@
                 <TextView
                     android:id="@id/certificateDetailNotValidBefore"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -448,6 +526,8 @@
                 <TextView
                     android:id="@id/certificateDetailNotValidAfterTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/not_valid_after"
                     android:layout_width="wrap_content"
@@ -456,6 +536,8 @@
                 <TextView
                     android:id="@id/certificateDetailNotValidAfter"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -471,6 +553,8 @@
                 <TextView
                     android:id="@id/certificateDetailPublicKeyInfoTitle"
                     style="@style/MaterialTypography.Dense.Subheading"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/title"
                     android:text="@string/public_key_info"
                     android:layout_width="wrap_content"
@@ -487,6 +571,8 @@
                 <TextView
                     android:id="@id/certificateDetailPublicKeyAlgorithmTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/algorithm"
                     android:layout_width="wrap_content"
@@ -495,6 +581,8 @@
                 <TextView
                     android:id="@id/certificateDetailPublicKeyAlgorithm"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -509,6 +597,8 @@
                 <TextView
                     android:id="@id/certificateDetailPublicKeyParametersTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/parameters"
                     android:layout_width="wrap_content"
@@ -517,6 +607,8 @@
                 <TextView
                     android:id="@id/certificateDetailPublicKeyParameters"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -531,6 +623,8 @@
                 <TextView
                     android:id="@id/certificateDetailPublicKeyPKTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/public_key"
                     android:layout_width="wrap_content"
@@ -539,6 +633,8 @@
                 <TextView
                     android:id="@id/certificateDetailPublicKeyPK"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -553,6 +649,8 @@
                 <TextView
                     android:id="@id/certificateDetailPublicKeyKeyUsageTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/key_usage"
                     android:layout_width="wrap_content"
@@ -561,6 +659,8 @@
                 <TextView
                     android:id="@id/certificateDetailPublicKeyKeyUsage"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -575,6 +675,8 @@
                 <TextView
                     android:id="@id/certificateDetailSignatureTitle"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/signature"
                     android:layout_width="wrap_content"
@@ -583,6 +685,8 @@
                 <TextView
                     android:id="@id/certificateDetailSignature"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -598,6 +702,8 @@
                 <TextView
                     android:id="@id/certificateDetailExtensionsTitle"
                     style="@style/MaterialTypography.Dense.Subheading"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/title"
                     android:text="@string/extensions"
                     android:layout_width="wrap_content"
@@ -614,6 +720,8 @@
                 <TextView
                     android:id="@id/certificateDetailExtensions"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -628,6 +736,8 @@
                 <TextView
                     android:id="@id/certificateDetailFingerprintsTitle"
                     style="@style/MaterialTypography.Dense.Subheading"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/title"
                     android:text="@string/fingerprints"
                     android:layout_width="wrap_content"
@@ -644,6 +754,8 @@
                 <TextView
                     android:id="@id/certificateDetailFingerprintsSHA256Title"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/sha_256"
                     android:layout_width="wrap_content"
@@ -652,6 +764,8 @@
                 <TextView
                     android:id="@id/certificateDetailFingerprintsSHA256"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
@@ -666,6 +780,8 @@
                 <TextView
                     android:id="@id/certificateDetailFingerprintsSHA1Title"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationTitleLabel"
                     android:text="@string/sha_1"
                     android:layout_width="wrap_content"
@@ -674,6 +790,8 @@
                 <TextView
                     android:id="@id/certificateDetailFingerprintsSHA1"
                     style="@style/MaterialTypography.Dense.Body1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textColor="@color/detailInformationLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
