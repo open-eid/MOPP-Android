@@ -9,7 +9,10 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:accessibilityHeading="true"
+        android:contentDescription="@string/main_settings_role_and_address_button"
+        >
 
         <android.widget.Toolbar
             android:id="@id/toolbar"
@@ -17,6 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:accessibilityPaneTitle="@string/main_settings_role_and_address_button"
+            android:accessibilityHeading="true"
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:navigationContentDescription="@string/back"
             app:title="@string/main_settings_role_and_address_button" />

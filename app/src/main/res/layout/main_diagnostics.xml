@@ -9,12 +9,16 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:accessibilityHeading="true"
+        android:contentDescription="@string/main_diagnostics_title"
+        >
 
         <android.widget.Toolbar
             android:id="@id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:accessibilityHeading="true"
             android:theme="@style/ThemeOverlay.Application.ActionBar" />
 
     </com.google.android.material.appbar.AppBarLayout>

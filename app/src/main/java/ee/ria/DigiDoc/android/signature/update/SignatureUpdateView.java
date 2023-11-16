@@ -33,6 +33,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
@@ -90,6 +91,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     private final boolean isSivaConfirmed;
 
     private final Toolbar toolbarView;
+    private final AppBarLayout appBarLayout;
     private final NameUpdateDialog nameUpdateDialog;
     private final RecyclerView listView;
     private final SignatureUpdateAdapter adapter;
@@ -144,6 +146,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     @Nullable private DataFile documentRemoveConfirmation;
     @Nullable private Signature signatureRemoveConfirmation;
 
+    /** @noinspection unused*/
     private boolean isRoleViewShown = false;
     private boolean signingInfoDelegated = false;
     private final ProgressBar documentAddProgressBar;
@@ -174,6 +177,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update, this);
         toolbarView = findViewById(R.id.toolbar);
+        appBarLayout = findViewById(R.id.appBar);
         nameUpdateDialog = new NameUpdateDialog(context);
         listView = findViewById(R.id.signatureUpdateList);
         mobileIdActivityIndicatorView = findViewById(R.id.activityIndicatorMobileId);
@@ -289,7 +293,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     }
 
 
-    @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), addDocumentsIntent(),
@@ -336,6 +339,9 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         toolbarView.setTitle(titleResId);
         toolbarView.setNavigationIcon(R.drawable.ic_clear);
         toolbarView.setNavigationContentDescription(R.string.close);
+
+        appBarLayout.setAccessibilityHeading(true);
+        appBarLayout.setContentDescription(getContext().getString(titleResId));
 
         setAccessibilityPaneTitle(isExistingContainer ? getResources().getString(titleResId) : "Container signing");
 
@@ -461,9 +467,8 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                 signatureAddResponse instanceof MobileIdResponse
                         ? VISIBLE
                         : GONE);
-        if (signatureAddResponse instanceof MobileIdResponse) {
+        if (signatureAddResponse instanceof MobileIdResponse mobileIdResponse) {
             setSigningModalSize(mobileIdContainerView);
-            MobileIdResponse mobileIdResponse = (MobileIdResponse) signatureAddResponse;
             String mobileIdChallenge = mobileIdResponse.challenge();
             if (mobileIdChallenge != null) {
                 mobileIdChallengeView.setText(mobileIdChallenge);
@@ -525,8 +530,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                 signingInfoDelegated = true;
             }
 
-            if (signatureAddResponse instanceof SmartIdResponse) {
-                SmartIdResponse smartIdResponse = (SmartIdResponse) signatureAddResponse;
+            if (signatureAddResponse instanceof SmartIdResponse smartIdResponse) {
                 String selectDeviceText = getResources().getString(R.string.signature_update_smart_id_select_device);
                 if (smartIdResponse.selectDevice() && !smartIdInfo.getText().equals(selectDeviceText)) {
                     smartIdInfo.setText(R.string.signature_update_smart_id_select_device);
@@ -595,7 +599,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                 signatureAddSuccessMessageVisible));
     }
 
-    @SuppressWarnings("unchecked")
     private Observable<NameUpdateIntent> nameUpdateIntent() {
         return Observable.mergeArray(
                 adapter.nameUpdateClicks().map(ignored -> NameUpdateIntent.show(containerFile)),
@@ -645,7 +648,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         return signatureRoleDetailsIntentSubject;
     }
 
-    @SuppressWarnings("unchecked")
     private Observable<SignatureAddIntent> signatureAddIntent() {
         return Observable.mergeArray(
                 clicks(signatureAddButton)

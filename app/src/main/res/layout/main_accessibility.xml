@@ -9,13 +9,17 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:accessibilityHeading="true"
+        android:contentDescription="@string/main_accessibility_title"
+        >
 
         <android.widget.Toolbar
             android:id="@id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.Application.ActionBar" />
+            android:theme="@style/ThemeOverlay.Application.ActionBar"
+            android:accessibilityHeading="true" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -53,6 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/material_baseline_grid_3x"
                 android:layout_marginBottom="@dimen/material_baseline_grid_0.5x"
+                android:accessibilityHeading="true"
                 android:textColor="@color/title"
                 android:text="@string/main_accessibility_introduction_screen_reader_title" />
 
@@ -106,6 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/material_baseline_grid_3x"
                 android:layout_marginBottom="@dimen/material_baseline_grid_0.5x"
+                android:accessibilityHeading="true"
                 android:textColor="@color/title"
                 android:text="@string/main_accessibility_introduction_screen_magnification_title" />
 

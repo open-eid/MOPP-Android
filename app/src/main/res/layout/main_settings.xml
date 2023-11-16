@@ -9,13 +9,17 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:accessibilityHeading="true"
+        android:contentDescription="@string/main_settings_title"
+        >
 
         <android.widget.Toolbar
             android:id="@id/toolbar"
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:accessibilityHeading="true"
             android:accessibilityPaneTitle="@string/main_settings_title"
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:navigationContentDescription="@string/back"

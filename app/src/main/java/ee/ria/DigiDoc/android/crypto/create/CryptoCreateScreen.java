@@ -29,9 +29,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bluelinelabs.conductor.Controller;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
+import java.util.Objects;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
@@ -92,6 +94,7 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
 
     private View view;
     private Toolbar toolbarView;
+    private AppBarLayout appBarLayout;
     private NameUpdateDialog nameUpdateDialog;
     private ConfirmationDialog sivaConfirmationDialog;
     private ConfirmationDialog fileRemoveConfirmationDialog;
@@ -132,7 +135,6 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         return Observable.just(Intent.InitialIntent.create(containerFile, intent, isFromSignatureView));
     }
 
-    @SuppressWarnings("unchecked")
     private Observable<Intent.NameUpdateIntent> nameUpdateIntent() {
         return Observable.mergeArray(
                 adapter.nameUpdateClicks()
@@ -155,7 +157,6 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
                 .map(ignored -> Intent.DataFilesAddIntent.start(dataFiles));
     }
 
-    @SuppressWarnings("unchecked")
     private Observable<Intent.DataFileRemoveIntent> dataFileRemoveIntent() {
         return Observable.mergeArray(
                 adapter.dataFileRemoveClicks()
@@ -174,7 +175,6 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
                 .map(Intent.DataFileSaveIntent::create);
     }
 
-    @SuppressWarnings("unchecked")
     private Observable<Intent.DataFileViewIntent> dataFileViewIntent() {
         return Observable.mergeArray(adapter.dataFileClicks()
                         .flatMap(file -> Intent.DataFileViewIntent.confirmation(file, getApplicationContext())),
@@ -248,7 +248,6 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
                 });
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), upButtonClickIntent(), dataFilesAddIntent(),
@@ -281,6 +280,9 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         toolbarView.setNavigationIcon(R.drawable.ic_clear);
         toolbarView.setNavigationContentDescription(R.string.close);
 
+        appBarLayout.setAccessibilityHeading(true);
+        appBarLayout.setContentDescription(Objects.requireNonNull(getResources()).getString(titleResId));
+
         AccessibilityUtils.setViewAccessibilityPaneTitle(view, titleResId);
 
         adapter.dataForContainer(name, containerFile, dataFiles, state.dataFilesViewEnabled(),
@@ -295,9 +297,9 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         dataFileRemoveConfirmation = state.dataFileRemoveConfirmation();
         if (dataFileRemoveConfirmation != null) {
             if (dataFiles.size() == 1) {
-                fileRemoveConfirmationDialog.setMessage(getResources().getString(R.string.crypto_create_remove_last_data_file_confirmation_message));
+                fileRemoveConfirmationDialog.setMessage(Objects.requireNonNull(getResources()).getString(R.string.crypto_create_remove_last_data_file_confirmation_message));
             } else {
-                fileRemoveConfirmationDialog.setMessage(getResources().getString(R.string.crypto_create_remove_data_file_confirmation_message));
+                fileRemoveConfirmationDialog.setMessage(Objects.requireNonNull(getResources()).getString(R.string.crypto_create_remove_data_file_confirmation_message));
             }
             fileRemoveConfirmationDialog.show();
         } else {
@@ -415,6 +417,7 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
         view = inflater.inflate(R.layout.crypto_create_screen, container, false);
         toolbarView = view.findViewById(R.id.toolbar);
+        appBarLayout = view.findViewById(R.id.appBar);
         nameUpdateDialog = new NameUpdateDialog(container.getContext());
         fileRemoveConfirmationDialog = new ConfirmationDialog(container.getContext(),
                 R.string.crypto_create_remove_data_file_confirmation_message, R.id.documentRemovalDialog);
@@ -427,14 +430,14 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         decryptButton = view.findViewById(R.id.cryptoCreateDecryptButton);
         signButton = view.findViewById(R.id.cryptoCreateSignatureButton);
         sendButton = view.findViewById(R.id.cryptoCreateSendButton);
-        sendButton.setContentDescription(getResources().getString(R.string.share_container));
+        sendButton.setContentDescription(Objects.requireNonNull(getResources()).getString(R.string.share_container));
         cryptoButtonSpaceView = view.findViewById(R.id.cryptoCreateCryptoButtonSpace);
         signatureButtonSpaceView = view.findViewById(R.id.cryptoCreateSignatureButtonSpace);
         decryptDialog = new DecryptDialog(inflater.getContext());
 
         this.errorDialog = new ErrorDialog(inflater.getContext());
         this.errorDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.ok), (dialog, which) -> dialog.cancel());
-        this.errorDialog.setMessage(getResources().getString(R.string.crypto_create_error));
+        this.errorDialog.setMessage(Objects.requireNonNull(getResources()).getString(R.string.crypto_create_error));
 
         listView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());
@@ -481,6 +484,7 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             return bundle.getParcelable(KEY_INTENT, android.content.Intent.class);
         } else {
+            //noinspection deprecation
             return bundle.getParcelable(KEY_INTENT);
         }
     }

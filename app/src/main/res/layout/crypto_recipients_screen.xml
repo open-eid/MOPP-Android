@@ -10,13 +10,17 @@
         android:id="@id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_insetEdge="top">
+        app:layout_insetEdge="top"
+        android:accessibilityHeading="true"
+        android:contentDescription="@string/crypto_recipients_title"
+        >
 
         <android.widget.Toolbar
             android:id="@id/toolbar"
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:accessibilityHeading="true" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
