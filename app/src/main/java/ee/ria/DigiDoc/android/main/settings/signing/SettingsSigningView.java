@@ -105,6 +105,11 @@ public final class SettingsSigningView extends CoordinatorLayout {
         addCertificateButton = findViewById(R.id.mainSettingsTsaCertificateAddCertificateButton);
         showCertificateButton = findViewById(R.id.mainSettingsTsaCertificateShowCertificateButton);
 
+        sivaCategory = findViewById(R.id.signingSettingsSivaCategory);
+        proxyCategory = findViewById(R.id.signingSettingsProxyCategory);
+        sivaDialog = new SettingsSivaDialog(navigator.activity());
+        proxyDialog = new SettingsProxyDialog(navigator.activity());
+
         askRoleAndAddressSwitch = findViewById(R.id.mainSettingsAskRoleAndAddress);
 
         if (settingsDataStore != null) {
@@ -112,11 +117,6 @@ public final class SettingsSigningView extends CoordinatorLayout {
             setTSAContainerViewVisibility(isTsaCertificateViewVisible);
             setAskRoleAndAddressSetting(settingsDataStore);
         }
-
-        sivaCategory = findViewById(R.id.signingSettingsSivaCategory);
-        proxyCategory = findViewById(R.id.signingSettingsProxyCategory);
-        sivaDialog = new SettingsSivaDialog(navigator.activity());
-        proxyDialog = new SettingsProxyDialog(navigator.activity());
     }
 
     public void render(ViewState state) {

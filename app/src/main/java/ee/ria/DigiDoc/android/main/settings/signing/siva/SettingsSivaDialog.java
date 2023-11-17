@@ -106,7 +106,7 @@ public class SettingsSivaDialog extends Dialog {
         configurationProvider = ((ApplicationApp) context.getApplicationContext()).getConfigurationProvider();
 
         disposables = new ViewDisposables();
-        
+
         backButton = findViewById(R.id.mainSettingsSivaBackButton);
         backButton.requestFocus();
         sivaServiceChoiceGroup = findViewById(R.id.mainSettingsSivaServiceChoiceGroup);
