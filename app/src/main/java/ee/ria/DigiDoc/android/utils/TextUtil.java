@@ -31,15 +31,14 @@ import ee.ria.DigiDoc.R;
 
 public class TextUtil {
 
+    /** @noinspection unused*/
     public static AppCompatTextView getTextInputLayoutAppCompatTextView(TextInputLayout textInputLayout) {
         for (int i = 0; i < textInputLayout.getChildCount(); i++) {
             final View textInputLayoutChild = textInputLayout.getChildAt(i);
-            if (textInputLayoutChild instanceof LinearLayout) {
-                final LinearLayout linearLayout = (LinearLayout) textInputLayoutChild;
+            if (textInputLayoutChild instanceof final LinearLayout linearLayout) {
                 for (int j = 0; j < linearLayout.getChildCount(); j++) {
                     final View linearLayoutChild = linearLayout.getChildAt(j);
-                    if (linearLayoutChild instanceof FrameLayout) {
-                        final FrameLayout frameLayout = (FrameLayout) linearLayoutChild;
+                    if (linearLayoutChild instanceof final FrameLayout frameLayout) {
                         for (int k = 0; k < frameLayout.getChildCount(); k++) {
                             final View frameLayoutChild = frameLayout.getChildAt(k);
                             if (frameLayoutChild instanceof AppCompatTextView) {
