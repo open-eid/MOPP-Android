@@ -482,7 +482,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return idCardService
                         .decrypt(token, request.containerFile(), request.pin1())
                         .doOnSuccess(ignored ->
-                                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(),
+                                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext()
+                                                .createConfigurationContext(
+                                                        localeService.applicationConfigurationWithLocale(
+                                                                application.getApplicationContext(),
+                                                                localeService.applicationLocale())),
                                         AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.document_decrypted)
                         )
                         .flatMapObservable(dataFiles ->
