@@ -7,6 +7,7 @@ import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isSmallFontEnabled;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarViewTitle;
 import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDisplayMetricsDpToInt;
@@ -41,6 +42,7 @@ import com.google.common.io.Files;
 import java.io.File;
 import java.time.Instant;
 import java.time.Month;
+import java.util.Objects;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
@@ -250,7 +252,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     }
 
     private void setActionButtonsTextSize() {
-
         signatureAddButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
         signatureEncryptButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
         sendButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
@@ -347,16 +348,17 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
 
         listView.clearFocus();
 
-        TextView titleView = getTitleView(toolbarView);
+        TextView titleView = getToolbarViewTitle(toolbarView);
         if (titleView != null) {
             AccessibilityUtils.disableDoubleTapToActivateFeedback(titleView);
-            if (!isTitleViewFocused && isNestedContainer) {
-                titleView.postDelayed(() -> {
-                    titleView.requestFocus();
-                    titleView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
-                }, 1000);
-                isTitleViewFocused = true;
-            }
+            titleView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        if (!isTitleViewFocused && isNestedContainer) {
+            appBarLayout.postDelayed(() -> {
+                appBarLayout.requestFocus();
+                appBarLayout.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+            }, 1000);
+            isTitleViewFocused = true;
         }
 
         if (isNestedContainer) {
@@ -733,15 +735,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         return null;
     }
 
-    private TextView getTitleView(Toolbar toolbar) {
-        for (int i = 0; i < toolbar.getChildCount(); i++) {
-            if (toolbar.getChildAt(i) instanceof TextView) {
-                return ((TextView) toolbar.getChildAt(i));
-            }
-        }
-        return null;
-    }
-
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -830,9 +823,11 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     protected void onRestoreInstanceState(Parcelable state) {
         super.onRestoreInstanceState(ViewSavedState.onRestoreInstanceState(state, parcel -> {
             signatureAddDialog.onRestoreInstanceState(
-                    parcel.readBundle(getClass().getClassLoader()));
-            nameUpdateDialog.onRestoreInstanceState(parcel.readBundle(getClass().getClassLoader()));
-            roleAddDialog.onRestoreInstanceState(parcel.readBundle(getClass().getClassLoader()));
+                    Objects.requireNonNull(parcel.readBundle(getClass().getClassLoader())));
+            nameUpdateDialog.onRestoreInstanceState(
+                    Objects.requireNonNull(parcel.readBundle(getClass().getClassLoader())));
+            roleAddDialog.onRestoreInstanceState(
+                    Objects.requireNonNull(parcel.readBundle(getClass().getClassLoader())));
         }));
     }
 

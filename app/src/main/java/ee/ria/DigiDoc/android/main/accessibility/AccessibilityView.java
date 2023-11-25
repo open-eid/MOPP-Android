@@ -1,16 +1,18 @@
 package ee.ria.DigiDoc.android.main.accessibility;
 
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-import static ee.ria.DigiDoc.android.utils.TextUtil.getInvisibleElementTextView;
-import static ee.ria.DigiDoc.android.utils.ViewUtil.findLastElement;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarViewTitle;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
@@ -21,6 +23,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 
 public class AccessibilityView extends CoordinatorLayout implements ContentView {
 
+    private final AppBarLayout appBarLayout;
     private final Toolbar toolbarView;
 
     private final Navigator navigator;
@@ -39,6 +42,7 @@ public class AccessibilityView extends CoordinatorLayout implements ContentView 
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.main_accessibility, this);
         toolbarView = findViewById(R.id.toolbar);
+        appBarLayout = findViewById(R.id.appBar);
         navigator = ApplicationApp.component(context).navigator();
         disposables = new ViewDisposables();
 
@@ -52,6 +56,15 @@ public class AccessibilityView extends CoordinatorLayout implements ContentView 
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
+        TextView toolbarTitleView = getToolbarViewTitle(toolbarView);
+        if (toolbarTitleView != null) {
+            toolbarTitleView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        appBarLayout.postDelayed(() -> {
+            appBarLayout.requestFocus();
+            appBarLayout.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+            appBarLayout.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED);
+        }, 1000);
         disposables.attach();
         disposables.add(navigationClicks(toolbarView).subscribe(o ->
                 navigator.execute(Transaction.pop())));

@@ -19,12 +19,8 @@
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:accessibilityHeading="true"
             android:accessibilityPaneTitle="@string/main_settings_title"
-            app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationContentDescription="@string/back"
-            app:title="@string/main_settings_title" />
-
+            />
     </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView

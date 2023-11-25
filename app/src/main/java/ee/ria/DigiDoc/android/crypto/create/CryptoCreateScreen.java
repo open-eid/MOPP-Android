@@ -4,6 +4,7 @@ import static android.view.View.GONE;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarViewTitle;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.putBoolean;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.putFile;
@@ -19,6 +20,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toolbar;
@@ -284,6 +286,17 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         appBarLayout.setContentDescription(Objects.requireNonNull(getResources()).getString(titleResId));
 
         AccessibilityUtils.setViewAccessibilityPaneTitle(view, titleResId);
+        listView.clearFocus();
+        TextView titleView = getToolbarViewTitle(toolbarView);
+        if (titleView != null) {
+            AccessibilityUtils.disableDoubleTapToActivateFeedback(titleView);
+            titleView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+
+        appBarLayout.postDelayed(() -> {
+            appBarLayout.requestFocus();
+            appBarLayout.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+        }, 1000);
 
         adapter.dataForContainer(name, containerFile, dataFiles, state.dataFilesViewEnabled(),
                 state.dataFilesAddEnabled(), state.dataFilesRemoveEnabled(), recipients,

@@ -15,14 +15,11 @@
 
         <android.widget.Toolbar
             android:id="@id/toolbar"
+            android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.Application.ActionBar"
-            android:accessibilityHeading="true"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:navigationContentDescription="@string/back"
-            app:navigationIcon="?attr/homeAsUpIndicator"
-            app:title="@string/main_about_title" />
+            />
 
     </com.google.android.material.appbar.AppBarLayout>
 

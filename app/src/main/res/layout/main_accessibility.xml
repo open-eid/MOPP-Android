@@ -16,10 +16,10 @@
 
         <android.widget.Toolbar
             android:id="@id/toolbar"
+            android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.Application.ActionBar"
-            android:accessibilityHeading="true" />
+            />
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -5,7 +5,6 @@
     tools:parentTag="android.widget.LinearLayout"
     tools:layout_width="match_parent"
     tools:layout_height="match_parent"
-    android:keepScreenOn="true"
     tools:orientation="vertical">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -16,14 +15,16 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@id/appBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:accessibilityHeading="true"
+            >
 
             <android.widget.Toolbar
                 android:id="@id/toolbar"
                 android:theme="@style/ThemeOverlay.Application.ActionBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:accessibilityHeading="true" />
+                />
 
         </com.google.android.material.appbar.AppBarLayout>
 
