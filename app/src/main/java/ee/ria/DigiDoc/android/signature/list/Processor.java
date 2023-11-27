@@ -136,7 +136,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
             messageBuilder.append("Container is invalid, contains");
             if (unknownSignaturesCount > 0) {
                 messageBuilder.append(" ").append(configurationContext.getResources().getQuantityString(
-                        R.plurals.signature_update_signatures_unknown, unknownSignaturesCount, unknownSignaturesCount));
+                        R.plurals.signature_update_signatures_unknown, unknownSignaturesCount, unknownSignaturesCount).toLowerCase());
             }
             if (invalidSignatureCount > 0) {
                 messageBuilder.append(" ").append(configurationContext.getResources().getQuantityString(

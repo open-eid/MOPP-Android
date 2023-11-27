@@ -838,7 +838,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         if (sendButton.getVisibility() == VISIBLE && signatureAddButton.getVisibility() == VISIBLE &&
                 signatureEncryptButton.getVisibility() == VISIBLE) {
             signatureAddButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 1, 3));
-            signatureEncryptButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 2, 3));
+            signatureEncryptButton.setContentDescription(getResources().getString(R.string.decrypt_content_description, 2, 3));
             sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 3, 3));
         } else {
             sendButton.setContentDescription(getResources().getString(R.string.signature_update_send_button).toLowerCase());
