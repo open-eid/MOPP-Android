@@ -71,7 +71,6 @@
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/mainSettingsOpenAllFileTypes"
                     android:focusable="true"
-                    android:focusableInTouchMode="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingStart="0dp"
