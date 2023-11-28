@@ -47,6 +47,7 @@ import java.util.Optional;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.ApplicationApp;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.main.settings.access.siva.SivaSetting;
 import ee.ria.DigiDoc.android.main.settings.create.CertificateAddViewModel;
@@ -180,6 +181,7 @@ public final class SettingsAccessView extends CoordinatorLayout {
     private void restartIntent() {
         PackageManager packageManager = getContext().getPackageManager();
         Intent intent = packageManager.getLaunchIntentForPackage(getContext().getPackageName());
+        assert intent != null;
         ComponentName componentName = intent.getComponent();
         Intent restartIntent = Intent.makeRestartActivityTask(componentName);
         restartIntent.setAction(Intent.ACTION_CONFIGURATION_CHANGED);
@@ -288,9 +290,8 @@ public final class SettingsAccessView extends CoordinatorLayout {
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         disposables.attach();
-        disposables.add(navigationClicks(toolbarView).subscribe(o -> {
-            navigator.execute(Transaction.pop());
-        }));
+        disposables.add(navigationClicks(toolbarView).subscribe(o ->
+                navigator.execute(Transaction.pop())));
         disposables.add(clicks(showCertificateButton).subscribe(o -> {
             if (tsaCertificate != null) {
                 navigator.execute(Transaction.push(CertificateDetailScreen.create(tsaCertificate)));
@@ -378,6 +379,11 @@ public final class SettingsAccessView extends CoordinatorLayout {
                     setSivaUrl(settingsDataStore, defaultSivaUrl);
                     setSivaPlaceholderText(defaultSivaUrl);
                 }
+                sivaServiceUrl.setOnFocusChangeListener((view, hasFocus) -> {
+                    if (hasFocus) {
+                        AccessibilityUtils.setEditTextCursorToEnd(sivaServiceUrl);
+                    }
+                });
             }
         }
     }
