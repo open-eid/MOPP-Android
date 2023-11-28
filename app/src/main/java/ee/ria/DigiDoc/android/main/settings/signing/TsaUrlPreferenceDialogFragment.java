@@ -128,6 +128,7 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
             AppCompatEditText appCompatEditText,
             AppCompatTextView appCompatTextView
     ) {
+        AccessibilityUtils.setEditTextCursorToEnd(appCompatEditText);
         appCompatTextView.setText(tsaUrlPreference.getTitle());
         appCompatTextView.setLabelFor(appCompatEditText.getId());
         appCompatTextView.setVisibility(View.VISIBLE);

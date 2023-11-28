@@ -135,6 +135,7 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
             AppCompatEditText appCompatEditText,
             AppCompatTextView appCompatTextView
     ) {
+        AccessibilityUtils.setEditTextCursorToEnd(appCompatEditText);
         appCompatTextView.setText(uuidPreference.getTitle());
         appCompatTextView.setLabelFor(appCompatEditText.getId());
         appCompatTextView.setVisibility(View.VISIBLE);

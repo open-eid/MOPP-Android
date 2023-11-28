@@ -28,6 +28,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.List;
+import java.util.Objects;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -98,6 +99,8 @@ public final class MobileIdView extends LinearLayout implements
         if (AccessibilityUtils.isTalkBackEnabled()) {
             setAccessibilityDescription();
         }
+        AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
+        AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
     }
 
     @Override
@@ -123,7 +126,8 @@ public final class MobileIdView extends LinearLayout implements
     @Override
     public MobileIdRequest request() {
         return MobileIdRequest.create(phoneNoView.getText().toString(),
-                personalCodeView.getText().toString(), rememberMeView.isChecked());
+                Objects.requireNonNull(personalCodeView.getText()).toString(),
+                rememberMeView.isChecked());
     }
 
     @Override
@@ -133,6 +137,9 @@ public final class MobileIdView extends LinearLayout implements
     public void setDefaultPhoneNoPrefix(String phoneNoPrefix) {
         if (TextUtils.isEmpty(phoneNoView.getText())) {
             phoneNoView.setText(phoneNoPrefix, TextView.BufferType.EDITABLE);
+            phoneNoView.setHint(getResources().getString(R.string.mobile_id_country_code_and_phone_number_placeholder));
+        } else {
+            phoneNoView.setHint("");
         }
     }
 
@@ -195,12 +202,19 @@ public final class MobileIdView extends LinearLayout implements
         checkPhoneNumberValidity();
         checkPersonalCodeValidity();
 
-        phoneNoView.setOnFocusChangeListener((view, hasfocus) -> {
-            if (!hasfocus) {
+        phoneNoView.setOnFocusChangeListener((view, hasFocus) -> {
+            if (!hasFocus) {
                 checkPhoneNumberValidity();
+            } else {
+                AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
             }
         });
-        personalCodeView.setOnFocusChangeListener((view, hasfocus) -> checkPersonalCodeValidity());
+        personalCodeView.setOnFocusChangeListener((view, hasFocus) -> {
+            checkPersonalCodeValidity();
+            if (hasFocus) {
+                AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
+            }
+        });
     }
 
     private void checkPhoneNumberValidity() {
