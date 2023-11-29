@@ -1,6 +1,8 @@
 package ee.ria.DigiDoc.android.accessibility;
 
 import static android.content.Context.ACCESSIBILITY_SERVICE;
+import static android.text.TextUtils.isEmpty;
+import static java.util.Objects.nonNull;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -149,8 +151,34 @@ public class AccessibilityUtils {
             public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 StringBuilder textViewAccessibility = getTextViewAccessibility(textView);
+                if (nonNull(title)) {
+                    info.setText(title + " " + textViewAccessibility);
+                    info.setContentDescription(title + " " + textViewAccessibility);
+                    host.setContentDescription(title + " " + textViewAccessibility);
+                } else {
+                    info.setText(textViewAccessibility);
+                    info.setContentDescription(textViewAccessibility);
+                    host.setContentDescription(textViewAccessibility);
+                }
+            }
+        });
+    }
 
-                if (title != null) {
+    public static void setSingleCharactersContentDescriptionWithHint(TextView textView, @Nullable String title, String hint) {
+        ViewCompat.setAccessibilityDelegate(textView, new AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                StringBuilder textViewAccessibility = getTextViewAccessibility(textView);
+                if (isEmpty(textViewAccessibility)) {
+                    textView.setHint(hint);
+                    if (!isEmpty(textView.getHint())) {
+                        textViewAccessibility = new StringBuilder(textView.getHint().toString());
+                    }
+                } else {
+                    textView.setHint(" ");
+                }
+                if (nonNull(title)) {
                     info.setText(title + " " + textViewAccessibility);
                     info.setContentDescription(title + " " + textViewAccessibility);
                     host.setContentDescription(title + " " + textViewAccessibility);
@@ -246,6 +274,7 @@ public class AccessibilityUtils {
         return combinedMessage.toString();
     }
 
+    /** @noinspection deprecation*/
     private static AccessibilityEvent getAccessibilityEvent() {
         return new AccessibilityEvent();
     }

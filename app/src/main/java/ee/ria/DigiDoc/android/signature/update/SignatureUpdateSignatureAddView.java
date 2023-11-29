@@ -121,8 +121,6 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         nfcView.setVisibility(method == R.id.signatureUpdateSignatureAddMethodNFC ? VISIBLE : GONE);
         switch (method) {
             case R.id.signatureUpdateSignatureAddMethodMobileId:
-                mobileIdView.setDefaultPhoneNoPrefix("372");
-                break;
             case R.id.signatureUpdateSignatureAddMethodSmartId:
             case R.id.signatureUpdateSignatureAddMethodIdCard:
             case R.id.signatureUpdateSignatureAddMethodNFC:
