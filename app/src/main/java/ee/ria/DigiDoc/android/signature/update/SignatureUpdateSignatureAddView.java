@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import ee.ria.DigiDoc.R;
@@ -63,7 +64,6 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         RadioButton smartIdRadioButton = findViewById(R.id.signatureUpdateSignatureAddMethodSmartId);
         RadioButton idCardIdRadioButton = findViewById(R.id.signatureUpdateSignatureAddMethodIdCard);
 
-
         setupContentDescriptions(mobileIdRadioButton,
                 getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 3));
         setupContentDescriptions(smartIdRadioButton,
@@ -106,8 +106,6 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         idCardView.setVisibility(method == R.id.signatureUpdateSignatureAddMethodIdCard ? VISIBLE : GONE);
         switch (method) {
             case R.id.signatureUpdateSignatureAddMethodMobileId:
-                mobileIdView.setDefaultPhoneNoPrefix("372");
-                break;
             case R.id.signatureUpdateSignatureAddMethodSmartId:
             case R.id.signatureUpdateSignatureAddMethodIdCard:
                 break;
@@ -128,16 +126,12 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
     }
 
     public SignatureAddRequest request() {
-        switch (method()) {
-            case R.id.signatureUpdateSignatureAddMethodMobileId:
-                return mobileIdView.request();
-            case R.id.signatureUpdateSignatureAddMethodSmartId:
-                return smartIdView.request();
-            case R.id.signatureUpdateSignatureAddMethodIdCard:
-                return idCardView.request();
-            default:
-                throw new IllegalStateException("Unknown method " + method());
-        }
+        return switch (method()) {
+            case R.id.signatureUpdateSignatureAddMethodMobileId -> mobileIdView.request();
+            case R.id.signatureUpdateSignatureAddMethodSmartId -> smartIdView.request();
+            case R.id.signatureUpdateSignatureAddMethodIdCard -> idCardView.request();
+            default -> throw new IllegalStateException("Unknown method " + method());
+        };
     }
 
     public void response(SignatureAddResponse response) {
@@ -161,7 +155,8 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
     private void setupContentDescriptions(RadioButton radioButton, String contentDescription) {
         radioButton.setAccessibilityDelegate(new View.AccessibilityDelegate() {
             @Override
-            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+            public void onInitializeAccessibilityNodeInfo(
+                    @NonNull View host, @NonNull AccessibilityNodeInfo info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 info.setContentDescription(contentDescription);
                 info.setCheckable(false);

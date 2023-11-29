@@ -11,7 +11,6 @@ import static ee.ria.DigiDoc.common.TextUtil.getSymbolsFilter;
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.accessibility.AccessibilityManager;
@@ -28,6 +27,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.List;
+import java.util.Objects;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -98,6 +98,8 @@ public final class MobileIdView extends LinearLayout implements
         if (AccessibilityUtils.isTalkBackEnabled()) {
             setAccessibilityDescription();
         }
+        AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
+        AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
     }
 
     @Override
@@ -123,17 +125,12 @@ public final class MobileIdView extends LinearLayout implements
     @Override
     public MobileIdRequest request() {
         return MobileIdRequest.create(phoneNoView.getText().toString(),
-                personalCodeView.getText().toString(), rememberMeView.isChecked());
+                Objects.requireNonNull(personalCodeView.getText()).toString(),
+                rememberMeView.isChecked());
     }
 
     @Override
     public void response(@Nullable MobileIdResponse response, @Nullable RadioGroup methodView) {
-    }
-
-    public void setDefaultPhoneNoPrefix(String phoneNoPrefix) {
-        if (TextUtils.isEmpty(phoneNoView.getText())) {
-            phoneNoView.setText(phoneNoPrefix, TextView.BufferType.EDITABLE);
-        }
     }
 
     private void setDefaultCheckBoxToggle() {
@@ -160,7 +157,11 @@ public final class MobileIdView extends LinearLayout implements
     private void setAccessibilityDescription() {
         phoneNoView.setContentDescription(AccessibilityUtils.getTextViewAccessibility(phoneNoView));
         personalCodeView.setContentDescription(AccessibilityUtils.getTextViewAccessibility(personalCodeView));
-        AccessibilityUtils.setSingleCharactersContentDescription(phoneNoView, getResources().getString(R.string.signature_update_mobile_id_phone_no));
+        AccessibilityUtils.setSingleCharactersContentDescriptionWithHint(
+                phoneNoView,
+                getResources().getString(R.string.signature_update_mobile_id_phone_no),
+                getResources().getString(R.string.mobile_id_country_code_and_phone_number_placeholder)
+        );
         AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView, getResources().getString(R.string.signature_update_mobile_id_personal_code));
         AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
@@ -195,12 +196,19 @@ public final class MobileIdView extends LinearLayout implements
         checkPhoneNumberValidity();
         checkPersonalCodeValidity();
 
-        phoneNoView.setOnFocusChangeListener((view, hasfocus) -> {
-            if (!hasfocus) {
+        phoneNoView.setOnFocusChangeListener((view, hasFocus) -> {
+            if (!hasFocus) {
                 checkPhoneNumberValidity();
+            } else {
+                AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
             }
         });
-        personalCodeView.setOnFocusChangeListener((view, hasfocus) -> checkPersonalCodeValidity());
+        personalCodeView.setOnFocusChangeListener((view, hasFocus) -> {
+            checkPersonalCodeValidity();
+            if (hasFocus) {
+                AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
+            }
+        });
     }
 
     private void checkPhoneNumberValidity() {
