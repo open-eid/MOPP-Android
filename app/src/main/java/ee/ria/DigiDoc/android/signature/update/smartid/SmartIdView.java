@@ -234,12 +234,8 @@ public final class SmartIdView extends LinearLayout implements
             }
         }
         if (country == 0) {
-            if (pos == -1) {
-                inputFilters = Arrays.copyOf(inputFilters, inputFilters.length + 1);
-                inputFilters[inputFilters.length - 1] = new InputFilter.LengthFilter(11);
-            }
-            personalCodeView.setText(Objects.requireNonNull(personalCodeView.getText()).subSequence(0,
-                    Math.min(personalCodeView.getText().length(), 11)));
+            personalCodeView.setText(Objects.requireNonNull(personalCodeView.getText())
+                    .subSequence(0, Math.min(personalCodeView.getText().length(), 11)));
         } else {
             if (pos != -1) {
                 InputFilter[] copy = Arrays.copyOf(inputFilters, inputFilters.length - 1);
@@ -256,10 +252,8 @@ public final class SmartIdView extends LinearLayout implements
             public void onPopulateAccessibilityEvent(
                     @NonNull View host, @NonNull AccessibilityEvent event) {
                 if (!event.getText().isEmpty() &&
-                        (event.getText().get(0).toString().equals(
-                                getResources().getString(R.string.signature_update_signature_add_method_mobile_id)) ||
-                                event.getText().get(0).toString().equals(
-                                        getResources().getString(R.string.signature_update_signature_add_method_id_card)))) {
+                        (event.getText().get(0).toString().equals(getResources().getString(R.string.signature_update_signature_add_method_mobile_id)) ||
+                                event.getText().get(0).toString().equals(getResources().getString(R.string.signature_update_signature_add_method_id_card)))) {
                     event.getText().clear();
                     event.getText().add(getContentDescription());
                 }

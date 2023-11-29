@@ -11,7 +11,6 @@ import static ee.ria.DigiDoc.common.TextUtil.getSymbolsFilter;
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.accessibility.AccessibilityManager;
@@ -134,15 +133,6 @@ public final class MobileIdView extends LinearLayout implements
     public void response(@Nullable MobileIdResponse response, @Nullable RadioGroup methodView) {
     }
 
-    public void setDefaultPhoneNoPrefix(String phoneNoPrefix) {
-        if (TextUtils.isEmpty(phoneNoView.getText())) {
-            phoneNoView.setText(phoneNoPrefix, TextView.BufferType.EDITABLE);
-            phoneNoView.setHint(getResources().getString(R.string.mobile_id_country_code_and_phone_number_placeholder));
-        } else {
-            phoneNoView.setHint("");
-        }
-    }
-
     private void setDefaultCheckBoxToggle() {
         rememberMeView.setChecked(true);
     }
@@ -167,7 +157,11 @@ public final class MobileIdView extends LinearLayout implements
     private void setAccessibilityDescription() {
         phoneNoView.setContentDescription(AccessibilityUtils.getTextViewAccessibility(phoneNoView));
         personalCodeView.setContentDescription(AccessibilityUtils.getTextViewAccessibility(personalCodeView));
-        AccessibilityUtils.setSingleCharactersContentDescription(phoneNoView, getResources().getString(R.string.signature_update_mobile_id_phone_no));
+        AccessibilityUtils.setSingleCharactersContentDescriptionWithHint(
+                phoneNoView,
+                getResources().getString(R.string.signature_update_mobile_id_phone_no),
+                getResources().getString(R.string.mobile_id_country_code_and_phone_number_placeholder)
+        );
         AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView, getResources().getString(R.string.signature_update_mobile_id_personal_code));
         AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
