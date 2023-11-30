@@ -7,7 +7,8 @@ import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isSmallFontEnabled;
-import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarViewTitle;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarImageButton;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarTextView;
 import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDisplayMetricsDpToInt;
@@ -24,6 +25,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -92,8 +94,10 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     @Nullable private final File nestedFile;
     private final boolean isSivaConfirmed;
 
-    private final Toolbar toolbarView;
     private final AppBarLayout appBarLayout;
+    private final LinearLayout linearLayout;
+    private final Toolbar toolbarView;
+
     private final NameUpdateDialog nameUpdateDialog;
     private final RecyclerView listView;
     private final SignatureUpdateAdapter adapter;
@@ -180,6 +184,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         inflate(context, R.layout.signature_update, this);
         toolbarView = findViewById(R.id.toolbar);
         appBarLayout = findViewById(R.id.appBar);
+        linearLayout = findViewById(R.id.linearLayout);
         nameUpdateDialog = new NameUpdateDialog(context);
         listView = findViewById(R.id.signatureUpdateList);
         mobileIdActivityIndicatorView = findViewById(R.id.activityIndicatorMobileId);
@@ -293,7 +298,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         }
     }
 
-
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), addDocumentsIntent(),
@@ -332,7 +336,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             return;
         }
 
-
         nameUpdateDialog.render(showNameUpdate(state), state.nameUpdateName(), state.nameUpdateError());
 
         int titleResId = isExistingContainer ? R.string.signature_update_title_existing
@@ -344,15 +347,29 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         appBarLayout.setAccessibilityHeading(true);
         appBarLayout.setContentDescription(getContext().getString(titleResId));
 
-        setAccessibilityPaneTitle(isExistingContainer ? getResources().getString(titleResId) : "Container signing");
-
         listView.clearFocus();
 
-        TextView titleView = getToolbarViewTitle(toolbarView);
-        if (titleView != null) {
-            AccessibilityUtils.disableDoubleTapToActivateFeedback(titleView);
-            titleView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        linearLayout.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        smartIdContainerView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        mobileIdContainerView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        listView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        TextView toolbarTextView = getToolbarTextView(toolbarView);
+        if (toolbarTextView != null) {
+            toolbarTextView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         }
+        ImageButton toolbarImageButton = getToolbarImageButton(toolbarView);
+        if (toolbarImageButton != null) {
+            toolbarImageButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        appBarLayout.postDelayed(() -> {
+            linearLayout.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            smartIdContainerView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            mobileIdContainerView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            listView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            if (toolbarImageButton != null) {
+                toolbarImageButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            }
+        }, 1500);
         if (!isTitleViewFocused && isNestedContainer) {
             appBarLayout.postDelayed(() -> {
                 appBarLayout.requestFocus();

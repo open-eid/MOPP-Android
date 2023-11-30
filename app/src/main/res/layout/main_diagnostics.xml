@@ -2,6 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:importantForAccessibility="no"
     tools:parentTag="androidx.coordinatorlayout.widget.CoordinatorLayout"
     tools:layout_width="match_parent"
     tools:layout_height="match_parent">
@@ -10,15 +11,22 @@
         android:id="@id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:importantForAccessibility="yes"
         android:accessibilityHeading="true"
+        android:focusedByDefault="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:screenReaderFocusable="true"
         android:contentDescription="@string/main_diagnostics_title"
         >
-
+        <requestFocus/>
         <android.widget.Toolbar
             android:id="@id/toolbar"
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:accessibilityPaneTitle="@string/main_diagnostics_title"
             />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -26,6 +34,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@id/scrollView"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 

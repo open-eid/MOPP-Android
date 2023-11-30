@@ -4,7 +4,8 @@ import static android.view.View.GONE;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarViewTitle;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarImageButton;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarTextView;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.getFile;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.putBoolean;
 import static ee.ria.DigiDoc.android.utils.BundleUtils.putFile;
@@ -20,8 +21,9 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
@@ -95,8 +97,9 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
     private CryptoCreateViewModel viewModel;
 
     private View view;
-    private Toolbar toolbarView;
     private AppBarLayout appBarLayout;
+    private LinearLayout linearLayout;
+    private Toolbar toolbarView;
     private NameUpdateDialog nameUpdateDialog;
     private ConfirmationDialog sivaConfirmationDialog;
     private ConfirmationDialog fileRemoveConfirmationDialog;
@@ -285,17 +288,23 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         appBarLayout.setAccessibilityHeading(true);
         appBarLayout.setContentDescription(Objects.requireNonNull(getResources()).getString(titleResId));
 
-        AccessibilityUtils.setViewAccessibilityPaneTitle(view, titleResId);
         listView.clearFocus();
-        TextView titleView = getToolbarViewTitle(toolbarView);
-        if (titleView != null) {
-            AccessibilityUtils.disableDoubleTapToActivateFeedback(titleView);
-            titleView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        listView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        linearLayout.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        TextView toolbarTextView = getToolbarTextView(toolbarView);
+        if (toolbarTextView != null) {
+            toolbarTextView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         }
-
+        ImageButton toolbarImageButton = getToolbarImageButton(toolbarView);
+        if (toolbarImageButton != null) {
+            toolbarImageButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
         appBarLayout.postDelayed(() -> {
-            appBarLayout.requestFocus();
-            appBarLayout.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+            listView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            linearLayout.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            if (toolbarImageButton != null) {
+                toolbarImageButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            }
         }, 1000);
 
         adapter.dataForContainer(name, containerFile, dataFiles, state.dataFilesViewEnabled(),
@@ -431,6 +440,7 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         view = inflater.inflate(R.layout.crypto_create_screen, container, false);
         toolbarView = view.findViewById(R.id.toolbar);
         appBarLayout = view.findViewById(R.id.appBar);
+        linearLayout = view.findViewById(R.id.linearLayout);
         nameUpdateDialog = new NameUpdateDialog(container.getContext());
         fileRemoveConfirmationDialog = new ConfirmationDialog(container.getContext(),
                 R.string.crypto_create_remove_data_file_confirmation_message, R.id.documentRemovalDialog);
