@@ -47,6 +47,7 @@
     <item type="id" name="mainAccessibilityScreen" />
     <item type="id" name="mainAccessibilityFragment" />
 
+    <item type="id" name="mainAccessibilityLink" />
     <item type="id" name="mainAccessibilityIntroduction" />
     <item type="id" name="mainAccessibilityIntroduction2" />
     <item type="id" name="mainAccessibilityIntroductionScreenReaderTitle" />

@@ -24,6 +24,7 @@
     <!-- Main Accessibility -->
     <string name="main_accessibility_title">Accessibility</string>
 
+    <string name="main_accessibility_link">More information can be found on <a href="https://www.id.ee/ligipaasetavuse-teatis/">here</a>.</string>
     <string name="main_accessibility_introduction">RIA DigiDoc is designed to comply with the WCAG 2.1 AA accessibility guidelines. This means that the RIA DigiDoc application has been developed using the principles that the application should be usable by the blind and people with visual, mobility, and strength impairments.</string>
     <string name="main_accessibility_introduction_2">Accessibility can be improved by using built-in assistive tools on your smart device. You can find an overview of the main assistive tools below.</string>
     <string name="main_accessibility_introduction_screen_reader_title">Screen reader</string>
@@ -271,7 +272,7 @@
 
     <string name="signature_update_id_card_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Reader found. Insert your ID-card into the reader.</string>
-    <string name="signature_update_id_card_progress_message_card_detected">ID-card found. Requesting information...</string>
+    <string name="signature_update_id_card_progress_message_card_detected">ID-card found. Requesting information…</string>
     <string name="signature_update_id_card_sign_message">Ready to sign with ID-card</string>
     <string name="signature_update_id_card_sign_data">%1$s %2$s (%3$s)</string>
     <string name="signature_update_id_card_sign_pin2">Enter PIN2</string>
@@ -361,20 +362,20 @@
 
     <string name="crypto_create_decrypt_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>
     <string name="crypto_create_decrypt_progress_message_reader_detected">Reader found. Insert your ID-card into the reader.</string>
-    <string name="crypto_create_decrypt_progress_message_card_detected">ID-card found. Requesting information...</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">ID-card found. Requesting information…</string>
     <string name="crypto_create_decrypt_message">Ready to decrypt with ID-card.</string>
     <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
-    <string name="crypto_create_decrypt_pin1">Please enter PIN1</string>
-    <string name="crypto_create_decrypt_pin1_invalid">Wrong PIN1. You have %1$d attempts left.</string>
-    <string name="crypto_create_decrypt_pin1_invalid_final">Wrong PIN1. You have 1 attempt left until your PIN1 is blocked.</string>
-    <string name="crypto_create_decrypt_pin1_locked">PIN1 blocked. Go to My eID to unblock it.</string>
+    <string name="crypto_create_decrypt_pin1" tools:ignore="Typos">Please enter PIN1</string>
+    <string name="crypto_create_decrypt_pin1_invalid" tools:ignore="Typos">Wrong PIN1. You have %1$d attempts left.</string>
+    <string name="crypto_create_decrypt_pin1_invalid_final" tools:ignore="Typos">Wrong PIN1. You have 1 attempt left until your PIN1 is blocked.</string>
+    <string name="crypto_create_decrypt_pin1_locked" tools:ignore="Typos">PIN1 blocked. Go to My eID to unblock it.</string>
     <string name="crypto_create_decrypt_active">Decryption in progress. Please wait.</string>
     <string name="crypto_create_decrypt_error">Something went wrong with decryption. Please try again.</string>
 
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Connect the card reader and insert your ID-card into the reader.</string>
     <string name="eid_home_id_card_status_reader_detected_message">Reader found. Insert your ID-card into the reader.</string>
-    <string name="eid_home_id_card_status_card_detected_message">ID-card found. Requesting information...</string>
+    <string name="eid_home_id_card_status_card_detected_message">ID-card found. Requesting information…</string>
     <string name="eid_home_error">Something went wrong. Please try again.</string>
 
     <string name="eid_home_data_type">MY eID</string>
@@ -399,14 +400,14 @@
     <string name="eid_home_certificate_data_title_sign">Signing certificate</string>
     <string name="eid_home_certificate_data_valid">Certificate is &lt;c>valid&lt;/c> until %1$s</string>
     <string name="eid_home_certificate_data_expired">Certificate has &lt;c>expired&lt;/c>! %1$s cannot be used because the certificate has expired.</string>
-    <string name="eid_home_certificate_data_button_change_auth">CHANGE PIN1</string>
+    <string name="eid_home_certificate_data_button_change_auth" tools:ignore="Typos">CHANGE PIN1</string>
     <string name="eid_home_certificate_data_button_change_sign">CHANGE PIN2</string>
     <string name="eid_home_certificate_data_button_unblock_auth">UNBLOCK</string>
     <string name="eid_home_certificate_data_button_unblock_sign">UNBLOCK</string>
-    <string name="eid_home_certificate_data_link_auth">Forgot PIN1?</string>
-    <string name="eid_home_certificate_data_link_sign">Forgot PIN2?</string>
-    <string name="eid_home_certificate_data_error_auth">PIN1 is blocked, because PIN1 has been inserted 3 times incorrectly.</string>
-    <string name="eid_home_certificate_data_error_sign">PIN2 is blocked, because PIN2 has been inserted 3 times incorrectly.</string>
+    <string name="eid_home_certificate_data_link_auth" tools:ignore="Typos">Forgot PIN1?</string>
+    <string name="eid_home_certificate_data_link_sign" tools:ignore="Typos">Forgot PIN2?</string>
+    <string name="eid_home_certificate_data_error_auth" tools:ignore="Typos">PIN1 is blocked, because PIN1 has been inserted 3 times incorrectly.</string>
+    <string name="eid_home_certificate_data_error_sign" tools:ignore="Typos">PIN2 is blocked, because PIN2 has been inserted 3 times incorrectly.</string>
 
     <string name="eid_type_id_card">ID-CARD</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
@@ -414,11 +415,11 @@
     <string name="eid_type_e_seal">Certificate for Encryption</string>
     <string name="eid_type_unknown">UNKNOWN</string>
 
-    <string name="eid_home_code_update_title_pin1_edit">Change PIN1</string>
-    <string name="eid_home_code_update_title_pin1_unblock">Unblock PIN1</string>
-    <string name="eid_home_code_update_title_pin2_edit">Change PIN2</string>
-    <string name="eid_home_code_update_title_pin2_unblock">Unblock PIN2</string>
-    <string name="eid_home_code_update_title_puk_edit">Change PUK</string>
+    <string name="eid_home_code_update_title_pin1_edit" tools:ignore="Typos">Change PIN1</string>
+    <string name="eid_home_code_update_title_pin1_unblock" tools:ignore="Typos">Unblock PIN1</string>
+    <string name="eid_home_code_update_title_pin2_edit" tools:ignore="Typos">Change PIN2</string>
+    <string name="eid_home_code_update_title_pin2_unblock" tools:ignore="Typos">Unblock PIN2</string>
+    <string name="eid_home_code_update_title_puk_edit" tools:ignore="Typos">Change PUK</string>
     <string name="eid_home_code_update_text_row1_pin1_edit">New PIN1 must be different from current PIN1.</string>
     <string name="eid_home_code_update_text_row2_pin1_edit">PIN1 code is used for authentication.</string>
     <string name="eid_home_code_update_text_row3_pin1_edit">If PIN1 is inserted incorrectly 3 times, the identification certificate will be blocked and it will be impossible to use ID-card to verify identification, until it is unblocked via the PUK code.</string>
@@ -435,23 +436,23 @@
     <string name="eid_home_code_update_text_row4_pin2_unblock">PUK code is written in the envelope that is given with the ID-card.</string>
     <string name="eid_home_code_update_text_row1_puk_edit">PUK code is used for unblocking the certificates when PIN1 or PIN2 has been entered 3 times incorrectly.</string>
     <string name="eid_home_code_update_text_row2_puk_edit">If you forget the PUK code or the certificates remain blocked, you have to visit the service center to obtain new codes.</string>
-    <string name="eid_home_code_update_current_pin1_edit">CURRENT PIN1 CODE</string>
+    <string name="eid_home_code_update_current_pin1_edit" tools:ignore="Typos">CURRENT PIN1 CODE</string>
     <string name="eid_home_code_update_current_pin1_unblock">CURRENT PUK CODE</string>
-    <string name="eid_home_code_update_current_pin2_edit">CURRENT PIN2 CODE</string>
+    <string name="eid_home_code_update_current_pin2_edit" tools:ignore="Typos">CURRENT PIN2 CODE</string>
     <string name="eid_home_code_update_current_pin2_unblock">CURRENT PUK CODE</string>
     <string name="eid_home_code_update_current_puk_edit">CURRENT PUK CODE</string>
-    <string name="eid_home_code_update_new_pin1">NEW PIN1 CODE (at least %1$d symbols)</string>
+    <string name="eid_home_code_update_new_pin1" tools:ignore="Typos">NEW PIN1 CODE (at least %1$d symbols)</string>
     <string name="eid_home_code_update_new_pin2">NEW PIN2 CODE (at least %1$d symbols)</string>
     <string name="eid_home_code_update_new_puk">NEW PUK CODE (at least %1$d symbols)</string>
-    <string name="eid_home_code_update_repeat_pin1">REPEAT NEW PIN1 CODE</string>
+    <string name="eid_home_code_update_repeat_pin1" tools:ignore="Typos">REPEAT NEW PIN1 CODE</string>
     <string name="eid_home_code_update_repeat_pin2">REPEAT NEW PIN2 CODE</string>
     <string name="eid_home_code_update_repeat_puk">REPEAT NEW PUK CODE</string>
     <string name="eid_home_code_update_negative_button" tools:ignore="ButtonCase">CANCEL</string>
     <string name="eid_home_code_update_positive_button_edit">CHANGE</string>
     <string name="eid_home_code_update_positive_button_unblock">UNBLOCK</string>
 
-    <string name="eid_home_code_update_success_pin1_edit">PIN1 CHANGED</string>
-    <string name="eid_home_code_update_success_pin1_unblock">PIN1 UNBLOCKED</string>
+    <string name="eid_home_code_update_success_pin1_edit" tools:ignore="Typos">PIN1 CHANGED</string>
+    <string name="eid_home_code_update_success_pin1_unblock" tools:ignore="Typos">PIN1 UNBLOCKED</string>
     <string name="eid_home_code_update_success_pin2_edit">PIN2 CHANGED</string>
     <string name="eid_home_code_update_success_pin2_unblock">PIN2 UNBLOCKED</string>
     <string name="eid_home_code_update_success_puk_edit">PUK CHANGED</string>
@@ -504,7 +505,7 @@
     <string name="decrypt_send_content_description">Share, tab %1$d of %2$d</string>
 
     <string name="yes_button">YES</string>
-    <string name="cancel_button">CANCEL</string>
+    <string name="cancel_button" tools:ignore="ButtonCase">CANCEL</string>
 
     <!-- Sharing Screen -->
     <string name="sharing_screen_title">Choose file</string>
@@ -628,12 +629,12 @@
     <string name="eid_home_data_document_number_accessibility">Document number</string>
     <string name="eid_home_data_expiry_date_accessibility">Date of expiry</string>
     <string name="eid_home_data_certificates_title_accessibility">pin, puk codes and certificates</string>
-    <string name="eid_home_certificate_data_button_change_auth_accessibility">Change pin1</string>
+    <string name="eid_home_certificate_data_button_change_auth_accessibility" tools:ignore="Typos">Change pin1</string>
     <string name="eid_home_certificate_data_button_change_sign_accessibility">Change pin2</string>
     <string name="eid_home_certificate_data_button_unblock_auth_accessibility">Unblock</string>
     <string name="eid_home_certificate_data_button_unblock_sign_accessibility">Unblock</string>
     <string name="eid_home_data_certificates_puk_button_accessibility">Change puk</string>
-    <string name="eid_home_certificate_data_link_auth_accessibility">Forgot pin1?</string>
+    <string name="eid_home_certificate_data_link_auth_accessibility" tools:ignore="Typos">Forgot pin1?</string>
     <string name="eid_home_certificate_data_link_sign_accessibility">Forgot pin2?</string>
     <string name="eid_home_certificate_data_error_auth_accessibility">pin1 is blocked, because pin1 has been inserted 3 times incorrectly.</string>
     <string name="eid_home_certificate_data_error_sign_accessibility">pin2 is blocked, because pin2 has been inserted 3 times incorrectly.</string>

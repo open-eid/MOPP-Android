@@ -1,13 +1,11 @@
 package ee.ria.DigiDoc.android.main.accessibility;
 
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-import static ee.ria.DigiDoc.android.utils.TextUtil.getInvisibleElementTextView;
-import static ee.ria.DigiDoc.android.utils.ViewUtil.findLastElement;
 
 import android.content.Context;
+import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -41,6 +39,9 @@ public class AccessibilityView extends CoordinatorLayout implements ContentView 
         toolbarView = findViewById(R.id.toolbar);
         navigator = ApplicationApp.component(context).navigator();
         disposables = new ViewDisposables();
+
+        TextView textViewWithWebLink = findViewById(R.id.mainAccessibilityLink);
+        textViewWithWebLink.setMovementMethod(LinkMovementMethod.getInstance());
 
         toolbarView.setTitle(R.string.main_accessibility_title);
         toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);

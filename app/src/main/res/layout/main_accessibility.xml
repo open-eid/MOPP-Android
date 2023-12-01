@@ -39,6 +39,14 @@
                 android:text="@string/main_accessibility_introduction" />
 
             <TextView
+                android:id="@+id/mainAccessibilityLink"
+                style="@style/MaterialTypography.Dense.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/material_baseline_grid_1x"
+                android:text="@string/main_accessibility_link" />
+
+            <TextView
                 android:id="@+id/mainAccessibilityIntroduction2"
                 style="@style/MaterialTypography.Dense.Body1"
                 android:layout_width="wrap_content"
