@@ -8,6 +8,7 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
+        android:touchscreenBlocksFocus="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -16,6 +17,11 @@
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:touchscreenBlocksFocus="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:nextFocusDown="@+id/mainSettingsAskRoleAndAddress"
+            android:nextFocusUp="@+id/mainSettingsAskRoleAndAddress"
             android:accessibilityPaneTitle="@string/main_settings_role_and_address_button"
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:navigationContentDescription="@string/back"
@@ -58,6 +64,10 @@
                     android:id="@+id/mainSettingsAskRoleAndAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:nextFocusDown="@+id/toolbar"
+                    android:nextFocusUp="@+id/toolbar"
                     android:paddingStart="0dp"
                     android:paddingEnd="0dp"
                     android:minWidth="0dp"
