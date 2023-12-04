@@ -183,6 +183,7 @@ public final class SettingsAccessView extends CoordinatorLayout {
     private void restartIntent() {
         PackageManager packageManager = getContext().getPackageManager();
         Intent intent = packageManager.getLaunchIntentForPackage(getContext().getPackageName());
+        assert intent != null;
         ComponentName componentName = intent.getComponent();
         Intent restartIntent = Intent.makeRestartActivityTask(componentName);
         restartIntent.setAction(Intent.ACTION_CONFIGURATION_CHANGED);
@@ -296,9 +297,7 @@ public final class SettingsAccessView extends CoordinatorLayout {
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         disposables.attach();
-        disposables.add(navigationClicks(toolbarView).subscribe(o -> {
-            navigator.execute(Transaction.pop());
-        }));
+        disposables.add(navigationClicks(toolbarView).subscribe(o -> navigator.execute(Transaction.pop())));
         disposables.add(clicks(showCertificateButton).subscribe(o -> {
             if (tsaCertificate != null) {
                 navigator.execute(Transaction.push(CertificateDetailScreen.create(tsaCertificate)));
@@ -357,8 +356,8 @@ public final class SettingsAccessView extends CoordinatorLayout {
         settingsDataStore.setTsaUrl("");
         settingsDataStore.setIsOpenAllFileTypesEnabled(true);
         settingsDataStore.setIsScreenshotAllowed(false);
-        File tsaFile = FileUtil.getTSAFile(context, settingsDataStore.getTSACertName());
-        removeCertificate(tsaFile, settingsDataStore);
+        File certFile = FileUtil.getCertFile(context, settingsDataStore.getTSACertName(), DIR_SIVA_CERT);
+        removeCertificate(certFile, settingsDataStore);
         setTsaCertificateViewVisibleValue(false);
     }
 
