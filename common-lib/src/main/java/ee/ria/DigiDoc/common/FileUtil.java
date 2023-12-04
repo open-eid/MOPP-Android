@@ -1,7 +1,5 @@
 package ee.ria.DigiDoc.common;
 
-import static ee.ria.DigiDoc.common.CommonConstants.DIR_TSA_CERT;
-
 import android.content.Context;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
@@ -189,14 +187,14 @@ public class FileUtil {
         return new File(context.getFilesDir() + "/logs");
     }
 
-    public static File getTSAFile(Context context, String tsaCertName) {
-        File tsaCertFolder = new File(context.getFilesDir(), DIR_TSA_CERT);
+    public static File getCertFile(Context context, String certName, String certFolder) {
+        File savedCertFolder = new File(context.getFilesDir(), certFolder);
 
-        File[] files = tsaCertFolder.listFiles();
+        File[] files = savedCertFolder.listFiles();
 
         if (files != null) {
             for (File file : files) {
-                if (file.isFile() && file.getName().equals(tsaCertName)) {
+                if (file.isFile() && file.getName().equals(certName)) {
                     return file;
                 }
             }

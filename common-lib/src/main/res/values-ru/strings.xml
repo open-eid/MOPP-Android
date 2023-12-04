@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_internet_connection">Пожалуйста проверьте подключение к интернету</string>
+    <string name="invalid_ssl_handshake">Не удалось создать SSL канал передачи данных. Проверьте настройки вашего приложения или обновления программного обеспечения.</string>
+</resources>

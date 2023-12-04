@@ -109,7 +109,7 @@
             android:layout_weight="1"
             android:textSize="@dimen/material_baseline_grid_2.5x"
             android:padding="14dp"
-            android:maxLines="2"
+            android:maxLines="1"
             android:text="@string/main_home_menu_locale_ru" />
 
         <View

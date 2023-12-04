@@ -18,6 +18,7 @@ import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -63,11 +64,13 @@ import ee.ria.DigiDoc.common.ActivityUtil;
 import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.NoInternetConnectionException;
+import ee.ria.DigiDoc.sign.SSLHandshakeException;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
+import timber.log.Timber;
 
 @SuppressLint("ViewConstructor")
 public final class SignatureUpdateView extends LinearLayout implements ContentView, MviView<Intent, ViewState> {
@@ -227,10 +230,12 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         ContentView.addInvisibleElement(getContext(), this);
 
         View lastElementView = findViewById(R.id.lastInvisibleElement);
-        lastElementView.setVisibility(VISIBLE);
+        if (lastElementView != null) {
+            lastElementView.setVisibility(VISIBLE);
 
-        ContentView.removeInvisibleElementScrollListener(listView);
-        ContentView.addInvisibleElementScrollListener(listView, lastElementView);
+            ContentView.removeInvisibleElementScrollListener(listView);
+            ContentView.addInvisibleElementScrollListener(listView, lastElementView);
+        }
     }
 
     @Override
@@ -238,8 +243,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         super.onConfigurationChanged(newConfig);
 
         setActionButtonsTextSize();
-
-        signatureAddDialog.setButtonsBasedOnOrientation(newConfig.orientation);
     }
 
     private void setActionButtonsTextSize() {
@@ -254,8 +257,8 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
             signatureEncryptButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
             sendButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
-            mobileIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 20, 1, COMPLEX_UNIT_SP);
-            smartIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 20, 1, COMPLEX_UNIT_SP);
+            mobileIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
+            smartIdCancelButton.setAutoSizeTextTypeUniformWithConfiguration(7, 12, 1, COMPLEX_UNIT_SP);
         } else {
             signatureAddButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
             signatureEncryptButton.setAutoSizeTextTypeUniformWithConfiguration(11, 20, 1, COMPLEX_UNIT_SP);
@@ -292,7 +295,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), addDocumentsIntent(),
                 documentViewIntent(), documentSaveIntent(), documentRemoveIntent(), 
                 signatureRoleViewIntent(), signatureRemoveIntent(),
-                signatureAddIntent(), signatureViewIntent(), encryptIntent(), sendIntent());
+                signatureAddIntent(), signatureViewIntent(), encryptIntent(), saveIntent(), sendIntent());
     }
 
     private void checkIfDdocParentContainerIsTimestamped(ImmutableList<Signature> signatures, ImmutableList<DataFile> dataFiles) {
@@ -314,6 +317,10 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         if (state.containerLoadError() != null) {
             int messageId = state.containerLoadError() instanceof NoInternetConnectionException
                     ? R.string.no_internet_connection : R.string.signature_update_container_load_error;
+            if (state.containerLoadError() instanceof SSLHandshakeException) {
+                Timber.log(Log.ERROR, state.containerLoadError(), "Unable to open container. SSL handshake was not successful");
+                messageId = ((SSLHandshakeException) state.containerLoadError()).getMessageId();
+            }
             ToastUtil.showError(getContext(), messageId);
             navigator.execute(Transaction.pop());
             SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
@@ -387,8 +394,16 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                 || state.documentViewState().equals(State.ACTIVE)
                 || state.documentRemoveInProgress() || state.signatureRemoveInProgress()
                 || state.signatureAddActivity());
-        adapter.setData(navigator.activity(), state.signatureAddSuccessMessageVisible(), isExistingContainer,
-                isNestedContainer, state.container(), nestedFile, isSivaConfirmed);
+        try {
+            adapter.setData(navigator.activity(), state.signatureAddSuccessMessageVisible(), isExistingContainer,
+                    isNestedContainer, state.container(), nestedFile, isSivaConfirmed);
+        } catch (Exception e) {
+            Timber.log(Log.ERROR, e, "Unable to set adapter data");
+            if (e instanceof SSLHandshakeException) {
+                ToastUtil.showError(navigator.activity(), ((SSLHandshakeException) e).getMessageId());
+            }
+            navigator.execute(Transaction.pop());
+        }
 
         if (state.signatureAddSuccessMessageVisible()) {
             showSuccessNotification();
@@ -486,7 +501,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             }
 
             if (!mobileIdChallengeView.getText().equals(EMPTY_CHALLENGE)) {
-                AccessibilityUtils.setSingleCharactersContentDescription(mobileIdChallengeView);
+                AccessibilityUtils.setSingleCharactersContentDescription(mobileIdChallengeView, null);
                 String mobileIdChallengeDescription = getResources().getString(R.string.mobile_id_challenge) +
                         AccessibilityUtils.getTextAsSingleCharacters(mobileIdChallengeView.getText().toString());
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, mobileIdChallengeDescription);
@@ -685,6 +700,10 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                 .map(ignored -> SendIntent.create(containerFile));
     }
 
+    private Observable<ContainerSaveIntent> saveIntent() {
+        return adapter.saveContainerClicks().map(ignored -> ContainerSaveIntent.create(containerFile));
+    }
+
     private void sendMethodSelectionAccessibilityEvent(int method) {
         String signatureMethod = getMethod(method);
         if (signatureMethod != null) {
@@ -819,7 +838,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         if (sendButton.getVisibility() == VISIBLE && signatureAddButton.getVisibility() == VISIBLE &&
                 signatureEncryptButton.getVisibility() == VISIBLE) {
             signatureAddButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 1, 3));
-            signatureEncryptButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 2, 3));
+            signatureEncryptButton.setContentDescription(getResources().getString(R.string.decrypt_content_description, 2, 3));
             sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 3, 3));
         } else {
             sendButton.setContentDescription(getResources().getString(R.string.signature_update_send_button).toLowerCase());

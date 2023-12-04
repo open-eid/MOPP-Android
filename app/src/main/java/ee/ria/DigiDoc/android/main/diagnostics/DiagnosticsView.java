@@ -7,7 +7,6 @@ import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnost
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileSaveClicksSubject;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -53,7 +52,6 @@ import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.TSLException;
 import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
-import ee.ria.DigiDoc.android.utils.ViewUtil;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
@@ -318,7 +316,8 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
         appendTslVersion(tslUrl, FileUtil.normalizeUri(
                 Uri.parse(configurationProvider.getTslUrl())).toString());
         sivaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_siva_url_title,
-                configurationProvider.getSivaUrl(), Typeface.DEFAULT));
+                (getSiVaUrlText() != null && !getSiVaUrlText().isEmpty()) ?
+                        getSiVaUrlText() : configurationProvider.getSivaUrl(), Typeface.DEFAULT));
         tsaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsa_url_title,
                 (getTsaUrlText() != null && !getTsaUrlText().isEmpty()) ?
                         getTsaUrlText() : configurationProvider.getTsaUrl(), Typeface.DEFAULT));
@@ -389,7 +388,11 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
     }
 
     private String getTsaUrlText() {
-        return ((Activity) this.getContext()).getSettingsDataStore().getTsaUrl();
+        return ((Activity) navigator.activity()).getSettingsDataStore().getTsaUrl();
+    }
+
+    private String getSiVaUrlText() {
+        return ((Activity) navigator.activity()).getSettingsDataStore().getSivaUrl();
     }
 
     private void setTslCacheData() {

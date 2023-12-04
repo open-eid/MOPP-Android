@@ -22,14 +22,20 @@ package ee.ria.DigiDoc.android.signature.update.smartid;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
 import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
+import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.removeAccessibilityStateChanged;
 import static ee.ria.DigiDoc.android.utils.ErrorMessageUtil.setTextViewError;
+import static ee.ria.DigiDoc.android.utils.TextUtil.removeTextWatcher;
+import static ee.ria.DigiDoc.common.TextUtil.PERSONAL_CODE_SYMBOLS;
+import static ee.ria.DigiDoc.common.TextUtil.getSymbolsFilter;
 
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -53,6 +59,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
+import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -70,6 +77,9 @@ public final class SmartIdView extends LinearLayout implements
     private final TextInputLayout personalCodeViewLayoutLabel;
     private final TextInputEditText personalCodeView;
     private final CheckBox rememberMeView;
+
+    private final TextWatcher personalCodeTextWatcher;
+    private AccessibilityManager.TouchExplorationStateChangeListener accessibilityTouchExplorationStateChangeListener;
 
     public SmartIdView(Context context) {
         this(context, null);
@@ -112,6 +122,13 @@ public final class SmartIdView extends LinearLayout implements
 
         checkForDoneButtonClick();
         checkInputsValidity();
+
+        personalCodeTextWatcher = TextUtil.addTextWatcher(personalCodeView);
+        personalCodeView.setFilters(new InputFilter[]{getSymbolsFilter(PERSONAL_CODE_SYMBOLS)});
+
+        if (AccessibilityUtils.isTalkBackEnabled()) {
+            setAccessibilityDescription();
+        }
     }
 
     @Override
@@ -128,6 +145,9 @@ public final class SmartIdView extends LinearLayout implements
         countryView.clearFocus();
         personalCodeView.clearFocus();
         rememberMeView.clearFocus();
+
+        removeTextWatcher(personalCodeView, personalCodeTextWatcher);
+        removeAccessibilityStateChanged(accessibilityTouchExplorationStateChangeListener);
     }
 
     @Override
@@ -283,8 +303,34 @@ public final class SmartIdView extends LinearLayout implements
         return countryViewLabel.getText().toString();
     }
 
+    private void setAccessibilityDescription() {
+        personalCodeView.setContentDescription(getResources().getString(R.string.signature_update_mobile_id_personal_code) + " " +
+                AccessibilityUtils.getTextViewAccessibility(personalCodeView));
+        AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView,
+                getResources().getString(R.string.signature_update_mobile_id_personal_code));
+        AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        // Better support for Voice Assist to not delete wrong characters
+        accessibilityTouchExplorationStateChangeListener = AccessibilityUtils.addAccessibilityStateChanged(enabled -> {
+            boolean isTalkBackEnabled = AccessibilityUtils.isTalkBackEnabled();
+            if (isTalkBackEnabled) {
+                setAccessibilityDescription();
+            } else {
+                AccessibilityUtils.setJoinedCharactersContentDescription(personalCodeView);
+            }
+        });
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+
+        removeTextWatcher(personalCodeView, personalCodeTextWatcher);
+        removeAccessibilityStateChanged(accessibilityTouchExplorationStateChangeListener);
     }
 }

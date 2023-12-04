@@ -121,7 +121,7 @@ class DocumentViewIntent implements Intent, Action {
         this.confirmation = confirmation;
     }
 
-    static DocumentViewIntent confirmation(Context context, File containerFile, DataFile document) throws Exception {
+    static DocumentViewIntent confirmation(Context context, File containerFile, DataFile document) {
         String containerFileExtension = getFileExtension(containerFile.getName()).toLowerCase(Locale.US);
         String documentFileExtension = getFileExtension(document.name()).toLowerCase(Locale.US);
         if (!containerFileExtension.equals("pdf") && SignedContainer.isContainer(context, containerFile)) {
@@ -349,6 +349,25 @@ class SendIntent implements Intent {
     @Override
     public Action action() {
         return Action.SendAction.create(containerFile);
+    }
+}
+
+
+class ContainerSaveIntent implements Intent {
+
+    File containerFile;
+
+    public ContainerSaveIntent(File containerFile) {
+        this.containerFile = containerFile;
+    }
+
+    static ContainerSaveIntent create(File containerFile) {
+        return new ContainerSaveIntent(containerFile);
+    }
+
+    @Override
+    public Action action() {
+        return Action.ContainerSaveAction.create(containerFile);
     }
 }
 

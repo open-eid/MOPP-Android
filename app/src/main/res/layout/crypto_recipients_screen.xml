@@ -35,6 +35,16 @@
             android:minHeight="@dimen/material_baseline_grid_6x"
             android:background="@drawable/bottom_border_background" />
 
+        <TextView
+            android:id="@id/cryptoRecipientsSearchLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/MaterialTypography.Dense.Body1"
+            android:gravity="center"
+            android:layout_marginVertical="@dimen/material_list_normal_padding_vertical"
+            android:text="@string/crypto_recipients_search"
+            />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@id/cryptoRecipientsList"
             android:layout_width="match_parent"

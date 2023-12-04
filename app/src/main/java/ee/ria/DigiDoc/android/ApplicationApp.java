@@ -74,7 +74,7 @@ import ee.ria.DigiDoc.android.main.diagnostics.source.DiagnosticsDataSource;
 import ee.ria.DigiDoc.android.main.diagnostics.source.FileSystemDiagnosticsDataSource;
 import ee.ria.DigiDoc.android.main.home.HomeViewModel;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
-import ee.ria.DigiDoc.android.main.settings.create.TSACertificateAddViewModel;
+import ee.ria.DigiDoc.android.main.settings.create.CertificateAddViewModel;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateViewModel;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.data.source.FileSystemSignatureContainerDataSource;
@@ -431,8 +431,8 @@ public class ApplicationApp extends android.app.Application {
         abstract ViewModel eidHomeViewModel(EIDHomeViewModel viewModel);
 
         @SuppressWarnings("unused")
-        @Binds @IntoMap @ClassKey(TSACertificateAddViewModel.class)
-        abstract ViewModel tsaCertificateAddViewModel(TSACertificateAddViewModel viewModel);
+        @Binds @IntoMap @ClassKey(CertificateAddViewModel.class)
+        abstract ViewModel certificateAddViewModel(CertificateAddViewModel viewModel);
     }
 
     @Module

@@ -65,6 +65,10 @@
     <string name="main_settings_timestamp_cert_valid_to_title">Действительно до: </string>
     <string name="main_settings_timestamp_cert_add_certificate_button">ДОБАВИТЬ СЕРТИФИКАТ</string>
     <string name="main_settings_timestamp_cert_show_certificate_button">ПОКАЗАТЬ СЕРТИФИКАТ</string>
+    <string name="main_settings_siva_service_title">Доступ к услуге валидации SiVa</string>
+    <string name="main_settings_siva_default_access_title">Использовать доступ, назначенный по умолчанию</string>
+    <string name="main_settings_siva_default_manual_access_title">Использовать доступ, назначенный вручную</string>
+    <string name="main_settings_siva_certificate_title">Сертификат услуги валидации SiVa SSL</string>
 
     <!-- Main About -->
     <string name="main_about_title">Информация</string>
@@ -116,13 +120,16 @@
     <string name="signature_update_title_created">Подписание</string>
     <string name="signature_update_title_existing">Проверка контейнера</string>
     <string name="signature_update_name_update_button">Изменить название контейнера</string>
+    <string name="signature_update_name_update_voice_button">Изменить</string>
     <string name="signature_update_name_update_name">Название контейнера</string>
     <string name="signature_update_name_update_error_exists">Контейнер с таким названием уже существует</string>
     <string name="signature_update_name_update_error_invalid">Неверное название контейнера</string>
     <string name="signature_update_documents_title">Файлы контейнера</string>
     <string name="signature_update_documents_add_error_exists">Файл уже существует в контейнере</string>
     <string name="signature_update_document_remove_button">Удалить файл</string>
+    <string name="signature_update_document_remove_voice_button">Удалить</string>
     <string name="signature_update_document_save_button">Сохраните файл</string>
+    <string name="signature_update_document_save_voice_button">Сохраните</string>
     <string name="signature_update_remove_document_confirmation_message">Удалить файл из контейнера?</string>
     <string name="signature_update_remove_last_document_confirmation_message">Вы собираетесь удалить последний файл в контейнере, он удаляется вместе с контейнером.</string>
     <string name="signature_update_cancel_file_removal_button">Отменить удаление файла</string>
@@ -162,6 +169,7 @@
     <string name="signature_update_signature_remove_error">Не удалось удалить подпись из контейнера</string>
     <string name="signature_update_container_load_error">Ошибка при открывании контейнера</string>
     <string name="signature_update_send_button">ПОДЕЛИТЬСЯ</string>
+    <string name="signature_update_save_button">СОХРАНИТЕ</string>
     <string name="signature_update_signature_add_button">ПОДПИСАТЬ</string>
 
     <string name="signature_update_signature_type_timestamp">Временные штампы контейнерa</string>
@@ -190,8 +198,6 @@
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Не удалось отправить запрос. Превышено количество неудачных запросов с этого IP-адреса. Пожалуйста, попробуйте позже.</string>
     <string name="signature_update_signature_error_message_invalid_time_slot">Пожалуйста, проверьте время на своем смарт-устройстве. https://www.id.ee/ru/artikkel/oshibka-ria-digidoc-pozhalujsta-proverte-vremya-na-svoem-smart-ustrojstve/</string>
     <string name="signature_update_signature_error_message_certificate_revoked">Сертификат недействителен</string>
-
-    <string name="signature_update_signature_error_invalid_ssl_handshake">Не удалось создать SSL канал передачи данных. Проверьте настройки вашего приложения или обновления программного обеспечения.</string>
 
     <string name="signature_update_signature_selected_method_mobile_id">Метод подписи – Mobiil-ID, вкладка %1$d из %2$d</string>
     <string name="signature_update_signature_selected_method_smart_id">Метод подписи – Smart-ID, вкладка %1$d из %2$d</string>
@@ -336,6 +342,7 @@
     <string name="crypto_create_encrypt_error_no_recipients">Не добавлено ни одного получателя</string>
     <string name="crypto_create_decrypt_button">ДЕШИФРОВАТЬ</string>
     <string name="crypto_create_decrypt_positive_button">Дешифровать</string>
+    <string name="crypto_create_save_button">СОХРАНИТЕ</string>
     <string name="crypto_create_send_button">ПОДЕЛИТЬСЯ</string>
     <string name="crypto_create_error">Что-то пошло не так с шифрованием</string>
 
@@ -346,6 +353,7 @@
     <string name="crypto_recipient_add_button_added">ДОБАВЛЕН</string>
 
     <string name="crypto_recipients_title">Добавить получателей</string>
+    <string name="crypto_recipients_search_icon_voice_title">Искать</string>
     <string name="crypto_recipients_search">Введите личный код, код компании или регистра</string>
     <string name="crypto_recipients_search_result_invalid_personal_code">Личный код недействителен!</string>
     <string name="crypto_recipients_search_result_empty">У человека или компании нет действующего сертификата.\nДля шифрования необходимо иметь действующий сертификат.\nЕсли у вас возникнут вопросы, пожалуйста, обратитесь на id.ee.</string>
@@ -496,6 +504,7 @@
 
     <string name="decrypt_content_description">Дешифрировать документ, вкладка %1$d из %2$d</string>
     <string name="sign_send_content_description">Подписать, вкладка %1$d из %2$d</string>
+    <string name="sign_save_content_description">Сохраните, вкладка %1$d из %2$d</string>
     <string name="decrypt_send_content_description">Поделиться, вкладка %1$d из %2$d</string>
 
     <string name="yes_button">ДА</string>
@@ -583,8 +592,6 @@
     <string name="crash_report_dialog_send_button">Отправить</string>
     <string name="crash_report_dialog_always_send_button">Всегда отправлять</string>
     <string name="crash_report_dialog_dont_send_button">Не отправлять</string>
-
-    <string name="no_internet_connection">Пожалуйста проверьте подключение к интернету</string>
 
     <string name="rooted_device">Мы обнаружили, что ваше интеллектуальное устройство может быть рутировано. По соображениям безопасности мы не рекомендуем использовать это приложение на рутированом устройстве.</string>
 

@@ -9,6 +9,7 @@ import android.util.Log;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -152,7 +153,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                         SignedContainer.open(containerAdd.containerFile())) : null, isSivaConfirmed))))
                 .doOnError(throwable1 -> {
                     Timber.log(Log.ERROR, throwable1, "Add signed container failed");
-                    if (throwable1 instanceof NoInternetConnectionException) {
+                    if (throwable1 instanceof NoInternetConnectionException ||
+                            (throwable1 instanceof FileNotFoundException &&
+                                    throwable1.getMessage() != null &&
+                                    throwable1.getMessage().contains("connection_failure"))) {
                         ToastUtil.showError(navigator.activity(), R.string.no_internet_connection);
                     } else {
                         ToastUtil.showError(navigator.activity(), R.string.signature_create_error);

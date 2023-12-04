@@ -84,6 +84,17 @@
     <item type="id" name="mainSettingsTsaCertificateAddCertificateButton" />
     <item type="id" name="mainSettingsTsaCertificateShowCertificateButton" />
     <item type="id" name="mainSettingsChooseFileScreen" />
+    <item type="id" name="mainSettingsSivaServiceContainer" />
+    <item type="id" name="mainSettingsSivaServiceCertificateContainer" />
+    <item type="id" name="mainSettingsSivaServiceChoiceGroup" />
+    <item type="id" name="mainSettingsSivaServiceDefaultChoice" />
+    <item type="id" name="mainSettingsSivaServiceManualChoice" />
+    <item type="id" name="mainSettingsSivaServiceUrlLayout" />
+    <item type="id" name="mainSettingsSivaServiceUrl" />
+    <item type="id" name="mainSettingsSivaCertificateIssuedTo" />
+    <item type="id" name="mainSettingsSivaCertificateValidTo" />
+    <item type="id" name="mainSettingsSivaCertificateAddCertificateButton" />
+    <item type="id" name="mainSettingsSivaCertificateShowCertificateButton" />
 
 
     <!-- Main About -->
@@ -242,6 +253,7 @@
     <item type="id" name="signatureUpdateListStatusEmptyFile" />
     <item type="id" name="signatureUpdateListName" />
     <item type="id" name="signatureUpdateListNameUpdateButton" />
+    <item type="id" name="signatureUpdateListNameSaveButton" />
     <item type="id" name="signatureUpdateListSubheadTitle" />
     <item type="id" name="signatureUpdateListSubheadButton" />
     <item type="id" name="signatureUpdateListDocumentIcon" />
@@ -263,6 +275,7 @@
     <item type="id" name="signatureUpdateMobileIdChallengeText" />
     <item type="id" name="signatureUpdateMobileIdCancelButton" />
     <item type="id" name="signatureUpdateSendButton" />
+    <item type="id" name="signatureUpdateSaveButtonSpace" />
     <item type="id" name="signatureUpdateSignatureButtonSpace" />
     <item type="id" name="signatureUpdateEncryptButtonSpace" />
     <item type="id" name="signatureUpdateSignatureAddButton" />
@@ -355,8 +368,11 @@
     <item type="id" name="cryptoCreateList" />
     <item type="id" name="cryptoCreateEncryptButton" />
     <item type="id" name="cryptoCreateDecryptButton" />
-    <item type="id" name="cryptoCreateSignatureButton" />
+    <item type="id" name="cryptoCreateSaveButton" />
     <item type="id" name="cryptoCreateSendButton" />
+    <item type="id" name="cryptoCreateButtonSpace" />
+    <item type="id" name="cryptoCreateSaveButtonSpace" />
+    <item type="id" name="cryptoCreateSignatureButton" />
     <item type="id" name="cryptoCreateCryptoButtonSpace" />
     <item type="id" name="cryptoCreateSignatureButtonSpace" />
     <item type="id" name="cryptoCreateSuccessMessage" />
@@ -382,6 +398,7 @@
 
     <item type="id" name="cryptoRecipientsScreen" />
     <item type="id" name="cryptoRecipientsSearch" />
+    <item type="id" name="cryptoRecipientsSearchLabel" />
     <item type="id" name="cryptoRecipientsList" />
     <item type="id" name="cryptoRecipientsDoneButton" />
 

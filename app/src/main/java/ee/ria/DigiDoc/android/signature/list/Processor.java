@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.signature.list;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
 import java.io.File;
@@ -27,6 +28,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.core.ObservableTransformer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import timber.log.Timber;
 
 final class Processor implements ObservableTransformer<Action, Result> {
 
@@ -74,9 +76,14 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     SignedContainer.isAsicsFile(containerFile.getName()) ?
                                             SignedFilesUtil.getContainerDataFile(signatureContainerDataSource,
                                                     SignedContainer.open(containerFile)) : null, action.isSivaConfirmed())));
-                    SignedContainer signedContainer = SignedContainer.open(containerFile);
-                    sendContainerStatusAccessibilityMessage(signedContainer, application.getApplicationContext(), localeService.applicationConfigurationWithLocale(application.getApplicationContext(),
-                            localeService.applicationLocale()));
+                    try {
+                        SignedContainer signedContainer = SignedContainer.open(containerFile);
+                        sendContainerStatusAccessibilityMessage(signedContainer, application.getApplicationContext(), localeService.applicationConfigurationWithLocale(application.getApplicationContext(),
+                                localeService.applicationLocale()));
+                    } catch (Exception e) {
+                        Timber.log(Log.ERROR, e, String.format("Unable to open container. Error: %s", e.getMessage()));
+                        return Observable.just(Result.VoidResult.cancel());
+                    }
                 }
                 return Observable.just(Result.VoidResult.success());
             }
@@ -129,7 +136,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
             messageBuilder.append("Container is invalid, contains");
             if (unknownSignaturesCount > 0) {
                 messageBuilder.append(" ").append(configurationContext.getResources().getQuantityString(
-                        R.plurals.signature_update_signatures_unknown, unknownSignaturesCount, unknownSignaturesCount));
+                        R.plurals.signature_update_signatures_unknown, unknownSignaturesCount, unknownSignaturesCount).toLowerCase());
             }
             if (invalidSignatureCount > 0) {
                 messageBuilder.append(" ").append(configurationContext.getResources().getQuantityString(

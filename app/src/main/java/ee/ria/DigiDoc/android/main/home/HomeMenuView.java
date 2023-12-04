@@ -198,7 +198,7 @@ public final class HomeMenuView extends NestedScrollView implements ContentView 
 
     private void setRegularFontTextSize() {
         setTextSize();
-        setButtonsParameters(72, localeView);
+        setButtonsParameters(80, localeView);
         setAutoTextSizeNone();
     }
 

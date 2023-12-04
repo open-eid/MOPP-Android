@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.main.settings;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
@@ -14,6 +15,8 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.main.settings.access.siva.SivaSetting;
+import timber.log.Timber;
 
 public final class SettingsDataStore {
 
@@ -282,5 +285,41 @@ public final class SettingsDataStore {
 
     public boolean getIsTsaCertificateViewVisible() {
         return preferences.getBoolean(resources.getString(R.string.main_settings_tsa_cert_view), false);
+    }
+
+    public void setSivaSetting(SivaSetting sivaSetting) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_siva_setting_key), sivaSetting.name());
+        editor.commit();
+    }
+
+    public SivaSetting getSivaSetting() {
+        String sivaSetting = preferences.getString(resources.getString(R.string.main_settings_siva_setting_key), SivaSetting.DEFAULT.name());
+        try {
+            return SivaSetting.valueOf(sivaSetting);
+        } catch (IllegalArgumentException iae) {
+            Timber.log(Log.ERROR, iae, "Unable to get SiVa setting value");
+            return SivaSetting.DEFAULT;
+        }
+    }
+
+    public void setSivaUrl(String sivaUrl) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_siva_url_key), sivaUrl);
+        editor.commit();
+    }
+
+    public String getSivaUrl() {
+        return preferences.getString(resources.getString(R.string.main_settings_siva_url_key), "");
+    }
+
+    public void setSivaCertName(String cert) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_siva_cert_key), cert);
+        editor.commit();
+    }
+
+    public String getSivaCertName() {
+        return preferences.getString(resources.getString(R.string.main_settings_siva_cert_key), "");
     }
 }

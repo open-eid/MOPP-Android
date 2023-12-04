@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 import androidx.core.content.ContextCompat;
 
+import java.io.FileNotFoundException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -31,6 +32,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.signature.update.exception.DocumentExistsException;
 import ee.ria.DigiDoc.android.signature.update.exception.DocumentRemoveException;
 import ee.ria.DigiDoc.android.signature.update.exception.GeneralSignatureUpdateException;
+import ee.ria.DigiDoc.sign.SSLHandshakeException;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
@@ -105,6 +107,15 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
             type = DOCUMENTS_ADD;
             if (documentsAddError instanceof EmptyFileException) {
                 updateError = new EmptyFileException();
+            } else if (documentsAddError instanceof NoInternetConnectionException) {
+                updateError = new NoInternetConnectionException();
+            } else if (documentsAddError instanceof FileNotFoundException) {
+                if (documentsAddError.getMessage() != null &&
+                        documentsAddError.getMessage().contains("connection_failure")) {
+                    updateError = new NoInternetConnectionException();
+                } else {
+                    updateError = new EmptyFileException();
+                }
             } else {
                 updateError = new DocumentExistsException();
             }
@@ -121,6 +132,8 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                 );
             } else if (signatureAddError instanceof NoInternetConnectionException) {
                 updateError = new NoInternetConnectionException();
+            } else if (signatureAddError instanceof SSLHandshakeException) {
+                updateError = new SSLHandshakeException();
             } else if (signatureAddError instanceof DetailMessageSource) {
                 String link = ErrorMessageUtil.extractLink(signatureAddError.getMessage());
                 if (!link.isEmpty()) {

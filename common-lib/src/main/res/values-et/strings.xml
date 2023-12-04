@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="no_internet_connection">Palun kontrolli internetiühendust</string>
+    <string name="invalid_ssl_handshake">SSL ühenduskanali loomine ebaõnnestus. Kontrolli rakenduse seadeid või tarkvara uuendusi</string>
 </resources>

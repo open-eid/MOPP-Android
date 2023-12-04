@@ -48,6 +48,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import timber.log.Timber;
@@ -256,12 +257,16 @@ public final class IntentUtils {
 
         Uri fileUri = FileProvider.getUriForFile(context,
                 context.getString(R.string.file_provider_authority), destFile);
+        String mimeType = SignedContainer.mimeType(file);
+        if (CryptoContainer.isCryptoContainer(file)) {
+            mimeType = CryptoContainer.getMimeType();
+        }
         Intent intent = Intent
                 .createChooser(new Intent(Intent.ACTION_CREATE_DOCUMENT)
                         .addCategory(Intent.CATEGORY_OPENABLE)
                         .putExtra(Intent.EXTRA_TITLE, FileUtil.sanitizeString(file.getName(), ""))
                         .putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(storagePath))
-                        .setDataAndType(fileUri, SignedContainer.mimeType(file))
+                        .setDataAndType(fileUri, mimeType)
                         .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION), null);
 
         List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);

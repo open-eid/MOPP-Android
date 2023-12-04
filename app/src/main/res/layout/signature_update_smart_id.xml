@@ -114,6 +114,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@null"
+                android:paddingBottom="@dimen/material_list_normal_padding_vertical"
                 android:text="@string/signature_update_signature_add_positive_button" />
 
         </LinearLayout>

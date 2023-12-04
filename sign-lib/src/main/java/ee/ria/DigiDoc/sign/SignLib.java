@@ -1,5 +1,8 @@
 package ee.ria.DigiDoc.sign;
 
+import static ee.ria.DigiDoc.common.CommonConstants.DIR_SIVA_CERT;
+import static ee.ria.DigiDoc.common.CommonConstants.DIR_TSA_CERT;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.system.ErrnoException;
@@ -45,6 +48,8 @@ public final class SignLib {
 
     private static SharedPreferences.OnSharedPreferenceChangeListener tsaUrlChangeListener;
     private static SharedPreferences.OnSharedPreferenceChangeListener tsCertChangeListener;
+    private static SharedPreferences.OnSharedPreferenceChangeListener sivaUrlChangeListener;
+    private static SharedPreferences.OnSharedPreferenceChangeListener sivaCertChangeListener;
 
     /**
      * Initialize sign-lib.
@@ -135,18 +140,20 @@ public final class SignLib {
         }
 
         String tsaCertPreferenceKey = context.getResources().getString(R.string.main_settings_tsa_cert_key);
+        String sivaUrlPreferenceKey = context.getResources().getString(R.string.main_settings_siva_url_key);
+        String sivaCertPreferenceKey = context.getResources().getString(R.string.main_settings_siva_cert_key);
         certBundle = configurationProvider.getCertBundle();
 
         forcePKCS12Certificate();
         overrideTSLUrl(configurationProvider.getTslUrl());
         overrideTSLCert(configurationProvider.getTslCerts());
-        overrideSignatureValidationServiceUrl(configurationProvider.getSivaUrl());
+        overrideSignatureValidationServiceUrl(context, sivaUrlPreferenceKey, configurationProvider.getSivaUrl());
         overrideOCSPUrls(configurationProvider.getOCSPUrls());
         overrideTSCerts(configurationProvider.getCertBundle());
-        overrideVerifyServiceCert(configurationProvider.getCertBundle());
         initTsaUrl(context, tsaUrlPreferenceKey, configurationProvider.getTsaUrl());
         initTsCert(context, tsaCertPreferenceKey, "",
                 tsaUrlPreferenceKey, configurationProvider.getTsaUrl());
+        initVerifyServiceCert(context, sivaCertPreferenceKey, configurationProvider.getCertBundle());
     }
 
     private static void forcePKCS12Certificate() {
@@ -182,15 +189,35 @@ public final class SignLib {
         }
     }
 
-    private static void overrideVerifyServiceCert(List<String> certBundle) {
+    private static void initVerifyServiceCert(Context context, String preferenceKey, List<String> certBundle) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if (sivaCertChangeListener != null) {
+            preferences.unregisterOnSharedPreferenceChangeListener(sivaCertChangeListener);
+        }
+
+        sivaCertChangeListener = new SivaCertChangeListener(context, preferenceKey, certBundle);
+        preferences.registerOnSharedPreferenceChangeListener(sivaCertChangeListener);
+        sivaCertChangeListener.onSharedPreferenceChanged(preferences, preferenceKey);
+    }
+
+    private static void overrideVerifyServiceCert(List<String> certBundle, String customSivaCert) {
+        DigiDocConf.instance().setVerifyServiceCert(new byte[0]);
+        if (customSivaCert != null && !customSivaCert.isEmpty()) {
+            DigiDocConf.instance().addVerifyServiceCert(Base64.decode(customSivaCert));
+        }
         for (String cert : certBundle) {
             DigiDocConf.instance().addVerifyServiceCert(Base64.decode(cert));
         }
     }
 
-    private static void overrideSignatureValidationServiceUrl(String sivaUrl) {
-        DigiDocConf.instance().setVerifyServiceUri(sivaUrl);
-//        DigiDocConf.instance().setVerifyServiceCert(new byte[0]);
+    private static void overrideSignatureValidationServiceUrl(Context context, String preferenceKey, String defaultValue) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if (sivaUrlChangeListener != null) {
+            preferences.unregisterOnSharedPreferenceChangeListener(sivaUrlChangeListener);
+        }
+        sivaUrlChangeListener = new SivaUrlChangeListener(preferenceKey, defaultValue);
+        preferences.registerOnSharedPreferenceChangeListener(sivaUrlChangeListener);
+        sivaUrlChangeListener.onSharedPreferenceChanged(preferences, preferenceKey);
     }
 
     private static void overrideOCSPUrls(Map<String, String> ocspUrls) {
@@ -245,10 +272,10 @@ public final class SignLib {
         }
     }
 
-    private static String getCustomTSAFile(Context context, String fileName) {
-        File tsaFile = FileUtil.getTSAFile(context, fileName);
-        if (tsaFile != null) {
-            String fileContents = FileUtils.readFileContent(tsaFile.getPath());
+    private static String getCustomCertFile(Context context, String fileName, String certFolder) {
+        File certFile = FileUtil.getCertFile(context, fileName, certFolder);
+        if (certFile != null) {
+            String fileContents = FileUtils.readFileContent(certFile.getPath());
             return fileContents
                     .replace("-----BEGIN CERTIFICATE-----", "")
                     .replace("-----END CERTIFICATE-----", "")
@@ -303,8 +330,50 @@ public final class SignLib {
                 if (sharedPreferences.getString(tsaUrlPreferenceKey, defaultTsaUrl).equals(defaultTsaUrl)) {
                     overrideTSCerts(certBundle, null);
                 } else {
-                    overrideTSCerts(certBundle, getCustomTSAFile(context, sharedPreferences.getString(key, defaultValue)));
+                    overrideTSCerts(certBundle, getCustomCertFile(context,
+                        sharedPreferences.getString(key, defaultValue), DIR_TSA_CERT));
                 }
+            }
+        }
+    }
+
+    private static final class SivaUrlChangeListener implements
+            SharedPreferences.OnSharedPreferenceChangeListener {
+
+        private final String preferenceKey;
+        private final String defaultValue;
+
+        SivaUrlChangeListener(String preferenceKey, String defaultValue) {
+            this.preferenceKey = preferenceKey;
+            this.defaultValue = defaultValue;
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (TextUtils.equals(key, preferenceKey)) {
+                DigiDocConf.instance().setVerifyServiceUri(sharedPreferences.getString(key, defaultValue));
+            }
+        }
+    }
+
+    private static final class SivaCertChangeListener implements
+            SharedPreferences.OnSharedPreferenceChangeListener {
+
+        private final Context context;
+        private final String preferenceKey;
+        private final List<String> defaultValues;
+
+        SivaCertChangeListener(Context context, String preferenceKey, List<String> defaultValues) {
+            this.context = context;
+            this.preferenceKey = preferenceKey;
+            this.defaultValues = defaultValues;
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (TextUtils.equals(key, preferenceKey)) {
+                overrideVerifyServiceCert(defaultValues, getCustomCertFile(context,
+                        sharedPreferences.getString(key, ""), DIR_SIVA_CERT));
             }
         }
     }

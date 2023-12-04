@@ -65,6 +65,10 @@
     <string name="main_settings_timestamp_cert_valid_to_title">Valid to: </string>
     <string name="main_settings_timestamp_cert_add_certificate_button">ADD CERTIFICATE</string>
     <string name="main_settings_timestamp_cert_show_certificate_button">SHOW CERTIFICATE</string>
+    <string name="main_settings_siva_service_title">Access to Digital Signature Validation Service SiVa</string>
+    <string name="main_settings_siva_default_access_title">Use default access</string>
+    <string name="main_settings_siva_default_manual_access_title">Use manually configured access</string>
+    <string name="main_settings_siva_certificate_title">Digital Signature Validation Service SiVa SSL certificate</string>
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
@@ -116,13 +120,16 @@
     <string name="signature_update_title_created">Signing</string>
     <string name="signature_update_title_existing">Container verification</string>
     <string name="signature_update_name_update_button">Edit container name</string>
+    <string name="signature_update_name_update_voice_button">Edit</string>
     <string name="signature_update_name_update_name">Container name</string>
     <string name="signature_update_name_update_error_exists">Container with this name already exists</string>
     <string name="signature_update_name_update_error_invalid">Container name invalid</string>
     <string name="signature_update_documents_title">Container files</string>
     <string name="signature_update_documents_add_error_exists">File already exists in the container</string>
     <string name="signature_update_document_remove_button">Remove file</string>
+    <string name="signature_update_document_remove_voice_button">Remove</string>
     <string name="signature_update_document_save_button">Save file</string>
+    <string name="signature_update_document_save_voice_button">Save</string>
     <string name="signature_update_remove_document_confirmation_message">Remove file from container?</string>
     <string name="signature_update_remove_last_document_confirmation_message">You are about to remove the last file in the container, it is removed along with the container.</string>
     <string name="signature_update_cancel_file_removal_button">Cancel file removal</string>
@@ -160,6 +167,7 @@
     <string name="signature_update_signature_remove_error">Could not remove signature from the container</string>
     <string name="signature_update_container_load_error">Error opening container</string>
     <string name="signature_update_send_button">SHARE</string>
+    <string name="signature_update_save_button">SAVE</string>
     <string name="signature_update_signature_add_button">SIGN</string>
 
     <string name="signature_update_signature_type_timestamp">Container timestamps</string>
@@ -188,8 +196,6 @@
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Failed to send request. The number of unsuccessful request from this IP address has been exceeded. Please try again later.</string>
     <string name="signature_update_signature_error_message_invalid_time_slot">Please check your smart device time. https://www.id.ee/en/article/ria-digidoc-error-please-check-your-smart-device-time/</string>
     <string name="signature_update_signature_error_message_certificate_revoked">Certificate status revoked</string>
-
-    <string name="signature_update_signature_error_invalid_ssl_handshake">SSL handshake failed. Check your application settings or software upgrades</string>
 
     <string name="signature_update_signature_selected_method_mobile_id">Signing option Mobile-ID, tab %1$d of %2$d</string>
     <string name="signature_update_signature_selected_method_smart_id">Signing option Smart-ID, tab %1$d of %2$d</string>
@@ -334,6 +340,7 @@
     <string name="crypto_create_encrypt_error_no_recipients">No recipients specified</string>
     <string name="crypto_create_decrypt_button">DECRYPT</string>
     <string name="crypto_create_decrypt_positive_button">Decrypt</string>
+    <string name="crypto_create_save_button">SAVE</string>
     <string name="crypto_create_send_button">SHARE</string>
     <string name="crypto_create_error">Something went wrong with encryption</string>
 
@@ -344,6 +351,7 @@
     <string name="crypto_recipient_add_button_added">ADDED</string>
 
     <string name="crypto_recipients_title">Add recipients</string>
+    <string name="crypto_recipients_search_icon_voice_title">Search</string>
     <string name="crypto_recipients_search">Enter personal code, company or registry code</string>
     <string name="crypto_recipients_search_result_invalid_personal_code">Personal code is not valid!</string>
     <string name="crypto_recipients_search_result_empty">Person or company does not own a valid certificate.\nIt is necessary to have a valid certificate for encryption.\nIn case of questions please contact our support via id.ee.</string>
@@ -493,6 +501,7 @@
     <!--  General  -->
     <string name="decrypt_content_description">Decrypt document, tab %1$d of %2$d</string>
     <string name="sign_send_content_description">Sign, tab %1$d of %2$d</string>
+    <string name="sign_save_content_description">Save, tab %1$d of %2$d</string>
     <string name="decrypt_send_content_description">Share, tab %1$d of %2$d</string>
 
     <string name="yes_button">YES</string>
@@ -578,8 +587,6 @@
     <string name="crash_report_dialog_send_button">Send</string>
     <string name="crash_report_dialog_always_send_button">Always Send</string>
     <string name="crash_report_dialog_dont_send_button">Don\'t Send</string>
-
-    <string name="no_internet_connection">Please check your internet connection</string>
 
     <string name="rooted_device">We\'ve detected that your device may be rooted. For security reasons we don\'t recommend using this app on a rooted device.</string>
 

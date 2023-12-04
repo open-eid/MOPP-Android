@@ -327,24 +327,13 @@ public abstract class SignedContainer {
      * @param file File to check.
      * @return True if it is a container, false otherwise.
      */
-    public static boolean isContainer(Context context, File file) throws Exception {
+    public static boolean isContainer(Context context, File file) {
         String extension = getFileExtension(file.getName()).toLowerCase();
         if (EXTENSIONS.contains(extension)) {
             return true;
         }
         if (PDF_EXTENSION.equals(extension)) {
-            try {
-                if (container(file).signatures().size() > 0) {
-                    return true;
-                }
-            } catch (Exception e) {
-                if (e instanceof NoInternetConnectionException) {
-                    if (isSignedPDF(context, file)) {
-                        throw e;
-                    }
-                }
-                return false;
-            }
+            return isSignedPDF(context, file);
         }
         return false;
     }
@@ -515,8 +504,11 @@ public abstract class SignedContainer {
         try {
             container = Container.open(file.getAbsolutePath());
         } catch (Exception e) {
-            if (e.getMessage().startsWith("Failed to connect to host")) {
+            if (e.getMessage() != null && e.getMessage().startsWith("Failed to connect to host")) {
                 throw new NoInternetConnectionException();
+            } else if (e.getMessage() != null &&
+                    e.getMessage().startsWith("Failed to create ssl connection with host")) {
+                throw new SSLHandshakeException();
             }
             throw new IOException(e.getMessage());
         }

@@ -56,7 +56,9 @@ public final class AboutScreen extends Controller implements Screen {
 
         addInvisibleElement(getApplicationContext(), view);
         View lastElementView = view.findViewById(R.id.lastInvisibleElement);
-        addInvisibleElementScrollListener(listView, lastElementView);
+        if (lastElementView != null) {
+            addInvisibleElementScrollListener(listView, lastElementView);
+        }
 
         disposables.attach();
         disposables.add(navigationClicks(toolbarView).subscribe(ignored ->

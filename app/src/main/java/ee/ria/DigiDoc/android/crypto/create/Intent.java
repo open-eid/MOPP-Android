@@ -306,6 +306,16 @@ interface Intent extends MviIntent, MviAction {
     }
 
     @AutoValue
+    abstract class ContainerSaveIntent implements Intent {
+
+        abstract File containerFile();
+
+        static ContainerSaveIntent create(File containerFile) {
+            return new AutoValue_Intent_ContainerSaveIntent(containerFile);
+        }
+    }
+
+    @AutoValue
     abstract class SignIntent implements Intent {
 
         abstract File containerFile();

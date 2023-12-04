@@ -21,6 +21,7 @@ import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
@@ -31,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -60,6 +62,7 @@ import ee.ria.DigiDoc.crypto.PersonalCodeException;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.idcard.Token;
+import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -82,21 +85,21 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             nameUpdate;
 
     private final ObservableTransformer<Intent.DataFilesAddIntent,
-                                        Result.DataFilesAddResult> dataFilesAdd;
+            Result.DataFilesAddResult> dataFilesAdd;
 
     private final ObservableTransformer<Intent.DataFileRemoveIntent,
-                                        Result.DataFileRemoveResult> dataFileRemove;
+            Result.DataFileRemoveResult> dataFileRemove;
 
     private final ObservableTransformer<Intent.DataFileSaveIntent, Result> dataFileSave;
 
     private final ObservableTransformer<Intent.DataFileViewIntent, Result> dataFileView;
 
     private final ObservableTransformer<Intent.RecipientsAddButtonClickIntent,
-                                        Result.RecipientsAddButtonClickResult>
+            Result.RecipientsAddButtonClickResult>
             recipientsAddButtonClick;
 
     private final ObservableTransformer<Intent.RecipientsScreenUpButtonClickIntent,
-                                        Result> recipientsScreenUpButtonClick;
+            Result> recipientsScreenUpButtonClick;
 
     private final ObservableTransformer<Intent.RecipientsScreenDoneButtonClickIntent,
             Result> recipientsScreenDoneButtonClick;
@@ -111,17 +114,18 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             Result.RecipientAddAllResult> recipientAddAll;
 
     private final ObservableTransformer<Intent.RecipientRemoveIntent,
-                                        Result.RecipientRemoveResult> recipientRemove;
+            Result.RecipientRemoveResult> recipientRemove;
 
     private final ObservableTransformer<Intent.EncryptIntent, Result.EncryptResult> encrypt;
 
     private final ObservableTransformer<Intent.DecryptionIntent,
-                                        Result.DecryptionResult> decryption;
+            Result.DecryptionResult> decryption;
 
     private final ObservableTransformer<Intent.DecryptIntent, Result.DecryptResult> decrypt;
 
     private final ObservableTransformer<Intent.SendIntent, Result> send;
 
+    private final ObservableTransformer<Intent.ContainerSaveIntent, Result> containerSave;
     private final ObservableTransformer<Intent.SignIntent, Result> sign;
 
     @Inject Processor(Navigator navigator, RecipientRepository recipientRepository,
@@ -163,6 +167,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                         .onErrorReturn(throwable -> {
                                             if (throwable instanceof EmptyFileException) {
                                                 ToastUtil.showEmptyFileError(navigator.activity());
+                                            } else if (throwable instanceof NoInternetConnectionException ||
+                                                    (throwable instanceof FileNotFoundException &&
+                                                            throwable.getMessage() != null &&
+                                                            throwable.getMessage().contains("connection_failure"))) {
+                                                ToastUtil.showError(navigator.activity(), R.string.no_internet_connection);
                                             }
                                             navigator.execute(Transaction.pop());
                                             return Result.InitialResult.failure(throwable);
@@ -374,8 +383,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return Observable.just(Result.RecipientsSearchResult.failure(
                         new PersonalCodeException()
                 ));
-            }
-            else {
+            } else {
                 return Observable
                         .fromCallable(() -> recipientRepository.find(intent.query()))
                         .map(searchResult -> {
@@ -402,9 +410,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
         recipientAdd = upstream -> upstream.switchMap(intent ->
                 Observable.fromCallable(() ->
-                        Result.RecipientAddResult.create(with(intent.recipients(), intent.recipient(), false)))
-                    .doFinally(() ->
-                        AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_added)));
+                                Result.RecipientAddResult.create(with(intent.recipients(), intent.recipient(), false)))
+                        .doFinally(() ->
+                                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_added)));
 
         recipientAddAll = upstream -> upstream.switchMap(intent ->
                 Observable.fromCallable(() ->
@@ -414,9 +422,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
         recipientRemove = upstream -> upstream.switchMap(intent ->
                 Observable.fromCallable(() ->
-                        Result.RecipientRemoveResult.create(without(intent.recipients(), intent.recipient())))
-                    .doFinally(() ->
-                        AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_removed)));
+                                Result.RecipientRemoveResult.create(without(intent.recipients(), intent.recipient())))
+                        .doFinally(() ->
+                                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.recipient_removed)));
 
         encrypt = upstream -> upstream.switchMap(intent -> {
             String name = intent.name();
@@ -474,7 +482,11 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return idCardService
                         .decrypt(token, request.containerFile(), request.pin1())
                         .doOnSuccess(ignored ->
-                                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext(),
+                                AccessibilityUtils.sendAccessibilityEvent(application.getApplicationContext()
+                                                .createConfigurationContext(
+                                                        localeService.applicationConfigurationWithLocale(
+                                                                application.getApplicationContext(),
+                                                                localeService.applicationLocale())),
                                         AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.document_decrypted)
                         )
                         .flatMapObservable(dataFiles ->
@@ -488,7 +500,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                 try {
                                     idCardDataResponse = IdCardDataResponse
                                             .success(IdCardService.data(token), token);
-                                } catch (Exception ignored) {}
+                                } catch (Exception ignored) {
+                                }
                             }
                             return Result.DecryptResult.failure(throwable, idCardDataResponse);
                         })
@@ -504,6 +517,36 @@ final class Processor implements ObservableTransformer<Intent, Result> {
             navigator.execute(Transaction
                     .activity(createActionIntent(application, intent.containerFile(), android.content.Intent.ACTION_SEND), null));
             return Observable.empty();
+        });
+
+        containerSave = upstream -> upstream.switchMap(action -> {
+            navigator.execute(Transaction.activityForResult(SAVE_FILE,
+                    createSaveIntent(action.containerFile(), application.getApplicationContext()), null));
+            return navigator.activityResults()
+                    .filter(activityResult ->
+                            activityResult.requestCode() == SAVE_FILE)
+                    .switchMap(activityResult -> {
+                        if (activityResult.resultCode() == RESULT_OK) {
+                            android.content.Intent dataIntent = activityResult.data();
+                            if (dataIntent != null && dataIntent.getData() != null) {
+                                Uri dataUri = dataIntent.getData();
+                                try (
+                                        InputStream inputStream = new FileInputStream(action.containerFile());
+                                        OutputStream outputStream = application.getContentResolver().openOutputStream(dataUri)
+                                ) {
+                                    if (outputStream != null) {
+                                        ByteStreams.copy(inputStream, outputStream);
+                                        ToastUtil.showError(navigator.activity(), R.string.file_saved);
+                                        return Observable.empty();
+                                    }
+                                } catch (IOException ex) {
+                                    Timber.log(Log.DEBUG, ex, "Unable to save file");
+                                }
+                            }
+                            ToastUtil.showError(navigator.activity(), R.string.file_saved_error);
+                        }
+                        return Observable.empty();
+                    });
         });
 
         sign = upstream -> upstream.switchMap(signIntent -> {
@@ -538,8 +581,9 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 shared.ofType(Intent.EncryptIntent.class).compose(encrypt),
                 shared.ofType(Intent.DecryptionIntent.class).compose(decryption),
                 shared.ofType(Intent.DecryptIntent.class).compose(decrypt),
+                shared.ofType(Intent.SendIntent.class).compose(send),
                 shared.ofType(Intent.SignIntent.class).compose(sign),
-                shared.ofType(Intent.SendIntent.class).compose(send)));
+                shared.ofType(Intent.ContainerSaveIntent.class).compose(containerSave)));
     }
 
     private Observable<Result.InitialResult> parseIntent(android.content.Intent intent, Application application, File externallyOpenedFileDir, Context configurationContext) throws IOException {

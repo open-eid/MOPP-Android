@@ -1,14 +1,20 @@
 package ee.ria.DigiDoc.android.signature.update.mobileid;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
+import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.removeAccessibilityStateChanged;
 import static ee.ria.DigiDoc.android.utils.ErrorMessageUtil.setTextViewError;
 import static ee.ria.DigiDoc.android.utils.TextUtil.removeTextWatcher;
+import static ee.ria.DigiDoc.common.TextUtil.PERSONAL_CODE_SYMBOLS;
+import static ee.ria.DigiDoc.common.TextUtil.PHONE_SYMBOLS;
+import static ee.ria.DigiDoc.common.TextUtil.getSymbolsFilter;
 
 import android.content.Context;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -52,6 +58,8 @@ public final class MobileIdView extends LinearLayout implements
     private final TextInputLayout personalCodeLabel;
 
     private final TextWatcher phoneNoTextWatcher;
+    private final TextWatcher personalCodeTextWatcher;
+    private AccessibilityManager.TouchExplorationStateChangeListener accessibilityTouchExplorationStateChangeListener;
 
     public MobileIdView(Context context) {
         this(context, null);
@@ -80,14 +88,16 @@ public final class MobileIdView extends LinearLayout implements
         personalCodeLabel = findViewById(R.id.signatureUpdateMobileIdPersonalCodeLabel);
         personalCodeLabelText = findViewById(R.id.signatureUpdateMobileIdPersonalCodeMessage);
 
-        AccessibilityUtils.setSingleCharactersContentDescription(phoneNoView);
-        AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView);
-        AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
-        AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
-
         checkInputsValidity();
 
         phoneNoTextWatcher = TextUtil.addTextWatcher(phoneNoView);
+        personalCodeTextWatcher = TextUtil.addTextWatcher(personalCodeView);
+        phoneNoView.setFilters(new InputFilter[]{getSymbolsFilter(PHONE_SYMBOLS)});
+        personalCodeView.setFilters(new InputFilter[]{getSymbolsFilter(PERSONAL_CODE_SYMBOLS)});
+
+        if (AccessibilityUtils.isTalkBackEnabled()) {
+            setAccessibilityDescription();
+        }
     }
 
     @Override
@@ -106,6 +116,8 @@ public final class MobileIdView extends LinearLayout implements
         personalCodeView.clearFocus();
 
         removeTextWatcher(phoneNoView, phoneNoTextWatcher);
+        removeTextWatcher(personalCodeView, personalCodeTextWatcher);
+        removeAccessibilityStateChanged(accessibilityTouchExplorationStateChangeListener);
     }
 
     @Override
@@ -145,11 +157,38 @@ public final class MobileIdView extends LinearLayout implements
         return false;
     }
 
+    private void setAccessibilityDescription() {
+        phoneNoView.setContentDescription(AccessibilityUtils.getTextViewAccessibility(phoneNoView));
+        personalCodeView.setContentDescription(AccessibilityUtils.getTextViewAccessibility(personalCodeView));
+        AccessibilityUtils.setSingleCharactersContentDescription(phoneNoView, getResources().getString(R.string.signature_update_mobile_id_phone_no));
+        AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView, getResources().getString(R.string.signature_update_mobile_id_personal_code));
+        AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
+        AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        // Better support for Voice Assist to not delete wrong characters
+        accessibilityTouchExplorationStateChangeListener = AccessibilityUtils.addAccessibilityStateChanged(enabled -> {
+            boolean isTalkBackEnabled = AccessibilityUtils.isTalkBackEnabled();
+            if (isTalkBackEnabled) {
+                setAccessibilityDescription();
+            } else {
+                AccessibilityUtils.setJoinedCharactersContentDescription(phoneNoView);
+                AccessibilityUtils.setJoinedCharactersContentDescription(personalCodeView);
+            }
+        });
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
         removeTextWatcher(phoneNoView, phoneNoTextWatcher);
+        removeTextWatcher(personalCodeView, personalCodeTextWatcher);
+        removeAccessibilityStateChanged(accessibilityTouchExplorationStateChangeListener);
     }
 
     private void checkInputsValidity() {

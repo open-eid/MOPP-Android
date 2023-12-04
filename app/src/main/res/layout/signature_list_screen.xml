@@ -23,51 +23,64 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
-        android:id="@id/signatureListLayout"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@id/signatureList"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:paddingVertical="@dimen/material_list_normal_padding_vertical"
-            android:scrollbars="vertical" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-    <TextView
-        android:id="@id/listEmpty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:text="@string/signature_list_empty_message"
-        android:gravity="center"
-        android:visibility="gone" />
+            <LinearLayout
+                android:id="@id/signatureListLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@id/activityOverlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/activityOverlayBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:translationZ="@dimen/material_elevation_dialog" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@id/signatureList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    android:paddingVertical="@dimen/material_list_normal_padding_vertical"
+                    android:scrollbars="vertical" />
+            </LinearLayout>
 
-    <ProgressBar
-        android:id="@id/activityIndicator"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@id/appBar"
-        app:layout_anchorGravity="bottom"
-        android:indeterminate="true" />
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@id/listEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    android:text="@string/signature_list_empty_message"
+                    android:gravity="center"
+                    android:visibility="gone" />
+
+                <FrameLayout
+                    android:id="@id/activityOverlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/activityOverlayBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:translationZ="@dimen/material_elevation_dialog" />
+
+                <ProgressBar
+                    android:id="@id/activityIndicator"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_anchor="@id/appBar"
+                    app:layout_anchorGravity="bottom"
+                    android:indeterminate="true" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

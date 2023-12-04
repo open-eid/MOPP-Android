@@ -99,7 +99,9 @@ public final class HomeView extends LinearLayout implements ContentView, MviView
         ContentView.addInvisibleElement(getContext(), navigationContainerView);
 
         View lastElementView = findViewById(R.id.lastInvisibleElement);
-        moveView(lastElementView);
+        if (lastElementView != null) {
+            moveView(lastElementView);
+        }
     }
 
     private void setCustomAccessibilityFeedback(BottomNavigationItemView bottomNavigationItemView) {

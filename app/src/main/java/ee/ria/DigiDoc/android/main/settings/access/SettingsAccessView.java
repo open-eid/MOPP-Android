@@ -1,23 +1,35 @@
 package ee.ria.DigiDoc.android.main.settings.access;
 
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxRadioGroup.checkedChanges;
+import static com.jakewharton.rxbinding4.widget.RxTextView.textChanges;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.main.settings.access.siva.SivaSetting.DEFAULT;
+import static ee.ria.DigiDoc.android.main.settings.access.siva.SivaSetting.MANUAL;
 import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarViewTitle;
+import static ee.ria.DigiDoc.common.CommonConstants.DIR_SIVA_CERT;
+import static ee.ria.DigiDoc.common.CommonConstants.DIR_TSA_CERT;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.text.Editable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -30,13 +42,15 @@ import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
+import ee.ria.DigiDoc.android.main.settings.access.siva.SivaSetting;
+import ee.ria.DigiDoc.android.main.settings.create.CertificateAddViewModel;
 import ee.ria.DigiDoc.android.main.settings.create.ChooseFileScreen;
-import ee.ria.DigiDoc.android.main.settings.create.TSACertificateAddViewModel;
 import ee.ria.DigiDoc.android.main.settings.create.ViewState;
 import ee.ria.DigiDoc.android.signature.detail.CertificateDetailScreen;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -44,6 +58,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.common.CertificateUtil;
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -60,14 +75,30 @@ public final class SettingsAccessView extends CoordinatorLayout {
     private final Button showCertificateButton;
     private X509Certificate tsaCertificate;
 
+    private final RadioGroup sivaServiceChoiceGroup;
+    private final RadioButton sivaServiceDefaultChoice;
+    private final RadioButton sivaServiceManualChoice;
+    private final TextInputLayout sivaServiceUrlLayout;
+    private final TextInputEditText sivaServiceUrl;
+    private final TextView sivaCertificateIssuedTo;
+    private final TextView sivaCertificateValidTo;
+
+    private final LinearLayout sivaServiceCertificateContainer;
+    private final Button sivaCertificateAddCertificateButton;
+    private final Button sivaCertificateShowCertificateButton;
+    private X509Certificate sivaCertificate;
+
     private final Navigator navigator;
     private final SettingsDataStore settingsDataStore;
+    private final ConfigurationProvider configurationProvider;
 
     private final ViewDisposables disposables;
-    private final TSACertificateAddViewModel viewModel;
+    private final CertificateAddViewModel viewModel;
 
     private static boolean isTsaCertificateViewVisible;
     private static final Subject<Boolean> isTsaCertificateViewVisibleSubject = PublishSubject.create();
+
+    private String previousSivaUrl = "";
 
     String viewId = String.valueOf(View.generateViewId());
 
@@ -82,12 +113,13 @@ public final class SettingsAccessView extends CoordinatorLayout {
     public SettingsAccessView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         viewModel = ApplicationApp.component(context).navigator()
-                .viewModel(viewId, TSACertificateAddViewModel.class);
+                .viewModel(viewId, CertificateAddViewModel.class);
         inflate(context, R.layout.main_settings_access, this);
         toolbarView = findViewById(R.id.toolbar);
         TextView toolbarTitleView = getToolbarViewTitle(toolbarView);
         navigator = ApplicationApp.component(context).navigator();
         settingsDataStore = ApplicationApp.component(context).settingsDataStore();
+        configurationProvider = ((ApplicationApp) context.getApplicationContext()).getConfigurationProvider();
         disposables = new ViewDisposables();
 
         toolbarView.setTitle(R.string.main_settings_access_button);
@@ -106,6 +138,18 @@ public final class SettingsAccessView extends CoordinatorLayout {
 
         addCertificateButton.setContentDescription(addCertificateButton.getText().toString().toLowerCase());
         showCertificateButton.setContentDescription(showCertificateButton.getText().toString().toLowerCase());
+        
+        sivaServiceChoiceGroup = findViewById(R.id.mainSettingsSivaServiceChoiceGroup);
+        sivaServiceDefaultChoice = findViewById(R.id.mainSettingsSivaServiceDefaultChoice);
+        sivaServiceManualChoice = findViewById(R.id.mainSettingsSivaServiceManualChoice);
+        sivaServiceUrlLayout = findViewById(R.id.mainSettingsSivaServiceUrlLayout);
+        sivaServiceUrl = findViewById(R.id.mainSettingsSivaServiceUrl);
+        sivaCertificateIssuedTo = findViewById(R.id.mainSettingsSivaCertificateIssuedTo);
+        sivaCertificateValidTo = findViewById(R.id.mainSettingsSivaCertificateValidTo);
+
+        sivaServiceCertificateContainer = findViewById(R.id.mainSettingsSivaServiceCertificateContainer);
+        sivaCertificateAddCertificateButton = findViewById(R.id.mainSettingsSivaCertificateAddCertificateButton);
+        sivaCertificateShowCertificateButton = findViewById(R.id.mainSettingsSivaCertificateShowCertificateButton);
 
         if (settingsDataStore != null) {
             isTsaCertificateViewVisible = settingsDataStore.getIsTsaCertificateViewVisible();
@@ -132,6 +176,8 @@ public final class SettingsAccessView extends CoordinatorLayout {
                 restartIntent();
             });
         }
+
+        checkSivaServiceSetting(settingsDataStore, configurationProvider.getSivaUrl());
     }
 
     private void restartIntent() {
@@ -146,8 +192,7 @@ public final class SettingsAccessView extends CoordinatorLayout {
     public void render(ViewState state) {
         if (settingsDataStore != null) {
             String tsaCertName = settingsDataStore.getTSACertName();
-
-            File tsaFile = FileUtil.getTSAFile(getContext(), tsaCertName);
+            File tsaFile = FileUtil.getCertFile(getContext(), tsaCertName, DIR_TSA_CERT);
 
             if (tsaFile != null) {
                 String fileContents = FileUtils.readFileContent(tsaFile.getPath());
@@ -175,6 +220,32 @@ public final class SettingsAccessView extends CoordinatorLayout {
 
                     tsaCertIssuedTo.setText(getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title));
                     tsaCertValidTo.setText(getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title));
+                }
+            }
+
+            if (sivaServiceUrl.getText() != null) {
+                previousSivaUrl = sivaServiceUrl.getText().toString();
+            }
+            String sivaCertName = settingsDataStore.getSivaCertName();
+            File sivaFile = FileUtil.getCertFile(getContext(), sivaCertName, DIR_SIVA_CERT);
+
+            if (sivaFile != null) {
+                String fileContents = FileUtils.readFileContent(sivaFile.getPath());
+                try {
+                    sivaCertificate = CertificateUtil.x509Certificate(fileContents);
+                    X509CertificateHolder certificateHolder = new JcaX509CertificateHolder(sivaCertificate);
+                    String issuer = getIssuer(certificateHolder);
+                    sivaCertificateIssuedTo.setText(String.format("%s %s",
+                            getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title),
+                            issuer));
+                    sivaCertificateValidTo.setText(String.format("%s %s",
+                            getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title),
+                            getFormattedDateTime(certificateHolder.getNotAfter())));
+                } catch (CertificateException e) {
+                    Timber.log(Log.ERROR, e, "Unable to get SiVa certificate");
+
+                    // Remove invalid files
+                    removeSivaCert(settingsDataStore, sivaCertificateIssuedTo, sivaCertificateValidTo);
                 }
             }
         }
@@ -209,22 +280,51 @@ public final class SettingsAccessView extends CoordinatorLayout {
         return "-";
     }
 
+    private void saveSivaUrl(String sivaServiceUrl) {
+        Optional<String> sivaUrl = Optional.ofNullable(sivaServiceUrl)
+                .filter(text -> !text.isEmpty());
+        if (sivaUrl.isPresent()) {
+            setSivaUrl(settingsDataStore, sivaUrl.get().trim());
+        } else {
+            String defaultSivaUrl = configurationProvider.getSivaUrl();
+            setSivaUrl(settingsDataStore, defaultSivaUrl);
+            setSivaPlaceholderText(defaultSivaUrl);
+        }
+    }
+
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         disposables.attach();
-        disposables.add(navigationClicks(toolbarView).subscribe(o ->
-                navigator.execute(Transaction.pop())));
+        disposables.add(navigationClicks(toolbarView).subscribe(o -> {
+            navigator.execute(Transaction.pop());
+        }));
         disposables.add(clicks(showCertificateButton).subscribe(o -> {
             if (tsaCertificate != null) {
                 navigator.execute(Transaction.push(CertificateDetailScreen.create(tsaCertificate)));
             }
         }));
         disposables.add(clicks(addCertificateButton).subscribe(o ->
-                navigator.execute(Transaction.push(ChooseFileScreen.create()))));
+                navigator.execute(Transaction.push(ChooseFileScreen.create(true, false)))));
         disposables.add(observeTsaCertificateViewVisibleChanges().subscribe(isVisible -> {
             settingsDataStore.setIsTsaCertificateViewVisible(isVisible);
             setTSAContainerViewVisibility(isVisible);
+        }));
+        disposables.add(checkedChanges(sivaServiceChoiceGroup).subscribe(setting ->
+                setSivaServiceSetting(settingsDataStore, configurationProvider.getSivaUrl(), setting)));
+        disposables.add(clicks(sivaCertificateAddCertificateButton).subscribe(o ->
+                navigator.execute(Transaction.push(ChooseFileScreen.create(false, true)))));
+        disposables.add(clicks(sivaCertificateShowCertificateButton).subscribe(o -> {
+            if (sivaCertificate != null) {
+                navigator.execute(Transaction.push(CertificateDetailScreen.create(sivaCertificate)));
+            }
+        }));
+        disposables.add(textChanges(sivaServiceUrl).subscribe(text -> {
+            SivaSetting currentSivaSetting = getSivaSetting(settingsDataStore);
+            if (currentSivaSetting == MANUAL && text.toString().isEmpty() && !previousSivaUrl.isEmpty()) {
+                removeSivaCert(settingsDataStore, sivaCertificateIssuedTo, sivaCertificateValidTo);
+            }
+            previousSivaUrl = text.toString();
         }));
         disposables.add(viewModel.viewStates().subscribe(this::render));
     }
@@ -232,6 +332,14 @@ public final class SettingsAccessView extends CoordinatorLayout {
     @Override
     public void onDetachedFromWindow() {
         disposables.detach();
+        SivaSetting currentSivaSetting = getSivaSetting(settingsDataStore);
+        Editable sivaUrl = sivaServiceUrl.getText();
+        if (sivaUrl != null) {
+            saveSivaUrl(currentSivaSetting == DEFAULT ?
+                    configurationProvider.getSivaUrl() : sivaUrl.toString());
+        } else {
+            saveSivaUrl(configurationProvider.getSivaUrl());
+        }
         super.onDetachedFromWindow();
     }
 
@@ -263,5 +371,83 @@ public final class SettingsAccessView extends CoordinatorLayout {
 
     private void setTSAContainerViewVisibility(boolean isVisible) {
         tsaCertContainer.setVisibility(!isVisible ? GONE : VISIBLE);
+    }
+
+    private SivaSetting getSivaSetting(SettingsDataStore settingsDataStore) {
+        if (settingsDataStore != null) {
+            return settingsDataStore.getSivaSetting();
+        }
+        return DEFAULT;
+    }
+
+    private void checkSivaServiceSetting(SettingsDataStore settingsDataStore,
+                                         String defaultSivaUrl) {
+        SivaSetting currentSivaSetting = getSivaSetting(settingsDataStore);
+        switch (currentSivaSetting) {
+            case DEFAULT -> {
+                String trimmedDefaultSivaUrl = defaultSivaUrl.trim();
+                setSivaPlaceholderText(trimmedDefaultSivaUrl);
+                setSivaUrl(settingsDataStore, trimmedDefaultSivaUrl);
+                sivaServiceDefaultChoice.setChecked(true);
+                isSivaCertViewShown(GONE);
+                setSivaUrlEnabled(false);
+            }
+            case MANUAL -> {
+                sivaServiceManualChoice.setChecked(true);
+                isSivaCertViewShown(VISIBLE);
+                setSivaUrlEnabled(true);
+                String manualSivaUrl = settingsDataStore.getSivaUrl();
+                if (!manualSivaUrl.isEmpty() && !defaultSivaUrl.equals(manualSivaUrl)) {
+                    sivaServiceUrl.setText(manualSivaUrl.trim());
+                } else {
+                    setSivaUrl(settingsDataStore, defaultSivaUrl);
+                    setSivaPlaceholderText(defaultSivaUrl);
+                }
+            }
+        }
+    }
+
+    private void isSivaCertViewShown(int visibility) {
+        sivaServiceCertificateContainer.setVisibility(visibility);
+    }
+
+    private void setSivaServiceSetting(SettingsDataStore settingsDataStore,
+                                       String defaultSivaUrl, int buttonId) {
+        if (settingsDataStore != null) {
+            if (sivaServiceDefaultChoice.getId() == buttonId) {
+                settingsDataStore.setSivaSetting(DEFAULT);
+            } else if (sivaServiceManualChoice.getId() == buttonId) {
+                settingsDataStore.setSivaSetting(MANUAL);
+            }
+
+            checkSivaServiceSetting(settingsDataStore, defaultSivaUrl);
+        }
+    }
+
+    private void setSivaUrlEnabled(boolean isEnabled) {
+        sivaServiceUrl.setEnabled(isEnabled);
+    }
+
+    private void setSivaUrl(SettingsDataStore settingsDataStore, String sivaUrl) {
+        if (settingsDataStore != null) {
+            settingsDataStore.setSivaUrl(sivaUrl);
+        }
+    }
+
+    private void setSivaPlaceholderText(String text) {
+        sivaServiceUrlLayout.setPlaceholderText(text);
+    }
+
+    private void removeSivaCert(SettingsDataStore settingsDataStore, TextView issuedTo, TextView validTo) {
+        String sivaCertName = settingsDataStore.getSivaCertName();
+        File sivaFile = FileUtil.getCertFile(getContext(), sivaCertName, DIR_SIVA_CERT);
+
+        if (sivaFile != null) {
+            FileUtils.removeFile(sivaFile.getPath());
+        }
+        settingsDataStore.setSivaCertName(null);
+
+        issuedTo.setText(getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title));
+        validTo.setText(getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title));
     }
 }
