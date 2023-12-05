@@ -18,7 +18,7 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
-        android:label="\u202F"
+        android:label="@string/application_name"
         android:theme="@style/Theme.Application.Launch"
         android:launchMode="singleInstance">
 

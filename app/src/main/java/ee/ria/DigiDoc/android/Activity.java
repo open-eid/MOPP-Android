@@ -20,6 +20,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 import androidx.preference.PreferenceManager;
 import androidx.work.WorkManager;
 
@@ -112,6 +113,8 @@ public final class Activity extends AppCompatActivity {
         initializeRoleAndAddressAsking();
 
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
+        setTitle("\u202F");
+        ViewCompat.setImportantForAccessibility(getWindow().getDecorView(), ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO);
     }
 
     private void handleRootedDevice() {
@@ -145,9 +148,7 @@ public final class Activity extends AppCompatActivity {
                 crashReportDialog.dismiss();
             });
             Button dontSendButton = crashReportDialog.findViewById(R.id.dontSendButton);
-            dontSendButton.setOnClickListener(v -> {
-                crashReportDialog.dismiss();
-            });
+            dontSendButton.setOnClickListener(v -> crashReportDialog.dismiss());
 
             crashReportDialog.show();
         }
@@ -165,7 +166,7 @@ public final class Activity extends AppCompatActivity {
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
 
