@@ -9,6 +9,7 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
+        android:touchscreenBlocksFocus="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:importantForAccessibility="yes"
@@ -26,6 +27,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:importantForAccessibility="no"
+            android:touchscreenBlocksFocus="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:nextFocusDown="@+id/mainSettingsAskRoleAndAddress"
+            android:nextFocusUp="@+id/mainSettingsAskRoleAndAddress"
             android:accessibilityPaneTitle="@string/main_settings_role_and_address_button"
             />
 
@@ -49,25 +55,29 @@
             android:paddingEnd="8dp"
             android:orientation="horizontal">
 
-            <TextView
-                style="@style/MaterialTypography.Dense.Body1"
-                android:textSize="16sp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/main_settings_ask_role_and_address_title"
-                android:layout_weight="2">
-            </TextView>
+                <TextView
+                    style="@style/MaterialTypography.Dense.Body1"
+                    android:textSize="16sp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_settings_ask_role_and_address_title"
+                    android:layout_weight="2">
+                </TextView>
 
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/mainSettingsAskRoleAndAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="0dp"
-                android:paddingEnd="0dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:layout_gravity="end">
-            </androidx.appcompat.widget.SwitchCompat>
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/mainSettingsAskRoleAndAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:nextFocusDown="@+id/toolbar"
+                    android:nextFocusUp="@+id/toolbar"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:layout_gravity="end">
+                </androidx.appcompat.widget.SwitchCompat>
         </LinearLayout>
 
     </ScrollView>

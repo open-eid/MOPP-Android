@@ -139,6 +139,9 @@ public final class SettingsAccessView extends CoordinatorLayout {
         addCertificateButton = findViewById(R.id.mainSettingsTsaCertificateAddCertificateButton);
         showCertificateButton = findViewById(R.id.mainSettingsTsaCertificateShowCertificateButton);
 
+        addCertificateButton.setContentDescription(addCertificateButton.getText().toString().toLowerCase());
+        showCertificateButton.setContentDescription(showCertificateButton.getText().toString().toLowerCase());
+        
         sivaServiceChoiceGroup = findViewById(R.id.mainSettingsSivaServiceChoiceGroup);
         sivaServiceDefaultChoice = findViewById(R.id.mainSettingsSivaServiceDefaultChoice);
         sivaServiceManualChoice = findViewById(R.id.mainSettingsSivaServiceManualChoice);
@@ -204,15 +207,20 @@ public final class SettingsAccessView extends CoordinatorLayout {
                     tsaCertIssuedTo.setText(String.format("%s %s",
                             getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title),
                             issuer));
+                    tsaCertIssuedTo.setContentDescription(String.format("%s %s",
+                            getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title),
+                            issuer).toLowerCase());
                     tsaCertValidTo.setText(String.format("%s %s",
                             getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title),
                             getFormattedDateTime(certificateHolder.getNotAfter())));
+                    tsaCertValidTo.setContentDescription(String.format("%s %s",
+                            getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title),
+                            getFormattedDateTime(certificateHolder.getNotAfter())).toLowerCase());
                 } catch (CertificateException e) {
                     Timber.log(Log.ERROR, e, "Unable to get TSA certificate");
 
                     // Remove invalid files
-                    FileUtils.removeFile(tsaFile.getPath());
-                    settingsDataStore.setTSACertName(null);
+                    removeCertificate(tsaFile, settingsDataStore);
 
                     tsaCertIssuedTo.setText(getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title));
                     tsaCertValidTo.setText(getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title));
@@ -361,6 +369,23 @@ public final class SettingsAccessView extends CoordinatorLayout {
 
     public static Observable<Boolean> observeTsaCertificateViewVisibleChanges() {
         return isTsaCertificateViewVisibleSubject;
+    }
+
+    public static void resetSettings(Context context, SettingsDataStore settingsDataStore) {
+        settingsDataStore.setUuid("");
+        settingsDataStore.setTsaUrl("");
+        settingsDataStore.setIsOpenAllFileTypesEnabled(true);
+        settingsDataStore.setIsScreenshotAllowed(false);
+        File certFile = FileUtil.getCertFile(context, settingsDataStore.getTSACertName(), DIR_SIVA_CERT);
+        removeCertificate(certFile, settingsDataStore);
+        setTsaCertificateViewVisibleValue(false);
+    }
+
+    private static void removeCertificate(File tsaFile, SettingsDataStore settingsDataStore) {
+        if (tsaFile != null) {
+            FileUtils.removeFile(tsaFile.getPath());
+        }
+        settingsDataStore.setTSACertName(null);
     }
 
     private void setTSAContainerViewVisibility(boolean isVisible) {

@@ -21,7 +21,9 @@ import com.google.android.material.appbar.AppBarLayout;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessScreen;
+import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessView;
 import ee.ria.DigiDoc.android.main.settings.role.SettingsRoleAndAddressScreen;
+import ee.ria.DigiDoc.android.main.settings.role.SettingsRoleAndAddressView;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -34,11 +36,13 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
     private final Toolbar toolbarView;
 
     private final Navigator navigator;
+    private final SettingsDataStore settingsDataStore;
 
     private final ViewDisposables disposables;
 
     private final Button accessCategory;
     private final Button roleAndAddressCategory;
+    private final Button defaultSettingsButton;
 
     public SettingsView(Context context) {
         this(context, null);
@@ -55,14 +59,24 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
         appBarLayout = findViewById(R.id.appBar);
         scrollView = findViewById(R.id.scrollView);
         navigator = ApplicationApp.component(context).navigator();
+        settingsDataStore = ApplicationApp.component(context).settingsDataStore();
         disposables = new ViewDisposables();
 
         accessCategory = findViewById(R.id.mainSettingsAccessCategory);
         roleAndAddressCategory = findViewById(R.id.mainSettingsRoleAndAddressCategory);
+        defaultSettingsButton = findViewById(R.id.mainSettingsUseDefaultSettings);
+
+        defaultSettingsButton.setContentDescription(
+                defaultSettingsButton.getText().toString().toLowerCase());
 
         toolbarView.setTitle(R.string.main_settings_title);
         toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
         toolbarView.setNavigationContentDescription(R.string.back);
+    }
+
+    private void resetToDefaultSettings(SettingsDataStore settingsDataStore) {
+        SettingsAccessView.resetSettings(getContext(), settingsDataStore);
+        SettingsRoleAndAddressView.resetSettings(settingsDataStore);
     }
 
     @Override
@@ -92,6 +106,9 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
         disposables.add(clicks(roleAndAddressCategory).subscribe(o ->
                 navigator.execute(
                         Transaction.push(SettingsRoleAndAddressScreen.create()))));
+        disposables.add(clicks(defaultSettingsButton).subscribe(o ->
+                resetToDefaultSettings(settingsDataStore)
+        ));
     }
 
     @Override

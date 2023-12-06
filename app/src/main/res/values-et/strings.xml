@@ -43,6 +43,7 @@
 
     <!-- Main Settings -->
     <string name="main_settings_title">Seaded</string>
+    <string name="main_settings_use_default_settings_button_title">TAASTA ALGSEADED</string>
     <string name="main_settings_access_button">Ligipääs</string>
     <string name="main_settings_role_and_address_button">Roll ja aadress</string>
     <string name="main_settings_phone_no_title">Riigikood ja telefoninumber</string>
