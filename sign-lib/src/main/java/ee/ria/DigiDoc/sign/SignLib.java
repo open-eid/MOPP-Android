@@ -103,7 +103,10 @@ public final class SignLib {
         }
     }
 
-    private static void initLibDigiDocpp(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent, boolean isLoggingEnabled) {
+    private static void initLibDigiDocpp(Context context, String tsaUrlPreferenceKey,
+                                         ConfigurationProvider configurationProvider,
+                                         String userAgent,
+                                         boolean isLoggingEnabled) {
         String path = getSchemaDir(context).getAbsolutePath();
         try {
             Os.setenv("HOME", path, true);
@@ -127,7 +130,9 @@ public final class SignLib {
         DigiDocConf.instance().setLogFile(logDirectory.getAbsolutePath() + File.separator + "libdigidocpp.log");
     }
 
-    private static void initLibDigiDocConfiguration(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, boolean isLoggingEnabled) {
+    private static void initLibDigiDocConfiguration(Context context, String tsaUrlPreferenceKey,
+                                                    ConfigurationProvider configurationProvider,
+                                                    boolean isLoggingEnabled) {
         DigiDocConf conf = new DigiDocConf(getSchemaDir(context).getAbsolutePath());
         Conf.init(conf.transfer());
         if (isLoggingEnabled || BuildConfig.BUILD_TYPE.contentEquals("debug")) {
@@ -146,7 +151,8 @@ public final class SignLib {
         overrideOCSPUrls(configurationProvider.getOCSPUrls());
         overrideTSCerts(configurationProvider.getCertBundle());
         initTsaUrl(context, tsaUrlPreferenceKey, configurationProvider.getTsaUrl());
-        initTsCert(context, tsaCertPreferenceKey, "");
+        initTsCert(context, tsaCertPreferenceKey, "",
+                tsaUrlPreferenceKey, configurationProvider.getTsaUrl());
         initVerifyServiceCert(context, sivaCertPreferenceKey, configurationProvider.getCertBundle());
     }
 
@@ -232,13 +238,15 @@ public final class SignLib {
         tsaUrlChangeListener.onSharedPreferenceChanged(preferences, preferenceKey);
     }
 
-    private static void initTsCert(Context context, String preferenceKey, String defaultValue) {
+    private static void initTsCert(Context context, String preferenceKey, String defaultValue,
+                                   String tsaUrlPreferenceKey, String defaultTsaUrl) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         if (tsCertChangeListener != null) {
             preferences.unregisterOnSharedPreferenceChangeListener(tsCertChangeListener);
         }
 
-        tsCertChangeListener = new TsCertChangeListener(context, preferenceKey, defaultValue);
+        tsCertChangeListener = new TsCertChangeListener(context, preferenceKey, defaultValue,
+                tsaUrlPreferenceKey, defaultTsaUrl);
         preferences.registerOnSharedPreferenceChangeListener(tsCertChangeListener);
         tsCertChangeListener.onSharedPreferenceChanged(preferences, preferenceKey);
     }
@@ -304,18 +312,27 @@ public final class SignLib {
         private final Context context;
         private final String preferenceKey;
         private final String defaultValue;
+        private final String tsaUrlPreferenceKey;
+        private final String defaultTsaUrl;
 
-        TsCertChangeListener(Context context, String preferenceKey, String defaultValue) {
+        TsCertChangeListener(Context context, String preferenceKey, String defaultValue,
+                             String tsaUrlPreferenceKey, String defaultTsaUrl) {
             this.context = context;
             this.preferenceKey = preferenceKey;
             this.defaultValue = defaultValue;
+            this.tsaUrlPreferenceKey = tsaUrlPreferenceKey;
+            this.defaultTsaUrl = defaultTsaUrl;
         }
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (TextUtils.equals(key, preferenceKey)) {
-                overrideTSCerts(certBundle, getCustomCertFile(context,
+                if (sharedPreferences.getString(tsaUrlPreferenceKey, defaultTsaUrl).equals(defaultTsaUrl)) {
+                    overrideTSCerts(certBundle, null);
+                } else {
+                    overrideTSCerts(certBundle, getCustomCertFile(context,
                         sharedPreferences.getString(key, defaultValue), DIR_TSA_CERT));
+                }
             }
         }
     }
