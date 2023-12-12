@@ -4,6 +4,8 @@
     <!-- General -->
     <item type="id" name="appBar" />
     <item type="id" name="toolbar" />
+    <item type="id" name="scrollView" />
+    <item type="id" name="linearLayout" />
     <item type="id" name="activityIndicator" />
     <item type="id" name="activityIndicatorMobileId" />
     <item type="id" name="activityIndicatorSmartId" />
@@ -98,6 +100,7 @@
 
 
     <!-- Main About -->
+    <item type="id" name="mainAboutScreen" />
     <item type="id" name="mainAboutListLayout" />
     <item type="id" name="mainAboutList" />
     <item type="id" name="mainAboutRiaDigiDocVersionTitle" />

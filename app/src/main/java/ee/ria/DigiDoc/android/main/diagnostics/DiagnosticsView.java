@@ -5,6 +5,8 @@ import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileLogsSaveClicksSubject;
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileSaveClicksSubject;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarImageButton;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarTextView;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -13,17 +15,22 @@ import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.widget.NestedScrollView;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -72,9 +79,11 @@ import timber.log.Timber;
 
 public final class DiagnosticsView extends CoordinatorLayout implements ContentView {
 
+    private final AppBarLayout appBarLayout;
+    private final NestedScrollView scrollView;
+    private final Toolbar toolbarView;
     private final Navigator navigator;
     private final SimpleDateFormat dateFormat;
-    private final Toolbar toolbarView;
     private final ConfirmationDialog diagnosticsRestartConfirmationDialog;
 
     private final ViewDisposables disposables;
@@ -87,11 +96,20 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
     private final String DIAGNOSTICS_LOGS_FILE_NAME = "ria_digidoc_" + getAppVersion() + "_logs.txt";
 
     public DiagnosticsView(Context context) {
-        super(context);
+        this(context, null);
+    }
+
+    public DiagnosticsView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public DiagnosticsView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         dateFormat = ConfigurationDateUtil.getDateFormat();
         inflate(context, R.layout.main_diagnostics, this);
-        AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.main_diagnostics_title);
         toolbarView = findViewById(R.id.toolbar);
+        appBarLayout = findViewById(R.id.appBar);
+        scrollView = findViewById(R.id.scrollView);
         View saveDiagnosticsButton = findViewById(R.id.configurationSaveButton);
         navigator = ApplicationApp.component(context).navigator();
 
@@ -163,6 +181,21 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
+        scrollView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        TextView toolbarTextView = getToolbarTextView(toolbarView);
+        if (toolbarTextView != null) {
+            toolbarTextView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        ImageButton toolbarImageButton = getToolbarImageButton(toolbarView);
+        if (toolbarImageButton != null) {
+            toolbarImageButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        appBarLayout.postDelayed(() -> {
+            scrollView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            if (toolbarImageButton != null) {
+                toolbarImageButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            }
+        }, 1000);
         disposables.attach();
         disposables.add(navigationClicks(toolbarView).subscribe(o ->
                 navigator.execute(Transaction.pop())));
@@ -204,7 +237,7 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
 
         File diagnosticsFileLocation = new File(DIAGNOSTICS_FILE_PATH + DIAGNOSTICS_FILE_NAME);
         try (FileOutputStream fileStream = new FileOutputStream(diagnosticsFileLocation);
-             OutputStreamWriter writer = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8.name())) {
+             OutputStreamWriter writer = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8)) {
             writer.append(formatDiagnosticsText(textViews));
             writer.flush();
             return diagnosticsFileLocation;
@@ -217,8 +250,7 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
     }
 
     private static void findAllTextViews(View view, List<TextView> textViews) {
-        if (view instanceof ViewGroup) {
-            final ViewGroup viewGroup = (ViewGroup) view;
+        if (view instanceof final ViewGroup viewGroup) {
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 final View child = viewGroup.getChildAt(i);
                 if (child instanceof TextView) {
@@ -315,11 +347,13 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
                 configurationProvider.getTslUrl(), Typeface.DEFAULT));
         appendTslVersion(tslUrl, FileUtil.normalizeUri(
                 Uri.parse(configurationProvider.getTslUrl())).toString());
+        getSiVaUrlText();
         sivaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_siva_url_title,
-                (getSiVaUrlText() != null && !getSiVaUrlText().isEmpty()) ?
+                !getSiVaUrlText().isEmpty() ?
                         getSiVaUrlText() : configurationProvider.getSivaUrl(), Typeface.DEFAULT));
+        getTsaUrlText();
         tsaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsa_url_title,
-                (getTsaUrlText() != null && !getTsaUrlText().isEmpty()) ?
+                !getTsaUrlText().isEmpty() ?
                         getTsaUrlText() : configurationProvider.getTsaUrl(), Typeface.DEFAULT));
         ldapPersonUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_ldap_person_url_title,
                 configurationProvider.getLdapPersonUrl(), Typeface.DEFAULT));
@@ -381,9 +415,7 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
 
     private String getRpUuidText() {
         String rpUuid = ((Activity) this.getContext()).getSettingsDataStore().getUuid();
-        int uuid = rpUuid == null || rpUuid.isEmpty()
-                ? R.string.main_diagnostics_rpuuid_default
-                : R.string.main_diagnostics_rpuuid_custom;
+        int uuid = rpUuid.isEmpty() ? R.string.main_diagnostics_rpuuid_default : R.string.main_diagnostics_rpuuid_custom;
         return getResources().getString(uuid);
     }
 

@@ -9,13 +9,17 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:accessibilityHeading="true"
+        android:contentDescription="@string/eid_home_code_update_title_pin1_edit"
+        >
 
         <android.widget.Toolbar
             android:id="@id/toolbar"
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:accessibilityHeading="true"
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:title="@string/eid_home_code_update_title_pin1_edit" />
 

@@ -19,6 +19,7 @@
         android:paddingTop="@dimen/material_list_normal_padding_vertical"
         android:paddingBottom="@dimen/material_list_normal_padding_vertical"
         android:gravity="center"
+        android:accessibilityHeading="true"
         android:text="@string/crypto_create_data_files_title" />
 
 </LinearLayout>

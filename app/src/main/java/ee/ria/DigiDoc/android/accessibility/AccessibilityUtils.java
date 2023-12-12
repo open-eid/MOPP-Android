@@ -81,6 +81,7 @@ public class AccessibilityUtils {
         }
     }
 
+    /** @noinspection unused*/
     public static void sendDelayedAccessibilityEvent(Context context, int eventType, CharSequence message) {
         AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService(ACCESSIBILITY_SERVICE);
         if (accessibilityManager.isEnabled()) {
@@ -92,13 +93,13 @@ public class AccessibilityUtils {
     }
 
     public static void setViewAccessibilityPaneTitle(View view, @StringRes int titleResId) {
-        view.setAccessibilityPaneTitle((view.getResources().getString(titleResId)).toLowerCase());
+        view.setAccessibilityPaneTitle(view.getResources().getString(titleResId).toLowerCase());
     }
 
     public static void setContentDescription(View view, @Nullable String text) {
         ViewCompat.setAccessibilityDelegate(view, new AccessibilityDelegateCompat() {
             @Override
-            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 String contentDescription = "";
                 if (text == null || text.isEmpty()) {
@@ -113,10 +114,6 @@ public class AccessibilityUtils {
                 info.setText(contentDescription);
             }
         });
-    }
-
-    public static void disableContentDescription(View view) {
-        view.setContentDescription(null);
     }
 
     public static void disableDoubleTapToActivateFeedback(View view) {
@@ -200,7 +197,7 @@ public class AccessibilityUtils {
     public static void setCustomClickAccessibilityFeedBack(TextView titleView, ExpandableLayout containerView) {
         ViewCompat.setAccessibilityDelegate(titleView, new AccessibilityDelegateCompat() {
             @Override
-            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 String message;
                 if (containerView.isExpanded()) {
@@ -223,6 +220,7 @@ public class AccessibilityUtils {
         return combinedMessage.toString();
     }
 
+    /** @noinspection deprecation*/
     private static AccessibilityEvent getAccessibilityEvent() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             return new AccessibilityEvent();
