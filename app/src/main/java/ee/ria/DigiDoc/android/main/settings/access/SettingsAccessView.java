@@ -6,7 +6,8 @@ import static com.jakewharton.rxbinding4.widget.RxTextView.textChanges;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.main.settings.access.siva.SivaSetting.DEFAULT;
 import static ee.ria.DigiDoc.android.main.settings.access.siva.SivaSetting.MANUAL;
-import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarViewTitle;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarImageButton;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarTextView;
 import static ee.ria.DigiDoc.common.CommonConstants.DIR_SIVA_CERT;
 import static ee.ria.DigiDoc.common.CommonConstants.DIR_TSA_CERT;
 
@@ -19,15 +20,18 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -67,6 +71,8 @@ import timber.log.Timber;
 
 public final class SettingsAccessView extends CoordinatorLayout {
 
+    private final AppBarLayout appBarLayout;
+    private final ScrollView scrollView;
     private final Toolbar toolbarView;
     private final LinearLayout tsaCertContainer;
     private final TextView tsaCertIssuedTo;
@@ -116,7 +122,8 @@ public final class SettingsAccessView extends CoordinatorLayout {
                 .viewModel(viewId, CertificateAddViewModel.class);
         inflate(context, R.layout.main_settings_access, this);
         toolbarView = findViewById(R.id.toolbar);
-        TextView toolbarTitleView = getToolbarViewTitle(toolbarView);
+        appBarLayout = findViewById(R.id.appBar);
+        scrollView = findViewById(R.id.scrollView);
         navigator = ApplicationApp.component(context).navigator();
         settingsDataStore = ApplicationApp.component(context).settingsDataStore();
         configurationProvider = ((ApplicationApp) context.getApplicationContext()).getConfigurationProvider();
@@ -126,16 +133,15 @@ public final class SettingsAccessView extends CoordinatorLayout {
         toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
         toolbarView.setNavigationContentDescription(R.string.back);
 
-        if (toolbarTitleView != null) {
-            toolbarTitleView.setContentDescription("\u202F");
-        }
-
         tsaCertContainer = findViewById(R.id.mainSettingsTsaCertificateContainer);
         tsaCertIssuedTo = findViewById(R.id.mainSettingsTsaCertificateIssuedTo);
         tsaCertValidTo = findViewById(R.id.mainSettingsTsaCertificateValidTo);
         addCertificateButton = findViewById(R.id.mainSettingsTsaCertificateAddCertificateButton);
         showCertificateButton = findViewById(R.id.mainSettingsTsaCertificateShowCertificateButton);
 
+        addCertificateButton.setContentDescription(addCertificateButton.getText().toString().toLowerCase());
+        showCertificateButton.setContentDescription(showCertificateButton.getText().toString().toLowerCase());
+        
         sivaServiceChoiceGroup = findViewById(R.id.mainSettingsSivaServiceChoiceGroup);
         sivaServiceDefaultChoice = findViewById(R.id.mainSettingsSivaServiceDefaultChoice);
         sivaServiceManualChoice = findViewById(R.id.mainSettingsSivaServiceManualChoice);
@@ -180,6 +186,7 @@ public final class SettingsAccessView extends CoordinatorLayout {
     private void restartIntent() {
         PackageManager packageManager = getContext().getPackageManager();
         Intent intent = packageManager.getLaunchIntentForPackage(getContext().getPackageName());
+        assert intent != null;
         ComponentName componentName = intent.getComponent();
         Intent restartIntent = Intent.makeRestartActivityTask(componentName);
         restartIntent.setAction(Intent.ACTION_CONFIGURATION_CHANGED);
@@ -200,15 +207,20 @@ public final class SettingsAccessView extends CoordinatorLayout {
                     tsaCertIssuedTo.setText(String.format("%s %s",
                             getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title),
                             issuer));
+                    tsaCertIssuedTo.setContentDescription(String.format("%s %s",
+                            getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title),
+                            issuer).toLowerCase());
                     tsaCertValidTo.setText(String.format("%s %s",
                             getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title),
                             getFormattedDateTime(certificateHolder.getNotAfter())));
+                    tsaCertValidTo.setContentDescription(String.format("%s %s",
+                            getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title),
+                            getFormattedDateTime(certificateHolder.getNotAfter())).toLowerCase());
                 } catch (CertificateException e) {
                     Timber.log(Log.ERROR, e, "Unable to get TSA certificate");
 
                     // Remove invalid files
-                    FileUtils.removeFile(tsaFile.getPath());
-                    settingsDataStore.setTSACertName(null);
+                    removeCertificate(tsaFile, settingsDataStore);
 
                     tsaCertIssuedTo.setText(getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title));
                     tsaCertValidTo.setText(getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title));
@@ -287,10 +299,25 @@ public final class SettingsAccessView extends CoordinatorLayout {
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
+
+        scrollView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        TextView toolbarTextView = getToolbarTextView(toolbarView);
+        if (toolbarTextView != null) {
+            toolbarTextView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        ImageButton toolbarImageButton = getToolbarImageButton(toolbarView);
+        if (toolbarImageButton != null) {
+            toolbarImageButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        appBarLayout.postDelayed(() -> {
+            scrollView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            if (toolbarImageButton != null) {
+                toolbarImageButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            }
+        }, 1000);
+
         disposables.attach();
-        disposables.add(navigationClicks(toolbarView).subscribe(o -> {
-            navigator.execute(Transaction.pop());
-        }));
+        disposables.add(navigationClicks(toolbarView).subscribe(o -> navigator.execute(Transaction.pop())));
         disposables.add(clicks(showCertificateButton).subscribe(o -> {
             if (tsaCertificate != null) {
                 navigator.execute(Transaction.push(CertificateDetailScreen.create(tsaCertificate)));
@@ -342,6 +369,23 @@ public final class SettingsAccessView extends CoordinatorLayout {
 
     public static Observable<Boolean> observeTsaCertificateViewVisibleChanges() {
         return isTsaCertificateViewVisibleSubject;
+    }
+
+    public static void resetSettings(Context context, SettingsDataStore settingsDataStore) {
+        settingsDataStore.setUuid("");
+        settingsDataStore.setTsaUrl("");
+        settingsDataStore.setIsOpenAllFileTypesEnabled(true);
+        settingsDataStore.setIsScreenshotAllowed(false);
+        File certFile = FileUtil.getCertFile(context, settingsDataStore.getTSACertName(), DIR_SIVA_CERT);
+        removeCertificate(certFile, settingsDataStore);
+        setTsaCertificateViewVisibleValue(false);
+    }
+
+    private static void removeCertificate(File tsaFile, SettingsDataStore settingsDataStore) {
+        if (tsaFile != null) {
+            FileUtils.removeFile(tsaFile.getPath());
+        }
+        settingsDataStore.setTSACertName(null);
     }
 
     private void setTSAContainerViewVisibility(boolean isVisible) {

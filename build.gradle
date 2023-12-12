@@ -3,6 +3,7 @@ allprojects {
         repositories {
             google()
             mavenCentral()
+            //noinspection JcenterRepositoryObsolete
             jcenter()
         }
         dependencies {
@@ -14,6 +15,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        //noinspection JcenterRepositoryObsolete
         jcenter()
     }
 

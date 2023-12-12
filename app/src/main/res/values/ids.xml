@@ -4,6 +4,8 @@
     <!-- General -->
     <item type="id" name="appBar" />
     <item type="id" name="toolbar" />
+    <item type="id" name="scrollView" />
+    <item type="id" name="linearLayout" />
     <item type="id" name="activityIndicator" />
     <item type="id" name="activityIndicatorMobileId" />
     <item type="id" name="activityIndicatorSmartId" />
@@ -71,6 +73,7 @@
     <item type="id" name="mainSettingsRoleAndAddressScreen" />
     <item type="id" name="mainSettingsFragment" />
     <item type="id" name="mainSettingsAccessCategory" />
+    <item type="id" name="mainSettingsUseDefaultSettings" />
     <item type="id" name="mainSettingsRoleAndAddressCategory" />
     <item type="id" name="mainSettingsOpenAllFileTypes" />
     <item type="id" name="mainSettingsAllowScreenshots" />
@@ -78,6 +81,7 @@
     <item type="id" name="mainSettingsAccessToTimeStampingService" />
     <item type="id" name="mainSettingsAskRoleAndAddress" />
     <item type="id" name="mainSettingsTsaCertificateContainer" />
+    <item type="id" name="mainSettingsTsaCertificateTitle" />
     <item type="id" name="mainSettingsTsaCertificateIssuedTo" />
     <item type="id" name="mainSettingsTsaCertificateValidTo" />
     <item type="id" name="mainSettingsTsaCertificateAddCertificateButton" />
@@ -97,6 +101,7 @@
 
 
     <!-- Main About -->
+    <item type="id" name="mainAboutScreen" />
     <item type="id" name="mainAboutListLayout" />
     <item type="id" name="mainAboutList" />
     <item type="id" name="mainAboutRiaDigiDocVersionTitle" />

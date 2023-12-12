@@ -2,30 +2,39 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:importantForAccessibility="no"
     tools:parentTag="androidx.coordinatorlayout.widget.CoordinatorLayout"
     tools:layout_width="match_parent"
     tools:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
+        android:touchscreenBlocksFocus="false"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="yes"
+        android:accessibilityHeading="true"
+        android:focusedByDefault="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:screenReaderFocusable="true"
+        android:contentDescription="@string/main_settings_title"
+        >
+        <requestFocus/>
         <android.widget.Toolbar
             android:id="@id/toolbar"
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
             android:accessibilityPaneTitle="@string/main_settings_title"
-            app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationContentDescription="@string/back"
-            app:title="@string/main_settings_title" />
-
+            />
     </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@id/scrollView"
         android:paddingStart="@dimen/material_content_edge_margin_horizontal"
         android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
         android:orientation="vertical"
@@ -35,11 +44,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
                 android:orientation="horizontal"
                 android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
                 android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
@@ -52,8 +63,10 @@
                     android:drawableStart="@drawable/ic_icon_access_padded"
                     android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_right_24"
                     android:textColor="@color/material_color_black"
-                    android:textSize="@dimen/material_baseline_grid_2x"
                     android:textAllCaps="false"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11dp"
+                    android:autoSizeStepGranularity="1dp"
                     android:drawableTint="@color/material_color_black"
                     android:background="@null"
                     android:padding="0dp"
@@ -69,6 +82,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
                 android:orientation="horizontal"
                 android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
                 android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
@@ -81,8 +95,10 @@
                     android:drawableStart="@drawable/ic_icon_access_padded"
                     android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_right_24"
                     android:textColor="@color/material_color_black"
-                    android:textSize="@dimen/material_baseline_grid_2x"
                     android:textAllCaps="false"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11dp"
+                    android:autoSizeStepGranularity="1dp"
                     android:drawableTint="@color/material_color_black"
                     android:background="@null"
                     android:padding="0dp"
@@ -92,6 +108,22 @@
                     android:gravity="center_vertical"
                     android:contentDescription="@string/main_settings_role_and_address_button"
                     android:text="@string/main_settings_role_and_address_button" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <Button
+                    android:id="@id/mainSettingsUseDefaultSettings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/material_baseline_grid_3x"
+                    android:text="@string/main_settings_use_default_settings_button_title" />
 
             </LinearLayout>
 

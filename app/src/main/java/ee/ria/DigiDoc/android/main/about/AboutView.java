@@ -1,6 +1,5 @@
-package ee.ria.DigiDoc.android.main.settings.role;
+package ee.ria.DigiDoc.android.main.about;
 
-import static com.jakewharton.rxbinding4.widget.RxCompoundButton.checkedChanges;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarImageButton;
 import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarTextView;
@@ -9,75 +8,67 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.AppBarLayout;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.ApplicationApp;
-import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 
-public final class SettingsRoleAndAddressView extends CoordinatorLayout {
 
+public final class AboutView extends CoordinatorLayout implements ContentView {
     private final AppBarLayout appBarLayout;
-    private final ScrollView scrollView;
+    private final NestedScrollView scrollView;
     private final Toolbar toolbarView;
-    private final SwitchCompat askRoleAndAddressSwitch;
-
     private final Navigator navigator;
-    private final SettingsDataStore settingsDataStore;
     private final ViewDisposables disposables;
+    private final RecyclerView listView;
 
-    public SettingsRoleAndAddressView(Context context) {
+    public AboutView(Context context) {
         this(context, null);
     }
 
-    public SettingsRoleAndAddressView(Context context, AttributeSet attrs) {
+    public AboutView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public SettingsRoleAndAddressView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public AboutView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        inflate(context, R.layout.main_settings_role_and_address, this);
+        inflate(context, R.layout.main_about_screen, this);
         toolbarView = findViewById(R.id.toolbar);
         appBarLayout = findViewById(R.id.appBar);
         scrollView = findViewById(R.id.scrollView);
         navigator = ApplicationApp.component(context).navigator();
-        settingsDataStore = ApplicationApp.component(context).settingsDataStore();
         disposables = new ViewDisposables();
-
-        toolbarView.setTitle(R.string.main_settings_role_and_address_button);
+        toolbarView.setTitle(R.string.main_about_title);
         toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
         toolbarView.setNavigationContentDescription(R.string.back);
+        listView = findViewById(R.id.mainAboutList);
+        listView.setLayoutManager(new LinearLayoutManager(getContext()));
+        listView.setAdapter(new AboutAdapter());
+        listView.clearFocus();
+        ContentView.addInvisibleElement(getContext(), this);
 
-        Activity activityContext = (Activity) this.getContext();
-
-        askRoleAndAddressSwitch = findViewById(R.id.mainSettingsAskRoleAndAddress);
-        if (askRoleAndAddressSwitch != null && activityContext != null) {
-            askRoleAndAddressSwitch.setChecked(activityContext.getSettingsDataStore().getIsRoleAskingEnabled());
-
-            askRoleAndAddressSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
-                    activityContext.getSettingsDataStore().setIsRoleAskingEnabled(isChecked));
+        View lastElementView = findViewById(R.id.lastInvisibleElement);
+        if (lastElementView != null) {
+            ContentView.addInvisibleElementScrollListener(listView, lastElementView);
         }
-    }
-
-    public static void resetSettings(SettingsDataStore settingsDataStore) {
-        settingsDataStore.setIsRoleAskingEnabled(false);
     }
 
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-
+        listView.clearFocus();
         scrollView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
         TextView toolbarTextView = getToolbarTextView(toolbarView);
         if (toolbarTextView != null) {
@@ -92,18 +83,16 @@ public final class SettingsRoleAndAddressView extends CoordinatorLayout {
             if (toolbarImageButton != null) {
                 toolbarImageButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
             }
-        }, 1000);
-
+        }, 1500);
         disposables.attach();
         disposables.add(navigationClicks(toolbarView).subscribe(o ->
                 navigator.execute(Transaction.pop())));
-        disposables.add(checkedChanges(askRoleAndAddressSwitch)
-                .subscribe(settingsDataStore::setIsRoleAskingEnabled));
     }
 
     @Override
     public void onDetachedFromWindow() {
         disposables.detach();
+        ContentView.removeInvisibleElementScrollListener(listView);
         super.onDetachedFromWindow();
     }
 }

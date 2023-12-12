@@ -7,6 +7,8 @@ import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isSmallFontEnabled;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarImageButton;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarTextView;
 import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
 import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDisplayMetricsDpToInt;
@@ -23,6 +25,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -33,6 +36,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
@@ -40,6 +44,7 @@ import com.google.common.io.Files;
 import java.io.File;
 import java.time.Instant;
 import java.time.Month;
+import java.util.Objects;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
@@ -89,7 +94,10 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     @Nullable private final File nestedFile;
     private final boolean isSivaConfirmed;
 
+    private final AppBarLayout appBarLayout;
+    private final LinearLayout linearLayout;
     private final Toolbar toolbarView;
+
     private final NameUpdateDialog nameUpdateDialog;
     private final RecyclerView listView;
     private final SignatureUpdateAdapter adapter;
@@ -144,6 +152,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     @Nullable private DataFile documentRemoveConfirmation;
     @Nullable private Signature signatureRemoveConfirmation;
 
+    /** @noinspection unused*/
     private boolean isRoleViewShown = false;
     private boolean signingInfoDelegated = false;
     private final ProgressBar documentAddProgressBar;
@@ -174,6 +183,8 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update, this);
         toolbarView = findViewById(R.id.toolbar);
+        appBarLayout = findViewById(R.id.appBar);
+        linearLayout = findViewById(R.id.linearLayout);
         nameUpdateDialog = new NameUpdateDialog(context);
         listView = findViewById(R.id.signatureUpdateList);
         mobileIdActivityIndicatorView = findViewById(R.id.activityIndicatorMobileId);
@@ -246,7 +257,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     }
 
     private void setActionButtonsTextSize() {
-
         signatureAddButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
         signatureEncryptButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
         sendButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0f);
@@ -288,8 +298,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         }
     }
 
-
-    @SuppressWarnings("unchecked")
     @Override
     public Observable<Intent> intents() {
         return Observable.mergeArray(initialIntent(), nameUpdateIntent(), addDocumentsIntent(),
@@ -328,7 +336,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             return;
         }
 
-
         nameUpdateDialog.render(showNameUpdate(state), state.nameUpdateName(), state.nameUpdateError());
 
         int titleResId = isExistingContainer ? R.string.signature_update_title_existing
@@ -337,20 +344,38 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         toolbarView.setNavigationIcon(R.drawable.ic_clear);
         toolbarView.setNavigationContentDescription(R.string.close);
 
-        setAccessibilityPaneTitle(isExistingContainer ? getResources().getString(titleResId) : "Container signing");
+        appBarLayout.setAccessibilityHeading(true);
+        appBarLayout.setContentDescription(getContext().getString(titleResId));
 
         listView.clearFocus();
 
-        TextView titleView = getTitleView(toolbarView);
-        if (titleView != null) {
-            AccessibilityUtils.disableDoubleTapToActivateFeedback(titleView);
-            if (!isTitleViewFocused && isNestedContainer) {
-                titleView.postDelayed(() -> {
-                    titleView.requestFocus();
-                    titleView.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
-                }, 1000);
-                isTitleViewFocused = true;
+        linearLayout.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        smartIdContainerView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        mobileIdContainerView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        listView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        TextView toolbarTextView = getToolbarTextView(toolbarView);
+        if (toolbarTextView != null) {
+            toolbarTextView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        ImageButton toolbarImageButton = getToolbarImageButton(toolbarView);
+        if (toolbarImageButton != null) {
+            toolbarImageButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        appBarLayout.postDelayed(() -> {
+            linearLayout.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            smartIdContainerView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            mobileIdContainerView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            listView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            if (toolbarImageButton != null) {
+                toolbarImageButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
             }
+        }, 1500);
+        if (!isTitleViewFocused && isNestedContainer) {
+            appBarLayout.postDelayed(() -> {
+                appBarLayout.requestFocus();
+                appBarLayout.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+            }, 1000);
+            isTitleViewFocused = true;
         }
 
         if (isNestedContainer) {
@@ -461,9 +486,8 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                 signatureAddResponse instanceof MobileIdResponse
                         ? VISIBLE
                         : GONE);
-        if (signatureAddResponse instanceof MobileIdResponse) {
+        if (signatureAddResponse instanceof MobileIdResponse mobileIdResponse) {
             setSigningModalSize(mobileIdContainerView);
-            MobileIdResponse mobileIdResponse = (MobileIdResponse) signatureAddResponse;
             String mobileIdChallenge = mobileIdResponse.challenge();
             if (mobileIdChallenge != null) {
                 mobileIdChallengeView.setText(mobileIdChallenge);
@@ -525,8 +549,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                 signingInfoDelegated = true;
             }
 
-            if (signatureAddResponse instanceof SmartIdResponse) {
-                SmartIdResponse smartIdResponse = (SmartIdResponse) signatureAddResponse;
+            if (signatureAddResponse instanceof SmartIdResponse smartIdResponse) {
                 String selectDeviceText = getResources().getString(R.string.signature_update_smart_id_select_device);
                 if (smartIdResponse.selectDevice() && !smartIdInfo.getText().equals(selectDeviceText)) {
                     smartIdInfo.setText(R.string.signature_update_smart_id_select_device);
@@ -595,7 +618,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                 signatureAddSuccessMessageVisible));
     }
 
-    @SuppressWarnings("unchecked")
     private Observable<NameUpdateIntent> nameUpdateIntent() {
         return Observable.mergeArray(
                 adapter.nameUpdateClicks().map(ignored -> NameUpdateIntent.show(containerFile)),
@@ -645,7 +667,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         return signatureRoleDetailsIntentSubject;
     }
 
-    @SuppressWarnings("unchecked")
     private Observable<SignatureAddIntent> signatureAddIntent() {
         return Observable.mergeArray(
                 clicks(signatureAddButton)
@@ -727,15 +748,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             return getResources().getString(R.string.signature_update_signature_add_method_smart_id);
         } else if (method == R.id.signatureUpdateSignatureAddMethodIdCard) {
             return getResources().getString(R.string.signature_update_signature_add_method_id_card);
-        }
-        return null;
-    }
-
-    private TextView getTitleView(Toolbar toolbar) {
-        for (int i = 0; i < toolbar.getChildCount(); i++) {
-            if (toolbar.getChildAt(i) instanceof TextView) {
-                return ((TextView) toolbar.getChildAt(i));
-            }
         }
         return null;
     }
@@ -828,9 +840,11 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     protected void onRestoreInstanceState(Parcelable state) {
         super.onRestoreInstanceState(ViewSavedState.onRestoreInstanceState(state, parcel -> {
             signatureAddDialog.onRestoreInstanceState(
-                    parcel.readBundle(getClass().getClassLoader()));
-            nameUpdateDialog.onRestoreInstanceState(parcel.readBundle(getClass().getClassLoader()));
-            roleAddDialog.onRestoreInstanceState(parcel.readBundle(getClass().getClassLoader()));
+                    Objects.requireNonNull(parcel.readBundle(getClass().getClassLoader())));
+            nameUpdateDialog.onRestoreInstanceState(
+                    Objects.requireNonNull(parcel.readBundle(getClass().getClassLoader())));
+            roleAddDialog.onRestoreInstanceState(
+                    Objects.requireNonNull(parcel.readBundle(getClass().getClassLoader())));
         }));
     }
 

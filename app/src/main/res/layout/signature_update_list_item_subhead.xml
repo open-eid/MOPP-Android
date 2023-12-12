@@ -27,6 +27,7 @@
             android:layout_weight="1"
             android:layout_marginStart="40dp"
             android:gravity="center"
+            android:accessibilityHeading="true"
             android:text="@string/signature_update_documents_title" />
 
         <ImageButton

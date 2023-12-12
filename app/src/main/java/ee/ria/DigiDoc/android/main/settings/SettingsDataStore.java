@@ -241,6 +241,12 @@ public final class SettingsDataStore {
         editor.commit();
     }
 
+    public void setTsaUrl(String tsaUrl) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_tsa_url_key), tsaUrl);
+        editor.commit();
+    }
+
     public String getTsaUrl() {
         return preferences.getString(resources.getString(R.string.main_settings_tsa_url_key), "");
     }
