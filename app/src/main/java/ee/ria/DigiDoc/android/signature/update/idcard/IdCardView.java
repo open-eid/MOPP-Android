@@ -152,7 +152,7 @@ public final class IdCardView extends LinearLayout implements
                     data.personalData().surname(), AccessibilityUtils.getTextAsSingleCharacters(data.personalData().personalCode())));
             signContainerMessage.setContentDescription(
                     getResources().getString(R.string.signature_update_id_card_sign_message) + ". " +
-                            signDataView.getContentDescription() + ". " +
+                            signDataView.getContentDescription().toString().toLowerCase() + ". " +
                             getResources().getString(R.string.signature_update_id_card_sign_pin2)
             );
             signPin2ErrorView.setVisibility(VISIBLE);
@@ -185,7 +185,7 @@ public final class IdCardView extends LinearLayout implements
                     data.personalData().surname(), AccessibilityUtils.getTextAsSingleCharacters(data.personalData().personalCode())));
             signContainerMessage.setContentDescription(
                     getResources().getString(R.string.signature_update_id_card_sign_message) + ". " +
-                            signDataView.getContentDescription() + ". " +
+                            signDataView.getContentDescription().toString().toLowerCase() + ". " +
                             getResources().getString(R.string.signature_update_id_card_sign_pin2)
             );
             signPin2ErrorView.setVisibility(GONE);
