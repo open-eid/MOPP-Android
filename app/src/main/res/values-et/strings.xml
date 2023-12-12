@@ -24,6 +24,7 @@
     <!-- Main Accessibility -->
     <string name="main_accessibility_title">Juurdepääsetavus</string>
 
+    <string name="main_accessibility_link">Rohkem infot leiab <a href="https://www.id.ee/ligipaasetavuse-teatis/">ligipääsetavuse teatisest</a>.</string>
     <string name="main_accessibility_introduction">RIA DigiDoc on ehitatud nii, et see vastaks WCAG 2.1 AA juurdepääsetavuse suunistele. See tähendab, et RIA DigiDoc rakenduse arendamisel on kasutatud põhimõtteid, et see oleks kasutatav ilma nägemisvõimeta, piiratud nägemisvõimega, piiratud liikumisvõime või jõuga jms.</string>
     <string name="main_accessibility_introduction_2">Juurdepääsetavust on võimalik parandada oma nutiseadmesse sisseehitatud abivahendeid kasutades. Alljärgnevalt ülevaade põhilistest abivahenditest.</string>
     <string name="main_accessibility_introduction_screen_reader_title">Ekraanilugeja</string>
@@ -271,7 +272,7 @@
 
     <string name="signature_update_id_card_progress_message_initial">Ühenda kaardilugeja nutiseadmega ja sisesta ID-kaart lugejasse</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>
-    <string name="signature_update_id_card_progress_message_card_detected">ID-kaart leitud. Pärin andmeid...</string>
+    <string name="signature_update_id_card_progress_message_card_detected">ID-kaart leitud. Pärin andmeid…</string>
     <string name="signature_update_id_card_sign_message">ID-kaart on valmis allkirjastamiseks</string>
     <string name="signature_update_id_card_sign_data">%1$s %2$s (%3$s)</string>
     <string name="signature_update_id_card_sign_pin2">Sisesta PIN2</string>
@@ -361,7 +362,7 @@
 
     <string name="crypto_create_decrypt_progress_message_initial">Ühenda kaardilugeja nutiseadmega ja sisesta ID-kaart lugejasse</string>
     <string name="crypto_create_decrypt_progress_message_reader_detected">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>
-    <string name="crypto_create_decrypt_progress_message_card_detected">ID-kaart leitud. Pärin andmeid...</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">ID-kaart leitud. Pärin andmeid…</string>
     <string name="crypto_create_decrypt_message">Valmis dekrüpteerimiseks ID-kaardiga.</string>
     <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
     <string name="crypto_create_decrypt_pin1">Palun sisesta PIN1.</string>
@@ -374,7 +375,7 @@
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Ühenda kaardilugeja nutiseadmega ja sisesta ID-kaart lugejasse.</string>
     <string name="eid_home_id_card_status_reader_detected_message">Kaardilugeja leitud. Sisesta ID-kaart lugejasse.</string>
-    <string name="eid_home_id_card_status_card_detected_message">ID-kaart leitud. Pärin andmeid...</string>
+    <string name="eid_home_id_card_status_card_detected_message">ID-kaart leitud. Pärin andmeid…</string>
     <string name="eid_home_error">Midagi läks valesti. Palun proovi uuesti.</string>
 
     <string name="eid_home_data_type">Minu eID</string>

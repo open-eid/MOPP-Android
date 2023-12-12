@@ -5,6 +5,7 @@ import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarI
 import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarTextView;
 
 import android.content.Context;
+import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
@@ -49,6 +50,9 @@ public class AccessibilityView extends CoordinatorLayout implements ContentView 
         scrollView = findViewById(R.id.scrollView);
         navigator = ApplicationApp.component(context).navigator();
         disposables = new ViewDisposables();
+
+        TextView textViewWithWebLink = findViewById(R.id.mainAccessibilityLink);
+        textViewWithWebLink.setMovementMethod(LinkMovementMethod.getInstance());
 
         toolbarView.setTitle(R.string.main_accessibility_title);
         toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);

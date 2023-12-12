@@ -24,6 +24,7 @@
     <!-- Main Accessibility -->
     <string name="main_accessibility_title">Доступность</string>
 
+    <string name="main_accessibility_link">Более подробную информацию можно найти <a href="https://www.id.ee/ligipaasetavuse-teatis/">тут</a>.</string>
     <string name="main_accessibility_introduction">Приложение RIA DigiDoc построено таким образом, чтобы оно соответствовало протоколам доступа WCAG 2.1 AA. Это означает, что при разработке RIA DigiDoc соблюдались принципы, позволяющие использовать приложение неспособным видеть и слабовидящим пользователям, лицам с ограничением двигательной функции или силы и т. п.</string>
     <string name="main_accessibility_introduction_2">Доступность можно исправить путём использования встроенных в смарт-устройство вспомогательных средств. Далее даётся обзор основных вспомогательных средств.</string>
     <string name="main_accessibility_introduction_screen_reader_title">Экранное считывающее устройство </string>
@@ -274,7 +275,7 @@
 
     <string name="signature_update_id_card_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
-    <string name="signature_update_id_card_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация...</string>
+    <string name="signature_update_id_card_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация…</string>
     <string name="signature_update_id_card_sign_message">Готово к подписанию с использованием ID-карты</string>
     <string name="signature_update_id_card_sign_data">%1$s %2$s (%3$s)</string>
     <string name="signature_update_id_card_sign_pin2">Введите PIN2</string>
@@ -364,7 +365,7 @@
 
     <string name="crypto_create_decrypt_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>
     <string name="crypto_create_decrypt_progress_message_reader_detected">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
-    <string name="crypto_create_decrypt_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация...</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация…</string>
     <string name="crypto_create_decrypt_message">Готово к дешифрованию с помощью ID-карты.</string>
     <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
     <string name="crypto_create_decrypt_pin1">Пожалуйста, введите PIN1.</string>
@@ -377,7 +378,7 @@
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Подключите считыватель карты и вставьте в него Вашу ID-карту.</string>
     <string name="eid_home_id_card_status_reader_detected_message">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
-    <string name="eid_home_id_card_status_card_detected_message">Обнаружена ID-карта. Запрашивается информация...</string>
+    <string name="eid_home_id_card_status_card_detected_message">Обнаружена ID-карта. Запрашивается информация…</string>
     <string name="eid_home_error">Что-то пошло не так. Пожалуйста, попробуйте снова.</string>
 
     <string name="eid_home_data_type">Мой eID</string>
