@@ -499,7 +499,7 @@
     <string name="eid_home_code_update_repeat_error_mismatch_puk">Uued PUK-koodid peavad olema samad</string>
 
     <!--  General  -->
-
+    <string name="encrypt_content_description">Krüpteeri dokument, vahekaart %1$d / %2$d</string>
     <string name="decrypt_content_description">Dekrüpteeri dokument, vahekaart %1$d / %2$d</string>
     <string name="sign_send_content_description">Allkirjasta, vahekaart %1$d / %2$d</string>
     <string name="sign_save_content_description">Salvesta, vahekaart %1$d / %2$d</string>

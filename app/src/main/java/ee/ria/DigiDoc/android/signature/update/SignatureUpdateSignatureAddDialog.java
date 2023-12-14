@@ -163,9 +163,11 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog impleme
 
     private void setCustomActionButtons(Context context, Button positiveButton, Button cancelButton, ObservableDialogClickListener clickListener) {
         positiveButton.setText(getContext().getString(R.string.signature_update_signature_add_positive_button));
+        positiveButton.setContentDescription(positiveButton.getText().toString().toLowerCase());
         positiveButton.setOnClickListener(v -> clickListener.onClick(this, DialogInterface.BUTTON_POSITIVE));
 
         cancelButton.setText(getContext().getString(android.R.string.cancel));
+        cancelButton.setContentDescription(cancelButton.getText().toString().toLowerCase());
         cancelButton.setOnClickListener(v -> {
             cancel();
             AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.signing_cancelled);

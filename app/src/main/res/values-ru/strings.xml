@@ -502,7 +502,7 @@
     <string name="eid_home_code_update_repeat_error_mismatch_puk">Новые PUK-коды должны совпадать</string>
 
     <!--  General  -->
-
+    <string name="encrypt_content_description">Зашифровать документ, вкладка %1$d из %2$d</string>
     <string name="decrypt_content_description">Дешифрировать документ, вкладка %1$d из %2$d</string>
     <string name="sign_send_content_description">Подписать, вкладка %1$d из %2$d</string>
     <string name="sign_save_content_description">Сохраните, вкладка %1$d из %2$d</string>

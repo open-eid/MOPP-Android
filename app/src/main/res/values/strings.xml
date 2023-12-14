@@ -500,6 +500,7 @@
     <string name="eid_home_code_update_repeat_error_mismatch_puk">New PUK codes must match</string>
 
     <!--  General  -->
+    <string name="encrypt_content_description">Encrypt document, tab %1$d of %2$d</string>
     <string name="decrypt_content_description">Decrypt document, tab %1$d of %2$d</string>
     <string name="sign_send_content_description">Sign, tab %1$d of %2$d</string>
     <string name="sign_save_content_description">Save, tab %1$d of %2$d</string>
