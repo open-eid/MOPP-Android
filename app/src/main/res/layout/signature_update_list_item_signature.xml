@@ -99,7 +99,7 @@
             android:layout_marginVertical="10dp"
             android:layout_width="@dimen/material_baseline_grid_3.5x"
             android:layout_height="@dimen/material_baseline_grid_3.5x"
-            android:src="@drawable/ic_info_outline"
+            android:src="@drawable/ic_icon_info"
             android:adjustViewBounds="true"
             android:scaleType="fitXY"
             app:tint="@color/accent"

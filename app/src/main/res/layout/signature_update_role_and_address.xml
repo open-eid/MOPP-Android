@@ -22,10 +22,8 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:text="@string/main_settings_role_title"
-            android:contentDescription="@string/main_settings_role_title" />
+            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateRoleLabel"
@@ -37,6 +35,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@id/signatureUpdateRoleText"
+                android:contentDescription="@string/main_settings_role_title"
+                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
@@ -55,10 +55,8 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:text="@string/main_settings_city_title"
-            android:contentDescription="@string/main_settings_city_title" />
+            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateRoleCityLabel"
@@ -70,13 +68,15 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@id/signatureUpdateRoleCityText"
+                android:focusable="true"
+                android:contentDescription="@string/main_settings_city_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:imeOptions="actionDone"
                 android:maxLines="1"
                 android:background="@drawable/bottom_border_background"
-                android:accessibilityTraversalAfter="@id/signatureUpdateRoleCity"
+                android:accessibilityTraversalAfter="@id/signatureUpdateRoleText"
                 android:minHeight="@dimen/material_baseline_grid_6x" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -88,10 +88,8 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:text="@string/main_settings_county_title"
-            android:contentDescription="@string/main_settings_county_title" />
+            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateRoleStateLabel"
@@ -103,13 +101,15 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@id/signatureUpdateRoleStateText"
+                android:focusable="true"
+                android:contentDescription="@string/main_settings_county_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:imeOptions="actionDone"
                 android:maxLines="1"
                 android:background="@drawable/bottom_border_background"
-                android:accessibilityTraversalAfter="@id/signatureUpdateRoleState"
+                android:accessibilityTraversalAfter="@id/signatureUpdateRoleCityText"
                 android:minHeight="@dimen/material_baseline_grid_6x" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -121,10 +121,8 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:text="@string/main_settings_country_title"
-            android:contentDescription="@string/main_settings_country_title" />
+            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateRoleCountryLabel"
@@ -136,13 +134,15 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@id/signatureUpdateRoleCountryText"
+            android:focusable="true"
+            android:contentDescription="@string/main_settings_country_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
             android:imeOptions="actionDone"
             android:maxLines="1"
             android:background="@drawable/bottom_border_background"
-            android:accessibilityTraversalAfter="@id/signatureUpdateRoleCountry"
+            android:accessibilityTraversalAfter="@id/signatureUpdateRoleStateText"
             android:minHeight="@dimen/material_baseline_grid_6x" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -154,10 +154,8 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:text="@string/main_settings_postal_code_title"
-            android:contentDescription="@string/main_settings_postal_code_title" />
+            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateRoleZipLabel"
@@ -169,13 +167,15 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@id/signatureUpdateRoleZipText"
+            android:focusable="true"
+            android:contentDescription="@string/main_settings_postal_code_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
             android:imeOptions="actionDone"
             android:maxLines="1"
             android:background="@drawable/bottom_border_background"
-            android:accessibilityTraversalAfter="@id/signatureUpdateRoleZip"
+            android:accessibilityTraversalAfter="@id/signatureUpdateRoleCountryText"
             android:minHeight="@dimen/material_baseline_grid_6x" />
 
         </com.google.android.material.textfield.TextInputLayout>

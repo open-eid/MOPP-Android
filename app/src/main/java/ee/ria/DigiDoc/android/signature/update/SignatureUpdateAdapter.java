@@ -531,17 +531,7 @@ final class SignatureUpdateAdapter extends
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
             nameView.setText(TextUtil.splitTextAndJoin(item.signature().name(), ",", ", "));
-            StringBuilder nameViewAccessibility = new StringBuilder();
-            String[] nameTextSplit = nameView.getText().toString().split(", ");
-
-            for (String nameText : nameTextSplit) {
-                if (TextUtil.isOnlyDigits(nameText)) {
-                    nameViewAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
-                } else {
-                    nameViewAccessibility.append(nameText);
-                }
-            }
-            nameView.setContentDescription(nameViewAccessibility.toString().toLowerCase());
+            nameView.setContentDescription(AccessibilityUtils.getSignatureName(nameView.getText().toString()));
             switch (item.signature().status()) {
                 case INVALID:
                     statusView.setText(R.string.signature_update_signature_status_invalid);
@@ -596,7 +586,7 @@ final class SignatureUpdateAdapter extends
 
             if (AccessibilityUtils.isTalkBackEnabled()) {
                 String removeButtonText = removeButton.getResources().getString(R.string.signature_update_signature_remove_button);
-                removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
+                removeButton.setContentDescription(removeButtonText + " " + AccessibilityUtils.getSignatureName(nameView.getText().toString()));
             } else {
                 removeButton.setContentDescription(
                         removeButton.getResources()
@@ -609,8 +599,8 @@ final class SignatureUpdateAdapter extends
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureRemoveClicksSubject);
 
-            String roleDetailsButtonText = roleDetailsButton.getResources().getString(R.string.signature_update_signature_role_and_address_title);
-            roleDetailsButton.setContentDescription(roleDetailsButtonText + " " + nameView.getText());
+            String roleDetailsButtonText = roleDetailsButton.getResources().getString(R.string.signature_update_signature_role_and_address_title_accessibility);
+            roleDetailsButton.setContentDescription(roleDetailsButtonText + " " + AccessibilityUtils.getSignatureName(nameView.getText().toString()));
             roleDetailsButton.setVisibility(isRoleEmpty(item.signature()) ? View.GONE : View.VISIBLE);
             clicks(roleDetailsButton).map(ignored ->
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
