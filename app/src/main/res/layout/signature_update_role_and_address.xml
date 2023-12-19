@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:id="@id/roleAndAddressContainer"
@@ -22,6 +23,7 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
+            android:labelFor="@id/signatureUpdateRoleText"
             android:text="@string/main_settings_role_title"
             android:importantForAccessibility="no" />
 
@@ -31,6 +33,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginTop="-10dp"
+            android:hint="@string/main_settings_role_title"
+            android:textColorHint="@android:color/transparent"
+            app:hintTextColor="@android:color/transparent"
             android:minHeight="@dimen/material_baseline_grid_6x">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -55,6 +60,7 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
+            android:labelFor="@id/signatureUpdateRoleCityText"
             android:text="@string/main_settings_city_title"
             android:importantForAccessibility="no" />
 
@@ -64,6 +70,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginTop="-10dp"
+            android:hint="@string/main_settings_city_title"
+            android:textColorHint="@android:color/transparent"
+            app:hintTextColor="@android:color/transparent"
             android:minHeight="@dimen/material_baseline_grid_6x">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -88,6 +97,7 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
+            android:labelFor="@id/signatureUpdateRoleStateText"
             android:text="@string/main_settings_county_title"
             android:importantForAccessibility="no" />
 
@@ -97,6 +107,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginTop="-10dp"
+            android:hint="@string/main_settings_county_title"
+            android:textColorHint="@android:color/transparent"
+            app:hintTextColor="@android:color/transparent"
             android:minHeight="@dimen/material_baseline_grid_6x">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -121,6 +134,7 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
+            android:labelFor="@id/signatureUpdateRoleCountryText"
             android:text="@string/main_settings_country_title"
             android:importantForAccessibility="no" />
 
@@ -130,6 +144,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginTop="-10dp"
+            android:hint="@string/main_settings_country_title"
+            android:textColorHint="@android:color/transparent"
+            app:hintTextColor="@android:color/transparent"
             android:minHeight="@dimen/material_baseline_grid_6x">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -154,6 +171,7 @@
             android:gravity="start"
             android:layout_marginTop="11dp"
             android:layout_marginStart="4dp"
+            android:labelFor="@id/signatureUpdateRoleZipText"
             android:text="@string/main_settings_postal_code_title"
             android:importantForAccessibility="no" />
 
@@ -163,6 +181,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginTop="-10dp"
+            android:hint="@string/main_settings_postal_code_title"
+            android:textColorHint="@android:color/transparent"
+            app:hintTextColor="@android:color/transparent"
             android:minHeight="@dimen/material_baseline_grid_6x">
 
         <com.google.android.material.textfield.TextInputEditText

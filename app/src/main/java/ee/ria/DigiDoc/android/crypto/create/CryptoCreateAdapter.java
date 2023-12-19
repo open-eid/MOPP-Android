@@ -139,6 +139,19 @@ final class CryptoCreateAdapter extends
         }
         for (Certificate recipient : recipients) {
             builder.add(RecipientItem.create(recipient, true, false, false));
+            RecipientItem newRecipientItem = RecipientItem.create(recipient, true, false, false);
+
+            boolean containsRecipient = false;
+            for (Item existingRecipientItem : builder.build()) {
+                if (existingRecipientItem.equals(newRecipientItem)) {
+                    containsRecipient = true;
+                    break;
+                }
+            }
+
+            if (!containsRecipient) {
+                builder.add(newRecipientItem);
+            }
         }
         items(builder.build());
     }
