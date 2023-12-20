@@ -45,7 +45,16 @@
     <!-- Main Settings -->
     <string name="main_settings_title">Seaded</string>
     <string name="main_settings_use_default_settings_button_title">TAASTA ALGSEADED</string>
-    <string name="main_settings_access_button">Ligipääs</string>
+    <string name="main_settings_rights">Õigused</string>
+    <string name="main_settings_proxy_button">Proksi</string>
+    <string name="main_settings_proxy_no_proxy">Ei kasuta proksit</string>
+    <string name="main_settings_proxy_use_system">Kasuta süsteemseid proksi seadeid</string>
+    <string name="main_settings_proxy_manual">Proksi seaded määratakse käsitsi</string>
+    <string name="main_settings_proxy_host">Host</string>
+    <string name="main_settings_proxy_port">Port</string>
+    <string name="main_settings_proxy_username">Kasutajanimi</string>
+    <string name="main_settings_proxy_password">Parool</string>
+    <string name="main_settings_proxy_allow_ssl">Luba proksi kasutamine SSL-ühenduste jaoks</string>
     <string name="main_settings_role_and_address_button">Roll ja aadress</string>
     <string name="main_settings_phone_no_title">Riigikood ja telefoninumber</string>
     <string name="main_settings_personal_code_title">Isikukood</string>

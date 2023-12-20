@@ -19,11 +19,18 @@
 
 package ee.ria.DigiDoc.mobileid.service;
 
+import static ee.ria.DigiDoc.common.ProxySetting.MANUAL_PROXY;
 import static ee.ria.DigiDoc.common.SigningUtil.checkSigningCancelled;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CERTIFICATE_CERT_BUNDLE;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MANUAL_PROXY_HOST;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MANUAL_PROXY_PASSWORD;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MANUAL_PROXY_PORT;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MANUAL_PROXY_USERNAME;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.PROXY_IS_SSL_ENABLED;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.PROXY_SETTING;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SIGNING_ROLE_DATA;
 
 import android.content.Context;
@@ -66,7 +73,9 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.TrustManager;
 
 import ee.ria.DigiDoc.common.ContainerWrapper;
+import ee.ria.DigiDoc.common.ManualProxy;
 import ee.ria.DigiDoc.common.MessageUtil;
+import ee.ria.DigiDoc.common.ProxySetting;
 import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.common.TrustManagerUtil;
 import ee.ria.DigiDoc.common.UUIDUtil;
@@ -111,6 +120,9 @@ public class MobileSignService extends Worker {
     private final String accessTokenPath;
     private final String accessTokenPass;
     private final ArrayList<String> certificateCertBundle;
+    private final boolean isProxySSLEnabled;
+    private final ProxySetting proxySetting;
+    private final ManualProxy manualProxySettings;
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
 
     public MobileSignService(@NonNull Context context, @NonNull WorkerParameters workerParameters) {
@@ -130,6 +142,25 @@ public class MobileSignService extends Worker {
 
         Type arraylistType = new TypeToken<ArrayList<String>>() {}.getType();
         certificateCertBundle = new Gson().fromJson(certBundleList, arraylistType);
+
+        isProxySSLEnabled = workerParameters.getInputData().getBoolean(PROXY_IS_SSL_ENABLED, true);
+
+        proxySetting = ProxySetting.valueOf(workerParameters.getInputData().getString(PROXY_SETTING));
+
+        if (MANUAL_PROXY.equals(proxySetting)) {
+            String proxySettingString = workerParameters.getInputData().getString(MANUAL_PROXY_HOST);
+            if (proxySettingString != null && proxySettingString.isEmpty()) {
+                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.GENERAL_ERROR));
+                throw new IllegalArgumentException("Proxy setting cannot be empty");
+            }
+        }
+
+        manualProxySettings = new ManualProxy(
+                workerParameters.getInputData().getString(MANUAL_PROXY_HOST),
+                workerParameters.getInputData().getInt(MANUAL_PROXY_PORT, 0),
+                workerParameters.getInputData().getString(MANUAL_PROXY_USERNAME),
+                workerParameters.getInputData().getString(MANUAL_PROXY_PASSWORD)
+        );
     }
 
     @NonNull
@@ -163,7 +194,8 @@ public class MobileSignService extends Worker {
             try {
                 if (certificateCertBundle != null) {
                     midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class,
-                            restSSLConfig, request.getUrl(), certificateCertBundle, trustManagers, getApplicationContext());
+                            restSSLConfig, request.getUrl(), certificateCertBundle, trustManagers,
+                            isProxySSLEnabled, proxySetting, manualProxySettings, getApplicationContext());
                 } else {
                     Timber.log(Log.DEBUG, "Certificate cert bundle is null");
                     return Result.failure();

@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.main.settings.access;
+package ee.ria.DigiDoc.android.main.settings.rights;
 
 import android.content.Context;
 import android.view.View;
@@ -11,20 +11,20 @@ import androidx.fragment.app.FragmentManager;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorScreen;
 
-public final class SettingsAccessScreen extends ConductorScreen {
+public final class SettingsRightsScreen extends ConductorScreen {
 
-    public static SettingsAccessScreen create() {
-        return new SettingsAccessScreen();
+    public static SettingsRightsScreen create() {
+        return new SettingsRightsScreen();
     }
 
     @SuppressWarnings("WeakerAccess")
-    public SettingsAccessScreen() {
-        super(R.id.mainSettingsAccessScreen);
+    public SettingsRightsScreen() {
+        super(R.id.mainSettingsRightsScreen);
     }
 
     @Override
     protected View view(Context context) {
-        return new SettingsAccessView(context);
+        return new SettingsRightsView(context);
     }
 
     @Override

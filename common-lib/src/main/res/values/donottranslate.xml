@@ -5,4 +5,12 @@
     <string name="main_settings_tsa_cert_key">main_settings_tsa_cert</string>
     <string name="main_settings_siva_url_key">main_settings_siva_url</string>
     <string name="main_settings_siva_cert_key">main_settings_siva_cert</string>
+    <string name="main_settings_proxy_setting_key">main_settings_proxy_setting</string>
+    <string name="main_settings_proxy_host_key">main_settings_proxy_host</string>
+    <string name="main_settings_proxy_port_key">main_settings_proxy_port</string>
+    <string name="main_settings_proxy_username_key">main_settings_proxy_username</string>
+    <string name="main_settings_proxy_password_key">main_settings_proxy_password</string>
+    <string name="main_settings_proxy_ssl_enabled_key">mainSettingsProxySSLEnabled</string>
+
+
 </resources>

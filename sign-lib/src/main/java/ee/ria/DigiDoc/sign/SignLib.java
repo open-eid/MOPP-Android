@@ -20,6 +20,7 @@ import org.bouncycastle.util.encoders.Base64;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
+import ee.ria.DigiDoc.common.EncryptedPreferences;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
@@ -46,6 +48,7 @@ public final class SignLib {
 
     private static List<String> certBundle = new ArrayList<>();
 
+    private static SharedPreferences.OnSharedPreferenceChangeListener proxyChangeListener;
     private static SharedPreferences.OnSharedPreferenceChangeListener tsaUrlChangeListener;
     private static SharedPreferences.OnSharedPreferenceChangeListener tsCertChangeListener;
     private static SharedPreferences.OnSharedPreferenceChangeListener sivaUrlChangeListener;
@@ -78,6 +81,15 @@ public final class SignLib {
 
     public static String libdigidocppVersion() {
         return digidoc.version();
+    }
+
+    public static void overrideProxy(String host, int port, String username,
+                                     String password, boolean setTunnelSSL) {
+        DigiDocConf.instance().setProxyHost(host);
+        DigiDocConf.instance().setProxyPort(String.valueOf(port));
+        DigiDocConf.instance().setProxyUser(username);
+        DigiDocConf.instance().setProxyPass(password);
+        DigiDocConf.instance().setProxyTunnelSSL(setTunnelSSL);
     }
 
     private static void initNativeLibs() {
@@ -142,9 +154,21 @@ public final class SignLib {
         String tsaCertPreferenceKey = context.getResources().getString(R.string.main_settings_tsa_cert_key);
         String sivaUrlPreferenceKey = context.getResources().getString(R.string.main_settings_siva_url_key);
         String sivaCertPreferenceKey = context.getResources().getString(R.string.main_settings_siva_cert_key);
+
+        String proxyHostPreferenceKey = context.getResources().getString(R.string.main_settings_proxy_host_key);
+        String proxyPortPreferenceKey = context.getResources().getString(R.string.main_settings_proxy_port_key);
+        String proxyUsernamePreferenceKey = context.getResources().getString(R.string.main_settings_proxy_username_key);
+        String proxyPasswordPreferenceKey = context.getResources().getString(R.string.main_settings_proxy_password_key);
+        String proxySSLEnabledPreferenceKey = context.getResources().getString(R.string.main_settings_proxy_ssl_enabled_key);
+
         certBundle = configurationProvider.getCertBundle();
 
         forcePKCS12Certificate();
+        initProxy(context, proxyHostPreferenceKey, "",
+                proxyPortPreferenceKey, 80,
+                proxyUsernamePreferenceKey, "",
+                proxyPasswordPreferenceKey, "",
+                proxySSLEnabledPreferenceKey, true);
         overrideTSLUrl(configurationProvider.getTslUrl());
         overrideTSLCert(configurationProvider.getTslCerts());
         overrideSignatureValidationServiceUrl(context, sivaUrlPreferenceKey, configurationProvider.getSivaUrl());
@@ -226,6 +250,29 @@ public final class SignLib {
             stringMap.put(entry.getKey(), entry.getValue());
         }
         DigiDocConf.instance().setOCSPUrls(stringMap);
+    }
+
+    private static void initProxy(Context context, String hostPreferenceKey, String hostDefaultValue,
+                                  String portPreferenceKey, int portDefaultValue,
+                                  String usernamePreferenceKey, String usernameDefaultValue,
+                                  String passwordPreferenceKey, String passwordDefaultValue,
+                                  String sslEnabledPreferenceKey, boolean sslEnabledDefaultValue) {
+        try {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences encryptedPreferences = EncryptedPreferences.getEncryptedPreferences(context);
+
+            if (sharedPreferences != null) {
+                overrideProxy(
+                        sharedPreferences.getString(hostPreferenceKey, hostDefaultValue),
+                        sharedPreferences.getInt(portPreferenceKey, portDefaultValue),
+                        sharedPreferences.getString(usernamePreferenceKey, usernameDefaultValue),
+                        encryptedPreferences.getString(passwordPreferenceKey, passwordDefaultValue),
+                        sharedPreferences.getBoolean(sslEnabledPreferenceKey, sslEnabledDefaultValue)
+                );
+            }
+        } catch (IOException | GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void initTsaUrl(Context context, String preferenceKey, String defaultValue) {

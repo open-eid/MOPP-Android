@@ -18,17 +18,23 @@
  *
  */
 
-package ee.ria.DigiDoc.android.main.settings.access;
+package ee.ria.DigiDoc.android.main.settings.signing;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 import android.app.Dialog;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.preference.EditTextPreferenceDialogFragmentCompat;
@@ -41,6 +47,9 @@ import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 
 public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
 
+    private AppCompatEditText appCompatEditText;
+    private TextWatcher uuidTextWatcher;
+
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
@@ -48,7 +57,7 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
         if (uuidPreference != null) {
             CheckBox checkBox = uuidPreference.getCheckBox();
 
-            AppCompatEditText appCompatEditText = TextUtil.getTextView(view);
+            appCompatEditText = TextUtil.getTextView(view);
 
             uuidPreference.setOnBindEditTextListener(editText -> {
                 checkBox.setChecked(false);
@@ -78,12 +87,18 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
                     parent.addView(checkBox, ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT);
                 }
+
+                appCompatEditText.setSingleLine(true);
+                appCompatEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                appCompatEditText.setSelection(appCompatEditText.getText() != null ?
+                        appCompatEditText.getText().length() : 0);
             }
         }
     }
 
     private void disableTextViewOnChecked(AppCompatEditText appCompatEditText) {
         appCompatEditText.setText(null);
+        appCompatEditText.setSingleLine(false);
         appCompatEditText.setHint("00000000-0000-0000-0000-000000000000");
         appCompatEditText.clearFocus();
     }
@@ -105,5 +120,6 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
         if (!positiveResult && getContext() != null) {
             AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.setting_value_change_cancelled);
         }
+        appCompatEditText.removeTextChangedListener(uuidTextWatcher);
     }
 }

@@ -20,10 +20,11 @@ import com.google.android.material.appbar.AppBarLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
-import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessScreen;
-import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessView;
-import ee.ria.DigiDoc.android.main.settings.role.SettingsRoleAndAddressScreen;
-import ee.ria.DigiDoc.android.main.settings.role.SettingsRoleAndAddressView;
+import ee.ria.DigiDoc.android.main.settings.proxy.SettingsProxyDialog;
+import ee.ria.DigiDoc.android.main.settings.rights.SettingsRightsScreen;
+import ee.ria.DigiDoc.android.main.settings.rights.SettingsRightsView;
+import ee.ria.DigiDoc.android.main.settings.signing.SettingsSigningScreen;
+import ee.ria.DigiDoc.android.main.settings.signing.SettingsSigningView;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -40,9 +41,10 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
 
     private final ViewDisposables disposables;
 
-    private final Button accessCategory;
-    private final Button roleAndAddressCategory;
     private final Button defaultSettingsButton;
+
+    private final Button accessCategory;
+    private final Button rightsCategory;
 
     public SettingsView(Context context) {
         this(context, null);
@@ -62,12 +64,12 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
         settingsDataStore = ApplicationApp.component(context).settingsDataStore();
         disposables = new ViewDisposables();
 
-        accessCategory = findViewById(R.id.mainSettingsAccessCategory);
-        roleAndAddressCategory = findViewById(R.id.mainSettingsRoleAndAddressCategory);
         defaultSettingsButton = findViewById(R.id.mainSettingsUseDefaultSettings);
 
         defaultSettingsButton.setContentDescription(
                 defaultSettingsButton.getText().toString().toLowerCase());
+        accessCategory = findViewById(R.id.mainSettingsSigningCategory);
+        rightsCategory = findViewById(R.id.mainSettingsRightsCategory);
 
         toolbarView.setTitle(R.string.main_settings_title);
         toolbarView.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
@@ -75,8 +77,9 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
     }
 
     private void resetToDefaultSettings(SettingsDataStore settingsDataStore) {
-        SettingsAccessView.resetSettings(getContext(), settingsDataStore);
-        SettingsRoleAndAddressView.resetSettings(settingsDataStore);
+        SettingsSigningView.resetSettings(getContext(), settingsDataStore);
+        SettingsRightsView.resetSettings(settingsDataStore);
+        SettingsProxyDialog.resetSettings(getContext(), settingsDataStore);
     }
 
     @Override
@@ -102,10 +105,10 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
                 navigator.execute(Transaction.pop())));
         disposables.add(clicks(accessCategory).subscribe(o ->
                 navigator.execute(
-                        Transaction.push(SettingsAccessScreen.create()))));
-        disposables.add(clicks(roleAndAddressCategory).subscribe(o ->
+                        Transaction.push(SettingsSigningScreen.create()))));
+        disposables.add(clicks(rightsCategory).subscribe(o ->
                 navigator.execute(
-                        Transaction.push(SettingsRoleAndAddressScreen.create()))));
+                        Transaction.push(SettingsRightsScreen.create()))));
         disposables.add(clicks(defaultSettingsButton).subscribe(o ->
                 resetToDefaultSettings(settingsDataStore)
         ));

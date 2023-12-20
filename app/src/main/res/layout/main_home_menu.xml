@@ -12,6 +12,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_margin="?attr/dialogPreferredPadding"
+        android:touchscreenBlocksFocus="false"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:src="@drawable/ic_clear"
         android:minWidth="@dimen/material_button_touch_target_height_minimum"
         app:tint="@color/material_color_white" />

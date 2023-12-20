@@ -1,6 +1,9 @@
 package ee.ria.DigiDoc.android.main.settings;
 
+import static ee.ria.DigiDoc.common.ProxySetting.NO_PROXY;
+
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Log;
@@ -8,6 +11,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -15,7 +20,11 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.main.settings.access.siva.SivaSetting;
+import ee.ria.DigiDoc.android.main.settings.signing.siva.SivaSetting;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
+import ee.ria.DigiDoc.common.EncryptedPreferences;
+import ee.ria.DigiDoc.common.ManualProxy;
+import ee.ria.DigiDoc.common.ProxySetting;
 import timber.log.Timber;
 
 public final class SettingsDataStore {
@@ -321,5 +330,96 @@ public final class SettingsDataStore {
 
     public String getSivaCertName() {
         return preferences.getString(resources.getString(R.string.main_settings_siva_cert_key), "");
+    }
+
+    public void setProxySetting(ProxySetting proxySetting) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_proxy_setting_key), proxySetting.name());
+        editor.commit();
+    }
+
+    public ProxySetting getProxySetting() {
+        String settingKey = preferences.getString(resources.getString(R.string.main_settings_proxy_setting_key), NO_PROXY.name());
+        try {
+            return ProxySetting.valueOf(settingKey);
+        } catch (IllegalArgumentException iae) {
+            Timber.log(Log.ERROR, iae, "Unable to get proxy setting");
+            return NO_PROXY;
+        }
+    }
+
+    public void setIsProxyForSSLEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(resources.getString(R.string.main_settings_proxy_ssl_enabled_key), isEnabled);
+        editor.commit();
+    }
+
+    public boolean getIsProxyForSSLEnabled() {
+        return preferences.getBoolean(resources.getString(R.string.main_settings_proxy_ssl_enabled_key), true);
+    }
+
+    public void setProxyHost(String host) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_proxy_host_key), host);
+        editor.commit();
+    }
+
+    public String getProxyHost() {
+        return preferences.getString(resources.getString(R.string.main_settings_proxy_host_key), "");
+    }
+
+    public void setProxyPort(int port) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(resources.getString(R.string.main_settings_proxy_port_key), port);
+        editor.commit();
+    }
+
+    public int getProxyPort() {
+        return preferences.getInt(resources.getString(R.string.main_settings_proxy_port_key), 80);
+    }
+
+    public void setProxyUsername(String username) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_proxy_username_key), username);
+        editor.commit();
+    }
+
+    public String getProxyUsername() {
+        return preferences.getString(resources.getString(R.string.main_settings_proxy_username_key), "");
+    }
+
+    public void setProxyPassword(Context context, String password) {
+        SharedPreferences encryptedPreferences = getEncryptedPreferences(context);
+        if (encryptedPreferences != null) {
+            SharedPreferences.Editor editor = encryptedPreferences.edit();
+            editor.putString(resources.getString(R.string.main_settings_proxy_password_key), password);
+            editor.commit();
+        }
+        Timber.log(Log.ERROR, "Unable to set proxy password");
+    }
+
+    public String getProxyPassword(Context context) {
+        SharedPreferences encryptedPreferences = getEncryptedPreferences(context);
+        if (encryptedPreferences != null) {
+            return encryptedPreferences.getString(resources.getString(R.string.main_settings_proxy_password_key), "");
+        }
+        Timber.log(Log.ERROR, "Unable to get proxy password");
+        return "";
+    }
+
+    public ManualProxy getManualProxySettings(Context context) {
+        return new ManualProxy(getProxyHost(), getProxyPort(),
+                getProxyUsername(), getProxyPassword(context));
+    }
+
+    @Nullable
+    private static SharedPreferences getEncryptedPreferences(Context context) {
+        try {
+            return EncryptedPreferences.getEncryptedPreferences(context);
+        } catch (GeneralSecurityException | IOException e) {
+            Timber.log(Log.ERROR, e, "Unable to get encrypted preferences");
+            ToastUtil.showError(context, R.string.signature_update_mobile_id_error_general_client);
+            return null;
+        }
     }
 }

@@ -101,7 +101,9 @@ final class SignatureAddSource {
                             Observable.create(new MobileIdOnSubscribe(navigator, container,
                                             localeService.applicationLocale(),
                                     settingsDataStore.getUuid(), mobileIdRequest.personalCode(),
-                                    mobileIdRequest.phoneNo(), roleData)))
+                                    mobileIdRequest.phoneNo(), settingsDataStore.getIsProxyForSSLEnabled(),
+                                    settingsDataStore.getProxySetting(),
+                                    settingsDataStore.getManualProxySettings(navigator.activity()), roleData)))
                     .switchMap(response -> {
                         String signature = response.signature();
                         Button mobileIdCancelButton = navigator.activity().findViewById(R.id.signatureUpdateMobileIdCancelButton);
@@ -137,7 +139,10 @@ final class SignatureAddSource {
                     .flatMapObservable(container ->
                             Observable.create(new SmartIdOnSubscribe(navigator, container,
                                     localeService.applicationLocale(), settingsDataStore.getUuid(),
-                                    smartIdRequest.personalCode(), smartIdRequest.country(), roleData)))
+                                    smartIdRequest.personalCode(), smartIdRequest.country(),
+                                    settingsDataStore.getIsProxyForSSLEnabled(),
+                                    settingsDataStore.getProxySetting(),
+                                    settingsDataStore.getManualProxySettings(navigator.activity()), roleData)))
                     .switchMap(response -> {
                         SessionStatusResponse.ProcessStatus processStatus = response.status();
                         Button smartIdCancelButton = navigator.activity().findViewById(R.id.signatureUpdateSmartIdCancelButton);

@@ -27,8 +27,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:importantForAccessibility="no"
-            android:accessibilityPaneTitle="@string/main_settings_title"
-            />
+            android:touchscreenBlocksFocus="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:accessibilityPaneTitle="@string/main_settings_title" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
@@ -56,12 +58,13 @@
                 android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
 
                 <Button
-                    android:id="@id/mainSettingsAccessCategory"
+                    android:id="@id/mainSettingsSigningCategory"
                     style="@style/MaterialTypography.Regular.Body2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_icon_access_padded"
+                    android:drawableStart="@drawable/ic_icon_signing"
                     android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_right_24"
+                    android:drawablePadding="@dimen/material_responsive_gutter"
                     android:textColor="@color/material_color_black"
                     android:textAllCaps="false"
                     android:autoSizeTextType="uniform"
@@ -69,13 +72,13 @@
                     android:autoSizeStepGranularity="1dp"
                     android:drawableTint="@color/material_color_black"
                     android:background="@null"
-                    android:padding="0dp"
+                    android:paddingHorizontal="@dimen/material_responsive_gutter"
                     android:layout_margin="0dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:gravity="center_vertical"
-                    android:contentDescription="@string/main_settings_access_button"
-                    android:text="@string/main_settings_access_button" />
+                    android:contentDescription="@string/signature_update_title_created"
+                    android:text="@string/signature_update_title_created" />
 
             </LinearLayout>
 
@@ -88,12 +91,13 @@
                 android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
 
                 <Button
-                    android:id="@id/mainSettingsRoleAndAddressCategory"
+                    android:id="@id/mainSettingsRightsCategory"
                     style="@style/MaterialTypography.Regular.Body2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_icon_access_padded"
+                    android:drawableStart="@drawable/ic_icon_permissions"
                     android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_right_24"
+                    android:drawablePadding="@dimen/material_responsive_gutter"
                     android:textColor="@color/material_color_black"
                     android:textAllCaps="false"
                     android:autoSizeTextType="uniform"
@@ -101,13 +105,13 @@
                     android:autoSizeStepGranularity="1dp"
                     android:drawableTint="@color/material_color_black"
                     android:background="@null"
-                    android:padding="0dp"
+                    android:paddingHorizontal="@dimen/material_responsive_gutter"
                     android:layout_margin="0dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:gravity="center_vertical"
-                    android:contentDescription="@string/main_settings_role_and_address_button"
-                    android:text="@string/main_settings_role_and_address_button" />
+                    android:contentDescription="@string/main_settings_rights"
+                    android:text="@string/main_settings_rights" />
 
             </LinearLayout>
 

@@ -8,12 +8,16 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
+        android:touchscreenBlocksFocus="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ee.ria.DigiDoc.android.main.home.HomeToolbar
             android:id="@id/toolbar"
             android:theme="@style/ThemeOverlay.Application.ActionBar"
+            android:touchscreenBlocksFocus="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

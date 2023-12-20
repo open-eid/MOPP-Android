@@ -33,6 +33,12 @@ public interface SmartSignConstants {
     String CREATE_SIGNATURE_CHALLENGE = "ee.ria.mopp.android.smartid.SID_CHALLENGE";
     String CREATE_SIGNATURE_STATUS = "ee.ria.mopp.android.smartid.CREATE_SIGNATURE_STATUS";
     String SERVICE_FAULT = "ee.ria.mopp.android.smartid.SERVICE_FAULT";
+    String PROXY_SETTING = "ee.ria.mopp.smartid.PROXY_SETTING";
+    String MANUAL_PROXY_HOST = "ee.ria.mopp.smartid.HOST";
+    String MANUAL_PROXY_PORT = "ee.ria.mopp.smartid.PORT";
+    String MANUAL_PROXY_USERNAME = "ee.ria.mopp.smartid.USERNAME";
+    String MANUAL_PROXY_PASSWORD = "ee.ria.mopp.smartid.PASSWORD";
+    String PROXY_IS_SSL_ENABLED = "ee.ria.mopp.smartid.PROXY_IS_SSL_ENABLED";
 
     String NOTIFICATION_CHANNEL = "SMART_ID_CHANNEL";
     int NOTIFICATION_PERMISSION_CODE = 1;

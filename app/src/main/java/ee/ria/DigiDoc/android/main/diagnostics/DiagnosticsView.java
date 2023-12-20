@@ -41,6 +41,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.Proxy;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
 import java.text.Normalizer;
@@ -49,12 +50,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.TSLException;
 import ee.ria.DigiDoc.android.utils.TSLUtil;
@@ -64,6 +67,10 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.common.ManualProxy;
+import ee.ria.DigiDoc.common.ProxyConfig;
+import ee.ria.DigiDoc.common.ProxySetting;
+import ee.ria.DigiDoc.common.ProxyUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
@@ -72,9 +79,11 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import okhttp3.Authenticator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.internal.tls.OkHostnameVerifier;
 import timber.log.Timber;
 
 public final class DiagnosticsView extends CoordinatorLayout implements ContentView {
@@ -82,9 +91,12 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
     private final AppBarLayout appBarLayout;
     private final NestedScrollView scrollView;
     private final Toolbar toolbarView;
+    private static final int DEFAULT_TIMEOUT = 5;
+
     private final Navigator navigator;
     private final SimpleDateFormat dateFormat;
     private final ConfirmationDialog diagnosticsRestartConfirmationDialog;
+    private final SettingsDataStore settingsDataStore;
 
     private final ViewDisposables disposables;
 
@@ -112,6 +124,7 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
         scrollView = findViewById(R.id.scrollView);
         View saveDiagnosticsButton = findViewById(R.id.configurationSaveButton);
         navigator = ApplicationApp.component(context).navigator();
+        settingsDataStore = ApplicationApp.component(context).settingsDataStore();
 
         ContentView.addInvisibleElement(getContext(), this);
 
@@ -119,7 +132,7 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
                 R.string.main_diagnostics_restart_message, R.id.mainDiagnosticsRestartConfirmationDialog);
 
         SwitchCompat activateLogFileGenerating = findViewById(R.id.mainDiagnosticsLogging);
-        activateLogFileGenerating.setChecked(((Activity) this.getContext()).getSettingsDataStore().getIsLogFileGenerationEnabled());
+        activateLogFileGenerating.setChecked(settingsDataStore.getIsLogFileGenerationEnabled());
         Button saveLogFileButton = findViewById(R.id.mainDiagnosticsSaveLoggingButton);
         saveLogFileButton.setVisibility(
                 (activateLogFileGenerating.isChecked() &&
@@ -150,14 +163,14 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
     private void fileLogToggleListener(SwitchCompat activateLogFileGenerating) {
         activateLogFileGenerating.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Activity activityContext = ((Activity) this.getContext());
-            boolean isLogFileGenerationEnabled = activityContext.getSettingsDataStore().getIsLogFileGenerationEnabled();
+            boolean isLogFileGenerationEnabled = settingsDataStore.getIsLogFileGenerationEnabled();
             if (isChecked) {
                 diagnosticsRestartConfirmationDialog.show();
                 ClickableDialogUtil.makeLinksInDialogClickable(diagnosticsRestartConfirmationDialog);
                 diagnosticsRestartConfirmationDialog.positiveButtonClicks()
                         .doOnNext(next -> {
                             diagnosticsRestartConfirmationDialog.dismiss();
-                            activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(true);
+                            settingsDataStore.setIsLogFileGenerationEnabled(true);
                             activityContext.restartAppWithIntent(activityContext.getIntent(), true);
                         })
                         .subscribe();
@@ -165,12 +178,12 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
                         .doOnNext(next -> {
                             diagnosticsRestartConfirmationDialog.dismiss();
                             activateLogFileGenerating.setChecked(false);
-                            activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(false);
+                            settingsDataStore.setIsLogFileGenerationEnabled(false);
                         })
                         .subscribe();
             } else {
-                activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(false);
-                activityContext.getSettingsDataStore().setIsLogFileGenerationRunning(false);
+                settingsDataStore.setIsLogFileGenerationEnabled(false);
+                settingsDataStore.setIsLogFileGenerationRunning(false);
                 if (isLogFileGenerationEnabled) {
                     activityContext.restartAppWithIntent(activityContext.getIntent(), true);
                 }
@@ -387,7 +400,7 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
     }
 
     private void appendTslVersion(TextView tslUrlTextView, String tslUrl) {
-        tslVersionDisposable = getObservableTslVersion(tslUrl )
+        tslVersionDisposable = getObservableTslVersion(tslUrl)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -396,9 +409,35 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
                 );
     }
 
+    private ProxySetting getProxySetting() {
+        return settingsDataStore.getProxySetting();
+    }
+
+    private ManualProxy getManualProxySettings() {
+        return new ManualProxy(
+                settingsDataStore.getProxyHost(),
+                settingsDataStore.getProxyPort(),
+                settingsDataStore.getProxyUsername(),
+                settingsDataStore.getProxyPassword(navigator.activity())
+        );
+    }
+
     private Observable<Integer> getObservableTslVersion(String tslUrl) {
+        ProxySetting proxySetting = getProxySetting();
+        boolean isProxySSLEnabled = settingsDataStore.getIsProxyForSSLEnabled();
+        boolean useHTTPSProxy = ProxyUtil.useHTTPSProxy(isProxySSLEnabled, getManualProxySettings());
+        ProxyConfig proxyConfig = ProxyUtil.getProxy(proxySetting, getManualProxySettings());
+
         return Observable.fromCallable(() -> {
-            OkHttpClient client = new OkHttpClient();
+            OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                    .proxy(proxySetting == ProxySetting.NO_PROXY || !useHTTPSProxy ? Proxy.NO_PROXY : proxyConfig.proxy())
+                    .proxyAuthenticator(proxySetting == ProxySetting.NO_PROXY || !useHTTPSProxy ? Authenticator.NONE : proxyConfig.authenticator())
+                    .hostnameVerifier(OkHostnameVerifier.INSTANCE)
+                    .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                    .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                    .callTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                    .writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+            OkHttpClient client = builder.build();
             Request request = new Request.Builder().url(tslUrl).build();
             Response response = client.newCall(request).execute();
             if (response.isSuccessful() && response.body() != null) {
@@ -414,8 +453,10 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
     }
 
     private String getRpUuidText() {
-        String rpUuid = ((Activity) this.getContext()).getSettingsDataStore().getUuid();
-        int uuid = rpUuid.isEmpty() ? R.string.main_diagnostics_rpuuid_default : R.string.main_diagnostics_rpuuid_custom;
+        String rpUuid = settingsDataStore.getUuid();
+        int uuid = rpUuid == null || rpUuid.isEmpty()
+                ? R.string.main_diagnostics_rpuuid_default
+                : R.string.main_diagnostics_rpuuid_custom;
         return getResources().getString(uuid);
     }
 
