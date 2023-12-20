@@ -18,7 +18,7 @@
  *
  */
 
-package ee.ria.DigiDoc.android.main.settings.access;
+package ee.ria.DigiDoc.android.main.settings.signing;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
@@ -28,8 +28,10 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.CheckBox;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.preference.PreferenceViewHolder;
 
 import com.takisoft.preferencex.EditTextPreference;
 
@@ -57,14 +59,16 @@ public class UUIDPreference extends EditTextPreference {
     public UUIDPreference(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
                             int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+
+        float sizePreference = 48f;
+        int sizeDisplayMetrics = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sizePreference, context.getResources().getDisplayMetrics());
+
         checkBox = new AppCompatCheckBox(context);
         checkBox.setId(android.R.id.checkbox);
         checkBox.setText(R.string.main_settings_tsa_url_use_default);
-        checkBox.setMinHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                48f, context.getResources().getDisplayMetrics()));
-        checkBox.setMinWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                120f, context.getResources().getDisplayMetrics()));
-        checkBox.setX(48f);
+        checkBox.setMinHeight(sizeDisplayMetrics);
+        checkBox.setX(sizePreference);
+        checkBox.setPadding(checkBox.getPaddingLeft(), checkBox.getPaddingTop(), sizeDisplayMetrics, checkBox.getPaddingBottom());
 
         setViewId(R.id.mainSettingsAccessToSigningService);
 

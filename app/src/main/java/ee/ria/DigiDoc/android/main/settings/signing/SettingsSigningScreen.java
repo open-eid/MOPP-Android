@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.main.settings.role;
+package ee.ria.DigiDoc.android.main.settings.signing;
 
 import android.content.Context;
 import android.view.View;
@@ -9,23 +9,22 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessView;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorScreen;
 
-public final class SettingsRoleAndAddressScreen extends ConductorScreen {
+public final class SettingsSigningScreen extends ConductorScreen {
 
-    public static SettingsRoleAndAddressScreen create() {
-        return new SettingsRoleAndAddressScreen();
+    public static SettingsSigningScreen create() {
+        return new SettingsSigningScreen();
     }
 
     @SuppressWarnings("WeakerAccess")
-    public SettingsRoleAndAddressScreen() {
-        super(R.id.mainSettingsRoleAndAddressScreen);
+    public SettingsSigningScreen() {
+        super(R.id.mainSettingsSigningScreen);
     }
 
     @Override
     protected View view(Context context) {
-        return new SettingsRoleAndAddressView(context);
+        return new SettingsSigningView(context);
     }
 
     @Override

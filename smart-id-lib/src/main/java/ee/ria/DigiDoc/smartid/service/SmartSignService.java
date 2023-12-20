@@ -23,8 +23,14 @@ package ee.ria.DigiDoc.smartid.service;
 import static ee.ria.DigiDoc.common.SigningUtil.checkSigningCancelled;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CERTIFICATE_CERT_BUNDLE;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_REQUEST;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_HOST;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_PASSWORD;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_PORT;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_USERNAME;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_CHANNEL;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_PERMISSION_CODE;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.PROXY_IS_SSL_ENABLED;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.PROXY_SETTING;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SIGNING_ROLE_DATA;
 
 import android.app.Notification;
@@ -58,9 +64,11 @@ import java.util.List;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
 import ee.ria.DigiDoc.common.ContainerWrapper;
+import ee.ria.DigiDoc.common.ManualProxy;
 import ee.ria.DigiDoc.common.MessageUtil;
 import ee.ria.DigiDoc.common.NotificationUtil;
 import ee.ria.DigiDoc.common.PowerUtil;
+import ee.ria.DigiDoc.common.ProxySetting;
 import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
@@ -99,6 +107,11 @@ public class SmartSignService extends Worker {
     private final String signatureRequest;
     private final ArrayList<String> certificateCertBundle;
 
+    private final boolean isProxySSLEnabled;
+
+    private final ProxySetting proxySetting;
+    private final ManualProxy manualProxySettings;
+
     public SmartSignService(@NonNull Context context, @NonNull WorkerParameters workerParameters) {
         super(context, workerParameters);
         Timber.tag(TAG);
@@ -114,6 +127,23 @@ public class SmartSignService extends Worker {
 
         Type arraylistType = new TypeToken<ArrayList<String>>() {}.getType();
         certificateCertBundle = new Gson().fromJson(certBundleList, arraylistType);
+
+        String proxySettingString = workerParameters.getInputData().getString(MANUAL_PROXY_HOST);
+        if (proxySettingString != null && proxySettingString.isEmpty()) {
+            broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR));
+            throw new IllegalArgumentException("Proxy setting cannot be empty");
+        }
+
+        isProxySSLEnabled = workerParameters.getInputData().getBoolean(PROXY_IS_SSL_ENABLED, true);
+
+        proxySetting = ProxySetting.valueOf(workerParameters.getInputData().getString(PROXY_SETTING));
+
+        manualProxySettings = new ManualProxy(
+                workerParameters.getInputData().getString(MANUAL_PROXY_HOST),
+                workerParameters.getInputData().getInt(MANUAL_PROXY_PORT, 0),
+                workerParameters.getInputData().getString(MANUAL_PROXY_USERNAME),
+                workerParameters.getInputData().getString(MANUAL_PROXY_PASSWORD)
+        );
     }
 
     public static void setIsCancelled(boolean isCancelled) {
@@ -149,7 +179,8 @@ public class SmartSignService extends Worker {
                     if (certificateCertBundle != null) {
                         Timber.log(Log.DEBUG, request.toString());
                         SIDRestServiceClient = ServiceGenerator.createService(SIDRestServiceClient.class,
-                                request.getUrl() + "/", certificateCertBundle, getApplicationContext());
+                                request.getUrl() + "/", certificateCertBundle,
+                                isProxySSLEnabled, proxySetting, manualProxySettings, getApplicationContext());
                     }
                 } catch (CertificateException | NoSuchAlgorithmException e) {
                     broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));

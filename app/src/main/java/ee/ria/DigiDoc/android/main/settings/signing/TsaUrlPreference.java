@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.main.settings.access;
+package ee.ria.DigiDoc.android.main.settings.signing;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
@@ -16,7 +16,6 @@ import com.takisoft.preferencex.EditTextPreference;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
-import ee.ria.DigiDoc.android.main.settings.access.SettingsAccessView;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 
 public class TsaUrlPreference extends EditTextPreference {
@@ -40,17 +39,21 @@ public class TsaUrlPreference extends EditTextPreference {
                             int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         configurationProvider = ((ApplicationApp) context.getApplicationContext()).getConfigurationProvider();
+
+        float sizePreference = 48f;
+        int sizeDisplayMetrics = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sizePreference, context.getResources().getDisplayMetrics());
+
         checkBox = new AppCompatCheckBox(context);
         checkBox.setId(android.R.id.checkbox);
         checkBox.setText(R.string.main_settings_tsa_url_use_default);
-        checkBox.setMinHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48f, context.getResources().getDisplayMetrics()));
-        checkBox.setMinWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120f, context.getResources().getDisplayMetrics()));
-        checkBox.setX(48f);
+        checkBox.setMinHeight(sizeDisplayMetrics);
+        checkBox.setX(sizePreference);
+        checkBox.setPadding(checkBox.getPaddingLeft(), checkBox.getPaddingTop(), sizeDisplayMetrics, checkBox.getPaddingBottom());
 
         setViewId(R.id.mainSettingsAccessToTimeStampingService);
 
         setOnPreferenceChangeListener((preference, newValue) -> {
-            SettingsAccessView.setTsaCertificateViewVisibleValue(!checkBox.isChecked());
+            SettingsSigningView.setTsaCertificateViewVisibleValue(!checkBox.isChecked());
             AccessibilityUtils.sendAccessibilityEvent(context, TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
             return true;
         });

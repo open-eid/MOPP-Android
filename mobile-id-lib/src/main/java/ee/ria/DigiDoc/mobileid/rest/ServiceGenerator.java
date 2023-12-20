@@ -26,6 +26,7 @@ import android.util.Log;
 
 import org.bouncycastle.util.encoders.Base64;
 
+import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -41,7 +42,12 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import ee.ria.DigiDoc.common.CertificateUtil;
+import ee.ria.DigiDoc.common.ManualProxy;
+import ee.ria.DigiDoc.common.ProxyConfig;
+import ee.ria.DigiDoc.common.ProxySetting;
+import ee.ria.DigiDoc.common.ProxyUtil;
 import ee.ria.DigiDoc.mobileid.BuildConfig;
+import okhttp3.Authenticator;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -60,20 +66,37 @@ public class ServiceGenerator {
 
     private static HttpLoggingInterceptor loggingInterceptor;
 
-    public static <S> S createService(Class<S> serviceClass, SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle, TrustManager[] trustManagers, Context context) throws CertificateException, NoSuchAlgorithmException {
+    public static <S> S createService(Class<S> serviceClass, SSLContext sslContext,
+                                      String midSignServiceUrl, ArrayList<String> certBundle,
+                                      TrustManager[] trustManagers, boolean isProxySSLEnabled,
+                                      ProxySetting proxySetting, ManualProxy manualProxySettings,
+                                      Context context) throws CertificateException, NoSuchAlgorithmException {
         Timber.log(Log.DEBUG, "Creating new retrofit instance");
         return new Retrofit.Builder()
                 .baseUrl(midSignServiceUrl + "/")
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(buildHttpClient(sslContext, midSignServiceUrl, certBundle, trustManagers, context))
+                .client(buildHttpClient(sslContext, midSignServiceUrl, certBundle, trustManagers,
+                        isProxySSLEnabled, proxySetting, manualProxySettings, context))
                 .build()
                 .create(serviceClass);
     }
 
-    private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl, ArrayList<String> certBundle, TrustManager[] trustManagers, Context context) throws CertificateException, NoSuchAlgorithmException {
+    private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl,
+                                                ArrayList<String> certBundle,
+                                                TrustManager[] trustManagers,
+                                                boolean isProxySSLEnabled,
+                                                ProxySetting proxySetting,
+                                                ManualProxy manualProxySettings,
+                                                Context context) throws CertificateException, NoSuchAlgorithmException {
         Timber.log(Log.DEBUG, "Building new httpClient");
+
+        ProxyConfig proxyConfig = ProxyUtil.getProxy(proxySetting, manualProxySettings);
+        boolean useHTTPSProxy = proxySetting != ProxySetting.MANUAL_PROXY || ProxyUtil.useHTTPSProxy(isProxySSLEnabled, manualProxySettings);
+
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
+                .proxy(proxySetting == ProxySetting.NO_PROXY || !useHTTPSProxy ? Proxy.NO_PROXY : proxyConfig.proxy())
+                .proxyAuthenticator(proxySetting == ProxySetting.NO_PROXY || !useHTTPSProxy ? Authenticator.NONE : proxyConfig.authenticator())
                 .connectTimeout(120, TimeUnit.SECONDS)
                 .readTimeout(120, TimeUnit.SECONDS)
                 .writeTimeout(120, TimeUnit.SECONDS)

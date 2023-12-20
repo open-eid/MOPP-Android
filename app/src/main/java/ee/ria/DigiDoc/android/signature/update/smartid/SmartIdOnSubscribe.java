@@ -27,6 +27,12 @@ import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_DEVICE;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_REQUEST;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_STATUS;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_HOST;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_PASSWORD;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_PORT;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_USERNAME;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.PROXY_IS_SSL_ENABLED;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.PROXY_SETTING;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SERVICE_FAULT;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SID_BROADCAST_ACTION;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SID_BROADCAST_TYPE_KEY;
@@ -64,8 +70,10 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.model.smartid.SmartIdMessageException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.common.ManualProxy;
 import ee.ria.DigiDoc.common.NotificationUtil;
 import ee.ria.DigiDoc.common.PowerUtil;
+import ee.ria.DigiDoc.common.ProxySetting;
 import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.sign.SignedContainer;
@@ -88,13 +96,16 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
     private final String uuid;
     private final String personalCode;
     private final String country;
-
-    @Nullable RoleData roleData;    
-
+    private final boolean isProxySSLEnabled;
+    private final ProxySetting proxySetting;
+    private final ManualProxy manualProxySettings;
+    @Nullable private final RoleData roleData;
     private static final String SIGNING_TAG = "SmartId";
 
     public SmartIdOnSubscribe(Navigator navigator, SignedContainer container, Locale locale,
-                              String uuid, String personalCode, String country, @Nullable RoleData roleData) {
+                              String uuid, String personalCode, String country,
+                              boolean isProxySSLEnabled, ProxySetting proxySetting,
+                              ManualProxy manualProxySettings, @Nullable RoleData roleData) {
         this.navigator = navigator;
         this.container = container;
         this.broadcastManager = LocalBroadcastManager.getInstance(navigator.activity());
@@ -102,6 +113,9 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         this.uuid = uuid;
         this.personalCode = personalCode;
         this.country = country;
+        this.isProxySSLEnabled = isProxySSLEnabled;
+        this.proxySetting = proxySetting;
+        this.manualProxySettings = manualProxySettings;
         this.roleData = roleData;
     }
 
@@ -195,6 +209,12 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         UUID uuid = UUID.randomUUID();
         Data inputData = new Data.Builder()
                 .putString(CREATE_SIGNATURE_REQUEST, toJson(request))
+                .putString(PROXY_SETTING, proxySetting.name())
+                .putString(MANUAL_PROXY_HOST, manualProxySettings.getHost())
+                .putInt(MANUAL_PROXY_PORT, manualProxySettings.getPort())
+                .putString(MANUAL_PROXY_USERNAME, manualProxySettings.getUsername())
+                .putString(MANUAL_PROXY_PASSWORD, manualProxySettings.getPassword())
+                .putBoolean(PROXY_IS_SSL_ENABLED, isProxySSLEnabled)
                 .putString(SIGNING_ROLE_DATA, RoleData.toJson(roleData))
                 .build();
 

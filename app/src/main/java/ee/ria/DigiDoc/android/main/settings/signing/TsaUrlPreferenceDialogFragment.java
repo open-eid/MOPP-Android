@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.main.settings.access;
+package ee.ria.DigiDoc.android.main.settings.signing;
 
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -6,7 +6,9 @@ import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -25,6 +27,9 @@ import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 
 public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
 
+    private AppCompatEditText appCompatEditText;
+    private TextWatcher tsaUrlTextWatcher;
+
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
@@ -33,7 +38,7 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
             ConfigurationProvider configurationProvider = ((ApplicationApp) getContext().getApplicationContext()).getConfigurationProvider();
             CheckBox checkBox = tsaUrlPreference.getCheckBox();
 
-            AppCompatEditText appCompatEditText = TextUtil.getTextView(view);
+            appCompatEditText = TextUtil.getTextView(view);
 
             tsaUrlPreference.setOnBindEditTextListener(editText -> {
                 checkBox.setChecked(false);
@@ -50,7 +55,7 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
 
                 checkBox.setChecked(TextUtils.isEmpty(tsaUrlPreference.getText()));
 
-                SettingsAccessView.setTsaCertificateViewVisibleValue(!checkBox.isChecked());
+                SettingsSigningView.setTsaCertificateViewVisibleValue(!checkBox.isChecked());
 
                 ViewGroup parent = ((ViewGroup) appCompatEditText.getParent());
                 View oldCheckBox = appCompatEditText.findViewById(checkBox.getId());
@@ -65,6 +70,28 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
                     parent.addView(checkBox, ViewGroup.LayoutParams.MATCH_PARENT,
                             WRAP_CONTENT);
                 }
+
+                appCompatEditText.setSelection(appCompatEditText.getText() != null ? appCompatEditText.getText().length() : 0);
+
+                tsaUrlTextWatcher = new TextWatcher() {
+
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        appCompatEditText.setSingleLine(appCompatEditText.getText() != null && appCompatEditText.getText().length() != 0);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if (s.length() == 1 && appCompatEditText.getText() != null) {
+                            appCompatEditText.setSelection(appCompatEditText.getText().length());
+                        }
+                    }
+                };
+
+                appCompatEditText.addTextChangedListener(tsaUrlTextWatcher);
             }
         }
     }
@@ -93,5 +120,6 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
         if (!positiveResult && getContext() != null) {
             AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.setting_value_change_cancelled);
         }
+        appCompatEditText.removeTextChangedListener(tsaUrlTextWatcher);
     }
 }

@@ -47,7 +47,7 @@ public class FetchAndPackageDefaultConfigurationTask {
     private static void loadAndStoreDefaultConfiguration(String[] args) {
         FetchAndPackageDefaultConfigurationTask.buildVariant = "main";
         String configurationServiceUrl = determineCentralConfigurationServiceUrl(args);
-        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(configurationServiceUrl,"Jenkins");
+        CentralConfigurationLoader confLoader = new CentralConfigurationLoader(null, configurationServiceUrl, "Jenkins");
         loadAndAssertConfiguration(confLoader, configurationServiceUrl, args);
     }
 

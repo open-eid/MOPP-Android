@@ -20,7 +20,7 @@
         android:maxLength="11"/>
     -->
 
-    <ee.ria.DigiDoc.android.main.settings.access.UUIDPreference
+    <ee.ria.DigiDoc.android.main.settings.signing.UUIDPreference
         android:id="@+id/mainSettingsAccessToSigningService"
         android:key="@string/main_settings_uuid_key"
         android:title="@string/main_settings_uuid_title"
@@ -29,7 +29,7 @@
         android:minHeight="@dimen/material_baseline_grid_6x"
         android:inputType="textPassword" />
 
-    <ee.ria.DigiDoc.android.main.settings.access.TsaUrlPreference
+    <ee.ria.DigiDoc.android.main.settings.signing.TsaUrlPreference
         android:id="@+id/mainSettingsAccessToTimeStampingService"
         android:inputType="textUri"
         android:key="@string/main_settings_tsa_url_key"
