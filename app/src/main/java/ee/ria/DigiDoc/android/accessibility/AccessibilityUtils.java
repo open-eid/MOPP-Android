@@ -212,6 +212,21 @@ public class AccessibilityUtils {
         });
     }
 
+    public static String getSignatureName(String text) {
+        StringBuilder nameViewAccessibility = new StringBuilder();
+        String[] nameTextSplit = text.split(", ");
+
+        for (String nameText : nameTextSplit) {
+            if (TextUtil.isOnlyDigits(nameText)) {
+                nameViewAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
+            } else {
+                nameViewAccessibility.append(nameText);
+            }
+        }
+
+        return nameViewAccessibility.toString().toLowerCase();
+    }
+
     private static String combineMessages(CharSequence... messages) {
         StringBuilder combinedMessage = new StringBuilder();
         for (CharSequence message : messages) {

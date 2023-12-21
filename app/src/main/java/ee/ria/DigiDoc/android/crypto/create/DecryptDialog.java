@@ -138,7 +138,7 @@ final class DecryptDialog extends AlertDialog {
                     data.personalData().givenNames(), data.personalData().surname(),
                     data.personalData().personalCode()));
             dataView.setContentDescription(getContext().getString(R.string.crypto_create_decrypt_data,
-                    data.personalData().givenNames(), data.personalData().surname(),
+                    data.personalData().givenNames().toLowerCase(), data.personalData().surname().toLowerCase(),
                     AccessibilityUtils.getTextAsSingleCharacters(data.personalData().personalCode())));
         }
 
@@ -152,7 +152,7 @@ final class DecryptDialog extends AlertDialog {
             String readyToSignDesc = containerView.getResources().getString(R.string.crypto_create_decrypt_message);
             if (data != null) {
                 CharSequence signerInfo = getContext().getString(R.string.crypto_create_decrypt_data,
-                        data.personalData().givenNames(), data.personalData().surname(),
+                        data.personalData().givenNames().toLowerCase(), data.personalData().surname().toLowerCase(),
                         AccessibilityUtils.getTextAsSingleCharacters(data.personalData().personalCode()));
                 String enterPin1Desc = containerView.getResources().getString(R.string.crypto_create_decrypt_pin1);
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, readyToSignDesc, signerInfo, enterPin1Desc);

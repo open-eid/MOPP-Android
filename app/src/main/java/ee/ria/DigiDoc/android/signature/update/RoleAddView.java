@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.common.RoleData;
 
 public final class RoleAddView extends LinearLayout {
@@ -54,6 +55,12 @@ public final class RoleAddView extends LinearLayout {
         stateTextView.setText(viewModel.state());
         countryTextView.setText(viewModel.country());
         zipTextView.setText(viewModel.zip());
+
+        AccessibilityUtils.setEditTextCursorToEnd(roleTextView);
+        AccessibilityUtils.setEditTextCursorToEnd(cityTextView);
+        AccessibilityUtils.setEditTextCursorToEnd(stateTextView);
+        AccessibilityUtils.setEditTextCursorToEnd(countryTextView);
+        AccessibilityUtils.setEditTextCursorToEnd(zipTextView);
     }
 
     public RoleData request() {

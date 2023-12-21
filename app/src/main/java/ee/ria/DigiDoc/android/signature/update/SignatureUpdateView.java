@@ -196,16 +196,16 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         smartIdInfo = findViewById(R.id.signatureUpdateSmartIdInfo);
         smartIdChallengeView = findViewById(R.id.signatureUpdateSmartIdChallenge);
         smartIdCancelButton = findViewById(R.id.signatureUpdateSmartIdCancelButton);
-        smartIdCancelButton.setContentDescription(getResources().getString(R.string.cancel_button_accessibility));
+        smartIdCancelButton.setContentDescription(getResources().getString(R.string.cancel_button_accessibility).toLowerCase());
         sendButton = findViewById(R.id.signatureUpdateSendButton);
-        sendButton.setContentDescription(getResources().getString(R.string.share_container));
+        sendButton.setContentDescription(getResources().getString(R.string.share_container).toLowerCase());
         signatureButtonSpace = findViewById(R.id.signatureUpdateSignatureButtonSpace);
         encryptButtonSpace = findViewById(R.id.signatureUpdateEncryptButtonSpace);
         signatureAddButton = findViewById(R.id.signatureUpdateSignatureAddButton);
         signatureEncryptButton = findViewById(R.id.signatureUpdateSignatureEncryptButton);
         mobileIdChallengeTextView = findViewById(R.id.signatureUpdateMobileIdChallengeText);
         mobileIdCancelButton = findViewById(R.id.signatureUpdateMobileIdCancelButton);
-        mobileIdCancelButton.setContentDescription(getResources().getString(R.string.cancel_button_accessibility));
+        mobileIdCancelButton.setContentDescription(getResources().getString(R.string.cancel_button_accessibility).toLowerCase());
         documentAddProgressBar = findViewById(R.id.signatureAddDocumentProgress);
 
         listView.setLayoutManager(new LinearLayoutManager(context));
@@ -345,7 +345,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         toolbarView.setNavigationContentDescription(R.string.close);
 
         appBarLayout.setAccessibilityHeading(true);
-        appBarLayout.setContentDescription(getContext().getString(titleResId));
+        appBarLayout.setContentDescription(getContext().getString(titleResId).toLowerCase());
 
         listView.clearFocus();
 
@@ -405,8 +405,8 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         if (state.container() != null) {
             dataFiles = state.container().dataFiles();
         }
-        signatureAddButton.setContentDescription(getResources().getString(R.string.sign_container_button_description));
-        signatureEncryptButton.setContentDescription(getResources().getString(R.string.crypto_create_encrypt_button_description));
+        signatureAddButton.setContentDescription(getResources().getString(R.string.sign_container_button_description).toLowerCase());
+        signatureEncryptButton.setContentDescription(getResources().getString(R.string.crypto_create_encrypt_button_description).toLowerCase());
 
         if (state.containerLoadInProgress() || state.documentsAddInProgress() ||
                 state.documentRemoveInProgress() || state.signatureRemoveInProgress()) {
@@ -851,9 +851,9 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     private void setupAccessibilityTabs() {
         if (sendButton.getVisibility() == VISIBLE && signatureAddButton.getVisibility() == VISIBLE &&
                 signatureEncryptButton.getVisibility() == VISIBLE) {
-            signatureAddButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 1, 3));
-            signatureEncryptButton.setContentDescription(getResources().getString(R.string.decrypt_content_description, 2, 3));
-            sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 3, 3));
+            signatureAddButton.setContentDescription(getResources().getString(R.string.sign_send_content_description, 1, 3).toLowerCase());
+            signatureEncryptButton.setContentDescription(getResources().getString(R.string.encrypt_content_description, 2, 3).toLowerCase());
+            sendButton.setContentDescription(getResources().getString(R.string.decrypt_send_content_description, 3, 3).toLowerCase());
         } else {
             sendButton.setContentDescription(getResources().getString(R.string.signature_update_send_button).toLowerCase());
             signatureAddButton.setContentDescription(getResources().getString(R.string.signature_update_signature_add_button).toLowerCase());

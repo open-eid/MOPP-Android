@@ -258,6 +258,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
         searchView.setIconifiedByDefault(false);
         View searchTextView = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
         searchTextView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+        searchTextView.setContentDescription(navigator.activity().getString(R.string.crypto_recipients_search));
         searchView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
 
         if (searchTextView instanceof TextView) {
@@ -400,7 +401,9 @@ public final class CryptoRecipientsScreen extends Controller implements Screen, 
             @Override
             public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
-                String splitContentDescription = TextUtil.splitTextAndJoin(contentDescription.toString(), "", " ");
+                String splitContentDescription = String.format("%s %s",
+                        navigator.activity().getString(R.string.crypto_recipients_search),
+                        TextUtil.splitTextAndJoin(contentDescription.toString(), "", " "));
                 info.setContentDescription(splitContentDescription);
                 info.setCheckable(false);
                 info.setClickable(false);
