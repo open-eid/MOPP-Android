@@ -59,9 +59,10 @@
                 </TextView>
 
                 <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/mainSettingsAskRoleAndAddress"
+                    android:id="@id/mainSettingsAskRoleAndAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:focusable="true"
                     android:paddingStart="0dp"
                     android:paddingEnd="0dp"
                     android:minWidth="0dp"
