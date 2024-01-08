@@ -121,6 +121,9 @@ public class SettingsSivaDialog extends Dialog {
         sivaCertificateAddCertificateButton = findViewById(R.id.mainSettingsSivaCertificateAddCertificateButton);
         sivaCertificateShowCertificateButton = findViewById(R.id.mainSettingsSivaCertificateShowCertificateButton);
 
+        sivaCertificateAddCertificateButton.setContentDescription(sivaCertificateAddCertificateButton.getText().toString().toLowerCase());
+        sivaCertificateShowCertificateButton.setContentDescription(sivaCertificateShowCertificateButton.getText().toString().toLowerCase());
+
         if (sivaServiceUrl.getText() != null) {
             previousSivaUrl = sivaServiceUrl.getText().toString();
         }

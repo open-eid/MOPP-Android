@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.android.main.settings.signing;
 
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.main.settings.signing.siva.SivaSetting.DEFAULT;
 import static ee.ria.DigiDoc.common.CommonConstants.DIR_SIVA_CERT;
 import static ee.ria.DigiDoc.common.CommonConstants.DIR_TSA_CERT;
 
@@ -16,8 +17,6 @@ import android.widget.Toolbar;
 
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
-import com.jakewharton.rxbinding4.widget.RxCompoundButton;
 
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -106,17 +105,18 @@ public final class SettingsSigningView extends CoordinatorLayout {
         addCertificateButton = findViewById(R.id.mainSettingsTsaCertificateAddCertificateButton);
         showCertificateButton = findViewById(R.id.mainSettingsTsaCertificateShowCertificateButton);
 
+        askRoleAndAddressSwitch = findViewById(R.id.mainSettingsAskRoleAndAddress);
+
         if (settingsDataStore != null) {
             isTsaCertificateViewVisible = settingsDataStore.getIsTsaCertificateViewVisible();
             setTSAContainerViewVisibility(isTsaCertificateViewVisible);
+            setAskRoleAndAddressSetting(settingsDataStore);
         }
 
         sivaCategory = findViewById(R.id.signingSettingsSivaCategory);
         proxyCategory = findViewById(R.id.signingSettingsProxyCategory);
         sivaDialog = new SettingsSivaDialog(navigator.activity());
         proxyDialog = new SettingsProxyDialog(navigator.activity());
-
-        askRoleAndAddressSwitch = findViewById(R.id.mainSettingsAskRoleAndAddress);
     }
 
     public void render(ViewState state) {
@@ -185,8 +185,6 @@ public final class SettingsSigningView extends CoordinatorLayout {
         disposables.attach();
         disposables.add(navigationClicks(toolbarView).subscribe(o ->
                 navigator.execute(Transaction.pop())));
-        disposables.add(RxCompoundButton.checkedChanges(askRoleAndAddressSwitch)
-                .subscribe(settingsDataStore::setIsRoleAskingEnabled));
         disposables.add(clicks(showCertificateButton).subscribe(o -> {
             if (tsaCertificate != null) {
                 navigator.execute(Transaction.push(CertificateDetailScreen.create(tsaCertificate)));
@@ -202,6 +200,7 @@ public final class SettingsSigningView extends CoordinatorLayout {
                 .subscribe(o -> {
                     boolean isChecked = askRoleAndAddressSwitch.isChecked();
                     settingsDataStore.setIsRoleAskingEnabled(isChecked);
+                    setAskRoleAndAddressSetting(settingsDataStore);
                 }));
         disposables.add(clicks(sivaCategory).subscribe(o -> sivaDialog.show()));
         disposables.add(clicks(proxyCategory).subscribe(o -> proxyDialog.show()));
@@ -228,6 +227,8 @@ public final class SettingsSigningView extends CoordinatorLayout {
         settingsDataStore.setTsaUrl("");
         settingsDataStore.setIsOpenAllFileTypesEnabled(true);
         settingsDataStore.setIsScreenshotAllowed(false);
+        settingsDataStore.setIsTsaCertificateViewVisible(false);
+        settingsDataStore.setSivaSetting(DEFAULT);
         File certFile = FileUtil.getCertFile(context, settingsDataStore.getTSACertName(), DIR_SIVA_CERT);
         removeCertificate(certFile, settingsDataStore);
         setTsaCertificateViewVisibleValue(false);
@@ -242,5 +243,10 @@ public final class SettingsSigningView extends CoordinatorLayout {
 
     private void setTSAContainerViewVisibility(boolean isVisible) {
         tsaCertContainer.setVisibility(!isVisible ? GONE : VISIBLE);
+    }
+
+    private void setAskRoleAndAddressSetting(SettingsDataStore settingsDataStore) {
+        boolean isRoleAskingEnabled = settingsDataStore.getIsRoleAskingEnabled();
+        askRoleAndAddressSwitch.setChecked(isRoleAskingEnabled);
     }
 }
