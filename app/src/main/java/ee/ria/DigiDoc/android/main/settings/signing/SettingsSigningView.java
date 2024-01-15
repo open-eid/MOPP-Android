@@ -228,8 +228,7 @@ public final class SettingsSigningView extends CoordinatorLayout {
         settingsDataStore.setIsOpenAllFileTypesEnabled(true);
         settingsDataStore.setIsScreenshotAllowed(false);
         settingsDataStore.setIsTsaCertificateViewVisible(false);
-        settingsDataStore.setSivaSetting(DEFAULT);
-        File certFile = FileUtil.getCertFile(context, settingsDataStore.getTSACertName(), DIR_SIVA_CERT);
+        File certFile = FileUtil.getCertFile(context, settingsDataStore.getTSACertName(), DIR_TSA_CERT);
         removeCertificate(certFile, settingsDataStore);
         setTsaCertificateViewVisibleValue(false);
     }
