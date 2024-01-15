@@ -105,6 +105,9 @@ public final class SettingsSigningView extends CoordinatorLayout {
         addCertificateButton = findViewById(R.id.mainSettingsTsaCertificateAddCertificateButton);
         showCertificateButton = findViewById(R.id.mainSettingsTsaCertificateShowCertificateButton);
 
+        addCertificateButton.setContentDescription(addCertificateButton.getText().toString().toLowerCase());
+        showCertificateButton.setContentDescription(showCertificateButton.getText().toString().toLowerCase());
+
         sivaCategory = findViewById(R.id.signingSettingsSivaCategory);
         proxyCategory = findViewById(R.id.signingSettingsProxyCategory);
         sivaDialog = new SettingsSivaDialog(navigator.activity());

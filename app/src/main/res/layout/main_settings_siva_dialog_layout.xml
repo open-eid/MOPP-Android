@@ -38,6 +38,7 @@
 
             <TextView
                 style="@style/MaterialTypography.Regular.Title"
+                android:accessibilityHeading="true"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="11dp"
                 android:autoSizeStepGranularity="1dp"
@@ -115,6 +116,7 @@
 
                 <TextView
                     style="@style/MaterialTypography.Regular.Body1"
+                    android:accessibilityHeading="true"
                     android:autoSizeTextType="uniform"
                     android:autoSizeMinTextSize="11dp"
                     android:autoSizeStepGranularity="1dp"

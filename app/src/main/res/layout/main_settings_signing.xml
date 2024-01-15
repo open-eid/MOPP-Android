@@ -10,16 +10,23 @@
         android:id="@id/appBar"
         android:touchscreenBlocksFocus="false"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="yes"
+        android:accessibilityHeading="true"
+        android:focusedByDefault="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:screenReaderFocusable="true"
+        android:contentDescription="@string/signature_update_title_created">
 
         <android.widget.Toolbar
             android:id="@id/toolbar"
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
             android:touchscreenBlocksFocus="false"
             android:focusable="true"
-            android:focusableInTouchMode="true"
             android:accessibilityPaneTitle="@string/signature_update_title_created"
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:navigationContentDescription="@string/back"
@@ -99,6 +106,7 @@
                     android:layout_width="match_parent"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
+                    android:accessibilityHeading="true"
                     android:text="@string/main_settings_timestamp_cert_title"
                     android:layout_weight="2">
                 </TextView>
