@@ -18,15 +18,16 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:screenReaderFocusable="true"
-        android:contentDescription="@string/main_settings_role_and_address_button"
-        >
+        android:contentDescription="@string/main_settings_rights">
+
         <requestFocus/>
+
         <android.widget.Toolbar
             android:id="@id/toolbar"
             android:theme="@style/ThemeOverlay.Application.ActionBar"
-            android:importantForAccessibility="no"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
             android:touchscreenBlocksFocus="false"
             android:focusable="true"
             android:focusableInTouchMode="true"
