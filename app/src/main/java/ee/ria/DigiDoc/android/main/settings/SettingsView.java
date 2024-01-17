@@ -25,6 +25,7 @@ import ee.ria.DigiDoc.android.main.settings.rights.SettingsRightsScreen;
 import ee.ria.DigiDoc.android.main.settings.rights.SettingsRightsView;
 import ee.ria.DigiDoc.android.main.settings.signing.SettingsSigningScreen;
 import ee.ria.DigiDoc.android.main.settings.signing.SettingsSigningView;
+import ee.ria.DigiDoc.android.main.settings.signing.siva.SettingsSivaDialog;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -79,6 +80,7 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
     private void resetToDefaultSettings(SettingsDataStore settingsDataStore) {
         SettingsSigningView.resetSettings(getContext(), settingsDataStore);
         SettingsRightsView.resetSettings(settingsDataStore);
+        SettingsSivaDialog.resetSettings(getContext(), settingsDataStore);
         SettingsProxyDialog.resetSettings(getContext(), settingsDataStore);
     }
 

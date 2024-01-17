@@ -184,7 +184,8 @@ public class SettingsSivaDialog extends Dialog {
                 Timber.log(Log.ERROR, e, "Unable to get SiVa certificate");
 
                 // Remove invalid files
-                removeSivaCert(settingsDataStore, sivaCertificateIssuedTo, sivaCertificateValidTo);
+                removeSivaCert(getContext(), settingsDataStore);
+                resetCertificateInfo(getContext());
             }
         }
     }
@@ -299,17 +300,26 @@ public class SettingsSivaDialog extends Dialog {
         sivaServiceUrlLayout.setPlaceholderText(text);
     }
 
-    private void removeSivaCert(SettingsDataStore settingsDataStore, TextView issuedTo, TextView validTo) {
+    private void resetCertificateInfo(Context context) {
+        sivaCertificateIssuedTo.setText(context.getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title));
+        sivaCertificateValidTo.setText(context.getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title));
+    }
+
+    private static void removeSivaCert(Context context, SettingsDataStore settingsDataStore) {
         String sivaCertName = settingsDataStore.getSivaCertName();
-        File sivaFile = FileUtil.getCertFile(getContext(), sivaCertName, DIR_SIVA_CERT);
+        File sivaFile = FileUtil.getCertFile(context, sivaCertName, DIR_SIVA_CERT);
 
         if (sivaFile != null) {
             FileUtils.removeFile(sivaFile.getPath());
         }
         settingsDataStore.setSivaCertName(null);
+    }
 
-        issuedTo.setText(navigator.activity().getResources().getText(R.string.main_settings_timestamp_cert_issued_to_title));
-        validTo.setText(navigator.activity().getResources().getText(R.string.main_settings_timestamp_cert_valid_to_title));
+    public static void resetSettings(Context context, SettingsDataStore settingsDataStore) {
+        settingsDataStore.setSivaSetting(DEFAULT);
+        settingsDataStore.setSivaUrl("");
+        settingsDataStore.setSivaCertName(null);
+        removeSivaCert(context, settingsDataStore);
     }
 
     @Override
@@ -325,7 +335,8 @@ public class SettingsSivaDialog extends Dialog {
         disposables.add(textChanges(sivaServiceUrl).subscribe(text -> {
             SivaSetting currentSivaSetting = getSivaSetting(settingsDataStore);
             if (currentSivaSetting == MANUAL && text.toString().isEmpty() && !previousSivaUrl.isEmpty()) {
-                removeSivaCert(settingsDataStore, sivaCertificateIssuedTo, sivaCertificateValidTo);
+                removeSivaCert(getContext(), settingsDataStore);
+                resetCertificateInfo(getContext());
             }
             previousSivaUrl = text.toString();
         }));
