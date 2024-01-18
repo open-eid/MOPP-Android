@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:gravity="start"
             android:layout_marginTop="20dp"
-            android:minHeight="@dimen/material_baseline_grid_6x"
+            android:minHeight="@dimen/material_baseline_grid_2x"
             android:text="@string/signature_update_mobile_id_phone_no"
             android:importantForAccessibility="no" />
 
@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:gravity="start"
             android:layout_marginTop="20dp"
-            android:minHeight="@dimen/material_baseline_grid_6x"
+            android:minHeight="@dimen/material_baseline_grid_2x"
             android:text="@string/signature_update_mobile_id_personal_code"
             android:importantForAccessibility="no" />
 

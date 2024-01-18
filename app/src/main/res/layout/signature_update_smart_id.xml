@@ -28,7 +28,6 @@
             android:layout_height="wrap_content"
             android:gravity="start"
             android:layout_marginTop="11dp"
-            android:layout_marginStart="4dp"
             android:text="@string/signature_update_smart_id_country"
             android:textColor="@color/textLabel"
             android:paddingTop="1px"

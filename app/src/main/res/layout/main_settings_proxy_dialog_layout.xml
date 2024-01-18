@@ -94,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:layout_marginTop="20dp"
-                android:minHeight="@dimen/material_baseline_grid_4x"
+                android:minHeight="@dimen/material_baseline_grid_2x"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="11dp"
                 android:autoSizeMaxTextSize="20dp"
@@ -117,7 +117,7 @@
                     android:inputType="text"
                     android:imeOptions="actionDone"
                     android:maxLines="1"
-                    android:minHeight="@dimen/material_baseline_grid_4x"
+                    android:minHeight="@dimen/material_baseline_grid_6x"
                     android:background="@drawable/bottom_border_background" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -127,7 +127,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:layout_marginTop="20dp"
-                android:minHeight="@dimen/material_baseline_grid_4x"
+                android:minHeight="@dimen/material_baseline_grid_2x"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="11dp"
                 android:autoSizeMaxTextSize="20dp"
@@ -151,7 +151,7 @@
                     android:inputType="number"
                     android:imeOptions="actionDone"
                     android:maxLines="1"
-                    android:minHeight="@dimen/material_baseline_grid_4x"
+                    android:minHeight="@dimen/material_baseline_grid_6x"
                     android:background="@drawable/bottom_border_background" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -161,7 +161,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:layout_marginTop="20dp"
-                android:minHeight="@dimen/material_baseline_grid_4x"
+                android:minHeight="@dimen/material_baseline_grid_2x"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="11dp"
                 android:autoSizeMaxTextSize="20dp"
@@ -184,7 +184,7 @@
                     android:inputType="text"
                     android:imeOptions="actionDone"
                     android:maxLines="1"
-                    android:minHeight="@dimen/material_baseline_grid_4x"
+                    android:minHeight="@dimen/material_baseline_grid_6x"
                     android:background="@drawable/bottom_border_background" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -194,7 +194,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:layout_marginTop="20dp"
-                android:minHeight="@dimen/material_baseline_grid_4x"
+                android:minHeight="@dimen/material_baseline_grid_2x"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="11dp"
                 android:autoSizeMaxTextSize="20dp"
@@ -217,7 +217,7 @@
                     android:inputType="textPassword"
                     android:imeOptions="actionDone"
                     android:maxLines="1"
-                    android:minHeight="@dimen/material_baseline_grid_4x"
+                    android:minHeight="@dimen/material_baseline_grid_6x"
                     android:background="@drawable/bottom_border_background" />
 
             </com.google.android.material.textfield.TextInputLayout>
