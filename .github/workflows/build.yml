@@ -75,6 +75,8 @@ jobs:
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.SIGNING_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "34.0.0"
       - name: Rename APK
         run: |
           mv ${{ github.workspace }}/${{ env.APK_RELEASE_DIRECTORY }}/app-release-unsigned-signed.apk ${{ github.workspace }}/${{ env.APK_RELEASE_DIRECTORY }}/"RIA_DigiDoc_${{ env.APP_VERSION_NAME }}.${{ env.BUILD_NUMBER }}.apk"
