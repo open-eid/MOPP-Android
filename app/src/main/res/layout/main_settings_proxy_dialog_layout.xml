@@ -63,7 +63,10 @@
                     android:autoSizeTextType="uniform"
                     android:autoSizeMinTextSize="11dp"
                     android:autoSizeStepGranularity="1dp"
-                    android:padding="14dp"
+                    android:paddingTop="14dp"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp"
                     android:text="@string/main_settings_proxy_no_proxy" />
 
                 <RadioButton
@@ -74,7 +77,10 @@
                     android:autoSizeTextType="uniform"
                     android:autoSizeMinTextSize="11dp"
                     android:autoSizeStepGranularity="1dp"
-                    android:padding="14dp"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp"
                     android:text="@string/main_settings_proxy_use_system" />
 
                 <RadioButton
@@ -85,7 +91,10 @@
                     android:autoSizeTextType="uniform"
                     android:autoSizeMinTextSize="11dp"
                     android:autoSizeStepGranularity="1dp"
-                    android:padding="14dp"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp"
                     android:text="@string/main_settings_proxy_manual" />
             </RadioGroup>
 
@@ -93,11 +102,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:minHeight="@dimen/material_baseline_grid_2x"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="11dp"
-                android:autoSizeMaxTextSize="20dp"
+                android:autoSizeMaxTextSize="30dp"
                 android:autoSizeStepGranularity="1dp"
                 android:text="@string/main_settings_proxy_host" />
 
@@ -126,11 +135,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:layout_marginTop="20dp"
                 android:minHeight="@dimen/material_baseline_grid_2x"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="11dp"
-                android:autoSizeMaxTextSize="20dp"
+                android:autoSizeMaxTextSize="30dp"
                 android:autoSizeStepGranularity="1dp"
                 android:text="@string/main_settings_proxy_port" />
 
@@ -160,11 +168,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:layout_marginTop="20dp"
                 android:minHeight="@dimen/material_baseline_grid_2x"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="11dp"
-                android:autoSizeMaxTextSize="20dp"
+                android:autoSizeMaxTextSize="30dp"
                 android:autoSizeStepGranularity="1dp"
                 android:text="@string/main_settings_proxy_username" />
 
@@ -193,11 +200,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:layout_marginTop="20dp"
                 android:minHeight="@dimen/material_baseline_grid_2x"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="11dp"
-                android:autoSizeMaxTextSize="20dp"
+                android:autoSizeMaxTextSize="30dp"
                 android:autoSizeStepGranularity="1dp"
                 android:text="@string/main_settings_proxy_password" />
 
@@ -226,7 +232,7 @@
                 android:id="@id/mainSettingsProxyAllowSSL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginStart="-5dp"
                 android:layout_marginBottom="20dp"
                 android:checked="true"
                 android:text="@string/main_settings_proxy_allow_ssl" />
