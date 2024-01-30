@@ -94,7 +94,7 @@
                     android:paddingTop="8dp"
                     android:paddingLeft="14dp"
                     android:paddingRight="14dp"
-                    android:paddingBottom="8dp"
+                    android:paddingBottom="14dp"
                     android:text="@string/main_settings_proxy_manual" />
             </RadioGroup>
 
@@ -102,8 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:layout_marginTop="10dp"
-                android:minHeight="@dimen/material_baseline_grid_2x"
+                android:minHeight="@dimen/material_baseline_grid_1x"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="11dp"
                 android:autoSizeMaxTextSize="30dp"
@@ -126,7 +125,7 @@
                     android:inputType="text"
                     android:imeOptions="actionDone"
                     android:maxLines="1"
-                    android:minHeight="@dimen/material_baseline_grid_6x"
+                    android:minHeight="@dimen/material_baseline_grid_4x"
                     android:background="@drawable/bottom_border_background" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -135,7 +134,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:minHeight="@dimen/material_baseline_grid_2x"
+                android:minHeight="@dimen/material_baseline_grid_1x"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="11dp"
                 android:autoSizeMaxTextSize="30dp"
@@ -159,7 +158,7 @@
                     android:inputType="number"
                     android:imeOptions="actionDone"
                     android:maxLines="1"
-                    android:minHeight="@dimen/material_baseline_grid_6x"
+                    android:minHeight="@dimen/material_baseline_grid_4x"
                     android:background="@drawable/bottom_border_background" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -168,7 +167,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:minHeight="@dimen/material_baseline_grid_2x"
+                android:minHeight="@dimen/material_baseline_grid_1x"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="11dp"
                 android:autoSizeMaxTextSize="30dp"
@@ -191,7 +190,7 @@
                     android:inputType="text"
                     android:imeOptions="actionDone"
                     android:maxLines="1"
-                    android:minHeight="@dimen/material_baseline_grid_6x"
+                    android:minHeight="@dimen/material_baseline_grid_4x"
                     android:background="@drawable/bottom_border_background" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -200,7 +199,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:minHeight="@dimen/material_baseline_grid_2x"
+                android:minHeight="@dimen/material_baseline_grid_1x"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="11dp"
                 android:autoSizeMaxTextSize="30dp"
@@ -223,7 +222,7 @@
                     android:inputType="textPassword"
                     android:imeOptions="actionDone"
                     android:maxLines="1"
-                    android:minHeight="@dimen/material_baseline_grid_6x"
+                    android:minHeight="@dimen/material_baseline_grid_4x"
                     android:background="@drawable/bottom_border_background" />
 
             </com.google.android.material.textfield.TextInputLayout>

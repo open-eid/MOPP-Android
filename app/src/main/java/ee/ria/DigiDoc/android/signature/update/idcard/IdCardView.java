@@ -5,7 +5,12 @@ import static ee.ria.DigiDoc.android.Constants.VOID;
 import static ee.ria.DigiDoc.common.PinConstants.PIN2_MIN_LENGTH;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.text.Editable;
+import android.text.Layout;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.AlignmentSpan;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -82,6 +87,27 @@ public final class IdCardView extends LinearLayout implements
 
         checkForDoneButtonClick();
         checkInputsValidity();
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            CharSequence errorText = signPin2Label.getError();
+            if (errorText != null) {
+                SpannableStringBuilder spannable = new SpannableStringBuilder(errorText);
+                spannable.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER), 0, errorText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                signPin2Label.setError(spannable);
+            }
+        } else {
+            CharSequence errorText = signPin2Label.getError();
+            if (errorText != null) {
+                SpannableStringBuilder spannable = new SpannableStringBuilder(errorText);
+                spannable.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_NORMAL), 0, errorText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                signPin2Label.setError(spannable);
+            }
+        }
     }
 
     public Observable<Object> positiveButtonState() {
