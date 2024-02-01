@@ -2,10 +2,16 @@ package ee.ria.DigiDoc.android.signature.update.idcard;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
 import static ee.ria.DigiDoc.android.Constants.VOID;
+import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceOrientation;
 import static ee.ria.DigiDoc.common.PinConstants.PIN2_MIN_LENGTH;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.text.Editable;
+import android.text.Layout;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.AlignmentSpan;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -84,6 +90,62 @@ public final class IdCardView extends LinearLayout implements
         checkInputsValidity();
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        // Reset errors when view is loaded
+        setError(signPin2Label, null);
+        setError(signPin2ErrorView, null);
+
+        setErrorLabelAlignment(signPin2Label);
+        setErrorLabelAlignment(signPin2ErrorView);
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        setErrorLabelAlignment(signPin2Label);
+        setErrorLabelAlignment(signPin2ErrorView);
+    }
+
+    private void setError(View view, String errorText) {
+        if (view instanceof TextInputLayout) {
+            ((TextInputLayout) view).setError(errorText);
+        } else if (view instanceof TextView) {
+            ((TextView) view).setText(errorText);
+        }
+
+        setErrorLabelAlignment(view);
+    }
+
+    private void setErrorLabelAlignment(View view) {
+        CharSequence errorText = null;
+        if (view instanceof TextInputLayout) {
+            errorText = ((TextInputLayout) view).getError();
+        } else if (view instanceof TextView) {
+            errorText = ((TextView) view).getText();
+        }
+
+        Layout.Alignment alignment = Layout.Alignment.ALIGN_NORMAL;
+        if (getDeviceOrientation(getContext()) == Configuration.ORIENTATION_LANDSCAPE) {
+            alignment = Layout.Alignment.ALIGN_CENTER;
+        }
+
+        SpannableStringBuilder spannable = new SpannableStringBuilder(errorText != null ? errorText : "");
+        spannable.setSpan(new AlignmentSpan.Standard(alignment), 0,
+                spannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        if (view instanceof TextInputLayout) {
+            ((TextInputLayout) view).setError(spannable);
+        } else if (view instanceof TextView) {
+            ((TextView) view).setText(spannable);
+        }
+    }
+
+
+
     public Observable<Object> positiveButtonState() {
         return Observable.merge(positiveButtonStateSubject, afterTextChangeEvents(signPin2View));
     }
@@ -95,7 +157,7 @@ public final class IdCardView extends LinearLayout implements
 
     @Override
     public void reset(@Nullable SignatureUpdateViewModel viewModel) {
-        signPin2View.setText(null);
+        setError(signPin2View, null);
         progressMessageView.setContentDescription(null);
     }
 
@@ -159,13 +221,12 @@ public final class IdCardView extends LinearLayout implements
             signDataView.clearFocus();
             progressMessageView.clearFocus();
             if (pinRetryCount == 1) {
-                signPin2ErrorView.setText(
-                        R.string.signature_update_id_card_sign_pin2_invalid_final);
+                setError(signPin2ErrorView, getResources().getString(R.string.signature_update_id_card_sign_pin2_invalid_final));
                 signPin2ErrorView.setContentDescription(
                         getResources().getString(R.string.signature_update_id_card_sign_pin2_invalid_final_accessibility)
                 );
             } else {
-                signPin2ErrorView.setText(getResources().getString(
+                setError(signPin2ErrorView, getResources().getString(
                         R.string.signature_update_id_card_sign_pin2_invalid, pinRetryCount));
                 signPin2ErrorView.setContentDescription(getResources().getString(
                         R.string.signature_update_id_card_sign_pin2_invalid_accessibility, pinRetryCount));
@@ -241,13 +302,13 @@ public final class IdCardView extends LinearLayout implements
     }
 
     private void checkPinCodeValidity() {
-        signPin2Label.setError(null);
+        setError(signPin2Label, null);
 
         Editable pinCodeView = signPin2View.getText();
 
         if (pinCodeView != null && !pinCodeView.toString().isEmpty() &&
                 !isPinLengthEnough(pinCodeView.toString())) {
-            signPin2Label.setError(getResources().getString(
+            setError(signPin2Label, getResources().getString(
                     R.string.id_card_sign_pin_invalid_length,
                     getResources().getString(R.string.signature_id_card_pin2),
                     Integer.toString(PIN2_MIN_LENGTH)));
