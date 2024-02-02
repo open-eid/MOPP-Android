@@ -360,11 +360,9 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
                 configurationProvider.getTslUrl(), Typeface.DEFAULT));
         appendTslVersion(tslUrl, FileUtil.normalizeUri(
                 Uri.parse(configurationProvider.getTslUrl())).toString());
-        getSiVaUrlText();
         sivaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_siva_url_title,
                 !getSiVaUrlText().isEmpty() ?
                         getSiVaUrlText() : configurationProvider.getSivaUrl(), Typeface.DEFAULT));
-        getTsaUrlText();
         tsaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsa_url_title,
                 !getTsaUrlText().isEmpty() ?
                         getTsaUrlText() : configurationProvider.getTsaUrl(), Typeface.DEFAULT));
