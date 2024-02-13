@@ -236,9 +236,8 @@ public class SettingsSivaDialog extends Dialog {
         if (sivaUrl.isPresent()) {
             setSivaUrl(settingsDataStore, sivaUrl.get().trim());
         } else {
-            String defaultSivaUrl = configurationProvider.getSivaUrl();
-            setSivaUrl(settingsDataStore, defaultSivaUrl);
-            setSivaPlaceholderText(defaultSivaUrl);
+            setSivaUrl(settingsDataStore, "");
+            setSivaPlaceholderText(configurationProvider.getSivaUrl());
         }
     }
 
@@ -247,9 +246,8 @@ public class SettingsSivaDialog extends Dialog {
         SivaSetting currentSivaSetting = getSivaSetting(settingsDataStore);
         switch (currentSivaSetting) {
             case DEFAULT -> {
-                String trimmedDefaultSivaUrl = defaultSivaUrl.trim();
-                setSivaPlaceholderText(trimmedDefaultSivaUrl);
-                setSivaUrl(settingsDataStore, trimmedDefaultSivaUrl);
+                setSivaPlaceholderText(defaultSivaUrl.trim());
+                setSivaUrl(settingsDataStore, "");
                 sivaServiceDefaultChoice.setChecked(true);
                 isSivaCertViewShown(GONE);
                 setSivaUrlEnabled(false);
@@ -262,7 +260,7 @@ public class SettingsSivaDialog extends Dialog {
                 if (!manualSivaUrl.isEmpty() && !defaultSivaUrl.equals(manualSivaUrl)) {
                     sivaServiceUrl.setText(manualSivaUrl.trim());
                 } else {
-                    setSivaUrl(settingsDataStore, defaultSivaUrl);
+                    setSivaUrl(settingsDataStore, "");
                     setSivaPlaceholderText(defaultSivaUrl);
                 }
             }
@@ -357,8 +355,7 @@ public class SettingsSivaDialog extends Dialog {
         SivaSetting currentSivaSetting = getSivaSetting(settingsDataStore);
         Editable sivaUrl = sivaServiceUrl.getText();
         if (sivaUrl != null) {
-            saveSivaUrl(currentSivaSetting == DEFAULT ?
-                    configurationProvider.getSivaUrl() : sivaUrl.toString());
+            saveSivaUrl(currentSivaSetting == DEFAULT ? "" : sivaUrl.toString());
         } else {
             saveSivaUrl(configurationProvider.getSivaUrl());
         }

@@ -348,7 +348,8 @@ public final class SignLib {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (TextUtils.equals(key, preferenceKey)) {
-                DigiDocConf.instance().setTSUrl(sharedPreferences.getString(key, defaultValue));
+                String value = sharedPreferences.getString(key, defaultValue);
+                DigiDocConf.instance().setTSUrl(value.isEmpty() ? defaultValue : value);
             }
         }
     }
@@ -398,7 +399,8 @@ public final class SignLib {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (TextUtils.equals(key, preferenceKey)) {
-                DigiDocConf.instance().setVerifyServiceUri(sharedPreferences.getString(key, defaultValue));
+                String value = sharedPreferences.getString(key, defaultValue);
+                DigiDocConf.instance().setVerifyServiceUri(value.isEmpty() ? defaultValue : value);
             }
         }
     }
