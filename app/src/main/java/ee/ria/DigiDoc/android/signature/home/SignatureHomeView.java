@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.signature.home;
 
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.accessibility.AccessibilityEvent;
@@ -14,17 +16,17 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.home.HomeToolbar;
 import ee.ria.DigiDoc.android.main.home.HomeView;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
+import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import io.reactivex.rxjava3.core.Observable;
 
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-
 public final class SignatureHomeView extends CoordinatorLayout implements HomeView.HomeViewChild {
 
     private final HomeToolbar toolbarView;
     private final Button createButton;
+    private final Button recentDocumentsButton;
 
     private final Navigator navigator;
 
@@ -44,6 +46,7 @@ public final class SignatureHomeView extends CoordinatorLayout implements HomeVi
         toolbarView = findViewById(R.id.toolbar);
         createButton = findViewById(R.id.signatureHomeCreateButton);
         navigator = ApplicationApp.component(context).navigator();
+        recentDocumentsButton = findViewById(R.id.signatureHomeRecentDocumentsButton);
         disposables = new ViewDisposables();
         AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.main_home_navigation_signature);
 
@@ -69,6 +72,8 @@ public final class SignatureHomeView extends CoordinatorLayout implements HomeVi
         disposables.attach();
         disposables.add(clicks(createButton).subscribe(o ->
                 navigator.execute(Transaction.push(SignatureCreateScreen.create(null)))));
+        disposables.add(clicks(recentDocumentsButton).subscribe(o ->
+                navigator.execute(Transaction.push(SignatureListScreen.create()))));
     }
 
     @Override

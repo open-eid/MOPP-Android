@@ -16,7 +16,7 @@
     <string name="main_home_menu_help_url_short">link www.id.ee</string>
     <string name="main_home_menu_help_url">https://www.id.ee/en/id-help/</string>
     <string name="main_home_menu_accessibility">ACCESSIBILITY</string>
-    <string name="main_home_menu_recent">RECENT DOCUMENTS</string>
+    <string name="main_home_recent">RECENT DOCUMENTS</string>
     <string name="main_home_menu_settings">SETTINGS</string>
     <string name="main_home_menu_about">INFO</string>
     <string name="main_home_menu_diagnostics">DIAGNOSTICS</string>
@@ -615,7 +615,7 @@
 
     <!-- Menu -->
     <string name="main_home_menu_help_accessibility">Help</string>
-    <string name="main_home_menu_recent_accessibility">Recent documents</string>
+    <string name="main_home_recent_accessibility">Recent documents</string>
     <string name="main_home_menu_settings_accessibility">Settings</string>
     <string name="main_home_menu_about_accessibility">Info</string>
     <string name="main_home_menu_diagnostics_accessibility">Diagnostics</string>

@@ -54,6 +54,15 @@
                 android:text="@string/signature_home_create_button"
                 android:contentDescription="@string/signature_home_create_text_accessibility" />
 
+            <Button
+                android:id="@id/signatureHomeRecentDocumentsButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/main_home_recent"
+                android:background="@drawable/transparent_button"
+                android:textColor="@color/accent"
+                android:contentDescription="@string/main_home_recent_accessibility" />
+
         </LinearLayout>
 
     </ScrollView>

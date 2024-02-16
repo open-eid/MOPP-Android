@@ -1,8 +1,10 @@
 package ee.ria.DigiDoc.android.main.home;
 
-import static android.util.TypedValue.COMPLEX_UNIT_SP;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+import static com.jakewharton.rxbinding4.widget.RxRadioGroup.checkedChanges;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.isLargeFontEnabled;
 import static ee.ria.DigiDoc.android.utils.TextUtil.convertPxToDp;
+import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceOrientation;
 
 import android.content.Context;
@@ -27,14 +29,9 @@ import java.util.Locale;
 import java.util.Set;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.common.TextUtil;
 import io.reactivex.rxjava3.core.Observable;
-
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-import static com.jakewharton.rxbinding4.widget.RxRadioGroup.checkedChanges;
-import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 
 public final class HomeMenuView extends NestedScrollView implements ContentView {
 
@@ -42,7 +39,6 @@ public final class HomeMenuView extends NestedScrollView implements ContentView 
 
     private final Button helpView;
     private final Button accessibilityView;
-    private final Button recentView;
     private final Button settingsView;
     private final Button aboutView;
     private final Button diagnosticsView;
@@ -119,7 +115,6 @@ public final class HomeMenuView extends NestedScrollView implements ContentView 
                         TextUtil.splitTextAndJoin(
                                 getResources().getString(R.string.main_home_menu_help_url_short), "", " "));
         accessibilityView = findViewById(R.id.mainHomeMenuAccessibility);
-        recentView = findViewById(R.id.mainHomeMenuRecent);
         settingsView = findViewById(R.id.mainHomeMenuSettings);
         aboutView = findViewById(R.id.mainHomeMenuAbout);
         diagnosticsView = findViewById(R.id.mainHomeMenuDiagnostics);
@@ -129,7 +124,6 @@ public final class HomeMenuView extends NestedScrollView implements ContentView 
         russianButton = findViewById(R.id.mainHomeMenuLocaleRu);
 
         tintCompoundDrawables(helpView);
-        tintCompoundDrawables(recentView);
         tintCompoundDrawables(settingsView);
         tintCompoundDrawables(aboutView);
         tintCompoundDrawables(diagnosticsView);
@@ -160,7 +154,6 @@ public final class HomeMenuView extends NestedScrollView implements ContentView 
         return Observable.mergeArray(
                 clicks(helpView).map(ignored -> R.id.mainHomeMenuHelp),
                 clicks(accessibilityView).map(ignored -> R.id.mainHomeMenuAccessibility),
-                clicks(recentView).map(ignored -> R.id.mainHomeMenuRecent),
                 clicks(settingsView).map(ignored -> R.id.mainHomeMenuSettings),
                 clicks(aboutView).map(ignored -> R.id.mainHomeMenuAbout),
                 clicks(diagnosticsView).map(ignored -> R.id.mainHomeMenuDiagnostics));

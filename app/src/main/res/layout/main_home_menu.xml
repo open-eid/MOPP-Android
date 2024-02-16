@@ -38,15 +38,6 @@
         android:drawableStart="@drawable/ic_icon_accessibility" />
 
     <Button
-        android:id="@id/mainHomeMenuRecent"
-        style="@style/Widget.Application.MenuItem"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/main_home_menu_recent"
-        android:contentDescription="@string/main_home_menu_recent_accessibility"
-        android:drawableStart="@drawable/ic_folder_open" />
-
-    <Button
         android:id="@id/mainHomeMenuSettings"
         style="@style/Widget.Application.MenuItem"
         android:layout_width="match_parent"

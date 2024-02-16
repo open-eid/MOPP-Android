@@ -31,7 +31,6 @@ import ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen;
 import ee.ria.DigiDoc.android.main.home.Intent.NavigationVisibilityIntent;
 import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
-import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
 import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
@@ -171,8 +170,6 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return Transaction
                         .activity(createBrowserIntent(context, R.string.main_home_menu_help_url, configuration),
                                 null);
-            case R.id.mainHomeMenuRecent:
-                return Transaction.push(SignatureListScreen.create());
             case R.id.mainHomeMenuAccessibility:
                 return Transaction.push(AccessibilityScreen.create());
             case R.id.mainHomeMenuSettings:

@@ -16,10 +16,11 @@
     <string name="main_home_menu_help_url_short">link www.id.ee</string>
     <string name="main_home_menu_help_url">https://www.id.ee/id-abikeskus/</string>
     <string name="main_home_menu_accessibility">JUURDEPÄÄSETAVUS</string>
-    <string name="main_home_menu_recent">HILJUTISED DOKUMENDID</string>
     <string name="main_home_menu_settings">SEADED</string>
     <string name="main_home_menu_about">INFO</string>
     <string name="main_home_menu_diagnostics">DIAGNOSTIKA</string>
+    <string name="main_home_recent">HILJUTISED DOKUMENDID</string>
+    <string name="main_home_recent_accessibility">Hiljutised dokumendid</string>
 
     <!-- Main Accessibility -->
     <string name="main_accessibility_title">Juurdepääsetavus</string>
@@ -619,7 +620,6 @@
 
     <!-- Menu -->
     <string name="main_home_menu_help_accessibility">Abi</string>
-    <string name="main_home_menu_recent_accessibility">Hiljutised dokumendid</string>
     <string name="main_home_menu_settings_accessibility">Seaded</string>
     <string name="main_home_menu_about_accessibility">Info</string>
     <string name="main_home_menu_diagnostics_accessibility">Diagnostika</string>
