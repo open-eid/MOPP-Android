@@ -10,7 +10,6 @@ import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarT
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -41,7 +40,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.net.Proxy;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
 import java.text.Normalizer;
@@ -50,7 +48,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
@@ -59,7 +56,6 @@ import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
-import ee.ria.DigiDoc.android.utils.TSLException;
 import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
@@ -67,23 +63,10 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.common.FileUtil;
-import ee.ria.DigiDoc.common.ManualProxy;
-import ee.ria.DigiDoc.common.ProxyConfig;
-import ee.ria.DigiDoc.common.ProxySetting;
-import ee.ria.DigiDoc.common.ProxyUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.sign.SignLib;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-import okhttp3.Authenticator;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.internal.tls.OkHostnameVerifier;
 import timber.log.Timber;
 
 public final class DiagnosticsView extends CoordinatorLayout implements ContentView {
@@ -91,7 +74,6 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
     private final AppBarLayout appBarLayout;
     private final NestedScrollView scrollView;
     private final Toolbar toolbarView;
-    private static final int DEFAULT_TIMEOUT = 5;
 
     private final Navigator navigator;
     private final SimpleDateFormat dateFormat;
@@ -99,8 +81,6 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
     private final SettingsDataStore settingsDataStore;
 
     private final ViewDisposables disposables;
-
-    private Disposable tslVersionDisposable;
 
     private final String DIAGNOSTICS_FILE_NAME = "ria_digidoc_" + getAppVersion() + "_diagnostics.txt";
     private final String DIAGNOSTICS_FILE_PATH = getContext().getFilesDir().getPath()
@@ -217,9 +197,6 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
     @Override
     public void onDetachedFromWindow() {
         disposables.detach();
-        if (tslVersionDisposable != null) {
-            tslVersionDisposable.dispose();
-        }
         super.onDetachedFromWindow();
     }
 
@@ -358,8 +335,6 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
                 configurationProvider.getConfigUrl(), Typeface.DEFAULT));
         tslUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsl_url_title,
                 configurationProvider.getTslUrl(), Typeface.DEFAULT));
-        appendTslVersion(tslUrl, FileUtil.normalizeUri(
-                Uri.parse(configurationProvider.getTslUrl())).toString());
         sivaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_siva_url_title,
                 !getSiVaUrlText().isEmpty() ?
                         getSiVaUrlText() : configurationProvider.getSivaUrl(), Typeface.DEFAULT));
@@ -395,59 +370,6 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
                 displayDate(configurationProvider.getConfigurationUpdateDate()), Typeface.DEFAULT));
         centralConfigurationLastCheck.setText(setDisplayTextWithTitle(R.string.main_diagnostics_configuration_last_check_date,
                 displayDate(configurationProvider.getConfigurationLastUpdateCheckDate()), Typeface.DEFAULT));
-    }
-
-    private void appendTslVersion(TextView tslUrlTextView, String tslUrl) {
-        tslVersionDisposable = getObservableTslVersion(tslUrl)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        (tslVersion) -> tslUrlTextView.append(" ("+ tslVersion + ")"),
-                        (error) -> Timber.log(Log.ERROR, error, "Error reading TSL version")
-                );
-    }
-
-    private ProxySetting getProxySetting() {
-        return settingsDataStore.getProxySetting();
-    }
-
-    private ManualProxy getManualProxySettings() {
-        return new ManualProxy(
-                settingsDataStore.getProxyHost(),
-                settingsDataStore.getProxyPort(),
-                settingsDataStore.getProxyUsername(),
-                settingsDataStore.getProxyPassword(navigator.activity())
-        );
-    }
-
-    private Observable<Integer> getObservableTslVersion(String tslUrl) {
-        ProxySetting proxySetting = getProxySetting();
-        boolean isProxySSLEnabled = settingsDataStore.getIsProxyForSSLEnabled();
-        boolean useHTTPSProxy = ProxyUtil.useHTTPSProxy(isProxySSLEnabled, getManualProxySettings());
-        ProxyConfig proxyConfig = ProxyUtil.getProxy(proxySetting, getManualProxySettings());
-
-        return Observable.fromCallable(() -> {
-            OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                    .proxy(proxySetting == ProxySetting.NO_PROXY || !useHTTPSProxy ? Proxy.NO_PROXY : proxyConfig.proxy())
-                    .proxyAuthenticator(proxySetting == ProxySetting.NO_PROXY || !useHTTPSProxy ? Authenticator.NONE : proxyConfig.authenticator())
-                    .hostnameVerifier(OkHostnameVerifier.INSTANCE)
-                    .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-                    .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-                    .callTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-                    .writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
-            OkHttpClient client = builder.build();
-            Request request = new Request.Builder().url(tslUrl).build();
-            Response response = client.newCall(request).execute();
-            if (response.isSuccessful() && response.body() != null) {
-                 try (InputStream responseBody = response.body().byteStream()) {
-                     return TSLUtil.readSequenceNumber(responseBody);
-                 }
-            } else {
-                String message = "Error fetching TSL, response code: " + response.code();
-                Timber.log(Log.ERROR, message);
-                throw new TSLException(message);
-            }
-        });
     }
 
     private String getRpUuidText() {
