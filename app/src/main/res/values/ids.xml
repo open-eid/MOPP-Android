@@ -36,7 +36,6 @@
     <item type="id" name="mainHomeMenuCloseButton" />
     <item type="id" name="mainHomeMenuHelp" />
     <item type="id" name="mainHomeMenuAccessibility" />
-    <item type="id" name="mainHomeMenuRecent" />
     <item type="id" name="mainHomeMenuSettings" />
     <item type="id" name="mainHomeMenuAbout" />
     <item type="id" name="mainHomeMenuDiagnostics" />
@@ -159,6 +158,7 @@
 
     <!-- Signature Home -->
     <item type="id" name="signatureHomeCreateButton" />
+    <item type="id" name="signatureHomeRecentDocumentsButton" />
 
     <!-- Signature List -->
     <item type="id" name="signatureListScreen" />
@@ -384,6 +384,7 @@
 
     <!-- Crypto Home -->
     <item type="id" name="cryptoHomeCreateButton" />
+    <item type="id" name="cryptoHomeRecentDocumentsButton" />
 
     <!-- Crypto Create -->
     <item type="id" name="cryptoCreateScreen" />
