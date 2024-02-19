@@ -84,7 +84,12 @@ public final class SignLib {
     }
 
     public static String libdigidocppVersion() {
-        return digidoc.version();
+        try {
+            return digidoc.version();
+        } catch (Error e) {
+            Timber.e(e, "Unable to get Libdigidocpp version");
+            return "";
+        }
     }
 
     public static void overrideProxy(String host, int port, String username, String password) {
