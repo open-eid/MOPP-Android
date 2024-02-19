@@ -63,7 +63,7 @@ public class ServiceGenerator {
     private static HttpLoggingInterceptor loggingInterceptor;
 
     public static <S> S createService(Class<S> serviceClass, String sidSignServiceUrl,
-                                      ArrayList<String> certBundle, boolean isProxySSLEnabled,
+                                      ArrayList<String> certBundle,
                                       ProxySetting proxySetting, ManualProxy manualProxySettings,
                                       Context context)
             throws CertificateException, NoSuchAlgorithmException {
@@ -72,7 +72,7 @@ public class ServiceGenerator {
                 .baseUrl(sidSignServiceUrl)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(buildHttpClient(sidSignServiceUrl, certBundle, isProxySSLEnabled,
+                .client(buildHttpClient(sidSignServiceUrl, certBundle,
                         proxySetting, manualProxySettings, context))
                 .build()
                 .create(serviceClass);
@@ -80,7 +80,6 @@ public class ServiceGenerator {
 
     private static OkHttpClient buildHttpClient(String sidSignServiceUrl,
                                                 ArrayList<String> certBundle,
-                                                boolean isProxySSLEnabled,
                                                 ProxySetting proxySetting,
                                                 ManualProxy manualProxySettings,
                                                 Context context)
@@ -88,11 +87,10 @@ public class ServiceGenerator {
         Timber.log(Log.DEBUG, "Building new httpClient");
 
         ProxyConfig proxyConfig = ProxyUtil.getProxy(proxySetting, manualProxySettings);
-        boolean useHTTPSProxy = proxySetting != ProxySetting.MANUAL_PROXY || ProxyUtil.useHTTPSProxy(isProxySSLEnabled, manualProxySettings);
 
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
-                .proxy(proxySetting == ProxySetting.NO_PROXY || !useHTTPSProxy ? Proxy.NO_PROXY : proxyConfig.proxy())
-                .proxyAuthenticator(proxySetting == ProxySetting.NO_PROXY || !useHTTPSProxy ? Authenticator.NONE : proxyConfig.authenticator())
+                .proxy(proxySetting == ProxySetting.NO_PROXY ? Proxy.NO_PROXY : proxyConfig.proxy())
+                .proxyAuthenticator(proxySetting == ProxySetting.NO_PROXY ? Authenticator.NONE : proxyConfig.authenticator())
                 .connectTimeout(120, TimeUnit.SECONDS)
                 .readTimeout(120, TimeUnit.SECONDS)
                 .writeTimeout(120, TimeUnit.SECONDS)

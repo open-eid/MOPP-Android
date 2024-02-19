@@ -1,9 +1,11 @@
 package ee.ria.DigiDoc.configuration.loader;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import static ee.ria.DigiDoc.common.ProxyUtil.getManualProxySettings;
+import static ee.ria.DigiDoc.common.ProxyUtil.getProxySetting;
 
-import androidx.preference.PreferenceManager;
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -17,20 +19,24 @@ import ee.ria.DigiDoc.common.ProxyUtil;
 import ee.ria.DigiDoc.configuration.R;
 import okhttp3.Authenticator;
 import okhttp3.Call;
+import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.internal.tls.OkHostnameVerifier;
+import timber.log.Timber;
 
 class CentralConfigurationClient {
 
     private static final int DEFAULT_TIMEOUT = 5;
+    private final Context context;
     private final OkHttpClient httpClient;
     private final String centralConfigurationServiceUrl;
     private final String userAgent;
 
     CentralConfigurationClient(Context context, String centralConfigurationServiceUrl, String userAgent) {
+        this.context = context;
         this.centralConfigurationServiceUrl = centralConfigurationServiceUrl;
         httpClient = constructHttpClient(context);
         this.userAgent = userAgent;
@@ -38,16 +44,31 @@ class CentralConfigurationClient {
 
     String getConfiguration() {
         CompletableFuture<String> future = requestData(centralConfigurationServiceUrl + "/config.json");
+        future.exceptionally(e -> {
+            Timber.log(Log.ERROR, e, String.format("%s %s", "Unable to get configuration", e.getLocalizedMessage()));
+            Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            return future.join();
+        });
         return future.join();
     }
 
     String getConfigurationSignature() {
         CompletableFuture<String> future = requestData(centralConfigurationServiceUrl + "/config.rsa");
+        future.exceptionally(e -> {
+            Timber.log(Log.ERROR, e, String.format("%s %s", "Unable to get configuration signature", e.getLocalizedMessage()));
+            Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            return future.join();
+        });
         return future.join();
     }
 
     String getConfigurationSignaturePublicKey() {
         CompletableFuture<String> future = requestData(centralConfigurationServiceUrl + "/config.pub");
+        future.exceptionally(e -> {
+            Timber.log(Log.ERROR, e, String.format("%s %s", "Unable to get configuration public key", e.getLocalizedMessage()));
+            Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            return future.join();
+        });
         return future.join();
     }
 
@@ -86,26 +107,6 @@ class CentralConfigurationClient {
         return result;
     }
 
-    private static ProxySetting getProxySetting(Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String proxySettingPreference = sharedPreferences.getString(context.getString(R.string.main_settings_proxy_setting_key), ProxySetting.NO_PROXY.name());
-        return ProxySetting.valueOf(proxySettingPreference);
-    }
-
-    private static ManualProxy getManualProxySettings(Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String host = sharedPreferences.getString(context.getString(R.string.main_settings_proxy_host_key), "");
-        int port = sharedPreferences.getInt(context.getString(R.string.main_settings_proxy_port_key), 0);
-        String username = sharedPreferences.getString(context.getString(R.string.main_settings_proxy_username_key), "");
-        String password = sharedPreferences.getString(context.getString(R.string.main_settings_proxy_password_key), "");
-        return new ManualProxy(host, port, username, password);
-    }
-
-    private static boolean isProxySSLEnabled(Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getBoolean(context.getString(R.string.main_settings_proxy_ssl_enabled_key), true);
-    }
-
     private static OkHttpClient constructHttpClient(Context context) {
         try {
             OkHttpClient.Builder builder = constructClientBuilder(context);
@@ -124,13 +125,23 @@ class CentralConfigurationClient {
                 .writeTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
 
         if (context != null) {
-            boolean isProxySSLEnabled = isProxySSLEnabled(context);
             ProxySetting proxySetting = getProxySetting(context);
-            ProxyConfig proxyConfig = ProxyUtil.getProxy(proxySetting, getManualProxySettings(context));
-            boolean useHTTPSProxy = proxySetting != ProxySetting.MANUAL_PROXY || ProxyUtil.useHTTPSProxy(isProxySSLEnabled, getManualProxySettings(context));
+            ManualProxy manualProxy = getManualProxySettings(context);
+            ProxyConfig proxyConfig = ProxyUtil.getProxy(proxySetting, manualProxy);
 
-            builder.proxy(proxySetting == ProxySetting.NO_PROXY || !useHTTPSProxy ? Proxy.NO_PROXY : proxyConfig.proxy())
-                    .proxyAuthenticator(proxySetting == ProxySetting.NO_PROXY || !useHTTPSProxy ? Authenticator.NONE : proxyConfig.authenticator());
+            builder.proxy(proxySetting == ProxySetting.NO_PROXY ? Proxy.NO_PROXY : proxyConfig.proxy())
+                    .proxyAuthenticator(proxySetting == ProxySetting.NO_PROXY ? Authenticator.NONE : proxyConfig.authenticator());
+
+            builder.addInterceptor(chain -> {
+                Request originalRequest = chain.request();
+                String credential = Credentials.basic(manualProxy.getUsername(), manualProxy.getPassword());
+                Request.Builder requestBuilder = originalRequest.newBuilder()
+                        .addHeader("Proxy-Authorization", credential)
+                        .addHeader("Authorization", credential);
+
+                Request newRequest = requestBuilder.build();
+                return chain.proceed(newRequest);
+            });
         }
 
         return builder;

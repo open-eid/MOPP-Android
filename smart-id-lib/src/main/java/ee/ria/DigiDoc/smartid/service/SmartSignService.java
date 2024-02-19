@@ -29,7 +29,6 @@ import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_POR
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_USERNAME;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_CHANNEL;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_PERMISSION_CODE;
-import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.PROXY_IS_SSL_ENABLED;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.PROXY_SETTING;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SIGNING_ROLE_DATA;
 
@@ -107,8 +106,6 @@ public class SmartSignService extends Worker {
     private final String signatureRequest;
     private final ArrayList<String> certificateCertBundle;
 
-    private final boolean isProxySSLEnabled;
-
     private final ProxySetting proxySetting;
     private final ManualProxy manualProxySettings;
 
@@ -128,15 +125,13 @@ public class SmartSignService extends Worker {
         Type arraylistType = new TypeToken<ArrayList<String>>() {}.getType();
         certificateCertBundle = new Gson().fromJson(certBundleList, arraylistType);
 
-        String proxySettingString = workerParameters.getInputData().getString(MANUAL_PROXY_HOST);
-        if (proxySettingString != null && proxySettingString.isEmpty()) {
+        try {
+            proxySetting = ProxySetting.valueOf(workerParameters.getInputData().getString(PROXY_SETTING));
+        } catch (IllegalArgumentException iae) {
+            Timber.log(Log.ERROR, iae, "Proxy setting cannot be empty");
             broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR));
-            throw new IllegalArgumentException("Proxy setting cannot be empty");
+            throw iae;
         }
-
-        isProxySSLEnabled = workerParameters.getInputData().getBoolean(PROXY_IS_SSL_ENABLED, true);
-
-        proxySetting = ProxySetting.valueOf(workerParameters.getInputData().getString(PROXY_SETTING));
 
         manualProxySettings = new ManualProxy(
                 workerParameters.getInputData().getString(MANUAL_PROXY_HOST),
@@ -180,7 +175,7 @@ public class SmartSignService extends Worker {
                         Timber.log(Log.DEBUG, request.toString());
                         SIDRestServiceClient = ServiceGenerator.createService(SIDRestServiceClient.class,
                                 request.getUrl() + "/", certificateCertBundle,
-                                isProxySSLEnabled, proxySetting, manualProxySettings, getApplicationContext());
+                                proxySetting, manualProxySettings, getApplicationContext());
                     }
                 } catch (CertificateException | NoSuchAlgorithmException e) {
                     broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
@@ -269,6 +264,12 @@ public class SmartSignService extends Worker {
                     } else if (e.getMessage() != null && e.getMessage().contains("Certificate status: revoked")) {
                         broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.CERTIFICATE_REVOKED));
                         Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID - Certificate status: revoked. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                    } else if (e.getMessage() != null && e.getMessage().contains("Failed to connect")) {
+                        broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE));
+                        Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID - Failed to connect to host. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                    } else if (e.getMessage() != null && e.getMessage().startsWith("Failed to create ssl connection with host")) {
+                        broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
+                        Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID - Failed to create ssl connection with host. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                     } else {
                         broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, e.getMessage()));
                         Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));

@@ -10,10 +10,13 @@ public final class ProxyConfig {
     @Nullable
     private final Proxy proxy;
     private final Authenticator authenticator;
+    @Nullable
+    private final ManualProxy manualProxy;
 
-    public ProxyConfig(@Nullable Proxy proxy, Authenticator authenticator) {
+    public ProxyConfig(@Nullable Proxy proxy, Authenticator authenticator, @Nullable ManualProxy manualProxy) {
         this.proxy = proxy;
         this.authenticator = authenticator;
+        this.manualProxy = manualProxy;
     }
 
     @Nullable
@@ -23,5 +26,10 @@ public final class ProxyConfig {
 
     public Authenticator authenticator() {
         return authenticator;
+    }
+
+    @Nullable
+    public ManualProxy manualProxy() {
+        return manualProxy;
     }
 }

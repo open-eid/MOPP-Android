@@ -228,8 +228,7 @@ public final class SettingsSigningView extends CoordinatorLayout {
     public static void resetSettings(Context context, SettingsDataStore settingsDataStore) {
         settingsDataStore.setUuid("");
         settingsDataStore.setTsaUrl("");
-        settingsDataStore.setIsOpenAllFileTypesEnabled(true);
-        settingsDataStore.setIsScreenshotAllowed(false);
+        settingsDataStore.setIsRoleAskingEnabled(false);
         settingsDataStore.setIsTsaCertificateViewVisible(false);
         File certFile = FileUtil.getCertFile(context, settingsDataStore.getTSACertName(), DIR_TSA_CERT);
         removeCertificate(certFile, settingsDataStore);

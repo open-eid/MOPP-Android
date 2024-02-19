@@ -62,6 +62,8 @@ import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.common.TextUtil;
+import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
+import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
 import ee.ria.DigiDoc.sign.utils.Function;
 import ee.ria.libdigidocpp.Container;
@@ -504,7 +506,8 @@ public abstract class SignedContainer {
         try {
             container = Container.open(file.getAbsolutePath());
         } catch (Exception e) {
-            if (e.getMessage() != null && e.getMessage().startsWith("Failed to connect to host")) {
+            if (e.getMessage() != null && (e.getMessage().startsWith("Failed to connect to host") ||
+                    e.getMessage().startsWith("Failed to create proxy connection with host"))) {
                 throw new NoInternetConnectionException();
             } else if (e.getMessage() != null &&
                     e.getMessage().startsWith("Failed to create ssl connection with host")) {

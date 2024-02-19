@@ -169,7 +169,7 @@ public class TextUtil {
 
                 float measureText = textPaint.measureText(currentText);
 
-                while (measureText > viewWidth) {
+                while (measureText != 0 && measureText > viewWidth) {
                     measureText = textPaint.measureText(currentText);
                     currentTextSize -= 0.5;
                     editText.setTextSize(COMPLEX_UNIT_PX, currentTextSize);
@@ -181,6 +181,10 @@ public class TextUtil {
                     if (currentTextSize <= defaultTextSize) {
                         editText.setTextSize(COMPLEX_UNIT_PX, currentTextSize);
                     }
+                }
+
+                if (editText.getTextSize() <= 0) {
+                    editText.setTextSize(COMPLEX_UNIT_PX, defaultTextSize);
                 }
             }
 

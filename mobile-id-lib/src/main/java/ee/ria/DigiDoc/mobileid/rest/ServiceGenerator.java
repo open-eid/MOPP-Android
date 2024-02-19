@@ -68,16 +68,15 @@ public class ServiceGenerator {
 
     public static <S> S createService(Class<S> serviceClass, SSLContext sslContext,
                                       String midSignServiceUrl, ArrayList<String> certBundle,
-                                      TrustManager[] trustManagers, boolean isProxySSLEnabled,
-                                      ProxySetting proxySetting, ManualProxy manualProxySettings,
-                                      Context context) throws CertificateException, NoSuchAlgorithmException {
+                                      TrustManager[] trustManagers, ProxySetting proxySetting,
+                                      ManualProxy manualProxySettings, Context context) throws CertificateException, NoSuchAlgorithmException {
         Timber.log(Log.DEBUG, "Creating new retrofit instance");
         return new Retrofit.Builder()
                 .baseUrl(midSignServiceUrl + "/")
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(buildHttpClient(sslContext, midSignServiceUrl, certBundle, trustManagers,
-                        isProxySSLEnabled, proxySetting, manualProxySettings, context))
+                        proxySetting, manualProxySettings, context))
                 .build()
                 .create(serviceClass);
     }
@@ -85,18 +84,16 @@ public class ServiceGenerator {
     private static OkHttpClient buildHttpClient(SSLContext sslContext, String midSignServiceUrl,
                                                 ArrayList<String> certBundle,
                                                 TrustManager[] trustManagers,
-                                                boolean isProxySSLEnabled,
                                                 ProxySetting proxySetting,
                                                 ManualProxy manualProxySettings,
                                                 Context context) throws CertificateException, NoSuchAlgorithmException {
         Timber.log(Log.DEBUG, "Building new httpClient");
 
         ProxyConfig proxyConfig = ProxyUtil.getProxy(proxySetting, manualProxySettings);
-        boolean useHTTPSProxy = proxySetting != ProxySetting.MANUAL_PROXY || ProxyUtil.useHTTPSProxy(isProxySSLEnabled, manualProxySettings);
 
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
-                .proxy(proxySetting == ProxySetting.NO_PROXY || !useHTTPSProxy ? Proxy.NO_PROXY : proxyConfig.proxy())
-                .proxyAuthenticator(proxySetting == ProxySetting.NO_PROXY || !useHTTPSProxy ? Authenticator.NONE : proxyConfig.authenticator())
+                .proxy(proxySetting == ProxySetting.NO_PROXY ? Proxy.NO_PROXY : proxyConfig.proxy())
+                .proxyAuthenticator(proxySetting == ProxySetting.NO_PROXY ? Authenticator.NONE : proxyConfig.authenticator())
                 .connectTimeout(120, TimeUnit.SECONDS)
                 .readTimeout(120, TimeUnit.SECONDS)
                 .writeTimeout(120, TimeUnit.SECONDS)

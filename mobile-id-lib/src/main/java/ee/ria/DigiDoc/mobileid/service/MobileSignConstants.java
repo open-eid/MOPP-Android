@@ -33,10 +33,10 @@ public interface MobileSignConstants {
     String CREATE_SIGNATURE_CHALLENGE = "ee.ria.mopp.androidmobileid.MID_CHALLENGE";
     String CREATE_SIGNATURE_STATUS = "ee.ria.mopp.androidmobileid.CREATE_SIGNATURE_STATUS";
     String SERVICE_FAULT = "ee.ria.mopp.androidmobileid.SERVICE_FAULT";
+    String CONFIG_URL = "ee.ria.mopp.androidmobileid.CONFIG_URL";
     String PROXY_SETTING = "ee.ria.mopp.androidmobileid.PROXY_SETTING";
     String MANUAL_PROXY_HOST = "ee.ria.mopp.androidmobileid.HOST";
     String MANUAL_PROXY_PORT = "ee.ria.mopp.androidmobileid.PORT";
     String MANUAL_PROXY_USERNAME = "ee.ria.mopp.androidmobileid.USERNAME";
     String MANUAL_PROXY_PASSWORD = "ee.ria.mopp.androidmobileid.PASSWORD";
-    String PROXY_IS_SSL_ENABLED = "ee.ria.mopp.androidmobileid.PROXY_IS_SSL_ENABLED";
 }

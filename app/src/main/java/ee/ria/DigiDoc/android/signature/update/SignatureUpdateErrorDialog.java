@@ -9,20 +9,15 @@ import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceLayoutWi
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Typeface;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
-import androidx.core.content.ContextCompat;
 
 import java.io.FileNotFoundException;
 import java.lang.annotation.Retention;
@@ -32,18 +27,18 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.signature.update.exception.DocumentExistsException;
 import ee.ria.DigiDoc.android.signature.update.exception.DocumentRemoveException;
 import ee.ria.DigiDoc.android.signature.update.exception.GeneralSignatureUpdateException;
-import ee.ria.DigiDoc.sign.SSLHandshakeException;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.common.DetailMessageException;
 import ee.ria.DigiDoc.common.DetailMessageSource;
+import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
+import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
 import ee.ria.DigiDoc.common.exception.SignatureUpdateDetailError;
 import ee.ria.DigiDoc.common.exception.SignatureUpdateError;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.sign.CertificateRevokedException;
-import ee.ria.DigiDoc.sign.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.OcspInvalidTimeSlotException;
 import ee.ria.DigiDoc.sign.TooManyRequestsException;
 import ee.ria.DigiDoc.sign.utils.UrlMessage;
@@ -170,6 +165,10 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                 updateError = new CertificateRevokedException(
                         getContext().getString(R.string.signature_update_signature_error_message_certificate_revoked)
                 );
+            } else if (signatureAddError.getMessage() != null && signatureAddError.getMessage().contains("Failed to connect")) {
+                updateError = new NoInternetConnectionException();
+            } else if (signatureAddError.getMessage() != null && signatureAddError.getMessage().startsWith("Failed to create ssl connection with host")) {
+                updateError = new SSLHandshakeException();
             } else {
                 setTitle(R.string.signature_update_signature_add_error);
                 updateError = new GeneralSignatureUpdateException(signatureAddError.getMessage());

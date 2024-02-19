@@ -24,12 +24,12 @@ import static ee.ria.DigiDoc.common.SigningUtil.checkSigningCancelled;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CERTIFICATE_CERT_BUNDLE;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CONFIG_URL;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MANUAL_PROXY_HOST;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MANUAL_PROXY_PASSWORD;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MANUAL_PROXY_PORT;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MANUAL_PROXY_USERNAME;
-import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.PROXY_IS_SSL_ENABLED;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.PROXY_SETTING;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SIGNING_ROLE_DATA;
 
@@ -120,7 +120,7 @@ public class MobileSignService extends Worker {
     private final String accessTokenPath;
     private final String accessTokenPass;
     private final ArrayList<String> certificateCertBundle;
-    private final boolean isProxySSLEnabled;
+    private final String configUrl;
     private final ProxySetting proxySetting;
     private final ManualProxy manualProxySettings;
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -143,7 +143,7 @@ public class MobileSignService extends Worker {
         Type arraylistType = new TypeToken<ArrayList<String>>() {}.getType();
         certificateCertBundle = new Gson().fromJson(certBundleList, arraylistType);
 
-        isProxySSLEnabled = workerParameters.getInputData().getBoolean(PROXY_IS_SSL_ENABLED, true);
+        configUrl = workerParameters.getInputData().getString(CONFIG_URL);
 
         proxySetting = ProxySetting.valueOf(workerParameters.getInputData().getString(PROXY_SETTING));
 
@@ -195,7 +195,7 @@ public class MobileSignService extends Worker {
                 if (certificateCertBundle != null) {
                     midRestServiceClient = ServiceGenerator.createService(MIDRestServiceClient.class,
                             restSSLConfig, request.getUrl(), certificateCertBundle, trustManagers,
-                            isProxySSLEnabled, proxySetting, manualProxySettings, getApplicationContext());
+                            proxySetting, manualProxySettings, getApplicationContext());
                 } else {
                     Timber.log(Log.DEBUG, "Certificate cert bundle is null");
                     return Result.failure();
@@ -291,6 +291,14 @@ public class MobileSignService extends Worker {
                     RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.CERTIFICATE_REVOKED);
                     broadcastFault(fault);
                     Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID - Certificate status: revoked. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                } else if (e.getMessage() != null && e.getMessage().contains("Failed to connect")) {
+                    RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE);
+                    broadcastFault(fault);
+                    Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID - Failed to connect to host. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                } else if (e.getMessage() != null && e.getMessage().startsWith("Failed to create ssl connection with host")) {
+                    RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE);
+                    broadcastFault(fault);
+                    Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID - Failed to create ssl connection with host. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                 } else {
                     RESTServiceFault fault = new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.TECHNICAL_ERROR);
                     broadcastFault(fault);

@@ -10,7 +10,6 @@
     <string name="main_settings_proxy_port_key">main_settings_proxy_port</string>
     <string name="main_settings_proxy_username_key">main_settings_proxy_username</string>
     <string name="main_settings_proxy_password_key">main_settings_proxy_password</string>
-    <string name="main_settings_proxy_ssl_enabled_key">mainSettingsProxySSLEnabled</string>
 
 
 </resources>

@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import ee.ria.DigiDoc.common.ManualProxy;
+import ee.ria.DigiDoc.common.ProxySetting;
 import ee.ria.DigiDoc.configuration.ConfigurationManager;
 import ee.ria.DigiDoc.configuration.ConfigurationProperties;
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
@@ -34,7 +36,8 @@ public final class SignedContainerTest {
         ConfigurationProperties configurationProperties = new ConfigurationProperties(targetContext.getAssets());
         CachedConfigurationHandler cachedConfigurationHandler = new CachedConfigurationHandler(targetContext.getCacheDir());
         ConfigurationManager configurationManager = new ConfigurationManager(targetContext, configurationProperties, cachedConfigurationHandler, "SignedContainerTest-User-Agent");
-        SignLib.init(targetContext, "tsa_url", configurationManager.getConfiguration(), "SignedContainerTest-User-Agent", false);
+        SignLib.init(targetContext, "tsa_url", configurationManager.getConfiguration(), "SignedContainerTest-User-Agent", false,
+                ProxySetting.NO_PROXY, new ManualProxy("", 80, "", ""));
     }
 
     private static final String DIR = "signed-containers";

@@ -192,15 +192,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <CheckBox
-                android:id="@id/mainSettingsProxyAllowSSL"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:checked="true"
-                android:text="@string/main_settings_proxy_allow_ssl" />
-
         </LinearLayout>
 
     </ScrollView>

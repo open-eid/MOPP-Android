@@ -55,7 +55,6 @@
     <string name="main_settings_proxy_port">Port</string>
     <string name="main_settings_proxy_username">Kasutajanimi</string>
     <string name="main_settings_proxy_password">Parool</string>
-    <string name="main_settings_proxy_allow_ssl">Luba proksi kasutamine SSL-ühenduste jaoks</string>
     <string name="main_settings_role_and_address_button">Roll ja aadress</string>
     <string name="main_settings_phone_no_title">Riigikood ja telefoninumber</string>
     <string name="main_settings_personal_code_title">Isikukood</string>
