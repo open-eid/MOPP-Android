@@ -51,6 +51,7 @@ final class DecryptDialog extends AlertDialog {
     private final ViewDisposables disposables = new ViewDisposables();
 
     private Token token = null;
+    @State private String state = State.IDLE;
 
     DecryptDialog(@NonNull Context context) {
         super(context);
@@ -88,6 +89,7 @@ final class DecryptDialog extends AlertDialog {
                             @Nullable Throwable decryptError) {
         IdCardData data = idCardDataResponse.data();
         token = idCardDataResponse.token();
+        state = decryptState;
 
         if (decryptState.equals(State.CLEAR)) {
             pin1View.setText(null);
@@ -170,7 +172,8 @@ final class DecryptDialog extends AlertDialog {
     }
 
     private Observable<Boolean> positiveButtonEnabled() {
-        return pin1FieldChange().map(ignored -> token != null && pin1View.getText().length() >= 4);
+        return pin1FieldChange().map(ignored -> token != null && pin1View.getText().length() >= 4 &&
+                !state.equals(State.ACTIVE));
     }
 
     private void checkInputsValidity() {
