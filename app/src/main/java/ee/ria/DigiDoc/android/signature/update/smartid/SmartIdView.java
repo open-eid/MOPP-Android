@@ -317,8 +317,8 @@ public final class SmartIdView extends LinearLayout implements
     }
 
     private void setAccessibilityDescription() {
-        personalCodeView.setContentDescription(getResources().getString(R.string.signature_update_mobile_id_personal_code) + " " +
-                AccessibilityUtils.getTextViewAccessibility(personalCodeView));
+        personalCodeView.setContentDescription(String.format("%s, %s", getResources().getString(R.string.signature_update_mobile_id_personal_code),
+                AccessibilityUtils.getTextViewAccessibility(personalCodeView)));
         AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView,
                 getResources().getString(R.string.signature_update_mobile_id_personal_code));
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
