@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.main.settings.signing;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.main.settings.signing.siva.SivaSetting.DEFAULT;
@@ -32,6 +33,7 @@ import java.util.Locale;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.main.settings.create.CertificateAddViewModel;
 import ee.ria.DigiDoc.android.main.settings.create.ChooseFileScreen;
@@ -204,6 +206,7 @@ public final class SettingsSigningView extends CoordinatorLayout {
                     boolean isChecked = askRoleAndAddressSwitch.isChecked();
                     settingsDataStore.setIsRoleAskingEnabled(isChecked);
                     setAskRoleAndAddressSetting(settingsDataStore);
+                    AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
                 }));
         disposables.add(clicks(sivaCategory).subscribe(o -> sivaDialog.show()));
         disposables.add(clicks(proxyCategory).subscribe(o -> proxyDialog.show()));
