@@ -8,7 +8,6 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -48,22 +47,25 @@ import ee.ria.DigiDoc.android.main.home.HomeScreen;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.main.settings.rights.SettingsRightsScreen;
 import ee.ria.DigiDoc.android.main.sharing.SharingScreen;
+import ee.ria.DigiDoc.android.root.RootCreateScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.ContainerMimeTypeUtil;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
+import ee.ria.DigiDoc.android.utils.RootUtil;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.ViewType;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
-import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import timber.log.Timber;
 
 public final class Activity extends AppCompatActivity {
+
+    private static final String rootedKey = "IS_ROOTED";
 
     private Navigator navigator;
     private RootScreenFactory rootScreenFactory;
@@ -77,65 +79,64 @@ public final class Activity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        handleRootedDevice();
         setTheme(R.style.Theme_Application);
         setTitle(""); // ACCESSIBILITY: prevents application name read during each activity launch
-        super.onCreate(savedInstanceState);
-
-        // Prevent screen recording
-        SecureUtil.markAsSecure(this, getWindow());
-
-        handleCrashOnPreviousExecution();
-
-        WorkManager.getInstance(this).cancelAllWork();
-
-        Intent intent = sanitizeIntent(getIntent());
-
-        ViewType viewType = settingsDataStore.getViewType();
-
-        if (viewType != null) {
-            intent.putExtra(VIEW_TYPE, viewType.name());
+        if (isRooted()) {
+            super.onCreate(null);
+            Intent intent = new Intent();
+            intent.putExtra(rootedKey, true);
             rootScreenFactory.intent(intent, this);
         } else {
-            if ((Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setAction(intent.getAction());
-                handleIncomingFiles(intent, this);
-            } else if (Intent.ACTION_CONFIGURATION_CHANGED.equals(intent.getAction())) {
-                getIntent().setAction(Intent.ACTION_MAIN);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                restartAppWithIntent(intent, false);
-            } else if (Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
+            super.onCreate(savedInstanceState);
+
+            // Prevent screen recording
+            SecureUtil.markAsSecure(this, getWindow());
+
+            handleCrashOnPreviousExecution();
+
+            WorkManager.getInstance(this).cancelAllWork();
+
+            Intent intent = sanitizeIntent(getIntent());
+
+            if (viewType != null) {
+                intent.putExtra(VIEW_TYPE, viewType.name());
                 rootScreenFactory.intent(intent, this);
-            } else if (Intent.ACTION_MAIN.equals(intent.getAction()) && savedInstanceState != null) {
-                savedInstanceState = null;
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                restartAppWithIntent(intent, false);
             } else {
-                rootScreenFactory.intent(intent, this);
+                if ((Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setAction(intent.getAction());
+                    handleIncomingFiles(intent, this);
+                } else if (Intent.ACTION_CONFIGURATION_CHANGED.equals(intent.getAction())) {
+                    getIntent().setAction(Intent.ACTION_MAIN);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    restartAppWithIntent(intent, false);
+                } else if (Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
+                    rootScreenFactory.intent(intent, this);
+                } else if (Intent.ACTION_MAIN.equals(intent.getAction()) && savedInstanceState != null) {
+                    savedInstanceState = null;
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    restartAppWithIntent(intent, false);
+                } else {
+                    rootScreenFactory.intent(intent, this);
+                }
             }
+
+            mContext = new WeakReference<>(this);
+
+            initializeApplicationFileTypesAssociation();
+            initializeRoleAndAddressAsking();
         }
-
-        mContext = new WeakReference<>(this);
-
-        initializeApplicationFileTypesAssociation();
-        initializeRoleAndAddressAsking();
 
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
         setTitle("\u202F");
         ViewCompat.setImportantForAccessibility(getWindow().getDecorView(), ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO);
     }
 
-    private void handleRootedDevice() {
-        if (CommonUtils.isRooted()) {
-            ErrorDialog errorDialog = new ErrorDialog(this);
-            errorDialog.setMessage(getResources().getString(R.string.rooted_device));
-            errorDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.ok), (dialog, which) -> dialog.cancel());
-            errorDialog.show();
-        }
+    private boolean isRooted() {
+        return CommonUtils.isRooted() || RootUtil.isDeviceRooted();
     }
 
     private void handleCrashOnPreviousExecution() {

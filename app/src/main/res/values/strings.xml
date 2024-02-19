@@ -598,7 +598,7 @@
     <string name="crash_report_dialog_always_send_button">Always Send</string>
     <string name="crash_report_dialog_dont_send_button">Don\'t Send</string>
 
-    <string name="rooted_device">We\'ve detected that your device may be rooted. For security reasons we don\'t recommend using this app on a rooted device.</string>
+    <string name="rooted_device">This app cannot be used in rooted device.</string>
 
     <!-- Accessibility -->
 

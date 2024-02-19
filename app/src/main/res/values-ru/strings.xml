@@ -602,7 +602,7 @@
     <string name="crash_report_dialog_always_send_button">Всегда отправлять</string>
     <string name="crash_report_dialog_dont_send_button">Не отправлять</string>
 
-    <string name="rooted_device">Мы обнаружили, что ваше интеллектуальное устройство может быть рутировано. По соображениям безопасности мы не рекомендуем использовать это приложение на рутированом устройстве.</string>
+    <string name="rooted_device">Данное приложение не может быть использовано на взломанном (роот) устройстве.</string>
 
     <!-- Accessibility -->
 
