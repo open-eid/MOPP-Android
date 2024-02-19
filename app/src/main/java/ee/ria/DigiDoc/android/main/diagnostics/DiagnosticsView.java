@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.main.diagnostics;
 
 import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileLogsSaveClicksSubject;
@@ -150,6 +151,7 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
                 ClickableDialogUtil.makeLinksInDialogClickable(diagnosticsRestartConfirmationDialog);
                 diagnosticsRestartConfirmationDialog.positiveButtonClicks()
                         .doOnNext(next -> {
+                            AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
                             diagnosticsRestartConfirmationDialog.dismiss();
                             settingsDataStore.setIsLogFileGenerationEnabled(true);
                             settingsDataStore.setViewType(ViewType.DIAGNOSTICS);
@@ -167,6 +169,7 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
                 settingsDataStore.setIsLogFileGenerationEnabled(false);
                 settingsDataStore.setIsLogFileGenerationRunning(false);
                 if (isLogFileGenerationEnabled) {
+                    AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
                     activityContext.restartAppWithIntent(activityContext.getIntent(), true);
                 }
             }
