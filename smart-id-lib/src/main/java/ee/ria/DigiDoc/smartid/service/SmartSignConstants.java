@@ -38,7 +38,6 @@ public interface SmartSignConstants {
     String MANUAL_PROXY_PORT = "ee.ria.mopp.smartid.PORT";
     String MANUAL_PROXY_USERNAME = "ee.ria.mopp.smartid.USERNAME";
     String MANUAL_PROXY_PASSWORD = "ee.ria.mopp.smartid.PASSWORD";
-    String PROXY_IS_SSL_ENABLED = "ee.ria.mopp.smartid.PROXY_IS_SSL_ENABLED";
 
     String NOTIFICATION_CHANNEL = "SMART_ID_CHANNEL";
     int NOTIFICATION_PERMISSION_CODE = 1;

@@ -1,8 +1,8 @@
-package ee.ria.DigiDoc.sign;
+package ee.ria.DigiDoc.common.exception;
 
 import android.content.Context;
 
-import ee.ria.DigiDoc.common.exception.SignatureUpdateError;
+import ee.ria.DigiDoc.common.R;
 
 public class NoInternetConnectionException extends Exception implements SignatureUpdateError {
 

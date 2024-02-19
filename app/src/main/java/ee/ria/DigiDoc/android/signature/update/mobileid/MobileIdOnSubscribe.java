@@ -4,6 +4,7 @@ import static ee.ria.DigiDoc.mobileid.dto.request.MobileCreateSignatureRequest.t
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CERTIFICATE_CERT_BUNDLE;
+import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CONFIG_URL;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_CHALLENGE;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_REQUEST;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.CREATE_SIGNATURE_STATUS;
@@ -13,7 +14,6 @@ import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MANUAL_PROXY_P
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MANUAL_PROXY_USERNAME;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MID_BROADCAST_ACTION;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.MID_BROADCAST_TYPE_KEY;
-import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.PROXY_IS_SSL_ENABLED;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.PROXY_SETTING;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SERVICE_FAULT;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.SIGNING_ROLE_DATA;
@@ -64,7 +64,6 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
     private final String uuid;
     private final String personalCode;
     private final String phoneNo;
-    private final boolean isProxySSLEnabled;
     private final ProxySetting proxySetting;
     private final ManualProxy manualProxySettings;
     @Nullable private final RoleData roleData;
@@ -72,8 +71,8 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
 
     public MobileIdOnSubscribe(Navigator navigator, SignedContainer container, Locale locale,
                                String uuid, String personalCode, String phoneNo,
-                               boolean isProxySSLEnabled, ProxySetting proxySetting,
-                               ManualProxy manualProxySettings, @Nullable RoleData roleData) {
+                               ProxySetting proxySetting, ManualProxy manualProxySettings,
+                               @Nullable RoleData roleData) {
         this.navigator = navigator;
         this.container = container;
         this.locale = locale;
@@ -81,7 +80,6 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
         this.uuid = uuid;
         this.personalCode = personalCode;
         this.phoneNo = phoneNo;
-        this.isProxySSLEnabled = isProxySSLEnabled;
         this.proxySetting = proxySetting;
         this.manualProxySettings = manualProxySettings;
         this.roleData = roleData;
@@ -155,12 +153,12 @@ public final class MobileIdOnSubscribe implements ObservableOnSubscribe<MobileId
                 .putString(CREATE_SIGNATURE_REQUEST, toJson(request))
                 .putString(ACCESS_TOKEN_PASS, SignLib.accessTokenPass())
                 .putString(ACCESS_TOKEN_PATH, SignLib.accessTokenPath())
+                .putString(CONFIG_URL, configurationProvider.getConfigUrl())
                 .putString(PROXY_SETTING, proxySetting.name())
                 .putString(MANUAL_PROXY_HOST, manualProxySettings.getHost())
                 .putInt(MANUAL_PROXY_PORT, manualProxySettings.getPort())
                 .putString(MANUAL_PROXY_USERNAME, manualProxySettings.getUsername())
                 .putString(MANUAL_PROXY_PASSWORD, manualProxySettings.getPassword())
-                .putBoolean(PROXY_IS_SSL_ENABLED, isProxySSLEnabled)
                 .putString(SIGNING_ROLE_DATA, RoleData.toJson(roleData))
                 .build();
 

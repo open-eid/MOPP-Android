@@ -20,6 +20,8 @@
 package ee.ria.DigiDoc.android;
 
 import static ee.ria.DigiDoc.common.LoggingUtil.isLoggingEnabled;
+import static ee.ria.DigiDoc.common.ProxyUtil.getManualProxySettings;
+import static ee.ria.DigiDoc.common.ProxyUtil.getProxySetting;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -86,6 +88,10 @@ import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorNavigator;
+import ee.ria.DigiDoc.common.ManualProxy;
+import ee.ria.DigiDoc.common.ProxyConfig;
+import ee.ria.DigiDoc.common.ProxySetting;
+import ee.ria.DigiDoc.common.ProxyUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationConstants;
 import ee.ria.DigiDoc.configuration.ConfigurationManager;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
@@ -202,7 +208,13 @@ public class ApplicationApp extends android.app.Application {
     // Container configuration
 
     private void setupSignLib() {
-        SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider(), UserAgentUtil.getUserAgent(getApplicationContext()), isLoggingEnabled(getApplicationContext()));
+        ProxySetting proxySetting = getProxySetting(getApplicationContext());
+        ManualProxy manualProxy = getManualProxySettings(getApplicationContext());
+        ProxyConfig proxyConfig = ProxyUtil.getProxy(proxySetting, manualProxy);
+
+        SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider(),
+                UserAgentUtil.getUserAgent(getApplicationContext()), isLoggingEnabled(getApplicationContext()),
+                proxySetting, proxyConfig.manualProxy());
     }
 
     private void setupRxJava() {

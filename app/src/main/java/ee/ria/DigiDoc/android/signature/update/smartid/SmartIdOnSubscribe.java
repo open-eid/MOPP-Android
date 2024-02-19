@@ -31,7 +31,6 @@ import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_HOS
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_PASSWORD;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_PORT;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_USERNAME;
-import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.PROXY_IS_SSL_ENABLED;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.PROXY_SETTING;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SERVICE_FAULT;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SID_BROADCAST_ACTION;
@@ -96,15 +95,13 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
     private final String uuid;
     private final String personalCode;
     private final String country;
-    private final boolean isProxySSLEnabled;
     private final ProxySetting proxySetting;
     private final ManualProxy manualProxySettings;
     @Nullable private final RoleData roleData;
     private static final String SIGNING_TAG = "SmartId";
 
     public SmartIdOnSubscribe(Navigator navigator, SignedContainer container, Locale locale,
-                              String uuid, String personalCode, String country,
-                              boolean isProxySSLEnabled, ProxySetting proxySetting,
+                              String uuid, String personalCode, String country, ProxySetting proxySetting,
                               ManualProxy manualProxySettings, @Nullable RoleData roleData) {
         this.navigator = navigator;
         this.container = container;
@@ -113,7 +110,6 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         this.uuid = uuid;
         this.personalCode = personalCode;
         this.country = country;
-        this.isProxySSLEnabled = isProxySSLEnabled;
         this.proxySetting = proxySetting;
         this.manualProxySettings = manualProxySettings;
         this.roleData = roleData;
@@ -214,7 +210,6 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                 .putInt(MANUAL_PROXY_PORT, manualProxySettings.getPort())
                 .putString(MANUAL_PROXY_USERNAME, manualProxySettings.getUsername())
                 .putString(MANUAL_PROXY_PASSWORD, manualProxySettings.getPassword())
-                .putBoolean(PROXY_IS_SSL_ENABLED, isProxySSLEnabled)
                 .putString(SIGNING_ROLE_DATA, RoleData.toJson(roleData))
                 .build();
 

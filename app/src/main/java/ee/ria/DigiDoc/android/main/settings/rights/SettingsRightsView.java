@@ -97,6 +97,7 @@ public final class SettingsRightsView extends CoordinatorLayout {
     }
 
     public static void resetSettings(SettingsDataStore settingsDataStore) {
-        settingsDataStore.setIsRoleAskingEnabled(false);
+        settingsDataStore.setIsOpenAllFileTypesEnabled(true);
+        settingsDataStore.setIsScreenshotAllowed(false);
     }
 }

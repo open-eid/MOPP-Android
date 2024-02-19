@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.sign;
 
 import static ee.ria.DigiDoc.common.CommonConstants.DIR_SIVA_CERT;
 import static ee.ria.DigiDoc.common.CommonConstants.DIR_TSA_CERT;
+import static ee.ria.DigiDoc.common.ProxySetting.SYSTEM_PROXY;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -25,12 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import ee.ria.DigiDoc.common.EncryptedPreferences;
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.common.ManualProxy;
+import ee.ria.DigiDoc.common.ProxySetting;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
 import ee.ria.libdigidocpp.Conf;
@@ -59,7 +63,7 @@ public final class SignLib {
      * <p>
      * Unzips the schema, access certificate and initializes libdigidocpp.
      */
-    public static void init(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent, boolean isLoggingEnabled) {
+    public static void init(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent, boolean isLoggingEnabled, ProxySetting proxySetting, ManualProxy proxySettings) {
         initNativeLibs();
         try {
             initSchema(context);
@@ -67,7 +71,7 @@ public final class SignLib {
             Timber.log(Log.ERROR, e, "Init schema failed");
         }
 
-        initLibDigiDocpp(context, tsaUrlPreferenceKey, configurationProvider, userAgent, isLoggingEnabled);
+        initLibDigiDocpp(context, tsaUrlPreferenceKey, configurationProvider, userAgent, isLoggingEnabled, proxySetting, proxySettings);
 
     }
 
@@ -83,13 +87,17 @@ public final class SignLib {
         return digidoc.version();
     }
 
-    public static void overrideProxy(String host, int port, String username,
-                                     String password, boolean setTunnelSSL) {
-        DigiDocConf.instance().setProxyHost(host);
-        DigiDocConf.instance().setProxyPort(String.valueOf(port));
-        DigiDocConf.instance().setProxyUser(username);
-        DigiDocConf.instance().setProxyPass(password);
-        DigiDocConf.instance().setProxyTunnelSSL(setTunnelSSL);
+    public static void overrideProxy(String host, int port, String username, String password) {
+        if (Optional.ofNullable(host).isPresent()) {
+            DigiDocConf.instance().setProxyHost(host);
+        }
+        DigiDocConf.instance().setProxyPort(port != 0 ? String.valueOf(port) : "80");
+        if (Optional.ofNullable(username).isPresent()) {
+            DigiDocConf.instance().setProxyUser(username);
+        }
+        if (Optional.ofNullable(password).isPresent()) {
+            DigiDocConf.instance().setProxyPass(password);
+        }
     }
 
     private static void initNativeLibs() {
@@ -118,7 +126,9 @@ public final class SignLib {
     private static void initLibDigiDocpp(Context context, String tsaUrlPreferenceKey,
                                          ConfigurationProvider configurationProvider,
                                          String userAgent,
-                                         boolean isLoggingEnabled) {
+                                         boolean isLoggingEnabled,
+                                         ProxySetting proxySetting,
+                                         ManualProxy proxySettings) {
         String path = getSchemaDir(context).getAbsolutePath();
         try {
             Os.setenv("HOME", path, true);
@@ -126,7 +136,7 @@ public final class SignLib {
             Timber.log(Log.ERROR, e, "Setting HOME environment variable failed");
         }
 
-        initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider, isLoggingEnabled);
+        initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider, isLoggingEnabled, proxySetting, proxySettings);
         digidoc.initializeLib(userAgent, path);
     }
 
@@ -144,7 +154,9 @@ public final class SignLib {
 
     private static void initLibDigiDocConfiguration(Context context, String tsaUrlPreferenceKey,
                                                     ConfigurationProvider configurationProvider,
-                                                    boolean isLoggingEnabled) {
+                                                    boolean isLoggingEnabled,
+                                                    ProxySetting proxySetting,
+                                                    ManualProxy proxySettings) {
         DigiDocConf conf = new DigiDocConf(getSchemaDir(context).getAbsolutePath());
         Conf.init(conf.transfer());
         if (isLoggingEnabled || BuildConfig.BUILD_TYPE.contentEquals("debug")) {
@@ -159,16 +171,23 @@ public final class SignLib {
         String proxyPortPreferenceKey = context.getResources().getString(R.string.main_settings_proxy_port_key);
         String proxyUsernamePreferenceKey = context.getResources().getString(R.string.main_settings_proxy_username_key);
         String proxyPasswordPreferenceKey = context.getResources().getString(R.string.main_settings_proxy_password_key);
-        String proxySSLEnabledPreferenceKey = context.getResources().getString(R.string.main_settings_proxy_ssl_enabled_key);
 
         certBundle = configurationProvider.getCertBundle();
 
         forcePKCS12Certificate();
-        initProxy(context, proxyHostPreferenceKey, "",
-                proxyPortPreferenceKey, 80,
-                proxyUsernamePreferenceKey, "",
-                proxyPasswordPreferenceKey, "",
-                proxySSLEnabledPreferenceKey, true);
+        if (proxySetting == SYSTEM_PROXY) {
+            if (proxySettings != null) {
+                overrideProxy(proxySettings.getHost(), proxySettings.getPort(), proxySettings.getUsername(),
+                        proxySettings.getPassword());
+            } else {
+                overrideProxy("", 80, "", "");
+            }
+        } else {
+            initProxy(context, proxyHostPreferenceKey, "",
+                    proxyPortPreferenceKey, 80,
+                    proxyUsernamePreferenceKey, "",
+                    proxyPasswordPreferenceKey, "");
+        }
         overrideTSLUrl(configurationProvider.getTslUrl());
         overrideTSLCert(configurationProvider.getTslCerts());
         overrideSignatureValidationServiceUrl(context, sivaUrlPreferenceKey, configurationProvider.getSivaUrl());
@@ -255,8 +274,7 @@ public final class SignLib {
     private static void initProxy(Context context, String hostPreferenceKey, String hostDefaultValue,
                                   String portPreferenceKey, int portDefaultValue,
                                   String usernamePreferenceKey, String usernameDefaultValue,
-                                  String passwordPreferenceKey, String passwordDefaultValue,
-                                  String sslEnabledPreferenceKey, boolean sslEnabledDefaultValue) {
+                                  String passwordPreferenceKey, String passwordDefaultValue) {
         try {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences encryptedPreferences = EncryptedPreferences.getEncryptedPreferences(context);
@@ -266,8 +284,7 @@ public final class SignLib {
                         sharedPreferences.getString(hostPreferenceKey, hostDefaultValue),
                         sharedPreferences.getInt(portPreferenceKey, portDefaultValue),
                         sharedPreferences.getString(usernamePreferenceKey, usernameDefaultValue),
-                        encryptedPreferences.getString(passwordPreferenceKey, passwordDefaultValue),
-                        sharedPreferences.getBoolean(sslEnabledPreferenceKey, sslEnabledDefaultValue)
+                        encryptedPreferences.getString(passwordPreferenceKey, passwordDefaultValue)
                 );
             }
         } catch (IOException | GeneralSecurityException e) {

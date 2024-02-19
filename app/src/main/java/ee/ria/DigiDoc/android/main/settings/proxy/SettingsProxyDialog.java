@@ -28,7 +28,9 @@ import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.common.ManualProxy;
+import ee.ria.DigiDoc.common.ProxyConfig;
 import ee.ria.DigiDoc.common.ProxySetting;
+import ee.ria.DigiDoc.common.ProxyUtil;
 import ee.ria.DigiDoc.sign.SignLib;
 import timber.log.Timber;
 
@@ -43,7 +45,6 @@ public class SettingsProxyDialog extends Dialog {
     private final RadioButton noProxy;
     private final RadioButton systemProxy;
     private final RadioButton manualProxy;
-    private final CheckBox allowSSLConnections;
 
     private final TextInputEditText host;
     private final TextInputEditText port;
@@ -74,7 +75,6 @@ public class SettingsProxyDialog extends Dialog {
         noProxy = findViewById(R.id.mainSettingsProxyNoProxy);
         systemProxy = findViewById(R.id.mainSettingsProxyUseSystem);
         manualProxy = findViewById(R.id.mainSettingsProxyManual);
-        allowSSLConnections = findViewById(R.id.mainSettingsProxyAllowSSL);
 
         host = findViewById(R.id.mainSettingsProxyHost);
         port = findViewById(R.id.mainSettingsProxyPort);
@@ -90,7 +90,6 @@ public class SettingsProxyDialog extends Dialog {
 
         checkActiveProxySetting(settingsDataStore);
         checkManualProxySettings(settingsDataStore, manualProxySettings);
-        checkIsSSLForProxyEnabled(settingsDataStore);
 
     }
 
@@ -109,8 +108,6 @@ public class SettingsProxyDialog extends Dialog {
                 .subscribe(this::validatePortNumber));
         disposables.add(checkedChanges(proxyGroup).subscribe(setting ->
                 setProxySetting(settingsDataStore, setting)));
-        disposables.add(RxCompoundButton.checkedChanges(allowSSLConnections).subscribe(isEnabled ->
-                setIsSSLForProxyEnabled(settingsDataStore, isEnabled)));
     }
 
     @Override
@@ -118,19 +115,27 @@ public class SettingsProxyDialog extends Dialog {
         if (settingsDataStore != null) {
             ProxySetting currentProxySetting = settingsDataStore.getProxySetting();
             if (currentProxySetting.equals(MANUAL_PROXY)) {
-                manualProxySettings.setHost(host.getEditableText().toString());
-                String portNumber = port.getEditableText().toString();
+                manualProxySettings.setHost(host.getEditableText().toString().trim());
+                String portNumber = port.getEditableText().toString().trim();
                 try {
                     manualProxySettings.setPort(
                             portNumber.isEmpty() || !isValidPortNumber(portNumber) ? 80 :
-                                    Integer.parseInt(port.getEditableText().toString()));
+                                    Integer.parseInt(port.getEditableText().toString().trim()));
                 } catch (NumberFormatException nfe) {
                     Timber.log(Log.ERROR, nfe, "Unable to get the port number");
                     manualProxySettings.setPort(80);
                 }
-                manualProxySettings.setUsername(username.getEditableText().toString());
-                manualProxySettings.setPassword(password.getEditableText().toString());
+                manualProxySettings.setUsername(username.getEditableText().toString().trim());
+                manualProxySettings.setPassword(password.getEditableText().toString().trim());
                 setManualProxySettings(settingsDataStore, manualProxySettings);
+            } else if (currentProxySetting.equals(SYSTEM_PROXY)) {
+                ProxyConfig systemSettings = ProxyUtil.getProxy(currentProxySetting, null);
+                ManualProxy proxySettings = systemSettings.manualProxy();
+                if (proxySettings != null) {
+                    overrideLibdigidocppProxy(proxySettings);
+                    return;
+                }
+                clearProxySettings(settingsDataStore);
             } else {
                 clearProxySettings(settingsDataStore);
             }
@@ -152,8 +157,13 @@ public class SettingsProxyDialog extends Dialog {
             settingsDataStore.setProxyPort(80);
             settingsDataStore.setProxyUsername("");
             settingsDataStore.setProxyPassword(context, "");
-            settingsDataStore.setIsProxyForSSLEnabled(true);
         }
+        SignLib.overrideProxy("", 80, "", "");
+    }
+
+    public static void overrideLibdigidocppProxy(ManualProxy manualProxy) {
+        SignLib.overrideProxy(manualProxy.getHost(), manualProxy.getPort(),
+                manualProxy.getUsername(), manualProxy.getPassword());
     }
 
     private void checkActiveProxySetting(SettingsDataStore settingsDataStore) {
@@ -214,26 +224,7 @@ public class SettingsProxyDialog extends Dialog {
             settingsDataStore.setProxyPort(manualProxy.getPort());
             settingsDataStore.setProxyUsername(manualProxy.getUsername());
             settingsDataStore.setProxyPassword(navigator.activity(), manualProxy.getPassword());
-            SignLib.overrideProxy(manualProxy.getHost(), manualProxy.getPort(),
-                    manualProxy.getUsername(), manualProxy.getPassword(),
-                    settingsDataStore.getIsProxyForSSLEnabled());
-        }
-    }
-
-    private void checkIsSSLForProxyEnabled(SettingsDataStore settingsDataStore) {
-        if (settingsDataStore != null) {
-            boolean isSSLForProxyEnabled = settingsDataStore.getIsProxyForSSLEnabled();
-            allowSSLConnections.setChecked(isSSLForProxyEnabled);
-        }
-    }
-
-    private void setIsSSLForProxyEnabled(SettingsDataStore settingsDataStore, boolean isEnabled) {
-        if (settingsDataStore != null) {
-            settingsDataStore.setIsProxyForSSLEnabled(isEnabled);
-            SignLib.overrideProxy(settingsDataStore.getProxyHost(), settingsDataStore.getProxyPort(),
-                    settingsDataStore.getProxyUsername(),
-                    settingsDataStore.getProxyPassword(navigator.activity()),
-                    settingsDataStore.getIsProxyForSSLEnabled());
+            overrideLibdigidocppProxy(manualProxy);
         }
     }
 
@@ -250,7 +241,6 @@ public class SettingsProxyDialog extends Dialog {
         port.setEnabled(isEnabled);
         username.setEnabled(isEnabled);
         password.setEnabled(isEnabled);
-        allowSSLConnections.setEnabled(isEnabled);
     }
 
     private void validatePortNumber(String portNumber) {

@@ -101,8 +101,7 @@ final class SignatureAddSource {
                             Observable.create(new MobileIdOnSubscribe(navigator, container,
                                             localeService.applicationLocale(),
                                     settingsDataStore.getUuid(), mobileIdRequest.personalCode(),
-                                    mobileIdRequest.phoneNo(), settingsDataStore.getIsProxyForSSLEnabled(),
-                                    settingsDataStore.getProxySetting(),
+                                    mobileIdRequest.phoneNo(), settingsDataStore.getProxySetting(),
                                     settingsDataStore.getManualProxySettings(navigator.activity()), roleData)))
                     .switchMap(response -> {
                         String signature = response.signature();
@@ -140,7 +139,6 @@ final class SignatureAddSource {
                             Observable.create(new SmartIdOnSubscribe(navigator, container,
                                     localeService.applicationLocale(), settingsDataStore.getUuid(),
                                     smartIdRequest.personalCode(), smartIdRequest.country(),
-                                    settingsDataStore.getIsProxyForSSLEnabled(),
                                     settingsDataStore.getProxySetting(),
                                     settingsDataStore.getManualProxySettings(navigator.activity()), roleData)))
                     .switchMap(response -> {

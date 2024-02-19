@@ -348,16 +348,6 @@ public final class SettingsDataStore {
         }
     }
 
-    public void setIsProxyForSSLEnabled(boolean isEnabled) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(resources.getString(R.string.main_settings_proxy_ssl_enabled_key), isEnabled);
-        editor.commit();
-    }
-
-    public boolean getIsProxyForSSLEnabled() {
-        return preferences.getBoolean(resources.getString(R.string.main_settings_proxy_ssl_enabled_key), true);
-    }
-
     public void setProxyHost(String host) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(resources.getString(R.string.main_settings_proxy_host_key), host);

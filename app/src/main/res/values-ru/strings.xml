@@ -54,7 +54,6 @@
     <string name="main_settings_proxy_port">Порт</string>
     <string name="main_settings_proxy_username">Имя пользователя</string>
     <string name="main_settings_proxy_password">Пароль</string>
-    <string name="main_settings_proxy_allow_ssl">Включить прокси-сервер для подключения SSL</string>
     <string name="main_settings_role_and_address_button">Роль и адрес</string>
     <string name="main_settings_phone_no_title">Код страны и телефонный номер</string>
     <string name="main_settings_personal_code_title">Личный код</string>
