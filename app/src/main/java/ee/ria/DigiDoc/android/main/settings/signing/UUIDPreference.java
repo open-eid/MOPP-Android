@@ -27,6 +27,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,6 +44,8 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 public class UUIDPreference extends EditTextPreference {
 
     private final CheckBox checkBox;
+
+    private PreferenceViewHolder holder;
 
     public UUIDPreference(Context context) {
         this(context, null);
@@ -73,6 +76,9 @@ public class UUIDPreference extends EditTextPreference {
         setViewId(R.id.mainSettingsAccessToSigningService);
 
         setOnPreferenceChangeListener((preference, newValue) -> {
+            if (holder != null) {
+                setPreferenceContentDescription(holder);
+            }
             AccessibilityUtils.sendAccessibilityEvent(context, TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
             return true;
         });
@@ -91,5 +97,25 @@ public class UUIDPreference extends EditTextPreference {
         char[] password = new char[text.length()];
         Arrays.fill(password, '·');
         return new String(password);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
+
+        this.holder = holder;
+
+        setPreferenceContentDescription(holder);
+    }
+
+    private void setPreferenceContentDescription(PreferenceViewHolder holder) {
+        if (AccessibilityUtils.isTalkBackEnabled()) {
+            String buttonLabel = AccessibilityUtils.getButtonTranslation();
+
+            TextView summary = (TextView) holder.findViewById(android.R.id.summary);
+            if (summary != null) {
+                summary.setContentDescription(buttonLabel);
+            }
+        }
     }
 }

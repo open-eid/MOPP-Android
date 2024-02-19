@@ -22,6 +22,8 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
+import java.util.Locale;
+
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.common.TextUtil;
 
@@ -225,6 +227,15 @@ public class AccessibilityUtils {
         }
 
         return nameViewAccessibility.toString().toLowerCase();
+    }
+
+    public static String getButtonTranslation() {
+        Locale systemLanguage = Resources.getSystem().getConfiguration().getLocales().get(0);
+        return switch (systemLanguage.getLanguage()) {
+            case "et" -> "nupp";
+            case "ru" -> "кнопка";
+            default -> "button";
+        };
     }
 
     private static String combineMessages(CharSequence... messages) {
