@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.Application.Label"
             android:text="@string/container_title"
+            android:focusable="true"
             android:contentDescription="@string/container_title_accessibility"/>
 
         <TextView
@@ -29,6 +30,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceListItem"
             android:singleLine="true"
+            android:focusable="true"
             android:ellipsize="middle" />
     </LinearLayout>
 
@@ -39,6 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/material_list_text_first_position_margin_start"
         android:src="@drawable/ic_icon_edit"
+        android:focusable="true"
         android:contentDescription="@string/signature_update_name_update_button" />
 
     <ImageButton
@@ -48,6 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/material_menu_simple_padding_vertical"
         android:src="@drawable/ic_icon_save"
+        android:focusable="true"
         android:contentDescription="@string/signature_update_document_save_button"
         app:tint="@color/accent" />
 
