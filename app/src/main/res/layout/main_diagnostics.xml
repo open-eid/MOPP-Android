@@ -350,6 +350,7 @@
                         style="@style/MaterialTypography.Dense.Body1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:focusable="true"
                         android:text="@string/main_diagnostics_logging_switch" />
                 </LinearLayout>
 
@@ -364,6 +365,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/material_baseline_grid_3x"
                         android:text="@string/main_diagnostics_save_log"
+                        android:focusable="true"
                         android:visibility="gone" />
                 </LinearLayout>
 
@@ -377,6 +379,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/material_baseline_grid_3x"
+                        android:focusable="true"
                         android:text="@string/main_diagnostics_configuration_check_for_update_button" />
 
                 </LinearLayout>
@@ -391,6 +394,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/material_baseline_grid_3x"
+                        android:focusable="true"
                         android:text="@string/main_diagnostics_configuration_save_diagnostics_button" />
 
                 </LinearLayout>

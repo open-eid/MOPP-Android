@@ -52,6 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/material_typography_dense_display_3_text_size"
                 android:text="@string/signature_home_create_button"
+                android:focusable="true"
                 android:contentDescription="@string/signature_home_create_text_accessibility" />
 
             <Button
@@ -61,6 +62,7 @@
                 android:text="@string/main_home_recent"
                 android:background="@drawable/transparent_button"
                 android:textColor="@color/accent"
+                android:focusable="true"
                 android:contentDescription="@string/main_home_recent_accessibility" />
 
         </LinearLayout>

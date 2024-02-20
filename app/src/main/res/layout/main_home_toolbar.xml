@@ -20,6 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:src="@drawable/ic_more_vert"
+        android:touchscreenBlocksFocus="false"
+        android:focusable="true"
         android:contentDescription="@string/main_home_menu_button" />
 
 </merge>
