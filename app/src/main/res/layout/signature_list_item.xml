@@ -8,18 +8,16 @@
     android:gravity="center_vertical"
     android:background="?attr/selectableItemBackground">
 
-    <ee.ria.DigiDoc.android.signature.list.MiddleMultilineTextView
+    <TextView
         android:id="@id/signatureListItemName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginStart="@dimen/material_list_text_first_position_margin_start"
         android:layout_marginEnd="@dimen/material_list_text_last_position_margin_end"
+        android:layout_marginBottom="4dp"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:maxLines="4"
-        android:ellipsize="middle"
-        android:fontFamily="monospace"
-        />
+        android:maxLines="4" />
 
     <ImageButton
         android:id="@id/signatureListItemRemoveButton"
