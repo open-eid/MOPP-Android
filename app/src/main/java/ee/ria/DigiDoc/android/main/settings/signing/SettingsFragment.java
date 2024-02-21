@@ -1,6 +1,5 @@
 package ee.ria.DigiDoc.android.main.settings.signing;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,9 +17,6 @@ import androidx.preference.PreferenceScreen;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.takisoft.preferencex.PreferenceFragmentCompat;
-
-import java.util.List;
-import java.util.Locale;
 
 import ee.ria.DigiDoc.R;
 
