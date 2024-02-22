@@ -82,7 +82,13 @@ public final class SmartIdStatusMessages {
                     .build();
 
     public static String message(Context context, ProcessStatus status) {
-        Timber.log(Log.DEBUG, context.getString(MESSAGES.get(status)));
+        if (status.equals(ProcessStatus.TOO_MANY_REQUESTS)) {
+            Timber.log(Log.DEBUG, String.format("%s - %s", "Smart-ID", context.getString(MESSAGES.get(status), context.getString(
+                    R.string.signature_update_signature_add_method_smart_id))));
+            return context.getString(MESSAGES.get(status), context.getString(
+                            R.string.signature_update_signature_add_method_smart_id));
+        }
+        Timber.log(Log.DEBUG, String.format("%s - %s", "Smart-ID", context.getString(MESSAGES.get(status))));
         return context.getString(MESSAGES.get(status));
     }
 }
