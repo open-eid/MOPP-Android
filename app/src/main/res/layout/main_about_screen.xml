@@ -25,6 +25,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:importantForAccessibility="no"
+            android:touchscreenBlocksFocus="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:accessibilityPaneTitle="@string/main_about_title"
             app:layout_scrollFlags="scroll|enterAlways"
             />
@@ -49,7 +52,6 @@
                 android:id="@id/mainAboutList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:importantForAccessibility="no"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
         </LinearLayout>
 
