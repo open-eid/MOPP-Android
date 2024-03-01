@@ -343,14 +343,32 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/material_baseline_grid_3x" >
+                    android:layout_marginTop="@dimen/material_baseline_grid_3x"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/MaterialTypography.Dense.Body1"
+                        android:textSize="16sp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/main_diagnostics_logging_switch"
+                        android:importantForAccessibility="no"
+                        android:layout_weight="2">
+                    </TextView>
 
                     <androidx.appcompat.widget.SwitchCompat
                         android:id="@id/mainDiagnosticsLogging"
-                        style="@style/MaterialTypography.Dense.Body1"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/main_diagnostics_logging_switch" />
+                        android:focusable="true"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="0dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:importantForAccessibility="yes"
+                        android:layout_gravity="end"
+                        android:contentDescription="@string/main_diagnostics_logging_switch">
+                    </androidx.appcompat.widget.SwitchCompat>
                 </LinearLayout>
 
                 <LinearLayout

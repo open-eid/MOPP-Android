@@ -2,8 +2,6 @@ package ee.ria.DigiDoc.android.main.settings.signing;
 
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-import static ee.ria.DigiDoc.android.main.settings.signing.siva.SivaSetting.DEFAULT;
-import static ee.ria.DigiDoc.common.CommonConstants.DIR_SIVA_CERT;
 import static ee.ria.DigiDoc.common.CommonConstants.DIR_TSA_CERT;
 
 import android.content.Context;
