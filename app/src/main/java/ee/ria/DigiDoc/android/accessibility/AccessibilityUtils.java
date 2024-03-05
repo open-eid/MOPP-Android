@@ -235,12 +235,7 @@ public class AccessibilityUtils {
         return combinedMessage.toString();
     }
 
-    /** @noinspection deprecation*/
     private static AccessibilityEvent getAccessibilityEvent() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            return new AccessibilityEvent();
-        } else {
-            return AccessibilityEvent.obtain();
-        }
+        return new AccessibilityEvent();
     }
 }

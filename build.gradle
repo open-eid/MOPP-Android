@@ -31,9 +31,9 @@ allprojects {
 }
 
 ext {
-    compileSdkVersion = 33
-    minSdkVersion = 28
-    targetSdkVersion = 33
+    compileSdkVersion = 34
+    minSdkVersion = 30
+    targetSdkVersion = 34
 
     androidxVersion = '1.6.0'
     androidxAppCompatVersion = '1.6.1'
