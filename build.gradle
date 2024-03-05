@@ -80,7 +80,7 @@ ext {
     cdoc4jVersion = '1.4'
     slf4jVersion = '2.0.7'
     junitVersion = '5.10.0'
-    truthVersion = '1.1.3'
+    truthVersion = '1.4.2'
     mockitoVersion = '5.4.0'
     jacksonVersion = '2.15.2'
     firebaseCrashlyticsVersion = '32.2.2'
