@@ -55,6 +55,10 @@
     <string name="main_settings_proxy_port">Порт</string>
     <string name="main_settings_proxy_username">Имя пользователя</string>
     <string name="main_settings_proxy_password">Пароль</string>
+    <string name="main_settings_proxy_check_connection">Проверьте настройки интернета</string>
+    <string name="main_settings_proxy_check_connection_success">Настройки Интернета верны, услуга подтверждения действительности доступна!</string>
+    <string name="main_settings_proxy_check_connection_unsuccessful">Услуга подтверждения действительности не доступна!</string>
+    <string name="main_settings_proxy_check_username_and_password">Проверьте имя пользователя и пароль прокси</string>
     <string name="main_settings_role_and_address_button">Роль и адрес</string>
     <string name="main_settings_phone_no_title">Код страны и телефонный номер</string>
     <string name="main_settings_personal_code_title">Личный код</string>

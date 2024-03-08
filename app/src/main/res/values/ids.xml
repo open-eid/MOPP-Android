@@ -87,6 +87,7 @@
     <item type="id" name="mainSettingsProxyPort" />
     <item type="id" name="mainSettingsProxyUsername" />
     <item type="id" name="mainSettingsProxyPassword" />
+    <item type="id" name="mainSettingsProxyCheckInternetConnectionButton" />
     <item type="id" name="mainSettingsRoleAndAddressCategory" />
     <item type="id" name="mainSettingsOpenAllFileTypes" />
     <item type="id" name="mainSettingsAllowScreenshots" />

@@ -56,6 +56,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -266,7 +267,16 @@ public class MobileSignService extends Worker {
                 broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
                 Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID. SSL handshake failed. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                 return Result.failure();
+            } catch (SocketTimeoutException ste) {
+                broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE));
+                Timber.log(Log.ERROR, ste, "Failed to sign with Mobile-ID. Unable to connect to service. Exception message: %s. Exception: %s", ste.getMessage(), Arrays.toString(ste.getStackTrace()));
+                return Result.failure();
             } catch (IOException e) {
+                if (e.getMessage() != null && e.getMessage().contains("CONNECT: 403")) {
+                    broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE));
+                    Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID. REST API certificate request failed. Received HTTP status 403. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                    return Result.failure();
+                }
                 broadcastFault(defaultError(e.getMessage()));
                 Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID. REST API certificate request failed. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                 return Result.failure();
