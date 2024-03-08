@@ -94,7 +94,7 @@ public class ServiceGenerator {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
                 .proxy(proxySetting == ProxySetting.NO_PROXY ? Proxy.NO_PROXY : proxyConfig.proxy())
                 .proxyAuthenticator(proxySetting == ProxySetting.NO_PROXY ? Authenticator.NONE : proxyConfig.authenticator())
-                .connectTimeout(120, TimeUnit.SECONDS)
+                .connectTimeout(5, TimeUnit.SECONDS)
                 .readTimeout(120, TimeUnit.SECONDS)
                 .writeTimeout(120, TimeUnit.SECONDS)
                 .pingInterval(3, TimeUnit.SECONDS)

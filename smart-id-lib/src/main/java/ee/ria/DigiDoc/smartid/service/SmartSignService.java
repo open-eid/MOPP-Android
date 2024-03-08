@@ -53,6 +53,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -237,7 +238,16 @@ public class SmartSignService extends Worker {
                     broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
                     Timber.log(Log.ERROR, e, "SSL handshake failed - Session status response. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                     return Result.failure();
+                } catch (SocketTimeoutException ste) {
+                    broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE));
+                    Timber.log(Log.ERROR, ste, "Failed to sign with Smart-ID - Unable to connect to service. Exception message: %s. Exception: %s", ste.getMessage(), Arrays.toString(ste.getStackTrace()));
+                    return Result.failure();
                 } catch (IOException e) {
+                    if (e.getMessage() != null && e.getMessage().contains("CONNECT: 403")) {
+                        broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE));
+                        Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID - REST API certificate request failed. Received HTTP status 403. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                        return Result.failure();
+                    }
                     broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, e.getMessage()));
                     Timber.log(Log.ERROR, e, "REST API certificate request failed. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                     return Result.failure();
