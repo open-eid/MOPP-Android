@@ -33,17 +33,20 @@ public class SivaUtil {
 
             FileStream fileStream = files.get(0);
             String extension = getFileExtension(FilenameUtils.getName(fileStream.displayName())).toLowerCase(Locale.US);
-            return SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension) || ("pdf".equals(extension) &&
-                    SignedContainer.isSignedPDFFile(fileStream.source(), context, fileStream.displayName())) ||
+
+            return SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension) &&
+                    !FileUtil.isXades(context, fileStream.source(), fileStream.displayName()) ||
+                    ("pdf".equals(extension) && SignedContainer.isSignedPDFFile(fileStream.source(), context, fileStream.displayName())) ||
                     FileUtil.isCades(context, fileStream.source(), fileStream.displayName());
         });
     }
 
-    public static boolean isSivaConfirmationNeeded(File containerFile, DataFile dataFile) {
+    public static boolean isSivaConfirmationNeeded(File containerFile, DataFile dataFile) throws Exception {
         String extension = getFileExtension(dataFile.name()).toLowerCase(Locale.US);
         boolean isSignedPdfDataFile =
                 extension.equals("pdf") && dataFile.name().equals(containerFile.getName());
-        return isSignedPdfDataFile || SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension);
+        return (isSignedPdfDataFile || SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension)) &&
+                SignedContainer.isXades(SignedContainer.open(containerFile, false));
     }
 
     public static void showSivaConfirmationDialog(ConfirmationDialog sivaConfirmationDialog) {

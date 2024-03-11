@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Files;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -149,7 +150,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                 .create(containerAdd.isExistingContainer(), false,
                                         containerAdd.containerFile(), false,
                                         false,
-                                        SignedContainer.isAsicsFile(containerAdd.containerFile().getName()) ?
+                                        SignedContainer.isAsicsFile(containerAdd.containerFile()) ?
                                                 SignedFilesUtil.getContainerDataFile(signatureContainerDataSource,
                                                         SignedContainer.open(containerAdd.containerFile(), isSivaConfirmed), isSivaConfirmed) : null, isSivaConfirmed))))
                 .doOnError(throwable1 -> {
@@ -184,7 +185,8 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         ClickableDialogUtil.makeLinksInDialogClickable(sivaConfirmationDialog);
                         sivaConfirmationDialog.cancels()
                                 .flatMap(next -> {
-                                    if (validFiles.size() == 1 && SignedContainer.isAsicsFile(validFiles.get(0).displayName().toLowerCase())) {
+                                    if (validFiles.size() == 1 && TIMESTAMP_CONTAINER_EXTENSIONS.contains(
+                                            Files.getFileExtension(validFiles.get(0).displayName().toLowerCase()))) {
                                         sivaConfirmationDialog.dismiss();
                                         return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, false);
                                     } else {

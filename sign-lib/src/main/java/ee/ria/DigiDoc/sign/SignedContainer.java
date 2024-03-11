@@ -68,6 +68,7 @@ import ee.ria.DigiDoc.common.exception.InvalidProxySettingsException;
 import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
 import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
+import ee.ria.DigiDoc.sign.utils.ContainerMimeTypeUtil;
 import ee.ria.DigiDoc.sign.utils.Function;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
@@ -699,13 +700,20 @@ public abstract class SignedContainer {
         return false;
     }
 
-    public static boolean isAsicsFile(String fileName) {
-        return ASICS_EXTENSIONS.contains(Files.getFileExtension(fileName).toLowerCase());
+    public static boolean isAsicsFile(File file) {
+        String containerExtension = ContainerMimeTypeUtil.getContainerExtension(file);
+        return ASICS_EXTENSIONS.contains(containerExtension.toLowerCase());
     }
 
     public static boolean isCades(List<Signature> signatures) {
         return signatures.stream()
                 .map(Signature::signatureFormat)
                 .anyMatch(format -> format.toLowerCase().contains("cades"));
+    }
+
+    public static boolean isXades(SignedContainer container) {
+        ImmutableList<Signature> signatures = container.signatures();
+        return signatures.stream()
+                .anyMatch(signature -> signature.signatureFormat().contains("BES"));
     }
 }

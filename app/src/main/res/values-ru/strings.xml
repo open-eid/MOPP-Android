@@ -529,6 +529,7 @@
     <string name="empty_file_error">Пустой файл нельзя добавить в контейнер.</string>
     <string name="empty_file_message">В контейнер добавлен пустой файл. Для подписания удалите из контейнера пустой файл.</string>
     <string name="cades_file_message">Этот контейнер содержит подпись CAdES. К данному контейнеру нельзя добавить или удалить из него подпись.</string>
+    <string name="xades_file_message">Речь идет о конверте ASICS, содержащемся в подписи XADES. К данному контейнеру нельзя добавить или удалить из него подпись.</string>
 
     <!--  TODO: tõlked  -->
     <string name="document">Документ</string>

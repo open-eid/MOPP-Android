@@ -84,7 +84,7 @@ public final class SignatureListScreen extends Controller implements Screen,
                         .map(ignored -> {
                             if (sivaConfirmationContainerFile != null &&
                                     SignedContainer.isContainer(getApplicationContext(), sivaConfirmationContainerFile) &&
-                                    SignedContainer.isAsicsFile(sivaConfirmationContainerFile.getName())) {
+                                    SignedContainer.isAsicsFile(sivaConfirmationContainerFile)) {
                                 try {
                                     SignedContainer signedContainer = SignedContainer.open(sivaConfirmationContainerFile, false);
                                     if (signedContainer.dataFiles().size() == 1 &&
