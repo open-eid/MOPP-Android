@@ -51,6 +51,7 @@ import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.SignedContainer;
+import ee.ria.DigiDoc.sign.utils.ContainerMimeTypeUtil;
 import timber.log.Timber;
 
 public final class IntentUtils {

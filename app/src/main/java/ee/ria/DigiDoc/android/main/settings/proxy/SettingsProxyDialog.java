@@ -343,7 +343,7 @@ public class SettingsProxyDialog extends Dialog {
     }
 
     private void checkConnection() {
-        System.out.println("Checking connection");
+        Timber.log(Log.DEBUG, "Checking connection");
 
         saveProxySettings(false);
 

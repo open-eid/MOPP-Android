@@ -104,6 +104,13 @@ final class SignatureUpdateAdapter extends
                 builder.add(cadesItem);
             }
 
+            boolean isXades = SignedContainer.isXades(container) && SignedContainer.isAsicsFile(container.file());
+            XadesItem xadesItem = XadesItem.create();
+
+            if (isXades) {
+                builder.add(xadesItem);
+            }
+
             if (nestedFile == null || !isSivaConfirmed) {
                 if (isCades && !builder.build().contains(cadesItem)) {
                     builder.add(cadesItem);
@@ -145,7 +152,7 @@ final class SignatureUpdateAdapter extends
                         }
                     }
                 } else {
-                    if (ASICS_TIMESTAMP_CONTAINERS.contains(Files.getFileExtension(container.name()).toLowerCase())) {
+                    if (ASICS_TIMESTAMP_CONTAINERS.contains(Files.getFileExtension(container.name()).toLowerCase()) && !isXades && !isCades) {
                         createAsicsTimestampView(builder, container);
                     } else {
                         createRegularSignatureView(builder, container, isNestedContainer);
@@ -310,6 +317,8 @@ final class SignatureUpdateAdapter extends
                     return new EmptyViewHolder(itemView);
                 case R.layout.signature_update_list_item_cades:
                     return new CadesViewHolder(itemView);
+                case R.layout.signature_update_list_item_xades:
+                    return new XadesViewHolder(itemView);
                 case R.layout.signature_update_list_item_name:
                     return new NameViewHolder(itemView);
                 case R.layout.signature_update_list_item_subhead:
@@ -377,6 +386,26 @@ final class SignatureUpdateAdapter extends
             cadesFileView.setText(resources.getString(R.string.cades_file_message));
             cadesFileView.setContentDescription(cadesFileView.getText());
             cadesFileView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    static final class XadesViewHolder extends UpdateViewHolder<XadesItem> {
+
+        private final Resources resources;
+
+        private final TextView xadesFileView;
+
+        XadesViewHolder(View itemView) {
+            super(itemView);
+            resources = itemView.getResources();
+            xadesFileView = itemView.findViewById(R.id.signatureUpdateListStatusXadesFile);
+        }
+
+        @Override
+        void bind(SignatureUpdateAdapter adapter, XadesItem item) {
+            xadesFileView.setText(resources.getString(R.string.xades_file_message));
+            xadesFileView.setContentDescription(xadesFileView.getText().toString().toLowerCase());
+            xadesFileView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -810,6 +839,15 @@ final class SignatureUpdateAdapter extends
         static CadesItem create() {
             return new AutoValue_SignatureUpdateAdapter_CadesItem(
                     R.layout.signature_update_list_item_cades);
+        }
+    }
+    
+    @AutoValue
+    static abstract class XadesItem extends Item {
+
+        static XadesItem create() {
+            return new AutoValue_SignatureUpdateAdapter_XadesItem(
+                    R.layout.signature_update_list_item_xades);
         }
     }
 

@@ -139,10 +139,14 @@ class DocumentViewIntent implements Intent, Action {
         } else if (containerFileExtension.equals("pdf") && documentFileExtension.equals("pdf")) {
             return create(containerFile, document, false);
         } else {
-            boolean isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(containerFile, document);
-            return create(containerFile, document, isConfirmationNeeded);
+            try {
+                boolean isConfirmationNeeded = SivaUtil.isSivaConfirmationNeeded(containerFile, document);
+                return create(containerFile, document, isConfirmationNeeded);
+            } catch (Exception e) {
+                Timber.log(Log.ERROR, e, "Unable to get document file from container");
+                return create(containerFile, document, false);
+            }
         }
-
     }
 
     static DocumentViewIntent cancel() {

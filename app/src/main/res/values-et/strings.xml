@@ -534,6 +534,7 @@
     <string name="empty_file_error">Tühja faili ei saa lisada ümbrikusse.</string>
     <string name="empty_file_message">Ümbrikule on lisatud tühi fail. Allkirjastamiseks eemalda ümbrikust tühi fail.</string>
     <string name="cades_file_message">Tegemist on CAdES allkirja sisaldava ümbrikuga. Sellele ümbrikule ei saa allkirja lisada ega eemaldada.</string>
+    <string name="xades_file_message">Tegemist on XADES allkirja sisalduva ASICS ümbrikuga. Sellele ümbrikule ei saa allkirja lisada ega eemaldada.</string>
 
     <!--  TODO: tõlked  -->
     <string name="signature_removed">Allkiri eemaldatud</string>

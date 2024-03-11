@@ -72,7 +72,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 } else {
                     navigator.execute(Transaction.push(SignatureUpdateScreen
                             .create(true, false, containerFile, false, false,
-                                    SignedContainer.isAsicsFile(containerFile.getName()) ?
+                                    SignedContainer.isAsicsFile(containerFile) ?
                                             SignedFilesUtil.getContainerDataFile(signatureContainerDataSource,
                                                     SignedContainer.open(containerFile, action.isSivaConfirmed()), action.isSivaConfirmed()) : null, action.isSivaConfirmed())));
                     try {

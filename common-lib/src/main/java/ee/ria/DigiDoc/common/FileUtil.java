@@ -223,6 +223,56 @@ public class FileUtil {
         }
     }
 
+    public static boolean isXades(Context context, ByteSource byteSource, String fileName) {
+        try {
+            File tempContainerFilesDirectory = new File(context.getFilesDir(), "tempContainerFiles");
+            createDirectoryIfNotExist(tempContainerFilesDirectory.toString());
+            File containerFile = getFile(byteSource,
+                    new File(tempContainerFilesDirectory, fileName).getPath());
+            boolean fileExists = isFileInZip(containerFile.getPath(), "signatures.xml");
+            removeAllFilesInFolder(tempContainerFilesDirectory.toPath());
+            Files.deleteIfExists(tempContainerFilesDirectory.toPath());
+            return fileExists;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static void removeAllFilesInFolder(Path dir) throws IOException {
+        if (!Files.isDirectory(dir)) {
+            logMessage(Level.WARNING,dir + " is not a directory");
+            return;
+        }
+        try (var stream = Files.walk(dir)) {
+            stream.filter(Files::isRegularFile)
+                    .forEach(file -> {
+                        try {
+                            Files.delete(file);
+                        } catch (IOException e) {
+                            logMessage(Level.WARNING,"Failed to delete file: " + file);
+                        }
+                    });
+        }
+    }
+
+    public static void createDirectoryIfNotExist(String directory) {
+        File destinationDirectory = new File(directory);
+        if (!destinationDirectory.exists()) {
+            boolean isDirsCreated = destinationDirectory.mkdirs();
+            if (isDirsCreated) {
+                logMessage(Level.INFO, "Directories created for " + directory);
+            }
+        }
+    }
+
+    private static boolean isRawUrl(String url) {
+        if (url == null || url.length() == 0) {
+            return false;
+        }
+
+        return url.startsWith("raw:");
+    }
+
     public static boolean isFileInZip(String zipFilePath, String fileNameToFind) throws IOException {
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFilePath))) {
             ZipEntry entry;
@@ -244,27 +294,9 @@ public class FileUtil {
         return file;
     }
 
-    public static void createDirectoryIfNotExist(String directory) {
-        File destinationDirectory = new File(directory);
-        if (!destinationDirectory.exists()) {
-            boolean isDirsCreated = destinationDirectory.mkdirs();
-            if (isDirsCreated) {
-                logMessage(Level.INFO, "Directories created for " + directory);
-            }
-        }
-    }
-
     public static void logMessage(Level level, String message) {
         if (BuildConfig.DEBUG && logger.isLoggable(level)) {
             logger.log(level, message);
         }
-    }
-
-    private static boolean isRawUrl(String url) {
-        if (url == null || url.length() == 0) {
-            return false;
-        }
-
-        return url.startsWith("raw:");
     }
 }

@@ -275,6 +275,7 @@
     <item type="id" name="signatureUpdateListStatusInvalid" />
     <item type="id" name="signatureUpdateListStatusEmptyFile" />
     <item type="id" name="signatureUpdateListStatusCadesFile" />
+    <item type="id" name="signatureUpdateListStatusXadesFile" />
     <item type="id" name="signatureUpdateListName" />
     <item type="id" name="signatureUpdateListNameUpdateButton" />
     <item type="id" name="signatureUpdateListNameSaveButton" />
