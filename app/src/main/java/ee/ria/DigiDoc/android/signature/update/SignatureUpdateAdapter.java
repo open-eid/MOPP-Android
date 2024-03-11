@@ -47,8 +47,8 @@ import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.common.TextUtil;
-import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
+import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignatureStatus;
 import ee.ria.DigiDoc.sign.SignedContainer;
@@ -95,12 +95,26 @@ final class SignatureUpdateAdapter extends
         }
 
         if (container != null) {
+            boolean isAsics = SignedContainer.isAsicsFile(container.file());
+            XadesItem xadesItem = XadesItem.create();
+            if (isAsics) {
+                builder.add(xadesItem);
+            }
+
             if (nestedFile == null || !isSivaConfirmed) {
+                if (!builder.build().contains(xadesItem)) {
+                    builder.add(xadesItem);
+                }
                 createRegularDataFilesView(builder, context, name, container, isNestedContainer, isExistingContainer);
             }
 
             if (isExistingContainer) {
                 if (nestedFile != null && isSivaConfirmed) {
+                    boolean isNestedAsics = SignedContainer.isAsicsFile(nestedFile);
+                    if (isNestedAsics && !builder.build().contains(xadesItem)) {
+                        builder.add(xadesItem);
+                    }
+
                     try {
                         SignedContainer signedContainerNested = SignedContainer.open(nestedFile);
                         if (!container.dataFiles().isEmpty() && container.dataFiles().size() == 1 &&
@@ -280,6 +294,8 @@ final class SignatureUpdateAdapter extends
                     return new StatusViewHolder(itemView);
                 case R.layout.signature_update_list_item_empty:
                     return new EmptyViewHolder(itemView);
+                case R.layout.signature_update_list_item_xades:
+                    return new XadesViewHolder(itemView);
                 case R.layout.signature_update_list_item_name:
                     return new NameViewHolder(itemView);
                 case R.layout.signature_update_list_item_subhead:
@@ -327,6 +343,26 @@ final class SignatureUpdateAdapter extends
             emptyFileView.setText(resources.getString(R.string.empty_file_message));
             emptyFileView.setContentDescription(emptyFileView.getText());
             emptyFileView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    static final class XadesViewHolder extends UpdateViewHolder<XadesItem> {
+
+        private final Resources resources;
+
+        private final TextView xadesFileView;
+
+        XadesViewHolder(View itemView) {
+            super(itemView);
+            resources = itemView.getResources();
+            xadesFileView = itemView.findViewById(R.id.signatureUpdateListStatusXadesFile);
+        }
+
+        @Override
+        void bind(SignatureUpdateAdapter adapter, XadesItem item) {
+            xadesFileView.setText(resources.getString(R.string.xades_file_message));
+            xadesFileView.setContentDescription(xadesFileView.getText().toString().toLowerCase());
+            xadesFileView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -751,6 +787,15 @@ final class SignatureUpdateAdapter extends
         static EmptyItem create() {
             return new AutoValue_SignatureUpdateAdapter_EmptyItem(
                     R.layout.signature_update_list_item_empty);
+        }
+    }
+
+    @AutoValue
+    static abstract class XadesItem extends Item {
+
+        static XadesItem create() {
+            return new AutoValue_SignatureUpdateAdapter_XadesItem(
+                    R.layout.signature_update_list_item_xades);
         }
     }
 

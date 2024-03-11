@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader;
 import com.tom_roush.pdfbox.pdmodel.PDDocument;
 import com.tom_roush.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
@@ -65,6 +64,7 @@ import ee.ria.DigiDoc.common.TextUtil;
 import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
 import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
+import ee.ria.DigiDoc.sign.utils.ContainerMimeTypeUtil;
 import ee.ria.DigiDoc.sign.utils.Function;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
@@ -667,7 +667,8 @@ public abstract class SignedContainer {
 
         return false;
     }
-    public static boolean isAsicsFile(String fileName) {
-        return ASICS_EXTENSIONS.contains(Files.getFileExtension(fileName).toLowerCase());
+    public static boolean isAsicsFile(File file) {
+        String containerExtension = ContainerMimeTypeUtil.getContainerExtension(file);
+        return ASICS_EXTENSIONS.contains(containerExtension.toLowerCase());
     }
 }

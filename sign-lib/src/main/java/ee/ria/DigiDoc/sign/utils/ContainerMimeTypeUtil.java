@@ -1,4 +1,4 @@
-package ee.ria.DigiDoc.android.utils;
+package ee.ria.DigiDoc.sign.utils;
 
 import android.util.Log;
 
@@ -9,7 +9,7 @@ import timber.log.Timber;
 
 public class ContainerMimeTypeUtil {
     public static String getContainerExtension(File file) {
-        String containerMimeType = "";
+        String containerMimeType;
         try {
             containerMimeType = SignedContainer.getMediaType(file);
         } catch (Exception e) {

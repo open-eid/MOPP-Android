@@ -48,7 +48,6 @@ import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.main.settings.rights.SettingsRightsScreen;
 import ee.ria.DigiDoc.android.main.sharing.SharingScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
-import ee.ria.DigiDoc.android.utils.ContainerMimeTypeUtil;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
 import ee.ria.DigiDoc.android.utils.RootUtil;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
@@ -60,6 +59,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.sign.SignedContainer;
+import ee.ria.DigiDoc.sign.utils.ContainerMimeTypeUtil;
 import timber.log.Timber;
 
 public final class Activity extends AppCompatActivity {
