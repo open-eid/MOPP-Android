@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2024 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,34 @@
 
 package ee.ria.DigiDoc.idcard;
 
+import android.content.Context;
+
+import ee.ria.DigiDoc.common.exception.SignatureUpdateError;
+
 /**
  * PIN1/PIN2/PUK code verification failed.
  */
-public class CodeVerificationException extends IdCardException {
+public class CodeVerificationException extends IdCardException implements SignatureUpdateError {
+
+    private CodeType type;
+    private String message;
 
     CodeVerificationException(CodeType type) {
         super(type + " verification failed");
+    }
+
+    public CodeVerificationException(CodeType type, String message) {
+        super(type + " verification failed");
+        this.type = type;
+        this.message = message;
+    }
+
+    public CodeType getType() {
+        return type;
+    }
+
+    @Override
+    public String getMessage(Context context) {
+        return message;
     }
 }

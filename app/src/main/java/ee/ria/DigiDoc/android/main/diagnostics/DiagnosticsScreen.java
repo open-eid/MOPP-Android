@@ -10,19 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
-import java.util.List;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
-import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.navigator.conductor.ConductorScreen;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-public final class DiagnosticsScreen extends ConductorScreen implements Screen, MviView<Intent, ViewState> {
+public final class DiagnosticsScreen extends ConductorScreen implements MviView<Intent, ViewState> {
 
     private final ViewDisposables disposables = new ViewDisposables();
     private DiagnosticsViewModel viewModel;
@@ -36,21 +34,20 @@ public final class DiagnosticsScreen extends ConductorScreen implements Screen, 
         disposables.add(viewModel.viewStates().subscribe(this::render));
         viewModel.process(intents());
 
-
         return super.onCreateView(inflater, container, savedViewState);
     }
 
     @Override
     protected void onContextAvailable(@NonNull Context context) {
         super.onContextAvailable(context);
-        viewModel = Application.component(context).navigator()
+        viewModel = ApplicationApp.component(context).navigator()
                 .viewModel(getInstanceId(), DiagnosticsViewModel.class);
     }
 
     @Override
     protected void onContextUnavailable() {
-        viewModel = null;
         super.onContextUnavailable();
+        viewModel = null;
     }
 
     public static DiagnosticsScreen create() {

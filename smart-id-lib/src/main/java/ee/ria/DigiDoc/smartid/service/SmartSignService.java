@@ -1,6 +1,6 @@
 /*
  * smart-id-lib
- * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2024 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,24 +21,38 @@
 package ee.ria.DigiDoc.smartid.service;
 
 import static ee.ria.DigiDoc.common.SigningUtil.checkSigningCancelled;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CERTIFICATE_CERT_BUNDLE;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_REQUEST;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_HOST;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_PASSWORD;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_PORT;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.MANUAL_PROXY_USERNAME;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_CHANNEL;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_PERMISSION_CODE;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.PROXY_SETTING;
+import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.SIGNING_ROLE_DATA;
 
-import android.Manifest;
-import android.app.IntentService;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.util.Log;
 
-import androidx.core.app.ActivityCompat;
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
+import androidx.work.ForegroundInfo;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -49,9 +63,12 @@ import java.util.List;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
 import ee.ria.DigiDoc.common.ContainerWrapper;
+import ee.ria.DigiDoc.common.ManualProxy;
 import ee.ria.DigiDoc.common.MessageUtil;
 import ee.ria.DigiDoc.common.NotificationUtil;
 import ee.ria.DigiDoc.common.PowerUtil;
+import ee.ria.DigiDoc.common.ProxySetting;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
 import ee.ria.DigiDoc.common.exception.SigningCancelledException;
@@ -70,7 +87,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class SmartSignService extends IntentService {
+public class SmartSignService extends Worker {
 
     private static final String NOTIFICATION_NAME = "Smart-ID";
     private static final String PEM_BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
@@ -82,13 +99,46 @@ public class SmartSignService extends IntentService {
     private static final long SUBSEQUENT_STATUS_REQUEST_DELAY_IN_MILLISECONDS = 5 * 1000;
     private static final long TIMEOUT_CANCEL = 80 * 1000;
     private static boolean isCancelled = false;
+    private final String roleData;
 
     private SIDRestServiceClient SIDRestServiceClient;
 
-    public SmartSignService() {
-        super(TAG);
+    private final String signatureRequest;
+    private final ArrayList<String> certificateCertBundle;
+
+    private final ProxySetting proxySetting;
+    private final ManualProxy manualProxySettings;
+
+    public SmartSignService(@NonNull Context context, @NonNull WorkerParameters workerParameters) {
+        super(context, workerParameters);
         Timber.tag(TAG);
+
         isCancelled = false;
+
+        roleData = workerParameters.getInputData().getString(SIGNING_ROLE_DATA);
+
+        signatureRequest = workerParameters.getInputData().getString(CREATE_SIGNATURE_REQUEST);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String certBundleList = sharedPreferences.getString(CERTIFICATE_CERT_BUNDLE, "");
+
+        Type arraylistType = new TypeToken<ArrayList<String>>() {}.getType();
+        certificateCertBundle = new Gson().fromJson(certBundleList, arraylistType);
+
+        try {
+            proxySetting = ProxySetting.valueOf(workerParameters.getInputData().getString(PROXY_SETTING));
+        } catch (IllegalArgumentException iae) {
+            Timber.log(Log.ERROR, iae, "Proxy setting cannot be empty");
+            broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR));
+            throw iae;
+        }
+
+        manualProxySettings = new ManualProxy(
+                workerParameters.getInputData().getString(MANUAL_PROXY_HOST),
+                workerParameters.getInputData().getInt(MANUAL_PROXY_PORT, 0),
+                workerParameters.getInputData().getString(MANUAL_PROXY_USERNAME),
+                workerParameters.getInputData().getString(MANUAL_PROXY_PASSWORD)
+        );
     }
 
     public static void setIsCancelled(boolean isCancelled) {
@@ -97,56 +147,47 @@ public class SmartSignService extends IntentService {
 
     private void createNotificationChannel() {
         Timber.log(Log.DEBUG, "Creating notification channel");
-        NotificationUtil.createNotificationChannel(this, NOTIFICATION_CHANNEL, NOTIFICATION_NAME);
+        NotificationUtil.createNotificationChannel(getApplicationContext(), NOTIFICATION_CHANNEL, NOTIFICATION_NAME);
     }
 
     public void showEmptyNotification() {
         createNotificationChannel();
-        Notification notification = NotificationUtil.createNotification(this, NOTIFICATION_CHANNEL,
+        Notification notification = NotificationUtil.createNotification(getApplicationContext(), NOTIFICATION_CHANNEL,
                 R.mipmap.ic_launcher, null, null, NotificationCompat.PRIORITY_MIN, true);
 
-        startForeground(NOTIFICATION_PERMISSION_CODE, notification);
+        setForegroundAsync(new ForegroundInfo(NOTIFICATION_PERMISSION_CODE, notification));
     }
 
-    private void sendNotification(Context context, String challenge, Notification notification) {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 || ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            NotificationManagerCompat.from(this)
-                    .notify(Integer.parseInt(challenge), notification);
-        }
-    }
-
+    @NonNull
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public Result doWork() {
         if (PowerUtil.isPowerSavingMode(getApplicationContext())) {
             showEmptyNotification();
         }
 
         Timber.log(Log.DEBUG, "Handling smart sign intent");
 
-        if (intent != null) {
-            SmartIDSignatureRequest request =
-                    (SmartIDSignatureRequest) intent.getSerializableExtra(SmartSignConstants.CREATE_SIGNATURE_REQUEST);
-
-            ArrayList<String> certificateCertBundle = intent.getStringArrayListExtra(SmartSignConstants.CERTIFICATE_CERT_BUNDLE);
-
+        SmartIDSignatureRequest request = getRequestFromData(signatureRequest);
+        RoleData roleDataRequest = getRoleDataFromData(roleData);
             if (request != null) {
                 try {
                     if (certificateCertBundle != null) {
                         Timber.log(Log.DEBUG, request.toString());
                         SIDRestServiceClient = ServiceGenerator.createService(SIDRestServiceClient.class,
-                                request.getUrl(), certificateCertBundle, getApplicationContext());
+                                request.getUrl() + "/", certificateCertBundle,
+                                proxySetting, manualProxySettings, getApplicationContext());
                     }
                 } catch (CertificateException | NoSuchAlgorithmException e) {
                     broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
                     Timber.log(Log.ERROR, "SSL handshake failed. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
-                    return;
+                    return Result.failure();
                 }
 
 
                 if (!UUIDUtil.isValid(request.getRelyingPartyUUID())) {
                     broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.INVALID_ACCESS_RIGHTS));
                     Timber.log(Log.DEBUG, "%s - Relying Party UUID not in valid format", request.getRelyingPartyUUID());
-                    return;
+                    return Result.failure();
                 }
 
                 try {
@@ -156,13 +197,13 @@ public class SmartSignService extends IntentService {
                             semanticsIdentifier, getCertificateRequest(request)), true);
                     if (sessionStatusResponse == null) {
                         Timber.log(Log.ERROR, "No session status response");
-                        return;
+                        return Result.failure();
                     }
 
                     Timber.log(Log.DEBUG, "Session status response: %s", sessionStatusResponse.toString());
 
                     ContainerWrapper containerWrapper = new ContainerWrapper(request.getContainerPath());
-                    String base64Hash = containerWrapper.prepareSignature(getCertificatePem(sessionStatusResponse.getCert().getValue()));
+                    String base64Hash = containerWrapper.prepareSignature(getCertificatePem(sessionStatusResponse.getCert().getValue()), roleDataRequest);
                     if (base64Hash != null && !base64Hash.isEmpty()) {
                         Timber.log(Log.DEBUG, "Broadcasting signature challenge response");
                         broadcastSmartCreateSignatureChallengeResponse(base64Hash);
@@ -176,34 +217,42 @@ public class SmartSignService extends IntentService {
                                 sessionStatusResponse.getResult().getDocumentNumber(), requestString), false);
                         if (sessionStatusResponse == null) {
                             Timber.log(Log.ERROR, "Unable to get session status response");
-                            return;
+                            return Result.failure();
                         }
                         Timber.log(Log.DEBUG, "SessionStatusResponse: %s", sessionStatusResponse);
                         Timber.log(Log.DEBUG, "Finalizing signature...");
                         containerWrapper.finalizeSignature(sessionStatusResponse.getSignature().getValue());
                         Timber.log(Log.DEBUG, "Broadcasting signature status response");
                         broadcastSmartCreateSignatureStatusResponse(sessionStatusResponse);
+                        return Result.success();
                     } else {
                         Timber.log(Log.DEBUG, "Base64 (Prepare signature) is empty or null");
+                        return Result.failure();
                     }
                 } catch (UnknownHostException e) {
                     broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE));
                     Timber.log(Log.ERROR, e, "REST API certificate request failed. Unknown host. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                    return Result.failure();
                 } catch (SSLPeerUnverifiedException e) {
                     broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
                     Timber.log(Log.ERROR, e, "SSL handshake failed - Session status response. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                    return Result.failure();
                 } catch (IOException e) {
                     broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, e.getMessage()));
                     Timber.log(Log.ERROR, e, "REST API certificate request failed. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                    return Result.failure();
                 } catch (CertificateException e) {
                     broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, e.getMessage()));
                     Timber.log(Log.ERROR, "Generating certificate failed. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                    return Result.failure();
                 } catch (InterruptedException e) {
                     Timber.log(Log.ERROR, e, "Waiting for next call to SID REST API interrupted. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                     Thread.currentThread().interrupt();
+                    return Result.failure();
                 } catch (NoSuchAlgorithmException e) {
                     broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, e.getMessage()));
                     Timber.log(Log.ERROR, "Generating verification code failed. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                    return Result.failure();
                 } catch (Exception e) {
                     Timber.log(Log.ERROR, e, "Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                     if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
@@ -215,29 +264,30 @@ public class SmartSignService extends IntentService {
                     } else if (e.getMessage() != null && e.getMessage().contains("Certificate status: revoked")) {
                         broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.CERTIFICATE_REVOKED));
                         Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID - Certificate status: revoked. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                    } else if (e.getMessage() != null && e.getMessage().contains("Failed to connect")) {
+                        broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE));
+                        Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID - Failed to connect to host. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                    } else if (e.getMessage() != null && e.getMessage().startsWith("Failed to create ssl connection with host")) {
+                        broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.INVALID_SSL_HANDSHAKE));
+                        Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID - Failed to create ssl connection with host. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                     } else {
                         broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, e.getMessage()));
                         Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                     }
+                    return Result.failure();
                 }
             } else {
                 Timber.log(Log.ERROR, "Invalid request");
                 throw new IllegalStateException("Invalid request");
             }
-        }
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     private String getCertificatePem(String cert) {
         return PEM_BEGIN_CERT + "\n" + cert + "\n" + PEM_END_CERT;
     }
 
-    private SessionStatusResponse doSessionStatusRequestLoop(Call<SessionResponse> request, boolean certRequest) throws IOException {
-        try {
+    private SessionStatusResponse doSessionStatusRequestLoop(Call<SessionResponse> request, boolean certRequest) throws IOException, SigningCancelledException {
             long timeout = 0;
             SessionResponse sessionResponse = handleRequest(request);
             if (sessionResponse == null) {
@@ -276,13 +326,7 @@ public class SmartSignService extends IntentService {
             }
             broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.TIMEOUT));
             Timber.log(Log.DEBUG, "Request timeout (TIMEOUT)");
-        } catch (UnknownHostException e) {
-            broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE, e.getMessage()));
-            Timber.log(Log.ERROR, "REST API session status request failed. Unknown host. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
-        } catch (SigningCancelledException sce) {
-            broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.USER_REFUSED));
-            Timber.log(Log.ERROR, sce, "Failed to sign with Smart-ID. Technical or general error. Exception message: %s. Exception: %s", sce.getMessage(), Arrays.toString(sce.getStackTrace()));
-        }
+
         return null;
     }
 
@@ -291,7 +335,7 @@ public class SmartSignService extends IntentService {
         Intent localIntent = new Intent(SmartSignConstants.SID_BROADCAST_ACTION)
                 .putExtra(SmartSignConstants.SID_BROADCAST_TYPE_KEY, SmartSignConstants.SERVICE_FAULT)
                 .putExtra(SmartSignConstants.SERVICE_FAULT, ServiceFault.toJson(serviceFault));
-        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
     }
 
     private void broadcastSmartCreateSignatureStatusResponse(SessionStatusResponse response) {
@@ -302,14 +346,14 @@ public class SmartSignService extends IntentService {
                 .putExtra(SmartSignConstants.CREATE_SIGNATURE_STATUS,
                         smartIdServiceResponse);
         Timber.log(Log.DEBUG, "Smart-ID service response: " + smartIdServiceResponse);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
     }
 
     private void broadcastSmartCreateSignatureSelectDevice() {
         Timber.log(Log.DEBUG, "User selecting device");
         Intent localIntent = new Intent(SmartSignConstants.SID_BROADCAST_ACTION)
                 .putExtra(SmartSignConstants.SID_BROADCAST_TYPE_KEY, SmartSignConstants.CREATE_SIGNATURE_DEVICE);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
     }
 
     private void broadcastSmartCreateSignatureChallengeResponse(String base64Hash) throws NoSuchAlgorithmException {
@@ -318,7 +362,7 @@ public class SmartSignService extends IntentService {
                 .putExtra(SmartSignConstants.SID_BROADCAST_TYPE_KEY, SmartSignConstants.CREATE_SIGNATURE_CHALLENGE)
                 .putExtra(SmartSignConstants.CREATE_SIGNATURE_CHALLENGE,
                         VerificationCodeUtil.calculateSmartIdVerificationCode(base64Hash));
-        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(localIntent);
     }
 
     private SmartIDServiceResponse generateSmartIdResponse(SessionStatusResponse response) {
@@ -400,5 +444,33 @@ public class SmartSignService extends IntentService {
         Timber.log(Log.DEBUG, "Smart-ID request: isSuccessful: %s, status: %s, message: %s, body: %s, errorBody: %s",
                 httpResponse.isSuccessful(), httpResponse.code(), httpResponse.message(), httpResponse.body(), httpResponse.errorBody());
         return httpResponse.body();
+    }
+
+    private SmartIDSignatureRequest getRequestFromData(String signatureRequest) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            SmartIDSignatureRequest smartIDSignatureRequest = objectMapper.readValue(signatureRequest, SmartIDSignatureRequest.class);
+            Timber.log(Log.DEBUG, "Smart-ID request from data: %s", smartIDSignatureRequest.toString());
+            return smartIDSignatureRequest;
+        } catch (JsonProcessingException e) {
+            broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR));
+            Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID. Failed to process signature request JSON. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+        }
+
+        return null;
+    }
+
+    private RoleData getRoleDataFromData(String roleData) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            RoleData roleDataRequest = objectMapper.readValue(roleData, RoleData.class);
+            Timber.log(Log.DEBUG, "Role data from data: %s", roleDataRequest != null ? roleDataRequest.toString() : "No role data");
+            return roleDataRequest;
+        } catch (JsonProcessingException e) {
+            broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR));
+            Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID. Failed to process role data request JSON. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+        }
+
+        return null;
     }
 }

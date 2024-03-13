@@ -10,13 +10,17 @@
         android:id="@id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_insetEdge="top">
+        app:layout_insetEdge="top"
+        android:accessibilityHeading="true"
+        android:contentDescription="@string/crypto_recipients_title"
+        >
 
         <android.widget.Toolbar
             android:id="@id/toolbar"
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:accessibilityHeading="true" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -33,7 +37,18 @@
             android:inputType="textFilter|textMultiLine"
             android:autoSizeTextType="uniform"
             android:minHeight="@dimen/material_baseline_grid_6x"
-            android:background="@drawable/bottom_border_background" />
+            android:background="@drawable/bottom_border_background"
+            android:contentDescription="@string/crypto_recipients_search" />
+
+        <TextView
+            android:id="@id/cryptoRecipientsSearchLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/MaterialTypography.Dense.Body1"
+            android:gravity="center"
+            android:layout_marginVertical="@dimen/material_list_normal_padding_vertical"
+            android:text="@string/crypto_recipients_search"
+            android:importantForAccessibility="no" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@id/cryptoRecipientsList"

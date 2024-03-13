@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@id/mainSettingsProxyBackButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:padding="@dimen/material_list_normal_padding_vertical"
+                android:background="@null"
+                app:srcCompat="@drawable/abc_ic_ab_back_material"
+                android:contentDescription="@string/back" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/MaterialTypography.Regular.Title"
+                android:accessibilityHeading="true"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="11dp"
+                android:autoSizeStepGranularity="1dp"
+                android:text="@string/main_settings_proxy_button"
+                android:contentDescription="@string/main_settings_proxy_button"
+                android:paddingVertical="@dimen/material_baseline_grid_1x"
+                android:layout_weight="2"
+                android:layout_height="0dp"
+                android:layout_width="match_parent">
+            </TextView>
+
+            <RadioGroup
+                android:id="@id/mainSettingsProxyGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <RadioButton
+                    android:id="@id/mainSettingsProxyNoProxy"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11dp"
+                    android:autoSizeStepGranularity="1dp"
+                    android:paddingTop="14dp"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp"
+                    android:text="@string/main_settings_proxy_no_proxy" />
+
+                <RadioButton
+                    android:id="@id/mainSettingsProxyUseSystem"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11dp"
+                    android:autoSizeStepGranularity="1dp"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="8dp"
+                    android:text="@string/main_settings_proxy_use_system" />
+
+                <RadioButton
+                    android:id="@id/mainSettingsProxyManual"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11dp"
+                    android:autoSizeStepGranularity="1dp"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="14dp"
+                    android:text="@string/main_settings_proxy_manual" />
+            </RadioGroup>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:minHeight="@dimen/material_baseline_grid_1x"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="11dp"
+                android:autoSizeMaxTextSize="30dp"
+                android:autoSizeStepGranularity="1dp"
+                android:text="@string/main_settings_proxy_host" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:hint="@string/main_settings_proxy_host"
+                app:hintEnabled="false"
+                app:errorEnabled="true"
+                app:expandedHintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@id/mainSettingsProxyHost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:imeOptions="actionDone"
+                    android:maxLines="1"
+                    android:minHeight="@dimen/material_baseline_grid_4x"
+                    android:background="@drawable/bottom_border_background" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:minHeight="@dimen/material_baseline_grid_1x"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="11dp"
+                android:autoSizeMaxTextSize="30dp"
+                android:autoSizeStepGranularity="1dp"
+                android:text="@string/main_settings_proxy_port" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@id/mainSettingsProxyPortLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:hint="@string/main_settings_proxy_port"
+                app:hintEnabled="false"
+                app:errorEnabled="true"
+                app:expandedHintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@id/mainSettingsProxyPort"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:imeOptions="actionDone"
+                    android:maxLines="1"
+                    android:minHeight="@dimen/material_baseline_grid_4x"
+                    android:background="@drawable/bottom_border_background" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:minHeight="@dimen/material_baseline_grid_1x"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="11dp"
+                android:autoSizeMaxTextSize="30dp"
+                android:autoSizeStepGranularity="1dp"
+                android:text="@string/main_settings_proxy_username" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:hint="@string/main_settings_proxy_username"
+                app:hintEnabled="false"
+                app:errorEnabled="true"
+                app:expandedHintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@id/mainSettingsProxyUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:imeOptions="actionDone"
+                    android:maxLines="1"
+                    android:minHeight="@dimen/material_baseline_grid_4x"
+                    android:background="@drawable/bottom_border_background" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:minHeight="@dimen/material_baseline_grid_1x"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="11dp"
+                android:autoSizeMaxTextSize="30dp"
+                android:autoSizeStepGranularity="1dp"
+                android:text="@string/main_settings_proxy_password" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:hint="@string/main_settings_proxy_password"
+                app:hintEnabled="false"
+                app:errorEnabled="true"
+                app:expandedHintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@id/mainSettingsProxyPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:imeOptions="actionDone"
+                    android:maxLines="1"
+                    android:minHeight="@dimen/material_baseline_grid_4x"
+                    android:background="@drawable/bottom_border_background" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

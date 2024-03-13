@@ -4,6 +4,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+
+import androidx.annotation.Nullable;
 
 import java.io.File;
 
@@ -28,6 +31,7 @@ import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdRequest;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse;
 import ee.ria.DigiDoc.sign.SignedContainer;
@@ -84,10 +88,14 @@ final class SignatureAddSource {
         }
     }
 
+    Observable<Result.SignatureAddResult> showRoleView(int method) {
+        return Observable.just(Result.SignatureAddResult.showRoleView(method));
+    }
+
     Observable<? extends SignatureAddResponse> sign(File containerFile,
                                                     SignatureAddRequest request,
                                                     Navigator navigator,
-                                                    android.content.Intent intent) {
+                                                    @Nullable RoleData roleData) {
         if (request instanceof MobileIdRequest) {
             MobileIdRequest mobileIdRequest = (MobileIdRequest) request;
             if (mobileIdRequest.rememberMe()) {
@@ -100,14 +108,16 @@ final class SignatureAddSource {
             return signatureContainerDataSource
                     .get(containerFile)
                     .flatMapObservable(container ->
-                            Observable.create(new MobileIdOnSubscribe(navigator, intent, container,
+                            Observable.create(new MobileIdOnSubscribe(navigator, container,
                                             localeService.applicationLocale(),
                                     settingsDataStore.getUuid(), mobileIdRequest.personalCode(),
-                                    mobileIdRequest.phoneNo())))
+                                    mobileIdRequest.phoneNo(), settingsDataStore.getProxySetting(),
+                                    settingsDataStore.getManualProxySettings(navigator.activity()), roleData)))
                     .switchMap(response -> {
                         String signature = response.signature();
-                        if (signature != null) {
-                            navigator.activity().findViewById(R.id.signatureUpdateMobileIdCancelButton).setVisibility(View.GONE);
+                        Button mobileIdCancelButton = navigator.activity().findViewById(R.id.signatureUpdateMobileIdCancelButton);
+                        if (mobileIdCancelButton != null && signature != null) {
+                            mobileIdCancelButton.setVisibility(View.GONE);
                             return signatureContainerDataSource
                                     .addSignature(containerFile, signature)
                                     .toObservable()
@@ -136,13 +146,16 @@ final class SignatureAddSource {
             return signatureContainerDataSource
                     .get(containerFile)
                     .flatMapObservable(container ->
-                            Observable.create(new SmartIdOnSubscribe(navigator, intent, container,
-                                    settingsDataStore.getUuid(), smartIdRequest.personalCode(),
-                                    smartIdRequest.country())))
+                            Observable.create(new SmartIdOnSubscribe(navigator, container,
+                                    localeService.applicationLocale(), settingsDataStore.getUuid(),
+                                    smartIdRequest.personalCode(), smartIdRequest.country(),
+                                    settingsDataStore.getProxySetting(),
+                                    settingsDataStore.getManualProxySettings(navigator.activity()), roleData)))
                     .switchMap(response -> {
                         SessionStatusResponse.ProcessStatus processStatus = response.status();
-                        if (SessionStatusResponse.ProcessStatus.OK.equals(processStatus)) {
-                            navigator.activity().findViewById(R.id.signatureUpdateSmartIdCancelButton).setVisibility(View.GONE);
+                        Button smartIdCancelButton = navigator.activity().findViewById(R.id.signatureUpdateSmartIdCancelButton);
+                        if (smartIdCancelButton != null && SessionStatusResponse.ProcessStatus.OK.equals(processStatus)) {
+                            smartIdCancelButton.setVisibility(View.GONE);
                         }
                         return Observable.just(response);
                     })
@@ -153,11 +166,17 @@ final class SignatureAddSource {
                     .onErrorResumeNext(Observable::error);
         } else if (request instanceof NFCRequest) {
             NFCRequest nfcRequest = (NFCRequest) request;
-            /* fixme: Should we remember card? (Lauris) */
-
+            if (nfcRequest.rememberMe()) {
+                settingsDataStore.setCan(nfcRequest.can());
+            } else {
+                settingsDataStore.setCan(EMPTY_VALUE);
+            }
             Single<SignedContainer> s = signatureContainerDataSource.get(containerFile);
             Observable<NFCResponse> obs = s.flatMapObservable(container -> {
-                        return Observable.create(new NFCOnSubscribe(navigator, intent, container, settingsDataStore.getUuid(), nfcRequest.getCan(), nfcRequest.getPin2()));
+                    String can = nfcRequest.can();
+                    String pin2 = nfcRequest.pin2();
+                    NFCOnSubscribe nfcsub = new NFCOnSubscribe(navigator, container, can, pin2, roleData);
+                    return Observable.create(nfcsub);
                 });
             return obs.switchMap(response -> {
                         SessionStatusResponse.ProcessStatus processStatus = response.status();
@@ -176,7 +195,7 @@ final class SignatureAddSource {
                                     .filter(dataResponse -> dataResponse.token() != null)
                                     .switchMapSingle(dataResponse ->
                                             idCardService.sign(dataResponse.token(), container,
-                                                    idCardRequest.pin2())).firstOrError())
+                                                    idCardRequest.pin2(), roleData)).firstOrError())
                     .map(IdCardResponse::success)
                     .toObservable()
                     .onErrorResumeNext(error -> {
@@ -206,10 +225,12 @@ final class SignatureAddSource {
         }
     }
 
-    public Single<SignedContainer> sign(String signatureValue, byte[] dataToSign, SignedContainer container) {
+    public Single<SignedContainer> sign(String signatureValue, byte[] dataToSign,
+                                        SignedContainer container,
+                                        @Nullable RoleData roleData) {
         return Single
                 .fromCallable(() -> container.sign(ByteString.of(dataToSign),
-                        signData -> ByteString.encodeUtf8(signatureValue)))
+                        signData -> ByteString.encodeUtf8(signatureValue), roleData))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

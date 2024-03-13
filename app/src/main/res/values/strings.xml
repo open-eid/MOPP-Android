@@ -16,7 +16,7 @@
     <string name="main_home_menu_help_url_short">link www.id.ee</string>
     <string name="main_home_menu_help_url">https://www.id.ee/en/id-help/</string>
     <string name="main_home_menu_accessibility">ACCESSIBILITY</string>
-    <string name="main_home_menu_recent">RECENT DOCUMENTS</string>
+    <string name="main_home_recent">RECENT DOCUMENTS</string>
     <string name="main_home_menu_settings">SETTINGS</string>
     <string name="main_home_menu_about">INFO</string>
     <string name="main_home_menu_diagnostics">DIAGNOSTICS</string>
@@ -24,6 +24,7 @@
     <!-- Main Accessibility -->
     <string name="main_accessibility_title">Accessibility</string>
 
+    <string name="main_accessibility_link">More information can be found on <a href="https://www.id.ee/ligipaasetavuse-teatis/">here</a>.</string>
     <string name="main_accessibility_introduction">RIA DigiDoc is designed to comply with the WCAG 2.1 AA accessibility guidelines. This means that the RIA DigiDoc application has been developed using the principles that the application should be usable by the blind and people with visual, mobility, and strength impairments.</string>
     <string name="main_accessibility_introduction_2">Accessibility can be improved by using built-in assistive tools on your smart device. You can find an overview of the main assistive tools below.</string>
     <string name="main_accessibility_introduction_screen_reader_title">Screen reader</string>
@@ -43,16 +44,28 @@
 
     <!-- Main Settings -->
     <string name="main_settings_title">Settings</string>
+    <string name="main_settings_use_default_settings_button_title">USE DEFAULT SETTINGS</string>
+    <string name="main_settings_rights">Permissions</string>
+    <string name="main_settings_proxy_button">Proxy</string>
+    <string name="main_settings_proxy_no_proxy">No proxy</string>
+    <string name="main_settings_proxy_use_system">Use system proxy settings</string>
+    <string name="main_settings_proxy_manual">Manual proxy configuration</string>
+    <string name="main_settings_proxy_host">Host</string>
+    <string name="main_settings_proxy_port">Port</string>
+    <string name="main_settings_proxy_username">Username</string>
+    <string name="main_settings_proxy_password">Password</string>
+    <string name="main_settings_role_and_address_button">Role and address</string>
     <string name="main_settings_phone_no_title">Country code and phone number</string>
     <string name="main_settings_personal_code_title">Personal code</string>
     <string name="main_settings_tsa_url_title">Access to Time-Stamping service</string>
     <string name="main_settings_uuid_title">Access to mobile-ID and Smart-ID service</string>
     <string name="main_settings_tsa_url_use_default">Use default</string>
-    <string name="main_settings_role_title">Role</string>
+    <string name="main_settings_ask_role_and_address_title">Ask role and address info on signing</string>
+    <string name="main_settings_role_title">Role / resolution</string>
     <string name="main_settings_city_title">City</string>
     <string name="main_settings_county_title">State</string>
     <string name="main_settings_country_title">Country</string>
-    <string name="main_settings_postal_code_title">ZIP code</string>
+    <string name="main_settings_postal_code_title">Zip</string>
     <string name="main_settings_signature_profile_title">Default file type</string>
     <string name="main_settings_open_all_filetypes_title">Allow app to use all file types (requires app restart)</string>
     <string name="main_settings_allow_screenshots_title">Allow screenshots (requires app restart)</string>
@@ -61,6 +74,10 @@
     <string name="main_settings_timestamp_cert_valid_to_title">Valid to: </string>
     <string name="main_settings_timestamp_cert_add_certificate_button">ADD CERTIFICATE</string>
     <string name="main_settings_timestamp_cert_show_certificate_button">SHOW CERTIFICATE</string>
+    <string name="main_settings_siva_service_title">Access to Digital Signature Validation Service SiVa</string>
+    <string name="main_settings_siva_default_access_title">Use default access</string>
+    <string name="main_settings_siva_default_manual_access_title">Use manually configured access</string>
+    <string name="main_settings_siva_certificate_title">Digital Signature Validation Service SiVa SSL certificate</string>
 
     <!-- Main About -->
     <string name="main_about_title">Info</string>
@@ -112,13 +129,16 @@
     <string name="signature_update_title_created">Signing</string>
     <string name="signature_update_title_existing">Container verification</string>
     <string name="signature_update_name_update_button">Edit container name</string>
+    <string name="signature_update_name_update_voice_button">Edit</string>
     <string name="signature_update_name_update_name">Container name</string>
     <string name="signature_update_name_update_error_exists">Container with this name already exists</string>
     <string name="signature_update_name_update_error_invalid">Container name invalid</string>
     <string name="signature_update_documents_title">Container files</string>
     <string name="signature_update_documents_add_error_exists">File already exists in the container</string>
     <string name="signature_update_document_remove_button">Remove file</string>
+    <string name="signature_update_document_remove_voice_button">Remove</string>
     <string name="signature_update_document_save_button">Save file</string>
+    <string name="signature_update_document_save_voice_button">Save</string>
     <string name="signature_update_remove_document_confirmation_message">Remove file from container?</string>
     <string name="signature_update_remove_last_document_confirmation_message">You are about to remove the last file in the container, it is removed along with the container.</string>
     <string name="signature_update_cancel_file_removal_button">Cancel file removal</string>
@@ -156,6 +176,7 @@
     <string name="signature_update_signature_remove_error">Could not remove signature from the container</string>
     <string name="signature_update_container_load_error">Error opening container</string>
     <string name="signature_update_send_button">SHARE</string>
+    <string name="signature_update_save_button">SAVE</string>
     <string name="signature_update_signature_add_button">SIGN</string>
 
     <string name="signature_update_signature_type_timestamp">Container timestamps</string>
@@ -174,6 +195,10 @@
     <string name="signature_update_signature_add_error">Something went wrong</string>
     <string name="signature_update_signature_add_error_title">Failed to sign container</string>
 
+    <string name="signature_update_signature_role_and_address_title">ROLE AND ADDRESS</string>
+    <string name="signature_update_signature_role_and_address_title_accessibility">Role and address</string>
+    <string name="signature_update_signature_role_and_address_info_title">Enter your role and address info</string>
+
     <string name="signature_update_signature_error_message_additional_information">Additional information</string>
     <string name="signature_update_signature_error_message_details">Details</string>
 
@@ -181,8 +206,6 @@
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Failed to send request. The number of unsuccessful request from this IP address has been exceeded. Please try again later.</string>
     <string name="signature_update_signature_error_message_invalid_time_slot">Please check your smart device time. https://www.id.ee/en/article/ria-digidoc-error-please-check-your-smart-device-time/</string>
     <string name="signature_update_signature_error_message_certificate_revoked">Certificate status revoked</string>
-
-    <string name="signature_update_signature_error_invalid_ssl_handshake">SSL handshake failed. Check your application settings or software upgrades</string>
 
     <string name="signature_update_signature_selected_method_mobile_id">Signing option Mobile-ID, tab %1$d of %2$d</string>
     <string name="signature_update_signature_selected_method_smart_id">Signing option Smart-ID, tab %1$d of %2$d</string>
@@ -259,7 +282,7 @@
 
     <string name="signature_update_id_card_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Reader found. Insert your ID-card into the reader.</string>
-    <string name="signature_update_id_card_progress_message_card_detected">ID-card found. Requesting information...</string>
+    <string name="signature_update_id_card_progress_message_card_detected">ID-card found. Requesting information…</string>
     <string name="signature_update_id_card_sign_message">Ready to sign with ID-card</string>
     <string name="signature_update_id_card_sign_data">%1$s %2$s (%3$s)</string>
     <string name="signature_update_id_card_sign_pin2">Enter PIN2</string>
@@ -270,10 +293,10 @@
 
     <string name="id_card_sign_pin_invalid_length">%1$s code must be at least %2$s digits long</string>
 
-    <string name="signature_update_nfc_message">Enter your CAN number and PIN 2 code to sign with ID-Card using NFC</string>
+    <string name="signature_update_nfc_message">Enter your CAN and PIN 2 code to sign with ID-Card using NFC</string>
     <string name="signature_update_nfc_can">CAN code on card</string>
     <string name="signature_update_nfc_pin2">PIN 2 code</string>
-    <string name="signature_update_nfc_hold">Please hold your ID Card against phone until the signing process is completed</string>
+    <string name="signature_update_nfc_hold">Please hold your ID Card against the phone until the signing process is completed</string>
     <string name="signature_update_nfc_detected">Card detected. Please keep holding it until the signing process is completed</string>
 
     <!-- Signature Details -->
@@ -318,6 +341,7 @@
     <string name="crypto_create_encrypt_success_message">ENCRYPTION SUCCEEDED</string>
     <string name="crypto_create_decrypt_success_message">DECRYPTION SUCCESSFUL</string>
     <string name="crypto_create_name_update_button">Edit container name</string>
+    <string name="crypto_create_data_file">Encrypted file</string>
     <string name="crypto_create_data_files_title">Encrypted files</string>
     <string name="crypto_create_data_files_add_error_exists">File already exists in the container</string>
     <string name="crypto_create_data_file_remove_button">Remove file</string>
@@ -332,6 +356,7 @@
     <string name="crypto_create_encrypt_error_no_recipients">No recipients specified</string>
     <string name="crypto_create_decrypt_button">DECRYPT</string>
     <string name="crypto_create_decrypt_positive_button">Decrypt</string>
+    <string name="crypto_create_save_button">SAVE</string>
     <string name="crypto_create_send_button">SHARE</string>
     <string name="crypto_create_error">Something went wrong with encryption</string>
 
@@ -342,6 +367,7 @@
     <string name="crypto_recipient_add_button_added">ADDED</string>
 
     <string name="crypto_recipients_title">Add recipients</string>
+    <string name="crypto_recipients_search_icon_voice_title">Search</string>
     <string name="crypto_recipients_search">Enter personal code, company or registry code</string>
     <string name="crypto_recipients_search_result_invalid_personal_code">Personal code is not valid!</string>
     <string name="crypto_recipients_search_result_empty">Person or company does not own a valid certificate.\nIt is necessary to have a valid certificate for encryption.\nIn case of questions please contact our support via id.ee.</string>
@@ -352,20 +378,20 @@
 
     <string name="crypto_create_decrypt_progress_message_initial">Connect the card reader and insert your ID-card into the reader</string>
     <string name="crypto_create_decrypt_progress_message_reader_detected">Reader found. Insert your ID-card into the reader.</string>
-    <string name="crypto_create_decrypt_progress_message_card_detected">ID-card found. Requesting information...</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">ID-card found. Requesting information…</string>
     <string name="crypto_create_decrypt_message">Ready to decrypt with ID-card.</string>
     <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
-    <string name="crypto_create_decrypt_pin1">Please enter PIN1</string>
-    <string name="crypto_create_decrypt_pin1_invalid">Wrong PIN1. You have %1$d attempts left.</string>
-    <string name="crypto_create_decrypt_pin1_invalid_final">Wrong PIN1. You have 1 attempt left until your PIN1 is blocked.</string>
-    <string name="crypto_create_decrypt_pin1_locked">PIN1 blocked. Go to My eID to unblock it.</string>
+    <string name="crypto_create_decrypt_pin1" tools:ignore="Typos">Please enter PIN1</string>
+    <string name="crypto_create_decrypt_pin1_invalid" tools:ignore="Typos">Wrong PIN1. You have %1$d attempts left.</string>
+    <string name="crypto_create_decrypt_pin1_invalid_final" tools:ignore="Typos">Wrong PIN1. You have 1 attempt left until your PIN1 is blocked.</string>
+    <string name="crypto_create_decrypt_pin1_locked" tools:ignore="Typos">PIN1 blocked. Go to My eID to unblock it.</string>
     <string name="crypto_create_decrypt_active">Decryption in progress. Please wait.</string>
     <string name="crypto_create_decrypt_error">Something went wrong with decryption. Please try again.</string>
 
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Connect the card reader and insert your ID-card into the reader.</string>
     <string name="eid_home_id_card_status_reader_detected_message">Reader found. Insert your ID-card into the reader.</string>
-    <string name="eid_home_id_card_status_card_detected_message">ID-card found. Requesting information...</string>
+    <string name="eid_home_id_card_status_card_detected_message">ID-card found. Requesting information…</string>
     <string name="eid_home_error">Something went wrong. Please try again.</string>
 
     <string name="eid_home_data_type">MY eID</string>
@@ -390,14 +416,14 @@
     <string name="eid_home_certificate_data_title_sign">Signing certificate</string>
     <string name="eid_home_certificate_data_valid">Certificate is &lt;c>valid&lt;/c> until %1$s</string>
     <string name="eid_home_certificate_data_expired">Certificate has &lt;c>expired&lt;/c>! %1$s cannot be used because the certificate has expired.</string>
-    <string name="eid_home_certificate_data_button_change_auth">CHANGE PIN1</string>
+    <string name="eid_home_certificate_data_button_change_auth" tools:ignore="Typos">CHANGE PIN1</string>
     <string name="eid_home_certificate_data_button_change_sign">CHANGE PIN2</string>
     <string name="eid_home_certificate_data_button_unblock_auth">UNBLOCK</string>
     <string name="eid_home_certificate_data_button_unblock_sign">UNBLOCK</string>
-    <string name="eid_home_certificate_data_link_auth">Forgot PIN1?</string>
-    <string name="eid_home_certificate_data_link_sign">Forgot PIN2?</string>
-    <string name="eid_home_certificate_data_error_auth">PIN1 is blocked, because PIN1 has been inserted 3 times incorrectly.</string>
-    <string name="eid_home_certificate_data_error_sign">PIN2 is blocked, because PIN2 has been inserted 3 times incorrectly.</string>
+    <string name="eid_home_certificate_data_link_auth" tools:ignore="Typos">Forgot PIN1?</string>
+    <string name="eid_home_certificate_data_link_sign" tools:ignore="Typos">Forgot PIN2?</string>
+    <string name="eid_home_certificate_data_error_auth" tools:ignore="Typos">PIN1 is blocked, because PIN1 has been inserted 3 times incorrectly.</string>
+    <string name="eid_home_certificate_data_error_sign" tools:ignore="Typos">PIN2 is blocked, because PIN2 has been inserted 3 times incorrectly.</string>
 
     <string name="eid_type_id_card">ID-CARD</string>
     <string name="eid_type_digi_id">DIGI-ID</string>
@@ -405,11 +431,11 @@
     <string name="eid_type_e_seal">Certificate for Encryption</string>
     <string name="eid_type_unknown">UNKNOWN</string>
 
-    <string name="eid_home_code_update_title_pin1_edit">Change PIN1</string>
-    <string name="eid_home_code_update_title_pin1_unblock">Unblock PIN1</string>
-    <string name="eid_home_code_update_title_pin2_edit">Change PIN2</string>
-    <string name="eid_home_code_update_title_pin2_unblock">Unblock PIN2</string>
-    <string name="eid_home_code_update_title_puk_edit">Change PUK</string>
+    <string name="eid_home_code_update_title_pin1_edit" tools:ignore="Typos">Change PIN1</string>
+    <string name="eid_home_code_update_title_pin1_unblock" tools:ignore="Typos">Unblock PIN1</string>
+    <string name="eid_home_code_update_title_pin2_edit" tools:ignore="Typos">Change PIN2</string>
+    <string name="eid_home_code_update_title_pin2_unblock" tools:ignore="Typos">Unblock PIN2</string>
+    <string name="eid_home_code_update_title_puk_edit" tools:ignore="Typos">Change PUK</string>
     <string name="eid_home_code_update_text_row1_pin1_edit">New PIN1 must be different from current PIN1.</string>
     <string name="eid_home_code_update_text_row2_pin1_edit">PIN1 code is used for authentication.</string>
     <string name="eid_home_code_update_text_row3_pin1_edit">If PIN1 is inserted incorrectly 3 times, the identification certificate will be blocked and it will be impossible to use ID-card to verify identification, until it is unblocked via the PUK code.</string>
@@ -426,23 +452,23 @@
     <string name="eid_home_code_update_text_row4_pin2_unblock">PUK code is written in the envelope that is given with the ID-card.</string>
     <string name="eid_home_code_update_text_row1_puk_edit">PUK code is used for unblocking the certificates when PIN1 or PIN2 has been entered 3 times incorrectly.</string>
     <string name="eid_home_code_update_text_row2_puk_edit">If you forget the PUK code or the certificates remain blocked, you have to visit the service center to obtain new codes.</string>
-    <string name="eid_home_code_update_current_pin1_edit">CURRENT PIN1 CODE</string>
+    <string name="eid_home_code_update_current_pin1_edit" tools:ignore="Typos">CURRENT PIN1 CODE</string>
     <string name="eid_home_code_update_current_pin1_unblock">CURRENT PUK CODE</string>
-    <string name="eid_home_code_update_current_pin2_edit">CURRENT PIN2 CODE</string>
+    <string name="eid_home_code_update_current_pin2_edit" tools:ignore="Typos">CURRENT PIN2 CODE</string>
     <string name="eid_home_code_update_current_pin2_unblock">CURRENT PUK CODE</string>
     <string name="eid_home_code_update_current_puk_edit">CURRENT PUK CODE</string>
-    <string name="eid_home_code_update_new_pin1">NEW PIN1 CODE (at least %1$d symbols)</string>
+    <string name="eid_home_code_update_new_pin1" tools:ignore="Typos">NEW PIN1 CODE (at least %1$d symbols)</string>
     <string name="eid_home_code_update_new_pin2">NEW PIN2 CODE (at least %1$d symbols)</string>
     <string name="eid_home_code_update_new_puk">NEW PUK CODE (at least %1$d symbols)</string>
-    <string name="eid_home_code_update_repeat_pin1">REPEAT NEW PIN1 CODE</string>
+    <string name="eid_home_code_update_repeat_pin1" tools:ignore="Typos">REPEAT NEW PIN1 CODE</string>
     <string name="eid_home_code_update_repeat_pin2">REPEAT NEW PIN2 CODE</string>
     <string name="eid_home_code_update_repeat_puk">REPEAT NEW PUK CODE</string>
     <string name="eid_home_code_update_negative_button" tools:ignore="ButtonCase">CANCEL</string>
     <string name="eid_home_code_update_positive_button_edit">CHANGE</string>
     <string name="eid_home_code_update_positive_button_unblock">UNBLOCK</string>
 
-    <string name="eid_home_code_update_success_pin1_edit">PIN1 CHANGED</string>
-    <string name="eid_home_code_update_success_pin1_unblock">PIN1 UNBLOCKED</string>
+    <string name="eid_home_code_update_success_pin1_edit" tools:ignore="Typos">PIN1 CHANGED</string>
+    <string name="eid_home_code_update_success_pin1_unblock" tools:ignore="Typos">PIN1 UNBLOCKED</string>
     <string name="eid_home_code_update_success_pin2_edit">PIN2 CHANGED</string>
     <string name="eid_home_code_update_success_pin2_unblock">PIN2 UNBLOCKED</string>
     <string name="eid_home_code_update_success_puk_edit">PUK CHANGED</string>
@@ -489,12 +515,14 @@
     <string name="eid_home_code_update_repeat_error_mismatch_puk">New PUK codes must match</string>
 
     <!--  General  -->
+    <string name="encrypt_content_description">Encrypt document, tab %1$d of %2$d</string>
     <string name="decrypt_content_description">Decrypt document, tab %1$d of %2$d</string>
     <string name="sign_send_content_description">Sign, tab %1$d of %2$d</string>
+    <string name="sign_save_content_description">Save, tab %1$d of %2$d</string>
     <string name="decrypt_send_content_description">Share, tab %1$d of %2$d</string>
 
     <string name="yes_button">YES</string>
-    <string name="cancel_button">CANCEL</string>
+    <string name="cancel_button" tools:ignore="ButtonCase">CANCEL</string>
 
     <!-- Sharing Screen -->
     <string name="sharing_screen_title">Choose file</string>
@@ -577,8 +605,6 @@
     <string name="crash_report_dialog_always_send_button">Always Send</string>
     <string name="crash_report_dialog_dont_send_button">Don\'t Send</string>
 
-    <string name="no_internet_connection">Please check your internet connection</string>
-
     <string name="rooted_device">We\'ve detected that your device may be rooted. For security reasons we don\'t recommend using this app on a rooted device.</string>
 
     <!-- Accessibility -->
@@ -595,7 +621,7 @@
 
     <!-- Menu -->
     <string name="main_home_menu_help_accessibility">Help</string>
-    <string name="main_home_menu_recent_accessibility">Recent documents</string>
+    <string name="main_home_recent_accessibility">Recent documents</string>
     <string name="main_home_menu_settings_accessibility">Settings</string>
     <string name="main_home_menu_about_accessibility">Info</string>
     <string name="main_home_menu_diagnostics_accessibility">Diagnostics</string>
@@ -620,12 +646,12 @@
     <string name="eid_home_data_document_number_accessibility">Document number</string>
     <string name="eid_home_data_expiry_date_accessibility">Date of expiry</string>
     <string name="eid_home_data_certificates_title_accessibility">pin, puk codes and certificates</string>
-    <string name="eid_home_certificate_data_button_change_auth_accessibility">Change pin1</string>
+    <string name="eid_home_certificate_data_button_change_auth_accessibility" tools:ignore="Typos">Change pin1</string>
     <string name="eid_home_certificate_data_button_change_sign_accessibility">Change pin2</string>
     <string name="eid_home_certificate_data_button_unblock_auth_accessibility">Unblock</string>
     <string name="eid_home_certificate_data_button_unblock_sign_accessibility">Unblock</string>
     <string name="eid_home_data_certificates_puk_button_accessibility">Change puk</string>
-    <string name="eid_home_certificate_data_link_auth_accessibility">Forgot pin1?</string>
+    <string name="eid_home_certificate_data_link_auth_accessibility" tools:ignore="Typos">Forgot pin1?</string>
     <string name="eid_home_certificate_data_link_sign_accessibility">Forgot pin2?</string>
     <string name="eid_home_certificate_data_error_auth_accessibility">pin1 is blocked, because pin1 has been inserted 3 times incorrectly.</string>
     <string name="eid_home_certificate_data_error_sign_accessibility">pin2 is blocked, because pin2 has been inserted 3 times incorrectly.</string>

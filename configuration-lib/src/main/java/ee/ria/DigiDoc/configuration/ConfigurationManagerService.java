@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.PatchedJobIntentService;
 
@@ -11,6 +13,7 @@ import java.util.Date;
 
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
+import timber.log.Timber;
 
 public class ConfigurationManagerService extends PatchedJobIntentService {
 
@@ -33,9 +36,17 @@ public class ConfigurationManagerService extends PatchedJobIntentService {
         configurationManager = new ConfigurationManager(this, configurationProperties, cachedConfigurationHandler, UserAgentUtil.getUserAgent(getApplicationContext()));
     }
 
+    private ResultReceiver getConfigurationResultReceiver(Intent intent) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            return intent.getParcelableExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER, ResultReceiver.class);
+        } else {
+            return intent.getParcelableExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER);
+        }
+    }
+
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        ResultReceiver confResultReceiver = intent.getParcelableExtra(ConfigurationConstants.CONFIGURATION_RESULT_RECEIVER);
+        ResultReceiver confResultReceiver = getConfigurationResultReceiver(intent);
         Bundle bundle = new Bundle();
 
         ConfigurationProvider configurationProvider = getConfiguration(intent);
@@ -44,12 +55,16 @@ public class ConfigurationManagerService extends PatchedJobIntentService {
         Date confUpdateDate = configurationProvider.getConfigurationUpdateDate();
 
         int resultCode = CONFIGURATION_UP_TO_DATE;
-        if (lastConfigurationUpdateEpoch == 0 || (confUpdateDate != null && confUpdateDate.after(new Date(lastConfigurationUpdateEpoch)))) {
-            resultCode = NEW_CONFIGURATION_LOADED;
-        }
+        if (confResultReceiver != null) {
+            if (lastConfigurationUpdateEpoch == 0 || (confUpdateDate != null && confUpdateDate.after(new Date(lastConfigurationUpdateEpoch)))) {
+                resultCode = NEW_CONFIGURATION_LOADED;
+            }
 
-        bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, configurationProvider);
-        confResultReceiver.send(resultCode, bundle);
+            bundle.putParcelable(ConfigurationConstants.CONFIGURATION_PROVIDER, configurationProvider);
+            confResultReceiver.send(resultCode, bundle);
+        } else {
+            Timber.log(Log.DEBUG, "Unable to get configuration result receiver");
+        }
     }
 
     private ConfigurationProvider getConfiguration(Intent intent) {

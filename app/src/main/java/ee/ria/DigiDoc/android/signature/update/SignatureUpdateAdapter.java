@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -26,6 +27,7 @@ import androidx.annotation.StringRes;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.common.util.CollectionUtils;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -39,13 +41,14 @@ import java.time.Month;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.Formatter;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.common.TextUtil;
 import ee.ria.DigiDoc.sign.DataFile;
+import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignatureStatus;
 import ee.ria.DigiDoc.sign.SignedContainer;
@@ -59,12 +62,14 @@ final class SignatureUpdateAdapter extends
 
     final Subject<Object> scrollToTopSubject = PublishSubject.create();
     final Subject<Object> nameUpdateClicksSubject = PublishSubject.create();
+    final Subject<Object> saveContainerClicksSubject = PublishSubject.create();
     final Subject<DataFile> documentClicksSubject = PublishSubject.create();
     final Subject<Object> documentAddClicksSubject = PublishSubject.create();
     final Subject<DataFile> documentSaveClicksSubject = PublishSubject.create();
     final Subject<DataFile> documentRemoveClicksSubject = PublishSubject.create();
     final Subject<Signature> signatureClicksSubject = PublishSubject.create();
     final Subject<Signature> signatureRemoveClicksSubject = PublishSubject.create();
+    final Subject<Signature> signatureRoleDetailsClicksSubject = PublishSubject.create();
 
     private final ImmutableList<String> ASICS_TIMESTAMP_CONTAINERS = ImmutableList.of("asics", "scs");
     private final ImmutableList<String> NO_REMOVE_SIGNATURE_BUTTON_FILE_EXTENSIONS = ImmutableList.of("adoc", "ddoc", "asics", "scs", "pdf");
@@ -72,7 +77,7 @@ final class SignatureUpdateAdapter extends
     private ImmutableList<Item> items = ImmutableList.of();
 
     void setData(Context context, boolean isSuccess, boolean isExistingContainer, boolean isNestedContainer,
-                 @Nullable SignedContainer container, @Nullable File nestedFile, boolean isSivaConfirmed) {
+                 @Nullable SignedContainer container, @Nullable File nestedFile, boolean isSivaConfirmed) throws Exception {
         boolean signaturesValid = container == null || container.signaturesValid();
         boolean isEmptyFileInContainer = container != null && container.hasEmptyFiles();
         String name = container == null ? null : FileUtil.sanitizeString(container.name(), "");
@@ -91,7 +96,7 @@ final class SignatureUpdateAdapter extends
 
         if (container != null) {
             if (nestedFile == null || !isSivaConfirmed) {
-                createRegularDataFilesView(builder, name, container, isNestedContainer, isExistingContainer);
+                createRegularDataFilesView(builder, context, name, container, isNestedContainer, isExistingContainer);
             }
 
             if (isExistingContainer) {
@@ -100,7 +105,7 @@ final class SignatureUpdateAdapter extends
                         SignedContainer signedContainerNested = SignedContainer.open(nestedFile);
                         if (!container.dataFiles().isEmpty() && container.dataFiles().size() == 1 &&
                                 Files.getFileExtension(nestedFile.getName()).equalsIgnoreCase("ddoc")) {
-                            createAsicsDataFilesView(builder, name, container, signedContainerNested, isNestedContainer);
+                            createAsicsDataFilesView(builder, context, name, container, signedContainerNested, isNestedContainer);
                             createAsicsTimestampView(builder, container);
                         }
 
@@ -109,8 +114,12 @@ final class SignatureUpdateAdapter extends
                         }
                     } catch (Exception e) {
                         Timber.log(Log.ERROR, e, "Unable to get nested container file to show timestamp signature");
-                        createRegularDataFilesView(builder, name, container, isNestedContainer, isExistingContainer);
-                        createRegularSignatureView(builder, container, isNestedContainer);
+                        if (e instanceof SSLHandshakeException) {
+                            throw e;
+                        } else {
+                            createRegularDataFilesView(builder, context, name, container, isNestedContainer, isExistingContainer);
+                            createRegularSignatureView(builder, container, isNestedContainer);
+                        }
                     }
                 } else {
                     if (ASICS_TIMESTAMP_CONTAINERS.contains(Files.getFileExtension(container.name()).toLowerCase())) {
@@ -141,9 +150,9 @@ final class SignatureUpdateAdapter extends
         }
     }
 
-    private void createRegularDataFilesView(ImmutableList.Builder<Item> builder, String name, SignedContainer container,
+    private void createRegularDataFilesView(ImmutableList.Builder<Item> builder, Context context, String name, SignedContainer container,
                                      boolean isNestedContainer, boolean isExistingContainer) {
-        builder.add(NameItem.create(name, !isNestedContainer))
+        builder.add(NameItem.create(context, name, !isNestedContainer))
                 .add(SubheadItem.create(DOCUMENT,
                         isExistingContainer && !isNestedContainer
                                 && container.dataFileAddEnabled()))
@@ -164,10 +173,10 @@ final class SignatureUpdateAdapter extends
         }
     }
 
-    private void createAsicsDataFilesView(ImmutableList.Builder<Item> builder, String name,
+    private void createAsicsDataFilesView(ImmutableList.Builder<Item> builder, Context context, String name,
                                           SignedContainer container, SignedContainer signedContainerNested,
                                           boolean isNestedContainer) {
-        builder.add(NameItem.create(name, false))
+        builder.add(NameItem.create(context, name, false))
                 .add(SubheadItem.create(DOCUMENT,
                         !isNestedContainer
                                 && container.dataFileAddEnabled()))
@@ -193,6 +202,10 @@ final class SignatureUpdateAdapter extends
         return nameUpdateClicksSubject;
     }
 
+    Observable<Object> saveContainerClicks() {
+        return saveContainerClicksSubject;
+    }
+
     Observable<DataFile> documentClicks() {
         return documentClicksSubject;
     }
@@ -215,6 +228,10 @@ final class SignatureUpdateAdapter extends
 
     Observable<Signature> signatureRemoveClicks() {
         return signatureRemoveClicksSubject;
+    }
+
+    Observable<Signature> signatureRoleDetailsClicks() {
+        return signatureRoleDetailsClicksSubject;
     }
 
     Item getItem(int position) {
@@ -334,12 +351,10 @@ final class SignatureUpdateAdapter extends
 
             unknownView.setText(resources.getQuantityString(
                     R.plurals.signature_update_signatures_unknown, unknownCount, unknownCount));
+            unknownView.setContentDescription(unknownView.getText().toString().toLowerCase());
             invalidView.setText(resources.getQuantityString(
                     R.plurals.signature_update_signatures_invalid, invalidCount, invalidCount));
-
-            String containerHasDesc = unknownView.getResources().getString(R.string.container_has);
-            unknownView.setContentDescription(containerHasDesc + " " + unknownView.getText());
-            invalidView.setContentDescription(containerHasDesc + " " + invalidView.getText());
+            invalidView.setContentDescription(invalidView.getText().toString().toLowerCase());
 
             unknownView.setVisibility(unknownCount == 0 ? View.GONE : View.VISIBLE);
             invalidView.setVisibility(invalidCount == 0 ? View.GONE : View.VISIBLE);
@@ -349,12 +364,23 @@ final class SignatureUpdateAdapter extends
     static final class NameViewHolder extends UpdateViewHolder<NameItem> {
 
         private final TextView nameView;
-        private final View updateButton;
+        private final ImageButton updateButton;
+        private final ImageButton saveButton;
 
         NameViewHolder(View itemView) {
             super(itemView);
             nameView = itemView.findViewById(R.id.signatureUpdateListName);
             updateButton = itemView.findViewById(R.id.signatureUpdateListNameUpdateButton);
+            saveButton = itemView.findViewById(R.id.signatureUpdateListNameSaveButton);
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                updateButton.setContentDescription(itemView.getResources()
+                        .getString(R.string.signature_update_name_update_button)
+                );
+            } else {
+                updateButton.setContentDescription(itemView.getResources()
+                        .getString(R.string.signature_update_name_update_voice_button)
+                );
+            }
         }
 
         @Override
@@ -365,7 +391,14 @@ final class SignatureUpdateAdapter extends
                 nameView.setText(FileUtil.sanitizeString(item.name(), ""));
             }
             updateButton.setVisibility(item.updateButtonVisible() && !isContainerSigned(adapter) ? View.VISIBLE : View.GONE);
+            saveButton.setVisibility(isContainerSigned(adapter) ? View.VISIBLE : View.GONE);
             clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
+            clicks(saveButton).subscribe(adapter.saveContainerClicksSubject);
+            if (AccessibilityUtils.isLargeFontEnabled(item.context().getResources())) {
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) saveButton.getLayoutParams();
+                params.topMargin = 25;
+                saveButton.setLayoutParams(params);
+            }
         }
 
         private boolean isContainerSigned(SignatureUpdateAdapter adapter) {
@@ -426,15 +459,30 @@ final class SignatureUpdateAdapter extends
             String fileNameDescription = nameView.getResources().getString(R.string.file);
             nameView.setContentDescription(fileNameDescription + " " + nameView.getText());
 
-            String saveButtonText = saveButton.getResources().getString(R.string.signature_update_document_save_button);
-            saveButton.setContentDescription(saveButtonText + " " + nameView.getText());
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                String saveButtonText = saveButton.getResources().getString(R.string.signature_update_document_save_button);
+                saveButton.setContentDescription(saveButtonText + " " + nameView.getText());
+            } else {
+                saveButton.setContentDescription(
+                        saveButton.getResources()
+                                .getString(R.string.signature_update_document_save_voice_button)
+                );
+            }
             saveButton.setVisibility(View.VISIBLE);
             clicks(saveButton).map(ignored ->
                     ((DocumentItem) adapter.getItem(getBindingAdapterPosition())).document())
                     .subscribe(adapter.documentSaveClicksSubject);
 
-            String removeButtonText = removeButton.getResources().getString(R.string.signature_update_document_remove_button);
-            removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                String removeButtonText = removeButton.getResources().getString(R.string.signature_update_document_remove_button);
+                removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
+            } else {
+                removeButton.setContentDescription(
+                        removeButton.getResources()
+                                .getString(R.string.signature_update_document_remove_voice_button)
+                );
+            }
+
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton).map(ignored ->
                     ((DocumentItem) adapter.getItem(getBindingAdapterPosition())).document())
@@ -453,14 +501,16 @@ final class SignatureUpdateAdapter extends
         private final TextView nameView;
         private final TextView statusView;
         private final TextView statusCautionView;
+        private final TextView roleView;
         private final TextView createdAtView;
         private final ImageButton removeButton;
+        private final ImageButton roleDetailsButton;
 
         private final Activity activityContext = (Activity)Activity.getContext().get();
 
         SignatureViewHolder(View itemView) {
             super(itemView);
-            formatter = Application.component(itemView.getContext()).formatter();
+            formatter = ApplicationApp.component(itemView.getContext()).formatter();
             Resources resources = itemView.getResources();
             colorValid = ColorStateList.valueOf(getColor(resources, R.color.success, null));
             colorWarning = ColorStateList.valueOf(getColor(resources, R.color.warningText, null));
@@ -469,8 +519,10 @@ final class SignatureUpdateAdapter extends
             statusView = itemView.findViewById(R.id.signatureUpdateListSignatureStatus);
             statusCautionView = itemView
                     .findViewById(R.id.signatureUpdateListSignatureStatusCaution);
+            roleView = itemView.findViewById(R.id.signatureUpdateListSignatureRole);
             createdAtView = itemView.findViewById(R.id.signatureUpdateListSignatureCreatedAt);
             removeButton = itemView.findViewById(R.id.signatureUpdateListSignatureRemoveButton);
+            roleDetailsButton = itemView.findViewById(R.id.signatureUpdateListSignatureRoleDetailsButton);
         }
 
         @Override
@@ -479,17 +531,7 @@ final class SignatureUpdateAdapter extends
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureClicksSubject);
             nameView.setText(TextUtil.splitTextAndJoin(item.signature().name(), ",", ", "));
-            StringBuilder nameViewAccessibility = new StringBuilder();
-            String[] nameTextSplit = nameView.getText().toString().split(", ");
-
-            for (String nameText : nameTextSplit) {
-                if (TextUtil.isOnlyDigits(nameText)) {
-                    nameViewAccessibility.append(TextUtil.splitTextAndJoin(nameText, "", " "));
-                } else {
-                    nameViewAccessibility.append(nameText);
-                }
-            }
-            nameView.setContentDescription(nameViewAccessibility.toString().toLowerCase());
+            nameView.setContentDescription(AccessibilityUtils.getSignatureName(nameView.getText().toString()));
             switch (item.signature().status()) {
                 case INVALID:
                     statusView.setText(R.string.signature_update_signature_status_invalid);
@@ -531,21 +573,49 @@ final class SignatureUpdateAdapter extends
                 removeCautionView();
             }
 
+            if (!CollectionUtils.isEmpty(item.signature().roles())) {
+                roleView.setText(String.join(" / ", item.signature().roles()));
+                roleView.setVisibility(View.VISIBLE);
+            } else {
+                roleView.setVisibility(View.GONE);
+            }
+
             createdAtView.setText(itemView.getResources().getString(
                     R.string.signature_update_signature_created_at,
                     formatter.instant(item.signature().createdAt())));
 
-            String removeButtonText = removeButton.getResources().getString(R.string.signature_update_signature_remove_button);
-            removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                String removeButtonText = removeButton.getResources().getString(R.string.signature_update_signature_remove_button);
+                removeButton.setContentDescription(removeButtonText + " " + AccessibilityUtils.getSignatureName(nameView.getText().toString()));
+            } else {
+                removeButton.setContentDescription(
+                        removeButton.getResources()
+                                .getString(R.string.signature_update_document_remove_voice_button)
+                );
+            }
+
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);
             clicks(removeButton).map(ignored ->
                     ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
                     .subscribe(adapter.signatureRemoveClicksSubject);
+
+            String roleDetailsButtonText = roleDetailsButton.getResources().getString(R.string.signature_update_signature_role_and_address_title_accessibility);
+            roleDetailsButton.setContentDescription(roleDetailsButtonText + " " + AccessibilityUtils.getSignatureName(nameView.getText().toString()));
+            roleDetailsButton.setVisibility(isRoleEmpty(item.signature()) ? View.GONE : View.VISIBLE);
+            clicks(roleDetailsButton).map(ignored ->
+                    ((SignatureItem) adapter.getItem(getBindingAdapterPosition())).signature())
+                    .subscribe(adapter.signatureRoleDetailsClicksSubject);
         }
 
         private void removeCautionView() {
             statusCautionView.setVisibility(View.GONE);
             statusCautionView.setText("");
+        }
+
+        private boolean isRoleEmpty(Signature signature) {
+            return CollectionUtils.isEmpty(signature.roles()) && TextUtil.isEmpty(signature.city()) &&
+                    TextUtil.isEmpty(signature.state()) &&
+                    TextUtil.isEmpty(signature.country()) && TextUtil.isEmpty(signature.zip());
         }
     }
 
@@ -575,7 +645,7 @@ final class SignatureUpdateAdapter extends
 
         TimestampViewHolder(View itemView) {
             super(itemView);
-            formatter = Application.component(itemView.getContext()).formatter();
+            formatter = ApplicationApp.component(itemView.getContext()).formatter();
             Resources resources = itemView.getResources();
             colorValid = ColorStateList.valueOf(getColor(resources, R.color.success, null));
             colorWarning = ColorStateList.valueOf(getColor(resources, R.color.warningText, null));
@@ -687,13 +757,15 @@ final class SignatureUpdateAdapter extends
     @AutoValue
     static abstract class NameItem extends Item {
 
+        abstract Context context();
+
         abstract String name();
 
         abstract boolean updateButtonVisible();
 
-        static NameItem create(String name, boolean updateButtonVisible) {
+        static NameItem create(Context context, String name, boolean updateButtonVisible) {
             return new AutoValue_SignatureUpdateAdapter_NameItem(
-                    R.layout.signature_update_list_item_name, name, updateButtonVisible);
+                    R.layout.signature_update_list_item_name, context, name, updateButtonVisible);
         }
     }
 

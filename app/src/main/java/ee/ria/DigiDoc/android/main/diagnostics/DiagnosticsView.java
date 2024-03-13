@@ -5,25 +5,31 @@ import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileLogsSaveClicksSubject;
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileSaveClicksSubject;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarImageButton;
+import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarTextView;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.widget.NestedScrollView;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -46,12 +52,14 @@ import java.util.List;
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
-import ee.ria.DigiDoc.android.utils.TSLException;
 import ee.ria.DigiDoc.android.utils.TSLUtil;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
@@ -60,25 +68,20 @@ import ee.ria.DigiDoc.configuration.ConfigurationDateUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.sign.SignLib;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import timber.log.Timber;
 
-public final class DiagnosticsView extends CoordinatorLayout {
+public final class DiagnosticsView extends CoordinatorLayout implements ContentView {
+
+    private final AppBarLayout appBarLayout;
+    private final NestedScrollView scrollView;
+    private final Toolbar toolbarView;
 
     private final Navigator navigator;
     private final SimpleDateFormat dateFormat;
-    private final Toolbar toolbarView;
     private final ConfirmationDialog diagnosticsRestartConfirmationDialog;
+    private final SettingsDataStore settingsDataStore;
 
     private final ViewDisposables disposables;
-
-    private Disposable tslVersionDisposable;
 
     private final String DIAGNOSTICS_FILE_NAME = "ria_digidoc_" + getAppVersion() + "_diagnostics.txt";
     private final String DIAGNOSTICS_FILE_PATH = getContext().getFilesDir().getPath()
@@ -86,25 +89,37 @@ public final class DiagnosticsView extends CoordinatorLayout {
     private final String DIAGNOSTICS_LOGS_FILE_NAME = "ria_digidoc_" + getAppVersion() + "_logs.txt";
 
     public DiagnosticsView(Context context) {
-        super(context);
+        this(context, null);
+    }
+
+    public DiagnosticsView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public DiagnosticsView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         dateFormat = ConfigurationDateUtil.getDateFormat();
         inflate(context, R.layout.main_diagnostics, this);
-        AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.main_diagnostics_title);
         toolbarView = findViewById(R.id.toolbar);
+        appBarLayout = findViewById(R.id.appBar);
+        scrollView = findViewById(R.id.scrollView);
         View saveDiagnosticsButton = findViewById(R.id.configurationSaveButton);
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
+        settingsDataStore = ApplicationApp.component(context).settingsDataStore();
+
+        ContentView.addInvisibleElement(getContext(), this);
 
         diagnosticsRestartConfirmationDialog = new ConfirmationDialog(navigator.activity(),
                 R.string.main_diagnostics_restart_message, R.id.mainDiagnosticsRestartConfirmationDialog);
 
         SwitchCompat activateLogFileGenerating = findViewById(R.id.mainDiagnosticsLogging);
-        activateLogFileGenerating.setChecked(((Activity) this.getContext()).getSettingsDataStore().getIsLogFileGenerationEnabled());
+        activateLogFileGenerating.setChecked(settingsDataStore.getIsLogFileGenerationEnabled());
         Button saveLogFileButton = findViewById(R.id.mainDiagnosticsSaveLoggingButton);
         saveLogFileButton.setVisibility(
                 (activateLogFileGenerating.isChecked() &&
                         FileUtil.logsExist(FileUtil.getLogsDirectory(getContext()))) ? VISIBLE : GONE);
 
-        ConfigurationProvider configurationProvider = ((Application) context.getApplicationContext()).getConfigurationProvider();
+        ConfigurationProvider configurationProvider = ((ApplicationApp) context.getApplicationContext()).getConfigurationProvider();
         disposables = new ViewDisposables();
 
         toolbarView.setTitle(R.string.main_diagnostics_title);
@@ -129,14 +144,14 @@ public final class DiagnosticsView extends CoordinatorLayout {
     private void fileLogToggleListener(SwitchCompat activateLogFileGenerating) {
         activateLogFileGenerating.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Activity activityContext = ((Activity) this.getContext());
-            boolean isLogFileGenerationEnabled = activityContext.getSettingsDataStore().getIsLogFileGenerationEnabled();
+            boolean isLogFileGenerationEnabled = settingsDataStore.getIsLogFileGenerationEnabled();
             if (isChecked) {
                 diagnosticsRestartConfirmationDialog.show();
                 ClickableDialogUtil.makeLinksInDialogClickable(diagnosticsRestartConfirmationDialog);
                 diagnosticsRestartConfirmationDialog.positiveButtonClicks()
                         .doOnNext(next -> {
                             diagnosticsRestartConfirmationDialog.dismiss();
-                            activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(true);
+                            settingsDataStore.setIsLogFileGenerationEnabled(true);
                             activityContext.restartAppWithIntent(activityContext.getIntent(), true);
                         })
                         .subscribe();
@@ -144,12 +159,12 @@ public final class DiagnosticsView extends CoordinatorLayout {
                         .doOnNext(next -> {
                             diagnosticsRestartConfirmationDialog.dismiss();
                             activateLogFileGenerating.setChecked(false);
-                            activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(false);
+                            settingsDataStore.setIsLogFileGenerationEnabled(false);
                         })
                         .subscribe();
             } else {
-                activityContext.getSettingsDataStore().setIsLogFileGenerationEnabled(false);
-                activityContext.getSettingsDataStore().setIsLogFileGenerationRunning(false);
+                settingsDataStore.setIsLogFileGenerationEnabled(false);
+                settingsDataStore.setIsLogFileGenerationRunning(false);
                 if (isLogFileGenerationEnabled) {
                     activityContext.restartAppWithIntent(activityContext.getIntent(), true);
                 }
@@ -160,6 +175,21 @@ public final class DiagnosticsView extends CoordinatorLayout {
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
+        scrollView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        TextView toolbarTextView = getToolbarTextView(toolbarView);
+        if (toolbarTextView != null) {
+            toolbarTextView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        ImageButton toolbarImageButton = getToolbarImageButton(toolbarView);
+        if (toolbarImageButton != null) {
+            toolbarImageButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
+        appBarLayout.postDelayed(() -> {
+            scrollView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+            if (toolbarImageButton != null) {
+                toolbarImageButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            }
+        }, 1000);
         disposables.attach();
         disposables.add(navigationClicks(toolbarView).subscribe(o ->
                 navigator.execute(Transaction.pop())));
@@ -168,9 +198,6 @@ public final class DiagnosticsView extends CoordinatorLayout {
     @Override
     public void onDetachedFromWindow() {
         disposables.detach();
-        if (tslVersionDisposable != null) {
-            tslVersionDisposable.dispose();
-        }
         super.onDetachedFromWindow();
     }
 
@@ -201,7 +228,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
         File diagnosticsFileLocation = new File(DIAGNOSTICS_FILE_PATH + DIAGNOSTICS_FILE_NAME);
         try (FileOutputStream fileStream = new FileOutputStream(diagnosticsFileLocation);
-             OutputStreamWriter writer = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8.name())) {
+             OutputStreamWriter writer = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8)) {
             writer.append(formatDiagnosticsText(textViews));
             writer.flush();
             return diagnosticsFileLocation;
@@ -214,8 +241,7 @@ public final class DiagnosticsView extends CoordinatorLayout {
     }
 
     private static void findAllTextViews(View view, List<TextView> textViews) {
-        if (view instanceof ViewGroup) {
-            final ViewGroup viewGroup = (ViewGroup) view;
+        if (view instanceof final ViewGroup viewGroup) {
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 final View child = viewGroup.getChildAt(i);
                 if (child instanceof TextView) {
@@ -269,12 +295,12 @@ public final class DiagnosticsView extends CoordinatorLayout {
 
     private String getTSLFileVersion(InputStream tslInputStream, String tslFileName) throws XmlPullParserException, IOException {
         int version = TSLUtil.readSequenceNumber(tslInputStream);
-        return tslFileName + " (" + version + ")";
+        return FileUtil.normalizeText(tslFileName) + " (" + version + ")";
     }
 
     private void updateConfiguration() {
-        Application application = (Application) getContext().getApplicationContext();
-        application.updateConfiguration(this);
+        ApplicationApp applicationApp = (ApplicationApp) getContext().getApplicationContext();
+        applicationApp.updateConfiguration(this);
     }
 
     private void setData(ConfigurationProvider configurationProvider) {
@@ -310,12 +336,11 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 configurationProvider.getConfigUrl(), Typeface.DEFAULT));
         tslUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsl_url_title,
                 configurationProvider.getTslUrl(), Typeface.DEFAULT));
-        appendTslVersion(tslUrl, FileUtil.normalizeUri(
-                Uri.parse(configurationProvider.getTslUrl())).toString());
         sivaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_siva_url_title,
-                configurationProvider.getSivaUrl(), Typeface.DEFAULT));
+                !getSiVaUrlText().isEmpty() ?
+                        getSiVaUrlText() : configurationProvider.getSivaUrl(), Typeface.DEFAULT));
         tsaUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_tsa_url_title,
-                (getTsaUrlText() != null && !getTsaUrlText().isEmpty()) ?
+                !getTsaUrlText().isEmpty() ?
                         getTsaUrlText() : configurationProvider.getTsaUrl(), Typeface.DEFAULT));
         ldapPersonUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_ldap_person_url_title,
                 configurationProvider.getLdapPersonUrl(), Typeface.DEFAULT));
@@ -348,35 +373,8 @@ public final class DiagnosticsView extends CoordinatorLayout {
                 displayDate(configurationProvider.getConfigurationLastUpdateCheckDate()), Typeface.DEFAULT));
     }
 
-    private void appendTslVersion(TextView tslUrlTextView, String tslUrl) {
-        tslVersionDisposable = getObservableTslVersion(tslUrl )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        (tslVersion) -> tslUrlTextView.append(" ("+ tslVersion + ")"),
-                        (error) -> Timber.log(Log.ERROR, error, "Error reading TSL version")
-                );
-    }
-
-    private Observable<Integer> getObservableTslVersion(String tslUrl) {
-        return Observable.fromCallable(() -> {
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder().url(tslUrl).build();
-            Response response = client.newCall(request).execute();
-            if (response.isSuccessful() && response.body() != null) {
-                 try (InputStream responseBody = response.body().byteStream()) {
-                     return TSLUtil.readSequenceNumber(responseBody);
-                 }
-            } else {
-                String message = "Error fetching TSL, response code: " + response.code();
-                Timber.log(Log.ERROR, message);
-                throw new TSLException(message);
-            }
-        });
-    }
-
     private String getRpUuidText() {
-        String rpUuid = ((Activity) this.getContext()).getSettingsDataStore().getUuid();
+        String rpUuid = settingsDataStore.getUuid();
         int uuid = rpUuid == null || rpUuid.isEmpty()
                 ? R.string.main_diagnostics_rpuuid_default
                 : R.string.main_diagnostics_rpuuid_custom;
@@ -384,7 +382,11 @@ public final class DiagnosticsView extends CoordinatorLayout {
     }
 
     private String getTsaUrlText() {
-        return ((Activity) this.getContext()).getSettingsDataStore().getTsaUrl();
+        return ((Activity) navigator.activity()).getSettingsDataStore().getTsaUrl();
+    }
+
+    private String getSiVaUrlText() {
+        return ((Activity) navigator.activity()).getSettingsDataStore().getSivaUrl();
     }
 
     private void setTslCacheData() {

@@ -25,10 +25,11 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.ObservableDialogClickListener;
 import io.reactivex.rxjava3.core.Observable;
 
-public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
+public final class SignatureUpdateSignatureAddDialog extends AlertDialog implements ContentView {
 
     private final SignatureUpdateSignatureAddView view;
     private final ObservableDialogClickListener positiveButtonClicks;
@@ -40,6 +41,8 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
     private final Button mobileIdCancelButton;
     private final Button smartIdPositiveButton;
     private final Button smartIdCancelButton;
+    private final Button NFCPositiveButton;
+    private final Button NFCCancelButton;
     private final Button idCardPositiveButton;
     private final Button idCardCancelButton;
 
@@ -56,29 +59,22 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
 
         positiveButtonClicks = new ObservableDialogClickListener();
 
-        // Buttons to show when in portrait mode
-        setButton(BUTTON_POSITIVE,
-                getContext().getString(R.string.signature_update_signature_add_positive_button),
-                positiveButtonClicks);
-        setButton(BUTTON_NEGATIVE, getContext().getString(android.R.string.cancel),
-                (dialog, which) -> {
-                    cancel();
-                    AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.signing_cancelled);
-                }
-        );
-
-        // Buttons to show when in landscape mode (to give more room for TextViews)
+        // Buttons to show instead of default Dialog view (to give more room for TextViews and for better large text support)
         mobileIdPositiveButton = view.findViewById(R.id.signatureUpdateMobileIdSignButton);
         mobileIdCancelButton = view.findViewById(R.id.signatureUpdateMobileIdCancelSigningButton);
-        setLandscapeButtons(getContext(), mobileIdPositiveButton, mobileIdCancelButton, positiveButtonClicks);
+        setCustomActionButtons(getContext(), mobileIdPositiveButton, mobileIdCancelButton, positiveButtonClicks);
 
         smartIdPositiveButton = view.findViewById(R.id.signatureUpdateSmartIdSignButton);
         smartIdCancelButton = view.findViewById(R.id.signatureUpdateSmartIdCancelSigningButton);
-        setLandscapeButtons(getContext(), smartIdPositiveButton, smartIdCancelButton, positiveButtonClicks);
+        setCustomActionButtons(getContext(), smartIdPositiveButton, smartIdCancelButton, positiveButtonClicks);
+
+        NFCPositiveButton = view.findViewById(R.id.signatureUpdateNFCSignButton);
+        NFCCancelButton = view.findViewById(R.id.signatureUpdateNFCCancelSigningButton);
+        setCustomActionButtons(getContext(), NFCPositiveButton, NFCCancelButton, positiveButtonClicks);
 
         idCardPositiveButton = view.findViewById(R.id.signatureUpdateIdCardSignButton);
         idCardCancelButton = view.findViewById(R.id.signatureUpdateIdCardCancelButton);
-        setLandscapeButtons(getContext(), idCardPositiveButton, idCardCancelButton, positiveButtonClicks);
+        setCustomActionButtons(getContext(), idCardPositiveButton, idCardCancelButton, positiveButtonClicks);
     }
 
     public SignatureUpdateSignatureAddView view() {
@@ -99,6 +95,12 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
                     WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
             setCustomLayoutChangeListener(window);
             view.addOnLayoutChangeListener(getCustomLayoutChangeListener());
+
+            View parentPanel = findViewById(R.id.parentPanel);
+            int lastInvisibleElement = R.id.lastInvisibleElement;
+            if (parentPanel != null && parentPanel.findViewById(lastInvisibleElement) == null) {
+                ContentView.addInvisibleElementToObject(getContext(), findViewById(R.id.parentPanel));
+            }
         }
     }
 
@@ -109,14 +111,15 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
         confirmButton.setContentDescription(getContext().getString(R.string.sign_container));
         Button cancelButton = getButton(BUTTON_NEGATIVE);
         cancelButton.setContentDescription(getContext().getString(R.string.cancel_signing_process));
-        setButtonsBasedOnOrientation(getContext().getResources().getConfiguration().orientation);
+        setActionButtons();
         mobileIdCancelButton.setTextColor(ContextCompat.getColor(getContext(), R.color.accent));
         smartIdCancelButton.setTextColor(ContextCompat.getColor(getContext(), R.color.accent));
+        NFCCancelButton.setTextColor(ContextCompat.getColor(getContext(), R.color.accent));
         idCardCancelButton.setTextColor(ContextCompat.getColor(getContext(), R.color.accent));
         disposables.attach();
         disposables.add(view.positiveButtonEnabled().subscribe(enabled -> {
             Button positiveButton = getButton(BUTTON_POSITIVE);
-            Button[] additionalPositiveButtons = { mobileIdPositiveButton, smartIdPositiveButton, idCardPositiveButton };
+            Button[] additionalPositiveButtons = { mobileIdPositiveButton, smartIdPositiveButton, NFCPositiveButton, idCardPositiveButton };
             updateButtonStateAndColor(positiveButton, additionalPositiveButtons, enabled);
         }));
     }
@@ -144,33 +147,37 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog {
         layoutChangeListener = null;
     }
 
-    void setButtonsBasedOnOrientation(int orientation) {
+    void setActionButtons() {
         Button confirmButton = getButton(BUTTON_POSITIVE);
         Button cancelButton = getButton(BUTTON_NEGATIVE);
 
         if (confirmButton != null && cancelButton != null) {
-            confirmButton.setVisibility(orientation == Configuration.ORIENTATION_PORTRAIT ? VISIBLE : GONE);
-            cancelButton.setVisibility(orientation == Configuration.ORIENTATION_PORTRAIT ? VISIBLE : GONE);
+            confirmButton.setVisibility(GONE);
+            cancelButton.setVisibility(GONE);
         }
 
         if (mobileIdPositiveButton != null && mobileIdCancelButton != null &&
                 smartIdPositiveButton != null && smartIdCancelButton != null &&
+                NFCPositiveButton != null && NFCCancelButton != null &&
                 idCardPositiveButton != null && idCardCancelButton != null) {
-            int visibility = orientation == Configuration.ORIENTATION_LANDSCAPE ? VISIBLE : GONE;
-            mobileIdPositiveButton.setVisibility(visibility);
-            mobileIdCancelButton.setVisibility(visibility);
-            smartIdPositiveButton.setVisibility(visibility);
-            smartIdCancelButton.setVisibility(visibility);
-            idCardPositiveButton.setVisibility(visibility);
-            idCardCancelButton.setVisibility(visibility);
+            mobileIdPositiveButton.setVisibility(VISIBLE);
+            mobileIdCancelButton.setVisibility(VISIBLE);
+            smartIdPositiveButton.setVisibility(VISIBLE);
+            smartIdCancelButton.setVisibility(VISIBLE);
+            NFCPositiveButton.setVisibility(VISIBLE);
+            NFCCancelButton.setVisibility(VISIBLE);
+            idCardPositiveButton.setVisibility(VISIBLE);
+            idCardCancelButton.setVisibility(VISIBLE);
         }
     }
 
-    private void setLandscapeButtons(Context context, Button positiveButton, Button cancelButton, ObservableDialogClickListener clickListener) {
+    private void setCustomActionButtons(Context context, Button positiveButton, Button cancelButton, ObservableDialogClickListener clickListener) {
         positiveButton.setText(getContext().getString(R.string.signature_update_signature_add_positive_button));
+        positiveButton.setContentDescription(positiveButton.getText().toString().toLowerCase());
         positiveButton.setOnClickListener(v -> clickListener.onClick(this, DialogInterface.BUTTON_POSITIVE));
 
         cancelButton.setText(getContext().getString(android.R.string.cancel));
+        cancelButton.setContentDescription(cancelButton.getText().toString().toLowerCase());
         cancelButton.setOnClickListener(v -> {
             cancel();
             AccessibilityUtils.sendAccessibilityEvent(context, AccessibilityEvent.TYPE_ANNOUNCEMENT, R.string.signing_cancelled);

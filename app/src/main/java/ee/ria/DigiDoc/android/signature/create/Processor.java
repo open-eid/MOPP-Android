@@ -9,6 +9,7 @@ import android.util.Log;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,7 +30,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.common.ActivityUtil;
-import ee.ria.DigiDoc.sign.NoInternetConnectionException;
+import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -58,13 +59,13 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 .switchMap(action -> {
                     if (action.intent() != null) {
                         throw new ActivityResultException(ActivityResult.create(
-                                action.transaction().requestCode(), RESULT_OK, action.intent()));
+                                action.transaction().getRequestCode(), RESULT_OK, action.intent()));
                     }
                     navigator.execute(action.transaction());
                     return navigator.activityResults()
                             .filter(activityResult ->
                                     activityResult.requestCode()
-                                            == action.transaction().requestCode())
+                                            == action.transaction().getRequestCode())
                             .doOnNext(activityResult -> {
                                 throw new ActivityResultException(activityResult);
                             })
@@ -77,11 +78,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     ActivityResult activityResult = ((ActivityResultException) throwable)
                             .activityResult;
                     if (activityResult.resultCode() == RESULT_OK) {
-
                         if (activityResult.data() != null) {
                             ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
                                     parseGetContentIntent(navigator.activity(), application.getContentResolver(), activityResult.data(), fileSystem.getExternallyOpenedFilesDir()));
-                            ToastUtil.handleEmptyFileError(validFiles, application, navigator.activity());
+                            ToastUtil.handleEmptyFileError(validFiles, navigator.activity());
 
                             return handleFiles(navigator, signatureContainerDataSource, validFiles)
                                     .observeOn(AndroidSchedulers.mainThread())
@@ -117,7 +117,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         boolean isEmptyFileException = exceptions.stream().anyMatch(exception ->
                                 (exception instanceof EmptyFileException));
                         if (isEmptyFileException) {
-                            ToastUtil.showEmptyFileError(navigator.activity(), application);
+                            ToastUtil.showEmptyFileError(navigator.activity());
                         } else {
                             ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
                         }
@@ -153,7 +153,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                         SignedContainer.open(containerAdd.containerFile())) : null, isSivaConfirmed))))
                 .doOnError(throwable1 -> {
                     Timber.log(Log.ERROR, throwable1, "Add signed container failed");
-                    if (throwable1 instanceof NoInternetConnectionException) {
+                    if (throwable1 instanceof NoInternetConnectionException ||
+                            (throwable1 instanceof FileNotFoundException &&
+                                    throwable1.getMessage() != null &&
+                                    throwable1.getMessage().contains("connection_failure"))) {
                         ToastUtil.showError(navigator.activity(), R.string.no_internet_connection);
                     } else {
                         ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
@@ -174,7 +177,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     if (isSivaConfirmationNeeded) {
                         sivaConfirmationDialog.show();
                         ClickableDialogUtil.makeLinksInDialogClickable(sivaConfirmationDialog);
-                        return sivaConfirmationDialog.cancels()
+                        sivaConfirmationDialog.cancels()
                                 .flatMap(next -> {
                                     if (validFiles.size() == 1 && SignedContainer.isAsicsFile(validFiles.get(0).displayName().toLowerCase())) {
                                         sivaConfirmationDialog.dismiss();
@@ -184,13 +187,19 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         return Observable.empty();
                                     }
                                 })
+                                .subscribeOn(AndroidSchedulers.mainThread())
+                                .subscribe();
+                        sivaConfirmationDialog.positiveButtonClicks()
                                 .flatMap(next -> {
                                     sivaConfirmationDialog.dismiss();
                                     return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, true);
-                                });
+                                })
+                                .subscribeOn(AndroidSchedulers.mainThread())
+                                .subscribe();
                     } else {
                         return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, true);
                     }
+                    return Observable.just(Result.ChooseFilesResult.create());
                 })
                 .onErrorResumeNext(throwable -> {
                     if (throwable instanceof NoInternetConnectionException) {

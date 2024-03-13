@@ -1,7 +1,12 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'com.google.gms.google-services'
-//apply plugin: 'com.google.firebase.crashlytics'
-apply plugin: 'kotlin-android'
+if (project.hasProperty('skipGoogleServices')) {
+    project.logger.lifecycle('Skipping Google Services')
+} else {
+    project.logger.lifecycle('Including Google Services')
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.crashlytics'
+}
+
 
 android {
     namespace 'ee.ria.DigiDoc'
@@ -14,6 +19,8 @@ android {
         applicationId 'ee.ria.DigiDoc'
         versionCode Integer.parseInt(appVersionCode)
         versionName appVersionName
+
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         multiDexEnabled true
 
@@ -29,6 +36,10 @@ android {
         debug {
             storeFile file('../debug.keystore')
         }
+    }
+
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 
     buildTypes {
@@ -61,12 +72,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     lint {
@@ -78,16 +85,24 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            merges += "META-INF/LICENSE.md"
+            merges += "META-INF/LICENSE-notice.md"
+        }
+    }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.20"
     implementation "androidx.annotation:annotation:${androidxVersion}"
     implementation "androidx.appcompat:appcompat:${androidxAppCompatVersion}"
     implementation "com.google.android.material:material:${androidMaterialVersion}"
     implementation "androidx.recyclerview:recyclerview:${androidxRecyclerviewVersion}"
     implementation "androidx.cardview:cardview:${androidxCardviewVersion}"
     implementation "androidx.lifecycle:lifecycle-viewmodel:${androidxLifecycleVersion}"
+    implementation "androidx.work:work-runtime:${androidxWorkRuntime}"
 
     implementation "com.takisoft.preferencex:preferencex:${preferencexVersion}"
 
@@ -134,8 +149,12 @@ dependencies {
     implementation project(':mobile-id-lib')
     implementation project(':smart-id-lib')
 
+    androidTestAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
+    androidTestImplementation "androidx.test:core:${androidxTestCoreVersion}"
+    androidTestImplementation "androidx.test:runner:${androidxTestCoreVersion}"
+
     testAnnotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
-    androidTestImplementation "junit:junit:${junitVersion}"
+    androidTestImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     androidTestImplementation "androidx.test.ext:junit:${androidxTestVersion}"
     androidTestImplementation "androidx.test:rules:${androidxTestRulesVersion}"
 }

@@ -1,18 +1,31 @@
 package ee.ria.DigiDoc.android.main.settings;
 
+import static ee.ria.DigiDoc.common.ProxySetting.NO_PROXY;
+
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.main.settings.signing.siva.SivaSetting;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
+import ee.ria.DigiDoc.common.EncryptedPreferences;
+import ee.ria.DigiDoc.common.ManualProxy;
+import ee.ria.DigiDoc.common.ProxySetting;
+import timber.log.Timber;
 
 public final class SettingsDataStore {
 
@@ -97,6 +110,90 @@ public final class SettingsDataStore {
         editor.apply();
     }
 
+    public String getCan() {
+        return preferences.getString(resources.getString(R.string.main_settings_can_key),"");
+    }
+
+    public void setCan(String can) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_can_key), can);
+        editor.apply();
+    }
+
+    public boolean getIsRoleAskingEnabled() {
+        return preferences.getBoolean(resources.getString(R.string.main_settings_ask_role_and_address_key),
+                false);
+    }
+
+    public void setIsRoleAskingEnabled(boolean isRoleAskingEnabled) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(resources.getString(R.string.main_settings_ask_role_and_address_key),
+                isRoleAskingEnabled);
+        editor.apply();
+    }
+
+    public List<String> getRoles() {
+        String rolesList = preferences.getString(resources.getString(R.string.main_settings_role_key),
+                    "");
+        return Arrays.asList(rolesList.split(","));
+    }
+
+    public void setRoles(List<String> roles) {
+        SharedPreferences.Editor editor = preferences.edit();
+        String rolesList = String.join(",", roles);
+        editor.putString(resources.getString(R.string.main_settings_role_key),
+                rolesList);
+        editor.apply();
+    }
+
+    public String getRoleCity() {
+        return preferences.getString(resources.getString(R.string.main_settings_city_key),
+                "");
+    }
+
+    public void setRoleCity(String city) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_city_key),
+                city);
+        editor.apply();
+    }
+
+    public String getRoleState() {
+        return preferences.getString(resources.getString(R.string.main_settings_county_key),
+                "");
+    }
+
+    public void setRoleState(String state) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_county_key),
+                state);
+        editor.apply();
+    }
+
+    public String getRoleCountry() {
+        return preferences.getString(resources.getString(R.string.main_settings_country_key),
+                "");
+    }
+
+    public void setRoleCountry(String country) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_country_key),
+                country);
+        editor.apply();
+    }
+
+    public String getRoleZip() {
+        return preferences.getString(resources.getString(R.string.main_settings_postal_code_key),
+                "");
+    }
+
+    public void setRoleZip(String zip) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_postal_code_key),
+                zip);
+        editor.apply();
+    }
+
     @Nullable public Locale getLocale() {
         String locale = preferences.getString(KEY_LOCALE, null);
         if (locale != null) {
@@ -163,6 +260,12 @@ public final class SettingsDataStore {
         editor.commit();
     }
 
+    public void setTsaUrl(String tsaUrl) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_tsa_url_key), tsaUrl);
+        editor.commit();
+    }
+
     public String getTsaUrl() {
         return preferences.getString(resources.getString(R.string.main_settings_tsa_url_key), "");
     }
@@ -201,5 +304,122 @@ public final class SettingsDataStore {
 
     public boolean getIsTsaCertificateViewVisible() {
         return preferences.getBoolean(resources.getString(R.string.main_settings_tsa_cert_view), false);
+    }
+
+    public void setSivaSetting(SivaSetting sivaSetting) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_siva_setting_key), sivaSetting.name());
+        editor.commit();
+    }
+
+    public SivaSetting getSivaSetting() {
+        String sivaSetting = preferences.getString(resources.getString(R.string.main_settings_siva_setting_key), SivaSetting.DEFAULT.name());
+        try {
+            return SivaSetting.valueOf(sivaSetting);
+        } catch (IllegalArgumentException iae) {
+            Timber.log(Log.ERROR, iae, "Unable to get SiVa setting value");
+            return SivaSetting.DEFAULT;
+        }
+    }
+
+    public void setSivaUrl(String sivaUrl) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_siva_url_key), sivaUrl);
+        editor.commit();
+    }
+
+    public String getSivaUrl() {
+        return preferences.getString(resources.getString(R.string.main_settings_siva_url_key), "");
+    }
+
+    public void setSivaCertName(String cert) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_siva_cert_key), cert);
+        editor.commit();
+    }
+
+    public String getSivaCertName() {
+        return preferences.getString(resources.getString(R.string.main_settings_siva_cert_key), "");
+    }
+
+    public void setProxySetting(ProxySetting proxySetting) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_proxy_setting_key), proxySetting.name());
+        editor.commit();
+    }
+
+    public ProxySetting getProxySetting() {
+        String settingKey = preferences.getString(resources.getString(R.string.main_settings_proxy_setting_key), NO_PROXY.name());
+        try {
+            return ProxySetting.valueOf(settingKey);
+        } catch (IllegalArgumentException iae) {
+            Timber.log(Log.ERROR, iae, "Unable to get proxy setting");
+            return NO_PROXY;
+        }
+    }
+
+    public void setProxyHost(String host) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_proxy_host_key), host);
+        editor.commit();
+    }
+
+    public String getProxyHost() {
+        return preferences.getString(resources.getString(R.string.main_settings_proxy_host_key), "");
+    }
+
+    public void setProxyPort(int port) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(resources.getString(R.string.main_settings_proxy_port_key), port);
+        editor.commit();
+    }
+
+    public int getProxyPort() {
+        return preferences.getInt(resources.getString(R.string.main_settings_proxy_port_key), 80);
+    }
+
+    public void setProxyUsername(String username) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.main_settings_proxy_username_key), username);
+        editor.commit();
+    }
+
+    public String getProxyUsername() {
+        return preferences.getString(resources.getString(R.string.main_settings_proxy_username_key), "");
+    }
+
+    public void setProxyPassword(Context context, String password) {
+        SharedPreferences encryptedPreferences = getEncryptedPreferences(context);
+        if (encryptedPreferences != null) {
+            SharedPreferences.Editor editor = encryptedPreferences.edit();
+            editor.putString(resources.getString(R.string.main_settings_proxy_password_key), password);
+            editor.commit();
+        }
+        Timber.log(Log.ERROR, "Unable to set proxy password");
+    }
+
+    public String getProxyPassword(Context context) {
+        SharedPreferences encryptedPreferences = getEncryptedPreferences(context);
+        if (encryptedPreferences != null) {
+            return encryptedPreferences.getString(resources.getString(R.string.main_settings_proxy_password_key), "");
+        }
+        Timber.log(Log.ERROR, "Unable to get proxy password");
+        return "";
+    }
+
+    public ManualProxy getManualProxySettings(Context context) {
+        return new ManualProxy(getProxyHost(), getProxyPort(),
+                getProxyUsername(), getProxyPassword(context));
+    }
+
+    @Nullable
+    private static SharedPreferences getEncryptedPreferences(Context context) {
+        try {
+            return EncryptedPreferences.getEncryptedPreferences(context);
+        } catch (GeneralSecurityException | IOException e) {
+            Timber.log(Log.ERROR, e, "Unable to get encrypted preferences");
+            ToastUtil.showError(context, R.string.signature_update_mobile_id_error_general_client);
+            return null;
+        }
     }
 }

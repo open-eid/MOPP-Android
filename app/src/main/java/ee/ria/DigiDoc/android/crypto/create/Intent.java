@@ -26,9 +26,12 @@ interface Intent extends MviIntent, MviAction {
 
         @Nullable abstract android.content.Intent intent();
 
+        abstract boolean isFromSignatureView();
+
         static InitialIntent create(@Nullable File containerFile,
-                                    @Nullable android.content.Intent intent) {
-            return new AutoValue_Intent_InitialIntent(containerFile, intent);
+                                    @Nullable android.content.Intent intent,
+                                    boolean isFromSignatureView) {
+            return new AutoValue_Intent_InitialIntent(containerFile, intent, isFromSignatureView);
         }
     }
 
@@ -299,6 +302,26 @@ interface Intent extends MviIntent, MviAction {
 
         static SendIntent create(File containerFile) {
             return new AutoValue_Intent_SendIntent(containerFile);
+        }
+    }
+
+    @AutoValue
+    abstract class ContainerSaveIntent implements Intent {
+
+        abstract File containerFile();
+
+        static ContainerSaveIntent create(File containerFile) {
+            return new AutoValue_Intent_ContainerSaveIntent(containerFile);
+        }
+    }
+
+    @AutoValue
+    abstract class SignIntent implements Intent {
+
+        abstract File containerFile();
+
+        static SignIntent create(File containerFile) {
+            return new AutoValue_Intent_SignIntent(containerFile);
         }
     }
 }

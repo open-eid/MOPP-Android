@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2024 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,8 @@ public interface MobileSignConstants {
     String MID_BROADCAST_ACTION = "ee.ria.mopp.androidmobileid.MID_BROADCAST_ACTION";
     String MID_BROADCAST_TYPE_KEY = "ee.ria.mopp.androidmobileid.MID_BROADCAST_TYPE_KEY";
 
+    String SIGNING_ROLE_DATA = "ee.ria.mopp.androidmobileid.SIGNING_ROLE_DATA";
+
     String CREATE_SIGNATURE_REQUEST = "ee.ria.mopp.androidmobileid.CREATE_SIGNATURE_REQUEST";
     String ACCESS_TOKEN_PASS = "ee.ria.mopp.androidmobileid.ACCESS_TOKEN_PASS";
     String ACCESS_TOKEN_PATH = "ee.ria.mopp.androidmobileid.ACCESS_TOKEN_PATH";
@@ -31,4 +33,10 @@ public interface MobileSignConstants {
     String CREATE_SIGNATURE_CHALLENGE = "ee.ria.mopp.androidmobileid.MID_CHALLENGE";
     String CREATE_SIGNATURE_STATUS = "ee.ria.mopp.androidmobileid.CREATE_SIGNATURE_STATUS";
     String SERVICE_FAULT = "ee.ria.mopp.androidmobileid.SERVICE_FAULT";
+    String CONFIG_URL = "ee.ria.mopp.androidmobileid.CONFIG_URL";
+    String PROXY_SETTING = "ee.ria.mopp.androidmobileid.PROXY_SETTING";
+    String MANUAL_PROXY_HOST = "ee.ria.mopp.androidmobileid.HOST";
+    String MANUAL_PROXY_PORT = "ee.ria.mopp.androidmobileid.PORT";
+    String MANUAL_PROXY_USERNAME = "ee.ria.mopp.androidmobileid.USERNAME";
+    String MANUAL_PROXY_PASSWORD = "ee.ria.mopp.androidmobileid.PASSWORD";
 }

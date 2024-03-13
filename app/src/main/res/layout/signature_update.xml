@@ -2,27 +2,38 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:importantForAccessibility="no"
     tools:parentTag="android.widget.LinearLayout"
     tools:layout_width="match_parent"
     tools:layout_height="match_parent"
-    android:keepScreenOn="true"
     tools:orientation="vertical">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:importantForAccessibility="no"
+        >
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@id/appBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="yes"
+            android:accessibilityHeading="true"
+            android:focusedByDefault="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:screenReaderFocusable="true"
+            >
+            <requestFocus/>
             <android.widget.Toolbar
                 android:id="@id/toolbar"
                 android:theme="@style/ThemeOverlay.Application.ActionBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -30,6 +41,7 @@
             android:id="@id/signatureUpdateList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:importantForAccessibility="no"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:scrollbars="vertical" />
 
@@ -37,6 +49,7 @@
             android:id="@id/activityOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:importantForAccessibility="no"
             android:background="@color/activityOverlayBackground"
             android:clickable="true"
             android:focusable="true"
@@ -103,7 +116,6 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintWidth="115dp"
-                        android:autoSizeTextType="uniform"
                         android:maxLines="1"
                         android:text="@string/cancel_button"
                         android:backgroundTint="@color/error"
@@ -177,7 +189,6 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintWidth="115dp"
-                    android:autoSizeTextType="uniform"
                     android:maxLines="1"
                     android:text="@string/cancel_button"
                     android:backgroundTint="@color/error"
@@ -214,6 +225,7 @@
             style="@style/Widget.Application.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
             android:layout_gravity="center"
             android:indeterminate="true"
             android:visibility="gone" />
@@ -221,25 +233,12 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <LinearLayout
+        android:id="@id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:importantForAccessibility="no"
         android:background="@color/accent">
-
-        <Button
-            android:id="@id/signatureUpdateSendButton"
-            style="@style/Widget.Application.Button.Container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:maxLines="1"
-            android:text="@string/signature_update_send_button"
-            android:drawableTop="@drawable/ic_icon_share" />
-
-        <Space
-            android:id="@id/signatureUpdateButtonSpace"
-            android:layout_width="1px"
-            android:layout_height="wrap_content" />
 
         <Button
             android:id="@id/signatureUpdateSignatureAddButton"
@@ -250,6 +249,36 @@
             android:maxLines="1"
             android:text="@string/signature_update_signature_add_button"
             android:drawableTop="@drawable/ic_icon_signature" />
+
+        <Space
+            android:id="@id/signatureUpdateSignatureButtonSpace"
+            android:layout_width="1px"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@id/signatureUpdateSignatureEncryptButton"
+            style="@style/Widget.Application.Button.Container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/crypto_create_encrypt_button"
+            android:drawableTop="@drawable/ic_icon_crypto" />
+
+        <Space
+            android:id="@id/signatureUpdateEncryptButtonSpace"
+            android:layout_width="1px"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@id/signatureUpdateSendButton"
+            style="@style/Widget.Application.Button.Container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/signature_update_send_button"
+            android:drawableTop="@drawable/ic_icon_share" />
 
     </LinearLayout>
 

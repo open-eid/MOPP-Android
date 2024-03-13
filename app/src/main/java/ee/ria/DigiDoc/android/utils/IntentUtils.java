@@ -48,6 +48,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.common.FileUtil;
+import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import timber.log.Timber;
@@ -231,12 +232,18 @@ public final class IntentUtils {
             StorageVolume storageVolume = storageManager.getPrimaryStorageVolume();
             Intent storageIntent = storageVolume.createOpenDocumentTreeIntent();
 
-            storagePath = storageIntent.getParcelableExtra(DocumentsContract.EXTRA_INITIAL_URI).toString();
-            storagePath = StringUtils.replace(storagePath, "/root/", "/document/");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                storagePath += URLEncoder.encode(":", StandardCharsets.UTF_8) + DOCUMENTS_FOLDER;
+            Parcelable initialUri = storageIntent.getParcelableExtra(DocumentsContract.EXTRA_INITIAL_URI);
+            if (initialUri != null) {
+                storagePath = initialUri.toString();
+                storagePath = StringUtils.replace(storagePath, "/root/", "/document/");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    storagePath += URLEncoder.encode(":", StandardCharsets.UTF_8) + DOCUMENTS_FOLDER;
+                } else {
+                    storagePath += URLEncoder.encode(":") + DOCUMENTS_FOLDER;
+                }
             } else {
-                storagePath += URLEncoder.encode(":") + DOCUMENTS_FOLDER;
+                Timber.log(Log.ERROR, "Unable to get initial URL");
+                return null;
             }
         }
         File dir = new File(context.getFilesDir(), DIR_INTERNAL_FILES);
@@ -250,12 +257,16 @@ public final class IntentUtils {
 
         Uri fileUri = FileProvider.getUriForFile(context,
                 context.getString(R.string.file_provider_authority), destFile);
+        String mimeType = SignedContainer.mimeType(file);
+        if (CryptoContainer.isCryptoContainer(file)) {
+            mimeType = CryptoContainer.getMimeType();
+        }
         Intent intent = Intent
                 .createChooser(new Intent(Intent.ACTION_CREATE_DOCUMENT)
                         .addCategory(Intent.CATEGORY_OPENABLE)
                         .putExtra(Intent.EXTRA_TITLE, FileUtil.sanitizeString(file.getName(), ""))
                         .putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(storagePath))
-                        .setDataAndType(fileUri, SignedContainer.mimeType(file))
+                        .setDataAndType(fileUri, mimeType)
                         .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION), null);
 
         List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
@@ -270,6 +281,15 @@ public final class IntentUtils {
     public static Intent createBrowserIntent(Context context, int stringRes, Configuration configuration) {
         String localizedUrl = context.createConfigurationContext(configuration).getText(stringRes).toString();
         return new Intent(Intent.ACTION_VIEW, Uri.parse(localizedUrl));
+    }
+
+    public static Intent setIntentData(Intent intent, Path filePath, android.app.Activity activity) {
+        intent.setData(Uri.parse(filePath.toUri().toString()));
+        intent.setClipData(ClipData.newRawUri(filePath.getFileName().toString(), FileProvider.getUriForFile(
+                activity,
+                activity.getString(R.string.file_provider_authority),
+                filePath.toFile())));
+        return intent;
     }
 
     private static String getDataFileMimetype(DataFile dataFile) {

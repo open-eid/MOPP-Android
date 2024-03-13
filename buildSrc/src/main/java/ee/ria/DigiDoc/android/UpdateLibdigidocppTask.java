@@ -7,6 +7,7 @@ import org.gradle.api.tasks.options.Option;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,12 +43,10 @@ public class UpdateLibdigidocppTask extends DefaultTask {
     static {
         ABIS.add("arm64-v8a");
         ABIS.add("armeabi-v7a");
-        ABIS.add("x86");
         ABIS.add("x86_64");
 
         ABI_FILES.put("arm64-v8a", "androidarm64");
         ABI_FILES.put("armeabi-v7a", "androidarm");
-        ABI_FILES.put("x86", "androidx86");
         ABI_FILES.put("x86_64", "androidx86_64");
     }
 
@@ -191,8 +190,13 @@ public class UpdateLibdigidocppTask extends DefaultTask {
                 if (!entryFile.toPath().normalize().startsWith(destination.toPath())) {
                     throw new ZipException("Bad zip entry: " + entry.getName());
                 }
-                Files.createDirectories(entryFile.getParentFile().toPath());
-                Files.copy(inputStream, entryFile.toPath());
+                File parentFile = entryFile.getParentFile();
+                if (parentFile != null) {
+                    Files.createDirectories(parentFile.toPath());
+                    Files.copy(inputStream, entryFile.toPath());
+                } else {
+                    throw new FileNotFoundException("Unable to get file to make directories");
+                }
             }
         }
     }
@@ -207,7 +211,8 @@ public class UpdateLibdigidocppTask extends DefaultTask {
     private static void jar(File path, File jar) throws IOException {
         Manifest manifest = new Manifest();
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
-        try (JarOutputStream outputStream = new JarOutputStream(new FileOutputStream(jar), manifest)) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(jar);
+             JarOutputStream outputStream = new JarOutputStream(fileOutputStream, manifest)) {
             for (File file : files(path)) {
                 if (!file.getName().endsWith(".class")) {
                     continue;

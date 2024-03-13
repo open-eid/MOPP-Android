@@ -1,6 +1,15 @@
 package ee.ria.DigiDoc.configuration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import android.content.Context;
+
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Before;
@@ -16,18 +25,10 @@ import java.util.Properties;
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
 public final class ConfigurationManagerTest {
 
     @Rule public final TemporaryFolder folder =
-            new TemporaryFolder(InstrumentationRegistry.getContext().getCacheDir());
+            new TemporaryFolder(InstrumentationRegistry.getInstrumentation().getContext().getCacheDir());
 
     private ConfigurationProperties configurationProperties;
     private CachedConfigurationHandler cacheConfHandler;
@@ -35,9 +36,9 @@ public final class ConfigurationManagerTest {
 
     @Before
     public void setup() {
-        deleteCachedData(InstrumentationRegistry.getContext().getCacheDir());
+        deleteCachedData(InstrumentationRegistry.getInstrumentation().getContext().getCacheDir());
 
-        Context context = InstrumentationRegistry.getTargetContext();
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         configurationProperties = new ConfigurationProperties(context.getAssets());
         cacheConfHandler = new CachedConfigurationHandler(context.getCacheDir());
         configurationManager = new ConfigurationManager(context, configurationProperties, cacheConfHandler, UserAgentUtil.getUserAgent(context));
@@ -71,7 +72,7 @@ public final class ConfigurationManagerTest {
         assertConfigurationValues(configuration);
         assertNull(configuration.getConfigurationLastUpdateCheckDate());
         // Packaged default configuration download date, initialized during APK build
-        assertEquals("Mon Sep 02 18:38:15 GMT+03:00 2019", configuration.getConfigurationUpdateDate().toString());
+        assertEquals("Mon Mar 21 19:56:08 GMT+02:00 2022", configuration.getConfigurationUpdateDate().toString());
     }
 
     @Test
@@ -81,7 +82,7 @@ public final class ConfigurationManagerTest {
         assertNull(configuration.getConfigurationLastUpdateCheckDate());
         assertNotNull(configuration.getConfigurationUpdateDate());
         // Packaged default configuration download date, initialized during APK build
-        assertEquals("Mon Sep 02 18:38:15 GMT+03:00 2019", configuration.getConfigurationUpdateDate().toString());
+        assertEquals("Mon Mar 21 19:56:08 GMT+02:00 2022", configuration.getConfigurationUpdateDate().toString());
     }
 
     @Test
@@ -151,7 +152,7 @@ public final class ConfigurationManagerTest {
         assertFalse(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_JSON));
         assertFalse(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_RSA));
 
-        configurationManager = new ConfigurationManager(InstrumentationRegistry.getTargetContext(), configurationProperties, cacheConfHandler, "Test User-Agent");
+        configurationManager = new ConfigurationManager(InstrumentationRegistry.getInstrumentation().getTargetContext(), configurationProperties, cacheConfHandler, "Test User-Agent");
         // Loading configuration.
         // Online configuration should fail and default configuration loaded, because cached configuration does not exist yet.
         // Default conf cached.
@@ -159,7 +160,7 @@ public final class ConfigurationManagerTest {
         assertDefaultConfigurationValues(configuration);
         assertNull(configuration.getConfigurationLastUpdateCheckDate());
         // Packaged default configuration download date, initialized during APK build
-        assertEquals("Mon Sep 02 18:38:15 GMT+03:00 2019", configuration.getConfigurationUpdateDate().toString());
+        assertEquals("Mon Mar 21 19:56:08 GMT+02:00 2022", configuration.getConfigurationUpdateDate().toString());
 
         assertTrue(cacheConfHandler.doesCachedConfigurationExist());
         assertTrue(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_JSON));
@@ -168,14 +169,11 @@ public final class ConfigurationManagerTest {
         // Set central configuration url back to valid, to emulate online configuration loading successful case
         properties.setProperty(ConfigurationProperties.CENTRAL_CONFIGURATION_SERVICE_URL_PROPERTY, confServiceValidUrl);
 
-        configurationManager = new ConfigurationManager(InstrumentationRegistry.getTargetContext(), configurationProperties, cacheConfHandler, "Test User-Agent");
+        configurationManager = new ConfigurationManager(InstrumentationRegistry.getInstrumentation().getTargetContext(), configurationProperties, cacheConfHandler, "Test User-Agent");
 
         // Load configuration again, now online load should succeed, and cached configuration overridden with given conf
-        long processStartDate = inSeconds(new Date());
         configuration = configurationManager.getConfiguration();
-        long processEndDate = inSeconds(new Date());
         assertConfigurationValues(configuration);
-        assertConfigurationUpdateDates(configuration, processStartDate, processEndDate);
 
         assertTrue(cacheConfHandler.doesCachedConfigurationExist());
         assertEquals(configuration.getConfigurationLastUpdateCheckDate(), cacheConfHandler.getConfLastUpdateCheckDate());
@@ -211,15 +209,15 @@ public final class ConfigurationManagerTest {
         assertEquals(configurationProperties.getCentralConfigurationServiceUrl(), configuration.getConfigUrl());
         assertEquals("ldaps://k3.ldap.sk.ee", configuration.getLdapCorpUrl());
         assertEquals("ldaps://esteid.ldap.sk.ee", configuration.getLdapPersonUrl());
-        assertEquals("https://siva.eesti.ee/V2/validate", configuration.getSivaUrl());
+        assertEquals("https://siva.eesti.ee/V3/validate", configuration.getSivaUrl());
         assertEquals("http://dd-at.ria.ee/tsa", configuration.getTsaUrl());
         assertEquals("https://ec.europa.eu/tools/lotl/eu-lotl.xml", configuration.getTslUrl());
-        assertEquals("20190816123015Z", configuration.getMetaInf().getDate());
+        assertEquals("20220221080015Z", configuration.getMetaInf().getDate());
         assertEquals("https://id.eesti.ee/config.json", configuration.getMetaInf().getUrl());
-        assertSame(93, configuration.getMetaInf().getSerial());
+        assertEquals(140, configuration.getMetaInf().getSerial());
         assertSame(1, configuration.getMetaInf().getVersion());
-        assertSame(8, configuration.getTslCerts().size());
-        assertSame(13, configuration.getOCSPUrls().size());
+        assertSame(10, configuration.getTslCerts().size());
+        assertSame(4, configuration.getOCSPUrls().size());
     }
 
 

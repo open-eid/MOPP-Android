@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.idcard.NFC;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
@@ -32,38 +33,28 @@ import timber.log.Timber;
 public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
     private final Navigator navigator;
     private final SignedContainer container;
-    private final LocalBroadcastManager broadcastManager;
-    private final String uuid;
     private final String can;
     private final String pin2;
+    private final RoleData role;
     private NFC nfc;
 
-    Intent intent;
-
-    public NFCOnSubscribe(Navigator navigator, Intent intent, SignedContainer container, String uuid,
-                              String can, String pin2) {
+    public NFCOnSubscribe(Navigator navigator, SignedContainer container,
+                              String can, String pin2, @Nullable RoleData roleData) {
         this.navigator = navigator;
         this.container = container;
-        this.broadcastManager = LocalBroadcastManager.getInstance(navigator.activity());
-        this.uuid = uuid;
         this.can = can;
         this.pin2 = pin2;
-
-        this.intent = intent;
+        this.role = roleData;
     }
 
     @Override
     public void subscribe(ObservableEmitter<NFCResponse> emitter) {
-        // fixme: Do we need service?
-        //navigator.activity().startService(intent);
         Timber.log(Log.DEBUG, "Handling NFC sign intent");
         NfcManager manager = (NfcManager) navigator.activity().getSystemService(Context.NFC_SERVICE);
         NfcAdapter adapter = manager.getDefaultAdapter();
         if (adapter == null || !adapter.isEnabled()) {
             Timber.log(Log.ERROR, "NFC is not enabled");
             emitter.onError(new java.io.IOException("NFC adapter not found"));
-            // fixme: Send error observable
-            return;
         }
         Timber.log(Log.DEBUG, "Successfully created NFC adapter");
         adapter.enableReaderMode(navigator.activity(),
@@ -98,14 +89,6 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
             card.setTimeout(32768);
             nfc = new NFC(card, can.getBytes(StandardCharsets.UTF_8));
 
-            // fixme: Communication test (remove it)
-            byte[] vals = {1,2,6,3,4,8};
-            String[] response = nfc.readPersonalData(vals);
-            for (String res : response) {
-                Timber.log(Log.DEBUG, res);
-            }
-            // Test sign
-
             // Step 1 - get certificate
             byte[] certificate = nfc.readCertificate();
             Timber.log(Log.DEBUG, "CERT:%s", Hex.toHexString(certificate));
@@ -137,7 +120,7 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
 
             container.sign(cert.data(),
                     signData -> ByteString.of(nfc.calculateSignature(pin2.getBytes(StandardCharsets.US_ASCII),
-                    signData.toByteArray())));
+                    signData.toByteArray())), role);
         } catch (TagLostException exc) {
             Timber.log(Log.ERROR, exc.getMessage());
             result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, exc.getMessage());

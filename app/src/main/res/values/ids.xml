@@ -4,11 +4,14 @@
     <!-- General -->
     <item type="id" name="appBar" />
     <item type="id" name="toolbar" />
+    <item type="id" name="scrollView" />
+    <item type="id" name="linearLayout" />
     <item type="id" name="activityIndicator" />
     <item type="id" name="activityIndicatorMobileId" />
     <item type="id" name="activityIndicatorSmartId" />
     <item type="id" name="activityOverlay" />
     <item type="id" name="listEmpty" />
+    <item type="id" name="lastInvisibleElement" />
 
     <item type="id" name="nameUpdateNameLabel" />
     <item type="id" name="nameUpdateName" />
@@ -33,7 +36,6 @@
     <item type="id" name="mainHomeMenuCloseButton" />
     <item type="id" name="mainHomeMenuHelp" />
     <item type="id" name="mainHomeMenuAccessibility" />
-    <item type="id" name="mainHomeMenuRecent" />
     <item type="id" name="mainHomeMenuSettings" />
     <item type="id" name="mainHomeMenuAbout" />
     <item type="id" name="mainHomeMenuDiagnostics" />
@@ -46,6 +48,7 @@
     <item type="id" name="mainAccessibilityScreen" />
     <item type="id" name="mainAccessibilityFragment" />
 
+    <item type="id" name="mainAccessibilityLink" />
     <item type="id" name="mainAccessibilityIntroduction" />
     <item type="id" name="mainAccessibilityIntroduction2" />
     <item type="id" name="mainAccessibilityIntroductionScreenReaderTitle" />
@@ -65,20 +68,58 @@
 
     <!-- Main Settings -->
     <item type="id" name="mainSettingsScreen" />
+    <item type="id" name="mainSettingsSigningScreen" />
+    <item type="id" name="mainSettingsRightsScreen" />
+    <item type="id" name="mainSettingsRoleAndAddressScreen" />
     <item type="id" name="mainSettingsFragment" />
+    <item type="id" name="mainSettingsUseDefaultSettings" />
+    <item type="id" name="mainSettingsSigningCategory" />
+    <item type="id" name="mainSettingsRightsCategory" />
+    <item type="id" name="mainSettingsAccessScreen" />
+    <item type="id" name="mainSettingsProxyScreen" />
+    <item type="id" name="mainSettingsAccessCategory" />
+    <item type="id" name="mainSettingsProxyGroup" />
+    <item type="id" name="mainSettingsProxyNoProxy" />
+    <item type="id" name="mainSettingsProxyUseSystem" />
+    <item type="id" name="mainSettingsProxyManual" />
+    <item type="id" name="mainSettingsProxyHost" />
+    <item type="id" name="mainSettingsProxyPortLayout" />
+    <item type="id" name="mainSettingsProxyPort" />
+    <item type="id" name="mainSettingsProxyUsername" />
+    <item type="id" name="mainSettingsProxyPassword" />
+    <item type="id" name="mainSettingsRoleAndAddressCategory" />
     <item type="id" name="mainSettingsOpenAllFileTypes" />
     <item type="id" name="mainSettingsAllowScreenshots" />
     <item type="id" name="mainSettingsAccessToSigningService" />
     <item type="id" name="mainSettingsAccessToTimeStampingService" />
+    <item type="id" name="mainSettingsAskRoleAndAddress" />
     <item type="id" name="mainSettingsTsaCertificateContainer" />
+    <item type="id" name="mainSettingsTsaCertificateTitle" />
     <item type="id" name="mainSettingsTsaCertificateIssuedTo" />
     <item type="id" name="mainSettingsTsaCertificateValidTo" />
     <item type="id" name="mainSettingsTsaCertificateAddCertificateButton" />
     <item type="id" name="mainSettingsTsaCertificateShowCertificateButton" />
     <item type="id" name="mainSettingsChooseFileScreen" />
+    <item type="id" name="mainSettingsSivaServiceContainer" />
+    <item type="id" name="mainSettingsSivaServiceCertificateContainer" />
+    <item type="id" name="mainSettingsSivaServiceChoiceGroup" />
+    <item type="id" name="mainSettingsSivaServiceDefaultChoice" />
+    <item type="id" name="mainSettingsSivaServiceManualChoice" />
+    <item type="id" name="mainSettingsSivaServiceUrlLayout" />
+    <item type="id" name="mainSettingsSivaServiceUrl" />
+    <item type="id" name="mainSettingsSivaCertificateIssuedTo" />
+    <item type="id" name="mainSettingsSivaCertificateValidTo" />
+    <item type="id" name="mainSettingsSivaCertificateAddCertificateButton" />
+    <item type="id" name="mainSettingsSivaCertificateShowCertificateButton" />
+    <item type="id" name="signingSettingsSivaCategory" />
+    <item type="id" name="mainSettingsSivaBackButton" />
+    <item type="id" name="signingSettingsProxyCategory" />
+    <item type="id" name="mainSettingsProxyBackButton" />
 
 
     <!-- Main About -->
+    <item type="id" name="mainAboutScreen" />
+    <item type="id" name="mainAboutListLayout" />
     <item type="id" name="mainAboutList" />
     <item type="id" name="mainAboutRiaDigiDocVersionTitle" />
     <item type="id" name="mainAboutComponentName" />
@@ -116,9 +157,11 @@
 
     <!-- Signature Home -->
     <item type="id" name="signatureHomeCreateButton" />
+    <item type="id" name="signatureHomeRecentDocumentsButton" />
 
     <!-- Signature List -->
     <item type="id" name="signatureListScreen" />
+    <item type="id" name="signatureListLayout" />
     <item type="id" name="signatureList" />
     <item type="id" name="signatureListItemName" />
     <item type="id" name="signatureListItemRemoveButton" />
@@ -232,6 +275,7 @@
     <item type="id" name="signatureUpdateListStatusEmptyFile" />
     <item type="id" name="signatureUpdateListName" />
     <item type="id" name="signatureUpdateListNameUpdateButton" />
+    <item type="id" name="signatureUpdateListNameSaveButton" />
     <item type="id" name="signatureUpdateListSubheadTitle" />
     <item type="id" name="signatureUpdateListSubheadButton" />
     <item type="id" name="signatureUpdateListDocumentIcon" />
@@ -243,7 +287,9 @@
     <item type="id" name="signatureUpdateListSignatureName" />
     <item type="id" name="signatureUpdateListSignatureStatus" />
     <item type="id" name="signatureUpdateListSignatureStatusCaution" />
+    <item type="id" name="signatureUpdateListSignatureRole" />
     <item type="id" name="signatureUpdateListSignatureCreatedAt" />
+    <item type="id" name="signatureUpdateListSignatureRoleDetailsButton" />
     <item type="id" name="signatureUpdateListSignatureRemoveButton" />
     <item type="id" name="signatureUpdateListDocumentsAddButton" />
     <item type="id" name="signatureUpdateMobileIdContainer" />
@@ -251,8 +297,11 @@
     <item type="id" name="signatureUpdateMobileIdChallengeText" />
     <item type="id" name="signatureUpdateMobileIdCancelButton" />
     <item type="id" name="signatureUpdateSendButton" />
-    <item type="id" name="signatureUpdateButtonSpace" />
+    <item type="id" name="signatureUpdateSaveButtonSpace" />
+    <item type="id" name="signatureUpdateSignatureButtonSpace" />
+    <item type="id" name="signatureUpdateEncryptButtonSpace" />
     <item type="id" name="signatureUpdateSignatureAddButton" />
+    <item type="id" name="signatureUpdateSignatureEncryptButton" />
     <item type="id" name="signatureUpdateSignatureAdd" />
     <item type="id" name="signatureUpdateSignatureAddMethod" />
     <item type="id" name="signatureUpdateSignatureAddMethodMobileId" />
@@ -279,6 +328,7 @@
     <item type="id" name="signatureUpdateSmartIdCountryLabel" />
     <item type="id" name="signatureUpdateSmartIdCountry" />
     <item type="id" name="signatureUpdateSmartIdPersonalCodeLabel" />
+    <item type="id" name="signatureUpdateSmartIdPersonalCodeLayoutLabel" />
     <item type="id" name="signatureUpdateSmartIdPersonalCode" />
     <item type="id" name="signatureUpdateSmartIdRememberMe" />
     <item type="id" name="signatureUpdateSmartIdCancelSigningButton" />
@@ -315,8 +365,37 @@
     <item type="id" name="signatureAddPersonalCode" />
     <item type="id" name="signatureAddRememberMe" />
 
+    <!-- Role and Address -->
+    <item type="id" name="signatureUpdateRoleAdd" />
+    <item type="id" name="signatureRoleScreen" />
+    <item type="id" name="roleAndAddressContainer" />
+    <item type="id" name="signatureUpdateRole" />
+    <item type="id" name="signatureUpdateRoleCity" />
+    <item type="id" name="signatureUpdateRoleState" />
+    <item type="id" name="signatureUpdateRoleCountry" />
+    <item type="id" name="signatureUpdateRoleZip" />
+
+    <item type="id" name="signatureUpdateRoleLabel" />
+    <item type="id" name="signatureUpdateRoleCityLabel" />
+    <item type="id" name="signatureUpdateRoleStateLabel" />
+    <item type="id" name="signatureUpdateRoleCountryLabel" />
+    <item type="id" name="signatureUpdateRoleZipLabel" />
+
+    <item type="id" name="signatureUpdateRoleText" />
+    <item type="id" name="signatureUpdateRoleCityText" />
+    <item type="id" name="signatureUpdateRoleStateText" />
+    <item type="id" name="signatureUpdateRoleCountryText" />
+    <item type="id" name="signatureUpdateRoleZipText" />
+
+    <item type="id" name="signatureUpdateRoleDetailLabel" />
+    <item type="id" name="signatureUpdateRoleCityDetailLabel" />
+    <item type="id" name="signatureUpdateRoleStateDetailLabel" />
+    <item type="id" name="signatureUpdateRoleCountryDetailLabel" />
+    <item type="id" name="signatureUpdateRoleZipDetailLabel" />
+
     <!-- Crypto Home -->
     <item type="id" name="cryptoHomeCreateButton" />
+    <item type="id" name="cryptoHomeRecentDocumentsButton" />
 
     <!-- Crypto Create -->
     <item type="id" name="cryptoCreateScreen" />
@@ -324,8 +403,13 @@
     <item type="id" name="cryptoCreateList" />
     <item type="id" name="cryptoCreateEncryptButton" />
     <item type="id" name="cryptoCreateDecryptButton" />
+    <item type="id" name="cryptoCreateSaveButton" />
     <item type="id" name="cryptoCreateSendButton" />
     <item type="id" name="cryptoCreateButtonSpace" />
+    <item type="id" name="cryptoCreateSaveButtonSpace" />
+    <item type="id" name="cryptoCreateSignatureButton" />
+    <item type="id" name="cryptoCreateCryptoButtonSpace" />
+    <item type="id" name="cryptoCreateSignatureButtonSpace" />
     <item type="id" name="cryptoCreateSuccessMessage" />
     <item type="id" name="cryptoCreateName" />
     <item type="id" name="cryptoCreateNameUpdateButton" />
@@ -349,6 +433,7 @@
 
     <item type="id" name="cryptoRecipientsScreen" />
     <item type="id" name="cryptoRecipientsSearch" />
+    <item type="id" name="cryptoRecipientsSearchLabel" />
     <item type="id" name="cryptoRecipientsList" />
     <item type="id" name="cryptoRecipientsDoneButton" />
 

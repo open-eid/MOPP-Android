@@ -13,8 +13,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     lint {
@@ -31,6 +31,7 @@ dependencies {
     api "com.squareup.okio:okio:${okioVersion}"
 
     implementation "androidx.appcompat:appcompat:${androidxAppCompatVersion}"
+    implementation "androidx.security:security-crypto:${androidxSecurityCrypto}"
 
     implementation "com.takisoft.preferencex:preferencex:${preferencexVersion}"
 
@@ -50,6 +51,6 @@ dependencies {
 
     api files('libs/libdigidocpp.jar')
 
-    testImplementation "junit:junit:${junitVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testImplementation "com.google.truth:truth:${truthVersion}"
 }

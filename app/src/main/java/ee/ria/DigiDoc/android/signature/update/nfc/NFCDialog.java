@@ -23,8 +23,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-public final class NFCDialog extends AlertDialog implements
-        DialogInterface.OnClickListener {
+public final class NFCDialog extends AlertDialog implements DialogInterface.OnClickListener {
 
     private final Subject<Integer> buttonClicksSubject = PublishSubject.create();
 
@@ -77,21 +76,6 @@ public final class NFCDialog extends AlertDialog implements
             return true;
         }
         return super.dispatchPopulateAccessibilityEvent(event);
-    }
-
-    public Observable<Object> positiveButtonClicks() {
-        return buttonClicksSubject
-                .filter(which -> which == BUTTON_POSITIVE)
-                .map(ignored -> Constants.VOID);
-    }
-
-    public Observable<Object> cancels() {
-        return RxDialog.cancels(this)
-                .mergeWith(buttonClicksSubject.filter(which -> which == BUTTON_NEGATIVE));
-    }
-
-    private String getDialogActionConfirmationDescription() {
-        return "Confirm";
     }
 
     private String getDialogActionCancelDescription() {

@@ -1,5 +1,9 @@
 package ee.ria.DigiDoc.android.main.home;
 
+import static android.content.Intent.ACTION_VIEW;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createBrowserIntent;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
+
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -27,7 +31,6 @@ import ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen;
 import ee.ria.DigiDoc.android.main.home.Intent.NavigationVisibilityIntent;
 import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
-import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
 import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
@@ -39,10 +42,6 @@ import ee.ria.DigiDoc.crypto.CryptoContainer;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.core.ObservableTransformer;
-
-import static android.content.Intent.ACTION_VIEW;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createBrowserIntent;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 
 final class Processor implements ObservableTransformer<Intent, Result> {
 
@@ -127,7 +126,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 navigator.execute(menuItemToTransaction(application, item,
                         localeService.applicationConfigurationWithLocale(application.getApplicationContext(),
                                 localeService.applicationLocale())));
-                return Observable.just(Result.MenuResult.create(false));
+                return Observable.just(Result.MenuResult.create(true));
             }
             throw new IllegalStateException("Action is in invalid state: " + action);
         });
@@ -171,8 +170,6 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return Transaction
                         .activity(createBrowserIntent(context, R.string.main_home_menu_help_url, configuration),
                                 null);
-            case R.id.mainHomeMenuRecent:
-                return Transaction.push(SignatureListScreen.create());
             case R.id.mainHomeMenuAccessibility:
                 return Transaction.push(AccessibilityScreen.create());
             case R.id.mainHomeMenuSettings:

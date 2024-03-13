@@ -43,6 +43,8 @@ abstract class ViewState implements MviViewState {
 
     @Nullable abstract DataFile sivaConfirmation();
 
+    abstract boolean roleAddConfirmation();
+
     abstract Builder buildWith();
 
     static ViewState initial() {
@@ -56,6 +58,7 @@ abstract class ViewState implements MviViewState {
                 .signatureRemoveInProgress(false)
                 .signatureAddActivity(false)
                 .signatureAddSuccessMessageVisible(false)
+                .roleAddConfirmation(false)
                 .build();
     }
 
@@ -83,6 +86,7 @@ abstract class ViewState implements MviViewState {
         Builder signatureAddError(@Nullable Throwable signatureAddError);
         Builder signatureAddResponse(@Nullable SignatureAddResponse signatureAddResponse);
         Builder sivaConfirmation(@Nullable DataFile dataFile);
+        Builder roleAddConfirmation(boolean showRoleView);
         ViewState build();
     }
 }

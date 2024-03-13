@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2024 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -149,7 +149,7 @@ abstract class EstEIDToken implements Token {
             }
             stream.write(reader.transmit(0x00, 0xB0, i, 0x00, null, remaining));
             return stream.toByteArray();
-        } catch (IOException e) {
+        } catch (IOException | NumberFormatException e) {
             throw new SmartCardReaderException(e);
         }
     }

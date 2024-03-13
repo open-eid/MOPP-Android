@@ -211,7 +211,7 @@ public class NFC {
                     Timber.log(Log.DEBUG, "MAC:%x %s", tlv_mac.tag, Hex.toHexString(tlv_mac.data, tlv_mac.start, tlv_mac.end - tlv_mac.start));
                     // fixme: Check MAC (Lauris)
                     if (tlv_enc.data[tlv_enc.start] != 0x1) {
-                        throw new IOException("Missin padding indicator");
+                        throw new IOException("Missing padding indicator");
                     }
                     byte[] decrypted = encryptDecryptData(Arrays.copyOfRange(tlv_enc.data, tlv_enc.start + 1, tlv_enc.end), Cipher.DECRYPT_MODE);
                     int indexOfTerminator = Hex.toHexString(decrypted).lastIndexOf("80") / 2;
@@ -243,13 +243,6 @@ public class NFC {
         return null;
     }
 
-    /**
-     * Calculates the message authentication code
-     *
-     * @param APDU   the byte array on which the CMAC algorithm is performed
-     * @param keyMAC the key for performing CMAC
-     * @return MAC
-     */
     private byte[] getMAC(byte[] APDU, byte[] keyMAC) {
         BlockCipher blockCipher = new AESEngine();
         CMac cmac = new CMac(blockCipher);
@@ -260,27 +253,12 @@ public class NFC {
         return Arrays.copyOf(MAC, 8);
     }
 
-    /**
-     * Creates an application protocol data unit
-     *
-     * @param template the byte array to be used as a template
-     * @param data     the data necessary for completing the APDU
-     * @param extra    the missing length of the APDU being created
-     * @return the complete APDU
-     */
     private byte[] createAPDU(byte[] template, byte[] data, int extra) {
         byte[] APDU = Arrays.copyOf(template, template.length + extra);
         System.arraycopy(data, 0, APDU, template.length, data.length);
         return APDU;
     }
 
-    /**
-     * Creates a cipher key
-     *
-     * @param unpadded the array to be used as the basis for the key
-     * @param last     the last byte in the appended padding
-     * @return the constructed key
-     */
     private byte[] createKey(byte[] unpadded, byte last) throws NoSuchAlgorithmException {
         byte[] padded = Arrays.copyOf(unpadded, unpadded.length + 4);
         padded[padded.length - 1] = last;
@@ -288,13 +266,6 @@ public class NFC {
         return messageDigest.digest(padded);
     }
 
-    /**
-     * Decrypts the nonce
-     *
-     * @param encryptedNonce the encrypted nonce received from the chip
-     * @param CAN            the card access number provided by the user
-     * @return the decrypted nonce
-     */
     private byte[] decryptNonce(byte[] encryptedNonce, byte[] CAN) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
         byte[] decryptionKey = createKey(CAN, (byte) 3);
         Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
@@ -319,12 +290,13 @@ public class NFC {
     private static final byte[] GAMutualAuthentication_DATA = Hex.decode("7c0a8508");
 
     private static final byte DYN_AUTH_DATA = 0x7c;
+    private static final byte[] readFile = Hex.decode("0cb000000d970100");
+    private static final byte[] IASECCFID = {0x3f, 0x00};
+    private static final byte[] AWP = {(byte) 0xad, (byte) 0xf1};
+    private static final byte[] QSCD = {(byte) 0xad, (byte) 0xf2};
+    private static final byte[] authCert = {0x34, 0x01};
+    private static final byte[] signCert = {0x34, 0x1f};
 
-    /**
-     * Attempts to use the PACE protocol to create a secure channel with an Estonian ID-card
-     *
-     * @param CAN    the card access number
-     */
     private byte[][] PACE(byte[] CAN) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
 
         // Select Master AID
@@ -375,11 +347,8 @@ public class NFC {
         byte[] pk3 = cardPublicKey.getEncoded(false);
         APDU = createAPDU(dataForMACIncomplete, pk3, 65);
         byte[] MAC = getMAC(APDU, keyMAC);
-        //APDU = createAPDU(GAMutualAuthenticationIncomplete, MAC, 9);
-        //Timber.log(Log.DEBUG, "APDU1: %s", Hex.toHexString(APDU));
         APDU2 = createPlainAPDU(GAMutualAuthentication[1], GAMutualAuthentication[2], GAMutualAuthentication[3], GAMutualAuthentication_DATA, MAC);
         Timber.log(Log.DEBUG, "APDU2: %s", Hex.toHexString(APDU2));
-        //response = getResponse(APDU, "Mutual authentication");
         res = communicate(APDU2);
         Timber.log(Log.DEBUG, "Mutual authentication:%s", Hex.toHexString(res.data));
         TLV tlv_mac = TLV.decodeResult("Mutual authentication", res.data, DYN_AUTH_DATA, 0x86);
@@ -389,20 +358,12 @@ public class NFC {
         APDU = createAPDU(dataForMACIncomplete, pk4, 65);
         MAC = getMAC(APDU, keyMAC);
         if (!Arrays.equals(MAC, Arrays.copyOfRange(tlv_mac.data, tlv_mac.start, tlv_mac.end))) {
-        //if (!Hex.toHexString(res.data, 4, 8).equals(Hex.toHexString(MAC))) {
             throw new RuntimeException("Could not verify chip's MAC."); // *Should* never happen.
         }
         return new byte[][]{keyEnc, keyMAC};
 
     }
 
-    /**
-     * Encrypts or decrypts the APDU data
-     *
-     * @param data   the array containing the data to be processed
-     * @param mode   indicates whether to en- or decrypt the data
-     * @return the result of encryption or decryption
-     */
     private byte[] encryptDecryptData(byte[] data, int mode) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
         SecretKeySpec secretKeySpec = new SecretKeySpec(keyEnc, "AES");
         Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -486,50 +447,6 @@ public class NFC {
         return APDU;
     }
 
-    /**
-     * Gets the contents of the personal data dedicated file
-     *
-     * @param lastBytes   the last bytes of the personal data file identifiers (0 < x < 16)
-     * @return array containing the corresponding data strings
-     */
-    public String[] readPersonalData(byte[] lastBytes) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, IOException {
-
-        String[] personalData = new String[lastBytes.length];
-        int stringIndex = 0;
-
-        Result result = communicateSecure(CMD_SELECT_DF, IASECCFID);
-
-        byte[] FID = new byte[2];
-        FID[0] = personalDF[0];
-
-        // Select the personal data DF
-        result = communicateSecure(CMD_SELECT_DF, personalDF);
-
-        //Arrays.copyOf(personalDF, personalDF.length);
-        // select and read the personal data elementary files
-        for (byte index : lastBytes) {
-            if (index > 15 || index < 1) throw new RuntimeException("Invalid personal data FID.");
-            FID[1] = index;
-            result = communicateSecure(CMD_SELECT_DF, FID);
-            if (result.code != 0x9000) {
-                throw new RuntimeException(String.format("Could not select %d", index));
-            }
-            result = communicateSecure(CMD_READ_BINARY, null);
-            if (result.code != 0x9000) {
-                throw new RuntimeException(String.format("Could not read %d", index));
-            }
-            personalData[stringIndex++] = new String(result.data);
-        }
-        return personalData;
-
-    }
-
-    /**
-     * Retrieves the authentication or signature certificate from the chip
-     *
-     * @param authOrSign true for auth, false for sign cert
-     * @return the requested certificate
-     */
     public byte[] getCertificate(boolean authOrSign) throws NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, IOException {
 
         // selectFile(IASECCFID, "the master application");
@@ -577,16 +494,5 @@ public class NFC {
         Log.i(log, Hex.toHexString(response));
         return response;
     }
-
-
-
-    private static final byte[] readFile = Hex.decode("0cb000000d970100");
-
-    private static final byte[] IASECCFID = {0x3f, 0x00};
-    private static final byte[] personalDF = {0x50, 0x00};
-    private static final byte[] AWP = {(byte) 0xad, (byte) 0xf1};
-    private static final byte[] QSCD = {(byte) 0xad, (byte) 0xf2};
-    private static final byte[] authCert = {0x34, 0x01};
-    private static final byte[] signCert = {0x34, 0x1f};
 
 }

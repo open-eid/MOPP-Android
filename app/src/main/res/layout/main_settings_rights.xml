@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:importantForAccessibility="no"
+    tools:parentTag="androidx.coordinatorlayout.widget.CoordinatorLayout"
+    tools:layout_width="match_parent"
+    tools:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@id/appBar"
+        android:touchscreenBlocksFocus="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="yes"
+        android:accessibilityHeading="true"
+        android:focusedByDefault="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:screenReaderFocusable="true"
+        android:contentDescription="@string/main_settings_rights">
+
+        <requestFocus/>
+
+        <android.widget.Toolbar
+            android:id="@id/toolbar"
+            android:theme="@style/ThemeOverlay.Application.ActionBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:touchscreenBlocksFocus="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:accessibilityPaneTitle="@string/main_settings_rights"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:navigationContentDescription="@string/back"
+            app:title="@string/main_settings_rights" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:id="@id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/material_content_edge_margin_horizontal"
+        android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="18dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/MaterialTypography.Regular.Body1"
+                    android:textSize="16sp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_settings_open_all_filetypes_title"
+                    android:layout_weight="2">
+                </TextView>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/mainSettingsOpenAllFileTypes"
+                    android:focusable="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:layout_gravity="end"
+                    android:contentDescription="@string/main_settings_open_all_filetypes_title">
+                </androidx.appcompat.widget.SwitchCompat>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="18dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/MaterialTypography.Regular.Body1"
+                    android:textSize="16sp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_settings_allow_screenshots_title"
+                    android:layout_weight="2">
+                </TextView>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/mainSettingsAllowScreenshots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:layout_gravity="end">
+                </androidx.appcompat.widget.SwitchCompat>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</merge>

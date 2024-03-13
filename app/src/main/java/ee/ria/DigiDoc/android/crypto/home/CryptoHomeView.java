@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.android.crypto.home;
 
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.accessibility.AccessibilityEvent;
@@ -9,22 +11,22 @@ import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.main.home.HomeToolbar;
 import ee.ria.DigiDoc.android.main.home.HomeView;
+import ee.ria.DigiDoc.android.signature.list.SignatureListScreen;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import io.reactivex.rxjava3.core.Observable;
 
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
-
 public final class CryptoHomeView extends CoordinatorLayout implements HomeView.HomeViewChild {
 
     private final HomeToolbar toolbarView;
     private final Button createButton;
+    private final Button recentDocumentsButton;
 
     private final Navigator navigator;
 
@@ -43,7 +45,8 @@ public final class CryptoHomeView extends CoordinatorLayout implements HomeView.
         inflate(context, R.layout.crypto_home, this);
         toolbarView = findViewById(R.id.toolbar);
         createButton = findViewById(R.id.cryptoHomeCreateButton);
-        navigator = Application.component(context).navigator();
+        recentDocumentsButton = findViewById(R.id.cryptoHomeRecentDocumentsButton);
+        navigator = ApplicationApp.component(context).navigator();
         AccessibilityUtils.setViewAccessibilityPaneTitle(this, R.string.main_home_navigation_crypto);
 
         createButton.postDelayed(() -> {
@@ -68,6 +71,8 @@ public final class CryptoHomeView extends CoordinatorLayout implements HomeView.
         disposables.attach();
         disposables.add(clicks(createButton).subscribe(ignored ->
                 navigator.execute(Transaction.push(CryptoCreateScreen.create()))));
+        disposables.add(clicks(recentDocumentsButton).subscribe(o ->
+                navigator.execute(Transaction.push(SignatureListScreen.create()))));
     }
 
     @Override

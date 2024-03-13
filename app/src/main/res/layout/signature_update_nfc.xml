@@ -40,15 +40,24 @@
                 android:id="@id/signatureUpdateNFCCAN"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="phone"
+                android:accessibilityTraversalAfter="@id/signatureUpdateNFCCANText"
+                android:background="@drawable/bottom_border_background"
                 android:digits="0123456789"
                 android:imeOptions="actionDone"
+                android:inputType="number"
                 android:maxLines="1"
-                android:accessibilityTraversalAfter="@id/signatureUpdateNFCCANText"
-                android:minHeight="@dimen/material_baseline_grid_6x"
-                android:background="@drawable/bottom_border_background"/>
+                android:minHeight="@dimen/material_baseline_grid_6x" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <CheckBox
+            android:id="@+id/signatureUpdateNFCRememberMe"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginStart="-5dp"
+            android:checked="false"
+            android:textColor="@color/textLabel"
+            android:text="@string/signature_update_mobile_id_remember_me" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/signatureUpdateNFCPIN2Label"
@@ -76,12 +85,39 @@
                 android:accessibilityTraversalAfter="@id/signatureUpdateNFCPIN2Text"
                 android:background="@drawable/bottom_border_background"
                 android:imeOptions="actionDone"
-                android:inputType="number"
+                android:inputType="numberPassword"
                 android:maxLines="1"
-                android:minHeight="@dimen/material_baseline_grid_6x"
-                android:password="true" />
+                android:minHeight="@dimen/material_baseline_grid_6x"/>
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/signatureUpdateNFCCancelSigningButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:text="@string/cancel_button" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/signatureUpdateNFCSignButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:paddingBottom="@dimen/material_list_normal_padding_vertical"
+                android:text="@string/signature_update_signature_add_positive_button" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

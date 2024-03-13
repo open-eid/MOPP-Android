@@ -1,7 +1,5 @@
 package ee.ria.DigiDoc.common;
 
-import static ee.ria.DigiDoc.common.CommonConstants.DIR_TSA_CERT;
-
 import android.content.Context;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
@@ -35,11 +33,11 @@ public class FileUtil {
      * @return Boolean indicating if file is in the cache directory.
      */
     public static File getFileInDirectory(File file, File directory) throws IOException {
-        if (file.getCanonicalPath().startsWith(directory.getCanonicalPath())) {
-            return file;
+        if (!file.toPath().normalize().startsWith(directory.toPath())) {
+            throw new IOException("Invalid path: " + file.getCanonicalPath());
         }
 
-        throw new IOException("Invalid file path");
+        return file;
     }
 
     /**
@@ -97,7 +95,7 @@ public class FileUtil {
             return normalizeUri(Uri.parse(trimmed)).toString();
         }
 
-        return !sb.toString().equals("") ?
+        return !sb.toString().isEmpty() ?
                 FilenameUtils.getName(FilenameUtils.normalize(sb.toString())) :
                 FilenameUtils.normalize(trimmed);
     }
@@ -189,14 +187,14 @@ public class FileUtil {
         return new File(context.getFilesDir() + "/logs");
     }
 
-    public static File getTSAFile(Context context, String tsaCertName) {
-        File tsaCertFolder = new File(context.getFilesDir(), DIR_TSA_CERT);
+    public static File getCertFile(Context context, String certName, String certFolder) {
+        File savedCertFolder = new File(context.getFilesDir(), certFolder);
 
-        File[] files = tsaCertFolder.listFiles();
+        File[] files = savedCertFolder.listFiles();
 
         if (files != null) {
             for (File file : files) {
-                if (file.isFile() && file.getName().equals(tsaCertName)) {
+                if (file.isFile() && file.getName().equals(certName)) {
                     return file;
                 }
             }

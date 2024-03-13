@@ -1,6 +1,6 @@
 /*
  * smart-id-lib
- * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2024 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,8 @@
 
 package ee.ria.DigiDoc.smartid.dto.request;
 
+import com.google.gson.Gson;
+
 import java.io.Serializable;
 
 import lombok.Data;
@@ -37,4 +39,8 @@ public class SmartIDSignatureRequest implements Serializable {
 
     private String hashType;
     private String displayText;
+
+    public static String toJson(SmartIDSignatureRequest request) {
+        return new Gson().toJson(request);
+    }
 }

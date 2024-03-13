@@ -4,8 +4,6 @@ import android.content.Context;
 
 import org.bouncycastle.util.encoders.Base64;
 
-import java.security.cert.X509Certificate;
-
 /**
  * Configuration loader from central configuration service.
  */
@@ -13,8 +11,8 @@ public class CentralConfigurationLoader extends ConfigurationLoader {
 
     private final CentralConfigurationClient configurationClient;
 
-    public CentralConfigurationLoader(String configurationServiceUrl, String userAgent) {
-        this.configurationClient = new CentralConfigurationClient(configurationServiceUrl, userAgent);
+    public CentralConfigurationLoader(Context context, String configurationServiceUrl, String userAgent) {
+        this.configurationClient = new CentralConfigurationClient(context, configurationServiceUrl, userAgent);
     }
 
     @Override

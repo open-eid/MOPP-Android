@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@id/roleAndAddressContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/signature_update_signature_role_and_address_info_title" />
+
+        <TextView
+            android:id="@id/signatureUpdateRole"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="11dp"
+            android:layout_marginStart="4dp"
+            android:labelFor="@id/signatureUpdateRoleText"
+            android:text="@string/main_settings_role_title"
+            android:importantForAccessibility="no" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@id/signatureUpdateRoleLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="-10dp"
+            android:hint="@string/main_settings_role_title"
+            android:textColorHint="@android:color/transparent"
+            app:hintTextColor="@android:color/transparent"
+            android:minHeight="@dimen/material_baseline_grid_6x">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@id/signatureUpdateRoleText"
+                android:contentDescription="@string/main_settings_role_title"
+                android:focusable="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:background="@drawable/bottom_border_background"
+                android:accessibilityTraversalAfter="@id/signatureUpdateRole"
+                android:minHeight="@dimen/material_baseline_grid_6x" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@id/signatureUpdateRoleCity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="11dp"
+            android:layout_marginStart="4dp"
+            android:labelFor="@id/signatureUpdateRoleCityText"
+            android:text="@string/main_settings_city_title"
+            android:importantForAccessibility="no" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@id/signatureUpdateRoleCityLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="-10dp"
+            android:hint="@string/main_settings_city_title"
+            android:textColorHint="@android:color/transparent"
+            app:hintTextColor="@android:color/transparent"
+            android:minHeight="@dimen/material_baseline_grid_6x">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@id/signatureUpdateRoleCityText"
+                android:focusable="true"
+                android:contentDescription="@string/main_settings_city_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:background="@drawable/bottom_border_background"
+                android:accessibilityTraversalAfter="@id/signatureUpdateRoleText"
+                android:minHeight="@dimen/material_baseline_grid_6x" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@id/signatureUpdateRoleState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="11dp"
+            android:layout_marginStart="4dp"
+            android:labelFor="@id/signatureUpdateRoleStateText"
+            android:text="@string/main_settings_county_title"
+            android:importantForAccessibility="no" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@id/signatureUpdateRoleStateLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="-10dp"
+            android:hint="@string/main_settings_county_title"
+            android:textColorHint="@android:color/transparent"
+            app:hintTextColor="@android:color/transparent"
+            android:minHeight="@dimen/material_baseline_grid_6x">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@id/signatureUpdateRoleStateText"
+                android:focusable="true"
+                android:contentDescription="@string/main_settings_county_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:background="@drawable/bottom_border_background"
+                android:accessibilityTraversalAfter="@id/signatureUpdateRoleCityText"
+                android:minHeight="@dimen/material_baseline_grid_6x" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@id/signatureUpdateRoleCountry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="11dp"
+            android:layout_marginStart="4dp"
+            android:labelFor="@id/signatureUpdateRoleCountryText"
+            android:text="@string/main_settings_country_title"
+            android:importantForAccessibility="no" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@id/signatureUpdateRoleCountryLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="-10dp"
+            android:hint="@string/main_settings_country_title"
+            android:textColorHint="@android:color/transparent"
+            app:hintTextColor="@android:color/transparent"
+            android:minHeight="@dimen/material_baseline_grid_6x">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@id/signatureUpdateRoleCountryText"
+            android:focusable="true"
+            android:contentDescription="@string/main_settings_country_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:maxLines="1"
+            android:background="@drawable/bottom_border_background"
+            android:accessibilityTraversalAfter="@id/signatureUpdateRoleStateText"
+            android:minHeight="@dimen/material_baseline_grid_6x" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@id/signatureUpdateRoleZip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:layout_marginTop="11dp"
+            android:layout_marginStart="4dp"
+            android:labelFor="@id/signatureUpdateRoleZipText"
+            android:text="@string/main_settings_postal_code_title"
+            android:importantForAccessibility="no" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@id/signatureUpdateRoleZipLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="-10dp"
+            android:hint="@string/main_settings_postal_code_title"
+            android:textColorHint="@android:color/transparent"
+            app:hintTextColor="@android:color/transparent"
+            android:minHeight="@dimen/material_baseline_grid_6x">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@id/signatureUpdateRoleZipText"
+            android:focusable="true"
+            android:contentDescription="@string/main_settings_postal_code_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:maxLines="1"
+            android:background="@drawable/bottom_border_background"
+            android:accessibilityTraversalAfter="@id/signatureUpdateRoleCountryText"
+            android:minHeight="@dimen/material_baseline_grid_6x" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+</ScrollView>

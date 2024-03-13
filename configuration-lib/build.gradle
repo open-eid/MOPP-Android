@@ -12,8 +12,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     testOptions {
@@ -30,12 +30,17 @@ android {
     }
 }
 
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
 dependencies {
     api "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
     api "com.squareup.okhttp3:okhttp:${okhttpVersion}"
     api "com.google.code.gson:gson:${gsonVersion}"
 
     implementation "androidx.core:core:${androidxCoreVersion}"
+    implementation "androidx.preference:preference:${androidxPreference}"
     implementation "com.jakewharton.timber:timber:${timberVersion}"
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     implementation "commons-io:commons-io:${commonsioVersion}"
@@ -43,7 +48,10 @@ dependencies {
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
     annotationProcessor "com.ryanharter.auto.value:auto-value-parcel:${autoValueParcelVersion}"
 
-    testImplementation "junit:junit:${junitVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
 
     testImplementation "com.google.code.gson:gson:${gsonVersion}"

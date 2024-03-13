@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:textColor="@color/signingNavigation"
             android:text="@string/signature_update_mobile_id_message" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -23,8 +24,9 @@
             android:layout_height="wrap_content"
             android:gravity="start"
             android:layout_marginTop="20dp"
-            android:minHeight="@dimen/material_baseline_grid_6x"
-            android:text="@string/signature_update_mobile_id_phone_no" />
+            android:minHeight="@dimen/material_baseline_grid_2x"
+            android:text="@string/signature_update_mobile_id_phone_no"
+            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateMobileIdPhoneNoLabel"
@@ -56,9 +58,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="start"
-            android:layout_marginTop="20dp"
-            android:minHeight="@dimen/material_baseline_grid_6x"
-            android:text="@string/signature_update_mobile_id_personal_code" />
+            android:minHeight="@dimen/material_baseline_grid_2x"
+            android:text="@string/signature_update_mobile_id_personal_code"
+            android:importantForAccessibility="no" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@id/signatureUpdateMobileIdPersonalCodeLabel"
@@ -85,15 +87,19 @@
 
         <CheckBox
             android:id="@id/signatureUpdateMobileIdRememberMe"
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:layout_height="70dp"
+            android:layout_marginStart="-5dp"
+            android:padding="0dp"
             android:checked="false"
+            android:textColor="@color/textLabel"
             android:text="@string/signature_update_mobile_id_remember_me" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            >
 
             <Button
                 android:id="@+id/signatureUpdateMobileIdCancelSigningButton"
@@ -113,6 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@null"
+                android:paddingBottom="@dimen/material_list_normal_padding_vertical"
                 android:text="@string/signature_update_signature_add_positive_button" />
 
         </LinearLayout>

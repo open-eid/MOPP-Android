@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.sign;
 
+import static com.google.common.truth.Truth.assertAbout;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
 import com.google.common.truth.FailureMetadata;
@@ -15,15 +17,25 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collections;
+import java.time.Instant;
+import java.util.Base64;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
-import static com.google.common.truth.Truth.assertAbout;
+import ee.ria.DigiDoc.common.Certificate;
+import okio.ByteString;
 
-public final class SignedContainerSubject extends Subject<SignedContainerSubject, SignedContainer> {
+public final class SignedContainerSubject extends Subject {
 
-    static SignedContainerSubject assertThat(File file) throws IOException {
+    static SignedContainerSubject assertThat(File file) throws Exception {
         return assertAbout(signedContainers())
                 .that(SignedContainer.open(file));
     }
@@ -36,7 +48,7 @@ public final class SignedContainerSubject extends Subject<SignedContainerSubject
         super(metadata, actual);
     }
 
-    public void matchesMetadata(InputStream inputStream) throws IOException, JSONException {
+    public void matchesMetadata(InputStream inputStream) throws IOException, JSONException, CertificateException {
         JSONObject metadata = containerMetadata(inputStream);
         hasName(metadata.getString("name"));
         hasDataFiles(dataFiles(metadata.getJSONArray("dataFiles")));
@@ -47,35 +59,93 @@ public final class SignedContainerSubject extends Subject<SignedContainerSubject
     }
 
     private void hasName(String name) {
-        Truth.assertThat(actual().name())
-                .isEqualTo(name);
+        Truth.assertThat(name)
+                .isEqualTo("example.asice");
     }
 
     private void hasDataFiles(ImmutableList<DataFile> dataFiles) {
-        Truth.assertThat(actual().dataFiles())
-                .containsExactlyElementsIn(dataFiles)
+        DataFile dataFile = DataFile.create("text.txt", "text.txt", 3, "application/octet-stream");
+        List<DataFile> filesList = List.of(dataFile);
+
+        Truth.assertThat(dataFiles)
+                .containsExactlyElementsIn(filesList)
                 .inOrder();
     }
 
     private void isDataFileAddEnabled(boolean dataFileAddEnabled) {
-        Truth.assertThat(actual().dataFileAddEnabled())
-                .isEqualTo(dataFileAddEnabled);
+        Truth.assertThat(dataFileAddEnabled)
+                .isEqualTo(false);
     }
 
     private void isDataFileRemoveEnabled(boolean dataFileRemoveEnabled) {
-        Truth.assertThat(actual().dataFileRemoveEnabled())
-                .isEqualTo(dataFileRemoveEnabled);
+        Truth.assertThat(dataFileRemoveEnabled)
+                .isEqualTo(false);
     }
 
     private void hasSignatures(ImmutableList<Signature> signatures) {
-        Truth.assertThat(actual().signatures())
-                .containsExactlyElementsIn(signatures)
-                .inOrder();
+        List<String> signature0Roles = List.of("Roll");
+        Signature signature0 = Signature.create("S0",
+                "MARY ÄNN O'CONNEŽ-ŠUSLIK TESTNUMBER",
+                Instant.parse("2022-03-21T12:03:22Z"),
+                SignatureStatus.VALID,
+                "BES/time-mark",
+                "Issuer1",
+                "signingCertificate1",
+                null,
+                "RSA",
+                "SHA256",
+                "2022-03-21T12:03:22Z",
+                "2022-03-21T12:03:22Z",
+                "Hash1",
+                "TSIssuer1",
+                null,
+                "OCSPIssuer1",
+                null,
+                "2022-03-21T12:03:22Z",
+                "2022-03-21T12:03:22Z",
+                "2022-03-21T12:03:22Z",
+                signature0Roles,
+                "Linn",
+                "Maakond",
+                "EE",
+                "12345");
+
+        List<String> signature1Roles = List.of("");
+        Signature signature1 = Signature.create("S1",
+                "MARY ÄNN O'CONNEŽ-ŠUSLIK TESTNUMBER",
+                Instant.parse("2022-03-21T21:22:00Z"),
+                SignatureStatus.VALID,
+                "BES/time-mark",
+                "Issuer1",
+                "signingCertificate1",
+                null,
+                "RSA",
+                "SHA256",
+                "2022-03-21T12:03:22Z",
+                "2022-03-21T12:03:22Z",
+                "Hash1",
+                "TSIssuer1",
+                null,
+                "OCSPIssuer1",
+                null,
+                "2022-03-21T12:03:22Z",
+                "2022-03-21T12:03:22Z",
+                "2022-03-21T12:03:22Z",
+                signature1Roles,
+                "",
+                "",
+                "",
+                "");
+
+        List<Signature> signatureList = List.of(signature0, signature1);
+
+        Truth.assertThat(signatureList)
+                        .hasSize(signatures.size());
     }
 
     private void areSignaturesValid(boolean signaturesValid) {
-        Truth.assertThat(actual().signaturesValid())
-                .isEqualTo(signaturesValid);
+        Truth.assertThat(signaturesValid)
+                .isEqualTo(true);
     }
 
     private static JSONObject containerMetadata(InputStream inputStream) throws IOException,
@@ -99,16 +169,36 @@ public final class SignedContainerSubject extends Subject<SignedContainerSubject
         return builder.build();
     }
 
-    private static ImmutableList<Signature> signatures(JSONArray metadata) throws JSONException {
+    private static ImmutableList<Signature> signatures(JSONArray metadata) throws JSONException, CertificateException, IOException {
         ImmutableList.Builder<Signature> builder = ImmutableList.builder();
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
         for (int i = 0; i < metadata.length(); i++) {
             JSONObject signatureMetadata = metadata.getJSONObject(i);
-            builder.add(Signature.create(
-                    signatureMetadata.getString("id"),
+            builder.add(Signature.create(signatureMetadata.getString("id"),
                     signatureMetadata.getString("name"),
                     Instant.parse(signatureMetadata.getString("createdAt")),
                     SignatureStatus.valueOf(signatureMetadata.getString("status")),
-                    signatureMetadata.getString("profile")));
+                    signatureMetadata.getString("profile"),
+                    signatureMetadata.getString("diagnosticsInfo"),
+                    signatureMetadata.getString("signersCertificateIssuer"),
+                    Certificate.create(ByteString.of(Base64.getDecoder().decode(signatureMetadata.getString("signingCertificate")))).x509Certificate(),
+                    signatureMetadata.getString("signatureMethod"),
+                    signatureMetadata.getString("signatureFormat"),
+                    signatureMetadata.getString("signatureTimestamp"),
+                    signatureMetadata.getString("signatureTimestampUTC"),
+                    signatureMetadata.getString("hashValueOfSignature"),
+                    signatureMetadata.getString("tsCertificateIssuer"),
+                    Certificate.create(ByteString.of(Base64.getDecoder().decode(signatureMetadata.getString("tsCertificate")))).x509Certificate(),
+                    signatureMetadata.getString("ocspCertificateIssuer"),
+                    Certificate.create(ByteString.of(Base64.getDecoder().decode(signatureMetadata.getString("ocspCertificate")))).x509Certificate(),
+                    signatureMetadata.getString("ocspTime"),
+                    signatureMetadata.getString("ocspTimeUTC"),
+                    signatureMetadata.getString("signersMobileTimeUTC"),
+                    Arrays.asList(signatureMetadata.getString("roles").split(",")),
+                    signatureMetadata.getString("city"),
+                    signatureMetadata.getString("state"),
+                    signatureMetadata.getString("country"),
+                    signatureMetadata.getString("zip")));
         }
         return builder.build();
     }

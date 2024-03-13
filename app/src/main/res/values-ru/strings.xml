@@ -16,7 +16,7 @@
     <string name="main_home_menu_help_url_short">линк www.id.ee</string>
     <string name="main_home_menu_help_url">https://www.id.ee/ru/id-pomoshh/</string>
     <string name="main_home_menu_accessibility">ДОСТУПНОСТЬ</string>
-    <string name="main_home_menu_recent">НЕДАВНИЕ ДОКУМЕНТЫ</string>
+    <string name="main_home_recent">НЕДАВНИЕ ДОКУМЕНТЫ</string>
     <string name="main_home_menu_settings">НАСТРОЙКИ</string>
     <string name="main_home_menu_about">ИНФОРМАЦИЯ</string>
     <string name="main_home_menu_diagnostics">ДИАГНОСТИКА</string>
@@ -24,6 +24,7 @@
     <!-- Main Accessibility -->
     <string name="main_accessibility_title">Доступность</string>
 
+    <string name="main_accessibility_link">Более подробную информацию можно найти <a href="https://www.id.ee/ligipaasetavuse-teatis/">тут</a>.</string>
     <string name="main_accessibility_introduction">Приложение RIA DigiDoc построено таким образом, чтобы оно соответствовало протоколам доступа WCAG 2.1 AA. Это означает, что при разработке RIA DigiDoc соблюдались принципы, позволяющие использовать приложение неспособным видеть и слабовидящим пользователям, лицам с ограничением двигательной функции или силы и т. п.</string>
     <string name="main_accessibility_introduction_2">Доступность можно исправить путём использования встроенных в смарт-устройство вспомогательных средств. Далее даётся обзор основных вспомогательных средств.</string>
     <string name="main_accessibility_introduction_screen_reader_title">Экранное считывающее устройство </string>
@@ -43,16 +44,28 @@
 
     <!-- Main Settings -->
     <string name="main_settings_title">Настройки</string>
+    <string name="main_settings_use_default_settings_button_title">ИСПОЛЬЗОВАТЬ НАСТРОЙКИ ПО УМОЛЧАНИЮ</string>
+    <string name="main_settings_rights">Права</string>
+    <string name="main_settings_proxy_button">Прокси</string>
+    <string name="main_settings_proxy_no_proxy">Прокси не используется</string>
+    <string name="main_settings_proxy_use_system">Использовать системные настройки прокси</string>
+    <string name="main_settings_proxy_manual">Настроить прокси вручную</string>
+    <string name="main_settings_proxy_host">Хост</string>
+    <string name="main_settings_proxy_port">Порт</string>
+    <string name="main_settings_proxy_username">Имя пользователя</string>
+    <string name="main_settings_proxy_password">Пароль</string>
+    <string name="main_settings_role_and_address_button">Роль и адрес</string>
     <string name="main_settings_phone_no_title">Код страны и телефонный номер</string>
     <string name="main_settings_personal_code_title">Личный код</string>
     <string name="main_settings_tsa_url_title">Доступ к услугам отметки времени</string>
     <string name="main_settings_uuid_title">Доступ к услуге mobiil-ID и Smart-ID</string>
     <string name="main_settings_tsa_url_use_default">Использовать значение по умолчанию</string>
-    <string name="main_settings_role_title">Роль</string>
+    <string name="main_settings_ask_role_and_address_title">Спросить роль и адрес при каждом подписании</string>
+    <string name="main_settings_role_title">Роль / pезолюция</string>
     <string name="main_settings_city_title">Город</string>
     <string name="main_settings_county_title">Уезд</string>
     <string name="main_settings_country_title">Страна</string>
-    <string name="main_settings_postal_code_title">Почтовый код</string>
+    <string name="main_settings_postal_code_title">Индекс</string>
     <string name="main_settings_signature_profile_title">Формат файла по умолчанию</string>
     <string name="main_settings_open_all_filetypes_title">Разрешить приложению открывать все типы файлов (потребуется перезапуск приложения)</string>
     <string name="main_settings_allow_screenshots_title">Разрешить скриншоты (потребуется перезапуск приложения)</string>
@@ -61,6 +74,10 @@
     <string name="main_settings_timestamp_cert_valid_to_title">Действительно до: </string>
     <string name="main_settings_timestamp_cert_add_certificate_button">ДОБАВИТЬ СЕРТИФИКАТ</string>
     <string name="main_settings_timestamp_cert_show_certificate_button">ПОКАЗАТЬ СЕРТИФИКАТ</string>
+    <string name="main_settings_siva_service_title">Доступ к услуге валидации SiVa</string>
+    <string name="main_settings_siva_default_access_title">Использовать доступ, назначенный по умолчанию</string>
+    <string name="main_settings_siva_default_manual_access_title">Использовать доступ, назначенный вручную</string>
+    <string name="main_settings_siva_certificate_title">Сертификат услуги валидации SiVa SSL</string>
 
     <!-- Main About -->
     <string name="main_about_title">Информация</string>
@@ -112,13 +129,16 @@
     <string name="signature_update_title_created">Подписание</string>
     <string name="signature_update_title_existing">Проверка контейнера</string>
     <string name="signature_update_name_update_button">Изменить название контейнера</string>
+    <string name="signature_update_name_update_voice_button">Изменить</string>
     <string name="signature_update_name_update_name">Название контейнера</string>
     <string name="signature_update_name_update_error_exists">Контейнер с таким названием уже существует</string>
     <string name="signature_update_name_update_error_invalid">Неверное название контейнера</string>
     <string name="signature_update_documents_title">Файлы контейнера</string>
     <string name="signature_update_documents_add_error_exists">Файл уже существует в контейнере</string>
     <string name="signature_update_document_remove_button">Удалить файл</string>
+    <string name="signature_update_document_remove_voice_button">Удалить</string>
     <string name="signature_update_document_save_button">Сохраните файл</string>
+    <string name="signature_update_document_save_voice_button">Сохраните</string>
     <string name="signature_update_remove_document_confirmation_message">Удалить файл из контейнера?</string>
     <string name="signature_update_remove_last_document_confirmation_message">Вы собираетесь удалить последний файл в контейнере, он удаляется вместе с контейнером.</string>
     <string name="signature_update_cancel_file_removal_button">Отменить удаление файла</string>
@@ -158,6 +178,7 @@
     <string name="signature_update_signature_remove_error">Не удалось удалить подпись из контейнера</string>
     <string name="signature_update_container_load_error">Ошибка при открывании контейнера</string>
     <string name="signature_update_send_button">ПОДЕЛИТЬСЯ</string>
+    <string name="signature_update_save_button">СОХРАНИТЕ</string>
     <string name="signature_update_signature_add_button">ПОДПИСАТЬ</string>
 
     <string name="signature_update_signature_type_timestamp">Временные штампы контейнерa</string>
@@ -176,6 +197,10 @@
     <string name="signature_update_signature_add_error">Что-то пошло не так</string>
     <string name="signature_update_signature_add_error_title">Не удалось подписать контейнер</string>
 
+    <string name="signature_update_signature_role_and_address_title">РОЛЬ И АДРЕС</string>
+    <string name="signature_update_signature_role_and_address_title_accessibility">Роль и адрес</string>
+    <string name="signature_update_signature_role_and_address_info_title">Введите свою роль и адрес</string>
+
     <string name="signature_update_signature_error_message_additional_information">Дополнительная информация</string>
     <string name="signature_update_signature_error_message_details">Детали</string>
 
@@ -183,8 +208,6 @@
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Не удалось отправить запрос. Превышено количество неудачных запросов с этого IP-адреса. Пожалуйста, попробуйте позже.</string>
     <string name="signature_update_signature_error_message_invalid_time_slot">Пожалуйста, проверьте время на своем смарт-устройстве. https://www.id.ee/ru/artikkel/oshibka-ria-digidoc-pozhalujsta-proverte-vremya-na-svoem-smart-ustrojstve/</string>
     <string name="signature_update_signature_error_message_certificate_revoked">Сертификат недействителен</string>
-
-    <string name="signature_update_signature_error_invalid_ssl_handshake">Не удалось создать SSL канал передачи данных. Проверьте настройки вашего приложения или обновления программного обеспечения.</string>
 
     <string name="signature_update_signature_selected_method_mobile_id">Метод подписи – Mobiil-ID, вкладка %1$d из %2$d</string>
     <string name="signature_update_signature_selected_method_smart_id">Метод подписи – Smart-ID, вкладка %1$d из %2$d</string>
@@ -261,7 +284,7 @@
 
     <string name="signature_update_id_card_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>
     <string name="signature_update_id_card_progress_message_reader_detected">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
-    <string name="signature_update_id_card_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация...</string>
+    <string name="signature_update_id_card_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация…</string>
     <string name="signature_update_id_card_sign_message">Готово к подписанию с использованием ID-карты</string>
     <string name="signature_update_id_card_sign_data">%1$s %2$s (%3$s)</string>
     <string name="signature_update_id_card_sign_pin2">Введите PIN2</string>
@@ -318,6 +341,7 @@
     <string name="crypto_create_encrypt_success_message">ШИФРОВАНИЕ УДАЛОСЬ</string>
     <string name="crypto_create_decrypt_success_message">ДЕШИФРОВАНИЕ УДАЛОСЬ</string>
     <string name="crypto_create_name_update_button">Изменить название контейнера</string>
+    <string name="crypto_create_data_file">Зашифрованные файл</string>
     <string name="crypto_create_data_files_title">Зашифрованные файлы</string>
     <string name="crypto_create_data_files_add_error_exists">Файл уже существует в контейнере</string>
     <string name="crypto_create_data_file_remove_button">Удалить файл</string>
@@ -332,6 +356,7 @@
     <string name="crypto_create_encrypt_error_no_recipients">Не добавлено ни одного получателя</string>
     <string name="crypto_create_decrypt_button">ДЕШИФРОВАТЬ</string>
     <string name="crypto_create_decrypt_positive_button">Дешифровать</string>
+    <string name="crypto_create_save_button">СОХРАНИТЕ</string>
     <string name="crypto_create_send_button">ПОДЕЛИТЬСЯ</string>
     <string name="crypto_create_error">Что-то пошло не так с шифрованием</string>
 
@@ -342,6 +367,7 @@
     <string name="crypto_recipient_add_button_added">ДОБАВЛЕН</string>
 
     <string name="crypto_recipients_title">Добавить получателей</string>
+    <string name="crypto_recipients_search_icon_voice_title">Искать</string>
     <string name="crypto_recipients_search">Введите личный код, код компании или регистра</string>
     <string name="crypto_recipients_search_result_invalid_personal_code">Личный код недействителен!</string>
     <string name="crypto_recipients_search_result_empty">У человека или компании нет действующего сертификата.\nДля шифрования необходимо иметь действующий сертификат.\nЕсли у вас возникнут вопросы, пожалуйста, обратитесь на id.ee.</string>
@@ -352,7 +378,7 @@
 
     <string name="crypto_create_decrypt_progress_message_initial">Подключите считыватель карты и вставьте в него Вашу ID-карту</string>
     <string name="crypto_create_decrypt_progress_message_reader_detected">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
-    <string name="crypto_create_decrypt_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация...</string>
+    <string name="crypto_create_decrypt_progress_message_card_detected">Обнаружена ID-карта. Запрашивается информация…</string>
     <string name="crypto_create_decrypt_message">Готово к дешифрованию с помощью ID-карты.</string>
     <string name="crypto_create_decrypt_data">%1$s %2$s (%3$s)</string>
     <string name="crypto_create_decrypt_pin1">Пожалуйста, введите PIN1.</string>
@@ -365,7 +391,7 @@
     <!-- EID Home -->
     <string name="eid_home_id_card_status_initial_message">Подключите считыватель карты и вставьте в него Вашу ID-карту.</string>
     <string name="eid_home_id_card_status_reader_detected_message">Обнаружен считыватель карты. Вставьте в него Вашу ID-карту.</string>
-    <string name="eid_home_id_card_status_card_detected_message">Обнаружена ID-карта. Запрашивается информация...</string>
+    <string name="eid_home_id_card_status_card_detected_message">Обнаружена ID-карта. Запрашивается информация…</string>
     <string name="eid_home_error">Что-то пошло не так. Пожалуйста, попробуйте снова.</string>
 
     <string name="eid_home_data_type">Мой eID</string>
@@ -489,9 +515,10 @@
     <string name="eid_home_code_update_repeat_error_mismatch_puk">Новые PUK-коды должны совпадать</string>
 
     <!--  General  -->
-
+    <string name="encrypt_content_description">Зашифровать документ, вкладка %1$d из %2$d</string>
     <string name="decrypt_content_description">Дешифрировать документ, вкладка %1$d из %2$d</string>
     <string name="sign_send_content_description">Подписать, вкладка %1$d из %2$d</string>
+    <string name="sign_save_content_description">Сохраните, вкладка %1$d из %2$d</string>
     <string name="decrypt_send_content_description">Поделиться, вкладка %1$d из %2$d</string>
 
     <string name="yes_button">ДА</string>
@@ -580,8 +607,6 @@
     <string name="crash_report_dialog_always_send_button">Всегда отправлять</string>
     <string name="crash_report_dialog_dont_send_button">Не отправлять</string>
 
-    <string name="no_internet_connection">Пожалуйста проверьте подключение к интернету</string>
-
     <string name="rooted_device">Мы обнаружили, что ваше интеллектуальное устройство может быть рутировано. По соображениям безопасности мы не рекомендуем использовать это приложение на рутированом устройстве.</string>
 
     <!-- Accessibility -->
@@ -598,7 +623,7 @@
 
     <!-- Menu -->
     <string name="main_home_menu_help_accessibility">Помощь</string>
-    <string name="main_home_menu_recent_accessibility">Недавние документы</string>
+    <string name="main_home_recent_accessibility">Недавние документы</string>
     <string name="main_home_menu_settings_accessibility">Настройки</string>
     <string name="main_home_menu_about_accessibility">Информация</string>
     <string name="main_home_menu_diagnostics_accessibility">Диагностика</string>

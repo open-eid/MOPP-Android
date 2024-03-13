@@ -2,30 +2,57 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:importantForAccessibility="no"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="yes"
+        android:accessibilityHeading="true"
+        android:focusedByDefault="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:screenReaderFocusable="true"
+        android:contentDescription="@string/main_about_title"
+        >
+        <requestFocus/>
         <android.widget.Toolbar
             android:id="@id/toolbar"
+            android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.Application.ActionBar"
+            android:importantForAccessibility="no"
+            android:accessibilityPaneTitle="@string/main_about_title"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:navigationContentDescription="@string/back"
-            app:navigationIcon="?attr/homeAsUpIndicator"
-            app:title="@string/main_about_title" />
+            />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@id/mainAboutList"
+    <androidx.core.widget.NestedScrollView
+        android:id="@id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:id="@id/mainAboutListLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@id/mainAboutList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

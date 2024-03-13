@@ -6,7 +6,6 @@ import static android.view.View.VISIBLE;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxSearchView.queryTextChangeEvents;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
-import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
 import static ee.ria.DigiDoc.android.Constants.VOID;
 
 import android.content.Context;
@@ -14,7 +13,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,22 +40,22 @@ import com.jakewharton.rxbinding4.widget.SearchViewQueryTextEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Application;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.mvi.State;
+import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
-import ee.ria.DigiDoc.android.utils.validator.PersonalCodeValidator;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.TextUtil;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-public final class CryptoRecipientsScreen extends Controller implements Screen,
+public final class CryptoRecipientsScreen extends Controller implements Screen, ContentView,
         MviView<Intent, ViewState>, Navigator.BackButtonClickListener {
 
     private static final String KEY_CRYPTO_CREATE_SCREEN_ID = "cryptoCreateScreenId";
@@ -79,6 +77,8 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     private Toolbar toolbarView;
     private SearchView searchView;
     private EditText searchViewInnerText;
+    private TextView searchViewLabel;
+    private RecyclerView listView;
     private CryptoCreateAdapter adapter;
     private View doneButton;
     private View activityOverlayView;
@@ -177,9 +177,9 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
     @Override
     protected void onContextAvailable(@NonNull Context context) {
         super.onContextAvailable(context);
-        viewModel = Application.component(context).navigator()
+        viewModel = ApplicationApp.component(context).navigator()
                 .viewModel(cryptoCreateScreenId, CryptoCreateViewModel.class);
-        navigator = Application.component(context).navigator();
+        navigator = ApplicationApp.component(context).navigator();
     }
 
     @Override
@@ -254,19 +254,23 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         toolbarView.setNavigationContentDescription(R.string.back);
 
         searchView = view.findViewById(R.id.cryptoRecipientsSearch);
+        searchViewLabel = view.findViewById(R.id.cryptoRecipientsSearchLabel);
         searchView.setIconifiedByDefault(false);
         View searchTextView = searchView.findViewById(getResources().getIdentifier("android:id/search_src_text", null, null));
         searchTextView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+        searchTextView.setContentDescription(navigator.activity().getString(R.string.crypto_recipients_search));
         searchView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
 
         if (searchTextView instanceof TextView) {
-            AccessibilityUtils.setSingleCharactersContentDescription((TextView) searchTextView);
+            AccessibilityUtils.setSingleCharactersContentDescription((TextView) searchTextView, null);
         }
 
         hideSearchCloseButton(searchTextView);
 
         View searchPlate = searchView.findViewById(getResources().getIdentifier("android:id/search_plate", null, null));
         ImageView searchButton = searchView.findViewById(getResources().getIdentifier("android:id/search_button", null, null));
+
+        searchButton.setContentDescription(getResources().getString(R.string.crypto_recipients_search_icon_voice_title));
 
         searchButton.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
             setupContentDescriptions(searchTextView, submittedQuery);
@@ -275,12 +279,12 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
         searchButton.setOnClickListener(v -> {
             setupContentDescriptions(searchTextView, submittedQuery);
+            searchViewLabel.setVisibility(GONE);
             searchView.performClick();
             setMagIconClickable(searchTextView, searchPlate, searchButton);
         });
 
         if (getResources() != null) {
-            searchView.setQueryHint(getResources().getString(R.string.crypto_recipients_search));
 
             // Remove ">" search button from the right side of the Search Bar
             removeDefaultSearchButton(searchView);
@@ -296,12 +300,13 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                     setButtonsVisibilityOnLayoutChange(searchTextView, searchPlate, searchButton);
 
                     if (getResources() != null) {
-                        if (searchViewInnerText.getTextSize() > 40) {
-                            searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
-                        }
                         searchViewInnerText.setLayoutParams(
                                 new LinearLayout.LayoutParams((int) (searchView.getWidth() / 1.5), DisplayUtil.getDisplayMetricsDpToInt(getResources(), 70))
                         );
+
+                        ee.ria.DigiDoc.android.utils.TextUtil.setSearchViewTextSizeConstraints(searchView, searchViewInnerText);
+
+                        searchViewInnerText.setSingleLine(true);
 
                         searchViewInnerText.addTextChangedListener(new TextWatcher() {
                             @Override
@@ -310,12 +315,10 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
                             @Override
                             public void onTextChanged(CharSequence s, int start, int before, int count) {
                                 if (s.length() == 0) {
-                                    searchViewInnerText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 40);
-                                    searchViewInnerText.setSingleLine(false);
+                                    ee.ria.DigiDoc.android.utils.TextUtil.setSearchViewTextSizeConstraints(searchView, searchViewInnerText);
                                     setSearchQuery("");
+                                    searchViewLabel.setVisibility(VISIBLE);
                                     searchView.performClick();
-                                } else {
-                                    searchViewInnerText.setSingleLine(true);
                                 }
                             }
 
@@ -333,17 +336,27 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
 
         searchView.setSubmitButtonEnabled(true);
         searchView.setEnabled(true);
-        RecyclerView listView = view.findViewById(R.id.cryptoRecipientsList);
+        listView = view.findViewById(R.id.cryptoRecipientsList);
         listView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         listView.setAdapter(adapter = new CryptoCreateAdapter());
         listView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         doneButton = view.findViewById(R.id.cryptoRecipientsDoneButton);
         activityOverlayView = view.findViewById(R.id.activityOverlay);
         activityIndicatorView = view.findViewById(R.id.activityIndicator);
+
+        ContentView.addInvisibleElement(getApplicationContext(), view);
+
+        View lastElementView = view.findViewById(R.id.lastInvisibleElement);
+
+        if (lastElementView != null) {
+            ContentView.addInvisibleElementScrollListener(listView, lastElementView);
+        }
+
         return view;
     }
 
     private void setDoneSearchQuery(String text) {
+        searchViewLabel.setVisibility(GONE);
         searchView.setQuery(StringUtils.trim(text), false);
         searchView.clearFocus();
     }
@@ -353,6 +366,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
             String trimmed = StringUtils.trim(text);
             submittedQuery = trimmed;
             setDoneSearchQuery(trimmed);
+            searchViewLabel.setVisibility(GONE);
             return trimmed;
         }
         return "";
@@ -372,6 +386,7 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
         disposables.detach();
         navigator.removeBackButtonClickListener(this);
         searchView.setOnCloseListener(null);
+        ContentView.removeInvisibleElementScrollListener(listView);
         ee.ria.DigiDoc.android.utils.TextUtil.removeTextWatcher(searchViewInnerText,searchViewTextWatcher);
         super.onDetach(view);
     }
@@ -386,7 +401,9 @@ public final class CryptoRecipientsScreen extends Controller implements Screen,
             @Override
             public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
-                String splitContentDescription = TextUtil.splitTextAndJoin(contentDescription.toString(), "", " ");
+                String splitContentDescription = String.format("%s %s",
+                        navigator.activity().getString(R.string.crypto_recipients_search),
+                        TextUtil.splitTextAndJoin(contentDescription.toString(), "", " "));
                 info.setContentDescription(splitContentDescription);
                 info.setCheckable(false);
                 info.setClickable(false);

@@ -9,13 +9,17 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:accessibilityHeading="true"
+        android:contentDescription="@string/eid_home_code_update_title_pin1_edit"
+        >
 
         <android.widget.Toolbar
             android:id="@id/toolbar"
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:accessibilityHeading="true"
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:title="@string/eid_home_code_update_title_pin1_edit" />
 
@@ -59,7 +63,7 @@
                 android:gravity="start"
                 android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
                 android:layout_marginTop="20dp"
-                android:minHeight="@dimen/material_baseline_grid_6x" />
+                android:minHeight="@dimen/material_baseline_grid_2x" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@id/eidHomeCodeUpdateCurrentLabel"
@@ -87,7 +91,7 @@
                 android:gravity="start"
                 android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
                 android:layout_marginTop="20dp"
-                android:minHeight="@dimen/material_baseline_grid_6x" />
+                android:minHeight="@dimen/material_baseline_grid_2x" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@id/eidHomeUpdateNewLabel"
@@ -115,7 +119,7 @@
                 android:gravity="start"
                 android:layout_marginStart="@dimen/material_content_edge_margin_horizontal"
                 android:layout_marginTop="20dp"
-                android:minHeight="@dimen/material_baseline_grid_6x" />
+                android:minHeight="@dimen/material_baseline_grid_2x" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@id/eidHomeCodeUpdateRepeatLabel"

@@ -1,11 +1,11 @@
 name: "CodeQL Android"
 
 on: [push, pull_request]
-
+env:
+  BUILD_NUMBER: ${{ github.run_number }}
 jobs:
   analyze:
     name: CodeQL Analyze
-    if: contains(github.repository, 'open-eid/MOPP-Android') && contains(github.ref, 'master')
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -23,11 +23,15 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Get RIA DigiDoc version
+        run: |
+          echo "APP_VERSION_NAME=$(grep 'appVersionName=' gradle.properties | cut -d'=' -f 2 | cut -d'-' -f 1)" >> $GITHUB_ENV
+
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: zulu
-          java-version: 11
+          java-version: 17
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
@@ -35,10 +39,11 @@ jobs:
           languages: ${{ matrix.language }}
           queries: +security-and-quality
 
-      - name: Build RIA DigiDoc
-        run: |
-          ./gradlew -Dorg.gradle.caching=false --no-daemon -S clean
-          ./gradlew -Dorg.gradle.caching=false --no-daemon -S app:assembleDebug -x app:processDebugGoogleServices -x app:uploadCrashlyticsMappingFileDebug
+      - name: Setup Gradle and Build RIA DigiDoc
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: wrapper
+          arguments: clean --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=${{ env.APP_VERSION_NAME }}.${{ env.BUILD_NUMBER }} assemble --debug -PskipGoogleServices
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2

@@ -2,20 +2,34 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:importantForAccessibility="no"
     tools:parentTag="androidx.coordinatorlayout.widget.CoordinatorLayout"
     tools:layout_width="match_parent"
     tools:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@id/appBar"
+        android:touchscreenBlocksFocus="false"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="yes"
+        android:accessibilityHeading="true"
+        android:focusedByDefault="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:screenReaderFocusable="true"
+        android:contentDescription="@string/main_settings_title"
+        >
+        <requestFocus/>
         <android.widget.Toolbar
             android:id="@id/toolbar"
             android:theme="@style/ThemeOverlay.Application.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:touchscreenBlocksFocus="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:accessibilityPaneTitle="@string/main_settings_title"
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:navigationContentDescription="@string/back"
@@ -26,6 +40,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@id/scrollView"
         android:paddingStart="@dimen/material_content_edge_margin_horizontal"
         android:paddingEnd="@dimen/material_content_edge_margin_horizontal"
         android:orientation="vertical"
@@ -35,136 +50,88 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
             android:orientation="vertical">
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@id/mainSettingsFragment"
-                    android:name="ee.ria.DigiDoc.android.main.settings.SettingsFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="18dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="8dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/MaterialTypography.Dense.Body1"
-                    android:textSize="16sp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/main_settings_open_all_filetypes_title"
-                    android:layout_weight="2">
-                </TextView>
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/mainSettingsOpenAllFileTypes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:layout_gravity="end">
-                </androidx.appcompat.widget.SwitchCompat>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="18dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="8dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/MaterialTypography.Dense.Body1"
-                    android:textSize="16sp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/main_settings_allow_screenshots_title"
-                    android:layout_weight="2">
-                </TextView>
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/mainSettingsAllowScreenshots"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:layout_gravity="end">
-                </androidx.appcompat.widget.SwitchCompat>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@id/mainSettingsTsaCertificateContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="18dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="8dp"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/MaterialTypography.Dense.Body1"
-                    android:textSize="16sp"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:text="@string/main_settings_timestamp_cert_title"
-                    android:layout_weight="2">
-                </TextView>
-
-                <TextView
-                    android:id="@id/mainSettingsTsaCertificateIssuedTo"
-                    style="@style/MaterialTypography.Dense.Body1"
-                    android:textSize="16sp"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:text="@string/main_settings_timestamp_cert_issued_to_title"
-                    android:layout_weight="2">
-                </TextView>
-
-                <TextView
-                    android:id="@id/mainSettingsTsaCertificateValidTo"
-                    style="@style/MaterialTypography.Dense.Body1"
-                    android:textSize="16sp"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:text="@string/main_settings_timestamp_cert_valid_to_title"
-                    android:layout_weight="2">
-                </TextView>
+                android:importantForAccessibility="no"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
 
                 <Button
-                    android:id="@id/mainSettingsTsaCertificateAddCertificateButton"
-                    android:layout_width="wrap_content"
+                    android:id="@id/mainSettingsSigningCategory"
+                    style="@style/MaterialTypography.Regular.Body2"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/main_settings_timestamp_cert_add_certificate_button" />
+                    android:drawableStart="@drawable/ic_icon_signing"
+                    android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_right_24"
+                    android:drawablePadding="@dimen/material_responsive_gutter"
+                    android:textColor="@color/material_color_black"
+                    android:textAllCaps="false"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11dp"
+                    android:autoSizeStepGranularity="1dp"
+                    android:drawableTint="@color/material_color_black"
+                    android:background="@null"
+                    android:paddingHorizontal="@dimen/material_responsive_gutter"
+                    android:layout_margin="0dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:gravity="center_vertical"
+                    android:contentDescription="@string/signature_update_title_created"
+                    android:text="@string/signature_update_title_created" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
 
                 <Button
-                    android:id="@id/mainSettingsTsaCertificateShowCertificateButton"
-                    android:layout_width="wrap_content"
+                    android:id="@id/mainSettingsRightsCategory"
+                    style="@style/MaterialTypography.Regular.Body2"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/main_settings_timestamp_cert_show_certificate_button" />
+                    android:drawableStart="@drawable/ic_icon_permissions"
+                    android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_right_24"
+                    android:drawablePadding="@dimen/material_responsive_gutter"
+                    android:textColor="@color/material_color_black"
+                    android:textAllCaps="false"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11dp"
+                    android:autoSizeStepGranularity="1dp"
+                    android:drawableTint="@color/material_color_black"
+                    android:background="@null"
+                    android:paddingHorizontal="@dimen/material_responsive_gutter"
+                    android:layout_margin="0dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:gravity="center_vertical"
+                    android:contentDescription="@string/main_settings_rights"
+                    android:text="@string/main_settings_rights" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/material_baseline_grid_2.5x"
+                android:layout_marginBottom="@dimen/material_baseline_grid_2.5x">
+
+                <Button
+                    android:id="@id/mainSettingsUseDefaultSettings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/material_baseline_grid_3x"
+                    android:text="@string/main_settings_use_default_settings_button_title" />
 
             </LinearLayout>
 

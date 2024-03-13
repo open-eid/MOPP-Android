@@ -1,6 +1,6 @@
 /*
  * smart-id-lib
- * Copyright 2017 - 2023 Riigi Infosüsteemi Amet
+ * Copyright 2017 - 2024 Riigi Infosüsteemi Amet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,7 @@ import android.util.Log;
 
 import org.bouncycastle.util.encoders.Base64;
 
+import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -39,7 +40,12 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import ee.ria.DigiDoc.common.CertificateUtil;
+import ee.ria.DigiDoc.common.ManualProxy;
+import ee.ria.DigiDoc.common.ProxyConfig;
+import ee.ria.DigiDoc.common.ProxySetting;
+import ee.ria.DigiDoc.common.ProxyUtil;
 import ee.ria.DigiDoc.smartid.BuildConfig;
+import okhttp3.Authenticator;
 import okhttp3.CertificatePinner;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
@@ -56,22 +62,35 @@ public class ServiceGenerator {
 
     private static HttpLoggingInterceptor loggingInterceptor;
 
-    public static <S> S createService(Class<S> serviceClass, String sidSignServiceUrl, ArrayList<String> certBundle, Context context)
+    public static <S> S createService(Class<S> serviceClass, String sidSignServiceUrl,
+                                      ArrayList<String> certBundle,
+                                      ProxySetting proxySetting, ManualProxy manualProxySettings,
+                                      Context context)
             throws CertificateException, NoSuchAlgorithmException {
         Timber.log(Log.DEBUG, "Creating new retrofit instance");
         return new Retrofit.Builder()
-                .baseUrl(sidSignServiceUrl + "/")
+                .baseUrl(sidSignServiceUrl)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(buildHttpClient(sidSignServiceUrl, certBundle, context))
+                .client(buildHttpClient(sidSignServiceUrl, certBundle,
+                        proxySetting, manualProxySettings, context))
                 .build()
                 .create(serviceClass);
     }
 
-    private static OkHttpClient buildHttpClient(String sidSignServiceUrl, ArrayList<String> certBundle, Context context)
+    private static OkHttpClient buildHttpClient(String sidSignServiceUrl,
+                                                ArrayList<String> certBundle,
+                                                ProxySetting proxySetting,
+                                                ManualProxy manualProxySettings,
+                                                Context context)
             throws CertificateException, NoSuchAlgorithmException {
         Timber.log(Log.DEBUG, "Building new httpClient");
+
+        ProxyConfig proxyConfig = ProxyUtil.getProxy(proxySetting, manualProxySettings);
+
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
+                .proxy(proxySetting == ProxySetting.NO_PROXY ? Proxy.NO_PROXY : proxyConfig.proxy())
+                .proxyAuthenticator(proxySetting == ProxySetting.NO_PROXY ? Authenticator.NONE : proxyConfig.authenticator())
                 .connectTimeout(120, TimeUnit.SECONDS)
                 .readTimeout(120, TimeUnit.SECONDS)
                 .writeTimeout(120, TimeUnit.SECONDS)

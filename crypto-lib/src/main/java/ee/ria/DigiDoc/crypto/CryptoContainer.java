@@ -1,5 +1,8 @@
 package ee.ria.DigiDoc.crypto;
 
+import static com.google.common.io.Files.getFileExtension;
+import static com.google.common.io.Files.getNameWithoutExtension;
+
 import androidx.annotation.WorkerThread;
 
 import com.google.auto.value.AutoValue;
@@ -23,9 +26,6 @@ import java.util.Locale;
 import ee.ria.DigiDoc.common.Certificate;
 import okio.ByteString;
 
-import static com.google.common.io.Files.getFileExtension;
-import static com.google.common.io.Files.getNameWithoutExtension;
-
 /**
  * Handles working with CDOC containers.
  *
@@ -37,6 +37,8 @@ import static com.google.common.io.Files.getNameWithoutExtension;
 public abstract class CryptoContainer {
 
     private static final String EXTENSION = "cdoc";
+
+    private static final String MIME_TYPE = "application/octet-stream";
 
     /**
      * Location of the container.
@@ -197,5 +199,9 @@ public abstract class CryptoContainer {
     public static boolean isCryptoContainer(File file) {
         String extension = getFileExtension(file.getName()).toLowerCase();
         return "cdoc".equals(extension);
+    }
+
+    public static String getMimeType() {
+        return MIME_TYPE;
     }
 }

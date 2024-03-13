@@ -2,9 +2,11 @@ package ee.ria.DigiDoc.android.utils;
 
 import static android.util.TypedValue.COMPLEX_UNIT_PX;
 import static android.view.View.GONE;
+import static android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO;
 import static android.view.View.VISIBLE;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.Layout;
 import android.text.SpannableString;
@@ -18,6 +20,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -25,6 +28,8 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.google.android.material.textfield.TextInputLayout;
+
+import ee.ria.DigiDoc.R;
 
 public class TextUtil {
 
@@ -102,6 +107,50 @@ public class TextUtil {
                 size, context.getResources().getDisplayMetrics());
     }
 
+    public static void setSearchViewTextSizeConstraints(SearchView searchView, TextView searchEditText) {
+        float maxTextSize = 16;
+        float minTextSize = 11;
+        String queryHint = "";
+
+        if (searchView.getQueryHint() != null) {
+            queryHint = searchView.getQueryHint().toString();
+        }
+
+        int maxWidth = searchView.getWidth();
+
+        TextPaint textPaint = new TextPaint();
+        textPaint.setTextSize(maxTextSize);
+        textPaint.setAntiAlias(true);
+
+        float textWidth = textPaint.measureText(queryHint);
+
+        while (textWidth > (float) maxWidth) {
+            if (!(textPaint.getTextSize() < minTextSize)) {
+                maxTextSize--;
+                textPaint.setTextSize(maxTextSize);
+                textWidth = textPaint.measureText(queryHint);
+            }
+        }
+
+        searchEditText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, maxTextSize);
+    }
+
+    public static TextView getInvisibleElementTextView(Context context) {
+        TextView textView = new TextView(context);
+        textView.setText(R.string.last_invisible_element_name);
+        textView.setTextColor(Color.GRAY);
+        textView.setId(R.id.lastInvisibleElement);
+        textView.setTag(R.string.last_invisible_element_tag);
+        textView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+        textView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        textView.setEnabled(false);
+        textView.setAlpha(0.001f);
+
+        return textView;
+    }
+
     public static TextWatcher addTextWatcher(EditText editText) {
 
         float defaultTextSize = editText.getTextSize();
@@ -120,7 +169,7 @@ public class TextUtil {
 
                 float measureText = textPaint.measureText(currentText);
 
-                while (measureText > viewWidth) {
+                while (measureText != 0 && measureText > viewWidth) {
                     measureText = textPaint.measureText(currentText);
                     currentTextSize -= 0.5;
                     editText.setTextSize(COMPLEX_UNIT_PX, currentTextSize);
@@ -132,6 +181,10 @@ public class TextUtil {
                     if (currentTextSize <= defaultTextSize) {
                         editText.setTextSize(COMPLEX_UNIT_PX, currentTextSize);
                     }
+                }
+
+                if (editText.getTextSize() <= 0) {
+                    editText.setTextSize(COMPLEX_UNIT_PX, defaultTextSize);
                 }
             }
 

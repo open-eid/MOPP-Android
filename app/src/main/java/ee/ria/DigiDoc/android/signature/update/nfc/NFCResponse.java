@@ -46,7 +46,6 @@ public abstract class NFCResponse implements SignatureAddResponse {
         return new AutoValue_NFCResponse(container, status, message);
     }
 
-    /* fixme: copy-pasted (Lauris) */
     public static NFCResponse createWithStatus(SessionStatusResponse.ProcessStatus status, String message) {
         return create(null, status, message);
     }

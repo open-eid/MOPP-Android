@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@id/mainSettingsSivaBackButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:padding="@dimen/material_list_normal_padding_vertical"
+                android:background="@null"
+                app:srcCompat="@drawable/abc_ic_ab_back_material"
+                android:contentDescription="@string/back" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@id/mainSettingsSivaServiceContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/MaterialTypography.Regular.Title"
+                android:accessibilityHeading="true"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="11dp"
+                android:autoSizeStepGranularity="1dp"
+                android:text="@string/main_settings_siva_service_title"
+                android:paddingVertical="@dimen/material_baseline_grid_2x"
+                android:layout_weight="2"
+                android:layout_height="0dp"
+                android:layout_width="match_parent">
+            </TextView>
+
+            <RadioGroup
+                android:id="@id/mainSettingsSivaServiceChoiceGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <RadioButton
+                    android:id="@id/mainSettingsSivaServiceDefaultChoice"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11dp"
+                    android:autoSizeStepGranularity="1dp"
+                    android:padding="14dp"
+                    android:text="@string/main_settings_siva_default_access_title" />
+
+                <RadioButton
+                    android:id="@id/mainSettingsSivaServiceManualChoice"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11dp"
+                    android:autoSizeStepGranularity="1dp"
+                    android:padding="14dp"
+                    android:text="@string/main_settings_siva_default_manual_access_title" />
+            </RadioGroup>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:minHeight="@dimen/material_baseline_grid_4x" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@id/mainSettingsSivaServiceUrlLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                app:placeholderTextColor="@color/material_color_grey_400"
+                app:hintEnabled="false"
+                app:errorEnabled="true"
+                app:expandedHintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@id/mainSettingsSivaServiceUrl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:imeOptions="actionDone"
+                    android:maxLines="1"
+                    android:minHeight="@dimen/material_baseline_grid_3x"
+                    android:paddingBottom="8dp"
+                    android:background="@drawable/bottom_border_background" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:id="@id/mainSettingsSivaServiceCertificateContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="18dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/MaterialTypography.Regular.Body1"
+                    android:accessibilityHeading="true"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11dp"
+                    android:autoSizeStepGranularity="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:text="@string/main_settings_siva_certificate_title"
+                    android:layout_weight="2">
+                </TextView>
+
+                <TextView
+                    android:id="@id/mainSettingsSivaCertificateIssuedTo"
+                    style="@style/MaterialTypography.Regular.Body1"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11dp"
+                    android:autoSizeStepGranularity="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:text="@string/main_settings_timestamp_cert_issued_to_title"
+                    android:layout_weight="2">
+                </TextView>
+
+                <TextView
+                    android:id="@id/mainSettingsSivaCertificateValidTo"
+                    style="@style/MaterialTypography.Regular.Body1"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="11dp"
+                    android:autoSizeStepGranularity="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:text="@string/main_settings_timestamp_cert_valid_to_title"
+                    android:layout_weight="2">
+                </TextView>
+
+                <Button
+                    android:id="@id/mainSettingsSivaCertificateAddCertificateButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/main_settings_timestamp_cert_add_certificate_button" />
+
+                <Button
+                    android:id="@id/mainSettingsSivaCertificateShowCertificateButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/main_settings_timestamp_cert_show_certificate_button" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

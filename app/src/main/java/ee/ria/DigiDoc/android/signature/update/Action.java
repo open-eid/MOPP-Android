@@ -1,5 +1,8 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
+import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
+
 import androidx.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
@@ -10,11 +13,9 @@ import java.io.File;
 import ee.ria.DigiDoc.android.utils.mvi.MviAction;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.navigator.TransactionAction;
+import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
-
-import static ee.ria.DigiDoc.android.Constants.RC_SIGNATURE_UPDATE_DOCUMENTS_ADD;
-import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 
 interface Action extends MviAction {
 
@@ -47,6 +48,16 @@ interface Action extends MviAction {
                     Transaction.activityForResult(RC_SIGNATURE_UPDATE_DOCUMENTS_ADD,
                             createGetContentIntent(true), null),
                     containerFile);
+        }
+    }
+
+    @AutoValue
+    abstract class SignatureRoleDetailsAction implements Action {
+
+        abstract Signature signature();
+
+        static SignatureRoleDetailsAction create(Signature signature) {
+            return new AutoValue_Action_SignatureRoleDetailsAction(signature);
         }
     }
 
@@ -110,13 +121,19 @@ interface Action extends MviAction {
 
         abstract boolean isCancelled();
 
+        @Nullable abstract Boolean showRoleAddingView();
+
+        @Nullable abstract RoleData roleData();
+
         static SignatureAddAction create(@Nullable Integer method,
                                          @Nullable Boolean existingContainer,
                                          @Nullable File containerFile,
                                          @Nullable SignatureAddRequest request,
-                                         boolean isCancelled) {
+                                         boolean isCancelled,
+                                         @Nullable Boolean showRoleAddingView,
+                                         @Nullable RoleData roleData) {
             return new AutoValue_Action_SignatureAddAction(method, existingContainer, containerFile,
-                    request, isCancelled);
+                    request, isCancelled, showRoleAddingView, roleData);
         }
     }
 
@@ -127,6 +144,26 @@ interface Action extends MviAction {
 
         static SendAction create(File containerFile) {
             return new AutoValue_Action_SendAction(containerFile);
+        }
+    }
+
+    @AutoValue
+    abstract class ContainerSaveAction implements Action {
+
+        abstract File containerFile();
+
+        static ContainerSaveAction create(File containerFile) {
+            return new AutoValue_Action_ContainerSaveAction(containerFile);
+        }
+    }
+
+    @AutoValue
+    abstract class EncryptAction implements Action {
+
+        abstract File containerFile();
+
+        static EncryptAction create(File containerFile) {
+            return new AutoValue_Action_EncryptAction(containerFile);
         }
     }
 }
