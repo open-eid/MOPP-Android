@@ -57,8 +57,6 @@ public final class NFCDialog extends AlertDialog implements DialogInterface.OnCl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Button okButton = getButton(BUTTON_POSITIVE);
-        //okButton.setContentDescription(getDialogActionConfirmationDescription());
         Button cancelButton = getButton(BUTTON_NEGATIVE);
         cancelButton.setContentDescription(getDialogActionCancelDescription());
     }

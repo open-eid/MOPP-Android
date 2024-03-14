@@ -545,7 +545,7 @@
     <string name="file_added">File added</string>
     <string name="files_added">Files added</string>
     <string name="error_dialog">Error dialog</string>
-    <string name="confirmation_dialog">Confirmation dialog</string>
+    <string name="confirmation_dialog">Status dialog</string>
     <string name="recipients_found">Recipients found</string>
     <string name="recipient_found">Recipient found</string>
     <string name="recipient_added">Recipient added</string>

@@ -32,10 +32,12 @@ public final class SettingsDataStore {
     private static final String KEY_LOCALE = "locale";
 
     private final SharedPreferences preferences;
+    private final SharedPreferences encryptedPreferences;
     private final Resources resources;
 
     @Inject SettingsDataStore(Application application) {
         preferences = PreferenceManager.getDefaultSharedPreferences(application);
+        encryptedPreferences = getEncryptedPreferences(application.getApplicationContext());
         this.resources = application.getResources();
     }
 
@@ -111,13 +113,20 @@ public final class SettingsDataStore {
     }
 
     public String getCan() {
-        return preferences.getString(resources.getString(R.string.main_settings_can_key),"");
+        if (encryptedPreferences != null) {
+            return encryptedPreferences.getString(resources.getString(R.string.main_settings_can_key), "");
+        }
+        Timber.log(Log.ERROR, "Unable to read CAN");
+        return "";
     }
 
     public void setCan(String can) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(resources.getString(R.string.main_settings_can_key), can);
-        editor.apply();
+        if (encryptedPreferences != null) {
+            SharedPreferences.Editor editor = encryptedPreferences.edit();
+            editor.putString(resources.getString(R.string.main_settings_can_key), can);
+            editor.commit();
+        }
+        Timber.log(Log.ERROR, "Unable to save CAN");
     }
 
     public boolean getIsRoleAskingEnabled() {
