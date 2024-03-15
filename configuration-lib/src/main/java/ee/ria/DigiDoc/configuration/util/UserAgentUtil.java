@@ -69,7 +69,7 @@ public final class UserAgentUtil {
     private static StringBuilder getAppVersion(Context context) {
         StringBuilder versionName = new StringBuilder();
         try {
-            versionName.append(getPackageInfo(context).getLongVersionCode())
+            versionName.append(getPackageInfo(context).versionName)
                     .append(".")
                     .append(getPackageInfo(context).getLongVersionCode());
         } catch (PackageManager.NameNotFoundException e) {
