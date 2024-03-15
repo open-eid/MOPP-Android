@@ -45,6 +45,7 @@
     <!-- Main Settings -->
     <string name="main_settings_title">Настройки</string>
     <string name="main_settings_use_default_settings_button_title">ИСПОЛЬЗОВАТЬ НАСТРОЙКИ ПО УМОЛЧАНИЮ</string>
+    <string name="main_settings_use_default_settings_message">Настройки по-умолчанию восстановлены</string>
     <string name="main_settings_rights">Права</string>
     <string name="main_settings_proxy_button">Прокси</string>
     <string name="main_settings_proxy_no_proxy">Прокси не используется</string>
