@@ -46,6 +46,7 @@
     <!-- Main Settings -->
     <string name="main_settings_title">Seaded</string>
     <string name="main_settings_use_default_settings_button_title">TAASTA ALGSEADED</string>
+    <string name="main_settings_use_default_settings_message">Algseaded taastatud</string>
     <string name="main_settings_rights">Õigused</string>
     <string name="main_settings_proxy_button">Proksi</string>
     <string name="main_settings_proxy_no_proxy">Ei kasuta proksit</string>

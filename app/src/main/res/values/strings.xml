@@ -45,6 +45,7 @@
     <!-- Main Settings -->
     <string name="main_settings_title">Settings</string>
     <string name="main_settings_use_default_settings_button_title">USE DEFAULT SETTINGS</string>
+    <string name="main_settings_use_default_settings_message">Default settings restored</string>
     <string name="main_settings_rights">Permissions</string>
     <string name="main_settings_proxy_button">Proxy</string>
     <string name="main_settings_proxy_no_proxy">No proxy</string>
