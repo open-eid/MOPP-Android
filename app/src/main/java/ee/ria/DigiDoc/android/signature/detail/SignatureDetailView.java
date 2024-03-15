@@ -41,6 +41,7 @@ import ee.ria.DigiDoc.android.utils.ViewSavedState;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
+import ee.ria.DigiDoc.common.DigidocContainerOpenCB;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignatureStatus;
 import ee.ria.DigiDoc.sign.SignedContainer;
@@ -117,7 +118,7 @@ public final class SignatureDetailView extends CoordinatorLayout implements Cont
     }
 
     private String getContainerMimeType(SignedContainer signedContainer) {
-        Container container = Container.open(signedContainer.file().getAbsolutePath());
+        Container container = Container.open(signedContainer.file().getAbsolutePath(), new DigidocContainerOpenCB(false));
         if (container == null) {
             return "";
         }

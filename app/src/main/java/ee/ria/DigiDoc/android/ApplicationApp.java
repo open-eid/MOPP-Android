@@ -19,6 +19,7 @@
 
 package ee.ria.DigiDoc.android;
 
+import static ee.ria.DigiDoc.common.FileUtil.createDirectoryIfNotExist;
 import static ee.ria.DigiDoc.common.LoggingUtil.isLoggingEnabled;
 import static ee.ria.DigiDoc.common.ProxyUtil.getManualProxySettings;
 import static ee.ria.DigiDoc.common.ProxyUtil.getProxySetting;
@@ -137,7 +138,7 @@ public class ApplicationApp extends android.app.Application {
         }
 
         if (tslFiles != null && tslFiles.length > 0) {
-            FileUtils.createDirectoryIfNotExist(destination);
+            createDirectoryIfNotExist(destination);
             for (String fileName : tslFiles) {
                 if (shouldCopyTSL(assetsPath, fileName, destination)) {
                     copyTSLFromAssets(assetsPath, fileName, destination);

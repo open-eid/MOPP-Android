@@ -20,11 +20,7 @@ import java.io.InputStreamReader;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collections;
-import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
 
@@ -37,7 +33,7 @@ public final class SignedContainerSubject extends Subject {
 
     static SignedContainerSubject assertThat(File file) throws Exception {
         return assertAbout(signedContainers())
-                .that(SignedContainer.open(file));
+                .that(SignedContainer.open(file, false));
     }
 
     private static Subject.Factory<SignedContainerSubject, SignedContainer> signedContainers() {

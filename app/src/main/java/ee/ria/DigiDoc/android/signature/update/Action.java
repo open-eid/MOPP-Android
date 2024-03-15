@@ -30,10 +30,13 @@ interface Action extends MviAction {
 
         abstract boolean isExistingContainer();
 
+        abstract boolean isSivaConfirmed();
+
         static ContainerLoadAction create(File containerFile, @Nullable Integer signatureAddMethod,
-                                          boolean signatureAddSuccessMessageVisible, boolean isExistingContainer) {
+                                          boolean signatureAddSuccessMessageVisible, boolean isExistingContainer,
+                                          boolean isSivaConfirmed) {
             return new AutoValue_Action_ContainerLoadAction(containerFile, signatureAddMethod,
-                    signatureAddSuccessMessageVisible, isExistingContainer);
+                    signatureAddSuccessMessageVisible, isExistingContainer, isSivaConfirmed);
         }
     }
 
@@ -101,10 +104,13 @@ interface Action extends MviAction {
 
         @Nullable abstract Signature signature();
 
+        abstract boolean isSivaConfirmed();
+
         static SignatureViewAction create(@Nullable File containerFile,
-                                         @Nullable Signature signature) {
+                                         @Nullable Signature signature,
+                                          boolean isSivaConfirmed) {
             return new AutoValue_Action_SignatureViewAction(containerFile,
-                    signature);
+                    signature, isSivaConfirmed);
         }
     }
 
@@ -125,15 +131,18 @@ interface Action extends MviAction {
 
         @Nullable abstract RoleData roleData();
 
+        abstract boolean isSivaConfirmed();
+
         static SignatureAddAction create(@Nullable Integer method,
                                          @Nullable Boolean existingContainer,
                                          @Nullable File containerFile,
                                          @Nullable SignatureAddRequest request,
                                          boolean isCancelled,
                                          @Nullable Boolean showRoleAddingView,
-                                         @Nullable RoleData roleData) {
+                                         @Nullable RoleData roleData,
+                                         boolean isSivaConfirmed) {
             return new AutoValue_Action_SignatureAddAction(method, existingContainer, containerFile,
-                    request, isCancelled, showRoleAddingView, roleData);
+                    request, isCancelled, showRoleAddingView, roleData, isSivaConfirmed);
         }
     }
 

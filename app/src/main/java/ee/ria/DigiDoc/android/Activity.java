@@ -338,7 +338,7 @@ public final class Activity extends AppCompatActivity {
                             if (!externalFileName.isEmpty()) {
                                 Path renamedFile = FileUtil.renameFile(file.toPath(),
                                         newFileName);
-                                SignedContainer.open(renamedFile.toFile());
+                                SignedContainer.open(renamedFile.toFile(), false);
                                 Intent updatedIntent = setIntentData(intent, renamedFile, activity);
                                 return SignatureCreateScreen.create(updatedIntent);
                             } else {

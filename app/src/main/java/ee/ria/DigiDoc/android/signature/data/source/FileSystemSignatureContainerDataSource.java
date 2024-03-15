@@ -1,5 +1,9 @@
 package ee.ria.DigiDoc.android.signature.data.source;
 
+import static ee.ria.DigiDoc.android.Constants.SIGNATURE_CONTAINER_EXT;
+
+import android.content.Context;
+
 import com.google.common.collect.ImmutableList;
 
 import org.apache.commons.io.FilenameUtils;
@@ -23,11 +27,6 @@ import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
-
-import static com.google.common.io.Files.getNameWithoutExtension;
-import static ee.ria.DigiDoc.android.Constants.SIGNATURE_CONTAINER_EXT;
-
-import android.content.Context;
 
 public final class FileSystemSignatureContainerDataSource implements SignatureContainerDataSource {
 
@@ -68,8 +67,8 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
     }
 
     @Override
-    public Single<SignedContainer> get(File containerFile) {
-        return Single.fromCallable(() -> SignedContainer.open(containerFile));
+    public Single<SignedContainer> get(File containerFile, boolean isSentToSiva) {
+        return Single.fromCallable(() -> SignedContainer.open(containerFile, isSentToSiva));
     }
 
     @Override
@@ -83,7 +82,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
                                                 ImmutableList<FileStream> documentStreams) {
         return Single.fromCallable(() ->
                 SignedContainer
-                        .open(containerFile)
+                        .open(containerFile, false)
                         .addDataFiles(cacheFileStreams(getContainerFiles(containerFile, documentStreams))));
     }
 
@@ -91,23 +90,23 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
     public Single<SignedContainer> removeDocument(File containerFile, DataFile document) {
         return Single.fromCallable(() ->
                 SignedContainer
-                        .open(containerFile)
+                        .open(containerFile, false)
                         .removeDataFile(document));
     }
 
     @Override
-    public Single<File> getDocumentFile(File containerFile, DataFile document) {
+    public Single<File> getDocumentFile(File containerFile, DataFile document, boolean isSentToSiva) {
         return Single.fromCallable(() ->
                 SignedContainer
-                        .open(containerFile)
-                        .getDataFile(document, fileSystem.getContainerDataFilesDir(containerFile)));
+                        .open(containerFile, isSentToSiva)
+                        .getDataFile(document, fileSystem.getContainerDataFilesDir(containerFile), isSentToSiva));
     }
 
     @Override
     public Single<SignedContainer> removeSignature(File containerFile, Signature signature) {
         return Single.fromCallable(() ->
                 SignedContainer
-                        .open(containerFile)
+                        .open(containerFile, false)
                         .removeSignature(signature));
     }
 
@@ -115,7 +114,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
     public Single<SignedContainer> addSignature(File containerFile, String signature) {
         return Single.fromCallable(() ->
                 SignedContainer
-                        .open(containerFile)
+                        .open(containerFile, false)
                         .addAdEsSignature(signature.getBytes(StandardCharsets.UTF_8)));
     }
 
@@ -138,7 +137,7 @@ public final class FileSystemSignatureContainerDataSource implements SignatureCo
 
     private List<String> getFileNamesInContainer(File containerFile) throws Exception {
         List<String> containerFileNames = new ArrayList<>();
-        ImmutableList<DataFile> dataFiles = SignedContainer.open(containerFile).dataFiles();
+        ImmutableList<DataFile> dataFiles = SignedContainer.open(containerFile, false).dataFiles();
 
         for (int i = 0; i < dataFiles.size(); i++) {
             containerFileNames.add(dataFiles.get(i).name());

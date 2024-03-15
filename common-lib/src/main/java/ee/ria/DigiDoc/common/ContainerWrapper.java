@@ -37,7 +37,7 @@ public class ContainerWrapper {
     private Signature signature;
 
     public ContainerWrapper(String containerPath) {
-        this.container = Container.open(containerPath);
+        this.container = Container.open(containerPath, new DigidocContainerOpenCB(false));
     }
 
     public Container getContainer() {

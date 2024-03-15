@@ -6,19 +6,28 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.webkit.URLUtil;
 
+import com.google.common.io.ByteSource;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class FileUtil {
+
+    private static final Logger logger = Logger.getLogger(FileUtil.class.getName());
 
     public static final String RESTRICTED_FILENAME_CHARACTERS_AS_STRING = "@%:^?[]\\'\"”’{}#&`\\\\~«»/´";
     public static final String RTL_CHARACTERS_AS_STRING = "" + '\u200E' + '\u200F' + '\u202E' + '\u202A' + '\u202B';
@@ -200,6 +209,55 @@ public class FileUtil {
             }
         }
         return null;
+    }
+
+    public static boolean isCades(Context context, ByteSource byteSource, String fileName) {
+        try {
+            File tempContainerFilesDirectory = new File(context.getFilesDir(), "tempContainerFiles");
+            createDirectoryIfNotExist(tempContainerFilesDirectory.toString());
+            File containerFile = getFile(byteSource,
+                    new File(tempContainerFilesDirectory, fileName).getPath());
+            return isFileInZip(containerFile.getPath(), "p7s");
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static boolean isFileInZip(String zipFilePath, String fileNameToFind) throws IOException {
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFilePath))) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if (entry.getName().contains(fileNameToFind)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static File getFile(ByteSource byteSource, String filePath) throws IOException {
+        byte[] bytes = byteSource.read();
+
+        File file = new File(filePath);
+        com.google.common.io.Files.write(bytes, file);
+
+        return file;
+    }
+
+    public static void createDirectoryIfNotExist(String directory) {
+        File destinationDirectory = new File(directory);
+        if (!destinationDirectory.exists()) {
+            boolean isDirsCreated = destinationDirectory.mkdirs();
+            if (isDirsCreated) {
+                logMessage(Level.INFO, "Directories created for " + directory);
+            }
+        }
+    }
+
+    public static void logMessage(Level level, String message) {
+        if (BuildConfig.DEBUG && logger.isLoggable(level)) {
+            logger.log(level, message);
+        }
     }
 
     private static boolean isRawUrl(String url) {
