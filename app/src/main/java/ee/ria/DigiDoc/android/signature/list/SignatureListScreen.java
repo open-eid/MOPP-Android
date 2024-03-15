@@ -10,6 +10,7 @@ import static ee.ria.DigiDoc.android.utils.navigator.ContentView.removeInvisible
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.bluelinelabs.conductor.Controller;
 import com.google.common.io.Files;
 
 import java.io.File;
+import java.io.IOException;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
@@ -36,6 +38,7 @@ import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.core.Observable;
+import timber.log.Timber;
 
 public final class SignatureListScreen extends Controller implements Screen,
         MviView<Intent, ViewState> {
@@ -82,10 +85,19 @@ public final class SignatureListScreen extends Controller implements Screen,
                             if (sivaConfirmationContainerFile != null &&
                                     SignedContainer.isContainer(getApplicationContext(), sivaConfirmationContainerFile) &&
                                     SignedContainer.isAsicsFile(sivaConfirmationContainerFile.getName())) {
-                                SignedContainer signedContainer = SignedContainer.open(sivaConfirmationContainerFile);
-                                if (signedContainer.dataFiles().size() == 1 &&
-                                        Files.getFileExtension(signedContainer.dataFiles().get(0).name()).equalsIgnoreCase("ddoc")) {
-                                    return ContainerOpenIntent.open(sivaConfirmationContainerFile, false);
+                                try {
+                                    SignedContainer signedContainer = SignedContainer.open(sivaConfirmationContainerFile, false);
+                                    if (signedContainer.dataFiles().size() == 1 &&
+                                            Files.getFileExtension(signedContainer.dataFiles().get(0).name()).equalsIgnoreCase("ddoc")) {
+                                        return ContainerOpenIntent.open(sivaConfirmationContainerFile, false);
+                                    }
+                                } catch (IOException ie) {
+                                    Timber.log(Log.ERROR, ie, "Unable to open container");
+                                    if (ie.getMessage() != null &&
+                                            !ie.getMessage().contains("Online validation disabled")) {
+                                        Timber.log(Log.ERROR, ie, "SiVa not confirmed");
+                                    }
+                                    return ContainerOpenIntent.cancel();
                                 }
                             }
                             return ContainerOpenIntent.cancel();

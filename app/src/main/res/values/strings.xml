@@ -126,7 +126,7 @@
 
     <!-- Signature Create -->
     <string name="signature_create_error">Could not load selected files</string>
-    <string name="siva_send_message_dialog">Signed document in PDF and DDOC format will be transmitted to the Digital Signature Validation Service SiVa to verify the validity of the digital signature. Read more information about transmitted data to Digital Signature Validation service from https://www.id.ee/en/article/data-protection-conditions-for-the-id-software-of-the-national-information-system-authority/</string>
+    <string name="siva_send_message_dialog">This type of signed document will be transmitted to the Digital Signature Validation Service SiVa to verify the validity of the digital signature. Read more information about transmitted data to Digital Signature Validation Service on the https://www.id.ee/en/article/data-protection-conditions-for-the-id-software-of-the-national-information-system-authority website</string>
     <string name="siva_read_here">here</string>
     <string name="siva_continue_question">Do you want to continue?</string>
 
@@ -531,6 +531,7 @@
     <string name="documents_add_button">+ ADD MORE FILES</string>
     <string name="empty_file_error">Cannot add empty file to the container.</string>
     <string name="empty_file_message">An empty file is attached to the envelope. Remove the empty file from the container to sign.</string>
+    <string name="cades_file_message">This container contains CAdES signature. You are not allowed to add or remove signatures to this container.</string>
     <string name="signature_removed">Signature removed</string>
     <string name="signature_removal_cancelled">Signature removal cancelled</string>
     <string name="file_removed">File removed</string>

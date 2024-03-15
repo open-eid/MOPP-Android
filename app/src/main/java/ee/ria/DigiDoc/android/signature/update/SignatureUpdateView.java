@@ -388,7 +388,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             encryptButtonSpace.setVisibility(isExistingContainer ? VISIBLE : GONE);
             if (UNSIGNABLE_CONTAINER_EXTENSIONS.contains(
                     Files.getFileExtension(containerFile.getName()).toLowerCase()) ||
-                    FileSystem.isEmptyDataFileInContainer(navigator.activity(), containerFile)) {
+                    FileSystem.isEmptyDataFileInContainer(navigator.activity(), containerFile, isSivaConfirmed)) {
                 signatureAddButton.setVisibility(GONE);
             } else {
                 signatureAddButton.setVisibility(VISIBLE);
@@ -599,7 +599,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     private Observable<InitialIntent> initialIntent() {
         return Observable.just(InitialIntent.create(isExistingContainer, containerFile,
                 signatureAddVisible ? viewModel.signatureAddMethod() : null,
-                signatureAddSuccessMessageVisible));
+                signatureAddSuccessMessageVisible, isSivaConfirmed));
     }
 
     private Observable<NameUpdateIntent> nameUpdateIntent() {
@@ -640,7 +640,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
 
     private Observable<SignatureViewIntent> signatureViewIntent() {
         return adapter.signatureClicks()
-                .map(document -> SignatureViewIntent.create(containerFile, document));
+                .map(document -> SignatureViewIntent.create(containerFile, document, isSivaConfirmed));
     }
 
     private Observable<SignatureRemoveIntent> signatureRemoveIntent() {
@@ -657,7 +657,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                         .doOnNext(ignored -> resetSignatureAddDialog())
                         .map(ignored -> {
                             int method = viewModel.signatureAddMethod();
-                            return SignatureAddIntent.show(method, isExistingContainer, containerFile, false);
+                            return SignatureAddIntent.show(method, isExistingContainer, containerFile, false, isSivaConfirmed);
                         }),
                 cancels(signatureAddDialog)
                         .doOnNext(ignored -> resetSignatureAddDialog())
@@ -665,7 +665,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                 signatureAddView.methodChanges().map(method -> {
                         viewModel.setSignatureAddMethod(method);
                         sendMethodSelectionAccessibilityEvent(method);
-                        return SignatureAddIntent.show(method, isExistingContainer, containerFile, false);
+                        return SignatureAddIntent.show(method, isExistingContainer, containerFile, false, isSivaConfirmed);
                 }),
                 signatureAddDialog.positiveButtonClicks().map(ignored -> {
                     SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
@@ -674,11 +674,11 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                     if (isRoleAskingEnabled) {
                         roleAddDialog.show();
                         return SignatureAddIntent.show(signatureAddView.method(),
-                                isExistingContainer, containerFile, true);
+                                isExistingContainer, containerFile, true, isSivaConfirmed);
                     }
                     return SignatureAddIntent.sign(signatureAddView.method(),
                             isExistingContainer, containerFile, signatureAddView.request(),
-                            activity.getSettingsDataStore().getIsRoleAskingEnabled() ? roleAddView.request() : null);
+                            activity.getSettingsDataStore().getIsRoleAskingEnabled() ? roleAddView.request() : null, isSivaConfirmed);
                 }),
                 cancels(roleAddDialog)
                     .doOnNext(ignored -> resetSignatureAddDialog())
@@ -689,7 +689,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                     roleAddDialog.dismiss();
                     return SignatureAddIntent.sign(signatureAddView.method(),
                             isExistingContainer, containerFile, signatureAddView.request(),
-                            activity.getSettingsDataStore().getIsRoleAskingEnabled() ? roleAddView.request() : null);
+                            activity.getSettingsDataStore().getIsRoleAskingEnabled() ? roleAddView.request() : null, isSivaConfirmed);
                 }),
                 signatureAddIntentSubject
         );
@@ -755,7 +755,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                         .create((nestedFile != null) ? nestedFile : containerFile, document))));
         disposables.add(adapter.signatureClicks().subscribe(signature ->
                 signatureViewIntentSubject.onNext(SignatureViewIntent
-                        .create(containerFile, signature))));
+                        .create(containerFile, signature, isSivaConfirmed))));
         disposables.add(adapter.documentRemoveClicks().subscribe(document ->
                 documentRemoveIntentSubject.onNext(DocumentRemoveIntent
                         .showConfirmation(containerFile, dataFiles, document))));

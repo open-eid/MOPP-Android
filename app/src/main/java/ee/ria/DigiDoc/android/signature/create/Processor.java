@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -150,7 +151,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                         false,
                                         SignedContainer.isAsicsFile(containerAdd.containerFile().getName()) ?
                                                 SignedFilesUtil.getContainerDataFile(signatureContainerDataSource,
-                                                        SignedContainer.open(containerAdd.containerFile())) : null, isSivaConfirmed))))
+                                                        SignedContainer.open(containerAdd.containerFile(), isSivaConfirmed), isSivaConfirmed) : null, isSivaConfirmed))))
                 .doOnError(throwable1 -> {
                     Timber.log(Log.ERROR, throwable1, "Add signed container failed");
                     if (throwable1 instanceof NoInternetConnectionException ||
@@ -159,7 +160,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     throwable1.getMessage().contains("connection_failure"))) {
                         ToastUtil.showError(navigator.activity(), R.string.no_internet_connection);
                     } else {
-                        ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
+                        if (throwable1 instanceof IOException ie &&
+                                ie.getMessage() != null &&
+                                !ie.getMessage().contains("Online validation disabled")) {
+                            ToastUtil.showError(navigator.activity(), R.string.signature_create_error);
+                        }
                     }
 
                     navigator.execute(Transaction.pop());

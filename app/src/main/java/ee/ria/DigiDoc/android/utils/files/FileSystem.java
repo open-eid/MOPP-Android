@@ -182,11 +182,11 @@ public final class FileSystem {
      * @param containerFile Container file.
      * @return Boolean if container has empty file or not.
      */
-    public static boolean isEmptyDataFileInContainer(Context context, File containerFile) {
+    public static boolean isEmptyDataFileInContainer(Context context, File containerFile, boolean isSentToSiva) {
         try {
             if (SignedContainer.isContainer(context, containerFile)) {
                 try {
-                    SignedContainer signedContainer = SignedContainer.open(containerFile);
+                    SignedContainer signedContainer = SignedContainer.open(containerFile, isSentToSiva);
                     return signedContainer.hasEmptyFiles();
                 } catch (Exception e) {
                     Timber.log(Log.ERROR, e, "Unable to check files in container");

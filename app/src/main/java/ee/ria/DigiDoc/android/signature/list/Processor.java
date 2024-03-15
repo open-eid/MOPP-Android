@@ -22,7 +22,6 @@ import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.sign.SignatureStatus;
 import ee.ria.DigiDoc.sign.SignedContainer;
-
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
@@ -75,9 +74,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             .create(true, false, containerFile, false, false,
                                     SignedContainer.isAsicsFile(containerFile.getName()) ?
                                             SignedFilesUtil.getContainerDataFile(signatureContainerDataSource,
-                                                    SignedContainer.open(containerFile)) : null, action.isSivaConfirmed())));
+                                                    SignedContainer.open(containerFile, action.isSivaConfirmed()), action.isSivaConfirmed()) : null, action.isSivaConfirmed())));
                     try {
-                        SignedContainer signedContainer = SignedContainer.open(containerFile);
+                        SignedContainer signedContainer = SignedContainer.open(containerFile, action.isSivaConfirmed());
                         sendContainerStatusAccessibilityMessage(signedContainer, application.getApplicationContext(), localeService.applicationConfigurationWithLocale(application.getApplicationContext(),
                                 localeService.applicationLocale()));
                     } catch (Exception e) {

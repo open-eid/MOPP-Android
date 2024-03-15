@@ -126,7 +126,7 @@
 
     <!-- Signature Create -->
     <string name="signature_create_error">Не удалось загрузить выбранные файлы</string>
-    <string name="siva_send_message_dialog">Для проверки действительности электронно-цифровых подписей в форматах PDF и DDOC файл пересылается в службу проверки цифровых подписей SiVa. Подробнее о данных, переданных для проверки действительности электронно-цифровых подписей, можно прочитать https://www.id.ee/ru/artikkel/usloviya-zashhity-dannyh-programmnogo-obespecheniya-id-karty-departamenta-gosudarstvennoj-infosistemy/</string>
+    <string name="siva_send_message_dialog">Данный тип подписанного документа передается в службу валидации SiVa для проверки действительности цифровых подписей. Подробнее о передаваемых при проверке действительности электронной подписи данных, можете прочитать на сайте https://www.id.ee/ru/artikkel/usloviya-zashhity-dannyh-programmnogo-obespecheniya-id-karty-departamenta-gosudarstvennoj-infosistemy</string>
     <string name="siva_read_here">здесь</string>
     <string name="siva_continue_question">Вы желаете продолжить?</string>
 
@@ -528,6 +528,7 @@
 
     <string name="empty_file_error">Пустой файл нельзя добавить в контейнер.</string>
     <string name="empty_file_message">В контейнер добавлен пустой файл. Для подписания удалите из контейнера пустой файл.</string>
+    <string name="cades_file_message">Этот контейнер содержит подпись CAdES. К данному контейнеру нельзя добавить или удалить из него подпись.</string>
 
     <!--  TODO: tõlked  -->
     <string name="document">Документ</string>

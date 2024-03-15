@@ -402,7 +402,7 @@ public final class Activity extends AppCompatActivity {
                             if (!externalFileName.isEmpty()) {
                                 Path renamedFile = FileUtil.renameFile(file.toPath(),
                                         newFileName);
-                                SignedContainer.open(renamedFile.toFile());
+                                SignedContainer.open(renamedFile.toFile(), false);
                                 Intent updatedIntent = setIntentData(intent, renamedFile, activity);
                                 Timber.log(Log.DEBUG, String.format("Creating SignatureCreateScreen with filename %s", renamedFile));
                                 return SignatureCreateScreen.create(updatedIntent);
