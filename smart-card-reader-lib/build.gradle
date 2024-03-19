@@ -30,8 +30,8 @@ dependencies {
     implementation "com.jakewharton.timber:timber:${timberVersion}"
     api "io.reactivex.rxjava3:rxjava:${rxJavaVersion}"
 
+    implementation files('libs/acssmc-1.1.6.jar') // ACS
     implementation files(
-            'libs/acssmc-1.1.4.jar', // ACS
             'libs/androidSCardV1.2.jar' // Identiv
     )
 

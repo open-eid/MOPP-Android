@@ -19,6 +19,9 @@
 
 package ee.ria.DigiDoc.idcard;
 
+import static com.google.common.primitives.Bytes.concat;
+import static ee.ria.DigiDoc.idcard.AlgorithmUtils.addPadding;
+
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -30,14 +33,12 @@ import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.Arrays;
 
 import ee.ria.DigiDoc.smartcardreader.ApduResponseException;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
 import timber.log.Timber;
-
-import static com.google.common.primitives.Bytes.concat;
-import static ee.ria.DigiDoc.idcard.AlgorithmUtils.addPadding;
 
 abstract class EstEIDToken implements Token {
 
@@ -162,6 +163,9 @@ abstract class EstEIDToken implements Token {
         selectSecurityEnvironment((byte) 0x01);
         // TODO select keys
         verifyCode(CodeType.PIN2, pin2);
+        if (null != pin2 && pin2.length > 0) {
+            Arrays.fill(pin2, (byte) 0);
+        }
         return reader.transmit(0x00, 0x2A, 0x9E, 0x9A, addPadding(hash, ecc), null);
     }
 
@@ -187,6 +191,9 @@ abstract class EstEIDToken implements Token {
     private void verifyCode(CodeType type, byte[] code) throws SmartCardReaderException {
         try {
             reader.transmit(0x00, 0x20, 0x00, type.value, code, null);
+            if (null != code && code.length > 0) {
+                Arrays.fill(code, (byte) 0);
+            }
         } catch (ApduResponseException e) {
             if (e.sw1 == 0x63 || (e.sw1 == 0x69 && e.sw2 == (byte) 0x83)) {
                 throw new CodeVerificationException(type);

@@ -1,5 +1,7 @@
 package ee.ria.DigiDoc.idcard;
 
+import static com.google.common.primitives.Bytes.concat;
+
 import android.util.Pair;
 import android.util.SparseArray;
 
@@ -15,8 +17,6 @@ import java.util.Map;
 import ee.ria.DigiDoc.smartcardreader.ApduResponseException;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
-
-import static com.google.common.primitives.Bytes.concat;
 
 class ID1 implements Token {
 
@@ -121,6 +121,9 @@ class ID1 implements Token {
     @Override
     public byte[] calculateSignature(byte[] pin2, byte[] hash, boolean ecc) throws SmartCardReaderException {
         verifyCode(CodeType.PIN2, pin2);
+        if (null != pin2 && pin2.length > 0) {
+            Arrays.fill(pin2, (byte) 0);
+        }
         selectQSCDAid();
         reader.transmit(0x00, 0x22, 0x41, 0xB6, new byte[] {(byte) 0x80, 0x04, (byte) 0xFF, 0x15, 0x08, 0x00, (byte) 0x84, 0x01, (byte) 0x9F}, null);
         return reader.transmit(0x00, 0x2A, 0x9E, 0x9A, padWithZeroes(hash), 0x00);
