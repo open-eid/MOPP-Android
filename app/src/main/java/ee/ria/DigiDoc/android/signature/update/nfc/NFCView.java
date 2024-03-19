@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update.nfc;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
+import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.removeAccessibilityStateChanged;
 
 import android.content.Context;
 import android.text.Editable;
@@ -129,25 +130,33 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
         return pin.length() >= PinConstants.PIN2_MIN_LENGTH;
     }
 
+    private void setAccessibilityDescription() {
+        canView.setContentDescription(getResources().getString(R.string.signature_update_nfc_can) + " " +
+                AccessibilityUtils.getTextViewAccessibility(canView));
+        AccessibilityUtils.setSingleCharactersContentDescription(canView,
+                getResources().getString(R.string.signature_update_nfc_can));
+        AccessibilityUtils.setEditTextCursorToEnd(canView);
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
         // Better support for Voice Assist to not delete wrong characters
-        //accessibilityTouchExplorationStateChangeListener = AccessibilityUtils.addAccessibilityStateChanged(enabled -> {
-        //    boolean isTalkBackEnabled = AccessibilityUtils.isTalkBackEnabled();
-        //    if (isTalkBackEnabled) {
-        //        setAccessibilityDescription();
-        //    } else {
-        //        AccessibilityUtils.setJoinedCharactersContentDescription(personalCodeView);
-        //    }
-        //});
+        accessibilityTouchExplorationStateChangeListener = AccessibilityUtils.addAccessibilityStateChanged(enabled -> {
+            boolean isTalkBackEnabled = AccessibilityUtils.isTalkBackEnabled();
+            if (isTalkBackEnabled) {
+                setAccessibilityDescription();
+            } else {
+                AccessibilityUtils.setJoinedCharactersContentDescription(canView);
+            }
+        });
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
-        //removeAccessibilityStateChanged(accessibilityTouchExplorationStateChangeListener);
+        removeAccessibilityStateChanged(accessibilityTouchExplorationStateChangeListener);
     }
 }

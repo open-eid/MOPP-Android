@@ -106,9 +106,9 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
             Timber.log(Log.DEBUG, "Verify PIN2:%x %s", r.code, Hex.toHexString(r.data));
             if (r.code != 0x9000) {
                 if (r.code == 0x6983) {
-                    throw new RuntimeException("Invalid PIN. Authentication method blocked.");
+                    throw new RuntimeException(navigator.activity().getString(R.string.signature_update_id_card_sign_pin2_locked));
                 } else if ((r.code & 0xfff0) == 0x63c0) {
-                    throw new RuntimeException(String.format("Invalid PIN. Attempts left: %d.", r.code & 0xf));
+                    throw new RuntimeException(String.format(navigator.activity().getString(R.string.signature_update_id_card_sign_pin2_invalid), r.code & 0xf));
                 } else {
                     throw new RuntimeException("Verification error");
                 }
