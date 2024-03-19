@@ -60,9 +60,7 @@ public final class SettingsSigningView extends CoordinatorLayout {
     private X509Certificate tsaCertificate;
 
     private final Button sivaCategory;
-    private final SettingsSivaDialog sivaDialog;
     private final Button proxyCategory;
-    private final SettingsProxyDialog proxyDialog;
 
     private final Navigator navigator;
     private final SettingsDataStore settingsDataStore;
@@ -108,8 +106,6 @@ public final class SettingsSigningView extends CoordinatorLayout {
 
         sivaCategory = findViewById(R.id.signingSettingsSivaCategory);
         proxyCategory = findViewById(R.id.signingSettingsProxyCategory);
-        sivaDialog = new SettingsSivaDialog(navigator.activity());
-        proxyDialog = new SettingsProxyDialog(navigator.activity());
 
         askRoleAndAddressSwitch = findViewById(R.id.mainSettingsAskRoleAndAddress);
 
@@ -203,8 +199,14 @@ public final class SettingsSigningView extends CoordinatorLayout {
                     settingsDataStore.setIsRoleAskingEnabled(isChecked);
                     setAskRoleAndAddressSetting(settingsDataStore);
                 }));
-        disposables.add(clicks(sivaCategory).subscribe(o -> sivaDialog.show()));
-        disposables.add(clicks(proxyCategory).subscribe(o -> proxyDialog.show()));
+        disposables.add(clicks(sivaCategory).subscribe(o -> {
+            SettingsSivaDialog sivaDialog = new SettingsSivaDialog(navigator.activity());
+            sivaDialog.show();
+        }));
+        disposables.add(clicks(proxyCategory).subscribe(o -> {
+            SettingsProxyDialog proxyDialog = new SettingsProxyDialog(navigator.activity());
+            proxyDialog.show();
+        }));
         disposables.add(viewModel.viewStates().subscribe(this::render));
     }
 

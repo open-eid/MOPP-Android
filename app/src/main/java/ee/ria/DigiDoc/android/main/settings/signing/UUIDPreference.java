@@ -28,10 +28,8 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.CheckBox;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.preference.PreferenceViewHolder;
 
 import com.takisoft.preferencex.EditTextPreference;
 
