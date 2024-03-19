@@ -31,5 +31,10 @@ public final class Constants {
      */
     public static final int MAXIMUM_PERSONAL_CODE_LENGTH = 11;
 
+    /**
+     * View type to identify screen when restarting app
+     */
+    public static final String VIEW_TYPE = "VIEW_TYPE";
+
     private Constants() {}
 }

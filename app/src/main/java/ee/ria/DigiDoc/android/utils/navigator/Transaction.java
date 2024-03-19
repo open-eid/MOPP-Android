@@ -3,12 +3,15 @@ package ee.ria.DigiDoc.android.utils.navigator;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.Router;
 import com.bluelinelabs.conductor.RouterTransaction;
-import com.google.auto.value.AutoValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Transaction {
 
@@ -28,6 +31,10 @@ public abstract class Transaction {
 
     public static ReplaceTransaction replace(Screen screen) {
         return new ReplaceTransaction(screen);
+    }
+
+    public static BackstackTransaction backstack(List<Screen> screens) {
+        return new BackstackTransaction(screens);
     }
 
     public static ActivityTransaction activity(Intent intent, Bundle options) {
@@ -100,6 +107,27 @@ public abstract class Transaction {
         @Override
         public void execute(Router router, Activity activity) {
             router.replaceTopController(routerTransaction(screen));
+        }
+    }
+
+    public static class BackstackTransaction extends Transaction {
+        private final List<Screen> screens;
+
+        public BackstackTransaction(List<Screen> screens) {
+            this.screens = screens;
+        }
+
+        public List<Screen> getScreens() {
+            return screens;
+        }
+
+        @Override
+        public void execute(Router router, Activity activity) {
+            List<RouterTransaction> routerTransactions = new ArrayList<>();
+            for (Screen screen : screens) {
+                routerTransactions.add(routerTransaction(screen));
+            }
+            router.setBackstack(routerTransactions, null);
         }
     }
 

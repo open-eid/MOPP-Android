@@ -29,10 +29,12 @@ import ee.ria.DigiDoc.android.main.about.AboutScreen;
 import ee.ria.DigiDoc.android.main.accessibility.AccessibilityScreen;
 import ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen;
 import ee.ria.DigiDoc.android.main.home.Intent.NavigationVisibilityIntent;
+import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.main.settings.SettingsScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
+import ee.ria.DigiDoc.android.utils.ViewType;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -76,8 +78,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
 
     @Nullable private String eidScreenId;
 
-    @Inject Processor(Application application, Navigator navigator, LocaleService localeService,
-                      ContentResolver contentResolver, FileSystem fileSystem) {
+    @Inject Processor(Application application, Navigator navigator, SettingsDataStore settingsDataStore,
+                      LocaleService localeService, ContentResolver contentResolver, FileSystem fileSystem) {
         this.navigator = navigator;
 
         initial = upstream -> upstream.switchMap(intent -> {
@@ -137,6 +139,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         localeChange = upstream -> upstream.switchMap(intent -> Observable
                 .fromCallable(() -> {
                     localeService.applicationLocale(new Locale(LOCALES.get(intent.item())));
+                    settingsDataStore.setViewType(ViewType.MENU);
                     return Result.LocaleChangeResult.create(LOCALES.inverse().get(
                             localeService.applicationLocale().getLanguage()));
                 })

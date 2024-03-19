@@ -59,6 +59,7 @@ import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.TSLUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.ViewType;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
@@ -152,6 +153,7 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
                         .doOnNext(next -> {
                             diagnosticsRestartConfirmationDialog.dismiss();
                             settingsDataStore.setIsLogFileGenerationEnabled(true);
+                            settingsDataStore.setViewType(ViewType.DIAGNOSTICS);
                             activityContext.restartAppWithIntent(activityContext.getIntent(), true);
                         })
                         .subscribe();
@@ -330,7 +332,7 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
         androidVersion.setText(setDisplayTextWithTitle(R.string.main_diagnostics_operating_system_title,
                 getAndroidVersion(), Typeface.DEFAULT_BOLD));
         libDocVersion.setText(setDisplayTextWithTitle(R.string.main_diagnostics_libdigidocpp_title,
-                getLibDigiDocVersion(), Typeface.DEFAULT_BOLD));
+                getLibDigiDocVersion(settingsDataStore), Typeface.DEFAULT_BOLD));
 
         configUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_config_url_title,
                 configurationProvider.getConfigUrl(), Typeface.DEFAULT));
@@ -451,7 +453,13 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
         return "Android " + Build.VERSION.RELEASE;
     }
 
-    private static String getLibDigiDocVersion() {
-        return SignLib.libdigidocppVersion();
+    private static String getLibDigiDocVersion(SettingsDataStore settingsDataStore) {
+        String libDigidocppVersion = SignLib.libdigidocppVersion();
+        // Libdigidocpp might not have been initialized when opening Diagnostics view
+        if (libDigidocppVersion.isEmpty()) {
+            return settingsDataStore.getLibdigidocppVersion();
+        }
+        settingsDataStore.setLibdigidocppVersion(libDigidocppVersion);
+        return libDigidocppVersion;
     }
 }

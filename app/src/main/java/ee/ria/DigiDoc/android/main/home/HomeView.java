@@ -1,7 +1,13 @@
 package ee.ria.DigiDoc.android.main.home;
 
+import static com.jakewharton.rxbinding4.material.RxBottomNavigationView.itemSelections;
+import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
+import static ee.ria.DigiDoc.android.utils.ViewUtil.moveView;
+import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.SparseArray;
 import android.view.View;
@@ -16,23 +22,22 @@ import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.internal.BaselineLayout;
 
+import java.util.Optional;
+
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
+import ee.ria.DigiDoc.android.Constants;
 import ee.ria.DigiDoc.android.crypto.home.CryptoHomeView;
 import ee.ria.DigiDoc.android.eid.EIDHomeView;
 import ee.ria.DigiDoc.android.signature.home.SignatureHomeView;
 import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.ViewType;
 import ee.ria.DigiDoc.android.utils.mvi.MviView;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
-
-import static com.jakewharton.rxbinding4.material.RxBottomNavigationView.itemSelections;
-import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
-import static ee.ria.DigiDoc.android.utils.ViewUtil.moveView;
-import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 
 @SuppressLint("ViewConstructor")
 public final class HomeView extends LinearLayout implements ContentView, MviView<Intent, ViewState> {
@@ -90,7 +95,7 @@ public final class HomeView extends LinearLayout implements ContentView, MviView
         setBottomToolbarItemSizes(cryptoItem);
         setBottomToolbarItemSizes(eidItem);
 
-        menuDialog = new HomeMenuDialog(context);
+        menuDialog = new HomeMenuDialog(context, intent);
         menuView = menuDialog.getMenuView();
         viewModel = ApplicationApp.component(context).navigator().viewModel(screenId,
                 HomeViewModel.class);
@@ -171,7 +176,7 @@ public final class HomeView extends LinearLayout implements ContentView, MviView
                     .subscribe(navigationVisibilityIntentSubject);
         }
 
-        if (state.menuOpen()) {
+        if (state.menuOpen() || isReturnedFromSettings(intent)) {
             menuDialog.show();
         } else {
             menuDialog.dismiss();
@@ -195,7 +200,10 @@ public final class HomeView extends LinearLayout implements ContentView, MviView
         return Observable.merge(
                 menuIntentSubject,
                 cancels(menuDialog).map(ignored -> Intent.MenuIntent.state(false)),
-                menuView.closeButtonClicks().map(ignored -> Intent.MenuIntent.state(false)),
+                menuView.closeButtonClicks().map(ignored -> {
+                    menuDialog.dismiss();
+                    return Intent.MenuIntent.state(false);
+                }),
                 menuView.itemClicks().map(Intent.MenuIntent::navigate));
     }
 
@@ -234,5 +242,12 @@ public final class HomeView extends LinearLayout implements ContentView, MviView
     public void restoreHierarchyState(SparseArray<Parcelable> container) {
         super.restoreHierarchyState(container);
         this.hierarchyState = container;
+    }
+
+    private boolean isReturnedFromSettings(android.content.Intent intent) {
+        Bundle extras = Optional.ofNullable(intent.getExtras()).orElse(new Bundle());
+        String viewType = Optional.ofNullable(extras.getString(Constants.VIEW_TYPE)).orElse("");
+
+        return !viewType.isEmpty() && !viewType.equals(ViewType.MAIN.name());
     }
 }
