@@ -15,8 +15,9 @@
         android:layout_weight="1"
         android:layout_marginStart="@dimen/material_list_text_first_position_margin_start"
         android:layout_marginEnd="@dimen/material_list_text_last_position_margin_end"
+        android:layout_marginBottom="4dp"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:ellipsize="end" />
+        android:maxLines="4" />
 
     <ImageButton
         android:id="@id/signatureListItemRemoveButton"
