@@ -1,15 +1,12 @@
 package ee.ria.DigiDoc.android.signature.update.nfc;
 
 import android.content.Context;
-import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.nfc.Tag;
 import android.nfc.TagLostException;
 import android.nfc.tech.IsoDep;
 import android.util.Log;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.bouncycastle.util.encoders.Hex;
 
@@ -19,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import javax.annotation.Nullable;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.RoleData;
@@ -55,17 +53,20 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
         if (adapter == null || !adapter.isEnabled()) {
             Timber.log(Log.ERROR, "NFC is not enabled");
             emitter.onError(new java.io.IOException("NFC adapter not found"));
-        }
-        Timber.log(Log.DEBUG, "Successfully created NFC adapter");
-        adapter.enableReaderMode(navigator.activity(),
-                tag -> {
-                    emitter.onNext(NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.OK, navigator.activity().getString(R.string.signature_update_nfc_detected)));
-                    NFCResponse response = onTagDiscovered(adapter, tag);
-                    Timber.log(Log.DEBUG, "NFC::completed");
-                    emitter.onNext((response != null) ? response : NFCResponse.success(container));
-                    emitter.onComplete();
+        } else {
+            Timber.log(Log.DEBUG, "Successfully created NFC adapter");
+            adapter.enableReaderMode(navigator.activity(),
+                    tag -> {
+                        if (AccessibilityUtils.isTalkBackEnabled()) {
+                            AccessibilityUtils.interrupt(navigator.activity());
+                        }
+                        emitter.onNext(NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.OK, navigator.activity().getString(R.string.signature_update_nfc_detected)));
+                        NFCResponse response = onTagDiscovered(adapter, tag);
+                        Timber.log(Log.DEBUG, "NFC::completed");
+                        emitter.onNext((response != null) ? response : NFCResponse.success(container));
+                        emitter.onComplete();
                     }, NfcAdapter.FLAG_READER_NFC_A, null);
-
+        }
     }
 
     private static final byte[] SEL_QSCD_CMD = Hex.decode("00A4040C");
@@ -83,7 +84,6 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
         Timber.log(Log.DEBUG, "Tag discovered: %s", tag.toString());
         card = IsoDep.get(tag);
         NFCResponse result = null;
-        SessionStatusResponse.ProcessStatus status = SessionStatusResponse.ProcessStatus.OK;
         try {
             card.connect();
             card.setTimeout(32768);
@@ -106,9 +106,9 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
             Timber.log(Log.DEBUG, "Verify PIN2:%x %s", r.code, Hex.toHexString(r.data));
             if (r.code != 0x9000) {
                 if (r.code == 0x6983) {
-                    throw new RuntimeException("Invalid PIN. Authentication method blocked.");
+                    throw new RuntimeException(navigator.activity().getString(R.string.signature_update_id_card_sign_pin2_locked));
                 } else if ((r.code & 0xfff0) == 0x63c0) {
-                    throw new RuntimeException(String.format("Invalid PIN. Attempts left: %d.", r.code & 0xf));
+                    throw new RuntimeException(String.format(navigator.activity().getString(R.string.signature_update_id_card_sign_pin2_invalid), r.code & 0xf));
                 } else {
                     throw new RuntimeException("Verification error");
                 }
@@ -119,8 +119,7 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
 
 
             container.sign(cert.data(),
-                    signData -> ByteString.of(nfc.calculateSignature(pin2.getBytes(StandardCharsets.US_ASCII),
-                    signData.toByteArray())), role);
+                    signData -> ByteString.of(nfc.calculateSignature(signData.toByteArray())), role);
         } catch (TagLostException exc) {
             Timber.log(Log.ERROR, exc.getMessage());
             result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, exc.getMessage());

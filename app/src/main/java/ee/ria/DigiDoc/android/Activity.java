@@ -80,7 +80,7 @@ public final class Activity extends AppCompatActivity {
         // Prevent screen recording
         SecureUtil.markAsSecure(this, getWindow());
 
-        //handleCrashOnPreviousExecution();
+        handleCrashOnPreviousExecution();
 
         WorkManager.getInstance(this).cancelAllWork();
 

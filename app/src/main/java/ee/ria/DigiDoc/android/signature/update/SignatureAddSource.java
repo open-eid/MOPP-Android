@@ -179,7 +179,6 @@ final class SignatureAddSource {
                     return Observable.create(nfcsub);
                 });
             return obs.switchMap(response -> {
-                        SessionStatusResponse.ProcessStatus processStatus = response.status();
                         return Observable.just(response);
                     })
                     .subscribeOn(Schedulers.io())

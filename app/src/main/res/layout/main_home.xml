@@ -2,10 +2,10 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:layout_height="match_parent"
+    tools:parentTag="android.widget.LinearLayout"
     tools:layout_width="match_parent"
-    tools:orientation="vertical"
-    tools:parentTag="android.widget.LinearLayout">
+    tools:layout_height="match_parent"
+    tools:orientation="vertical">
 
     <FrameLayout
         android:id="@id/mainHomeNavigationContainer"

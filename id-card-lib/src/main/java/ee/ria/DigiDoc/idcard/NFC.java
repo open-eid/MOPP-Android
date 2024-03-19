@@ -174,7 +174,7 @@ public class NFC {
     private static final byte[] CMD_READ_BINARY = Hex.decode("00B00000");
     private static final byte[] CMD_SIGN = Hex.decode("002A9E9A");
 
-    public byte[] calculateSignature(byte[] pin2, byte[] data) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+    public byte[] calculateSignature(byte[] data) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
 
         Result r = communicateSecure(CMD_SIGN, data);
         Timber.log(Log.DEBUG, "SIGN:%x %s", r.code, Hex.toHexString(r.data));
@@ -450,13 +450,13 @@ public class NFC {
     public byte[] getCertificate(boolean authOrSign) throws NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, IOException {
 
         // selectFile(IASECCFID, "the master application");
-        Result result = communicateSecure(CMD_SELECT_DF, IASECCFID);
+        communicateSecure(CMD_SELECT_DF, IASECCFID);
 
         // selectFile(authOrSign ? AWP : QSCD, "the application");
-        result = communicateSecure(CMD_SELECT_DF, authOrSign ? AWP : QSCD);
+        communicateSecure(CMD_SELECT_DF, authOrSign ? AWP : QSCD);
 
         // selectFile(authOrSign ? authCert : signCert, "the certificate");
-        result = communicateSecure(CMD_SELECT_DF, authOrSign ? authCert : signCert);
+        communicateSecure(CMD_SELECT_DF, authOrSign ? authCert : signCert);
 
         byte[] certificate = new byte[0];
         byte[] readCert = Arrays.copyOf(readFile, readFile.length);
