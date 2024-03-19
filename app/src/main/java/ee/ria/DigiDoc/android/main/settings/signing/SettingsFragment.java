@@ -42,13 +42,15 @@ public final class SettingsFragment extends PreferenceFragmentCompat {
                             public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
                                 super.onInitializeAccessibilityNodeInfo(host, info);
                                 if (host.getId() == R.id.mainSettingsAccessToSigningService) {
-                                    info.setContentDescription(
-                                            getAccessibilityDescription(R.string.main_settings_uuid_title, R.string.main_settings_uuid_key)
-                                    );
+                                    info.setContentDescription("");
+                                    info.setText("");
                                 } else if (host.getId() == R.id.mainSettingsAccessToTimeStampingService) {
-                                    info.setContentDescription(
-                                            getAccessibilityDescription(R.string.main_settings_tsa_url_title, R.string.main_settings_tsa_url_key)
-                                    );
+                                    info.removeAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK);
+                                    info.removeAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_SELECT);
+                                    info.removeAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_FOCUS);
+
+                                    info.setContentDescription("");
+                                    info.setText("");
                                 }
                             }
                         });
