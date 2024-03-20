@@ -1,13 +1,14 @@
 package ee.ria.DigiDoc.sign.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.Patterns;
 
 import androidx.annotation.StringRes;
 
 import java.util.regex.Matcher;
 
-import javax.annotation.Nullable;
+import ee.ria.DigiDoc.sign.R;
 
 public class UrlMessage {
 
@@ -36,7 +37,11 @@ public class UrlMessage {
     }
 
     private static String getTextFromTranslation(Context context, int textId) {
-        return context.getResources().getString(textId);
+        Resources resources = context.getResources();
+        if (textId == R.string.signature_update_signature_error_message_too_many_requests) {
+            return resources.getString(textId, resources.getString(R.string.id_card_conditional_speech));
+        }
+        return resources.getString(textId);
     }
 
     private static String extractLink(String text) {

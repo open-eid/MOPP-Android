@@ -259,6 +259,18 @@ final class AboutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             componentViewHolder.licenseUrlView.setText(component.licenseUrl());
             componentViewHolder.licenseUrlView.setContentDescription(getAccessibilityText(
                     resources.getString(component.licenseUrl())) + " link");
+
+            // Navigate to toolbar when previous element is selected on first element
+            Component firstComponent = components.get(0);
+            if (component == firstComponent) {
+                componentViewHolder.licenseUrlView.setNextFocusUpId(R.id.appBar);
+            }
+
+            // Navigate to toolbar when next element is selected on last element
+            Component lastComponent = components.get(components.size() - 1);
+            if (component == lastComponent) {
+                componentViewHolder.licenseUrlView.setNextFocusDownId(R.id.appBar);
+            }
         }
     }
 
