@@ -102,7 +102,7 @@ final class SignatureUpdateAdapter extends
             }
 
             if (nestedFile == null || !isSivaConfirmed) {
-                if (!builder.build().contains(xadesItem)) {
+                if (isAsics && !builder.build().contains(xadesItem)) {
                     builder.add(xadesItem);
                 }
                 createRegularDataFilesView(builder, context, name, container, isNestedContainer, isExistingContainer);
