@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.main.settings.rights;
 
+import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
 
@@ -15,6 +16,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.ViewType;
@@ -83,6 +85,7 @@ public final class SettingsRightsView extends CoordinatorLayout {
                     settingsDataStore.setIsScreenshotAllowed(isChecked);
                     settingsDataStore.setViewType(ViewType.SETTINGS);
                     restartIntent();
+                    AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
                 }));
         disposables.add(clicks(openAllFileTypesSwitch)
                 .subscribe(o -> {
@@ -90,6 +93,7 @@ public final class SettingsRightsView extends CoordinatorLayout {
                     settingsDataStore.setIsOpenAllFileTypesEnabled(isChecked);
                     settingsDataStore.setViewType(ViewType.SETTINGS);
                     restartIntent();
+                    AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.setting_value_changed);
                 }));
     }
 
