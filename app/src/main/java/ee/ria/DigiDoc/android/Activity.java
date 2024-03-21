@@ -47,6 +47,7 @@ import ee.ria.DigiDoc.android.main.home.HomeScreen;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.main.settings.rights.SettingsRightsScreen;
 import ee.ria.DigiDoc.android.main.sharing.SharingScreen;
+import ee.ria.DigiDoc.android.root.RootCreateScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.ContainerMimeTypeUtil;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
@@ -302,6 +303,10 @@ public final class Activity extends AppCompatActivity {
 
         @Override
         public List<Screen> call() {
+            if (intent != null && intent.getBooleanExtra(rootedKey, false)) {
+                return List.of(RootCreateScreen.create());
+            }
+
             if (intent == null || intent.getAction() == null) {
                 Timber.log(Log.DEBUG, "Creating HomeScreen");
                 return List.of(HomeScreen.create(intent));
