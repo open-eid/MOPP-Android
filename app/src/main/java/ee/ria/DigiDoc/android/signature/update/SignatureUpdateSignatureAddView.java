@@ -108,16 +108,6 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
                         (method() == R.id.signatureUpdateSignatureAddMethodIdCard && idCardView.positiveButtonEnabled()) ||
                         (method() == R.id.signatureUpdateSignatureAddMethodNFC && nfcView.positiveButtonEnabled())
         );
-/*        return Observable
-                .merge( methodChanges().startWith(Observable.fromCallable(this::method)),
-                        idCardView.positiveButtonState(),
-                        mobileIdView.positiveButtonState(),
-                        smartIdView.positiveButtonState())
-                .map(ignored ->
-                        (method() == R.id.signatureUpdateSignatureAddMethodMobileId && mobileIdView.positiveButtonEnabled()) ||
-                        (method() == R.id.signatureUpdateSignatureAddMethodSmartId && smartIdView.positiveButtonEnabled()) ||
-                        (method() == R.id.signatureUpdateSignatureAddMethodIdCard && idCardView.positiveButtonEnabled()));
-                        */
     }
 
     public int method() {
