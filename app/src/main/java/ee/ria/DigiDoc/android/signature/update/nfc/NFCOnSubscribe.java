@@ -55,17 +55,17 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
         if (adapter == null || !adapter.isEnabled()) {
             Timber.log(Log.ERROR, "NFC is not enabled");
             emitter.onError(new java.io.IOException("NFC adapter not found"));
-        }
-        Timber.log(Log.DEBUG, "Successfully created NFC adapter");
-        adapter.enableReaderMode(navigator.activity(),
-                tag -> {
-                    emitter.onNext(NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.OK, navigator.activity().getString(R.string.signature_update_nfc_detected)));
-                    NFCResponse response = onTagDiscovered(adapter, tag);
-                    Timber.log(Log.DEBUG, "NFC::completed");
-                    emitter.onNext((response != null) ? response : NFCResponse.success(container));
-                    emitter.onComplete();
+        } else {
+            Timber.log(Log.DEBUG, "Successfully created NFC adapter");
+            adapter.enableReaderMode(navigator.activity(),
+                    tag -> {
+                        emitter.onNext(NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.OK, navigator.activity().getString(R.string.signature_update_nfc_detected)));
+                        NFCResponse response = onTagDiscovered(adapter, tag);
+                        Timber.log(Log.DEBUG, "NFC::completed");
+                        emitter.onNext((response != null) ? response : NFCResponse.success(container));
+                        emitter.onComplete();
                     }, NfcAdapter.FLAG_READER_NFC_A, null);
-
+        }
     }
 
     private static final byte[] SEL_QSCD_CMD = Hex.decode("00A4040C");
@@ -83,7 +83,6 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
         Timber.log(Log.DEBUG, "Tag discovered: %s", tag.toString());
         card = IsoDep.get(tag);
         NFCResponse result = null;
-        SessionStatusResponse.ProcessStatus status = SessionStatusResponse.ProcessStatus.OK;
         try {
             card.connect();
             card.setTimeout(32768);
@@ -119,8 +118,7 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
 
 
             container.sign(cert.data(),
-                    signData -> ByteString.of(nfc.calculateSignature(pin2.getBytes(StandardCharsets.US_ASCII),
-                    signData.toByteArray())), role);
+                    signData -> ByteString.of(nfc.calculateSignature(signData.toByteArray())), role);
         } catch (TagLostException exc) {
             Timber.log(Log.ERROR, exc.getMessage());
             result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, exc.getMessage());
