@@ -22,7 +22,6 @@ import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.sign.SignatureStatus;
 import ee.ria.DigiDoc.sign.SignedContainer;
-
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
@@ -73,7 +72,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 } else {
                     navigator.execute(Transaction.push(SignatureUpdateScreen
                             .create(true, false, containerFile, false, false,
-                                    SignedContainer.isAsicsFile(containerFile.getName()) ?
+                                    SignedContainer.isAsicsFile(containerFile) ?
                                             SignedFilesUtil.getContainerDataFile(signatureContainerDataSource,
                                                     SignedContainer.open(containerFile)) : null, action.isSivaConfirmed())));
                     try {
