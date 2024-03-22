@@ -204,11 +204,11 @@ public final class Activity extends AppCompatActivity {
     }
 
     private Intent sanitizeIntent(Intent intent) {
-        if (intent.getDataString() != null) {
+        if (intent != null && intent.getDataString() != null) {
             Uri normalizedUri = FileUtil.normalizeUri(Uri.parse(intent.getDataString()));
             intent.setDataAndNormalize(normalizedUri);
         }
-        if (intent.getExtras() != null) {
+        if (intent != null && intent.getExtras() != null) {
             if (intent.getExtras().containsKey(Intent.EXTRA_REFERRER)) {
                 intent.getExtras().getString(Intent.EXTRA_REFERRER);
             }
