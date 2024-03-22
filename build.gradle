@@ -72,7 +72,7 @@ ext {
     rxBindingVersion = '4.0.0'
     pdfboxVersion = '2.0.27.0'
     telecomcharsetsVersion = '1.0.1'
-    autoValueVersion = '1.10.1'
+    autoValueVersion = '1.10.4'
     autoValueParcelVersion = '0.2.9'
     logbackAndroidVersion = '3.0.0'
     expandablelayoutVersion = '2.9.2'
