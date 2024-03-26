@@ -68,6 +68,7 @@ import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
 import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
+import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -379,6 +380,9 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             sendButton.setVisibility(GONE);
             signatureButtonSpace.setVisibility(GONE);
             encryptButtonSpace.setVisibility(GONE);
+            signatureAddButton.setVisibility(GONE);
+            signatureEncryptButton.setVisibility(GONE);
+        } else if (state.container() != null && SignedContainer.isCades(state.container().signatures())) {
             signatureAddButton.setVisibility(GONE);
             signatureEncryptButton.setVisibility(GONE);
         } else {
