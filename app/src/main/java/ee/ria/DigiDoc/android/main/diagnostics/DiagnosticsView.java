@@ -57,7 +57,6 @@ import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.TSLUtil;
-import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -244,7 +243,8 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
         if (view instanceof final ViewGroup viewGroup) {
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 final View child = viewGroup.getChildAt(i);
-                if (child instanceof TextView) {
+                boolean isInvisibleElement = child.getId() == R.id.lastInvisibleElement;
+                if (child instanceof TextView && !isInvisibleElement) {
                     textViews.add((TextView) child);
                 } else {
                     findAllTextViews(child, textViews);
