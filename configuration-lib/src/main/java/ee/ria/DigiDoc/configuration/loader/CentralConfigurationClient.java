@@ -4,6 +4,8 @@ import static ee.ria.DigiDoc.common.ProxyUtil.getManualProxySettings;
 import static ee.ria.DigiDoc.common.ProxyUtil.getProxySetting;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -46,7 +48,7 @@ class CentralConfigurationClient {
         CompletableFuture<String> future = requestData(centralConfigurationServiceUrl + "/config.json");
         future.exceptionally(e -> {
             Timber.log(Log.ERROR, e, String.format("%s %s", "Unable to get configuration", e.getLocalizedMessage()));
-            Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show());
             return future.join();
         });
         return future.join();
@@ -55,8 +57,8 @@ class CentralConfigurationClient {
     String getConfigurationSignature() {
         CompletableFuture<String> future = requestData(centralConfigurationServiceUrl + "/config.rsa");
         future.exceptionally(e -> {
-            Timber.log(Log.ERROR, e, String.format("%s %s", "Unable to get configuration signature", e.getLocalizedMessage()));
-            Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            Timber.log(Log.ERROR, e, String.format("%s. %s", "Unable to get configuration signature", e.getLocalizedMessage()));
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show());
             return future.join();
         });
         return future.join();
@@ -66,7 +68,7 @@ class CentralConfigurationClient {
         CompletableFuture<String> future = requestData(centralConfigurationServiceUrl + "/config.pub");
         future.exceptionally(e -> {
             Timber.log(Log.ERROR, e, String.format("%s %s", "Unable to get configuration public key", e.getLocalizedMessage()));
-            Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show());
             return future.join();
         });
         return future.join();
