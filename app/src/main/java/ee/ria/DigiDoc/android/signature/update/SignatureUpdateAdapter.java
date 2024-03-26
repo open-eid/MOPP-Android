@@ -191,7 +191,8 @@ final class SignatureUpdateAdapter extends
         } else {
             boolean showRemoveSignatureButton = !isNestedContainer &&
                     !NO_REMOVE_SIGNATURE_BUTTON_FILE_EXTENSIONS.contains(
-                            Files.getFileExtension(container.name()).toLowerCase());
+                            Files.getFileExtension(container.name()).toLowerCase()) &&
+                    !isCades(container.signatures());
             builder.addAll(SignatureItem.of(container.signatures(), showRemoveSignatureButton,
                     Files.getFileExtension(container.file().getName()).equalsIgnoreCase("ddoc")));
         }
