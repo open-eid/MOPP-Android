@@ -158,8 +158,8 @@ public final class MobileIdView extends LinearLayout implements
     }
 
     private void setAccessibilityDescription() {
-        phoneNoView.setContentDescription(AccessibilityUtils.getTextViewAccessibility(phoneNoView));
-        personalCodeView.setContentDescription(AccessibilityUtils.getTextViewAccessibility(personalCodeView));
+        phoneNoView.setContentDescription(String.format("%s, %s", countryAndPhoneNoLabel.getText(), AccessibilityUtils.getTextViewAccessibility(phoneNoView)));
+        personalCodeView.setContentDescription(String.format("%s, %s", personalCodeLabelText.getText(), AccessibilityUtils.getTextViewAccessibility(personalCodeView)));
         AccessibilityUtils.setSingleCharactersContentDescription(phoneNoView, getResources().getString(R.string.signature_update_mobile_id_phone_no));
         AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView, getResources().getString(R.string.signature_update_mobile_id_personal_code));
         AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
