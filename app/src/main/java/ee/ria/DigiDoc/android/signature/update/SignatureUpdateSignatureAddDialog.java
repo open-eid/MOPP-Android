@@ -41,6 +41,8 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog impleme
     private final Button mobileIdCancelButton;
     private final Button smartIdPositiveButton;
     private final Button smartIdCancelButton;
+    private final Button NFCPositiveButton;
+    private final Button NFCCancelButton;
     private final Button idCardPositiveButton;
     private final Button idCardCancelButton;
 
@@ -65,6 +67,10 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog impleme
         smartIdPositiveButton = view.findViewById(R.id.signatureUpdateSmartIdSignButton);
         smartIdCancelButton = view.findViewById(R.id.signatureUpdateSmartIdCancelSigningButton);
         setCustomActionButtons(getContext(), smartIdPositiveButton, smartIdCancelButton, positiveButtonClicks);
+
+        NFCPositiveButton = view.findViewById(R.id.signatureUpdateNFCSignButton);
+        NFCCancelButton = view.findViewById(R.id.signatureUpdateNFCCancelSigningButton);
+        setCustomActionButtons(getContext(), NFCPositiveButton, NFCCancelButton, positiveButtonClicks);
 
         idCardPositiveButton = view.findViewById(R.id.signatureUpdateIdCardSignButton);
         idCardCancelButton = view.findViewById(R.id.signatureUpdateIdCardCancelButton);
@@ -108,11 +114,12 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog impleme
         setActionButtons();
         mobileIdCancelButton.setTextColor(ContextCompat.getColor(getContext(), R.color.accent));
         smartIdCancelButton.setTextColor(ContextCompat.getColor(getContext(), R.color.accent));
+        NFCCancelButton.setTextColor(ContextCompat.getColor(getContext(), R.color.accent));
         idCardCancelButton.setTextColor(ContextCompat.getColor(getContext(), R.color.accent));
         disposables.attach();
         disposables.add(view.positiveButtonEnabled().subscribe(enabled -> {
             Button positiveButton = getButton(BUTTON_POSITIVE);
-            Button[] additionalPositiveButtons = { mobileIdPositiveButton, smartIdPositiveButton, idCardPositiveButton };
+            Button[] additionalPositiveButtons = { mobileIdPositiveButton, smartIdPositiveButton, NFCPositiveButton, idCardPositiveButton };
             updateButtonStateAndColor(positiveButton, additionalPositiveButtons, enabled);
         }));
     }
@@ -151,11 +158,14 @@ public final class SignatureUpdateSignatureAddDialog extends AlertDialog impleme
 
         if (mobileIdPositiveButton != null && mobileIdCancelButton != null &&
                 smartIdPositiveButton != null && smartIdCancelButton != null &&
+                NFCPositiveButton != null && NFCCancelButton != null &&
                 idCardPositiveButton != null && idCardCancelButton != null) {
             mobileIdPositiveButton.setVisibility(VISIBLE);
             mobileIdCancelButton.setVisibility(VISIBLE);
             smartIdPositiveButton.setVisibility(VISIBLE);
             smartIdCancelButton.setVisibility(VISIBLE);
+            NFCPositiveButton.setVisibility(VISIBLE);
+            NFCCancelButton.setVisibility(VISIBLE);
             idCardPositiveButton.setVisibility(VISIBLE);
             idCardCancelButton.setVisibility(VISIBLE);
         }

@@ -34,6 +34,7 @@ public final class SignatureUpdateViewModel extends
     public String sidPersonalCode() {
         return settingsDataStore.getSidPersonalCode();
     }
+    public String can() { return settingsDataStore.getCan(); }
 
     @Override
     protected Class<? extends Intent> initialIntentType() {

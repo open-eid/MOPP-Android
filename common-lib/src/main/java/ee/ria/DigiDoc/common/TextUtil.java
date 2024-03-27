@@ -11,8 +11,9 @@ import java.util.stream.Collectors;
 
 public class TextUtil {
 
-    public static String PERSONAL_CODE_SYMBOLS = "0123456789";
-    public static String PHONE_SYMBOLS = PERSONAL_CODE_SYMBOLS + "+-/()*+.,#";
+    public static final String DIGITS = "0123456789";
+    public static final String PERSONAL_CODE_SYMBOLS = DIGITS;
+    public static final String PHONE_SYMBOLS = DIGITS + "+-/()*+.,#";
 
     public static String splitTextAndJoin(String text, String delimiter, String joinDelimiter) {
         String[] nameComponents = TextUtils.split(text, delimiter);
