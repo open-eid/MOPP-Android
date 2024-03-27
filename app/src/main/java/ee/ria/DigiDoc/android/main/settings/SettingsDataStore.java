@@ -211,16 +211,6 @@ public final class SettingsDataStore {
         editor.apply();
     }
 
-    public Boolean getShowSuccessNotification() {
-        return preferences.getBoolean(resources.getString(R.string.show_success_notification_key), true);
-    }
-
-    public void setShowSuccessNotification(boolean showSuccessNotification) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(resources.getString(R.string.show_success_notification_key), showSuccessNotification);
-        editor.apply();
-    }
-
     public Boolean getIsDdocParentContainerTimestamped() {
         return preferences.getBoolean(resources.getString(R.string.is_ddoc_parent_container_timestamped_key), true);
     }

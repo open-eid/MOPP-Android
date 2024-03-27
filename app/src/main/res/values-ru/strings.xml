@@ -593,9 +593,6 @@
     <string name="confirm_puk_change">Подтвердить изменение Puk-кода</string>
     <string name="cancel_puk_change">Прервать процесс изменения Puk-кода</string>
 
-    <string name="success_notification_dialog_text">Чтобы поделиться контейнером, нажмите кнопку «ПОДЕЛИТЬСЯ» и выберите нужное приложение. Все контейнеры можно найти в папке «Недавние документы» в настройках приложения.</string>
-    <string name="success_notification_dialog_dont_show_again">Больше не показывать</string>
-
     <string name="crash_report_dialog_header">Отправить отчет о сбое?</string>
     <string name="crash_report_dialog_text">Похоже, произошел какой-то сбой! Помогите нам решить проблему отправив отчет о сбое.</string>
     <string name="crash_report_dialog_send_button">Отправить</string>
