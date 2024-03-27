@@ -17,8 +17,6 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Parcelable;
 import android.util.Log;
 import android.util.TypedValue;
@@ -64,12 +62,11 @@ import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
-import ee.ria.DigiDoc.android.utils.widget.NotificationDialog;
 import ee.ria.DigiDoc.common.ActivityUtil;
 import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
+import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
 import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.DataFile;
-import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.core.Observable;
@@ -431,7 +428,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         }
 
         if (state.signatureAddSuccessMessageVisible()) {
-            showSuccessNotification();
             if (AccessibilityUtils.isAccessibilityEnabled()) {
                 AccessibilityUtils.interrupt(getContext());
                 AccessibilityUtils.sendAccessibilityEvent(getContext(),
@@ -570,18 +566,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         }
 
         setupAccessibilityTabs();
-    }
-
-    private void showSuccessNotification() {
-        Boolean showNotification = ((Activity) getContext()).getSettingsDataStore().getShowSuccessNotification();
-        if (showNotification) {
-            NotificationDialog successNotificationDialog = new NotificationDialog((Activity) getContext());
-            if (AccessibilityUtils.isAccessibilityEnabled()) {
-                new Handler(Looper.getMainLooper()).postDelayed(successNotificationDialog::show, 2500);
-            } else {
-                new Handler(Looper.getMainLooper()).postDelayed(successNotificationDialog::show, 1000);
-            }
-        }
     }
 
     private boolean showNameUpdate(ViewState state) {
