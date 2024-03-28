@@ -323,7 +323,7 @@ public final class IntentUtils {
 
             boolean isContainer = SignedContainer.isContainer(context, externalFile);
             if (isContainer) {
-                return SignedContainer.open(externalFile).file();
+                return SignedContainer.open(externalFile, false).file();
             }
 
             return externalFile;

@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
+import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.core.Observable;
@@ -33,7 +34,8 @@ public class SivaUtil {
             FileStream fileStream = files.get(0);
             String extension = getFileExtension(FilenameUtils.getName(fileStream.displayName())).toLowerCase(Locale.US);
             return SEND_SIVA_CONTAINER_NOTIFICATION_EXTENSIONS.contains(extension) || ("pdf".equals(extension) &&
-                    SignedContainer.isSignedPDFFile(fileStream.source(), context, fileStream.displayName()));
+                    SignedContainer.isSignedPDFFile(fileStream.source(), context, fileStream.displayName())) ||
+                    FileUtil.isCades(context, fileStream.source(), fileStream.displayName());
         });
     }
 
@@ -48,5 +50,4 @@ public class SivaUtil {
         sivaConfirmationDialog.show();
         ClickableDialogUtil.makeLinksInDialogClickable(sivaConfirmationDialog);
     }
-
 }

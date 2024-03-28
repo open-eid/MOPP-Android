@@ -17,8 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ee.ria.DigiDoc.common.FileUtil;
-import ee.ria.DigiDoc.configuration.BuildConfig;
+import ee.ria.DigiDoc.common.BuildConfig;
 import timber.log.Timber;
 
 public class FileUtils {
@@ -91,16 +90,6 @@ public class FileUtils {
             os.write(content);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to store file '" + filePath + "'!", e);
-        }
-    }
-
-    public static void createDirectoryIfNotExist(String directory) {
-        File destinationDirectory = new File(directory);
-        if (!destinationDirectory.exists()) {
-            boolean isDirsCreated = destinationDirectory.mkdirs();
-            if (isDirsCreated) {
-                logMessage(Level.INFO, "Directories created for " + directory);
-            }
         }
     }
 

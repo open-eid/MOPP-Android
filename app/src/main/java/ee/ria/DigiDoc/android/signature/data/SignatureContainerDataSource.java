@@ -19,7 +19,7 @@ public interface SignatureContainerDataSource {
 
     Single<ContainerAdd> addContainer(Context context, ImmutableList<FileStream> fileStreams, boolean forceCreate);
 
-    Single<SignedContainer> get(File containerFile);
+    Single<SignedContainer> get(File containerFile, boolean isSentToSiva);
 
     Completable remove(File containerFile);
 
@@ -28,7 +28,7 @@ public interface SignatureContainerDataSource {
 
     Single<SignedContainer> removeDocument(File containerFile, DataFile document);
 
-    Single<File> getDocumentFile(File containerFile, DataFile document);
+    Single<File> getDocumentFile(File containerFile, DataFile document, boolean isSentToSiva);
 
     Single<SignedContainer> removeSignature(File containerFile, Signature signature);
 

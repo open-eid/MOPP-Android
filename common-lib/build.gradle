@@ -29,6 +29,7 @@ android {
 dependencies {
     api "androidx.annotation:annotation:${androidxVersion}"
     api "com.squareup.okio:okio:${okioVersion}"
+    api "com.google.guava:guava:${guavaVersion}"
 
     implementation "androidx.appcompat:appcompat:${androidxAppCompatVersion}"
     implementation "androidx.security:security-crypto:${androidxSecurityCrypto}"

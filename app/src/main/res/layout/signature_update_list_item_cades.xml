@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/material_chip_simple_label_padding_start"
+    android:layout_marginBottom="@dimen/material_list_dense_padding_vertical"
+    android:orientation="vertical"
+    android:background="@color/warning">
+
+    <TextView
+        android:id="@id/signatureUpdateListStatusCadesFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="@color/material_color_black"
+        tools:text="This container contains CAdES signature. You are not allowed to add or remove signatures to this container." />
+
+</LinearLayout>

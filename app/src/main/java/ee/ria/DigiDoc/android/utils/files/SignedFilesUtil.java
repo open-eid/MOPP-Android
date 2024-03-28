@@ -8,10 +8,10 @@ import ee.ria.DigiDoc.sign.SignedContainer;
 
 public class SignedFilesUtil {
 
-    public static File getContainerDataFile(SignatureContainerDataSource signatureContainerDataSource, SignedContainer signedContainer) {
+    public static File getContainerDataFile(SignatureContainerDataSource signatureContainerDataSource, SignedContainer signedContainer, boolean isSentToSiva) {
         DataFile dataFile = signedContainer.dataFiles().get(0);
         return signatureContainerDataSource
-                .getDocumentFile(signedContainer.file(), dataFile)
+                .getDocumentFile(signedContainer.file(), dataFile, isSentToSiva)
                 .blockingGet();
     }
 }
