@@ -210,10 +210,12 @@
     <string name="signature_update_signature_selected_method_mobile_id">Signing option Mobile-ID, tab %1$d of %2$d</string>
     <string name="signature_update_signature_selected_method_smart_id">Signing option Smart-ID, tab %1$d of %2$d</string>
     <string name="signature_update_signature_selected_method_id_card">Signing option ID-card, tab %1$d of %2$d</string>
+    <string name="signature_update_signature_selected_method_nfc">Signing option NFC, tab %1$d / %2$d</string>
 
     <string name="signature_update_signature_chosen_method_mobile_id">Signing method Mobile-ID, selected</string>
     <string name="signature_update_signature_chosen_method_smart_id">Signing method Smart-ID, selected</string>
     <string name="signature_update_signature_chosen_method_id_card">Signing method ID-Card, selected</string>
+    <string name="signature_update_signature_chosen_method_nfc">Signing method NFC, selected</string>
 
     <string name="signature_update_mobile_id_message">Enter your mobile number and personal code to sign with mobile-ID</string>
     <string name="signature_update_mobile_id_phone_no">Country code and phone number</string>
@@ -660,5 +662,4 @@
     <string name="eid_home_certificate_data_valid_accessibility">Certificate is valid until </string>
     <string name="signature_update_id_card_sign_pin2_invalid_accessibility">Wrong pin2. You have %1$d attempts left.</string>
     <string name="signature_update_id_card_sign_pin2_invalid_final_accessibility">Wrong pin2. You have 1 attempt left until your pin2 is blocked.</string>
-    <string name="signature_update_signature_selected_method_nfc">Signing option NFC, tab %1$d of %2$d</string>
 </resources>
