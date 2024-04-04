@@ -52,7 +52,7 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
         NfcAdapter adapter = manager.getDefaultAdapter();
         if (adapter == null || !adapter.isEnabled()) {
             Timber.log(Log.ERROR, "NFC is not enabled");
-            emitter.onError(new java.io.IOException("NFC adapter not found"));
+            emitter.onNext(NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, navigator.activity().getString(R.string.signature_update_nfc_adapter_missing)));
         } else {
             Timber.log(Log.DEBUG, "Successfully created NFC adapter");
             adapter.enableReaderMode(navigator.activity(),
@@ -122,13 +122,13 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
                     signData -> ByteString.of(nfc.calculateSignature(signData.toByteArray())), role);
         } catch (TagLostException exc) {
             Timber.log(Log.ERROR, exc.getMessage());
-            result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, exc.getMessage());
+            result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, navigator.activity().getString(R.string.signature_update_nfc_tag_lost));
         } catch (IOException exc) {
             Timber.log(Log.ERROR, exc.getMessage());
-            result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, exc.getMessage());
+            result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.TECHNICAL_ERROR, exc.getMessage());
         } catch (Exception exc) {
             Timber.log(Log.ERROR, exc.getMessage());
-            result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, exc.getMessage());
+            result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.TECHNICAL_ERROR, exc.getMessage());
         } finally {
             adapter.disableReaderMode(navigator.activity());
             card = null;

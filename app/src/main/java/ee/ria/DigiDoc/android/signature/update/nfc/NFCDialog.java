@@ -42,7 +42,11 @@ public final class NFCDialog extends AlertDialog implements DialogInterface.OnCl
             if (btn != null) btn.setText(android.R.string.cancel);
         }
         if (response.message() != null) {
-            setMessage(response.message());
+            if (response.status() == SessionStatusResponse.ProcessStatus.TECHNICAL_ERROR) {
+                setMessage(getContext().getString(R.string.signature_update_nfc_technical_error) + ":\n" + response.message());
+            } else {
+                setMessage(response.message());
+            }
         } else {
             if (AccessibilityUtils.isTalkBackEnabled()) {
                 AccessibilityUtils.interrupt(getContext());
