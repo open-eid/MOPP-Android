@@ -24,6 +24,7 @@
             android:gravity="start"
             android:layout_marginTop="20dp"
             android:minHeight="@dimen/material_baseline_grid_6x"
+            android:importantForAccessibility="no"
             android:text="@string/signature_update_nfc_can" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -66,6 +67,7 @@
             android:gravity="start"
             android:layout_marginTop="20dp"
             android:minHeight="@dimen/material_baseline_grid_6x"
+            android:importantForAccessibility="no"
             android:text="@string/signature_update_nfc_pin2" />
 
         <com.google.android.material.textfield.TextInputLayout

@@ -211,10 +211,12 @@
     <string name="signature_update_signature_selected_method_mobile_id">Allkirjastamise viisiks on Mobiil-ID, vahekaart %1$d / %2$d</string>
     <string name="signature_update_signature_selected_method_smart_id">Allkirjastamise viisiks on Smart-ID, vahekaart %1$d / %2$d</string>
     <string name="signature_update_signature_selected_method_id_card">Allkirjastamise viisiks on ID-kaart, vahekaart %1$d / %2$d</string>
+    <string name="signature_update_signature_selected_method_nfc">Allkirjastamise viisiks on NFC, vahekaart %1$d / %2$d</string>
 
     <string name="signature_update_signature_chosen_method_mobile_id">Allkirjastamisviis mobiil-ID on valitud</string>
     <string name="signature_update_signature_chosen_method_smart_id">Smart-ID allkirjastamise vahend valitud</string>
     <string name="signature_update_signature_chosen_method_id_card">ID-kaart allkirjastamise vahend valitud</string>
+    <string name="signature_update_signature_chosen_method_nfc">NFC allkirjastamise vahend valitud</string>
 
     <string name="signature_update_mobile_id_message">Sisesta oma telefoninumber ja isikukood mobiil-IDga allkirjastamiseks</string>
     <string name="signature_update_mobile_id_phone_no">Riigikood ja telefoninumber</string>

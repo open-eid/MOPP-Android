@@ -6,13 +6,18 @@ import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.removeAcce
 import android.content.Context;
 import android.text.Editable;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -109,6 +114,10 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
     @Override
     public void response(@Nullable NFCResponse response, @Nullable RadioGroup methodView) {
         positiveButtonStateSubject.onNext(Constants.VOID);
+
+        if (methodView != null) {
+            handleAccessibility(methodView);
+        }
     }
 
     private void checkInputsValidity() {
@@ -158,5 +167,65 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
         super.onDetachedFromWindow();
 
         removeAccessibilityStateChanged(accessibilityTouchExplorationStateChangeListener);
+    }
+
+    private void setupContentDescriptions(RadioButton radioButton, CharSequence contentDescription) {
+        radioButton.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override
+            public void onPopulateAccessibilityEvent(View host, AccessibilityEvent event) {
+                if (!event.getText().isEmpty() &&
+                        (event.getText().get(0).toString().equals(
+                                getResources().getString(R.string.signature_update_signature_add_method_mobile_id)) ||
+                                event.getText().get(0).toString().equals(
+                                        getResources().getString(R.string.signature_update_signature_add_method_smart_id)))) {
+                    event.getText().add(getContentDescription());
+                }
+            }
+
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setContentDescription(contentDescription);
+                info.setCheckable(false);
+                info.setClickable(false);
+                info.setClassName("");
+                info.setPackageName("");
+                info.setText(contentDescription);
+                info.setViewIdResourceName("");
+                info.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SET_SELECTION);
+            }
+        });
+    }
+
+    private void handleAccessibility(RadioGroup methodView) {
+        RadioButton mobileIdRadioButton = methodView.findViewById(R.id.signatureUpdateSignatureAddMethodMobileId);
+        CharSequence mobileIdContentDescription = mobileIdRadioButton.getContentDescription();
+        mobileIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        mobileIdRadioButton.setContentDescription("");
+        setupContentDescriptions(mobileIdRadioButton, mobileIdContentDescription);
+
+        RadioButton smartIdRadioButton = methodView.findViewById(R.id.signatureUpdateSignatureAddMethodSmartId);
+        CharSequence smartIdContentDescription = smartIdRadioButton.getContentDescription();
+        smartIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        smartIdRadioButton.setContentDescription("");
+        setupContentDescriptions(smartIdRadioButton, smartIdContentDescription);
+
+        RadioButton idCardRadioButton = methodView.findViewById(R.id.signatureUpdateSignatureAddMethodIdCard);
+        CharSequence idCardContentDescription = idCardRadioButton.getContentDescription();
+        idCardRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        idCardRadioButton.setContentDescription("");
+        setupContentDescriptions(idCardRadioButton, idCardContentDescription);
+
+        postDelayed(() -> {
+            mobileIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            mobileIdRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 4));
+
+            smartIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            smartIdRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_smart_id, 2, 4));
+
+            idCardRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            idCardRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 4));
+        }, 3500);
     }
 }

@@ -69,11 +69,10 @@ import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.android.utils.widget.NotificationDialog;
 import ee.ria.DigiDoc.common.ActivityUtil;
 import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
+import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
 import ee.ria.DigiDoc.mobileid.service.MobileSignService;
 import ee.ria.DigiDoc.sign.DataFile;
-import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
 import ee.ria.DigiDoc.sign.Signature;
-import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 import ee.ria.DigiDoc.smartid.service.SmartSignService;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -447,10 +446,11 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
 
         if (state.signatureAddSuccessMessageVisible()) {
             showSuccessNotification();
-            if (AccessibilityUtils.isAccessibilityEnabled()) {
+            if (AccessibilityUtils.isTalkBackEnabled()) {
                 AccessibilityUtils.interrupt(getContext());
-                AccessibilityUtils.sendAccessibilityEvent(getContext(),
-                        TYPE_ANNOUNCEMENT, R.string.container_signature_added);
+                new Handler(Looper.getMainLooper()).post(() ->
+                        AccessibilityUtils.sendAccessibilityEvent(getContext(),
+                                TYPE_ANNOUNCEMENT, R.string.container_signature_added));
             }
         }
 
@@ -780,6 +780,9 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             } else if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_id_card))) {
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
                         getResources().getString(R.string.signature_update_signature_chosen_method_id_card));
+            } else if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_nfc))) {
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
+                        getResources().getString(R.string.signature_update_signature_chosen_method_nfc));
             }
         }
     }

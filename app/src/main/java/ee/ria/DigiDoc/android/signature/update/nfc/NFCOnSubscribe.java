@@ -1,15 +1,12 @@
 package ee.ria.DigiDoc.android.signature.update.nfc;
 
 import android.content.Context;
-import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.nfc.Tag;
 import android.nfc.TagLostException;
 import android.nfc.tech.IsoDep;
 import android.util.Log;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.bouncycastle.util.encoders.Hex;
 
@@ -19,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import javax.annotation.Nullable;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.RoleData;
@@ -59,6 +57,9 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
             Timber.log(Log.DEBUG, "Successfully created NFC adapter");
             adapter.enableReaderMode(navigator.activity(),
                     tag -> {
+                        if (AccessibilityUtils.isTalkBackEnabled()) {
+                            AccessibilityUtils.interrupt(navigator.activity());
+                        }
                         emitter.onNext(NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.OK, navigator.activity().getString(R.string.signature_update_nfc_detected)));
                         NFCResponse response = onTagDiscovered(adapter, tag);
                         Timber.log(Log.DEBUG, "NFC::completed");

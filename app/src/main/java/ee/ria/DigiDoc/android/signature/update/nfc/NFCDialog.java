@@ -1,8 +1,5 @@
 package ee.ria.DigiDoc.android.signature.update.nfc;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -14,12 +11,9 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 
 import ee.ria.DigiDoc.R;
-import ee.ria.DigiDoc.android.Constants;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
-import ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog;
-
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
-import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
@@ -50,6 +44,9 @@ public final class NFCDialog extends AlertDialog implements DialogInterface.OnCl
         if (response.message() != null) {
             setMessage(response.message());
         } else {
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                AccessibilityUtils.interrupt(getContext());
+            }
             setMessage(getContext().getString(R.string.signature_update_nfc_hold));
         }
     }

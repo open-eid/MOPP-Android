@@ -21,10 +21,10 @@ import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardView;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdView;
-import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
-import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdView;
 import ee.ria.DigiDoc.android.signature.update.nfc.NFCResponse;
 import ee.ria.DigiDoc.android.signature.update.nfc.NFCView;
+import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
+import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdView;
 import ee.ria.DigiDoc.android.utils.TextUtil;
 import io.reactivex.rxjava3.core.Observable;
 
@@ -68,15 +68,14 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         RadioButton idCardIdRadioButton = findViewById(R.id.signatureUpdateSignatureAddMethodIdCard);
         RadioButton nfcIdRadioButton = findViewById(R.id.signatureUpdateSignatureAddMethodNFC);
 
-
         setupContentDescriptions(mobileIdRadioButton,
-                getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 3));
+                getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 4));
         setupContentDescriptions(smartIdRadioButton,
-                getResources().getString(R.string.signature_update_signature_selected_method_smart_id, 2, 3));
+                getResources().getString(R.string.signature_update_signature_selected_method_smart_id, 2, 4));
         setupContentDescriptions(idCardIdRadioButton,
-                getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 3));
+                getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 4));
         setupContentDescriptions(nfcIdRadioButton,
-                getResources().getString(R.string.signature_update_signature_selected_method_nfc, 3, 3));
+                getResources().getString(R.string.signature_update_signature_selected_method_nfc, 4, 4));
 
         TextUtil.setTextViewSizeInContainer(mobileIdRadioButton);
         TextUtil.setTextViewSizeInContainer(smartIdRadioButton);
