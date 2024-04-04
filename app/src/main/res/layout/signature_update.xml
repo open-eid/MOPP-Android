@@ -12,8 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:importantForAccessibility="no"
-        >
+        android:importantForAccessibility="no">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@id/appBar"
@@ -32,8 +31,7 @@
                 android:theme="@style/ThemeOverlay.Application.ActionBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:importantForAccessibility="no"
-                />
+                android:importantForAccessibility="no" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -68,63 +66,70 @@
             android:visibility="gone"
             app:contentPadding="@dimen/material_card_title_block_padding_horizontal">
 
-            <LinearLayout
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:fillViewport="true">
 
-                <TextView
-                    android:id="@+id/signatureUpdateSmartIdChallenge"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/accent"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                    android:orientation="vertical">
 
-                <ProgressBar
-                    android:id="@id/activityIndicatorSmartId"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
-                    android:layout_marginLeft="@dimen/material_baseline_grid_1.5x"
-                    android:layout_marginRight="@dimen/material_baseline_grid_1.5x"
-                    app:layout_anchor="@id/appBar"
-                    app:layout_anchorGravity="bottom"
-                    android:progressTint="@color/title"
-                    android:progress="0"
-                    android:indeterminate="false" />
+                    <TextView
+                        android:id="@+id/signatureUpdateSmartIdChallenge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/accent"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
-                <TextView
-                    android:id="@+id/signatureUpdateSmartIdInfo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/title" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <Button
-                        android:id="@+id/signatureUpdateSmartIdCancelButton"
-                        android:layout_width="0dp"
+                    <ProgressBar
+                        android:id="@id/activityIndicatorSmartId"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintWidth="115dp"
-                        android:maxLines="1"
-                        android:text="@string/cancel_button"
-                        android:backgroundTint="@color/error"
-                        android:foregroundTint="@color/primary">
-                    </Button>
+                        android:layout_marginLeft="@dimen/material_baseline_grid_1.5x"
+                        android:layout_marginRight="@dimen/material_baseline_grid_1.5x"
+                        app:layout_anchor="@id/appBar"
+                        app:layout_anchorGravity="bottom"
+                        android:progressTint="@color/title"
+                        android:progress="0"
+                        android:indeterminate="false" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/signatureUpdateSmartIdInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/title" />
 
-            </LinearLayout>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/signatureUpdateSmartIdCancelButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintWidth="115dp"
+                            android:maxLines="1"
+                            android:text="@string/cancel_button"
+                            android:backgroundTint="@color/error"
+                            android:foregroundTint="@color/primary">
+                        </Button>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
+
+            </ScrollView>
 
         </androidx.cardview.widget.CardView>
 
@@ -141,63 +146,70 @@
             android:translationZ="@dimen/material_dialog_elevation"
             android:visibility="gone">
 
-            <LinearLayout
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:fillViewport="true">
 
-                <TextView
-                    android:id="@id/signatureUpdateMobileIdChallenge"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/accent"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                    android:orientation="vertical">
 
-                <ProgressBar
-                    android:id="@id/activityIndicatorMobileId"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
-                    android:layout_marginLeft="@dimen/material_baseline_grid_1.5x"
-                    android:layout_marginRight="@dimen/material_baseline_grid_1.5x"
-                    app:layout_anchor="@id/appBar"
-                    app:layout_anchorGravity="bottom"
-                    android:progressTint="@color/title"
-                    android:progress="0"
-                    android:indeterminate="false" />
+                    <TextView
+                        android:id="@id/signatureUpdateMobileIdChallenge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/accent"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
-                <TextView
-                    android:id="@id/signatureUpdateMobileIdChallengeText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/title" />
+                    <ProgressBar
+                        android:id="@id/activityIndicatorMobileId"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
+                        android:layout_marginLeft="@dimen/material_baseline_grid_1.5x"
+                        android:layout_marginRight="@dimen/material_baseline_grid_1.5x"
+                        app:layout_anchor="@id/appBar"
+                        app:layout_anchorGravity="bottom"
+                        android:progressTint="@color/title"
+                        android:progress="0"
+                        android:indeterminate="false" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@id/signatureUpdateMobileIdChallengeText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/title" />
 
-                <Button
-                    android:id="@id/signatureUpdateMobileIdCancelButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintWidth="115dp"
-                    android:maxLines="1"
-                    android:text="@string/cancel_button"
-                    android:backgroundTint="@color/error"
-                    android:foregroundTint="@color/primary">
-                </Button>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        <Button
+                            android:id="@id/signatureUpdateMobileIdCancelButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/material_baseline_grid_1.5x"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintWidth="115dp"
+                            android:maxLines="1"
+                            android:text="@string/cancel_button"
+                            android:backgroundTint="@color/error"
+                            android:foregroundTint="@color/primary">
+                        </Button>
 
-            </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
+
+            </ScrollView>
 
         </androidx.cardview.widget.CardView>
 

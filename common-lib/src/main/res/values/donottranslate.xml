@@ -10,6 +10,8 @@
     <string name="main_settings_proxy_port_key">main_settings_proxy_port</string>
     <string name="main_settings_proxy_username_key">main_settings_proxy_username</string>
     <string name="main_settings_proxy_password_key">main_settings_proxy_password</string>
+    <string name="view_type_key">viewTypeKey</string>
+    <string name="digidoc_version_key">digidocVersion</string>
 
 
 </resources>

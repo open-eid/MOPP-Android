@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -163,7 +164,18 @@ public final class IdCardView extends LinearLayout implements
 
     @Override
     public IdCardRequest request() {
-        return IdCardRequest.create(token, signPin2View.getText().toString());
+        Editable pin2Text = signPin2View.getText();
+        if (pin2Text != null) {
+            byte[] pin2 = pin2Text.toString().getBytes(StandardCharsets.US_ASCII);
+            IdCardRequest idCardRequest = IdCardRequest.builder()
+                    .token(token)
+                    .pin2(pin2)
+                    .build();
+            signPin2View.setText("");
+            return idCardRequest;
+        }
+        signPin2View.setText("");
+        return null;
     }
 
     @Override

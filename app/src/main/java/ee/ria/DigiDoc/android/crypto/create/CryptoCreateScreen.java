@@ -16,8 +16,6 @@ import static ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog.cancels;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +52,6 @@ import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
 import ee.ria.DigiDoc.android.utils.widget.ConfirmationDialog;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
-import ee.ria.DigiDoc.android.utils.widget.NotificationDialog;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
@@ -312,10 +309,6 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
                 state.recipientsAddEnabled(), state.recipientsRemoveEnabled(),
                 state.encryptSuccessMessageVisible(), state.decryptSuccessMessageVisible(), listView);
 
-        if (state.encryptSuccessMessageVisible()) {
-            showSuccessNotification();
-        }
-
         dataFileRemoveConfirmation = state.dataFileRemoveConfirmation();
         if (dataFileRemoveConfirmation != null) {
             if (dataFiles.size() == 1) {
@@ -400,17 +393,6 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         }
     }
 
-    private void showSuccessNotification() {
-        Boolean showNotification = ((Activity) view.getContext()).getSettingsDataStore().getShowSuccessNotification();
-        if (showNotification) {
-            NotificationDialog successNotificationDialog = new NotificationDialog((Activity) view.getContext());
-            if (AccessibilityUtils.isAccessibilityEnabled()) {
-                new Handler(Looper.getMainLooper()).postDelayed(successNotificationDialog::show, 2000);
-            } else {
-                new Handler(Looper.getMainLooper()).postDelayed(successNotificationDialog::show, 1000);
-            }
-        }
-    }
 
     private void setActivity(boolean activity) {
         activityOverlayView.setVisibility(activity ? View.VISIBLE : GONE);

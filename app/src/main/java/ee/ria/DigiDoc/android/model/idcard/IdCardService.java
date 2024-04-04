@@ -1,5 +1,9 @@
 package ee.ria.DigiDoc.android.model.idcard;
 
+import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
+
+import androidx.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
@@ -29,10 +33,6 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okio.ByteString;
-
-import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
-
-import androidx.annotation.Nullable;
 
 @Singleton
 public final class IdCardService {
@@ -68,12 +68,12 @@ public final class IdCardService {
     }
 
     public Single<SignedContainer> sign(Token token, SignedContainer container,
-                                        String pin2, @Nullable RoleData roleData) {
+                                        byte[] pin2, @Nullable RoleData roleData) {
         return Single
                 .fromCallable(() -> {
                     IdCardData data = data(token);
                     return container.sign(data.signCertificate().data(),
-                            signData -> ByteString.of(token.calculateSignature(pin2.getBytes(StandardCharsets.US_ASCII),
+                            signData -> ByteString.of(token.calculateSignature(pin2,
                                     signData.toByteArray(),
                                     data.signCertificate().ellipticCurve())), roleData);
                 })

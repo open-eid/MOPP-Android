@@ -8,6 +8,7 @@ import static ee.ria.DigiDoc.android.utils.TintUtils.tintCompoundDrawables;
 import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceOrientation;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
@@ -29,11 +30,14 @@ import java.util.Locale;
 import java.util.Set;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Constants;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.common.TextUtil;
 import io.reactivex.rxjava3.core.Observable;
 
 public final class HomeMenuView extends NestedScrollView implements ContentView {
+
+    private Intent intent;
 
     private final View closeButton;
 
@@ -97,11 +101,12 @@ public final class HomeMenuView extends NestedScrollView implements ContentView 
     }
 
     public HomeMenuView(@NonNull Context context) {
-        this(context, null);
+        this(context, null, null);
     }
 
-    public HomeMenuView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public HomeMenuView(@NonNull Context context, @Nullable Intent intent, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
+        this.intent = intent;
     }
 
     public HomeMenuView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -143,6 +148,12 @@ public final class HomeMenuView extends NestedScrollView implements ContentView 
         super.onConfigurationChanged(newConfig);
 
         setFontSize();
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        intent.removeExtra(Constants.VIEW_TYPE);
     }
 
     public Observable closeButtonClicks() {

@@ -17,6 +17,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
+import ee.ria.DigiDoc.android.utils.ViewType;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Transaction;
 
@@ -80,12 +81,14 @@ public final class SettingsRightsView extends CoordinatorLayout {
                 .subscribe(o -> {
                     boolean isChecked = allowScreenshotsSwitch.isChecked();
                     settingsDataStore.setIsScreenshotAllowed(isChecked);
+                    settingsDataStore.setViewType(ViewType.SETTINGS);
                     restartIntent();
                 }));
         disposables.add(clicks(openAllFileTypesSwitch)
                 .subscribe(o -> {
                     boolean isChecked = openAllFileTypesSwitch.isChecked();
                     settingsDataStore.setIsOpenAllFileTypesEnabled(isChecked);
+                    settingsDataStore.setViewType(ViewType.SETTINGS);
                     restartIntent();
                 }));
     }

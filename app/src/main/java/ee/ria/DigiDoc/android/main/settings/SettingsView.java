@@ -26,6 +26,7 @@ import ee.ria.DigiDoc.android.main.settings.rights.SettingsRightsView;
 import ee.ria.DigiDoc.android.main.settings.signing.SettingsSigningScreen;
 import ee.ria.DigiDoc.android.main.settings.signing.SettingsSigningView;
 import ee.ria.DigiDoc.android.main.settings.signing.siva.SettingsSivaDialog;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
@@ -111,8 +112,11 @@ public final class SettingsView extends CoordinatorLayout implements ContentView
         disposables.add(clicks(rightsCategory).subscribe(o ->
                 navigator.execute(
                         Transaction.push(SettingsRightsScreen.create()))));
-        disposables.add(clicks(defaultSettingsButton).subscribe(o ->
-                resetToDefaultSettings(settingsDataStore)
+        disposables.add(clicks(defaultSettingsButton).subscribe(o -> {
+            resetToDefaultSettings(settingsDataStore);
+                    ToastUtil.showError(navigator.activity(),
+                            R.string.main_settings_use_default_settings_message);
+        }
         ));
     }
 

@@ -2,4 +2,6 @@
 <resources>
     <string name="no_internet_connection">Пожалуйста проверьте подключение к интернету</string>
     <string name="invalid_ssl_handshake">Не удалось создать SSL канал передачи данных. Проверьте настройки вашего приложения или обновления программного обеспечения.</string>
+    <string name="signature_update_signature_error_message_too_many_requests">Ваш месячный лимит бесплатных подписей для %1$s превышен. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
+    <string name="id_card_conditional_speech">ID-карты</string>
 </resources>

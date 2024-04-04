@@ -1,12 +1,17 @@
 package ee.ria.DigiDoc.android.signature.list;
 
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
+import static com.jakewharton.rxbinding4.view.RxView.clicks;
+
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.common.collect.ImmutableList;
 
@@ -16,8 +21,6 @@ import ee.ria.DigiDoc.R;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
-
-import static com.jakewharton.rxbinding4.view.RxView.clicks;
 
 final class SignatureListAdapter extends
         RecyclerView.Adapter<SignatureListAdapter.SignatureViewHolder> {
@@ -76,6 +79,21 @@ final class SignatureListAdapter extends
             super(itemView);
             nameView = itemView.findViewById(R.id.signatureListItemName);
             removeButton = itemView.findViewById(R.id.signatureListItemRemoveButton);
+
+            nameView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    nameView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    int maxLines = nameView.getMaxLines();
+                    int lineCount = nameView.getLineCount();
+
+                    if (lineCount > maxLines) {
+                        nameView.setText(TextUtils.ellipsize(nameView.getText(),
+                                nameView.getPaint(), (float) (nameView.getWidth() * (maxLines / 1.5)),
+                                TextUtils.TruncateAt.MIDDLE));
+                    }
+                }
+            });
         }
     }
 

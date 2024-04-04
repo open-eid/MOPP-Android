@@ -14,13 +14,13 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
-import com.google.common.io.ByteStreams;
-
 import org.bouncycastle.util.encoders.Base64;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +64,7 @@ public final class SignLib {
      * Unzips the schema, access certificate and initializes libdigidocpp.
      */
     public static void init(Context context, String tsaUrlPreferenceKey, ConfigurationProvider configurationProvider, String userAgent, boolean isLoggingEnabled, ProxySetting proxySetting, ManualProxy proxySettings) {
+        initHomeDir(context);
         initNativeLibs();
         try {
             initSchema(context);
@@ -71,8 +72,7 @@ public final class SignLib {
             Timber.log(Log.ERROR, e, "Init schema failed");
         }
 
-        initLibDigiDocpp(context, tsaUrlPreferenceKey, configurationProvider, userAgent, isLoggingEnabled, proxySetting, proxySettings);
-
+        initLibDigiDocpp(context, getSchemaPath(context), tsaUrlPreferenceKey, configurationProvider, userAgent, isLoggingEnabled, proxySetting, proxySettings);
     }
 
     public static String accessTokenPass() {
@@ -84,7 +84,12 @@ public final class SignLib {
     }
 
     public static String libdigidocppVersion() {
-        return digidoc.version();
+        try {
+            return digidoc.version();
+        } catch (Error e) {
+            Timber.e(e, "Unable to get Libdigidocpp version");
+            return "";
+        }
     }
 
     public static void overrideProxy(String host, int port, String username, String password) {
@@ -100,8 +105,20 @@ public final class SignLib {
         }
     }
 
+    private static String getSchemaPath(Context context) {
+        return getSchemaDir(context).getAbsolutePath();
+    }
+
+    private static void initHomeDir(Context context) {
+        String path = getSchemaPath(context);
+        try {
+            Os.setenv("HOME", path, true);
+        } catch (ErrnoException e) {
+            Timber.log(Log.ERROR, e, "Setting HOME environment variable failed");
+        }
+    }
+
     private static void initNativeLibs() {
-        System.loadLibrary("c++_shared");
         System.loadLibrary("digidoc_java");
     }
 
@@ -116,26 +133,17 @@ public final class SignLib {
                         !isChild(schemaDir, entryFile)) {
                     throw new ZipException("Bad zip entry: " + entry.getName());
                 }
-                FileOutputStream outputStream = new FileOutputStream(entryFile);
-                ByteStreams.copy(inputStream, outputStream);
-                outputStream.close();
+                Files.copy(inputStream, Paths.get(entryFile.toURI()), StandardCopyOption.REPLACE_EXISTING);
             }
         }
     }
 
-    private static void initLibDigiDocpp(Context context, String tsaUrlPreferenceKey,
+    private static void initLibDigiDocpp(Context context, String path, String tsaUrlPreferenceKey,
                                          ConfigurationProvider configurationProvider,
                                          String userAgent,
                                          boolean isLoggingEnabled,
                                          ProxySetting proxySetting,
                                          ManualProxy proxySettings) {
-        String path = getSchemaDir(context).getAbsolutePath();
-        try {
-            Os.setenv("HOME", path, true);
-        } catch (ErrnoException e) {
-            Timber.log(Log.ERROR, e, "Setting HOME environment variable failed");
-        }
-
         initLibDigiDocConfiguration(context, tsaUrlPreferenceKey, configurationProvider, isLoggingEnabled, proxySetting, proxySettings);
         digidoc.initializeLib(userAgent, path);
     }

@@ -45,6 +45,7 @@
     <!-- Main Settings -->
     <string name="main_settings_title">Settings</string>
     <string name="main_settings_use_default_settings_button_title">USE DEFAULT SETTINGS</string>
+    <string name="main_settings_use_default_settings_message">Default settings restored</string>
     <string name="main_settings_rights">Permissions</string>
     <string name="main_settings_proxy_button">Proxy</string>
     <string name="main_settings_proxy_no_proxy">No proxy</string>
@@ -202,7 +203,6 @@
     <string name="signature_update_signature_error_message_additional_information">Additional information</string>
     <string name="signature_update_signature_error_message_details">Details</string>
 
-    <string name="signature_update_signature_error_message_too_many_requests">The limit for digital signatures per month has been reached for this IP address. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Failed to send request. The number of unsuccessful request from this IP address has been exceeded. Please try again later.</string>
     <string name="signature_update_signature_error_message_invalid_time_slot">Please check your smart device time. https://www.id.ee/en/article/ria-digidoc-error-please-check-your-smart-device-time/</string>
     <string name="signature_update_signature_error_message_certificate_revoked">Certificate status revoked</string>
@@ -601,16 +601,13 @@
     <string name="confirm_puk_change">Confirm Puk change</string>
     <string name="cancel_puk_change">Cancel Puk changing process</string>
 
-    <string name="success_notification_dialog_text">To share the container click the \"SHARE\" button and choose your preferred application. All containers can also be found in the application settings \"Recent Documents\" folder.</string>
-    <string name="success_notification_dialog_dont_show_again">Don\'t show again</string>
-
     <string name="crash_report_dialog_header">Send crash report?</string>
     <string name="crash_report_dialog_text">Application crashed. Please send us crash report, so we can fix the problem.</string>
     <string name="crash_report_dialog_send_button">Send</string>
     <string name="crash_report_dialog_always_send_button">Always Send</string>
     <string name="crash_report_dialog_dont_send_button">Don\'t Send</string>
 
-    <string name="rooted_device">We\'ve detected that your device may be rooted. For security reasons we don\'t recommend using this app on a rooted device.</string>
+    <string name="rooted_device">This app cannot be used in rooted device.</string>
 
     <!-- Accessibility -->
 

@@ -496,12 +496,6 @@
     <!-- Sharing Screen -->
     <item type="id" name="sharingScreenList" />
 
-    <!-- Success notification Dialog -->
-    <item type="id" name="successNotificationDialog" />
-    <item type="id" name="successNotificationDialogText" />
-    <item type="id" name="successNotificationDontShowAgain" />
-    <item type="id" name="okButton" />
-
     <!-- Crash Report Dialog -->
     <item type="id" name="crashReportDialog" />
     <item type="id" name="crashReportDialogHeader" />

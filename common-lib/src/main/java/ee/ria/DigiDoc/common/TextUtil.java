@@ -32,6 +32,10 @@ public class TextUtil {
         return StringUtils.capitalize(text.toLowerCase());
     }
 
+    public static String uncapitalizeString(String text) {
+        return StringUtils.uncapitalize(text);
+    }
+
     public static boolean isEmpty(String text) {
         return StringUtils.isEmpty(text);
     }

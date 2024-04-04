@@ -157,16 +157,18 @@
                         android:id="@id/eidHomeCodeUpdateNegativeButton"
                         style="@style/Widget.Application.EID.Button.Negative"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:text="@string/eid_home_code_update_negative_button" />
 
                     <Button
                         android:id="@id/eidHomeCodeUpdatePositiveButton"
                         style="@style/Widget.Application.EID.Button.Positive"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:text="@string/eid_home_code_update_positive_button_edit" />
 
                 </LinearLayout>

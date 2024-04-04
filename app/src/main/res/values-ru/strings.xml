@@ -45,6 +45,7 @@
     <!-- Main Settings -->
     <string name="main_settings_title">Настройки</string>
     <string name="main_settings_use_default_settings_button_title">ИСПОЛЬЗОВАТЬ НАСТРОЙКИ ПО УМОЛЧАНИЮ</string>
+    <string name="main_settings_use_default_settings_message">Настройки по-умолчанию восстановлены</string>
     <string name="main_settings_rights">Права</string>
     <string name="main_settings_proxy_button">Прокси</string>
     <string name="main_settings_proxy_no_proxy">Прокси не используется</string>
@@ -204,7 +205,6 @@
     <string name="signature_update_signature_error_message_additional_information">Дополнительная информация</string>
     <string name="signature_update_signature_error_message_details">Детали</string>
 
-    <string name="signature_update_signature_error_message_too_many_requests">Предел для цифровых подписей в месяц был достигнут для этого IP-адреса. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Не удалось отправить запрос. Превышено количество неудачных запросов с этого IP-адреса. Пожалуйста, попробуйте позже.</string>
     <string name="signature_update_signature_error_message_invalid_time_slot">Пожалуйста, проверьте время на своем смарт-устройстве. https://www.id.ee/ru/artikkel/oshibka-ria-digidoc-pozhalujsta-proverte-vremya-na-svoem-smart-ustrojstve/</string>
     <string name="signature_update_signature_error_message_certificate_revoked">Сертификат недействителен</string>
@@ -600,16 +600,13 @@
     <string name="confirm_puk_change">Подтвердить изменение Puk-кода</string>
     <string name="cancel_puk_change">Прервать процесс изменения Puk-кода</string>
 
-    <string name="success_notification_dialog_text">Чтобы поделиться контейнером, нажмите кнопку «ПОДЕЛИТЬСЯ» и выберите нужное приложение. Все контейнеры можно найти в папке «Недавние документы» в настройках приложения.</string>
-    <string name="success_notification_dialog_dont_show_again">Больше не показывать</string>
-
     <string name="crash_report_dialog_header">Отправить отчет о сбое?</string>
     <string name="crash_report_dialog_text">Похоже, произошел какой-то сбой! Помогите нам решить проблему отправив отчет о сбое.</string>
     <string name="crash_report_dialog_send_button">Отправить</string>
     <string name="crash_report_dialog_always_send_button">Всегда отправлять</string>
     <string name="crash_report_dialog_dont_send_button">Не отправлять</string>
 
-    <string name="rooted_device">Мы обнаружили, что ваше интеллектуальное устройство может быть рутировано. По соображениям безопасности мы не рекомендуем использовать это приложение на рутированом устройстве.</string>
+    <string name="rooted_device">Данное приложение не может быть использовано на взломанном (роот) устройстве.</string>
 
     <!-- Accessibility -->
 

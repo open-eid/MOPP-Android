@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.main.settings.signing.siva.SivaSetting;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
+import ee.ria.DigiDoc.android.utils.ViewType;
 import ee.ria.DigiDoc.common.EncryptedPreferences;
 import ee.ria.DigiDoc.common.ManualProxy;
 import ee.ria.DigiDoc.common.ProxySetting;
@@ -229,16 +230,6 @@ public final class SettingsDataStore {
         editor.apply();
     }
 
-    public Boolean getShowSuccessNotification() {
-        return preferences.getBoolean(resources.getString(R.string.show_success_notification_key), true);
-    }
-
-    public void setShowSuccessNotification(boolean showSuccessNotification) {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(resources.getString(R.string.show_success_notification_key), showSuccessNotification);
-        editor.apply();
-    }
-
     public Boolean getIsDdocParentContainerTimestamped() {
         return preferences.getBoolean(resources.getString(R.string.is_ddoc_parent_container_timestamped_key), true);
     }
@@ -419,6 +410,32 @@ public final class SettingsDataStore {
     public ManualProxy getManualProxySettings(Context context) {
         return new ManualProxy(getProxyHost(), getProxyPort(),
                 getProxyUsername(), getProxyPassword(context));
+    }
+
+    public void setViewType(ViewType type) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.view_type_key), type.name());
+        editor.commit();
+    }
+
+    public ViewType getViewType() {
+        String viewTypeKey = preferences.getString(resources.getString(R.string.view_type_key), ViewType.MAIN.name());
+        try {
+            return ViewType.valueOf(viewTypeKey);
+        } catch (IllegalArgumentException iae) {
+            Timber.log(Log.ERROR, iae, "Unable to get view type setting");
+            return ViewType.MAIN;
+        }
+    }
+
+    public void setLibdigidocppVersion(String version) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(resources.getString(R.string.digidoc_version_key), version);
+        editor.commit();
+    }
+
+    public String getLibdigidocppVersion() {
+        return preferences.getString(resources.getString(R.string.digidoc_version_key), "");
     }
 
     @Nullable

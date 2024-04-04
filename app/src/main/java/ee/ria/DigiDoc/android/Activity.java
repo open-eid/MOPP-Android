@@ -1,13 +1,13 @@
 package ee.ria.DigiDoc.android;
 
 import static ee.ria.DigiDoc.android.Constants.DIR_EXTERNALLY_OPENED_FILES;
+import static ee.ria.DigiDoc.android.Constants.VIEW_TYPE;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.setIntentData;
 
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -33,6 +33,7 @@ import com.google.firebase.crashlytics.internal.common.CommonUtils;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
@@ -41,24 +42,29 @@ import javax.inject.Singleton;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
+import ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen;
 import ee.ria.DigiDoc.android.main.home.HomeScreen;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
+import ee.ria.DigiDoc.android.main.settings.rights.SettingsRightsScreen;
 import ee.ria.DigiDoc.android.main.sharing.SharingScreen;
 import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.utils.ContainerMimeTypeUtil;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
+import ee.ria.DigiDoc.android.utils.RootUtil;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
+import ee.ria.DigiDoc.android.utils.ViewType;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.android.utils.navigator.Screen;
-import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import timber.log.Timber;
 
 public final class Activity extends AppCompatActivity {
+
+    private static final String rootedKey = "IS_ROOTED";
 
     private Navigator navigator;
     private RootScreenFactory rootScreenFactory;
@@ -72,58 +78,66 @@ public final class Activity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        handleRootedDevice();
         setTheme(R.style.Theme_Application);
         setTitle(""); // ACCESSIBILITY: prevents application name read during each activity launch
-        super.onCreate(savedInstanceState);
-
-        // Prevent screen recording
-        SecureUtil.markAsSecure(this, getWindow());
-
-        handleCrashOnPreviousExecution();
-
-        WorkManager.getInstance(this).cancelAllWork();
-
-        Intent intent = sanitizeIntent(getIntent());
-
-        if ((Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.setAction(intent.getAction());
-            handleIncomingFiles(intent, this);
-        } else if (Intent.ACTION_CONFIGURATION_CHANGED.equals(intent.getAction())) {
-            getIntent().setAction(Intent.ACTION_MAIN);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            restartAppWithIntent(intent, false);
-        } else if (Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
+        if (isRooted()) {
+            super.onCreate(null);
+            Intent intent = new Intent();
+            intent.putExtra(rootedKey, true);
             rootScreenFactory.intent(intent, this);
-        } else if (Intent.ACTION_MAIN.equals(intent.getAction()) && savedInstanceState != null) {
-            savedInstanceState = null;
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            restartAppWithIntent(intent, false);
         } else {
-            rootScreenFactory.intent(intent, this);
+            super.onCreate(savedInstanceState);
+
+            // Prevent screen recording
+            SecureUtil.markAsSecure(this, getWindow());
+
+            handleCrashOnPreviousExecution();
+
+            WorkManager.getInstance(this).cancelAllWork();
+
+            Intent intent = sanitizeIntent(getIntent());
+
+            ViewType viewType = settingsDataStore.getViewType();
+
+            if (viewType != null) {
+                intent.putExtra(VIEW_TYPE, viewType.name());
+                rootScreenFactory.intent(intent, this);
+            } else {
+                if ((Intent.ACTION_SEND.equals(intent.getAction()) || Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) || Intent.ACTION_VIEW.equals(intent.getAction())) && intent.getType() != null) {
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setAction(intent.getAction());
+                    handleIncomingFiles(intent, this);
+                } else if (Intent.ACTION_CONFIGURATION_CHANGED.equals(intent.getAction())) {
+                    getIntent().setAction(Intent.ACTION_MAIN);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    restartAppWithIntent(intent, false);
+                } else if (Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
+                    rootScreenFactory.intent(intent, this);
+                } else if (Intent.ACTION_MAIN.equals(intent.getAction()) && savedInstanceState != null) {
+                    savedInstanceState = null;
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    restartAppWithIntent(intent, false);
+                } else {
+                    rootScreenFactory.intent(intent, this);
+                }
+            }
+
+            mContext = new WeakReference<>(this);
+
+            initializeApplicationFileTypesAssociation();
+            initializeRoleAndAddressAsking();
         }
-
-        mContext = new WeakReference<>(this);
-
-        initializeApplicationFileTypesAssociation();
-        initializeRoleAndAddressAsking();
 
         navigator.onCreate(this, findViewById(android.R.id.content), savedInstanceState);
         setTitle("\u202F");
         ViewCompat.setImportantForAccessibility(getWindow().getDecorView(), ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO);
     }
 
-    private void handleRootedDevice() {
-        if (CommonUtils.isRooted()) {
-            ErrorDialog errorDialog = new ErrorDialog(this);
-            errorDialog.setMessage(getResources().getString(R.string.rooted_device));
-            errorDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(android.R.string.ok), (dialog, which) -> dialog.cancel());
-            errorDialog.show();
-        }
+    private boolean isRooted() {
+        return CommonUtils.isRooted() || RootUtil.isDeviceRooted();
     }
 
     private void handleCrashOnPreviousExecution() {
@@ -190,11 +204,11 @@ public final class Activity extends AppCompatActivity {
     }
 
     private Intent sanitizeIntent(Intent intent) {
-        if (intent.getDataString() != null) {
+        if (intent != null && intent.getDataString() != null) {
             Uri normalizedUri = FileUtil.normalizeUri(Uri.parse(intent.getDataString()));
             intent.setDataAndNormalize(normalizedUri);
         }
-        if (intent.getExtras() != null) {
+        if (intent != null && intent.getExtras() != null) {
             if (intent.getExtras().containsKey(Intent.EXTRA_REFERRER)) {
                 intent.getExtras().getString(Intent.EXTRA_REFERRER);
             }
@@ -268,8 +282,12 @@ public final class Activity extends AppCompatActivity {
         return mContext;
     }
 
+    void resetScreen() {
+        settingsDataStore.setViewType(ViewType.MAIN);
+    }
+
     @Singleton
-    static final class RootScreenFactory implements Callable<Screen> {
+    static final class RootScreenFactory implements Callable<List<Screen>> {
 
         @Nullable private Intent intent;
 
@@ -283,18 +301,57 @@ public final class Activity extends AppCompatActivity {
         }
 
         @Override
-        public Screen call() {
-            if ((intent != null && intent.getAction() != null &&
-                    (Intent.ACTION_SEND.equals(intent.getAction()) ||
-                            Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) ||
-                            Intent.ACTION_VIEW.equals(intent.getAction()))) &&
-                    intent.getType() != null) {
-                return chooseScreen(intent, activity);
-            } else if (intent != null && intent.getAction() != null &&
-                    Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
-                return SharingScreen.create();
+        public List<Screen> call() {
+            if (intent == null || intent.getAction() == null) {
+                Timber.log(Log.DEBUG, "Creating HomeScreen");
+                return List.of(HomeScreen.create(intent));
             }
-            return HomeScreen.create(intent);
+
+            String action = intent.getAction();
+            Optional<String> viewTypeExtra = Optional.ofNullable(intent.getStringExtra(VIEW_TYPE));
+
+            String viewType = viewTypeExtra.orElse(ViewType.MAIN.name());
+
+            if (!viewType.equals(ViewType.MAIN.name())) {
+                resetScreen();
+
+                if (viewType.equals(ViewType.MENU.name())) {
+                    Timber.log(Log.DEBUG, "Creating Diagnostics Screen");
+                    intent.putExtra(VIEW_TYPE, ViewType.MENU.name());
+                    return List.of(
+                            HomeScreen.create(intent)
+                    );
+                } else if (viewType.equals(ViewType.DIAGNOSTICS.name())) {
+                    Timber.log(Log.DEBUG, "Creating Diagnostics Screen");
+                    intent.putExtra(VIEW_TYPE, ViewType.DIAGNOSTICS.name());
+                    return List.of(
+                            HomeScreen.create(intent),
+                            DiagnosticsScreen.create()
+                    );
+                } else if (viewType.equals(ViewType.SETTINGS.name())) {
+                    Timber.log(Log.DEBUG, "Creating Setting screen");
+                    intent.putExtra(VIEW_TYPE, ViewType.SETTINGS.name());
+                    return List.of(
+                            HomeScreen.create(intent),
+                            SettingsRightsScreen.create()
+                    );
+                }
+
+                Timber.log(Log.DEBUG, String.format("Unknown view type %s. Creating HomeScreen", viewType));
+                return List.of(HomeScreen.create(intent));
+            }
+
+            if ((Intent.ACTION_SEND.equals(action) ||
+                    Intent.ACTION_SEND_MULTIPLE.equals(action) ||
+                    Intent.ACTION_VIEW.equals(action)) &&
+                    intent.getType() != null) {
+                Timber.log(Log.DEBUG, "Choosing screen...");
+                return List.of(chooseScreen(intent, activity));
+            } else if (Intent.ACTION_GET_CONTENT.equals(action)) {
+                return List.of(SharingScreen.create());
+            }
+            Timber.log(Log.DEBUG, "Creating default HomeScreen");
+            return List.of(HomeScreen.create(intent));
         }
 
         private Screen chooseScreen(Intent intent, android.app.Activity activity) {
@@ -304,7 +361,7 @@ public final class Activity extends AppCompatActivity {
                 fileStreams = IntentUtils.parseGetContentIntent(getContext().get(),
                         activity.getContentResolver(), intent, externallyOpenedFilesDir);
             } catch (Exception e) {
-                Timber.log(Log.ERROR, e, "Unable to open file");
+                Timber.log(Log.ERROR, e, "Unable to open file. Creating HomeScreen");
                 ToastUtil.showError(getContext().get(), R.string.signature_create_error);
                 return HomeScreen.create(
                         new Intent(Intent.ACTION_MAIN)
@@ -317,6 +374,7 @@ public final class Activity extends AppCompatActivity {
                 if (extensionPart != -1) {
                     String extension = fileName.substring(fileName.lastIndexOf("."));
                     if (".cdoc".equalsIgnoreCase(extension)) {
+                        Timber.log(Log.DEBUG, "Creating CryptoCreateScreen");
                         return CryptoCreateScreen.open(intent);
                     }
                 } else if (intent.getClipData() != null || intent.getData() != null) {
@@ -332,6 +390,7 @@ public final class Activity extends AppCompatActivity {
                                     newFileName + ".cdoc");
                             CryptoContainer.open(renamedFile.toFile());
                             Intent updatedIntent = setIntentData(intent, renamedFile, activity);
+                            Timber.log(Log.DEBUG, "Creating CryptoCreateScreen");
                             return CryptoCreateScreen.open(updatedIntent);
                         } else {
                             String externalFileName = getFileName(file);
@@ -340,8 +399,10 @@ public final class Activity extends AppCompatActivity {
                                         newFileName);
                                 SignedContainer.open(renamedFile.toFile());
                                 Intent updatedIntent = setIntentData(intent, renamedFile, activity);
+                                Timber.log(Log.DEBUG, String.format("Creating SignatureCreateScreen with filename %s", renamedFile));
                                 return SignatureCreateScreen.create(updatedIntent);
                             } else {
+                                Timber.log(Log.DEBUG, "No filename. Creating SignatureCreateScreen");
                                 return SignatureCreateScreen.create(intent);
                             }
                         }
@@ -351,6 +412,7 @@ public final class Activity extends AppCompatActivity {
                     }
                 }
             }
+            Timber.log(Log.DEBUG, "Filestream is empty or has multiple elements. Creating SignatureCreateScreen");
             return SignatureCreateScreen.create(intent);
         }
 
@@ -367,6 +429,10 @@ public final class Activity extends AppCompatActivity {
                     return file.getName();
                 }
             }
+        }
+
+        private void resetScreen() {
+            ((Activity) activity).resetScreen();
         }
     }
 

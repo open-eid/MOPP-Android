@@ -46,6 +46,7 @@
     <!-- Main Settings -->
     <string name="main_settings_title">Seaded</string>
     <string name="main_settings_use_default_settings_button_title">TAASTA ALGSEADED</string>
+    <string name="main_settings_use_default_settings_message">Algseaded taastatud</string>
     <string name="main_settings_rights">Õigused</string>
     <string name="main_settings_proxy_button">Proksi</string>
     <string name="main_settings_proxy_no_proxy">Ei kasuta proksit</string>
@@ -203,7 +204,6 @@
     <string name="signature_update_signature_error_message_additional_information">Loe täpsemalt siit</string>
     <string name="signature_update_signature_error_message_details">Detailid</string>
 
-    <string name="signature_update_signature_error_message_too_many_requests">Sinu IP-aadressi tasuta allkirjade kuulimiit on ületatud. https://www.id.ee/artikkel/asutustele-kus-allkirjastatakse-digidoc4-kliendi-kaudu-suuremates-kogustes-dokumente/</string>
     <string name="signature_update_signature_error_message_exceeded_unsuccessful_requests">Päringu saatmine ebaõnnestus. Sellelt IP-aadressilt on ebaõnnestunud päringute arv ületatud. Palun proovige mõne aja pärast uuesti.</string>
     <string name="signature_update_signature_error_message_invalid_time_slot">Palun kontrolli oma nutiseadme kellaaega. https://www.id.ee/artikkel/ria-digidoc-viga-palun-kontrollige-oma-nutiseadme-kellaaega/</string>
     <string name="signature_update_signature_error_message_certificate_revoked">Sertifikaat on kehtetu</string>
@@ -601,16 +601,13 @@
     <string name="confirm_puk_change">Kinnita Puk muutmine</string>
     <string name="cancel_puk_change">Katkesta Puk muutmine</string>
 
-    <string name="success_notification_dialog_text">Ümbriku jagamiseks klõpsa \"JAGA\" nupul ning vali soovitud rakendus. Kõik ümbrikud on leitavad ka rakenduse seadetes asuvas \"Hiljutised dokumendid\" kaustast.</string>
-    <string name="success_notification_dialog_dont_show_again">Ära rohkem näita</string>
-
     <string name="crash_report_dialog_header">Kas saata vearaport?</string>
     <string name="crash_report_dialog_text">Rakenduses juhtus viga. Palun saada meile vearaport, et saaksime selle vea parandada.</string>
     <string name="crash_report_dialog_send_button">Saada</string>
     <string name="crash_report_dialog_always_send_button">Saada Alati</string>
     <string name="crash_report_dialog_dont_send_button">Ära saada</string>
 
-    <string name="rooted_device">Tuvastasime, et sinu nutiseade võib olla ruuditud. Turvalisuse kaalutlustel ei soovita me kasutada seda rakendust ruuditud seadmel.</string>
+    <string name="rooted_device">Seda rakendust ei saa kasutada turvamata (ingl rooted) seadmes.</string>
 
     <!-- Accessibility -->
 

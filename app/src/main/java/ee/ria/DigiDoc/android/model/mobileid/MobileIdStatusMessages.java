@@ -1,11 +1,14 @@
 package ee.ria.DigiDoc.android.model.mobileid;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.common.collect.ImmutableMap;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.common.TextUtil;
 import ee.ria.DigiDoc.mobileid.dto.response.MobileCreateSignatureSessionStatusResponse.ProcessStatus;
+import timber.log.Timber;
 
 public final class MobileIdStatusMessages {
 
@@ -41,6 +44,14 @@ public final class MobileIdStatusMessages {
                     .build();
 
     public static String message(Context context, ProcessStatus status) {
+        if (status.equals(ProcessStatus.TOO_MANY_REQUESTS)) {
+            Timber.log(Log.DEBUG, String.format("%s - %s", "Mobile-ID", context.getString(MESSAGES.get(status), context.getString(
+                    R.string.signature_update_signature_add_method_mobile_id))));
+            return context.getString(MESSAGES.get(status),
+                    TextUtil.uncapitalizeString(context.getString(
+                            R.string.signature_update_signature_add_method_mobile_id)));
+        }
+        Timber.log(Log.DEBUG, String.format("%s - %s", "Mobile-ID", context.getString(MESSAGES.get(status))));
         return context.getString(MESSAGES.get(status));
     }
 }

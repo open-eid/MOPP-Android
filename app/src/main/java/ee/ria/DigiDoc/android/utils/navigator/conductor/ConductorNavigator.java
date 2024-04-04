@@ -36,7 +36,7 @@ import timber.log.Timber;
 
 public final class ConductorNavigator implements Navigator {
 
-    private final Callable<Screen> rootScreenFactory;
+    private final Callable<List<Screen>> rootScreenFactory;
     private final ViewModelProvider.Factory viewModelFactory;
     private final Map<String, ScreenViewModelProvider> viewModelProviders;
     private final Subject<ActivityResult> activityResultSubject;
@@ -45,7 +45,7 @@ public final class ConductorNavigator implements Navigator {
 
     private Router router;
 
-    public ConductorNavigator(Callable<Screen> rootScreenFactory,
+    public ConductorNavigator(Callable<List<Screen>> rootScreenFactory,
                               ViewModelProvider.Factory viewModelFactory) {
         this.rootScreenFactory = rootScreenFactory;
         this.viewModelFactory = viewModelFactory;
@@ -79,7 +79,18 @@ public final class ConductorNavigator implements Navigator {
         });
         if (!router.hasRootController()) {
             try {
-                execute(Transaction.root(rootScreenFactory.call()));
+                List<Screen> screens = rootScreenFactory.call();
+                if (screens.isEmpty()) {
+                    throw new IllegalStateException("Screen list is empty");
+                }
+
+                Transaction transaction;
+                if (screens.size() == 1) {
+                    transaction = Transaction.root(screens.get(0));
+                } else {
+                    transaction = Transaction.backstack(screens);
+                }
+                execute(transaction);
             } catch (Exception e) {
                 throw new IllegalStateException("Root screen creation failed", e);
             }
