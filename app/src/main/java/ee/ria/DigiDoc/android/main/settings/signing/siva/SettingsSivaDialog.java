@@ -43,6 +43,7 @@ import java.util.Optional;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.main.settings.create.CertificateAddViewModel;
 import ee.ria.DigiDoc.android.main.settings.create.ChooseFileScreen;
@@ -129,6 +130,10 @@ public class SettingsSivaDialog extends Dialog {
         }
 
         checkSivaServiceSetting(settingsDataStore, configurationProvider.getSivaUrl());
+
+        if (AccessibilityUtils.isTalkBackEnabled()) {
+            handleSivaUrlContentDescription();
+        }
     }
 
     @Override
@@ -145,6 +150,9 @@ public class SettingsSivaDialog extends Dialog {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 sivaServiceUrl.setSingleLine(sivaServiceUrl.getText() != null && sivaServiceUrl.getText().length() != 0);
+                if (AccessibilityUtils.isTalkBackEnabled()) {
+                    handleSivaUrlContentDescription();
+                }
             }
 
             @Override
@@ -311,6 +319,16 @@ public class SettingsSivaDialog extends Dialog {
             FileUtils.removeFile(sivaFile.getPath());
         }
         settingsDataStore.setSivaCertName(null);
+    }
+
+    private void handleSivaUrlContentDescription() {
+        Editable sivaUrlEditable = sivaServiceUrl.getText();
+        if (sivaUrlEditable != null) {
+            String sivaUrl = sivaUrlEditable.toString();
+            AccessibilityUtils.setContentDescription(sivaServiceUrl, String.format("%s %s",
+                    getContext().getString(R.string.main_settings_siva_service_title),
+                    sivaUrl.isEmpty() ? sivaServiceUrlLayout.getPlaceholderText() : sivaUrl));
+        }
     }
 
     public static void resetSettings(Context context, SettingsDataStore settingsDataStore) {

@@ -82,16 +82,9 @@ public final class SettingsFragment extends PreferenceFragmentCompat {
         return view;
     }
 
-    private String getAccessibilityDescription(@StringRes int titleId, @StringRes int keyId) {
-        String summary = "";
-        Preference preference = findPreference(getString(keyId));
-        if (preference != null && preference.getSummary() != null) {
-            summary = preference.getSummary().toString();
-        }
-
-        return getString(titleId) + " " + summary + " " + Button.class.getSimpleName();
+    private String getAccessibilityDescription(@StringRes int titleId) {
+        return String.format("%s %s", getString(titleId), Button.class.getSimpleName());
     }
-
 
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {

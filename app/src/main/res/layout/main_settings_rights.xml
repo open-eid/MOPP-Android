@@ -66,6 +66,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/main_settings_open_all_filetypes_title"
+                    android:importantForAccessibility="no"
                     android:layout_weight="2">
                 </TextView>
 
@@ -79,6 +80,7 @@
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     android:layout_gravity="end"
+                    android:importantForAccessibility="yes"
                     android:contentDescription="@string/main_settings_open_all_filetypes_title">
                 </androidx.appcompat.widget.SwitchCompat>
             </LinearLayout>
@@ -97,6 +99,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/main_settings_allow_screenshots_title"
+                    android:importantForAccessibility="no"
                     android:layout_weight="2">
                 </TextView>
 
@@ -108,7 +111,9 @@
                     android:paddingEnd="0dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
-                    android:layout_gravity="end">
+                    android:importantForAccessibility="yes"
+                    android:layout_gravity="end"
+                    android:contentDescription="@string/main_settings_allow_screenshots_title">
                 </androidx.appcompat.widget.SwitchCompat>
 
             </LinearLayout>
