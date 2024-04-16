@@ -53,16 +53,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.pro'
         }
-        develop {
-            debuggable true
-            applicationIdSuffix '.develop'
-            signingConfig signingConfigs.debug
-            matchingFallbacks = ['debug']
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                    'proguard-rules.pro'
-        }
         release {
             minifyEnabled true
             shrinkResources true
