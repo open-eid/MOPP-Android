@@ -23,7 +23,6 @@ package ee.ria.DigiDoc.android.main.settings.signing;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 import android.app.Dialog;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -33,49 +32,60 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.preference.EditTextPreferenceDialogFragmentCompat;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
-import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 
 public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
 
-    private AppCompatEditText appCompatEditText;
+    private AppCompatEditText summary;
     private TextWatcher uuidTextWatcher;
 
+    private void handleUuidUrlContentDescription(View view, CheckBox checkBox) {
+        AppCompatEditText summaryView = view.findViewById(android.R.id.edit);
+        if (AccessibilityUtils.isTalkBackEnabled() && getContext() != null) {
+            AccessibilityUtils.setContentDescription(summaryView,
+                    getContext().getString(R.string.main_settings_uuid_title));
+
+            summaryView.setAccessibilityTraversalAfter(checkBox.getId());
+            checkBox.setNextFocusDownId(summaryView.getId());
+        }
+    }
+
     @Override
-    protected void onBindDialogView(View view) {
+    protected void onBindDialogView(@NonNull View view) {
         super.onBindDialogView(view);
         UUIDPreference uuidPreference = getUUIDPreference();
         if (uuidPreference != null) {
             CheckBox checkBox = uuidPreference.getCheckBox();
 
-            appCompatEditText = TextUtil.getTextView(view);
+            summary = view.findViewById(android.R.id.edit);
+
+            handleUuidUrlContentDescription(view, checkBox);
 
             uuidPreference.setOnBindEditTextListener(editText -> {
                 checkBox.setChecked(false);
                 editText.setText(uuidPreference.getText());
             });
 
-            if (appCompatEditText != null) {
+            if (summary != null) {
                 checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    appCompatEditText.setEnabled(!isChecked);
+                    summary.setEnabled(!isChecked);
                     if (isChecked) {
-                        disableTextViewOnChecked(appCompatEditText);
+                        disableTextViewOnChecked(summary);
                     }
                 });
 
                 checkBox.setChecked(TextUtils.isEmpty(uuidPreference.getText()));
 
-                ViewGroup parent = ((ViewGroup) appCompatEditText.getParent());
-                View oldCheckBox = appCompatEditText.findViewById(checkBox.getId());
+                ViewGroup parent = ((ViewGroup) summary.getParent());
+                View oldCheckBox = summary.findViewById(checkBox.getId());
                 if (oldCheckBox != null) {
                     parent.removeView(oldCheckBox);
                 }
@@ -88,10 +98,26 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
                             ViewGroup.LayoutParams.WRAP_CONTENT);
                 }
 
-                appCompatEditText.setSingleLine(true);
-                appCompatEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                appCompatEditText.setSelection(appCompatEditText.getText() != null ?
-                        appCompatEditText.getText().length() : 0);
+                summary.setSingleLine(true);
+                summary.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                summary.setSelection(summary.getText() != null ?
+                        summary.getText().length() : 0);
+
+                uuidTextWatcher = new TextWatcher() {
+
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        handleUuidUrlContentDescription(view, checkBox);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {}
+                };
+
+                summary.addTextChangedListener(uuidTextWatcher);
             }
         }
     }
@@ -120,6 +146,6 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
         if (!positiveResult && getContext() != null) {
             AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.setting_value_change_cancelled);
         }
-        appCompatEditText.removeTextChangedListener(uuidTextWatcher);
+        summary.removeTextChangedListener(uuidTextWatcher);
     }
 }

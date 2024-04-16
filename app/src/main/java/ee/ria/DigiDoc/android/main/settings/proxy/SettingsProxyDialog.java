@@ -10,19 +10,24 @@ import static ee.ria.DigiDoc.common.ProxySetting.SYSTEM_PROXY;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Window;
-import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.jakewharton.rxbinding4.widget.RxCompoundButton;
+
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -91,11 +96,63 @@ public class SettingsProxyDialog extends Dialog {
         checkActiveProxySetting(settingsDataStore);
         checkManualProxySettings(settingsDataStore, manualProxySettings);
 
+        if (AccessibilityUtils.isTalkBackEnabled()) {
+            handleSivaUrlContentDescription();
+        }
+    }
+
+    private void handleSivaUrlContentDescription() {
+        Optional<Editable> hostEditable = Optional.ofNullable(host.getText());
+        Optional<Editable> portEditable = Optional.ofNullable(port.getText());
+        Optional<Editable> usernameEditable = Optional.ofNullable(username.getText());
+        Optional<Editable> passwordEditable = Optional.ofNullable(password.getText());
+
+        if (Stream.of(hostEditable, portEditable, usernameEditable, passwordEditable)
+                .allMatch(Optional::isPresent)) {
+            hostEditable.ifPresent(hostText ->
+                    AccessibilityUtils.setContentDescription(host, String.format("%s %s",
+                    getContext().getString(R.string.main_settings_proxy_host), hostText)));
+
+            portEditable.ifPresent(portText ->
+                    AccessibilityUtils.setContentDescription(port, String.format("%s %s",
+                    getContext().getString(R.string.main_settings_proxy_port), portText)));
+
+            usernameEditable.ifPresent(usernameText ->
+                    AccessibilityUtils.setContentDescription(username, String.format("%s %s",
+                    getContext().getString(R.string.main_settings_proxy_username), usernameText)));
+
+            passwordEditable.ifPresent(passwordText ->
+                    AccessibilityUtils.setContentDescription(password, String.format("%s %s",
+                    getContext().getString(R.string.main_settings_proxy_password), passwordText)));
+        }
+    }
+
+    public static void addTextWatcherToViews(TextWatcher textWatcher, EditText... editTexts) {
+        for (EditText editText : editTexts) {
+            editText.addTextChangedListener(textWatcher);
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (AccessibilityUtils.isTalkBackEnabled()) {
+                    handleSivaUrlContentDescription();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        };
+
+        addTextWatcherToViews(textWatcher, host, port, username, password);
     }
 
     @Override

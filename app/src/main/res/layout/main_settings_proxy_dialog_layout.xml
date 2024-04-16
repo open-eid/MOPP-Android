@@ -107,6 +107,7 @@
                 android:autoSizeMinTextSize="11dp"
                 android:autoSizeMaxTextSize="30dp"
                 android:autoSizeStepGranularity="1dp"
+                android:importantForAccessibility="no"
                 android:text="@string/main_settings_proxy_host" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -126,6 +127,8 @@
                     android:imeOptions="actionDone"
                     android:maxLines="1"
                     android:minHeight="@dimen/material_baseline_grid_4x"
+                    android:importantForAccessibility="yes"
+                    android:contentDescription="@string/main_settings_proxy_host"
                     android:background="@drawable/bottom_border_background" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -139,6 +142,7 @@
                 android:autoSizeMinTextSize="11dp"
                 android:autoSizeMaxTextSize="30dp"
                 android:autoSizeStepGranularity="1dp"
+                android:importantForAccessibility="no"
                 android:text="@string/main_settings_proxy_port" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -159,6 +163,8 @@
                     android:imeOptions="actionDone"
                     android:maxLines="1"
                     android:minHeight="@dimen/material_baseline_grid_4x"
+                    android:importantForAccessibility="yes"
+                    android:contentDescription="@string/main_settings_proxy_port"
                     android:background="@drawable/bottom_border_background" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -172,6 +178,7 @@
                 android:autoSizeMinTextSize="11dp"
                 android:autoSizeMaxTextSize="30dp"
                 android:autoSizeStepGranularity="1dp"
+                android:importantForAccessibility="no"
                 android:text="@string/main_settings_proxy_username" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -191,6 +198,8 @@
                     android:imeOptions="actionDone"
                     android:maxLines="1"
                     android:minHeight="@dimen/material_baseline_grid_4x"
+                    android:importantForAccessibility="yes"
+                    android:contentDescription="@string/main_settings_proxy_username"
                     android:background="@drawable/bottom_border_background" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -204,6 +213,7 @@
                 android:autoSizeMinTextSize="11dp"
                 android:autoSizeMaxTextSize="30dp"
                 android:autoSizeStepGranularity="1dp"
+                android:importantForAccessibility="no"
                 android:text="@string/main_settings_proxy_password" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -223,6 +233,8 @@
                     android:imeOptions="actionDone"
                     android:maxLines="1"
                     android:minHeight="@dimen/material_baseline_grid_4x"
+                    android:importantForAccessibility="yes"
+                    android:contentDescription="@string/main_settings_proxy_password"
                     android:background="@drawable/bottom_border_background" />
 
             </com.google.android.material.textfield.TextInputLayout>
