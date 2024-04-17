@@ -20,6 +20,7 @@
 
 package ee.ria.DigiDoc.smartid.service;
 
+import static ee.ria.DigiDoc.common.ProxySetting.NO_PROXY;
 import static ee.ria.DigiDoc.common.SigningUtil.checkSigningCancelled;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CERTIFICATE_CERT_BUNDLE;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.CREATE_SIGNATURE_REQUEST;
@@ -69,6 +70,7 @@ import ee.ria.DigiDoc.common.MessageUtil;
 import ee.ria.DigiDoc.common.NotificationUtil;
 import ee.ria.DigiDoc.common.PowerUtil;
 import ee.ria.DigiDoc.common.ProxySetting;
+import ee.ria.DigiDoc.common.ProxyUtil;
 import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.common.UUIDUtil;
 import ee.ria.DigiDoc.common.VerificationCodeUtil;
@@ -246,6 +248,11 @@ public class SmartSignService extends Worker {
                     if (e.getMessage() != null && e.getMessage().contains("CONNECT: 403")) {
                         broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.NO_RESPONSE));
                         Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID - REST API certificate request failed. Received HTTP status 403. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                        return Result.failure();
+                    } else if (e.getMessage() != null && (ProxyUtil.getProxySetting(getApplicationContext()) != NO_PROXY &&
+                            e.getMessage().contains("Failed to authenticate with proxy"))) {
+                        broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.INVALID_PROXY_SETTINGS));
+                        Timber.log(Log.ERROR, e, "Failed to sign with Smart-ID. REST API certificate request failed with current proxy settings. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                         return Result.failure();
                     }
                     broadcastFault(new ServiceFault(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, e.getMessage()));

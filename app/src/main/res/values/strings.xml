@@ -56,8 +56,8 @@
     <string name="main_settings_proxy_username">Username</string>
     <string name="main_settings_proxy_password">Password</string>
     <string name="main_settings_proxy_check_connection">Check connection</string>
-    <string name="main_settings_proxy_check_connection_success">The connection to certificate status service is successful!</string>
-    <string name="main_settings_proxy_check_connection_unsuccessful">Cannot connect to certificate status service!</string>
+    <string name="main_settings_proxy_check_connection_success">Internet connection available!</string>
+    <string name="main_settings_proxy_check_connection_unsuccessful">No internet connection!</string>
     <string name="main_settings_proxy_check_username_and_password">Check proxy username and password</string>
     <string name="main_settings_role_and_address_button">Role and address</string>
     <string name="main_settings_phone_no_title">Country code and phone number</string>

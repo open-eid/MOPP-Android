@@ -383,9 +383,10 @@ public class SettingsProxyDialog extends Dialog {
                     result.complete("Internet connection detected successfully");
                 }
             } catch (IOException e) {
-                if (e.getMessage() != null && e.getMessage().contains("CONNECT: 403")) {
-                    Timber.log(Log.DEBUG, "Received HTTP status 403. Forbidden error with proxy configuration");
-                    navigator.activity().runOnUiThread(() -> ToastUtil.showError(navigator.activity(), R.string.main_settings_proxy_check_username_and_password));
+                if (e.getMessage() != null && (e.getMessage().contains("CONNECT: 403") ||
+                        e.getMessage().contains("Failed to authenticate with proxy"))) {
+                    Timber.log(Log.DEBUG, "Received HTTP status 403 or failed to authenticate. Unable to connect with proxy configuration");
+                    navigator.activity().runOnUiThread(() -> ToastUtil.showError(navigator.activity(), R.string.main_settings_proxy_check_connection_unsuccessful));
                     result.completeExceptionally(new NoInternetConnectionException());
                     return;
                 }

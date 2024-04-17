@@ -20,6 +20,7 @@
 package ee.ria.DigiDoc.mobileid.service;
 
 import static ee.ria.DigiDoc.common.ProxySetting.MANUAL_PROXY;
+import static ee.ria.DigiDoc.common.ProxySetting.NO_PROXY;
 import static ee.ria.DigiDoc.common.SigningUtil.checkSigningCancelled;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PASS;
 import static ee.ria.DigiDoc.mobileid.service.MobileSignConstants.ACCESS_TOKEN_PATH;
@@ -77,6 +78,7 @@ import ee.ria.DigiDoc.common.ContainerWrapper;
 import ee.ria.DigiDoc.common.ManualProxy;
 import ee.ria.DigiDoc.common.MessageUtil;
 import ee.ria.DigiDoc.common.ProxySetting;
+import ee.ria.DigiDoc.common.ProxyUtil;
 import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.common.TrustManagerUtil;
 import ee.ria.DigiDoc.common.UUIDUtil;
@@ -275,6 +277,11 @@ public class MobileSignService extends Worker {
                 if (e.getMessage() != null && e.getMessage().contains("CONNECT: 403")) {
                     broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.NO_RESPONSE));
                     Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID. REST API certificate request failed. Received HTTP status 403. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
+                    return Result.failure();
+                } else if (e.getMessage() != null && (ProxyUtil.getProxySetting(getApplicationContext()) != NO_PROXY &&
+                        e.getMessage().contains("Failed to authenticate with proxy"))) {
+                    broadcastFault(new RESTServiceFault(MobileCreateSignatureSessionStatusResponse.ProcessStatus.INVALID_PROXY_SETTINGS));
+                    Timber.log(Log.ERROR, e, "Failed to sign with Mobile-ID. REST API certificate request failed with current proxy settings. Exception message: %s. Exception: %s", e.getMessage(), Arrays.toString(e.getStackTrace()));
                     return Result.failure();
                 }
                 broadcastFault(defaultError(e.getMessage()));

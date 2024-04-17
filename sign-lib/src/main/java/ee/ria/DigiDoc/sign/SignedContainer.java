@@ -62,6 +62,7 @@ import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.common.TextUtil;
+import ee.ria.DigiDoc.common.exception.InvalidProxySettingsException;
 import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
 import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
@@ -238,6 +239,10 @@ public abstract class SignedContainer {
             if (e.getMessage() != null && e.getMessage().contains("Failed to connect")) {
                 Timber.log(Log.ERROR, e, "Failed to connect to Internet");
                 throw new NoInternetConnectionException();
+            }
+            if (e.getMessage() != null && e.getMessage().contains("Failed to create proxy connection with host")) {
+                Timber.log(Log.ERROR, e, "Failed to create proxy connection with host");
+                throw new InvalidProxySettingsException();
             }
 
             throw e;
