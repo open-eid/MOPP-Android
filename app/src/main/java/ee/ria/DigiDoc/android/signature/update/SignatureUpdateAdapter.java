@@ -137,7 +137,6 @@ final class SignatureUpdateAdapter extends
                         } else {
                             if (isCades(container.signatures())) {
                                 createAsicsDataFilesView(builder, context, name, container, container, isNestedContainer);
-                                createAsicsTimestampView(builder, container);
                                 createAsicsSignatureView(builder, container);
                             } else {
                                 createRegularDataFilesView(builder, context, name, container, isNestedContainer, isExistingContainer);
