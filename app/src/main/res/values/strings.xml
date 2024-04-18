@@ -55,6 +55,10 @@
     <string name="main_settings_proxy_port">Port</string>
     <string name="main_settings_proxy_username">Username</string>
     <string name="main_settings_proxy_password">Password</string>
+    <string name="main_settings_proxy_check_connection">Check connection</string>
+    <string name="main_settings_proxy_check_connection_success">Internet connection available!</string>
+    <string name="main_settings_proxy_check_connection_unsuccessful">No internet connection!</string>
+    <string name="main_settings_proxy_check_username_and_password">Check proxy username and password</string>
     <string name="main_settings_role_and_address_button">Role and address</string>
     <string name="main_settings_phone_no_title">Country code and phone number</string>
     <string name="main_settings_personal_code_title">Personal code</string>

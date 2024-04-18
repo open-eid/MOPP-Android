@@ -142,7 +142,9 @@ public class MobileCreateSignatureSessionStatusResponse {
         NO_RESPONSE,
         INVALID_COUNTRY_CODE,
         INVALID_SSL_HANDSHAKE,
-        TECHNICAL_ERROR
+        TECHNICAL_ERROR,
+
+        INVALID_PROXY_SETTINGS
     }
 }
 

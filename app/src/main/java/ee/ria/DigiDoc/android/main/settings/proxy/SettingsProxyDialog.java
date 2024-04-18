@@ -3,6 +3,7 @@ package ee.ria.DigiDoc.android.main.settings.proxy;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxRadioGroup.checkedChanges;
 import static com.jakewharton.rxbinding4.widget.RxTextView.textChanges;
+import static ee.ria.DigiDoc.common.NetworkUtil.constructClientBuilder;
 import static ee.ria.DigiDoc.common.ProxySetting.MANUAL_PROXY;
 import static ee.ria.DigiDoc.common.ProxySetting.NO_PROXY;
 import static ee.ria.DigiDoc.common.ProxySetting.SYSTEM_PROXY;
@@ -14,6 +15,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
@@ -22,7 +24,9 @@ import android.widget.RadioGroup;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import ee.ria.DigiDoc.R;
@@ -30,13 +34,20 @@ import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.main.settings.SettingsDataStore;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
+import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.common.ManualProxy;
 import ee.ria.DigiDoc.common.ProxyConfig;
 import ee.ria.DigiDoc.common.ProxySetting;
 import ee.ria.DigiDoc.common.ProxyUtil;
+import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
+import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
 import ee.ria.DigiDoc.sign.SignLib;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import timber.log.Timber;
 
 public class SettingsProxyDialog extends Dialog {
@@ -55,6 +66,7 @@ public class SettingsProxyDialog extends Dialog {
     private final TextInputEditText port;
     private final TextInputEditText username;
     private final TextInputEditText password;
+    private final Button checkConnection;
 
     private final TextInputLayout portLayout;
 
@@ -85,6 +97,7 @@ public class SettingsProxyDialog extends Dialog {
         port = findViewById(R.id.mainSettingsProxyPort);
         username = findViewById(R.id.mainSettingsProxyUsername);
         password = findViewById(R.id.mainSettingsProxyPassword);
+        checkConnection = findViewById(R.id.mainSettingsProxyCheckInternetConnectionButton);
 
         portLayout = findViewById(R.id.mainSettingsProxyPortLayout);
 
@@ -165,10 +178,18 @@ public class SettingsProxyDialog extends Dialog {
                 .subscribe(this::validatePortNumber));
         disposables.add(checkedChanges(proxyGroup).subscribe(setting ->
                 setProxySetting(settingsDataStore, setting)));
+        disposables.add(clicks(checkConnection).subscribe(o -> checkConnection()));
     }
 
     @Override
     public void onDetachedFromWindow() {
+        saveProxySettings(true);
+
+        disposables.detach();
+        super.onDetachedFromWindow();
+    }
+
+    private void saveProxySettings(boolean clearSettings) {
         if (settingsDataStore != null) {
             ProxySetting currentProxySetting = settingsDataStore.getProxySetting();
             if (currentProxySetting.equals(MANUAL_PROXY)) {
@@ -192,14 +213,15 @@ public class SettingsProxyDialog extends Dialog {
                     overrideLibdigidocppProxy(proxySettings);
                     return;
                 }
-                clearProxySettings(settingsDataStore);
+                if (clearSettings) {
+                    clearProxySettings(settingsDataStore);
+                }
             } else {
-                clearProxySettings(settingsDataStore);
+                if (clearSettings) {
+                    clearProxySettings(settingsDataStore);
+                }
             }
         }
-
-        disposables.detach();
-        super.onDetachedFromWindow();
     }
 
     @Override
@@ -318,5 +340,60 @@ public class SettingsProxyDialog extends Dialog {
             Timber.log(Log.ERROR, e, String.format("Invalid number: %s", portNumber));
             return false;
         }
+    }
+
+    private void checkConnection() {
+        System.out.println("Checking connection");
+
+        saveProxySettings(false);
+
+        CompletableFuture<String> result = new CompletableFuture<>();
+
+        Request request = new Request.Builder()
+                .url("https://id.eesti.ee/config.json")
+                .addHeader("Content-Type", "application/json")
+                .addHeader("User-Agent", UserAgentUtil.getUserAgent(navigator.activity()))
+                .build();
+
+        OkHttpClient httpClient;
+        try {
+            httpClient = constructClientBuilder(navigator.activity()).build();
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to construct HTTP client", e);
+        }
+
+        CompletableFuture.runAsync(() -> {
+            Call call = httpClient.newCall(request);
+            try {
+                Response response = call.execute();
+                if (response.code() == 403) {
+                    Timber.log(Log.DEBUG, "Forbidden error with proxy configuration");
+                    navigator.activity().runOnUiThread(() -> ToastUtil.showError(navigator.activity(), R.string.main_settings_proxy_check_username_and_password));
+                    result.completeExceptionally(new NoInternetConnectionException());
+                    return;
+                }
+
+                if (response.code() != 200) {
+                    Timber.log(Log.DEBUG, "No Internet connection detected");
+                    navigator.activity().runOnUiThread(() -> ToastUtil.showError(navigator.activity(), R.string.main_settings_proxy_check_connection_unsuccessful));
+                    result.completeExceptionally(new NoInternetConnectionException());
+                } else {
+                    Timber.log(Log.DEBUG, "Internet connection detected successfully");
+                    navigator.activity().runOnUiThread(() -> ToastUtil.showError(navigator.activity(), R.string.main_settings_proxy_check_connection_success));
+                    result.complete("Internet connection detected successfully");
+                }
+            } catch (IOException e) {
+                if (e.getMessage() != null && (e.getMessage().contains("CONNECT: 403") ||
+                        e.getMessage().contains("Failed to authenticate with proxy"))) {
+                    Timber.log(Log.DEBUG, "Received HTTP status 403 or failed to authenticate. Unable to connect with proxy configuration");
+                    navigator.activity().runOnUiThread(() -> ToastUtil.showError(navigator.activity(), R.string.main_settings_proxy_check_connection_unsuccessful));
+                    result.completeExceptionally(new NoInternetConnectionException());
+                    return;
+                }
+                Timber.log(Log.DEBUG, e, "Unable to check Internet connection");
+                navigator.activity().runOnUiThread(() -> ToastUtil.showError(navigator.activity(), R.string.main_settings_proxy_check_connection_unsuccessful));
+                result.completeExceptionally(new NoInternetConnectionException());
+            }
+        });
     }
 }

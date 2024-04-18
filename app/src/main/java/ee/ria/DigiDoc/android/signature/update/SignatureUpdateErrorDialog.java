@@ -33,6 +33,7 @@ import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
 import ee.ria.DigiDoc.common.DetailMessageException;
 import ee.ria.DigiDoc.common.DetailMessageSource;
+import ee.ria.DigiDoc.common.exception.InvalidProxySettingsException;
 import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
 import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
 import ee.ria.DigiDoc.common.exception.SignatureUpdateDetailError;
@@ -104,6 +105,8 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                 updateError = new EmptyFileException();
             } else if (documentsAddError instanceof NoInternetConnectionException) {
                 updateError = new NoInternetConnectionException();
+            } else if (signatureAddError instanceof InvalidProxySettingsException) {
+                updateError = new InvalidProxySettingsException();
             } else if (documentsAddError instanceof FileNotFoundException) {
                 if (documentsAddError.getMessage() != null &&
                         documentsAddError.getMessage().contains("connection_failure")) {
@@ -129,6 +132,8 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                 updateError = new NoInternetConnectionException();
             } else if (signatureAddError instanceof SSLHandshakeException) {
                 updateError = new SSLHandshakeException();
+            } else if (signatureAddError instanceof InvalidProxySettingsException) {
+                updateError = new InvalidProxySettingsException();
             } else if (signatureAddError instanceof DetailMessageSource) {
                 String link = ErrorMessageUtil.extractLink(signatureAddError.getMessage());
                 if (!link.isEmpty()) {

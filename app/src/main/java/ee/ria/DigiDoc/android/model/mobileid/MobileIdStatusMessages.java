@@ -41,6 +41,7 @@ public final class MobileIdStatusMessages {
                     .put(ProcessStatus.INVALID_COUNTRY_CODE, R.string.signature_update_mobile_id_status_no_country_code)
                     .put(ProcessStatus.INVALID_SSL_HANDSHAKE, R.string.invalid_ssl_handshake)
                     .put(ProcessStatus.TECHNICAL_ERROR, R.string.signature_update_mobile_id_error_technical_error)
+                    .put(ProcessStatus.INVALID_PROXY_SETTINGS, R.string.main_settings_proxy_invalid_settings)
                     .build();
 
     public static String message(Context context, ProcessStatus status) {

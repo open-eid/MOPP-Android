@@ -79,6 +79,7 @@ public final class SmartIdStatusMessages {
                     .put(ProcessStatus.INVALID_SSL_HANDSHAKE,
                             R.string.invalid_ssl_handshake)
                     .put(ProcessStatus.TECHNICAL_ERROR, R.string.signature_update_smart_id_error_technical_error)
+                    .put(ProcessStatus.INVALID_PROXY_SETTINGS, R.string.main_settings_proxy_invalid_settings)
                     .build();
 
     public static String message(Context context, ProcessStatus status) {
