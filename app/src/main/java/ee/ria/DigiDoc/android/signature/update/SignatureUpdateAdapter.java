@@ -8,6 +8,7 @@ import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.Sub
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.SIGNATURE;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateAdapter.SubheadItemType.TIMESTAMP;
 import static ee.ria.DigiDoc.android.utils.Immutables.containsType;
+import static ee.ria.DigiDoc.sign.SignedContainer.isCades;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -45,10 +46,11 @@ import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.Formatter;
+import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.common.TextUtil;
-import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
+import ee.ria.DigiDoc.sign.DataFile;
 import ee.ria.DigiDoc.sign.Signature;
 import ee.ria.DigiDoc.sign.SignatureStatus;
 import ee.ria.DigiDoc.sign.SignedContainer;
@@ -95,14 +97,30 @@ final class SignatureUpdateAdapter extends
         }
 
         if (container != null) {
+            FileStream containerFileStream = FileStream.create(container.file());
+            boolean isCades = FileUtil.isCades(context, containerFileStream.source(), containerFileStream.displayName());
+            CadesItem cadesItem = CadesItem.create();
+            if (isCades) {
+                builder.add(cadesItem);
+            }
+
             if (nestedFile == null || !isSivaConfirmed) {
+                if (isCades && !builder.build().contains(cadesItem)) {
+                    builder.add(cadesItem);
+                }
                 createRegularDataFilesView(builder, context, name, container, isNestedContainer, isExistingContainer);
             }
 
             if (isExistingContainer) {
                 if (nestedFile != null && isSivaConfirmed) {
+                    FileStream nestedContainerFileStream = FileStream.create(nestedFile);
+                    boolean isNestedCades = FileUtil.isCades(context, nestedContainerFileStream.source(), nestedContainerFileStream.displayName());
+                    if (isNestedCades && !builder.build().contains(cadesItem)) {
+                        builder.add(cadesItem);
+                    }
+
                     try {
-                        SignedContainer signedContainerNested = SignedContainer.open(nestedFile);
+                        SignedContainer signedContainerNested = SignedContainer.open(nestedFile, isSivaConfirmed);
                         if (!container.dataFiles().isEmpty() && container.dataFiles().size() == 1 &&
                                 Files.getFileExtension(nestedFile.getName()).equalsIgnoreCase("ddoc")) {
                             createAsicsDataFilesView(builder, context, name, container, signedContainerNested, isNestedContainer);
@@ -117,8 +135,13 @@ final class SignatureUpdateAdapter extends
                         if (e instanceof SSLHandshakeException) {
                             throw e;
                         } else {
-                            createRegularDataFilesView(builder, context, name, container, isNestedContainer, isExistingContainer);
-                            createRegularSignatureView(builder, container, isNestedContainer);
+                            if (isCades(container.signatures())) {
+                                createAsicsDataFilesView(builder, context, name, container, container, isNestedContainer);
+                                createAsicsSignatureView(builder, container);
+                            } else {
+                                createRegularDataFilesView(builder, context, name, container, isNestedContainer, isExistingContainer);
+                                createRegularSignatureView(builder, container, isNestedContainer);
+                            }
                         }
                     }
                 } else {
@@ -167,7 +190,8 @@ final class SignatureUpdateAdapter extends
         } else {
             boolean showRemoveSignatureButton = !isNestedContainer &&
                     !NO_REMOVE_SIGNATURE_BUTTON_FILE_EXTENSIONS.contains(
-                            Files.getFileExtension(container.name()).toLowerCase());
+                            Files.getFileExtension(container.name()).toLowerCase()) &&
+                    !isCades(container.signatures());
             builder.addAll(SignatureItem.of(container.signatures(), showRemoveSignatureButton,
                     Files.getFileExtension(container.file().getName()).equalsIgnoreCase("ddoc")));
         }
@@ -185,6 +209,10 @@ final class SignatureUpdateAdapter extends
 
     private void createAsicsTimestampView(ImmutableList.Builder<Item> builder, SignedContainer container) {
         builder.add(SubheadItem.create(TIMESTAMP, false));
+        if (isCades(container.signatures())) {
+            builder.addAll(TimestampItem.of(container.timestamps()));
+            return;
+        }
         builder.addAll(TimestampItem.of(container.signatures()));
     }
 
@@ -280,6 +308,8 @@ final class SignatureUpdateAdapter extends
                     return new StatusViewHolder(itemView);
                 case R.layout.signature_update_list_item_empty:
                     return new EmptyViewHolder(itemView);
+                case R.layout.signature_update_list_item_cades:
+                    return new CadesViewHolder(itemView);
                 case R.layout.signature_update_list_item_name:
                     return new NameViewHolder(itemView);
                 case R.layout.signature_update_list_item_subhead:
@@ -327,6 +357,26 @@ final class SignatureUpdateAdapter extends
             emptyFileView.setText(resources.getString(R.string.empty_file_message));
             emptyFileView.setContentDescription(emptyFileView.getText());
             emptyFileView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    static final class CadesViewHolder extends UpdateViewHolder<CadesItem> {
+
+        private final Resources resources;
+
+        private final TextView cadesFileView;
+
+        CadesViewHolder(View itemView) {
+            super(itemView);
+            resources = itemView.getResources();
+            cadesFileView = itemView.findViewById(R.id.signatureUpdateListStatusCadesFile);
+        }
+
+        @Override
+        void bind(SignatureUpdateAdapter adapter, CadesItem item) {
+            cadesFileView.setText(resources.getString(R.string.cades_file_message));
+            cadesFileView.setContentDescription(cadesFileView.getText());
+            cadesFileView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -751,6 +801,15 @@ final class SignatureUpdateAdapter extends
         static EmptyItem create() {
             return new AutoValue_SignatureUpdateAdapter_EmptyItem(
                     R.layout.signature_update_list_item_empty);
+        }
+    }
+
+    @AutoValue
+    static abstract class CadesItem extends Item {
+
+        static CadesItem create() {
+            return new AutoValue_SignatureUpdateAdapter_CadesItem(
+                    R.layout.signature_update_list_item_cades);
         }
     }
 

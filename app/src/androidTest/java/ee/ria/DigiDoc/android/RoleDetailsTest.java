@@ -1,7 +1,6 @@
 package ee.ria.DigiDoc.android;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -91,7 +90,7 @@ public class RoleDetailsTest {
                          OutputStream containerOutputStream = new FileOutputStream(assetFile)) {
                         ByteStreams.copy(containerInputStream, containerOutputStream);
                     }
-                    return SignedContainer.open(assetFile);
+                    return SignedContainer.open(assetFile, false);
                 }
             }
         } catch (Exception e) {

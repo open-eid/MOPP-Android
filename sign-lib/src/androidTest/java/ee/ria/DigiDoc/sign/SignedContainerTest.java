@@ -70,7 +70,7 @@ public final class SignedContainerTest {
 
     @Test public void open_fileDoesNotExist_throwsIOException() throws Exception {
         exception.expect(IOException.class);
-        SignedContainer.open(folder.newFile());
+        SignedContainer.open(folder.newFile(), false);
     }
 
     @Test public void create_dataFilesNull_throwsContainerDataFilesEmptyException() throws

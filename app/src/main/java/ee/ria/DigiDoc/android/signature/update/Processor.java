@@ -106,7 +106,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                       Navigator navigator,
                       FileSystem fileSystem) {
         containerLoad = upstream -> upstream.switchMap(action ->
-                signatureContainerDataSource.get(action.containerFile())
+                signatureContainerDataSource.get(action.containerFile(), action.isSivaConfirmed())
                         .toObservable()
                         .switchMap(container -> {
                             if (action.signatureAddSuccessMessageVisible()) {
@@ -236,7 +236,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
             } else {
                 File containerFile = action.containerFile;
                 return signatureContainerDataSource
-                        .getDocumentFile(containerFile, action.document)
+                        .getDocumentFile(containerFile, action.document, false)
                         .toObservable()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -282,7 +282,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     .filter(activityResult ->
                             activityResult.requestCode() == SAVE_FILE)
                     .switchMap(activityResult -> signatureContainerDataSource
-                            .getDocumentFile(action.containerFile, action.document)
+                            .getDocumentFile(action.containerFile, action.document, false)
                             .toObservable()
                             .map(documentFile -> {
                                 if (activityResult.resultCode() == RESULT_OK) {
@@ -362,7 +362,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
         signatureView = upstream -> upstream.flatMap(action -> {
             File containerFile = action.containerFile();
             return signatureContainerDataSource
-                    .get(containerFile)
+                    .get(containerFile, action.isSivaConfirmed())
                     .toObservable()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -408,7 +408,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                 }
             } else if (existingContainer != null && containerFile != null) {
                 return askNotificationPermission(navigator, method)
-                        .flatMap(ign -> signatureAddSource.sign(containerFile, request, navigator, action.roleData())
+                        .flatMap(ign -> signatureAddSource.sign(containerFile, request, navigator, action.roleData(), action.isSivaConfirmed())
                                 .switchMap(response -> {
                                     if (response.container() != null) {
                                         return Observable.fromCallable(() -> {
@@ -512,7 +512,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
         List<FileStream> filesNotInContainer = new ArrayList<>();
         List<String> containerDataFileNames = new ArrayList<>();
         if (!validFiles.isEmpty() && SignedContainer.isContainer(context, container)) {
-            SignedContainer signedContainer = SignedContainer.open(container);
+            SignedContainer signedContainer = SignedContainer.open(container, false);
             ImmutableList<DataFile> dataFiles = signedContainer.dataFiles();
             for (DataFile dataFile : dataFiles) {
                 containerDataFileNames.add(FileUtil.normalizeString(dataFile.name()));

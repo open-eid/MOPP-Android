@@ -85,7 +85,8 @@ final class SignatureAddSource {
     Observable<? extends SignatureAddResponse> sign(File containerFile,
                                                     SignatureAddRequest request,
                                                     Navigator navigator,
-                                                    @Nullable RoleData roleData) {
+                                                    @Nullable RoleData roleData,
+                                                    boolean isSivaConfirmed) {
         if (request instanceof MobileIdRequest) {
             MobileIdRequest mobileIdRequest = (MobileIdRequest) request;
             if (mobileIdRequest.rememberMe()) {
@@ -96,7 +97,7 @@ final class SignatureAddSource {
                 settingsDataStore.setPersonalCode(EMPTY_VALUE);
             }
             return signatureContainerDataSource
-                    .get(containerFile)
+                    .get(containerFile, isSivaConfirmed)
                     .flatMapObservable(container ->
                             Observable.create(new MobileIdOnSubscribe(navigator, container,
                                             localeService.applicationLocale(),
@@ -134,7 +135,7 @@ final class SignatureAddSource {
                 settingsDataStore.setSidPersonalCode(EMPTY_VALUE);
             }
             return signatureContainerDataSource
-                    .get(containerFile)
+                    .get(containerFile, isSivaConfirmed)
                     .flatMapObservable(container ->
                             Observable.create(new SmartIdOnSubscribe(navigator, container,
                                     localeService.applicationLocale(), settingsDataStore.getUuid(),
@@ -157,7 +158,7 @@ final class SignatureAddSource {
         } else if (request instanceof IdCardRequest) {
             IdCardRequest idCardRequest = (IdCardRequest) request;
             return signatureContainerDataSource
-                    .get(containerFile)
+                    .get(containerFile, isSivaConfirmed)
                     .flatMap(container ->
                             idCardService.data()
                                     .filter(dataResponse -> dataResponse.token() != null)

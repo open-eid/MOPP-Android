@@ -31,26 +31,30 @@ class InitialIntent implements Intent {
     private final File containerFile;
     @Nullable private final Integer signatureAddMethod;
     private final boolean signatureAddSuccessMessageVisible;
+    private final boolean isSivaConfirmed;
 
     private InitialIntent(boolean isExistingContainer, File containerFile,
                           @Nullable Integer signatureAddMethod,
-                          boolean signatureAddSuccessMessageVisible) {
+                          boolean signatureAddSuccessMessageVisible,
+                          boolean isSivaConfirmed) {
         this.isExistingContainer = isExistingContainer;
         this.containerFile = containerFile;
         this.signatureAddMethod = signatureAddMethod;
         this.signatureAddSuccessMessageVisible = signatureAddSuccessMessageVisible;
+        this.isSivaConfirmed = isSivaConfirmed;
     }
 
     public static InitialIntent create(boolean isExistingContainer, File containerFile,
                                        Integer signatureAddMethod,
-                                       boolean signatureAddSuccessMessageVisible) {
-        return new InitialIntent(isExistingContainer, containerFile, signatureAddMethod, signatureAddSuccessMessageVisible);
+                                       boolean signatureAddSuccessMessageVisible,
+                                       boolean isSivaConfirmed) {
+        return new InitialIntent(isExistingContainer, containerFile, signatureAddMethod, signatureAddSuccessMessageVisible, isSivaConfirmed);
     }
 
     @Override
     public Action action() {
         return Action.ContainerLoadAction.create(containerFile, signatureAddMethod,
-                signatureAddSuccessMessageVisible, isExistingContainer);
+                signatureAddSuccessMessageVisible, isExistingContainer, isSivaConfirmed);
     }
 }
 
@@ -186,18 +190,21 @@ class SignatureViewIntent implements Intent {
 
     Signature signature;
 
-    public SignatureViewIntent(File containerFile, Signature signature) {
+    boolean isSivaConfirmed;
+
+    public SignatureViewIntent(File containerFile, Signature signature, boolean isSivaConfirmed) {
         this.containerFile = containerFile;
         this.signature = signature;
+        this.isSivaConfirmed = isSivaConfirmed;
     }
 
-    static SignatureViewIntent create(File containerFile, Signature signature) {
-        return new SignatureViewIntent(containerFile, signature);
+    static SignatureViewIntent create(File containerFile, Signature signature, boolean isSivaConfirmed) {
+        return new SignatureViewIntent(containerFile, signature, isSivaConfirmed);
     }
 
     @Override
     public Action action() {
-        return Action.SignatureViewAction.create(containerFile, signature);
+        return Action.SignatureViewAction.create(containerFile, signature, isSivaConfirmed);
     }
 }
 
@@ -291,10 +298,12 @@ class SignatureAddIntent implements Intent {
     boolean isCancelled;
     boolean showRoleAddingView;
     @Nullable RoleData roleData;
+    boolean isSivaConfirmed;
 
     public SignatureAddIntent(@Nullable Integer method, @Nullable Boolean existingContainer,
                               @Nullable File containerFile, @Nullable SignatureAddRequest request,
-                              boolean isCancelled, boolean showRoleAddingView, @Nullable RoleData roleData) {
+                              boolean isCancelled, boolean showRoleAddingView, @Nullable RoleData roleData,
+                              boolean isSivaConfirmed) {
         this.method = method;
         this.existingContainer = existingContainer;
         this.containerFile = containerFile;
@@ -302,19 +311,20 @@ class SignatureAddIntent implements Intent {
         this.isCancelled = isCancelled;
         this.showRoleAddingView = showRoleAddingView;
         this.roleData = roleData;
+        this.isSivaConfirmed = isSivaConfirmed;
     }
 
-    static SignatureAddIntent show(int method, boolean existingContainer, File containerFile, boolean showRoleAddingView) {
-        return create(method, existingContainer, containerFile, null, false, showRoleAddingView, null);
+    static SignatureAddIntent show(int method, boolean existingContainer, File containerFile, boolean showRoleAddingView, boolean isSivaConfirmed) {
+        return create(method, existingContainer, containerFile, null, false, showRoleAddingView, null, isSivaConfirmed);
     }
 
     static SignatureAddIntent sign(int method, boolean existingContainer, File containerFile,
-                                   SignatureAddRequest request, RoleData roleData) {
-        return create(method, existingContainer, containerFile, request, false, false, roleData);
+                                   SignatureAddRequest request, RoleData roleData, boolean isSivaConfirmed) {
+        return create(method, existingContainer, containerFile, request, false, false, roleData, isSivaConfirmed);
     }
 
     static SignatureAddIntent clear() {
-        return create(null, null, null, null, true, false, null);
+        return create(null, null, null, null, true, false, null, false);
     }
 
     private static SignatureAddIntent create(@Nullable Integer method,
@@ -323,14 +333,15 @@ class SignatureAddIntent implements Intent {
                                              @Nullable SignatureAddRequest request,
                                              boolean isCancelled,
                                              boolean showRoleAddingView,
-                                             @Nullable RoleData roleData) {
-        return new SignatureAddIntent(method, existingContainer, containerFile, request, isCancelled, showRoleAddingView, roleData);
+                                             @Nullable RoleData roleData,
+                                             boolean isSivaConfirmed) {
+        return new SignatureAddIntent(method, existingContainer, containerFile, request, isCancelled, showRoleAddingView, roleData, isSivaConfirmed);
     }
 
     @Override
     public Action action() {
         return Action.SignatureAddAction.create(method, existingContainer, containerFile, request,
-                isCancelled, showRoleAddingView, roleData);
+                isCancelled, showRoleAddingView, roleData, isSivaConfirmed);
     }
 }
 

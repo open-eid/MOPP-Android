@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.sign;
 
 import static com.google.common.collect.ImmutableList.sortedCopyOf;
 import static com.google.common.io.Files.getFileExtension;
+import static ee.ria.DigiDoc.common.FileUtil.createDirectoryIfNotExist;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -59,6 +60,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import ee.ria.DigiDoc.common.Certificate;
+import ee.ria.DigiDoc.common.DigidocContainerOpenCB;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.common.TextUtil;
@@ -112,6 +114,8 @@ public abstract class SignedContainer {
 
     public abstract ImmutableList<Signature> signatures();
 
+    public abstract ImmutableList<Signature> timestamps();
+
     public final boolean signaturesValid() {
         for (int count : invalidSignatureCounts().values()) {
             if (count > 0) {
@@ -138,16 +142,16 @@ public abstract class SignedContainer {
     }
 
     public final SignedContainer addDataFiles(ImmutableList<File> dataFiles) throws Exception {
-        Container container = container(file());
+        Container container = container(file(), false);
         for (File dataFile : dataFiles) {
             container.addDataFile(dataFile.getAbsolutePath(), mimeType(dataFile));
         }
         container.save();
-        return open(file());
+        return open(file(), false);
     }
 
     public final SignedContainer removeDataFile(DataFile dataFile) throws Exception {
-        Container container = container(file());
+        Container container = container(file(), false);
         if (container.dataFiles().size() == 1) {
             throw new ContainerDataFilesEmptyException();
         }
@@ -159,11 +163,11 @@ public abstract class SignedContainer {
             }
         }
         container.save();
-        return open(file());
+        return open(file(), false);
     }
 
-    public final File getDataFile(DataFile dataFile, File directory) throws Exception {
-        Container container = container(file());
+    public final File getDataFile(DataFile dataFile, File directory, boolean isSentToSiva) throws Exception {
+        Container container = container(file(), isSentToSiva);
         File file = new File(directory, FileUtil.sanitizeString(dataFile.name(), ""));
         DataFiles dataFiles = container.dataFiles();
         for (int i = 0; i < dataFiles.size(); i++) {
@@ -178,7 +182,7 @@ public abstract class SignedContainer {
     }
 
     public final String calculateDataFileDigest(DataFile dataFile, String method) throws Exception {
-        Container container = container(file());
+        Container container = container(file(), false);
         DataFiles dataFiles = container.dataFiles();
         for (int i = 0; i < dataFiles.size(); i++) {
             ee.ria.libdigidocpp.DataFile containerDataFile = dataFiles.get(i);
@@ -191,21 +195,21 @@ public abstract class SignedContainer {
     }
 
     public final SignedContainer addAdEsSignature(byte[] adEsSignature) throws Exception {
-        Container container = container(file());
+        Container container = container(file(), false);
         try {
             container.addAdESSignature(adEsSignature);
         } catch (Exception e) {
             throw new SignaturesLockedException();
         }
         container.save();
-        return open(file());
+        return open(file(), false);
     }
 
     public final SignedContainer sign(ByteString certificate,
                                       Function<ByteString, ByteString> signFunction,
                                       @Nullable RoleData roleData) throws Exception {
         try {
-            Container container = container(file());
+            Container container = container(file(), false);
           
             ee.ria.libdigidocpp.Signature signature;
             if (roleData != null) {
@@ -220,7 +224,7 @@ public abstract class SignedContainer {
                 signature.setSignatureValue(signatureData.toByteArray());
                 signature.extendSignatureProfile(signatureProfile());
                 container.save();
-                return open(file());
+                return open(file(), false);
             }
             throw new Exception("Empty signature value");
         } catch (Exception e) {
@@ -250,7 +254,7 @@ public abstract class SignedContainer {
     }
 
     public final SignedContainer removeSignature(Signature signature) throws Exception {
-        Container container = container(file());
+        Container container = container(file(), false);
         Signatures signatures = container.signatures();
         for (int i = 0; i < signatures.size(); i++) {
             if (signature.id().equals(signatures.get(i).id())) {
@@ -259,7 +263,7 @@ public abstract class SignedContainer {
             }
         }
         container.save();
-        return open(file());
+        return open(file(), false);
     }
 
     public boolean hasEmptyFiles() {
@@ -298,7 +302,7 @@ public abstract class SignedContainer {
             container.addDataFile(dataFile.getAbsolutePath(), mimeType(dataFile));
         }
         container.save();
-        return open(file);
+        return open(file, false);
     }
 
     /**
@@ -308,8 +312,8 @@ public abstract class SignedContainer {
      * @return Signed container with data files and signatures.
      * @throws IOException When file could not be found/opened.
      */
-    public static SignedContainer open(File file) throws Exception {
-        Container container = container(file);
+    public static SignedContainer open(File file, boolean sendToSiva) throws Exception {
+        Container container = container(file, sendToSiva);
 
         ImmutableList.Builder<DataFile> dataFileBuilder = ImmutableList.builder();
         DataFiles dataFiles = container.dataFiles();
@@ -320,11 +324,19 @@ public abstract class SignedContainer {
         ImmutableList.Builder<Signature> signatureBuilder = ImmutableList.builder();
         Signatures signatures = container.signatures();
         for (int i = 0; i < signatures.size(); i++) {
-            signatureBuilder.add(signature(signatures.get(i)));
+            signatureBuilder.add(signature(signatures.get(i), false));
+        }
+
+        ImmutableList.Builder<Signature> timestampBuilder = ImmutableList.builder();
+        if (isCades(signatureBuilder.build())) {
+            for (int i = 0; i < signatures.size(); i++) {
+                timestampBuilder.add(signature(signatures.get(i), true));
+            }
         }
 
         return new AutoValue_SignedContainer(file, dataFileBuilder.build(),
-                sortedCopyOf(SIGNATURE_COMPARATOR, signatureBuilder.build()));
+                sortedCopyOf(SIGNATURE_COMPARATOR, signatureBuilder.build()),
+                sortedCopyOf(SIGNATURE_COMPARATOR, timestampBuilder.build()));
     }
 
     /**
@@ -358,7 +370,7 @@ public abstract class SignedContainer {
     }
 
     public static String getMediaType(File file) throws Exception {
-         return container(file).mediaType();
+         return container(file, false).mediaType();
     }
 
     private static DataFile dataFile(ee.ria.libdigidocpp.DataFile dataFile) {
@@ -392,9 +404,9 @@ public abstract class SignedContainer {
                 Splitter.fixedLength(2).split(Hex.toHexString(bytes))).trim();
     }
 
-    private static Signature signature(ee.ria.libdigidocpp.Signature signature) {
+    private static Signature signature(ee.ria.libdigidocpp.Signature signature, boolean isTimestamp) {
         String id = signature.id();
-        String name = signatureName(signature);
+        String name = isTimestamp ? timestampName(signature) : signatureName(signature);
         Instant createdAt = Instant.parse(signature.trustedSigningTime());
         SignatureStatus status = signatureStatus(signature);
         String diagnosticsInfo = getDiagnosticsInfo(signature);
@@ -481,6 +493,18 @@ public abstract class SignedContainer {
         return commonName == null ? signature.signedBy() : commonName;
     }
 
+    private static String timestampName(ee.ria.libdigidocpp.Signature signature) {
+        String commonName;
+        try {
+            commonName = Certificate.create(ByteString.of(signature.TimeStampCertificateDer()))
+                    .friendlyName();
+        } catch (IOException e) {
+            Timber.log(Log.ERROR, e, "Can't parse certificate to get CN");
+            commonName = null;
+        }
+        return commonName == null ? signature.signedBy() : commonName;
+    }
+
     private static SignatureStatus signatureStatus(
             ee.ria.libdigidocpp.Signature signature) {
         Validator validator = new Validator(signature);
@@ -506,10 +530,12 @@ public abstract class SignedContainer {
     }
 
     @NonNull
-    private static Container container(File file) throws Exception {
+    private static Container container(File file, boolean sendToSiva) throws Exception {
         Container container;
+
         try {
-            container = Container.open(file.getAbsolutePath());
+            DigidocContainerOpenCB dcoCB = new DigidocContainerOpenCB(sendToSiva);
+            container = Container.open(file.getAbsolutePath(), dcoCB);
         } catch (Exception e) {
             if (e.getMessage() != null && (e.getMessage().startsWith("Failed to connect to host") ||
                     e.getMessage().startsWith("Failed to create proxy connection with host"))) {
@@ -603,7 +629,7 @@ public abstract class SignedContainer {
 
             File pdfFilesDirectory = new File(context.getFilesDir(), "tempPdfFiles");
 
-            FileUtils.createDirectoryIfNotExist(pdfFilesDirectory.toString());
+            createDirectoryIfNotExist(pdfFilesDirectory.toString());
 
             File file = new File(pdfFilesDirectory, String.format(Locale.US, "%s",
                     FilenameUtils.getName(FileUtil.sanitizeString(fileName, ""))));
@@ -672,7 +698,14 @@ public abstract class SignedContainer {
 
         return false;
     }
+
     public static boolean isAsicsFile(String fileName) {
         return ASICS_EXTENSIONS.contains(Files.getFileExtension(fileName).toLowerCase());
+    }
+
+    public static boolean isCades(List<Signature> signatures) {
+        return signatures.stream()
+                .map(Signature::signatureFormat)
+                .anyMatch(format -> format.toLowerCase().contains("cades"));
     }
 }
