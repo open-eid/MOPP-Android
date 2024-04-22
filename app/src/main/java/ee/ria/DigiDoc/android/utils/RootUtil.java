@@ -1,29 +1,21 @@
 package ee.ria.DigiDoc.android.utils;
 
-import android.util.Log;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
-import timber.log.Timber;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class RootUtil {
 
     public static boolean isDeviceRooted() {
-        try {
-            Process process = Runtime.getRuntime().exec("su");
-            try (DataOutputStream dos = new DataOutputStream(process.getOutputStream())) {
-                dos.writeBytes("exit\n");
-                dos.flush();
+        String[] rootDirs = {"/sbin", "/su/bin", "/system/bin/su"};
+
+        for (String dir : rootDirs) {
+            Path rootPath = Paths.get(dir);
+            if (Files.exists(rootPath)) {
+                return true;
             }
-            int exitValue = process.waitFor();
-            boolean isRooted = exitValue == 0;
-            Timber.log(Log.DEBUG, isRooted ? "Device is rooted" : "Device is not rooted");
-            return isRooted;
-        } catch (IOException | InterruptedException e) {
-            Timber.log(Log.DEBUG, e, "Device is not rooted");
-            return false;
         }
+
+        return false;
     }
 }
