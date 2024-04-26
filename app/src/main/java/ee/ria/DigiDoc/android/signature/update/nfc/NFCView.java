@@ -2,6 +2,8 @@ package ee.ria.DigiDoc.android.signature.update.nfc;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.removeAccessibilityStateChanged;
+import static ee.ria.DigiDoc.common.PinConstants.PIN2_MIN_LENGTH;
+import static ee.ria.DigiDoc.common.PinConstants.PIN_MAX_LENGTH;
 
 import android.content.Context;
 import android.text.Editable;
@@ -10,7 +12,6 @@ import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.AccessibilityNodeInfo;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -40,7 +41,6 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
     private final EditText canView;
     private final TextInputLayout canLayout;
     private final MaterialTextView canLabel;
-    private final CheckBox rememberMeView;
     private final EditText pinView;
     private final TextInputLayout pinLayout;
     private final MaterialTextView pinLabel;
@@ -57,7 +57,6 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
         canView = findViewById(R.id.signatureUpdateNFCCAN);
         canLayout = findViewById(R.id.signatureUpdateNFCCANLayout);
         canLabel = findViewById(R.id.signatureUpdateNFCCANLabel);
-        rememberMeView = findViewById(R.id.signatureUpdateNFCRememberMe);
         pinView = findViewById(R.id.signatureUpdateNFCPIN2);
         pinLayout = findViewById(R.id.signatureUpdateNFCPIN2Layout);
         pinLabel = findViewById(R.id.signatureUpdateNFCPIN2Label);
@@ -87,13 +86,12 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
     public boolean positiveButtonEnabled() {
         Editable canText = canView.getText();
         Editable pinText = pinView.getText();
-        return canText != null && canText.length() == 6 && pinText != null && isPinLengthEnough(pinText.toString());
+        return canText != null && canText.length() == 6 && pinText != null && isPinLengthValid(pinText.toString());
     }
 
     @Override
     public void reset(SignatureUpdateViewModel viewModel) {
         canView.setText(viewModel.can());
-        rememberMeView.setChecked(true);
         pinView.setText("");
         AccessibilityUtils.setEditTextCursorToEnd(canView);
         AccessibilityUtils.setEditTextCursorToEnd(pinView);
@@ -101,14 +99,13 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
         ErrorMessageUtil.setTextViewError(getContext(), null, pinLabel, pinLayout, pinView);
         message.clearFocus();
         canView.clearFocus();
-        rememberMeView.clearFocus();
         pinView.clearFocus();
     }
 
     @Override
     public NFCRequest request() {
         return NFCRequest.create(canView.getText().toString(),
-                pinView.getText().toString(), rememberMeView.isChecked());
+                pinView.getText().toString());
     }
 
     @Override
@@ -129,14 +126,19 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
         pinLabel.setError(null);
         Editable pinCodeView = pinView.getText();
         if (pinCodeView != null && !pinCodeView.toString().isEmpty() &&
-                !isPinLengthEnough(pinCodeView.toString())
+                !isPinLengthValid(pinCodeView.toString())
         ) {
-            pinLabel.setError(getContext().getString(R.string.id_card_sign_pin_invalid_length));
+            pinLabel.setError(getResources().getString(
+                    R.string.id_card_sign_pin_invalid_length,
+                    getResources().getString(R.string.signature_id_card_pin2),
+                    Integer.toString(PIN2_MIN_LENGTH),
+                    Integer.toString(PIN_MAX_LENGTH)));
         }
     }
 
-    private boolean isPinLengthEnough(String pin) {
-        return pin.length() >= PinConstants.PIN2_MIN_LENGTH;
+    private boolean isPinLengthValid(String pin) {
+        return pin.length() >= PinConstants.PIN2_MIN_LENGTH &&
+                pin.length() <= PinConstants.PIN_MAX_LENGTH;
     }
 
     private void setAccessibilityDescription() {

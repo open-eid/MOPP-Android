@@ -4,6 +4,7 @@ import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
 import static ee.ria.DigiDoc.common.PinConstants.PIN1_MIN_LENGTH;
+import static ee.ria.DigiDoc.common.PinConstants.PIN_MAX_LENGTH;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -189,7 +190,8 @@ final class DecryptDialog extends AlertDialog {
             pin1ViewLabel.setError(getContext().getResources().getString(
                     R.string.id_card_sign_pin_invalid_length,
                     getContext().getResources().getString(R.string.signature_id_card_pin1),
-                    Integer.toString(PIN1_MIN_LENGTH)));
+                    Integer.toString(PIN1_MIN_LENGTH),
+                    Integer.toString(PIN_MAX_LENGTH)));
         }
     }
 
