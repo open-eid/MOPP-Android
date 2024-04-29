@@ -293,6 +293,7 @@
     <string name="signature_update_id_card_sign_pin2_invalid_final">Wrong PIN2. You have 1 attempt left until your PIN2 is blocked.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 blocked. Go to My eID to unblock it.</string>
 
+    <string name="nfc_sign_can_invalid_length">CAN-code must be %1$s digits long</string>
     <string name="id_card_sign_pin_invalid_length">%1$s code must be at least %2$s and a maximum of %3$s digits long</string>
 
     <string name="signature_update_nfc_message">Enter your CAN and PIN 2 code to sign with ID-Card using NFC</string>

@@ -293,6 +293,7 @@
     <string name="signature_update_id_card_sign_pin2_invalid_final">Vale PIN2. Järgmise vale sisestusega lukustub PIN.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 on lukus. Mine Minu eID, et avada.</string>
 
+    <string name="nfc_sign_can_invalid_length">CAN-kood peab olema %1$s-kohaline</string>
     <string name="id_card_sign_pin_invalid_length">%1$s-kood peab olema vähemalt %2$s-kohaline ja maksimaalselt %3$s-kohaline</string>
 
     <string name="signature_update_nfc_message">Enter your CAN number and PIN 2 code to sign with ID-Card using NFC</string>

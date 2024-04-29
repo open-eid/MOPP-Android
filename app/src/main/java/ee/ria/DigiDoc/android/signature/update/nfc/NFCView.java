@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.signature.update.nfc;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
+import static ee.ria.DigiDoc.android.Constants.CAN_LENGTH;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.removeAccessibilityStateChanged;
 import static ee.ria.DigiDoc.common.PinConstants.PIN2_MIN_LENGTH;
 import static ee.ria.DigiDoc.common.PinConstants.PIN_MAX_LENGTH;
@@ -80,13 +81,13 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
     }
 
     public Observable<Object> positiveButtonState() {
-        return Observable.merge(positiveButtonStateSubject, afterTextChangeEvents(pinView));
+        return Observable.merge(positiveButtonStateSubject, afterTextChangeEvents(canView) , afterTextChangeEvents(pinView));
     }
 
     public boolean positiveButtonEnabled() {
         Editable canText = canView.getText();
         Editable pinText = pinView.getText();
-        return canText != null && canText.length() == 6 && pinText != null && isPinLengthValid(pinText.toString());
+        return canText != null && isCANLengthValid(canText.toString()) && pinText != null && isPinLengthValid(pinText.toString());
     }
 
     @Override
@@ -118,17 +119,29 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
     }
 
     private void checkInputsValidity() {
-        checkPinCodeValidity();
+        canView.setOnFocusChangeListener((view, hasfocus) -> checkCANCodeValidity());
         pinView.setOnFocusChangeListener((view, hasfocus) -> checkPinCodeValidity());
     }
 
+    private void checkCANCodeValidity() {
+        canLayout.setError(null);
+        Editable canCodeView = canView.getText();
+        if (canCodeView != null && !canCodeView.toString().isEmpty() &&
+                !isCANLengthValid(canCodeView.toString())
+        ) {
+            canLayout.setError(getResources().getString(
+                    R.string.nfc_sign_can_invalid_length,
+                    Integer.toString(CAN_LENGTH)));
+        }
+    }
+
     private void checkPinCodeValidity() {
-        pinLabel.setError(null);
+        pinLayout.setError(null);
         Editable pinCodeView = pinView.getText();
         if (pinCodeView != null && !pinCodeView.toString().isEmpty() &&
                 !isPinLengthValid(pinCodeView.toString())
         ) {
-            pinLabel.setError(getResources().getString(
+            pinLayout.setError(getResources().getString(
                     R.string.id_card_sign_pin_invalid_length,
                     getResources().getString(R.string.signature_id_card_pin2),
                     Integer.toString(PIN2_MIN_LENGTH),
@@ -139,6 +152,10 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
     private boolean isPinLengthValid(String pin) {
         return pin.length() >= PinConstants.PIN2_MIN_LENGTH &&
                 pin.length() <= PinConstants.PIN_MAX_LENGTH;
+    }
+
+    private boolean isCANLengthValid(String can) {
+        return can.length() == CAN_LENGTH;
     }
 
     private void setAccessibilityDescription() {
