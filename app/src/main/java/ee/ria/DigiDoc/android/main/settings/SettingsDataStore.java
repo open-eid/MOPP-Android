@@ -126,6 +126,7 @@ public final class SettingsDataStore {
             SharedPreferences.Editor editor = encryptedPreferences.edit();
             editor.putString(resources.getString(R.string.main_settings_can_key), can);
             editor.commit();
+            return;
         }
         Timber.log(Log.ERROR, "Unable to save CAN");
     }
