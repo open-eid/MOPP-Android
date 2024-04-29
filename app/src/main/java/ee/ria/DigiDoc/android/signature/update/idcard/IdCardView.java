@@ -4,6 +4,7 @@ import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents
 import static ee.ria.DigiDoc.android.Constants.VOID;
 import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceOrientation;
 import static ee.ria.DigiDoc.common.PinConstants.PIN2_MIN_LENGTH;
+import static ee.ria.DigiDoc.common.PinConstants.PIN_MAX_LENGTH;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -323,7 +324,8 @@ public final class IdCardView extends LinearLayout implements
             setError(signPin2Label, getResources().getString(
                     R.string.id_card_sign_pin_invalid_length,
                     getResources().getString(R.string.signature_id_card_pin2),
-                    Integer.toString(PIN2_MIN_LENGTH)));
+                    Integer.toString(PIN2_MIN_LENGTH),
+                    Integer.toString(PIN_MAX_LENGTH)));
         }
     }
 

@@ -11,9 +11,7 @@ public abstract class NFCRequest implements SignatureAddRequest {
 
     public abstract String pin2();
 
-    public abstract boolean rememberMe();
-
-    public static NFCRequest create(String can, String pin2, boolean rememberMe) {
-        return new AutoValue_NFCRequest(can, pin2, rememberMe);
+    public static NFCRequest create(String can, String pin2) {
+        return new AutoValue_NFCRequest(can, pin2);
     }
 }

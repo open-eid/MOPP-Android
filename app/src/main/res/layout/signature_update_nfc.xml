@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:textColor="@color/signingNavigation"
             android:text="@string/signature_update_nfc_message" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -50,15 +51,6 @@
                 android:minHeight="@dimen/material_baseline_grid_6x" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <CheckBox
-            android:id="@+id/signatureUpdateNFCRememberMe"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_marginStart="-5dp"
-            android:checked="false"
-            android:textColor="@color/textLabel"
-            android:text="@string/signature_update_mobile_id_remember_me" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/signatureUpdateNFCPIN2Label"

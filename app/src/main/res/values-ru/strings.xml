@@ -295,7 +295,7 @@
     <string name="signature_update_id_card_sign_pin2_invalid_final">Неверный PIN2. У Вас осталась 1 попытка до блокировки Вашего PIN2.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 заблокирован. Зайдите в Мой eID, чтобы разблокировать его.</string>
 
-    <string name="id_card_sign_pin_invalid_length">%1$s-код должен быть не менее %2$s символов</string>
+    <string name="id_card_sign_pin_invalid_length">%1$s-код должен состоять минимум из %2$s и максимум из %3$s символов</string>
 
     <string name="signature_update_nfc_message">Enter your CAN number and PIN 2 code to sign with ID-Card using NFC</string>
     <string name="signature_update_nfc_can">CAN code on card</string>

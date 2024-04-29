@@ -1,7 +1,5 @@
 package ee.ria.DigiDoc.android.signature.update;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -81,7 +79,7 @@ final class SignatureAddSource {
                     })
                     .startWithItem(Result.SignatureAddResult.method(method, IdCardResponse.initial()));
         } else if (method == R.id.signatureUpdateSignatureAddMethodNFC) {
-            Timber.log(Log.DEBUG, "SignatureAddSource.java:74 :show");
+            Timber.log(Log.DEBUG, "SignatureAddSource.java:83 :show");
             return Observable.just(Result.SignatureAddResult.show(method));
         } else {
             throw new IllegalArgumentException("Unknown method " + method);
@@ -164,13 +162,8 @@ final class SignatureAddSource {
                     .startWithItem(SmartIdResponse
                             .status(SessionStatusResponse.ProcessStatus.OK))
                     .onErrorResumeNext(Observable::error);
-        } else if (request instanceof NFCRequest) {
-            NFCRequest nfcRequest = (NFCRequest) request;
-            if (nfcRequest.rememberMe()) {
-                settingsDataStore.setCan(nfcRequest.can());
-            } else {
-                settingsDataStore.setCan(EMPTY_VALUE);
-            }
+        } else if (request instanceof NFCRequest nfcRequest) {
+            settingsDataStore.setCan(nfcRequest.can());
             Single<SignedContainer> s = signatureContainerDataSource.get(containerFile);
             Observable<NFCResponse> obs = s.flatMapObservable(container -> {
                     String can = nfcRequest.can();

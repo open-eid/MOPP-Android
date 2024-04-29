@@ -44,7 +44,7 @@ public final class SettingsDataStore {
 
     public int getSignatureAddMethod() {
         int signatureAddMethod = preferences.getInt(resources.getString(R.string.main_settings_signature_add_method_key), R.id.signatureUpdateSignatureAddMethodMobileId);
-        Integer[] signatureAddMethods = { R.id.signatureUpdateSignatureAddMethodMobileId, R.id.signatureUpdateSignatureAddMethodSmartId, R.id.signatureUpdateSignatureAddMethodIdCard };
+        Integer[] signatureAddMethods = { R.id.signatureUpdateSignatureAddMethodMobileId, R.id.signatureUpdateSignatureAddMethodSmartId, R.id.signatureUpdateSignatureAddMethodIdCard, R.id.signatureUpdateSignatureAddMethodNFC };
         if (!Arrays.asList(signatureAddMethods).contains(signatureAddMethod)) {
             return R.id.signatureUpdateSignatureAddMethodMobileId;
         }
