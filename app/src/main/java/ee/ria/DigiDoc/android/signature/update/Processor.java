@@ -278,11 +278,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
         documentSave = upstream -> upstream.switchMap(action -> {
             navigator.execute(Transaction.activityForResult(SAVE_FILE,
                     createSaveIntent(action.document), null));
+            File containerFile = action.containerFile;
+            DataFile dataFile = action.document;
+            boolean confirmation = action.confirmation;
             return navigator.activityResults()
                     .filter(activityResult ->
                             activityResult.requestCode() == SAVE_FILE)
+                    .take(1)
                     .switchMap(activityResult -> signatureContainerDataSource
-                            .getDocumentFile(action.containerFile, action.document, false)
+                            .getDocumentFile(containerFile, dataFile, confirmation)
                             .toObservable()
                             .map(documentFile -> {
                                 if (activityResult.resultCode() == RESULT_OK) {

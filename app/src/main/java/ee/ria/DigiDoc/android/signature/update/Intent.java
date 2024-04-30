@@ -169,13 +169,16 @@ class DocumentSaveIntent implements Intent, Action {
 
     DataFile document;
 
-    public DocumentSaveIntent(File containerFile, DataFile document) {
+    boolean confirmation;
+
+    public DocumentSaveIntent(File containerFile, DataFile document, boolean confirmation) {
         this.containerFile = containerFile;
         this.document = document;
+        this.confirmation = confirmation;
     }
 
-    static DocumentSaveIntent create(File containerFile, DataFile document) {
-        return new DocumentSaveIntent(containerFile, document);
+    static DocumentSaveIntent create(File containerFile, DataFile document, boolean confirmation) {
+        return new DocumentSaveIntent(containerFile, document, confirmation);
     }
 
     @Override
