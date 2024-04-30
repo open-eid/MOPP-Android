@@ -15,10 +15,10 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@id/mainHomeNavigation"
-        android:theme="@style/ThemeOverlay.Application.Dark"
         style="@style/Widget.Application.BottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.Application.Dark"
         app:menu="@menu/main_home_navigation" />
 
 </merge>

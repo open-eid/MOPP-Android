@@ -4,6 +4,7 @@ import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents
 import static ee.ria.DigiDoc.android.Constants.VOID;
 import static ee.ria.DigiDoc.android.utils.display.DisplayUtil.getDeviceOrientation;
 import static ee.ria.DigiDoc.common.PinConstants.PIN2_MIN_LENGTH;
+import static ee.ria.DigiDoc.common.PinConstants.PIN_MAX_LENGTH;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -323,7 +324,8 @@ public final class IdCardView extends LinearLayout implements
             setError(signPin2Label, getResources().getString(
                     R.string.id_card_sign_pin_invalid_length,
                     getResources().getString(R.string.signature_id_card_pin2),
-                    Integer.toString(PIN2_MIN_LENGTH)));
+                    Integer.toString(PIN2_MIN_LENGTH),
+                    Integer.toString(PIN_MAX_LENGTH)));
         }
     }
 
@@ -396,12 +398,21 @@ public final class IdCardView extends LinearLayout implements
         smartIdRadioButton.setContentDescription("");
         setupContentDescriptions(smartIdRadioButton, smartIdContentDescription);
 
+        RadioButton nfcRadioButton = methodView.findViewById(R.id.signatureUpdateSignatureAddMethodNFC);
+        CharSequence nfcContentDescription = nfcRadioButton.getContentDescription();
+        nfcRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        nfcRadioButton.setContentDescription("");
+        setupContentDescriptions(nfcRadioButton, nfcContentDescription);
+
         postDelayed(() -> {
             mobileIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
-            mobileIdRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 3));
+            mobileIdRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 4));
 
             smartIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
-            smartIdRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_smart_id, 2, 3));
+            smartIdRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_smart_id, 2, 4));
+
+            nfcRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            nfcRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_nfc, 4, 4));
         }, 3500);
     }
 }

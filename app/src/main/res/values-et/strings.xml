@@ -195,6 +195,7 @@
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>
     <string name="signature_update_signature_add_method_smart_id">Smart-ID</string>
     <string name="signature_update_signature_add_method_id_card">ID-kaart</string>
+    <string name="signature_update_signature_add_method_nfc">NFC</string>
     <string name="signature_update_signature_add_positive_button">ALLKIRJASTA</string>
     <string name="signature_update_signature_add_success">ALLKIRI LISATUD</string>
     <string name="signature_update_signature_add_error">Midagi läks valesti</string>
@@ -214,10 +215,12 @@
     <string name="signature_update_signature_selected_method_mobile_id">Allkirjastamise viisiks on Mobiil-ID, vahekaart %1$d / %2$d</string>
     <string name="signature_update_signature_selected_method_smart_id">Allkirjastamise viisiks on Smart-ID, vahekaart %1$d / %2$d</string>
     <string name="signature_update_signature_selected_method_id_card">Allkirjastamise viisiks on ID-kaart, vahekaart %1$d / %2$d</string>
+    <string name="signature_update_signature_selected_method_nfc">Allkirjastamise viisiks on NFC, vahekaart %1$d / %2$d</string>
 
     <string name="signature_update_signature_chosen_method_mobile_id">Allkirjastamisviis mobiil-ID on valitud</string>
     <string name="signature_update_signature_chosen_method_smart_id">Smart-ID allkirjastamise vahend valitud</string>
     <string name="signature_update_signature_chosen_method_id_card">ID-kaart allkirjastamise vahend valitud</string>
+    <string name="signature_update_signature_chosen_method_nfc">NFC allkirjastamise vahend valitud</string>
 
     <string name="signature_update_mobile_id_message">Sisesta oma telefoninumber ja isikukood mobiil-IDga allkirjastamiseks</string>
     <string name="signature_update_mobile_id_phone_no">Riigikood ja telefoninumber</string>
@@ -294,7 +297,12 @@
     <string name="signature_update_id_card_sign_pin2_invalid_final">Vale PIN2. Järgmise vale sisestusega lukustub PIN.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 on lukus. Mine Minu eID, et avada.</string>
 
-    <string name="id_card_sign_pin_invalid_length">%1$s-kood peab olema vähemalt %2$s-kohaline</string>
+    <string name="nfc_sign_can_invalid_length">CAN-kood peab olema %1$s-kohaline</string>
+    <string name="id_card_sign_pin_invalid_length">%1$s-kood peab olema vähemalt %2$s-kohaline ja maksimaalselt %3$s-kohaline</string>
+
+    <string name="signature_update_nfc_message">Enter your CAN number and PIN 2 code to sign with ID-Card using NFC</string>
+    <string name="signature_update_nfc_can">CAN code on card</string>
+    <string name="signature_update_nfc_pin2">PIN 2 code</string>
 
     <!-- Signature Details -->
     <string name="signature_error_details_title">Hoiatused</string>

@@ -33,16 +33,18 @@ public final class SettingsDataStore {
     private static final String KEY_LOCALE = "locale";
 
     private final SharedPreferences preferences;
+    private final SharedPreferences encryptedPreferences;
     private final Resources resources;
 
     @Inject SettingsDataStore(Application application) {
         preferences = PreferenceManager.getDefaultSharedPreferences(application);
+        encryptedPreferences = getEncryptedPreferences(application.getApplicationContext());
         this.resources = application.getResources();
     }
 
     public int getSignatureAddMethod() {
         int signatureAddMethod = preferences.getInt(resources.getString(R.string.main_settings_signature_add_method_key), R.id.signatureUpdateSignatureAddMethodMobileId);
-        Integer[] signatureAddMethods = { R.id.signatureUpdateSignatureAddMethodMobileId, R.id.signatureUpdateSignatureAddMethodSmartId, R.id.signatureUpdateSignatureAddMethodIdCard };
+        Integer[] signatureAddMethods = { R.id.signatureUpdateSignatureAddMethodMobileId, R.id.signatureUpdateSignatureAddMethodSmartId, R.id.signatureUpdateSignatureAddMethodIdCard, R.id.signatureUpdateSignatureAddMethodNFC };
         if (!Arrays.asList(signatureAddMethods).contains(signatureAddMethod)) {
             return R.id.signatureUpdateSignatureAddMethodMobileId;
         }
@@ -109,6 +111,24 @@ public final class SettingsDataStore {
         editor.putString(resources.getString(R.string.main_settings_smartid_country_key),
                 country);
         editor.apply();
+    }
+
+    public String getCan() {
+        if (encryptedPreferences != null) {
+            return encryptedPreferences.getString(resources.getString(R.string.main_settings_can_key), "");
+        }
+        Timber.log(Log.ERROR, "Unable to read CAN");
+        return "";
+    }
+
+    public void setCan(String can) {
+        if (encryptedPreferences != null) {
+            SharedPreferences.Editor editor = encryptedPreferences.edit();
+            editor.putString(resources.getString(R.string.main_settings_can_key), can);
+            editor.commit();
+            return;
+        }
+        Timber.log(Log.ERROR, "Unable to save CAN");
     }
 
     public boolean getIsRoleAskingEnabled() {

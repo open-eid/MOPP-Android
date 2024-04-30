@@ -196,6 +196,7 @@
     <string name="signature_update_signature_add_method_mobile_id">Mobiil-ID</string>
     <string name="signature_update_signature_add_method_smart_id">Smart-ID</string>
     <string name="signature_update_signature_add_method_id_card">ID-карта</string>
+    <string name="signature_update_signature_add_method_nfc">NFC</string>
     <string name="signature_update_signature_add_positive_button">ПОДПИСАТЬ</string>
     <string name="signature_update_signature_add_success">ПОДПИСЬ ДОБАВЛЕНА</string>
     <string name="signature_update_signature_add_error">Что-то пошло не так</string>
@@ -215,10 +216,12 @@
     <string name="signature_update_signature_selected_method_mobile_id">Метод подписи – Mobiil-ID, вкладка %1$d из %2$d</string>
     <string name="signature_update_signature_selected_method_smart_id">Метод подписи – Smart-ID, вкладка %1$d из %2$d</string>
     <string name="signature_update_signature_selected_method_id_card">Метод подписи – ID-карта, вкладка %1$d из %2$d</string>
+    <string name="signature_update_signature_selected_method_nfc">Метод подписи – NFC, вкладка %1$d из %2$d</string>
 
     <string name="signature_update_signature_chosen_method_mobile_id">Выбран метод подписи Mobiil-ID</string>
     <string name="signature_update_signature_chosen_method_smart_id">Выбран метод подписи Smart-ID</string>
     <string name="signature_update_signature_chosen_method_id_card">Выбран метод подписи ID-карта</string>
+    <string name="signature_update_signature_chosen_method_nfc">Выбран метод подписи NFC</string>
 
     <string name="signature_update_mobile_id_message">Введите свой телефонный номер и личный код для подписания с помощью mobiil-ID</string>
     <string name="signature_update_mobile_id_phone_no">Код страны и телефонный номер</string>
@@ -296,7 +299,12 @@
     <string name="signature_update_id_card_sign_pin2_invalid_final">Неверный PIN2. У Вас осталась 1 попытка до блокировки Вашего PIN2.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 заблокирован. Зайдите в Мой eID, чтобы разблокировать его.</string>
 
-    <string name="id_card_sign_pin_invalid_length">%1$s-код должен быть не менее %2$s символов</string>
+    <string name="nfc_sign_can_invalid_length">CAN-код должен состоять из %1$s символов</string>
+    <string name="id_card_sign_pin_invalid_length">%1$s-код должен состоять минимум из %2$s и максимум из %3$s символов</string>
+
+    <string name="signature_update_nfc_message">Enter your CAN number and PIN 2 code to sign with ID-Card using NFC</string>
+    <string name="signature_update_nfc_can">CAN code on card</string>
+    <string name="signature_update_nfc_pin2">PIN 2 code</string>
 
     <!-- Signature Details -->
     <string name="signature_error_details_title">Предупреждения</string>

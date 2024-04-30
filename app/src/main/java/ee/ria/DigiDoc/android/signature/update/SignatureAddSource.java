@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -20,6 +21,9 @@ import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdOnSubscribe;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdRequest;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
+import ee.ria.DigiDoc.android.signature.update.nfc.NFCOnSubscribe;
+import ee.ria.DigiDoc.android.signature.update.nfc.NFCRequest;
+import ee.ria.DigiDoc.android.signature.update.nfc.NFCResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdOnSubscribe;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdRequest;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
@@ -35,6 +39,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okio.ByteString;
+import timber.log.Timber;
 
 final class SignatureAddSource {
 
@@ -73,6 +78,9 @@ final class SignatureAddSource {
                         }
                     })
                     .startWithItem(Result.SignatureAddResult.method(method, IdCardResponse.initial()));
+        } else if (method == R.id.signatureUpdateSignatureAddMethodNFC) {
+            Timber.log(Log.DEBUG, "SignatureAddSource.java:83 :show");
+            return Observable.just(Result.SignatureAddResult.show(method));
         } else {
             throw new IllegalArgumentException("Unknown method " + method);
         }
@@ -154,6 +162,22 @@ final class SignatureAddSource {
                     .observeOn(AndroidSchedulers.mainThread())
                     .startWithItem(SmartIdResponse
                             .status(SessionStatusResponse.ProcessStatus.OK))
+                    .onErrorResumeNext(Observable::error);
+        } else if (request instanceof NFCRequest nfcRequest) {
+            settingsDataStore.setCan(nfcRequest.can());
+            Single<SignedContainer> s = signatureContainerDataSource.get(containerFile);
+            Observable<NFCResponse> obs = s.flatMapObservable(container -> {
+                    String can = nfcRequest.can();
+                    String pin2 = nfcRequest.pin2();
+                    NFCOnSubscribe nfcsub = new NFCOnSubscribe(navigator, container, can, pin2, roleData);
+                    return Observable.create(nfcsub);
+                });
+            return obs.switchMap(response -> {
+                        return Observable.just(response);
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .startWithItem(NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.OK, null))
                     .onErrorResumeNext(Observable::error);
         } else if (request instanceof IdCardRequest) {
             IdCardRequest idCardRequest = (IdCardRequest) request;

@@ -286,12 +286,21 @@ public final class SmartIdView extends LinearLayout implements
         idCardRadioButton.setContentDescription("");
         setupContentDescriptions(idCardRadioButton, idCardContentDescription);
 
+        RadioButton nfcRadioButton = methodView.findViewById(R.id.signatureUpdateSignatureAddMethodNFC);
+        CharSequence nfcContentDescription = nfcRadioButton.getContentDescription();
+        nfcRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        nfcRadioButton.setContentDescription("");
+        setupContentDescriptions(nfcRadioButton, nfcContentDescription);
+
         postDelayed(() -> {
             mobileIdRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
-            mobileIdRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 3));
+            mobileIdRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 4));
 
             idCardRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
-            idCardRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 3));
+            idCardRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 4));
+
+            nfcRadioButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            nfcRadioButton.setContentDescription(getResources().getString(R.string.signature_update_signature_selected_method_nfc, 4, 4));
         }, 3500);
     }
 

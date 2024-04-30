@@ -21,6 +21,8 @@ import ee.ria.DigiDoc.android.signature.update.idcard.IdCardResponse;
 import ee.ria.DigiDoc.android.signature.update.idcard.IdCardView;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdView;
+import ee.ria.DigiDoc.android.signature.update.nfc.NFCResponse;
+import ee.ria.DigiDoc.android.signature.update.nfc.NFCView;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdView;
 import ee.ria.DigiDoc.android.utils.TextUtil;
@@ -32,6 +34,7 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
     private final MobileIdView mobileIdView;
     private final SmartIdView smartIdView;
     private final IdCardView idCardView;
+    private final NFCView nfcView;
 
     private final Observable<Integer> methodChanges;
 
@@ -57,23 +60,27 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         mobileIdView = findViewById(R.id.signatureUpdateMobileId);
         smartIdView = findViewById(R.id.signatureUpdateSmartId);
         idCardView = findViewById(R.id.signatureUpdateIdCard);
+        nfcView = findViewById(R.id.signatureUpdateNFC);
         methodChanges = checkedChanges(methodView).skipInitialValue().publish().autoConnect();
 
         RadioButton mobileIdRadioButton = findViewById(R.id.signatureUpdateSignatureAddMethodMobileId);
         RadioButton smartIdRadioButton = findViewById(R.id.signatureUpdateSignatureAddMethodSmartId);
         RadioButton idCardIdRadioButton = findViewById(R.id.signatureUpdateSignatureAddMethodIdCard);
-
+        RadioButton nfcIdRadioButton = findViewById(R.id.signatureUpdateSignatureAddMethodNFC);
 
         setupContentDescriptions(mobileIdRadioButton,
-                getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 3));
+                getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 4));
         setupContentDescriptions(smartIdRadioButton,
-                getResources().getString(R.string.signature_update_signature_selected_method_smart_id, 2, 3));
+                getResources().getString(R.string.signature_update_signature_selected_method_smart_id, 2, 4));
         setupContentDescriptions(idCardIdRadioButton,
-                getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 3));
+                getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 4));
+        setupContentDescriptions(nfcIdRadioButton,
+                getResources().getString(R.string.signature_update_signature_selected_method_nfc, 4, 4));
 
         TextUtil.setTextViewSizeInContainer(mobileIdRadioButton);
         TextUtil.setTextViewSizeInContainer(smartIdRadioButton);
         TextUtil.setTextViewSizeInContainer(idCardIdRadioButton);
+        TextUtil.setTextViewSizeInContainer(nfcIdRadioButton);
     }
 
     @Override
@@ -87,13 +94,19 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
     }
 
     public Observable<Boolean> positiveButtonEnabled() {
-        return Observable
-                .merge( methodChanges().startWith(Observable.fromCallable(this::method)),
-                        idCardView.positiveButtonState(), mobileIdView.positiveButtonState(), smartIdView.positiveButtonState())
-                .map(ignored ->
-                        (method() == R.id.signatureUpdateSignatureAddMethodMobileId && mobileIdView.positiveButtonEnabled()) ||
+        Observable mobs = methodChanges().startWith(Observable.fromCallable(this::method));
+        Observable btnobs = Observable.merge(
+                idCardView.positiveButtonState(),
+                mobileIdView.positiveButtonState(),
+                smartIdView.positiveButtonState(),
+                nfcView.positiveButtonState());
+        Observable fobs = mobs.mergeWith(btnobs);
+        return fobs.map (ignored ->
+                (method() == R.id.signatureUpdateSignatureAddMethodMobileId && mobileIdView.positiveButtonEnabled()) ||
                         (method() == R.id.signatureUpdateSignatureAddMethodSmartId && smartIdView.positiveButtonEnabled()) ||
-                        (method() == R.id.signatureUpdateSignatureAddMethodIdCard && idCardView.positiveButtonEnabled()));
+                        (method() == R.id.signatureUpdateSignatureAddMethodIdCard && idCardView.positiveButtonEnabled()) ||
+                        (method() == R.id.signatureUpdateSignatureAddMethodNFC && nfcView.positiveButtonEnabled())
+        );
     }
 
     public int method() {
@@ -104,12 +117,14 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         mobileIdView.setVisibility(method == R.id.signatureUpdateSignatureAddMethodMobileId ? VISIBLE : GONE);
         smartIdView.setVisibility(method == R.id.signatureUpdateSignatureAddMethodSmartId ? VISIBLE : GONE);
         idCardView.setVisibility(method == R.id.signatureUpdateSignatureAddMethodIdCard ? VISIBLE : GONE);
+        nfcView.setVisibility(method == R.id.signatureUpdateSignatureAddMethodNFC ? VISIBLE : GONE);
         switch (method) {
             case R.id.signatureUpdateSignatureAddMethodMobileId:
                 mobileIdView.setDefaultPhoneNoPrefix("372");
                 break;
             case R.id.signatureUpdateSignatureAddMethodSmartId:
             case R.id.signatureUpdateSignatureAddMethodIdCard:
+            case R.id.signatureUpdateSignatureAddMethodNFC:
                 break;
             default:
                 throw new IllegalArgumentException("Unknown method " + method);
@@ -121,9 +136,11 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
         idCardView.reset(viewModel);
         mobileIdView.reset(viewModel);
         smartIdView.reset(viewModel);
+        nfcView.reset(viewModel);
         mobileIdView.clearFocus();
         smartIdView.clearFocus();
         idCardView.clearFocus();
+        nfcView.clearFocus();
         methodView.requestFocus();
     }
 
@@ -135,6 +152,8 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
                 return smartIdView.request();
             case R.id.signatureUpdateSignatureAddMethodIdCard:
                 return idCardView.request();
+            case R.id.signatureUpdateSignatureAddMethodNFC:
+                return nfcView.request();
             default:
                 throw new IllegalStateException("Unknown method " + method());
         }
@@ -147,12 +166,16 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
             smartIdView.response(null, methodView);
         } else if (response == null && idCardView.getVisibility() == VISIBLE) {
             idCardView.response(null, methodView);
+        } else if (response == null && nfcView.getVisibility() == VISIBLE) {
+            nfcView.response(null, methodView);
         } else if (response instanceof MobileIdResponse) {
             mobileIdView.response((MobileIdResponse) response, null);
         } else if (response instanceof SmartIdResponse) {
             smartIdView.response((SmartIdResponse) response, null);
         } else if (response instanceof IdCardResponse) {
             idCardView.response((IdCardResponse) response, methodView);
+        } else if (response instanceof NFCResponse) {
+            nfcView.response((NFCResponse) response, methodView);
         } else {
             throw new IllegalArgumentException("Unknown response " + response);
         }

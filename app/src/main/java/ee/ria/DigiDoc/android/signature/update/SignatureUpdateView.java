@@ -50,6 +50,8 @@ import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
 import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
+import ee.ria.DigiDoc.android.signature.update.nfc.NFCDialog;
+import ee.ria.DigiDoc.android.signature.update.nfc.NFCResponse;
 import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -110,6 +112,8 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     private final TextView smartIdInfo;
     private final TextView smartIdChallengeView;
     private final Button smartIdCancelButton;
+    private final View NFCContainerView;
+    private final NFCDialog nfcDialog;
     private final Button sendButton;
     private final View signatureButtonSpace;
     private final View encryptButtonSpace;
@@ -195,6 +199,8 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         smartIdChallengeView = findViewById(R.id.signatureUpdateSmartIdChallenge);
         smartIdCancelButton = findViewById(R.id.signatureUpdateSmartIdCancelButton);
         smartIdCancelButton.setContentDescription(getResources().getString(R.string.cancel_button_accessibility).toLowerCase());
+        NFCContainerView = findViewById(R.id.signatureUpdateNFCContainer);
+        nfcDialog = new NFCDialog(context, R.string.signature_update_nfc_hold, R.id.documentRemovalDialog);
         sendButton = findViewById(R.id.signatureUpdateSendButton);
         sendButton.setContentDescription(getResources().getString(R.string.share_container).toLowerCase());
         signatureButtonSpace = findViewById(R.id.signatureUpdateSignatureButtonSpace);
@@ -569,6 +575,26 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             }
         }
 
+        NFCContainerView.setVisibility(signatureAddResponse instanceof NFCResponse ? VISIBLE : GONE);
+        if (NFCContainerView.getVisibility() == VISIBLE) {
+            NFCContainerView.setFocusedByDefault(true);
+            NFCContainerView.setFocusable(true);
+            NFCContainerView.setFocusableInTouchMode(true);
+            setSigningModalSize(NFCContainerView);
+
+            if (!signingInfoDelegated) {
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, R.string.signature_update_mobile_id_status_request_sent);
+                signingInfoDelegated = true;
+            }
+
+            if (signatureAddResponse instanceof NFCResponse) {
+                NFCResponse nfcResponse = (NFCResponse) signatureAddResponse;
+                Timber.log(Log.DEBUG, "NFC:SignatureUpdateView.render, status %s", nfcResponse.status().toString());
+                nfcDialog.showStatus(nfcResponse);
+                nfcDialog.show();
+            }
+        }
+
         setupAccessibilityTabs();
     }
 
@@ -725,6 +751,9 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             } else if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_id_card))) {
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
                         getResources().getString(R.string.signature_update_signature_chosen_method_id_card));
+            } else if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_nfc))) {
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
+                        getResources().getString(R.string.signature_update_signature_chosen_method_nfc));
             }
         }
     }
@@ -736,6 +765,8 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             return getResources().getString(R.string.signature_update_signature_add_method_smart_id);
         } else if (method == R.id.signatureUpdateSignatureAddMethodIdCard) {
             return getResources().getString(R.string.signature_update_signature_add_method_id_card);
+        } else if (method == R.id.signatureUpdateSignatureAddMethodNFC) {
+            return getResources().getString(R.string.signature_update_signature_add_method_nfc);
         }
         return null;
     }
@@ -807,6 +838,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         errorDialog.setOnDismissListener(null);
         errorDialog.dismiss();
         nameUpdateDialog.dismiss();
+        nfcDialog.dismiss();
         isTitleViewFocused = false;
         SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
         SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);

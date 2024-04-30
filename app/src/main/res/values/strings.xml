@@ -194,6 +194,7 @@
     <string name="signature_update_signature_add_method_mobile_id">Mobile-ID</string>
     <string name="signature_update_signature_add_method_smart_id">Smart-ID</string>
     <string name="signature_update_signature_add_method_id_card">ID-card</string>
+    <string name="signature_update_signature_add_method_nfc">NFC</string>
     <string name="signature_update_signature_add_positive_button">SIGN</string>
     <string name="signature_update_signature_add_success">SIGNATURE ADDED</string>
     <string name="signature_update_signature_add_error">Something went wrong</string>
@@ -213,10 +214,12 @@
     <string name="signature_update_signature_selected_method_mobile_id">Signing option Mobile-ID, tab %1$d of %2$d</string>
     <string name="signature_update_signature_selected_method_smart_id">Signing option Smart-ID, tab %1$d of %2$d</string>
     <string name="signature_update_signature_selected_method_id_card">Signing option ID-card, tab %1$d of %2$d</string>
+    <string name="signature_update_signature_selected_method_nfc">Signing option NFC, tab %1$d / %2$d</string>
 
     <string name="signature_update_signature_chosen_method_mobile_id">Signing method Mobile-ID, selected</string>
     <string name="signature_update_signature_chosen_method_smart_id">Signing method Smart-ID, selected</string>
     <string name="signature_update_signature_chosen_method_id_card">Signing method ID-Card, selected</string>
+    <string name="signature_update_signature_chosen_method_nfc">Signing method NFC, selected</string>
 
     <string name="signature_update_mobile_id_message">Enter your mobile number and personal code to sign with mobile-ID</string>
     <string name="signature_update_mobile_id_phone_no">Country code and phone number</string>
@@ -294,7 +297,17 @@
     <string name="signature_update_id_card_sign_pin2_invalid_final">Wrong PIN2. You have 1 attempt left until your PIN2 is blocked.</string>
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 blocked. Go to My eID to unblock it.</string>
 
-    <string name="id_card_sign_pin_invalid_length">%1$s code must be at least %2$s digits long</string>
+    <string name="nfc_sign_can_invalid_length">CAN-code must be %1$s digits long</string>
+    <string name="id_card_sign_pin_invalid_length">%1$s code must be at least %2$s and a maximum of %3$s digits long</string>
+
+    <string name="signature_update_nfc_message">Enter your CAN and PIN 2 code to sign with ID-Card using NFC</string>
+    <string name="signature_update_nfc_can">CAN code on card</string>
+    <string name="signature_update_nfc_pin2">PIN 2 code</string>
+    <string name="signature_update_nfc_adapter_missing">NFC adapter not found</string>
+    <string name="signature_update_nfc_tag_lost">NFC connection lost</string>
+    <string name="signature_update_nfc_technical_error">Technical error</string>
+    <string name="signature_update_nfc_hold">Please hold your ID Card against the phone until the signing process is completed</string>
+    <string name="signature_update_nfc_detected">Card detected. Please keep holding it until the signing process is completed</string>
 
     <!-- Signature Details -->
     <string name="signature_error_details_title">Warnings</string>
@@ -544,7 +557,7 @@
     <string name="file_added">File added</string>
     <string name="files_added">Files added</string>
     <string name="error_dialog">Error dialog</string>
-    <string name="confirmation_dialog">Confirmation dialog</string>
+    <string name="confirmation_dialog">Status dialog</string>
     <string name="recipients_found">Recipients found</string>
     <string name="recipient_found">Recipient found</string>
     <string name="recipient_added">Recipient added</string>
