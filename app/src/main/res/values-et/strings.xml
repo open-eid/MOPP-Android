@@ -303,6 +303,7 @@
     <string name="signature_update_nfc_message">Enter your CAN number and PIN 2 code to sign with ID-Card using NFC</string>
     <string name="signature_update_nfc_can">CAN code on card</string>
     <string name="signature_update_nfc_pin2">PIN 2 code</string>
+    <string name="signature_update_nfc_adapter_missing">See seade ei toeta NFC-d.</string>
 
     <!-- Signature Details -->
     <string name="signature_error_details_title">Hoiatused</string>

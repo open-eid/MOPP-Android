@@ -7,8 +7,11 @@ import static ee.ria.DigiDoc.common.PinConstants.PIN2_MIN_LENGTH;
 import static ee.ria.DigiDoc.common.PinConstants.PIN_MAX_LENGTH;
 
 import android.content.Context;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcManager;
 import android.text.Editable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
@@ -26,18 +29,25 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.Constants;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
+import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.common.PinConstants;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
+import timber.log.Timber;
 
-public class NFCView  extends LinearLayout implements SignatureAddView<NFCRequest, NFCResponse> {
+public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest, NFCResponse> {
+    private final Navigator navigator;
+
     private final Subject<Object> positiveButtonStateSubject = PublishSubject.create();
+    private final LinearLayout nfcFoundLayout;
+    private final LinearLayout nfcNotFoundLayout;
     private final TextView message;
     private final EditText canView;
     private final TextInputLayout canLayout;
@@ -54,6 +64,9 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
         setOrientation(VERTICAL);
         inflate(context, R.layout.signature_update_nfc, this);
 
+        navigator = ApplicationApp.component(context).navigator();
+        nfcFoundLayout = findViewById(R.id.signatureUpdateNFCFoundLayout);
+        nfcNotFoundLayout = findViewById(R.id.signatureUpdateNFCNotFoundLayout);
         message = findViewById(R.id.signatureUpdateNFCMessage);
         canView = findViewById(R.id.signatureUpdateNFCCAN);
         canLayout = findViewById(R.id.signatureUpdateNFCCANLayout);
@@ -61,6 +74,9 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
         pinView = findViewById(R.id.signatureUpdateNFCPIN2);
         pinLayout = findViewById(R.id.signatureUpdateNFCPIN2Layout);
         pinLabel = findViewById(R.id.signatureUpdateNFCPIN2Label);
+
+        handleNFCSupportLayout();
+
         AccessibilityUtils.setSingleCharactersContentDescription(canView, "Card number");
         AccessibilityUtils.setSingleCharactersContentDescription(pinView, "PIN code");
         AccessibilityUtils.setEditTextCursorToEnd(canView);
@@ -186,6 +202,27 @@ public class NFCView  extends LinearLayout implements SignatureAddView<NFCReques
         super.onDetachedFromWindow();
 
         removeAccessibilityStateChanged(accessibilityTouchExplorationStateChangeListener);
+    }
+
+    private boolean isNFCSupported() {
+        NfcManager manager = (NfcManager) navigator.activity().getSystemService(Context.NFC_SERVICE);
+        NfcAdapter adapter = manager.getDefaultAdapter();
+        if (adapter == null || !adapter.isEnabled()) {
+            Timber.log(Log.ERROR, "NFC is not supported on this device");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void handleNFCSupportLayout() {
+        if (isNFCSupported()) {
+            nfcNotFoundLayout.setVisibility(GONE);
+            nfcFoundLayout.setVisibility(VISIBLE);
+        } else {
+            nfcFoundLayout.setVisibility(GONE);
+            nfcNotFoundLayout.setVisibility(VISIBLE);
+        }
     }
 
     private void setupContentDescriptions(RadioButton radioButton, CharSequence contentDescription) {

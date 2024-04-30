@@ -351,6 +351,9 @@
 
     <item type="id" name="signatureUpdateNFC" />
     <item type="id" name="signatureUpdateNFCMessage" />
+    <item type="id" name="signatureUpdateNFCNotFoundLayout" />
+    <item type="id" name="signatureUpdateNFCNotFoundMessage" />
+    <item type="id" name="signatureUpdateNFCFoundLayout" />
     <item type="id" name="signatureUpdateNFCCAN" />
     <item type="id" name="signatureUpdateNFCCANLayout" />
     <item type="id" name="signatureUpdateNFCCANLabel" />
