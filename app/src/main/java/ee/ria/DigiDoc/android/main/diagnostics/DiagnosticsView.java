@@ -4,6 +4,7 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxToolbar.navigationClicks;
+import static ee.ria.DigiDoc.android.Constants.VIEW_TYPE;
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileLogsSaveClicksSubject;
 import static ee.ria.DigiDoc.android.main.diagnostics.DiagnosticsScreen.diagnosticsFileSaveClicksSubject;
 import static ee.ria.DigiDoc.android.main.settings.util.SettingsUtil.getToolbarImageButton;
@@ -49,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import ee.ria.DigiDoc.BuildConfig;
 import ee.ria.DigiDoc.R;
@@ -335,7 +337,7 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
         androidVersion.setText(setDisplayTextWithTitle(R.string.main_diagnostics_operating_system_title,
                 getAndroidVersion(), Typeface.DEFAULT_BOLD));
         libDocVersion.setText(setDisplayTextWithTitle(R.string.main_diagnostics_libdigidocpp_title,
-                getLibDigiDocVersion(settingsDataStore), Typeface.DEFAULT_BOLD));
+                getLibDigiDocVersion(settingsDataStore, navigator.activity()), Typeface.DEFAULT_BOLD));
 
         configUrl.setText(setDisplayTextWithTitle(R.string.main_diagnostics_config_url_title,
                 configurationProvider.getConfigUrl(), Typeface.DEFAULT));
@@ -456,13 +458,26 @@ public final class DiagnosticsView extends CoordinatorLayout implements ContentV
         return "Android " + Build.VERSION.RELEASE;
     }
 
-    private static String getLibDigiDocVersion(SettingsDataStore settingsDataStore) {
-        String libDigidocppVersion = SignLib.libdigidocppVersion();
-        // Libdigidocpp might not have been initialized when opening Diagnostics view
-        if (libDigidocppVersion.isEmpty()) {
-            return settingsDataStore.getLibdigidocppVersion();
-        }
-        settingsDataStore.setLibdigidocppVersion(libDigidocppVersion);
-        return libDigidocppVersion;
+    private static String getLibDigiDocVersion(SettingsDataStore settingsDataStore, Context context) {
+        return Optional.ofNullable(context)
+                .filter(ctx -> ctx instanceof Activity)
+                .map(ctx -> (Activity) ctx)
+                .map(Activity::getIntent)
+                .flatMap(intent -> Optional.ofNullable(intent.getExtras()))
+                .filter(extras -> extras.containsKey(VIEW_TYPE))
+                .map(extras -> extras.get(VIEW_TYPE))
+                .filter(viewType -> viewType instanceof String && !((String) viewType).isEmpty())
+                .map(viewType -> {
+                    String savedLibDigidocppVersion = settingsDataStore.getLibdigidocppVersion();
+                    if (savedLibDigidocppVersion.isEmpty()) {
+                        return "";
+                    }
+                    return savedLibDigidocppVersion;
+                })
+                .orElseGet(() -> {
+                    String libDigidocppVersion = SignLib.libdigidocppVersion();
+                    settingsDataStore.setLibdigidocppVersion(libDigidocppVersion);
+                    return libDigidocppVersion;
+                });
     }
 }

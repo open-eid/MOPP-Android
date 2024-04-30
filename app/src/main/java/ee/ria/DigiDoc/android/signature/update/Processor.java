@@ -236,7 +236,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
             } else {
                 File containerFile = action.containerFile;
                 return signatureContainerDataSource
-                        .getDocumentFile(containerFile, action.document, false)
+                        .getDocumentFile(containerFile, action.document, !action.confirmation)
                         .toObservable()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
