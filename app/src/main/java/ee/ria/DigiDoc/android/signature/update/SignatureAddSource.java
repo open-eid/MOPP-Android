@@ -165,7 +165,7 @@ final class SignatureAddSource {
                     .onErrorResumeNext(Observable::error);
         } else if (request instanceof NFCRequest nfcRequest) {
             settingsDataStore.setCan(nfcRequest.can());
-            Single<SignedContainer> s = signatureContainerDataSource.get(containerFile);
+            Single<SignedContainer> s = signatureContainerDataSource.get(containerFile, isSivaConfirmed);
             Observable<NFCResponse> obs = s.flatMapObservable(container -> {
                     String can = nfcRequest.can();
                     String pin2 = nfcRequest.pin2();
