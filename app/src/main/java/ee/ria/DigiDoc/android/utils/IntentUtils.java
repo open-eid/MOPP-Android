@@ -296,7 +296,11 @@ public final class IntentUtils {
     private static String getDataFileMimetype(DataFile dataFile) {
         int extensionIndex = dataFile.name().lastIndexOf(".");
         String extension = extensionIndex != -1 ? dataFile.name().substring(extensionIndex + 1) : "";
-        return !extension.isEmpty() ? MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) : "application/octet-stream";
+        if (!extension.isEmpty()) {
+            String dataFileMimetype = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            return dataFileMimetype != null ? dataFileMimetype : "application/octet-stream";
+        }
+        return "application/octet-stream";
     }
 
     private static long getFileSize(ContentResolver contentResolver, Uri uri) {

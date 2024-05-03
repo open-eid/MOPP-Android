@@ -787,7 +787,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         disposables.add(adapter.scrollToTop().subscribe(ignored -> listView.scrollToPosition(0)));
         disposables.add(adapter.documentSaveClicks().subscribe(document ->
                 documentSaveIntentSubject.onNext(DocumentSaveIntent
-                        .create((nestedFile != null) ? nestedFile : containerFile, document))));
+                        .create((nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, document, isSivaConfirmed))));
         disposables.add(adapter.signatureClicks().subscribe(signature ->
                 signatureViewIntentSubject.onNext(SignatureViewIntent
                         .create(containerFile, signature, isSivaConfirmed))));
