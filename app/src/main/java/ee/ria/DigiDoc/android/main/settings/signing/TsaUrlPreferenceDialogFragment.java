@@ -70,7 +70,9 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
 
             if (appCompatEditText != null) {
                 setAccessibilityForEditText(tsaUrlPreference, appCompatEditText, appCompatTextView);
-                AccessibilityUtils.setTextViewContentDescription(true, configurationProvider.getTsaUrl(), appCompatTextView.getText().toString(), appCompatEditText);
+                if (AccessibilityUtils.isTalkBackEnabled()) {
+                    AccessibilityUtils.setTextViewContentDescription(getContext(), true, configurationProvider.getTsaUrl(), appCompatTextView.getText().toString(), appCompatEditText);
+                }
             }
 
             if (summary != null) {

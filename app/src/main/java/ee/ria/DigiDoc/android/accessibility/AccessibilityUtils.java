@@ -27,6 +27,7 @@ import net.cachapa.expandablelayout.ExpandableLayout;
 
 import java.util.Locale;
 
+import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.common.TextUtil;
 
@@ -101,7 +102,7 @@ public class AccessibilityUtils {
         view.setAccessibilityPaneTitle(view.getResources().getString(titleResId).toLowerCase());
     }
 
-    public static void setTextViewContentDescription(boolean setAsSingleCharacters, @Nullable String hint, String label, EditText editText) {
+    public static void setTextViewContentDescription(Context context, boolean setAsSingleCharacters, @Nullable String hint, String label, EditText editText) {
         editText.setAccessibilityDelegate(new View.AccessibilityDelegate() {
 
             @Override
@@ -136,11 +137,11 @@ public class AccessibilityUtils {
 
                     String cursorPositionDescription;
                     if (cursorPosition == 0) {
-                        cursorPositionDescription = "Cursor's focus is at the beginning";
+                        cursorPositionDescription = context.getResources().getString(R.string.cursor_focus_beginning_content_description);
                     } else if (cursorPosition == textLength) {
-                        cursorPositionDescription = "Cursor's focus is at the end";
+                        cursorPositionDescription = context.getResources().getString(R.string.cursor_focus_end_content_description);
                     } else {
-                        cursorPositionDescription = "Cursor's focus is at character " + (cursorPosition + 1);
+                        cursorPositionDescription = context.getResources().getString(R.string.cursor_focus_at_character_content_description, cursorPosition + 1);
                     }
                     if (editText.getText() != null && !editText.getText().toString().isEmpty()) {
                         if (setAsSingleCharacters) {

@@ -81,7 +81,9 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
 
             if (appCompatEditText != null) {
                 setAccessibilityForEditText(uuidPreference, appCompatEditText, appCompatTextView);
-                AccessibilityUtils.setTextViewContentDescription(true, "00000000-0000-0000-0000-000000000000", appCompatTextView.getText().toString(), appCompatEditText);
+                if (AccessibilityUtils.isTalkBackEnabled()) {
+                    AccessibilityUtils.setTextViewContentDescription(getContext(), true, "00000000-0000-0000-0000-000000000000", appCompatTextView.getText().toString(), appCompatEditText);
+                }
             }
 
             if (summary != null) {

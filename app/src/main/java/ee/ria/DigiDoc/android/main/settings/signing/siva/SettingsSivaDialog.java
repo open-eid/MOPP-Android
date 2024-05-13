@@ -134,7 +134,7 @@ public class SettingsSivaDialog extends Dialog {
         if (AccessibilityUtils.isTalkBackEnabled()) {
             handleSivaUrlContentDescription();
             AccessibilityUtils.setEditTextCursorToEnd(sivaServiceUrl);
-            AccessibilityUtils.setTextViewContentDescription(false, null, context.getString(R.string.main_settings_siva_service_title), sivaServiceUrl);
+            AccessibilityUtils.setTextViewContentDescription(context, false, null, context.getString(R.string.main_settings_siva_service_title), sivaServiceUrl);
         }
     }
 

@@ -99,15 +99,16 @@ public final class MobileIdView extends LinearLayout implements
 
         if (AccessibilityUtils.isTalkBackEnabled()) {
             setAccessibilityDescription();
+
+            AccessibilityUtils.setSingleCharactersContentDescription(phoneNoView, countryAndPhoneNoLabel.getText().toString());
+            AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView, personalCodeLabelText.getText().toString());
+
+            AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
+            AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
+
+            AccessibilityUtils.setTextViewContentDescription(context, true, getResources().getString(R.string.mobile_id_country_code_and_phone_number_placeholder), countryAndPhoneNoLabel.getText().toString(), phoneNoView);
+            AccessibilityUtils.setTextViewContentDescription(context, true, null, personalCodeLabelText.getText().toString(), personalCodeView);
         }
-        AccessibilityUtils.setSingleCharactersContentDescription(phoneNoView, countryAndPhoneNoLabel.getText().toString());
-        AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView, personalCodeLabelText.getText().toString());
-
-        AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
-        AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
-
-        AccessibilityUtils.setTextViewContentDescription(true, getResources().getString(R.string.mobile_id_country_code_and_phone_number_placeholder), countryAndPhoneNoLabel.getText().toString(), phoneNoView);
-        AccessibilityUtils.setTextViewContentDescription(true, null, personalCodeLabelText.getText().toString(), personalCodeView);
     }
 
     @Override

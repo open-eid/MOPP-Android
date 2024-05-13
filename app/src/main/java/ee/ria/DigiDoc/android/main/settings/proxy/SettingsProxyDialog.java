@@ -115,10 +115,10 @@ public class SettingsProxyDialog extends Dialog {
             AccessibilityUtils.setEditTextCursorToEnd(port);
             AccessibilityUtils.setEditTextCursorToEnd(username);
             AccessibilityUtils.setEditTextCursorToEnd(password);
-            AccessibilityUtils.setTextViewContentDescription(false, null, context.getString(R.string.main_settings_proxy_host), host);
-            AccessibilityUtils.setTextViewContentDescription(false, "80", context.getString(R.string.main_settings_proxy_port), port);
-            AccessibilityUtils.setTextViewContentDescription(false, null, context.getString(R.string.main_settings_proxy_username), username);
-            AccessibilityUtils.setTextViewContentDescription(false, null, context.getString(R.string.main_settings_proxy_password), password);
+            AccessibilityUtils.setTextViewContentDescription(context, false, null, context.getString(R.string.main_settings_proxy_host), host);
+            AccessibilityUtils.setTextViewContentDescription(context, false, "80", context.getString(R.string.main_settings_proxy_port), port);
+            AccessibilityUtils.setTextViewContentDescription(context, false, null, context.getString(R.string.main_settings_proxy_username), username);
+            AccessibilityUtils.setTextViewContentDescription(context, false, null, context.getString(R.string.main_settings_proxy_password), password);
         }
     }
 
