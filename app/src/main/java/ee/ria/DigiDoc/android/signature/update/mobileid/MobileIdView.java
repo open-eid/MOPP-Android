@@ -9,8 +9,10 @@ import static ee.ria.DigiDoc.common.TextUtil.PHONE_SYMBOLS;
 import static ee.ria.DigiDoc.common.TextUtil.getSymbolsFilter;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.accessibility.AccessibilityManager;
@@ -98,8 +100,14 @@ public final class MobileIdView extends LinearLayout implements
         if (AccessibilityUtils.isTalkBackEnabled()) {
             setAccessibilityDescription();
         }
+        AccessibilityUtils.setSingleCharactersContentDescription(phoneNoView, countryAndPhoneNoLabel.getText().toString());
+        AccessibilityUtils.setSingleCharactersContentDescription(personalCodeView, personalCodeLabelText.getText().toString());
+
         AccessibilityUtils.setEditTextCursorToEnd(phoneNoView);
         AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
+
+        AccessibilityUtils.setTextViewContentDescription(true, getResources().getString(R.string.mobile_id_country_code_and_phone_number_placeholder), countryAndPhoneNoLabel.getText().toString(), phoneNoView);
+        AccessibilityUtils.setTextViewContentDescription(true, null, personalCodeLabelText.getText().toString(), personalCodeView);
     }
 
     @Override
@@ -152,6 +160,12 @@ public final class MobileIdView extends LinearLayout implements
                     isPersonalCodeCorrect(personalCode.toString());
         }
         return false;
+    }
+
+    public void setDefaultPhoneNoPrefix(String phoneNoPrefix) {
+        if (TextUtils.isEmpty(phoneNoView.getText())) {
+            phoneNoView.setText(phoneNoPrefix, TextView.BufferType.EDITABLE);
+        }
     }
 
     private void setAccessibilityDescription() {

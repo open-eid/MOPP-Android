@@ -42,6 +42,7 @@ import androidx.preference.EditTextPreferenceDialogFragmentCompat;
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
+import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 
 public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
@@ -80,6 +81,7 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
 
             if (appCompatEditText != null) {
                 setAccessibilityForEditText(uuidPreference, appCompatEditText, appCompatTextView);
+                AccessibilityUtils.setTextViewContentDescription(true, "00000000-0000-0000-0000-000000000000", appCompatTextView.getText().toString(), appCompatEditText);
             }
 
             if (summary != null) {

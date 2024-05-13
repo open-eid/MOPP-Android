@@ -25,6 +25,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
+import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 
@@ -69,6 +70,7 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
 
             if (appCompatEditText != null) {
                 setAccessibilityForEditText(tsaUrlPreference, appCompatEditText, appCompatTextView);
+                AccessibilityUtils.setTextViewContentDescription(true, configurationProvider.getTsaUrl(), appCompatTextView.getText().toString(), appCompatEditText);
             }
 
             if (summary != null) {

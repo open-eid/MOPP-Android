@@ -131,6 +131,8 @@ public final class SmartIdView extends LinearLayout implements
         if (AccessibilityUtils.isTalkBackEnabled()) {
             setAccessibilityDescription();
         }
+
+        AccessibilityUtils.setTextViewContentDescription(true, null, personalCodeViewLabel.getText().toString(), personalCodeView);
     }
 
     @Override

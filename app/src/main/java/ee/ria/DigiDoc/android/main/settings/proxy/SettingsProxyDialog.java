@@ -111,6 +111,14 @@ public class SettingsProxyDialog extends Dialog {
 
         if (AccessibilityUtils.isTalkBackEnabled()) {
             handleSivaUrlContentDescription();
+            AccessibilityUtils.setEditTextCursorToEnd(host);
+            AccessibilityUtils.setEditTextCursorToEnd(port);
+            AccessibilityUtils.setEditTextCursorToEnd(username);
+            AccessibilityUtils.setEditTextCursorToEnd(password);
+            AccessibilityUtils.setTextViewContentDescription(false, null, context.getString(R.string.main_settings_proxy_host), host);
+            AccessibilityUtils.setTextViewContentDescription(false, "80", context.getString(R.string.main_settings_proxy_port), port);
+            AccessibilityUtils.setTextViewContentDescription(false, null, context.getString(R.string.main_settings_proxy_username), username);
+            AccessibilityUtils.setTextViewContentDescription(false, null, context.getString(R.string.main_settings_proxy_password), password);
         }
     }
 

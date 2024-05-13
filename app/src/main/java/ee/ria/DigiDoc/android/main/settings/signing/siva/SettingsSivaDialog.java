@@ -133,6 +133,8 @@ public class SettingsSivaDialog extends Dialog {
 
         if (AccessibilityUtils.isTalkBackEnabled()) {
             handleSivaUrlContentDescription();
+            AccessibilityUtils.setEditTextCursorToEnd(sivaServiceUrl);
+            AccessibilityUtils.setTextViewContentDescription(false, null, context.getString(R.string.main_settings_siva_service_title), sivaServiceUrl);
         }
     }
 
@@ -196,16 +198,6 @@ public class SettingsSivaDialog extends Dialog {
                 resetCertificateInfo(getContext());
             }
         }
-    }
-
-    private void restartIntent() {
-        PackageManager packageManager = getContext().getPackageManager();
-        Intent intent = packageManager.getLaunchIntentForPackage(getContext().getPackageName());
-        assert intent != null;
-        ComponentName componentName = intent.getComponent();
-        Intent restartIntent = Intent.makeRestartActivityTask(componentName);
-        restartIntent.setAction(Intent.ACTION_CONFIGURATION_CHANGED);
-        getContext().startActivity(restartIntent);
     }
 
     public void render(ViewState state) {
