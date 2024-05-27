@@ -112,6 +112,13 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                         summary.setSingleLine(summary.getText() != null && summary.getText().length() != 0);
                         handleTsaUrlContentDescription(view, checkBox);
+                        if (summary.getText().toString().isEmpty()) {
+                            summary.setHint(configurationProvider.getTsaUrl());
+                            summary.setContentDescription(getResources().getText(R.string.main_settings_tsa_url_title));
+                        } else {
+                            summary.setHint("");
+                            summary.setContentDescription("");
+                        }
                     }
 
                     @Override

@@ -21,6 +21,7 @@
 package ee.ria.DigiDoc.android.main.settings.signing;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static ee.ria.DigiDoc.android.Constants.SETTINGS_DEFAULT_RELYING_PARTY_UUID;
 
 import android.app.Dialog;
 import android.graphics.Color;
@@ -82,7 +83,7 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
             if (appCompatEditText != null) {
                 setAccessibilityForEditText(uuidPreference, appCompatEditText, appCompatTextView);
                 if (AccessibilityUtils.isTalkBackEnabled()) {
-                    AccessibilityUtils.setTextViewContentDescription(getContext(), true, "00000000-0000-0000-0000-000000000000", appCompatTextView.getText().toString(), appCompatEditText);
+                    AccessibilityUtils.setTextViewContentDescription(getContext(), true, SETTINGS_DEFAULT_RELYING_PARTY_UUID, appCompatTextView.getText().toString(), appCompatEditText);
                 }
             }
 
@@ -123,6 +124,13 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                         handleUuidUrlContentDescription(view, checkBox);
+                        if (summary.getText().toString().isEmpty()) {
+                            summary.setHint(SETTINGS_DEFAULT_RELYING_PARTY_UUID);
+                            summary.setContentDescription(getResources().getText(R.string.main_settings_uuid_title));
+                        } else {
+                            summary.setHint("");
+                            summary.setContentDescription("");
+                        }
                     }
 
                     @Override
@@ -150,7 +158,7 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
     private void disableTextViewOnChecked(AppCompatEditText appCompatEditText) {
         appCompatEditText.setText(null);
         appCompatEditText.setSingleLine(false);
-        appCompatEditText.setHint("00000000-0000-0000-0000-000000000000");
+        appCompatEditText.setHint(SETTINGS_DEFAULT_RELYING_PARTY_UUID);
         appCompatEditText.clearFocus();
     }
 
