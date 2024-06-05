@@ -42,7 +42,6 @@ import ee.ria.DigiDoc.android.utils.mvi.State;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.common.TextUtil;
-import ee.ria.DigiDoc.crypto.CryptoContainer;
 import ee.ria.DigiDoc.crypto.NoInternetConnectionException;
 import ee.ria.DigiDoc.crypto.PersonalCodeException;
 import io.reactivex.rxjava3.core.Observable;
@@ -104,7 +103,7 @@ final class CryptoCreateAdapter extends
         for (Certificate recipient : recipients) {
             builder.add(RecipientItem.create(recipient, recipientsRemoveEnabled, false, false));
         }
-        if (recipients.size() == 0) {
+        if (recipients.isEmpty()) {
             builder.add(EmptyTextItem.create(R.string.crypto_create_recipients_empty));
         }
         if (recipientsAddEnabled) {
@@ -118,7 +117,7 @@ final class CryptoCreateAdapter extends
                            Throwable searchError,
                            ImmutableList<Certificate> recipients) {
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
-        if (searchResults != null && searchResults.size() > 0) {
+        if (searchResults != null && !searchResults.isEmpty()) {
             List<Certificate> certificates = new ArrayList<>();
             for (Certificate searchResult : searchResults) {
                 certificates.add(searchResult);
@@ -134,7 +133,7 @@ final class CryptoCreateAdapter extends
         } else if (searchResults != null && !searchState.equals(State.ACTIVE)) {
             builder.add(EmptyTextItem.create(R.string.crypto_recipients_search_result_empty));
         }
-        if (recipients.size() > 0) {
+        if (!recipients.isEmpty()) {
             builder.add(SubheadItem.create(R.string.crypto_recipients_selected_subhead));
         }
         for (Certificate recipient : recipients) {
@@ -300,12 +299,10 @@ final class CryptoCreateAdapter extends
             saveButton.setVisibility(isContainerEncryptedOrDecrypted(adapter) ? View.VISIBLE : View.GONE);
             if (AccessibilityUtils.isTalkBackEnabled()) {
                 updateButton.setContentDescription(itemView.getResources()
-                        .getString(R.string.crypto_create_name_update_button)
-                );
+                        .getString(R.string.crypto_create_name_update_button));
             } else {
                 updateButton.setContentDescription(itemView.getResources()
-                        .getString(R.string.signature_update_name_update_voice_button)
-                );
+                        .getString(R.string.signature_update_name_update_voice_button));
             }
             clicks(updateButton).subscribe(adapter.nameUpdateClicksSubject);
             clicks(saveButton).subscribe(adapter.saveContainerClicksSubject);
@@ -315,8 +312,7 @@ final class CryptoCreateAdapter extends
             for (CryptoCreateAdapter.Item cryptoItem : adapter.items) {
                 if ((cryptoItem instanceof CryptoCreateAdapter.DataFileItem &&
                         !((CryptoCreateAdapter.DataFileItem) cryptoItem).removeButtonVisible()
-                ) || (cryptoItem instanceof NameItem &&
-                        CryptoContainer.isContainerFileName(((NameItem) cryptoItem).name()))) {
+                )) {
                     return true;
                 }
             }
@@ -442,7 +438,7 @@ final class CryptoCreateAdapter extends
             if (AccessibilityUtils.isAccessibilityEnabled()) {
                 ViewCompat.setAccessibilityDelegate(itemView, new AccessibilityDelegateCompat() {
                     @Override
-                    public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+                    public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
                         super.onInitializeAccessibilityNodeInfo(host, info);
                         if (!item.removeButtonVisible() && info.getActionList().contains(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK)) {
                             info.removeAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK);
