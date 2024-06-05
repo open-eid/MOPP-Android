@@ -92,7 +92,7 @@ public class ProxyUtil {
         String password;
         try {
             password = EncryptedPreferences.getEncryptedPreferences(context).getString(context.getString(R.string.main_settings_proxy_password_key), "");
-        } catch (IOException | GeneralSecurityException e) {
+        } catch (IllegalStateException e) {
             password = "";
         }
         return new ManualProxy(host, port, username, password);

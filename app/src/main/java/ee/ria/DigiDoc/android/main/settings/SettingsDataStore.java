@@ -443,7 +443,7 @@ public final class SettingsDataStore {
     private static SharedPreferences getEncryptedPreferences(Context context) {
         try {
             return EncryptedPreferences.getEncryptedPreferences(context);
-        } catch (GeneralSecurityException | IOException e) {
+        } catch (IllegalStateException e) {
             Timber.log(Log.ERROR, e, "Unable to get encrypted preferences");
             ToastUtil.showError(context, R.string.signature_update_mobile_id_error_general_client);
             return null;

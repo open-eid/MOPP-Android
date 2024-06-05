@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +51,6 @@ public final class SignLib {
 
     private static List<String> certBundle = new ArrayList<>();
 
-    private static SharedPreferences.OnSharedPreferenceChangeListener proxyChangeListener;
     private static SharedPreferences.OnSharedPreferenceChangeListener tsaUrlChangeListener;
     private static SharedPreferences.OnSharedPreferenceChangeListener tsCertChangeListener;
     private static SharedPreferences.OnSharedPreferenceChangeListener sivaUrlChangeListener;
@@ -295,7 +293,8 @@ public final class SignLib {
                         encryptedPreferences.getString(passwordPreferenceKey, passwordDefaultValue)
                 );
             }
-        } catch (IOException | GeneralSecurityException e) {
+        } catch (IllegalStateException e) {
+            Timber.log(Log.ERROR, e, "Error initializing proxy");
             throw new RuntimeException(e);
         }
     }

@@ -215,9 +215,9 @@ public final class ConfigurationManagerTest {
         assertEquals("20220221080015Z", configuration.getMetaInf().getDate());
         assertEquals("https://id.eesti.ee/config.json", configuration.getMetaInf().getUrl());
         assertEquals(140, configuration.getMetaInf().getSerial());
-        assertSame(1, configuration.getMetaInf().getVersion());
-        assertSame(10, configuration.getTslCerts().size());
-        assertSame(4, configuration.getOCSPUrls().size());
+        assertEquals(1, configuration.getMetaInf().getVersion());
+        assertEquals(10, configuration.getTslCerts().size());
+        assertEquals(4, configuration.getOCSPUrls().size());
     }
 
 
