@@ -11,7 +11,7 @@ jobs:
       APK_RELEASE_DIRECTORY: "app/build/outputs/apk/release"
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Setup environment
@@ -22,12 +22,12 @@ jobs:
           cd ${{ github.workspace }}/app
           echo -n "$GOOGLE_SERVICES_JSON" | base64 --decode > "google-services.json"
       - name: Setup JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: zulu
           java-version: 17
       - name: Download Libdigidocpp Android (androidarm) artifact
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           workflow: build.yml
           branch: master
@@ -35,7 +35,7 @@ jobs:
           path: libdigidocpp-androidarm
           repo: open-eid/libdigidocpp
       - name: Download Libdigidocpp Android (androidarm64) artifact
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           workflow: build.yml
           branch: master
@@ -43,7 +43,7 @@ jobs:
           path: libdigidocpp-androidarm64
           repo: open-eid/libdigidocpp
       - name: Download Libdigidocpp Android (androidx86_64) artifact
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           workflow: build.yml
           branch: master
@@ -62,11 +62,11 @@ jobs:
         run: |
           pwd
           ./gradlew common-lib:updateLibdigidocpp --dir=libdigidocpp-files/
-      - name: Setup Gradle, Test and Build
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: wrapper
-          arguments: clean test --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=${{ env.APP_VERSION_NAME }}.${{ env.BUILD_NUMBER }} assembleRelease --info
+          ./gradlew sign-lib:updateLibdigidocpp --dir=libdigidocpp-files/
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Test and Build with Gradle
+        run: ./gradlew clean test --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=${{ env.APP_VERSION_NAME }}.${{ env.BUILD_NUMBER }} assembleRelease --info
       - name: Sign app APK
         uses: r0adkll/sign-android-release@v1
         id: signed_apk
@@ -81,7 +81,7 @@ jobs:
         run: |
           mv ${{ github.workspace }}/${{ env.APK_RELEASE_DIRECTORY }}/app-release-unsigned-signed.apk ${{ github.workspace }}/${{ env.APK_RELEASE_DIRECTORY }}/"RIA_DigiDoc_${{ env.APP_VERSION_NAME }}.${{ env.BUILD_NUMBER }}.apk"
       - name: Upload APK
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           name: "RIA_DigiDoc_${{ env.APP_VERSION_NAME }}.${{ env.BUILD_NUMBER }}"
