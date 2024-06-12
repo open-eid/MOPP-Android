@@ -119,10 +119,12 @@ class ID1 implements Token {
     }
 
     @Override
-    public byte[] calculateSignature(byte[] pin2, byte[] hash, boolean ecc) throws SmartCardReaderException {
-        verifyCode(CodeType.PIN2, pin2);
+    public byte[] calculateSignature(byte[] pin2, byte[] hash, boolean ecc) throws SmartCardReaderException, IllegalStateException {
         if (null != pin2 && pin2.length > 0) {
+        verifyCode(CodeType.PIN2, pin2);
             Arrays.fill(pin2, (byte) 0);
+        } else {
+            throw new IllegalStateException("PIN2 is null or empty");
         }
         selectQSCDAid();
         reader.transmit(0x00, 0x22, 0x41, 0xB6, new byte[] {(byte) 0x80, 0x04, (byte) 0xFF, 0x15, 0x08, 0x00, (byte) 0x84, 0x01, (byte) 0x9F}, null);

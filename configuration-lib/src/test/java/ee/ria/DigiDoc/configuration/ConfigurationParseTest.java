@@ -45,7 +45,7 @@ public class ConfigurationParseTest {
 
     @Test
     public void parseMissingStringValue() {
-        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             ConfigurationParser configurationParser = new ConfigurationParser(TEST_JSON);
             assertNull(configurationParser.parseStringValue("MISSING-VALUE"));
         }, "Failed to parse parameter 'MISSING-VALUE' from configuration json");
@@ -63,7 +63,7 @@ public class ConfigurationParseTest {
     @Test
     public void parseIntValue() {
         ConfigurationParser configurationParser = new ConfigurationParser(TEST_JSON);
-        assertSame(93, configurationParser.parseIntValue("META-INF", "SERIAL"));
+        assertEquals(93, configurationParser.parseIntValue("META-INF", "SERIAL"));
     }
 
     @Test

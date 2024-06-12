@@ -228,6 +228,8 @@ public class NFC {
             }
             // fixme: Use result code (Lauris)
             return new Result(response);
+        } catch (RuntimeException e) {
+            Timber.log(Log.ERROR, "Exception in app with NFC: %s", e.getMessage());
         } catch (Exception exc) {
             Timber.log(Log.ERROR, "NFC Error: %s", exc.getMessage());
         }

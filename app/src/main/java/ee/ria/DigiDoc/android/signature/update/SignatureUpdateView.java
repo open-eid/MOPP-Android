@@ -154,8 +154,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     @Nullable private DataFile documentRemoveConfirmation;
     @Nullable private Signature signatureRemoveConfirmation;
 
-    /** @noinspection unused*/
-    private boolean isRoleViewShown = false;
     private boolean signingInfoDelegated = false;
     private final ProgressBar documentAddProgressBar;
     private final ProgressBar mobileIdProgressBar;
@@ -619,7 +617,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
         SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
         signatureAddView.reset(viewModel);
-        isRoleViewShown = false;
     }
 
     private void resetRoleAddDialog() {
@@ -714,7 +711,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
                     .doOnNext(ignored -> resetSignatureAddDialog())
                     .map(ignored -> SignatureAddIntent.clear()),
                 roleAddDialog.positiveButtonClicks().map(ignored -> {
-                    isRoleViewShown = true;
                     roleViewModel.setRoleData(roleAddView.request());
                     roleAddDialog.dismiss();
                     return SignatureAddIntent.sign(signatureAddView.method(),
@@ -842,7 +838,6 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
         isTitleViewFocused = false;
         SignatureUpdateProgressBar.stopProgressBar(mobileIdProgressBar);
         SignatureUpdateProgressBar.stopProgressBar(smartIdProgressBar);
-        isRoleViewShown = false;
         ContentView.removeInvisibleElementScrollListener(listView);
         super.onDetachedFromWindow();
     }

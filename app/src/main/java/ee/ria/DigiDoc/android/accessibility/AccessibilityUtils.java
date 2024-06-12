@@ -5,6 +5,7 @@ import static android.content.Context.ACCESSIBILITY_SERVICE;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.LocaleList;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
@@ -230,8 +231,16 @@ public class AccessibilityUtils {
     }
 
     public static String getButtonTranslation() {
-        Locale systemLanguage = Resources.getSystem().getConfiguration().getLocales().get(0);
-        return switch (systemLanguage.getLanguage()) {
+        Locale language;
+        LocaleList localeList = Resources.getSystem().getConfiguration().getLocales();
+        Locale mainLocale = localeList.get(0);
+        if (!localeList.isEmpty() && mainLocale != null) {
+            language = mainLocale;
+        } else {
+            language = Locale.getDefault();
+        }
+
+        return switch (language.getLanguage()) {
             case "et" -> "nupp";
             case "ru" -> "кнопка";
             default -> "button";

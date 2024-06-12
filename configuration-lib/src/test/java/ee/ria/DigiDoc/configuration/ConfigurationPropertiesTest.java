@@ -1,7 +1,6 @@
 package ee.ria.DigiDoc.configuration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -27,16 +26,18 @@ public class ConfigurationPropertiesTest {
     public void loadProperties() throws IOException {
         ClassLoader classLoader = Optional.ofNullable(getClass().getClassLoader())
                 .orElseThrow(() -> new IllegalStateException("Unable to get ClassLoader"));
+
         try (InputStream inputStream = Objects.requireNonNull(
                 classLoader.getResourceAsStream(ConfigurationProperties.PROPERTIES_FILE_NAME),
-                        "Unable to open properties file"
-                )) {
-            when(assetManager.open(anyString())).thenReturn(inputStream);
+                "Unable to open properties file"
+        )) {
+            when(assetManager.open(anyString())).thenAnswer(invocation -> inputStream);
 
             ConfigurationProperties configurationProperties = new ConfigurationProperties(assetManager);
 
             assertEquals("https://id.eesti.ee/", configurationProperties.getCentralConfigurationServiceUrl());
-            assertSame(4, configurationProperties.getConfigurationUpdateInterval());
+            assertEquals(4, configurationProperties.getConfigurationUpdateInterval());
         }
     }
+
 }

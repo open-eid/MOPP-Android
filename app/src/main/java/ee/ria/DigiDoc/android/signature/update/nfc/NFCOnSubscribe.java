@@ -91,6 +91,10 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
 
             // Step 1 - get certificate
             byte[] certificate = nfc.readCertificate();
+            if (certificate == null) {
+                Timber.log(Log.ERROR, "Failed to read certificate. Certificate is null");
+                throw new RuntimeException("Unable to read certificate for NFC");
+            }
             Timber.log(Log.DEBUG, "CERT:%s", Hex.toHexString(certificate));
             Certificate cert = Certificate.create(ByteString.of(certificate, 0, certificate.length));
 
