@@ -146,19 +146,25 @@ public class AccessibilityUtils {
                     if (editText.getText() != null && !editText.getText().toString().isEmpty()) {
                         if (setAsSingleCharacters) {
                             String text = AccessibilityUtils.getTextAsSingleCharacters(editText.getText().toString());
-                            event.setContentDescription(String.format("%s %s, %s", label, text, cursorPositionDescription));
+                            String textFieldDescription = String.format("%s %s, %s", label, text, cursorPositionDescription);
+                            host.setContentDescription(textFieldDescription);
+                            event.setContentDescription(textFieldDescription);
                         } else {
                             if (hint != null) {
                                 editText.setHint("");
                             }
-                            event.setContentDescription(String.format("%s %s, %s", label, editText.getText(), cursorPositionDescription));
+                            String textFieldDescription = String.format("%s %s, %s", label, editText.getText(), cursorPositionDescription);
+                            host.setContentDescription(textFieldDescription);
+                            event.setContentDescription(textFieldDescription);
                         }
                     } else {
                         if (hint != null) {
                             editText.setHint(hint);
                         }
                         event.getText().clear();
-                        event.setContentDescription(String.format("%s %s, %s", label, editText.getText() != null ? editText.getText().toString() : hint, cursorPositionDescription));
+                        String textFieldDescription = String.format("%s %s, %s", label, editText.getText(), cursorPositionDescription);
+                        host.setContentDescription(textFieldDescription);
+                        event.setContentDescription(textFieldDescription);
                     }
                 }
             }

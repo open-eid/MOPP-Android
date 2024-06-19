@@ -6,6 +6,7 @@ import static android.view.View.inflate;
 import static com.jakewharton.rxbinding4.view.RxView.clicks;
 import static com.jakewharton.rxbinding4.widget.RxRadioGroup.checkedChanges;
 import static com.jakewharton.rxbinding4.widget.RxTextView.textChanges;
+import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.setTextViewContentDescription;
 import static ee.ria.DigiDoc.android.main.settings.signing.siva.SivaSetting.DEFAULT;
 import static ee.ria.DigiDoc.android.main.settings.signing.siva.SivaSetting.MANUAL;
 import static ee.ria.DigiDoc.common.CommonConstants.DIR_SIVA_CERT;
@@ -134,7 +135,7 @@ public class SettingsSivaDialog extends Dialog {
         if (AccessibilityUtils.isTalkBackEnabled()) {
             handleSivaUrlContentDescription();
             AccessibilityUtils.setEditTextCursorToEnd(sivaServiceUrl);
-            AccessibilityUtils.setTextViewContentDescription(context, false, null, context.getString(R.string.main_settings_siva_service_title), sivaServiceUrl);
+            sivaServiceUrl.setOnClickListener(v -> setTextViewContentDescription(context, false, null, context.getString(R.string.main_settings_siva_service_title), sivaServiceUrl));
         }
     }
 
@@ -142,7 +143,7 @@ public class SettingsSivaDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sivaServiceUrl.setSelection(sivaServiceUrl.getText() != null ? sivaServiceUrl.getText().length() : 0);
+        AccessibilityUtils.setEditTextCursorToEnd(sivaServiceUrl);
 
         sivaUrlTextWatcher = new TextWatcher() {
 
@@ -159,8 +160,8 @@ public class SettingsSivaDialog extends Dialog {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.length() == 1 && sivaServiceUrl.getText() != null) {
-                    sivaServiceUrl.setSelection(sivaServiceUrl.getText().length());
+                if (sivaServiceUrl.getText() != null) {
+                    AccessibilityUtils.setEditTextCursorToEnd(sivaServiceUrl);
                 }
             }
         };
@@ -387,6 +388,7 @@ public class SettingsSivaDialog extends Dialog {
         if (sivaUrlTextWatcher != null) {
             sivaServiceUrl.removeTextChangedListener(sivaUrlTextWatcher);
         }
+        sivaServiceUrl.setOnClickListener(null);
         super.onDetachedFromWindow();
     }
 
