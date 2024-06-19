@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import ee.ria.DigiDoc.R;
@@ -184,7 +185,8 @@ public final class SignatureUpdateSignatureAddView extends LinearLayout {
     private void setupContentDescriptions(RadioButton radioButton, String contentDescription) {
         radioButton.setAccessibilityDelegate(new View.AccessibilityDelegate() {
             @Override
-            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+            public void onInitializeAccessibilityNodeInfo(
+                    @NonNull View host, @NonNull AccessibilityNodeInfo info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 info.setContentDescription(contentDescription);
                 info.setCheckable(false);

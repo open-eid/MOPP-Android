@@ -21,6 +21,7 @@
 package ee.ria.DigiDoc.android.main.settings.signing;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static ee.ria.DigiDoc.android.Constants.SETTINGS_DEFAULT_RELYING_PARTY_UUID;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -92,7 +93,7 @@ public class UUIDPreference extends EditTextPreference {
     public CharSequence getSummary() {
         String text = getText();
         if (TextUtils.isEmpty(text)) {
-            return "00000000-0000-0000-0000-000000000000";
+            return SETTINGS_DEFAULT_RELYING_PARTY_UUID;
         }
         char[] password = new char[text.length()];
         Arrays.fill(password, '·');

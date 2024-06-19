@@ -42,13 +42,16 @@
                 android:id="@id/signatureUpdateMobileIdPhoneNo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="phone"
+                android:inputType="phone|textNoSuggestions"
                 android:digits="0123456789"
                 android:imeOptions="actionDone"
+                android:lines="1"
                 android:maxLines="1"
                 android:hint="@string/mobile_id_country_code_and_phone_number_placeholder"
                 android:accessibilityTraversalAfter="@id/signatureUpdateMobileIdPhoneNoText"
                 android:minHeight="@dimen/material_baseline_grid_6x"
+                android:importantForAutofill="no"
+                android:autofillHints=""
                 android:background="@drawable/bottom_border_background"/>
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -78,6 +81,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:imeOptions="actionDone"
+                android:lines="1"
                 android:maxLines="1"
                 android:accessibilityTraversalAfter="@id/signatureUpdateMobileIdPersonalCodeText"
                 android:minHeight="@dimen/material_baseline_grid_6x"

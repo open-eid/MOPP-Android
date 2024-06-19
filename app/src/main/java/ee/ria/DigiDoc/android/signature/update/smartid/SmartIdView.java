@@ -46,6 +46,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -53,6 +54,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import ee.ria.DigiDoc.R;
@@ -128,6 +130,7 @@ public final class SmartIdView extends LinearLayout implements
 
         if (AccessibilityUtils.isTalkBackEnabled()) {
             setAccessibilityDescription();
+            AccessibilityUtils.setTextViewContentDescription(context, true, null, personalCodeViewLabel.getText().toString(), personalCodeView);
         }
     }
 
@@ -181,7 +184,12 @@ public final class SmartIdView extends LinearLayout implements
     private void checkInputsValidity() {
         checkPersonalCodeValidity();
 
-        personalCodeView.setOnFocusChangeListener((view, hasfocus) -> checkPersonalCodeValidity());
+        personalCodeView.setOnFocusChangeListener((view, hasFocus) -> {
+            checkPersonalCodeValidity();
+            if (hasFocus) {
+                AccessibilityUtils.setEditTextCursorToEnd(personalCodeView);
+            }
+        });
     }
 
     private void checkPersonalCodeValidity() {
@@ -227,12 +235,8 @@ public final class SmartIdView extends LinearLayout implements
             }
         }
         if (country == 0) {
-            if (pos == -1) {
-                inputFilters = Arrays.copyOf(inputFilters, inputFilters.length + 1);
-                inputFilters[inputFilters.length - 1] = new InputFilter.LengthFilter(11);
-            }
-            personalCodeView.setText(personalCodeView.getText().subSequence(0,
-                    Math.min(personalCodeView.getText().length(), 11)));
+            personalCodeView.setText(Objects.requireNonNull(personalCodeView.getText())
+                    .subSequence(0, Math.min(personalCodeView.getText().length(), 11)));
         } else {
             if (pos != -1) {
                 InputFilter[] copy = Arrays.copyOf(inputFilters, inputFilters.length - 1);
@@ -246,19 +250,19 @@ public final class SmartIdView extends LinearLayout implements
     private void setupContentDescriptions(RadioButton radioButton, CharSequence contentDescription) {
         radioButton.setAccessibilityDelegate(new View.AccessibilityDelegate() {
             @Override
-            public void onPopulateAccessibilityEvent(View host, AccessibilityEvent event) {
+            public void onPopulateAccessibilityEvent(
+                    @NonNull View host, @NonNull AccessibilityEvent event) {
                 if (!event.getText().isEmpty() &&
-                        (event.getText().get(0).toString().equals(
-                                getResources().getString(R.string.signature_update_signature_add_method_mobile_id)) ||
-                                event.getText().get(0).toString().equals(
-                                        getResources().getString(R.string.signature_update_signature_add_method_id_card)))) {
+                        (event.getText().get(0).toString().equals(getResources().getString(R.string.signature_update_signature_add_method_mobile_id)) ||
+                                event.getText().get(0).toString().equals(getResources().getString(R.string.signature_update_signature_add_method_id_card)))) {
                     event.getText().clear();
                     event.getText().add(getContentDescription());
                 }
             }
 
             @Override
-            public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfo info) {
+            public void onInitializeAccessibilityNodeInfo(
+                    @NonNull View host, @NonNull AccessibilityNodeInfo info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 info.setContentDescription(contentDescription);

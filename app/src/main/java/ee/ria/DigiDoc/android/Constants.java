@@ -5,6 +5,11 @@ public final class Constants {
     public static final Object VOID = new Object();
 
     /*
+     * Relying Party
+     */
+    public static final String SETTINGS_DEFAULT_RELYING_PARTY_UUID = "00000000-0000-0000-0000-000000000000";
+
+    /*
      * Request codes for startActivityForResult
      */
 
