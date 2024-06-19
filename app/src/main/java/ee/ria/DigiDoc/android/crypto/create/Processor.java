@@ -155,6 +155,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .startWithItem(Result.InitialResult.activity());
             } else if (androidIntent != null) {
                 return parseIntent(androidIntent, application, fileSystem.getExternallyOpenedFilesDir(), configurationContext);
+            } else if (intent.isFromSignatureView()) {
+                return Observable.just(Result.InitialResult.success(CryptoContainer.open(intent.containerFile())));
             } else {
                 navigator.execute(Transaction.activityForResult(RC_CRYPTO_CREATE_INITIAL,
                         createGetContentIntent(true), null));
@@ -208,7 +210,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             return result;
                         })
                         .onErrorReturn(throwable -> Result.NameUpdateResult.failure(newName, throwable))
-                        .startWithItem(Result.NameUpdateResult.progress(name));
+                        .startWithItem(Result.NameUpdateResult.progress(newName));
             } else if (name != null) {
                 return Observable.just(Result.NameUpdateResult.show(name));
             } else {

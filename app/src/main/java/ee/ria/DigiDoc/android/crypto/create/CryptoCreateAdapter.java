@@ -73,7 +73,7 @@ final class CryptoCreateAdapter extends
                           boolean encryptSuccessMessageVisible,
                           boolean decryptSuccessMessageVisible,
                           RecyclerView listView) {
-        this.dataFilesViewEnabled = dataFilesViewEnabled;
+        this.dataFilesViewEnabled = dataFilesViewEnabled && dataFiles.isEmpty();
 
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (encryptSuccessMessageVisible) {
