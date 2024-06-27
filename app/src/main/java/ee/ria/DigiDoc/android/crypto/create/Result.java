@@ -114,6 +114,7 @@ interface Result extends MviResult<ViewState> {
         public ViewState reduce(ViewState state) {
             return state.buildWith()
                     .nameUpdateShowing(name() != null)
+                    .name(name())
                     .newName(newName())
                     .nameUpdateInProgress(inProgress())
                     .nameUpdateError(error())

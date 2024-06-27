@@ -35,6 +35,8 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import ee.ria.DigiDoc.R;
@@ -122,11 +124,12 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
     @Nullable private Throwable decryptError;
     @Nullable private File dataFileRemoveConfirmation;
     @Nullable private File sivaConfirmation;
+    private final File containerFromSigning;
 
     @SuppressWarnings("WeakerAccess")
     public CryptoCreateScreen(Bundle args) {
         super(args);
-        containerFile = args.containsKey(KEY_CONTAINER_FILE)
+        containerFromSigning = args.containsKey(KEY_CONTAINER_FILE)
                 ? getFile(args, KEY_CONTAINER_FILE)
                 : null;
         intent = getIntent(args);
@@ -134,7 +137,7 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
-        return Observable.just(Intent.InitialIntent.create(containerFile, intent, isFromSignatureView));
+        return Observable.just(Intent.InitialIntent.create(isFromSignatureView ? containerFromSigning : containerFile, intent, isFromSignatureView));
     }
 
     private Observable<Intent.NameUpdateIntent> nameUpdateIntent() {
@@ -274,7 +277,7 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
         setActivity(state.dataFilesAddState().equals(State.ACTIVE) ||
                 state.encryptState().equals(State.ACTIVE));
 
-        nameUpdateDialog.render(state.nameUpdateShowing(), FileUtil.sanitizeString(state.name(), ""), state.nameUpdateError());
+        nameUpdateDialog.render(state.nameUpdateShowing(), FileUtil.sanitizeString(state.newName() != null ? state.newName() : state.name(), ""), state.nameUpdateError());
 
         int titleResId = state.encryptButtonVisible() ? R.string.crypto_create_title_encrypt
                 : R.string.crypto_create_title_decrypt;
