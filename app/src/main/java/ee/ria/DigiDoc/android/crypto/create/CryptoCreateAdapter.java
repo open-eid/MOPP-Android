@@ -73,7 +73,7 @@ final class CryptoCreateAdapter extends
                           boolean encryptSuccessMessageVisible,
                           boolean decryptSuccessMessageVisible,
                           RecyclerView listView) {
-        this.dataFilesViewEnabled = dataFilesViewEnabled && dataFiles.isEmpty();
+        this.dataFilesViewEnabled = dataFilesViewEnabled;
 
         ImmutableList.Builder<Item> builder = ImmutableList.builder();
         if (encryptSuccessMessageVisible) {
@@ -240,26 +240,19 @@ final class CryptoCreateAdapter extends
         abstract void bind(CryptoCreateAdapter adapter, T item);
 
         static CreateViewHolder create(@LayoutRes int viewType, View itemView) {
-            switch (viewType) {
-                case R.layout.crypto_create_list_item_success:
-                    return new SuccessViewHolder(itemView);
-                case R.layout.crypto_create_list_item_name:
-                    return new NameViewHolder(itemView);
-                case R.layout.crypto_list_item_subhead:
-                    return new SubheadViewHolder(itemView);
-                case R.layout.crypto_create_list_item_add_button:
-                    return new AddButtonViewHolder(itemView);
-                case R.layout.crypto_create_list_item_empty_text:
-                    return new EmptyTextViewHolder(itemView);
-                case R.layout.crypto_create_list_item_data_file:
-                    return new DataFileViewHolder(itemView);
-                case R.layout.crypto_list_item_recipient:
-                    return new RecipientViewHolder(itemView);
-                case R.layout.crypto_list_item_add_all_button:
-                    return new AddAllViewHolder(itemView);
-                default:
-                    throw new IllegalArgumentException("Unknown view type " + viewType);
-            }
+            return switch (viewType) {
+                case R.layout.crypto_create_list_item_success -> new SuccessViewHolder(itemView);
+                case R.layout.crypto_create_list_item_name -> new NameViewHolder(itemView);
+                case R.layout.crypto_list_item_subhead -> new SubheadViewHolder(itemView);
+                case R.layout.crypto_create_list_item_add_button ->
+                        new AddButtonViewHolder(itemView);
+                case R.layout.crypto_create_list_item_empty_text ->
+                        new EmptyTextViewHolder(itemView);
+                case R.layout.crypto_create_list_item_data_file -> new DataFileViewHolder(itemView);
+                case R.layout.crypto_list_item_recipient -> new RecipientViewHolder(itemView);
+                case R.layout.crypto_list_item_add_all_button -> new AddAllViewHolder(itemView);
+                default -> throw new IllegalArgumentException("Unknown view type " + viewType);
+            };
         }
     }
 
@@ -695,9 +688,8 @@ final class CryptoCreateAdapter extends
             if (oldItem instanceof DataFileItem && newItem instanceof DataFileItem) {
                 return ((DataFileItem) oldItem).dataFile()
                         .equals(((DataFileItem) newItem).dataFile());
-            } else if (oldItem instanceof RecipientItem && newItem instanceof RecipientItem) {
-                RecipientItem oldRecipientItem = (RecipientItem) oldItem;
-                RecipientItem newRecipientItem = (RecipientItem) newItem;
+            } else if (oldItem instanceof RecipientItem oldRecipientItem &&
+                    newItem instanceof RecipientItem newRecipientItem) {
                 return oldRecipientItem.recipient().equals(newRecipientItem.recipient()) &&
                         oldRecipientItem.removeButtonVisible()
                                 == newRecipientItem.removeButtonVisible();

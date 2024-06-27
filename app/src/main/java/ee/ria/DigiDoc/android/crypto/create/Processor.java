@@ -63,7 +63,6 @@ import ee.ria.DigiDoc.crypto.PersonalCodeException;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.idcard.Token;
-
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -283,8 +282,10 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return Observable
                         .fromCallable(() -> {
                             try {
-                                //noinspection ResultOfMethodCallIgnored
-                                intent.dataFile().delete();
+                                if (intent.dataFile() != null) {
+                                    //noinspection ResultOfMethodCallIgnored
+                                    intent.dataFile().delete();
+                                }
                             } catch (Exception e) {
                                 // ignore because it's a cache file and is deleted anyway
                             }
@@ -560,7 +561,6 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         });
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public ObservableSource<Result> apply(Observable<Intent> upstream) {
         return upstream.publish(shared -> Observable.mergeArray(
