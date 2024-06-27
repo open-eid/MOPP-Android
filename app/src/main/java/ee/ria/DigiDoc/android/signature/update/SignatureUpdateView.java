@@ -648,7 +648,7 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
     private Observable<DocumentViewIntent> documentViewIntent() {
         return Observable.mergeArray(adapter.documentClicks()
                 .map(document -> DocumentViewIntent.confirmation(getContext(),
-                        (nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile, document)),
+                        (nestedFile != null && SignedContainer.isContainer(getContext(), nestedFile) && isSivaConfirmed) ? nestedFile : containerFile, document)),
                         sivaConfirmationDialog.positiveButtonClicks()
                                 .map(ignored -> DocumentViewIntent.open(
                                         (nestedFile != null && isSivaConfirmed) ? nestedFile : containerFile,
