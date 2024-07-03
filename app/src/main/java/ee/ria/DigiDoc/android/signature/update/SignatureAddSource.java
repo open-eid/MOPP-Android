@@ -7,6 +7,7 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 
@@ -167,14 +168,10 @@ final class SignatureAddSource {
             settingsDataStore.setCan(nfcRequest.can());
             Single<SignedContainer> s = signatureContainerDataSource.get(containerFile, isSivaConfirmed);
             Observable<NFCResponse> obs = s.flatMapObservable(container -> {
-                    String can = nfcRequest.can();
-                    String pin2 = nfcRequest.pin2();
-                    NFCOnSubscribe nfcsub = new NFCOnSubscribe(navigator, container, can, pin2, roleData);
-                    return Observable.create(nfcsub);
+                NFCOnSubscribe nfcsub = new NFCOnSubscribe(navigator, container, nfcRequest.can(), nfcRequest.pin2(), roleData);
+                return Observable.create(nfcsub);
                 });
-            return obs.switchMap(response -> {
-                        return Observable.just(response);
-                    })
+            return obs.switchMap(response -> Observable.just(response))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .startWithItem(NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.OK, null))
