@@ -63,7 +63,6 @@ import ee.ria.DigiDoc.crypto.PersonalCodeException;
 import ee.ria.DigiDoc.crypto.Pin1InvalidException;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.idcard.Token;
-
 import ee.ria.DigiDoc.sign.SignedContainer;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -155,6 +154,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                         .startWithItem(Result.InitialResult.activity());
             } else if (androidIntent != null) {
                 return parseIntent(androidIntent, application, fileSystem.getExternallyOpenedFilesDir(), configurationContext);
+            } else if (intent.isFromSignatureView()) {
+                return Observable.just(Result.InitialResult.success(CryptoContainer.open(intent.containerFile())));
             } else {
                 navigator.execute(Transaction.activityForResult(RC_CRYPTO_CREATE_INITIAL,
                         createGetContentIntent(true), null));
@@ -208,7 +209,7 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                             return result;
                         })
                         .onErrorReturn(throwable -> Result.NameUpdateResult.failure(newName, throwable))
-                        .startWithItem(Result.NameUpdateResult.progress(name));
+                        .startWithItem(Result.NameUpdateResult.progress(newName));
             } else if (name != null) {
                 return Observable.just(Result.NameUpdateResult.show(name));
             } else {
@@ -281,8 +282,10 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                 return Observable
                         .fromCallable(() -> {
                             try {
-                                //noinspection ResultOfMethodCallIgnored
-                                intent.dataFile().delete();
+                                if (intent.dataFile() != null) {
+                                    //noinspection ResultOfMethodCallIgnored
+                                    intent.dataFile().delete();
+                                }
                             } catch (Exception e) {
                                 // ignore because it's a cache file and is deleted anyway
                             }
@@ -558,7 +561,6 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         });
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public ObservableSource<Result> apply(Observable<Intent> upstream) {
         return upstream.publish(shared -> Observable.mergeArray(
