@@ -12,6 +12,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import javax.annotation.Nullable;
 
@@ -32,12 +33,12 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
     private final Navigator navigator;
     private final SignedContainer container;
     private final String can;
-    private final String pin2;
+    private final byte[] pin2;
     private final RoleData role;
     private NFC nfc;
 
     public NFCOnSubscribe(Navigator navigator, SignedContainer container,
-                              String can, String pin2, @Nullable RoleData roleData) {
+                              String can, byte[] pin2, @Nullable RoleData roleData) {
         this.navigator = navigator;
         this.container = container;
         this.can = can;
@@ -104,9 +105,11 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
 
             // pad the PIN and use the chip for verification
             byte[] paddedPIN = Hex.decode("ffffffffffffffffffffffff");
-            byte[] pin2b = pin2.getBytes(StandardCharsets.UTF_8);
-            System.arraycopy(pin2b, 0, paddedPIN, 0, pin2b.length);
+            System.arraycopy(pin2, 0, paddedPIN, 0, pin2.length);
             r = nfc.communicateSecure(VER_PIN2_CMD, paddedPIN);
+            if (null != pin2 && pin2.length > 0) {
+                Arrays.fill(pin2, (byte) 0);
+            }
             Timber.log(Log.DEBUG, "Verify PIN2:%x %s", r.code, Hex.toHexString(r.data));
             if (r.code != 0x9000) {
                 if (r.code == 0x6983) {
@@ -120,7 +123,6 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
 
             r = nfc.communicateSecure(CMD_SET_ENV_SIGN, SET_ENV_SIGN);
             Timber.log(Log.DEBUG, "Set ENV:%x %s", r.code, Hex.toHexString(r.data));
-
 
             container.sign(cert.data(),
                     signData -> ByteString.of(nfc.calculateSignature(signData.toByteArray())), role);
