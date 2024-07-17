@@ -28,6 +28,8 @@ import androidx.annotation.Nullable;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
 
+import java.nio.charset.StandardCharsets;
+
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.Constants;
@@ -121,8 +123,11 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
 
     @Override
     public NFCRequest request() {
-        return NFCRequest.create(canView.getText().toString(),
-                pinView.getText().toString());
+        NFCRequest nfcRequest = NFCRequest.create(canView.getText().toString(),
+                pinView.getText().toString().getBytes(StandardCharsets.UTF_8));
+        pinView.setText(null);
+
+        return nfcRequest;
     }
 
     @Override
