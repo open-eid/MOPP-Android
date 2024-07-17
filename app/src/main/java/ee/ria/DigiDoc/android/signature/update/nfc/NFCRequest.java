@@ -9,9 +9,9 @@ public abstract class NFCRequest implements SignatureAddRequest {
 
     public abstract String can();
 
-    public abstract String pin2();
+    public abstract byte[] pin2();
 
-    public static NFCRequest create(String can, String pin2) {
+    public static NFCRequest create(String can, byte[] pin2) {
         return new AutoValue_NFCRequest(can, pin2);
     }
 }
