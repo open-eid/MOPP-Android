@@ -196,6 +196,7 @@ public class NFC {
             Timber.log(Log.DEBUG, "APDU: %s", Hex.toHexString(APDU));
             response = card.transceive(APDU);
             Timber.log(Log.DEBUG, "RESPONSE: %s", Hex.toHexString(response));
+            int code = (((int) response[response.length - 2] & 0xff) << 8) | ((int) response[response.length - 1] & 0xff);
             if (response.length > 2) {
                 TLV tlv = new TLV(response, 0, response.length - 2);
                 Timber.log(Log.DEBUG, "TLV:%x %s", tlv.tag, Hex.toHexString(tlv.data, tlv.start, tlv.end - tlv.start));
@@ -212,7 +213,7 @@ public class NFC {
                     byte[] decrypted = encryptDecryptData(Arrays.copyOfRange(tlv_enc.data, tlv_enc.start + 1, tlv_enc.end), Cipher.DECRYPT_MODE);
                     int indexOfTerminator = Hex.toHexString(decrypted).lastIndexOf("80") / 2;
                     byte[] pruned = Arrays.copyOf(decrypted, indexOfTerminator);
-                    return new Result(0x9000, pruned);
+                    return new Result(code, pruned);
                 } else {
                     TLV tlv_res = tlv;
                     Timber.log(Log.DEBUG, "RES:%x %s", tlv_res.tag, Hex.toHexString(tlv_res.data, tlv_res.start, tlv_res.end - tlv_res.start));
@@ -220,7 +221,7 @@ public class NFC {
                     Timber.log(Log.DEBUG, "MAC:%x %s", tlv_mac.tag, Hex.toHexString(tlv_mac.data, tlv_mac.start, tlv_mac.end - tlv_mac.start));
                 }
             }
-            return new Result(response);
+            return new Result(code, response);
         } catch (RuntimeException e) {
             Timber.log(Log.ERROR, "Exception in app with NFC: %s", e.getMessage());
         } catch (Exception exc) {
