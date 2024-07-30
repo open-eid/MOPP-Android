@@ -35,7 +35,7 @@ public class ConfigurationPropertiesTest {
 
             ConfigurationProperties configurationProperties = new ConfigurationProperties(assetManager);
 
-            assertEquals("https://id.eesti.ee/", configurationProperties.getCentralConfigurationServiceUrl());
+            assertEquals("https://id.eesti.ee", configurationProperties.getCentralConfigurationServiceUrl());
             assertEquals(4, configurationProperties.getConfigurationUpdateInterval());
         }
     }
