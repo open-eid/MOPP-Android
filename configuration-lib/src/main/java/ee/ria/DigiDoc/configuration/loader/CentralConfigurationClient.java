@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.configuration.loader;
 
 import static ee.ria.DigiDoc.common.NetworkUtil.DEFAULT_TIMEOUT;
 import static ee.ria.DigiDoc.common.NetworkUtil.constructClientBuilder;
+import static ee.ria.DigiDoc.configuration.util.LocalizationUtil.getLocalizedMessage;
 
 import android.content.Context;
 import android.os.Handler;
@@ -40,7 +41,7 @@ class CentralConfigurationClient {
         CompletableFuture<String> future = requestData(centralConfigurationServiceUrl + "/config.json");
         future.exceptionally(e -> {
             Timber.log(Log.ERROR, e, String.format("%s %s", "Unable to get configuration", e.getLocalizedMessage()));
-            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show());
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, getLocalizedMessage(context, R.string.no_internet_connection), Toast.LENGTH_LONG).show());
             return future.join();
         });
         return future.join();
@@ -50,7 +51,7 @@ class CentralConfigurationClient {
         CompletableFuture<String> future = requestData(centralConfigurationServiceUrl + "/config.rsa");
         future.exceptionally(e -> {
             Timber.log(Log.ERROR, e, String.format("%s. %s", "Unable to get configuration signature", e.getLocalizedMessage()));
-            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show());
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, getLocalizedMessage(context, R.string.no_internet_connection), Toast.LENGTH_LONG).show());
             return future.join();
         });
         return future.join();
@@ -60,7 +61,7 @@ class CentralConfigurationClient {
         CompletableFuture<String> future = requestData(centralConfigurationServiceUrl + "/config.pub");
         future.exceptionally(e -> {
             Timber.log(Log.ERROR, e, String.format("%s %s", "Unable to get configuration public key", e.getLocalizedMessage()));
-            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_LONG).show());
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, getLocalizedMessage(context, R.string.no_internet_connection), Toast.LENGTH_LONG).show());
             return future.join();
         });
         return future.join();

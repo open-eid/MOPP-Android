@@ -1,6 +1,8 @@
 package ee.ria.DigiDoc.android.accessibility;
 
 import static android.content.Context.ACCESSIBILITY_SERVICE;
+import static android.text.TextUtils.isEmpty;
+import static java.util.Objects.nonNull;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -9,6 +11,7 @@ import android.os.LocaleList;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -25,6 +28,7 @@ import net.cachapa.expandablelayout.ExpandableLayout;
 
 import java.util.Locale;
 
+import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.common.TextUtil;
 
@@ -99,6 +103,75 @@ public class AccessibilityUtils {
         view.setAccessibilityPaneTitle(view.getResources().getString(titleResId).toLowerCase());
     }
 
+    public static void setTextViewContentDescription(Context context, boolean setAsSingleCharacters, @Nullable String hint, String label, EditText editText) {
+        editText.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+
+                if (info.getText() != null && setAsSingleCharacters) {
+                    String text = AccessibilityUtils.getTextAsSingleCharacters(info.getText().toString());
+                    info.setText(label + " " + text);
+                    info.setContentDescription(label + " " + text);
+                    host.setContentDescription(label + " " + text);
+                } else {
+                    info.setText(label);
+                    info.setContentDescription(label);
+                    host.setContentDescription(label);
+                }
+
+                if (editText.getText() != null && editText.getText().toString().isEmpty()) {
+                    editText.setHint(hint);
+                } else {
+                    editText.setHint("");
+                }
+            }
+
+            @Override
+            public void onPopulateAccessibilityEvent(@NonNull View host, @NonNull AccessibilityEvent event) {
+                super.onPopulateAccessibilityEvent(host, event);
+
+                if (host instanceof EditText editText) {
+                    int cursorPosition = editText.getSelectionStart();
+                    int textLength = editText.getText().length();
+
+                    String cursorPositionDescription;
+                    if (cursorPosition == 0) {
+                        cursorPositionDescription = context.getResources().getString(R.string.cursor_focus_beginning_content_description);
+                    } else if (cursorPosition == textLength) {
+                        cursorPositionDescription = context.getResources().getString(R.string.cursor_focus_end_content_description);
+                    } else {
+                        cursorPositionDescription = context.getResources().getString(R.string.cursor_focus_at_character_content_description, cursorPosition + 1);
+                    }
+                    if (editText.getText() != null && !editText.getText().toString().isEmpty()) {
+                        if (setAsSingleCharacters) {
+                            String text = AccessibilityUtils.getTextAsSingleCharacters(editText.getText().toString());
+                            String textFieldDescription = String.format("%s %s, %s", label, text, cursorPositionDescription);
+                            host.setContentDescription(textFieldDescription);
+                            event.setContentDescription(textFieldDescription);
+                        } else {
+                            if (hint != null) {
+                                editText.setHint("");
+                            }
+                            String textFieldDescription = String.format("%s %s, %s", label, editText.getText(), cursorPositionDescription);
+                            host.setContentDescription(textFieldDescription);
+                            event.setContentDescription(textFieldDescription);
+                        }
+                    } else {
+                        if (hint != null) {
+                            editText.setHint(hint);
+                        }
+                        event.getText().clear();
+                        String textFieldDescription = String.format("%s %s, %s", label, editText.getText(), cursorPositionDescription);
+                        host.setContentDescription(textFieldDescription);
+                        event.setContentDescription(textFieldDescription);
+                    }
+                }
+            }
+        });
+    }
+
     public static void setContentDescription(View view, @Nullable String text) {
         ViewCompat.setAccessibilityDelegate(view, new AccessibilityDelegateCompat() {
             @Override
@@ -150,8 +223,34 @@ public class AccessibilityUtils {
             public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
                 StringBuilder textViewAccessibility = getTextViewAccessibility(textView);
+                if (nonNull(title)) {
+                    info.setText(title + " " + textViewAccessibility);
+                    info.setContentDescription(title + " " + textViewAccessibility);
+                    host.setContentDescription(title + " " + textViewAccessibility);
+                } else {
+                    info.setText(textViewAccessibility);
+                    info.setContentDescription(textViewAccessibility);
+                    host.setContentDescription(textViewAccessibility);
+                }
+            }
+        });
+    }
 
-                if (title != null) {
+    public static void setSingleCharactersContentDescriptionWithHint(TextView textView, @Nullable String title, String hint) {
+        ViewCompat.setAccessibilityDelegate(textView, new AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                StringBuilder textViewAccessibility = getTextViewAccessibility(textView);
+                if (isEmpty(textViewAccessibility)) {
+                    textView.setHint(hint);
+                    if (!isEmpty(textView.getHint())) {
+                        textViewAccessibility = new StringBuilder(textView.getHint().toString());
+                    }
+                } else {
+                    textView.setHint(" ");
+                }
+                if (nonNull(title)) {
                     info.setText(title + " " + textViewAccessibility);
                     info.setContentDescription(title + " " + textViewAccessibility);
                     host.setContentDescription(title + " " + textViewAccessibility);
@@ -255,6 +354,7 @@ public class AccessibilityUtils {
         return combinedMessage.toString();
     }
 
+    /** @noinspection deprecation*/
     private static AccessibilityEvent getAccessibilityEvent() {
         return new AccessibilityEvent();
     }

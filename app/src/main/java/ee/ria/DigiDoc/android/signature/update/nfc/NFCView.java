@@ -79,10 +79,14 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
 
         handleNFCSupportLayout();
 
-        AccessibilityUtils.setSingleCharactersContentDescription(canView, "Card number");
-        AccessibilityUtils.setSingleCharactersContentDescription(pinView, "PIN code");
-        AccessibilityUtils.setEditTextCursorToEnd(canView);
-        AccessibilityUtils.setEditTextCursorToEnd(pinView);
+        if (AccessibilityUtils.isTalkBackEnabled()) {
+            AccessibilityUtils.setSingleCharactersContentDescription(canView, "Card number");
+            AccessibilityUtils.setSingleCharactersContentDescription(pinView, "PIN code");
+            AccessibilityUtils.setEditTextCursorToEnd(canView);
+            AccessibilityUtils.setEditTextCursorToEnd(pinView);
+            AccessibilityUtils.setTextViewContentDescription(context, true, null, canLabel.getText().toString(), canView);
+            AccessibilityUtils.setTextViewContentDescription(context, true, null, pinLabel.getText().toString(), pinView);
+        }
         checkInputsValidity();
     }
 

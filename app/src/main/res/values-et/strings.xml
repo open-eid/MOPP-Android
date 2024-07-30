@@ -526,6 +526,9 @@
     <string name="sign_send_content_description">Allkirjasta, vahekaart %1$d / %2$d</string>
     <string name="sign_save_content_description">Salvesta, vahekaart %1$d / %2$d</string>
     <string name="decrypt_send_content_description">Jaga, vahekaart %1$d / %2$d</string>
+    <string name="cursor_focus_beginning_content_description">Kursori fookus on alguses</string>
+    <string name="cursor_focus_at_character_content_description">Kursori fookus on %1$d tähemärgi juures</string>
+    <string name="cursor_focus_end_content_description">Kursori fookus on lõpus</string>
 
     <string name="document">Dokument</string>
     <string name="container_has">Ümbrikus </string>

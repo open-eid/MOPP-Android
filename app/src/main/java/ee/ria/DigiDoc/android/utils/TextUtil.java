@@ -19,10 +19,12 @@ import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -31,15 +33,54 @@ import ee.ria.DigiDoc.R;
 
 public class TextUtil {
 
+    public static AppCompatEditText getEditText(View view) {
+        if (view instanceof final ScrollView scrollView) {
+            final int scrollViewChildCount = scrollView.getChildCount();
+            for (int i = 0; i < scrollViewChildCount; ++i) {
+                final View scrollViewChild = scrollView.getChildAt(i);
+                if (scrollViewChild instanceof final LinearLayout linearLayout) {
+                    final int linearLayoutChildCount = linearLayout.getChildCount();
+                    for (int j = 0; j < linearLayoutChildCount; ++j) {
+                        final View linearLayoutChild = linearLayout.getChildAt(j);
+                        if (linearLayoutChild instanceof AppCompatEditText) {
+                            return (AppCompatEditText) linearLayoutChild;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static AppCompatTextView getTextView(View view) {
+        if (view instanceof final ScrollView scrollView) {
+            final int scrollViewChildCount = scrollView.getChildCount();
+            for (int i = 0; i < scrollViewChildCount; ++i) {
+                final View scrollViewChild = scrollView.getChildAt(i);
+                if (scrollViewChild instanceof final LinearLayout linearLayout) {
+                    final int linearLayoutChildCount = linearLayout.getChildCount();
+                    for (int j = 0; j < linearLayoutChildCount; ++j) {
+                        final View linearLayoutChild = linearLayout.getChildAt(j);
+                        if (linearLayoutChild instanceof AppCompatTextView) {
+                            return (AppCompatTextView) linearLayoutChild;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /** @noinspection unused*/
     public static AppCompatTextView getTextInputLayoutAppCompatTextView(TextInputLayout textInputLayout) {
         for (int i = 0; i < textInputLayout.getChildCount(); i++) {
             final View textInputLayoutChild = textInputLayout.getChildAt(i);
-            if (textInputLayoutChild instanceof LinearLayout) {
-                final LinearLayout linearLayout = (LinearLayout) textInputLayoutChild;
+            if (textInputLayoutChild instanceof final LinearLayout linearLayout) {
                 for (int j = 0; j < linearLayout.getChildCount(); j++) {
                     final View linearLayoutChild = linearLayout.getChildAt(j);
-                    if (linearLayoutChild instanceof FrameLayout) {
-                        final FrameLayout frameLayout = (FrameLayout) linearLayoutChild;
+                    if (linearLayoutChild instanceof final FrameLayout frameLayout) {
                         for (int k = 0; k < frameLayout.getChildCount(); k++) {
                             final View frameLayoutChild = frameLayout.getChildAt(k);
                             if (frameLayoutChild instanceof AppCompatTextView) {

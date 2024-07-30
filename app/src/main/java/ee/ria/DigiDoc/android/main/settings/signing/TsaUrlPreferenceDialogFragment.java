@@ -4,6 +4,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 
 import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -13,7 +14,9 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.CheckBox;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.preference.EditTextPreferenceDialogFragmentCompat;
 
 import java.util.Optional;
@@ -22,6 +25,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
+import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 
@@ -46,21 +50,30 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
     }
 
     @Override
-    protected void onBindDialogView(View view) {
+    protected void onBindDialogView(@NonNull View view) {
         super.onBindDialogView(view);
         TsaUrlPreference tsaUrlPreference = getTsaUrlPreference();
         if (tsaUrlPreference != null) {
-            ConfigurationProvider configurationProvider = ((ApplicationApp) getContext().getApplicationContext()).getConfigurationProvider();
+            ConfigurationProvider configurationProvider = ((ApplicationApp) requireContext().getApplicationContext()).getConfigurationProvider();
             CheckBox checkBox = tsaUrlPreference.getCheckBox();
 
             summary = view.findViewById(android.R.id.edit);
 
             handleTsaUrlContentDescription(view, checkBox);
+            AppCompatEditText appCompatEditText = TextUtil.getEditText(view);
+            AppCompatTextView appCompatTextView = TextUtil.getTextView(view);
 
             tsaUrlPreference.setOnBindEditTextListener(editText -> {
                 checkBox.setChecked(false);
                 editText.setText(tsaUrlPreference.getText());
             });
+
+            if (appCompatEditText != null) {
+                setAccessibilityForEditText(tsaUrlPreference, appCompatEditText, appCompatTextView);
+                if (AccessibilityUtils.isTalkBackEnabled()) {
+                    AccessibilityUtils.setTextViewContentDescription(getContext(), true, configurationProvider.getTsaUrl(), appCompatTextView.getText().toString(), appCompatEditText);
+                }
+            }
 
             if (summary != null) {
                 checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -99,6 +112,13 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                         summary.setSingleLine(summary.getText() != null && summary.getText().length() != 0);
                         handleTsaUrlContentDescription(view, checkBox);
+                        if (summary.getText().toString().isEmpty()) {
+                            summary.setHint(configurationProvider.getTsaUrl());
+                            summary.setContentDescription(getResources().getText(R.string.main_settings_tsa_url_title));
+                        } else {
+                            summary.setHint("");
+                            summary.setContentDescription("");
+                        }
                     }
 
                     @Override
@@ -114,6 +134,19 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
         }
     }
 
+    private void setAccessibilityForEditText(
+            TsaUrlPreference tsaUrlPreference,
+            AppCompatEditText appCompatEditText,
+            AppCompatTextView appCompatTextView
+    ) {
+        AccessibilityUtils.setEditTextCursorToEnd(appCompatEditText);
+        appCompatTextView.setText(tsaUrlPreference.getTitle());
+        appCompatTextView.setLabelFor(appCompatEditText.getId());
+        appCompatTextView.setVisibility(View.VISIBLE);
+        appCompatTextView.setTextColor(Color.WHITE);
+        appCompatTextView.setHeight(0);
+    }
+
     private void disableTextViewOnChecked(AppCompatEditText appCompatEditText,
                                           ConfigurationProvider configurationProvider) {
         appCompatEditText.setText(null);
@@ -121,6 +154,7 @@ public class TsaUrlPreferenceDialogFragment extends EditTextPreferenceDialogFrag
         appCompatEditText.clearFocus();
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = DisplayUtil.setCustomDialogSettings(super.onCreateDialog(savedInstanceState));

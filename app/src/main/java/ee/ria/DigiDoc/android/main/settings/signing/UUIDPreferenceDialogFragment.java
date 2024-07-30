@@ -21,8 +21,10 @@
 package ee.ria.DigiDoc.android.main.settings.signing;
 
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
+import static ee.ria.DigiDoc.android.Constants.SETTINGS_DEFAULT_RELYING_PARTY_UUID;
 
 import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -35,11 +37,13 @@ import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.preference.EditTextPreferenceDialogFragmentCompat;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
+import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 
 public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragmentCompat {
@@ -68,11 +72,20 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
             summary = view.findViewById(android.R.id.edit);
 
             handleUuidUrlContentDescription(view, checkBox);
+            AppCompatEditText appCompatEditText = TextUtil.getEditText(view);
+            AppCompatTextView appCompatTextView = TextUtil.getTextView(view);
 
             uuidPreference.setOnBindEditTextListener(editText -> {
                 checkBox.setChecked(false);
                 editText.setText(uuidPreference.getText());
             });
+
+            if (appCompatEditText != null) {
+                setAccessibilityForEditText(uuidPreference, appCompatEditText, appCompatTextView);
+                if (AccessibilityUtils.isTalkBackEnabled()) {
+                    AccessibilityUtils.setTextViewContentDescription(getContext(), true, SETTINGS_DEFAULT_RELYING_PARTY_UUID, appCompatTextView.getText().toString(), appCompatEditText);
+                }
+            }
 
             if (summary != null) {
                 checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -111,6 +124,13 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                         handleUuidUrlContentDescription(view, checkBox);
+                        if (summary.getText().toString().isEmpty()) {
+                            summary.setHint(SETTINGS_DEFAULT_RELYING_PARTY_UUID);
+                            summary.setContentDescription(getResources().getText(R.string.main_settings_uuid_title));
+                        } else {
+                            summary.setHint("");
+                            summary.setContentDescription("");
+                        }
                     }
 
                     @Override
@@ -122,13 +142,27 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
         }
     }
 
+    private void setAccessibilityForEditText(
+            UUIDPreference uuidPreference,
+            AppCompatEditText appCompatEditText,
+            AppCompatTextView appCompatTextView
+    ) {
+        AccessibilityUtils.setEditTextCursorToEnd(appCompatEditText);
+        appCompatTextView.setText(uuidPreference.getTitle());
+        appCompatTextView.setLabelFor(appCompatEditText.getId());
+        appCompatTextView.setVisibility(View.VISIBLE);
+        appCompatTextView.setTextColor(Color.WHITE);
+        appCompatTextView.setHeight(0);
+    }
+
     private void disableTextViewOnChecked(AppCompatEditText appCompatEditText) {
         appCompatEditText.setText(null);
         appCompatEditText.setSingleLine(false);
-        appCompatEditText.setHint("00000000-0000-0000-0000-000000000000");
+        appCompatEditText.setHint(SETTINGS_DEFAULT_RELYING_PARTY_UUID);
         appCompatEditText.clearFocus();
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = DisplayUtil.setCustomDialogSettings(super.onCreateDialog(savedInstanceState));
