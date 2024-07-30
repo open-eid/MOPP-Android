@@ -14,7 +14,7 @@
   "QDIGIDOC4-SUPPORTED": "4.2.0.42",
   "QDIGIDOC4-LATEST": "4.2.2.0",
   "TERA-DEFAULT-OUT-EXTENSION": ".asics",
-  "TSA-URL": "http://dd-at.ria.ee/tsa",
+  "TSA-URL": "https://eid-dd.ria.ee/ts",
   "QESTEIDUTIL-LATEST": "3.12.10.1265",
   "MID-SIGN-URL": "https://digidocservice.sk.ee",
   "OSX-LATEST": "19.7.0.1834",
