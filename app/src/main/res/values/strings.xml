@@ -139,7 +139,8 @@
     <string name="signature_update_name_update_error_exists">Container with this name already exists</string>
     <string name="signature_update_name_update_error_invalid">Container name invalid</string>
     <string name="signature_update_documents_title">Container files</string>
-    <string name="signature_update_documents_add_error_exists">File already exists in the container</string>
+    <string name="signature_update_document_add_error_exists">File %1$s already exists in the container</string>
+    <string name="signature_update_documents_add_error_exists">Files %1$s already exist in the container</string>
     <string name="signature_update_document_remove_button">Remove file</string>
     <string name="signature_update_document_remove_voice_button">Remove</string>
     <string name="signature_update_document_save_button">Save file</string>
@@ -353,7 +354,8 @@
     <string name="crypto_create_name_update_button">Edit container name</string>
     <string name="crypto_create_data_file">Encrypted file</string>
     <string name="crypto_create_data_files_title">Encrypted files</string>
-    <string name="crypto_create_data_files_add_error_exists">File already exists in the container</string>
+    <string name="crypto_create_data_file_add_error_exists">File %1$s already exists in the container</string>
+    <string name="crypto_create_data_files_add_error_exists">Files %1$s already exist in the container</string>
     <string name="crypto_create_data_file_remove_button">Remove file</string>
     <string name="crypto_create_remove_data_file_confirmation_message">Remove file from container?</string>
     <string name="crypto_create_remove_last_data_file_confirmation_message">You are about to remove the last file in the container, it is removed along with the container.</string>
