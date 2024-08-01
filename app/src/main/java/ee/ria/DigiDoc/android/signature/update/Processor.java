@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -42,6 +43,7 @@ import ee.ria.DigiDoc.android.signature.detail.SignatureDetailScreen;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
 import ee.ria.DigiDoc.android.utils.SivaUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
+import ee.ria.DigiDoc.android.utils.container.ContainerUtil;
 import ee.ria.DigiDoc.android.utils.files.FileAlreadyExistsException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
@@ -205,10 +207,16 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                         data, fileSystem.getExternallyOpenedFilesDir()));
                                         ToastUtil.handleEmptyFileError(validFiles, navigator.activity());
                                         ImmutableList<FileStream> filesNotInContainer = getFilesNotInContainer(navigator.activity(), validFiles, action.containerFile());
-                                        if (filesNotInContainer.isEmpty()) {
-                                            throw new FileAlreadyExistsException(navigator.activity()
-                                                    .getResources()
-                                                    .getString(R.string.signature_update_documents_add_error_exists));
+
+                                        ImmutableList<FileStream> filesAlreadyInContainer = ImmutableList.copyOf(validFiles.stream()
+                                                .filter(file -> !filesNotInContainer.contains(file))
+                                                .collect(Collectors.toList()));
+                                        if (!filesAlreadyInContainer.isEmpty()) {
+                                            ContainerUtil.showExistingFilesMessage(
+                                                    navigator.activity(),
+                                                    filesAlreadyInContainer,
+                                                    R.string.signature_update_document_add_error_exists,
+                                                    R.string.signature_update_documents_add_error_exists);
                                         }
                                         announceAccessibilityFilesAddedEvent(application.getApplicationContext(), filesNotInContainer.size());
                                         return signatureContainerDataSource

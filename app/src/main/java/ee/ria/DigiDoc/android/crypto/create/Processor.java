@@ -36,6 +36,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -48,6 +50,7 @@ import ee.ria.DigiDoc.android.signature.create.SignatureCreateScreen;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.LocaleService;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
+import ee.ria.DigiDoc.android.utils.container.ContainerUtil;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
@@ -236,19 +239,28 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                     .fromCallable(() -> {
                                         ImmutableList<FileStream> fileStreams =
                                                 parseGetContentIntent(navigator.activity(), contentResolver, data, fileSystem.getExternallyOpenedFilesDir());
-                                        ImmutableList.Builder<File> builder =
-                                                ImmutableList.<File>builder().addAll(dataFiles);
+                                        ImmutableList.Builder<File> builder = ImmutableList.<File>builder().addAll(dataFiles);
                                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(fileStreams);
                                         ToastUtil.handleEmptyFileError(validFiles, navigator.activity());
+
+                                        List<FileStream> existingFiles = new ArrayList<>();
                                         for (FileStream fileStream : validFiles) {
                                             File dataFile = fileSystem.cache(fileStream);
                                             if (dataFiles.contains(dataFile)) {
-                                                throw new IllegalArgumentException(
-                                                        navigator.activity().getString(
-                                                                R.string.crypto_create_data_files_add_error_exists));
+                                                existingFiles.add(fileStream);
+                                            } else {
+                                                builder.add(dataFile);
                                             }
-                                            builder.add(dataFile);
                                         }
+
+                                        if (!existingFiles.isEmpty()) {
+                                            ContainerUtil.showExistingFilesMessage(
+                                                    navigator.activity(),
+                                                    ImmutableList.copyOf(existingFiles),
+                                                    R.string.crypto_create_data_file_add_error_exists,
+                                                    R.string.crypto_create_data_files_add_error_exists);
+                                        }
+
                                         if (fileStreams.size() > 1) {
                                             AccessibilityUtils.sendAccessibilityEvent(configurationContext, TYPE_ANNOUNCEMENT, R.string.files_added);
                                         } else {

@@ -140,7 +140,8 @@
     <string name="signature_update_name_update_error_exists">Sellise nimega ümbrik on juba olemas</string>
     <string name="signature_update_name_update_error_invalid">Ümbriku nimi on vigane</string>
     <string name="signature_update_documents_title">Ümbriku failid</string>
-    <string name="signature_update_documents_add_error_exists">Fail on juba ümbrikus olemas</string>
+    <string name="signature_update_document_add_error_exists">Fail %1$s on juba ümbrikus olemas</string>
+    <string name="signature_update_documents_add_error_exists">Failid %1$s on juba ümbrikus olemas</string>
     <string name="signature_update_document_remove_button">Eemalda fail ümbrikust</string>
     <string name="signature_update_document_remove_voice_button">Eemalda</string>
     <string name="signature_update_document_save_button">Salvesta fail ümbrikust</string>
@@ -349,7 +350,8 @@
     <string name="crypto_create_name_update_button">Muuda ümbriku nime</string>
     <string name="crypto_create_data_file">Krüpteeritud fail</string>
     <string name="crypto_create_data_files_title">Krüpteeritud failid</string>
-    <string name="crypto_create_data_files_add_error_exists">Fail on juba ümbrikus olemas</string>
+    <string name="crypto_create_data_file_add_error_exists">Fail %1$s on juba ümbrikus olemas</string>
+    <string name="crypto_create_data_files_add_error_exists">Failid %1$s on juba ümbrikus olemas</string>
     <string name="crypto_create_data_file_remove_button">Eemalda fail</string>
     <string name="crypto_create_remove_data_file_confirmation_message">Soovid eemaldada faili ümbrikust?</string>
     <string name="crypto_create_remove_last_data_file_confirmation_message">Oled kustutamas viimast faili ümbrikus, koos sellega eemaldatakse ka ümbrik.</string>
