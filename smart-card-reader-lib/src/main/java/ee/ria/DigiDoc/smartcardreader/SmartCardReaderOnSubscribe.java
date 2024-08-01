@@ -14,6 +14,8 @@ import androidx.annotation.Nullable;
 
 import com.google.common.base.Optional;
 
+import java.util.Map;
+
 import io.reactivex.rxjava3.core.ObservableEmitter;
 import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import timber.log.Timber;
@@ -41,17 +43,15 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
         BroadcastReceiver deviceAttachReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                UsbDevice device = getUsbDevice(intent);
+                UsbDevice device = getCurrentDevice();
                 Timber.log(Log.DEBUG, "Smart card device attached: %s", device);
-                if (device != null && smartCardReaderManager.supports(device)) {
-                    requestPermission(device);
-                }
+                handleUsbDevicesPermission();
             }
         };
         BroadcastReceiver deviceDetachReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                UsbDevice device = getUsbDevice(intent);
+                UsbDevice device = getCurrentDevice();
                 Timber.log(Log.DEBUG, "Smart card device detached: %s", device);
                 if (device != null && currentDevice != null &&
                         currentDevice.getDeviceId() == device.getDeviceId()) {
@@ -63,9 +63,9 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
         BroadcastReceiver devicePermissionReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                boolean permissionGranted = intent.getBooleanExtra(
-                        UsbManager.EXTRA_PERMISSION_GRANTED, false);
-                UsbDevice device = getUsbDevice(intent);
+                intent.setPackage(context.getPackageName());
+                UsbDevice device = getDeviceGrantedPermission();
+                boolean permissionGranted = device != null;
                 Timber.log(Log.DEBUG, "Smart card device permission: granted: %s; device: %s", permissionGranted,
                         device);
                 if (permissionGranted && smartCardReaderManager.supports(device)) {
@@ -81,8 +81,13 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
                 new IntentFilter(UsbManager.ACTION_USB_DEVICE_ATTACHED));
         context.registerReceiver(deviceDetachReceiver,
                 new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
-        context.registerReceiver(devicePermissionReceiver,
-                new IntentFilter(ACTION_USB_DEVICE_PERMISSION));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.registerReceiver(devicePermissionReceiver,
+                    new IntentFilter(ACTION_USB_DEVICE_PERMISSION), Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            context.registerReceiver(devicePermissionReceiver,
+                    new IntentFilter(ACTION_USB_DEVICE_PERMISSION));
+        }
 
         emitter.setCancellable(() -> {
             context.unregisterReceiver(deviceAttachReceiver);
@@ -91,24 +96,16 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
             clearCurrent();
         });
 
-        for (UsbDevice device : usbManager.getDeviceList().values()) {
-            if (smartCardReaderManager.supports(device)) {
-                requestPermission(device);
-                break;
-            }
-        }
+        handleUsbDevicesPermission();
     }
 
-    private void requestPermission(UsbDevice device) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            usbManager.requestPermission(device,
-                    PendingIntent
-                            .getBroadcast(context, 0, new Intent(ACTION_USB_DEVICE_PERMISSION), PendingIntent.FLAG_MUTABLE));
-        } else {
-            usbManager.requestPermission(device,
-                    PendingIntent
-                            .getBroadcast(context, 0, new Intent(ACTION_USB_DEVICE_PERMISSION), 0));
-        }
+    private void requestPermission(Context context, UsbDevice device) {
+        Intent permissionIntent = new Intent(ACTION_USB_DEVICE_PERMISSION);
+        permissionIntent.setPackage(context.getPackageName());
+        usbManager.requestPermission(device,
+                PendingIntent
+                        .getBroadcast(context, 0, permissionIntent, PendingIntent.FLAG_IMMUTABLE));
+
     }
 
     private void clearCurrent() {
@@ -123,11 +120,35 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
         }
     }
 
-    private UsbDevice getUsbDevice(Intent intent) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            return intent.getParcelableExtra(UsbManager.EXTRA_DEVICE, UsbDevice.class);
-        } else {
-            return intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-        }
+    private UsbDevice getCurrentDevice() {
+        Map<String, UsbDevice> deviceList = usbManager.getDeviceList();
+
+        return deviceList.values().stream()
+                .filter(this::isSupportedDevice)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private UsbDevice getDeviceGrantedPermission() {
+        Map<String, UsbDevice> deviceList = usbManager.getDeviceList();
+
+        return deviceList.values().stream()
+                .filter(this::isSupportedDevice)
+                .filter(usbManager::hasPermission)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void handleUsbDevicesPermission() {
+        Map<String, UsbDevice> deviceList = usbManager.getDeviceList();
+
+        deviceList.values().stream()
+                .filter(this::isSupportedDevice)
+                .findFirst()
+                .ifPresent(usbDevice -> requestPermission(context, usbDevice));
+    }
+
+    private boolean isSupportedDevice(UsbDevice device) {
+        return smartCardReaderManager.supports(device);
     }
 }
