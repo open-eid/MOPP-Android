@@ -13,15 +13,17 @@ public final class SignatureDetailScreen extends ConductorScreen {
     private static final int SIGNATURE_DETAIL_SCREEN_ID = R.id.signatureDetailScreen;
     private Signature userSignature;
     private SignedContainer userSignedContainer;
+    boolean isSivaConfirmed;
 
-    public SignatureDetailScreen(int id, Signature signature, SignedContainer signedContainer) {
+    public SignatureDetailScreen(int id, Signature signature, SignedContainer signedContainer, boolean isSivaConfirmed) {
         super(id);
         this.userSignature = signature;
         this.userSignedContainer = signedContainer;
+        this.isSivaConfirmed = isSivaConfirmed;
     }
 
-    public static SignatureDetailScreen create(Signature signature, SignedContainer signedContainer) {
-        return new SignatureDetailScreen(SIGNATURE_DETAIL_SCREEN_ID, signature, signedContainer);
+    public static SignatureDetailScreen create(Signature signature, SignedContainer signedContainer, boolean isSivaConfirmed) {
+        return new SignatureDetailScreen(SIGNATURE_DETAIL_SCREEN_ID, signature, signedContainer, isSivaConfirmed);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -31,6 +33,6 @@ public final class SignatureDetailScreen extends ConductorScreen {
 
     @Override
     protected View view(Context context) {
-        return new SignatureDetailView(context, userSignature, userSignedContainer);
+        return new SignatureDetailView(context, userSignature, userSignedContainer, isSivaConfirmed);
     }
 }
