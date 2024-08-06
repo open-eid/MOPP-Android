@@ -51,10 +51,10 @@ final class SmartCardReaderOnSubscribe implements ObservableOnSubscribe<Optional
         BroadcastReceiver deviceDetachReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                UsbDevice device = getCurrentDevice();
+                UsbDevice usbDevice = getCurrentDevice();
+                UsbDevice device = usbDevice == null ? currentDevice : usbDevice;
                 Timber.log(Log.DEBUG, "Smart card device detached: %s", device);
-                if (device != null && currentDevice != null &&
-                        currentDevice.getDeviceId() == device.getDeviceId()) {
+                if (device != null && device.getDeviceId() == device.getDeviceId()) {
                     clearCurrent();
                     emitter.onNext(Optional.absent());
                 }
