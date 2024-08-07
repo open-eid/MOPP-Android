@@ -373,7 +373,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     .map(signedContainerFile -> {
                         Transaction transaction;
                         transaction = Transaction.push(SignatureDetailScreen
-                                .create(action.signature(), signedContainerFile));
+                                .create(action.signature(), signedContainerFile, action.isSivaConfirmed()));
                         navigator.execute(transaction);
                         return Result.SignatureViewResult.idle();
                     })

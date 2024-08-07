@@ -55,6 +55,8 @@ public final class SignatureDetailView extends CoordinatorLayout implements Cont
     private final Navigator navigator;
     private final Toolbar toolbarView;
 
+    private final boolean isSivaConfirmed;
+
     private final LinearLayout errorContainer;
     private final TextView errorTitle;
     private final TextView errorDetails;
@@ -66,7 +68,7 @@ public final class SignatureDetailView extends CoordinatorLayout implements Cont
 
     private final ViewDisposables disposables = new ViewDisposables();
 
-    public SignatureDetailView(Context context, Signature signature, SignedContainer signedContainer) {
+    public SignatureDetailView(Context context, Signature signature, SignedContainer signedContainer, boolean isSivaConfirmed) {
         super(context);
 
         inflate(context, R.layout.signature_detail_screen, this);
@@ -74,6 +76,8 @@ public final class SignatureDetailView extends CoordinatorLayout implements Cont
 
         navigator = ApplicationApp.component(context).navigator();
         toolbarView = findViewById(R.id.toolbar);
+
+        this.isSivaConfirmed = isSivaConfirmed;
 
         errorContainer = findViewById(R.id.signersCertificateErrorContainer);
         errorTitle = findViewById(R.id.signersCertificateErrorTitle);
@@ -117,12 +121,17 @@ public final class SignatureDetailView extends CoordinatorLayout implements Cont
         ContentView.addInvisibleElement(context, this);
     }
 
-    private String getContainerMimeType(SignedContainer signedContainer) {
-        Container container = Container.open(signedContainer.file().getAbsolutePath(), new DigidocContainerOpenCB(false));
-        if (container == null) {
+    private String getContainerMimeType(SignedContainer signedContainer, boolean isSivaConfirmed) {
+        try {
+            Container container = Container.open(signedContainer.file().getAbsolutePath(), new DigidocContainerOpenCB(isSivaConfirmed));
+            if (container == null) {
+                return "";
+            }
+            return container.mediaType();
+        } catch (Exception e) {
+            Timber.log(Log.ERROR, e, String.format("Unable to get container mimetype. %s", e.getLocalizedMessage()));
             return "";
         }
-        return container.mediaType();
     }
 
     private int getNumberOfFilesInContainer(SignedContainer signedContainer) {
@@ -133,7 +142,7 @@ public final class SignatureDetailView extends CoordinatorLayout implements Cont
         TextUtil.handleDetailText((signature.signersCertificateIssuer()), findViewById(R.id.signatureDetailSignersCertificateIssuer));
         TextUtil.handleDetailText((signature.name()).replace(",", ", "), findViewById(R.id.signersCertificateButton));
         TextUtil.handleDetailText((signature.signatureMethod()), findViewById(R.id.signatureDetailMethod));
-        TextUtil.handleDetailText((getContainerMimeType(signedContainer)), findViewById(R.id.containerDetailFormat));
+        TextUtil.handleDetailText((getContainerMimeType(signedContainer, isSivaConfirmed)), findViewById(R.id.containerDetailFormat));
         TextUtil.handleDetailText((signature.signatureFormat()), findViewById(R.id.signatureDetailFormat));
         TextUtil.handleDetailText((String.valueOf(getNumberOfFilesInContainer(signedContainer))), findViewById(R.id.containerDetailSignedFileCount));
         TextUtil.handleDetailText((signature.signatureTimestamp()), findViewById(R.id.signatureDetailTimestamp));
