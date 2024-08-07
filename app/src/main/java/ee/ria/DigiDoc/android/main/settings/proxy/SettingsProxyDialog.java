@@ -42,7 +42,7 @@ import ee.ria.DigiDoc.common.ProxyConfig;
 import ee.ria.DigiDoc.common.ProxySetting;
 import ee.ria.DigiDoc.common.ProxyUtil;
 import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
-import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
+import ee.ria.DigiDoc.common.UserAgentUtil;
 import ee.ria.DigiDoc.sign.SignLib;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;

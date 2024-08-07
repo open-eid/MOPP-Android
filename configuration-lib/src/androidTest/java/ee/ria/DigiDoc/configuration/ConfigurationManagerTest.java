@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
-import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
+import ee.ria.DigiDoc.common.UserAgentUtil;
 
 public final class ConfigurationManagerTest {
 

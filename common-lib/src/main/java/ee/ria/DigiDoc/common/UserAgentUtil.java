@@ -1,4 +1,6 @@
-package ee.ria.DigiDoc.configuration.util;
+package ee.ria.DigiDoc.common;
+
+import static android.content.Context.USB_SERVICE;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -16,11 +18,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import timber.log.Timber;
-
-import static android.content.Context.USB_SERVICE;
-
 public final class UserAgentUtil {
+
+    private static final String LOG_TAG = "UserAgentUtil";
 
     private static final List<String> deviceNameFilters = List.of("Smart", "Reader", "Card");
 
@@ -39,7 +39,7 @@ public final class UserAgentUtil {
             initializingMessage.append("riadigidoc/").append(getAppVersion(context));
             initializingMessage.append(" (Android ").append(Build.VERSION.RELEASE).append(")");
             initializingMessage.append(" Lang: ").append(Locale.getDefault().getLanguage());
-            if (deviceProductNames.size() > 0) {
+            if (!deviceProductNames.isEmpty()) {
                 initializingMessage.append(" Devices: ").append(TextUtils.join(", ", deviceProductNames));
             }
         }
@@ -73,7 +73,8 @@ public final class UserAgentUtil {
                     .append(".")
                     .append(getPackageInfo(context).getLongVersionCode());
         } catch (PackageManager.NameNotFoundException e) {
-            Timber.log(Log.ERROR, e, "Failed getting app version from package info");
+            Log.e(LOG_TAG, String.format("Failed getting app version from package info. %s",
+                    e.getLocalizedMessage()));
         }
 
         return versionName;

@@ -2,6 +2,8 @@ package ee.ria.DigiDoc.android.model.idcard;
 
 import static ee.ria.DigiDoc.android.utils.Predicates.duplicates;
 
+import android.content.Context;
+
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -67,12 +69,12 @@ public final class IdCardService {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Single<SignedContainer> sign(Token token, SignedContainer container,
+    public Single<SignedContainer> sign(Context context, Token token, SignedContainer container,
                                         byte[] pin2, @Nullable RoleData roleData) {
         return Single
                 .fromCallable(() -> {
                     IdCardData data = data(token);
-                    return container.sign(data.signCertificate().data(),
+                    return container.sign(context, data.signCertificate().data(),
                             signData -> ByteString.of(token.calculateSignature(pin2,
                                     signData.toByteArray(),
                                     data.signCertificate().ellipticCurve())), roleData);
