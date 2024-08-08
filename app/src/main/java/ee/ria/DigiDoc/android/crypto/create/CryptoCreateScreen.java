@@ -129,11 +129,12 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
     @SuppressWarnings("WeakerAccess")
     public CryptoCreateScreen(Bundle args) {
         super(args);
-        containerFromSigning = args.containsKey(KEY_CONTAINER_FILE)
+        isFromSignatureView = args.getBoolean(KEY_IS_FROM_SIGNATURE_VIEW);
+        containerFromSigning = isFromSignatureView && args.containsKey(KEY_CONTAINER_FILE)
                 ? getFile(args, KEY_CONTAINER_FILE)
                 : null;
+        containerFile = !isFromSignatureView && args.containsKey(KEY_CONTAINER_FILE) ? getFile(args, KEY_CONTAINER_FILE) : null;
         intent = getIntent(args);
-        isFromSignatureView = args.getBoolean(KEY_IS_FROM_SIGNATURE_VIEW);
     }
 
     private Observable<Intent.InitialIntent> initialIntent() {
@@ -146,7 +147,7 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
                         .map(ignored -> Intent.NameUpdateIntent.show(name)),
                 cancels(nameUpdateDialog).map(ignored -> {
                     AccessibilityUtils.sendAccessibilityEvent(view.getContext(), TYPE_ANNOUNCEMENT, R.string.container_name_change_cancelled);
-                    return Intent.NameUpdateIntent.clear();
+                    return Intent.NameUpdateIntent.clear(name);
                 }),
                 nameUpdateDialog.updates()
                         .map(newName -> Intent.NameUpdateIntent.update(name, newName))

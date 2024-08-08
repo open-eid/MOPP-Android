@@ -50,8 +50,8 @@ interface Intent extends MviIntent, MviAction {
             return create(oldName, newName);
         }
 
-        static NameUpdateIntent clear() {
-            return create(null, null);
+        static NameUpdateIntent clear(String oldName) {
+            return create(null, oldName);
         }
 
         private static NameUpdateIntent create(String name, String newName) {
