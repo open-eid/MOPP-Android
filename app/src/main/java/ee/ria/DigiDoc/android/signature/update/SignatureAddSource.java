@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -7,7 +8,6 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 
 import java.io.File;
-import java.util.Arrays;
 
 import javax.inject.Inject;
 
@@ -184,7 +184,7 @@ final class SignatureAddSource {
                             idCardService.data()
                                     .filter(dataResponse -> dataResponse.token() != null)
                                     .switchMapSingle(dataResponse ->
-                                            idCardService.sign(dataResponse.token(), container,
+                                            idCardService.sign(navigator.activity(), dataResponse.token(), container,
                                                     idCardRequest.pin2(), roleData)).firstOrError())
                     .map(IdCardResponse::success)
                     .toObservable()
@@ -215,11 +215,11 @@ final class SignatureAddSource {
         }
     }
 
-    public Single<SignedContainer> sign(String signatureValue, byte[] dataToSign,
+    public Single<SignedContainer> sign(Context context, String signatureValue, byte[] dataToSign,
                                         SignedContainer container,
                                         @Nullable RoleData roleData) {
         return Single
-                .fromCallable(() -> container.sign(ByteString.of(dataToSign),
+                .fromCallable(() -> container.sign(context, ByteString.of(dataToSign),
                         signData -> ByteString.encodeUtf8(signatureValue), roleData))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

@@ -12,7 +12,7 @@ import androidx.core.app.PatchedJobIntentService;
 import java.util.Date;
 
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
-import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
+import ee.ria.DigiDoc.common.UserAgentUtil;
 import timber.log.Timber;
 
 public class ConfigurationManagerService extends PatchedJobIntentService {

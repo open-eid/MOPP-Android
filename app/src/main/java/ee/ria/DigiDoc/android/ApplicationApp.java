@@ -100,7 +100,7 @@ import ee.ria.DigiDoc.configuration.ConfigurationProperties;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
-import ee.ria.DigiDoc.configuration.util.UserAgentUtil;
+import ee.ria.DigiDoc.common.UserAgentUtil;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
