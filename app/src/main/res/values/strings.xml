@@ -300,14 +300,14 @@
     <string name="nfc_sign_can_invalid_length">CAN-code must be %1$s digits long</string>
     <string name="id_card_sign_pin_invalid_length">%1$s code must be at least %2$s and a maximum of %3$s digits long</string>
 
-    <string name="signature_update_nfc_message">Enter your CAN and PIN 2 code to sign with ID-Card using NFC</string>
-    <string name="signature_update_nfc_can">CAN code on card</string>
-    <string name="signature_update_nfc_pin2">PIN 2 code</string>
-    <string name="signature_update_nfc_adapter_missing">This device does not support NFC.</string>
+    <string name="signature_update_nfc_message">Enter your ID-card access number (CAN) and PIN2 code to sign with ID-card</string>
+    <string name="signature_update_nfc_can">ID-card access number (CAN)</string>
+    <string name="signature_update_nfc_pin2">PIN2 code</string>
+    <string name="signature_update_nfc_adapter_missing">This device does not support NFC</string>
     <string name="signature_update_nfc_tag_lost">NFC connection lost</string>
     <string name="signature_update_nfc_technical_error">Technical error</string>
-    <string name="signature_update_nfc_hold">Please hold your ID Card against the phone until the signing process is completed</string>
-    <string name="signature_update_nfc_detected">Card detected. Please keep holding it until the signing process is completed</string>
+    <string name="signature_update_nfc_hold">Hold your phone near the ID-card</string>
+    <string name="signature_update_nfc_detected">Authenticating with ID-card</string>
 
     <!-- Signature Details -->
     <string name="signature_error_details_title">Warnings</string>
