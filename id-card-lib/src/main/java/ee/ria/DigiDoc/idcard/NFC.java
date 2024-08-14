@@ -90,7 +90,6 @@ public class NFC {
             if ((length & 0x80) != 0) {
                 int numberOfLengthBytes = length & 0x7F;
                 if (numberOfLengthBytes > 4) {
-                    // fixme: use proper exception type (Lauris)
                     throw new NFCException("TLV Message size invalid");
                 }
                 length = 0;
@@ -108,7 +107,6 @@ public class NFC {
         }
 
         public static byte[] wrap (@Nonnull byte[] cmd, byte[] data) {
-            // fixme: long lengths
             int len = (data != null) ? data.length : 0;
             byte[] r = new byte[cmd.length + 1 + len];
             System.arraycopy(cmd, 0, r, 0, cmd.length);
@@ -118,7 +116,6 @@ public class NFC {
         }
 
         public static byte[] wrap (int cmd, byte[] data) {
-            // fixme: long lengths
             int len = (data != null) ? data.length : 0;
             byte[] r = new byte[1 + 1 + len];
             r[0] = (byte) cmd;
@@ -154,16 +151,16 @@ public class NFC {
         }
     }
 
-    public NFC(IsoDep card, byte[] can) {
+    public NFC(IsoDep card, byte[] can) throws NFCException {
         this.card = card;
         this.can = can;
-        // fixme: Handle exceptions meaningfully
         try {
             byte[][] keys = PACE(can);
             keyEnc = keys[0];
             keyMAC = keys[1];
         } catch (Exception exc) {
             Timber.log(Log.ERROR, "NFC Error: %s", exc.getMessage());
+            throw new NFCException(exc.getMessage());
         }
     }
 
@@ -199,6 +196,7 @@ public class NFC {
             Timber.log(Log.DEBUG, "APDU: %s", Hex.toHexString(APDU));
             response = card.transceive(APDU);
             Timber.log(Log.DEBUG, "RESPONSE: %s", Hex.toHexString(response));
+            int code = (((int) response[response.length - 2] & 0xff) << 8) | ((int) response[response.length - 1] & 0xff);
             if (response.length > 2) {
                 TLV tlv = new TLV(response, 0, response.length - 2);
                 Timber.log(Log.DEBUG, "TLV:%x %s", tlv.tag, Hex.toHexString(tlv.data, tlv.start, tlv.end - tlv.start));
@@ -209,25 +207,21 @@ public class NFC {
                     Timber.log(Log.DEBUG, "RES:%x %s", tlv_res.tag, Hex.toHexString(tlv_res.data, tlv_res.start, tlv_res.end - tlv_res.start));
                     TLV tlv_mac = new TLV(tlv.data, tlv_res.end, response.length - 2);
                     Timber.log(Log.DEBUG, "MAC:%x %s", tlv_mac.tag, Hex.toHexString(tlv_mac.data, tlv_mac.start, tlv_mac.end - tlv_mac.start));
-                    // fixme: Check MAC (Lauris)
                     if (tlv_enc.data[tlv_enc.start] != 0x1) {
                         throw new IOException("Missing padding indicator");
                     }
                     byte[] decrypted = encryptDecryptData(Arrays.copyOfRange(tlv_enc.data, tlv_enc.start + 1, tlv_enc.end), Cipher.DECRYPT_MODE);
                     int indexOfTerminator = Hex.toHexString(decrypted).lastIndexOf("80") / 2;
                     byte[] pruned = Arrays.copyOf(decrypted, indexOfTerminator);
-                    // fixme: Use result code (Lauris)
-                    return new Result(0x9000, pruned);
+                    return new Result(code, pruned);
                 } else {
                     TLV tlv_res = tlv;
                     Timber.log(Log.DEBUG, "RES:%x %s", tlv_res.tag, Hex.toHexString(tlv_res.data, tlv_res.start, tlv_res.end - tlv_res.start));
                     TLV tlv_mac = new TLV(tlv.data, tlv_res.end, response.length - 2);
                     Timber.log(Log.DEBUG, "MAC:%x %s", tlv_mac.tag, Hex.toHexString(tlv_mac.data, tlv_mac.start, tlv_mac.end - tlv_mac.start));
-                    // fixme: Check MAC (Lauris)
                 }
             }
-            // fixme: Use result code (Lauris)
-            return new Result(response);
+            return new Result(code, response);
         } catch (RuntimeException e) {
             Timber.log(Log.ERROR, "Exception in app with NFC: %s", e.getMessage());
         } catch (Exception exc) {
@@ -417,7 +411,6 @@ public class NFC {
         mac_buf[18] = P1;
         mac_buf[19] = P2;
         mac_buf[20] = (byte) 0x80;
-        // fixme: Is it correct encoding for zero-length payload? (Lauris)
         mac_buf[32] = (enc_len > 0) ? (byte) 0x87 : (byte) 0x97;
         mac_buf[33] = (byte) (enc_len + 1);
         mac_buf[34] = (enc_len > 0) ? (byte) 0x1 : (byte) 0x0;
@@ -437,7 +430,6 @@ public class NFC {
         APDU[2] = P1;
         APDU[3] = P2;
         APDU[4] = (byte) (apdu_len - 6);
-        // fixme: Is it correct encoding for zero-length payload? (Lauris)
         APDU[5] = (enc_len > 0) ? (byte) 0x87 : (byte) 0x97;
         APDU[6] = (byte) (enc_len + 1);
         APDU[7] = (enc_len > 0) ? (byte) 0x1 : (byte) 0x0;
