@@ -205,7 +205,7 @@ public class SmartSignService extends Worker {
 
                     Timber.log(Log.DEBUG, "Session status response: %s", sessionStatusResponse.toString());
 
-                    ContainerWrapper containerWrapper = new ContainerWrapper(request.getContainerPath());
+                    ContainerWrapper containerWrapper = new ContainerWrapper(getApplicationContext(), request.getContainerPath());
                     String base64Hash = containerWrapper.prepareSignature(getCertificatePem(sessionStatusResponse.getCert().getValue()), roleDataRequest);
                     if (base64Hash != null && !base64Hash.isEmpty()) {
                         Timber.log(Log.DEBUG, "Broadcasting signature challenge response");
