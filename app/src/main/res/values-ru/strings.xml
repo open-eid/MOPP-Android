@@ -139,7 +139,8 @@
     <string name="signature_update_name_update_error_exists">Контейнер с таким названием уже существует</string>
     <string name="signature_update_name_update_error_invalid">Неверное название контейнера</string>
     <string name="signature_update_documents_title">Файлы контейнера</string>
-    <string name="signature_update_documents_add_error_exists">Файл уже существует в контейнере</string>
+    <string name="signature_update_document_add_error_exists">Файл %1$s уже существует в контейнере</string>
+    <string name="signature_update_documents_add_error_exists">Файлы %1$s уже существуют в контейнере</string>
     <string name="signature_update_document_remove_button">Удалить файл</string>
     <string name="signature_update_document_remove_voice_button">Удалить</string>
     <string name="signature_update_document_save_button">Сохраните файл</string>
@@ -351,7 +352,8 @@
     <string name="crypto_create_name_update_button">Изменить название контейнера</string>
     <string name="crypto_create_data_file">Зашифрованные файл</string>
     <string name="crypto_create_data_files_title">Зашифрованные файлы</string>
-    <string name="crypto_create_data_files_add_error_exists">Файл уже существует в контейнере</string>
+    <string name="crypto_create_data_file_add_error_exists">Файл %1$s уже существует в контейнере</string>
+    <string name="crypto_create_data_files_add_error_exists">Файлы %1$s уже существуют в контейнере</string>
     <string name="crypto_create_data_file_remove_button">Удалить файл</string>
     <string name="crypto_create_remove_data_file_confirmation_message">Удалить файл из контейнера?</string>
     <string name="crypto_create_remove_last_data_file_confirmation_message">Вы собираетесь удалить последний файл в контейнере, он удаляется вместе с контейнером.</string>
