@@ -210,7 +210,7 @@ public final class ConfigurationManagerTest {
         assertEquals("ldaps://k3.ldap.sk.ee", configuration.getLdapCorpUrl());
         assertEquals("ldaps://esteid.ldap.sk.ee", configuration.getLdapPersonUrl());
         assertEquals("https://siva.eesti.ee/V3/validate", configuration.getSivaUrl());
-        assertEquals("http://dd-at.ria.ee/tsa", configuration.getTsaUrl());
+        assertEquals("https://eid-dd.ria.ee/ts", configuration.getTsaUrl());
         assertEquals("https://ec.europa.eu/tools/lotl/eu-lotl.xml", configuration.getTslUrl());
         assertEquals("20220221080015Z", configuration.getMetaInf().getDate());
         assertEquals("https://id.eesti.ee/config.json", configuration.getMetaInf().getUrl());
