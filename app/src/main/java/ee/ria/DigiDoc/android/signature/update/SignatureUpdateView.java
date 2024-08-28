@@ -49,9 +49,9 @@ import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.signature.update.mobileid.MobileIdResponse;
-import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.signature.update.nfc.NFCDialog;
 import ee.ria.DigiDoc.android.signature.update.nfc.NFCResponse;
+import ee.ria.DigiDoc.android.signature.update.smartid.SmartIdResponse;
 import ee.ria.DigiDoc.android.utils.DateUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.ViewDisposables;
@@ -587,10 +587,14 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
 
             if (signatureAddResponse instanceof NFCResponse) {
                 NFCResponse nfcResponse = (NFCResponse) signatureAddResponse;
-                Timber.log(Log.DEBUG, "NFC:SignatureUpdateView.render, status %s", nfcResponse.status().toString());
+                if (nfcResponse.status() != null) {
+                    Timber.log(Log.DEBUG, "NFC:SignatureUpdateView.render, status %s", nfcResponse.status().toString());
+                }
                 nfcDialog.showStatus(nfcResponse);
                 nfcDialog.show();
             }
+        } else {
+            nfcDialog.dismiss();
         }
 
         setupAccessibilityTabs();
@@ -741,15 +745,19 @@ public final class SignatureUpdateView extends LinearLayout implements ContentVi
             if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_mobile_id))) {
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
                         getResources().getString(R.string.signature_update_signature_chosen_method_mobile_id));
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, getResources().getString(R.string.signature_update_signature_selected_method_mobile_id, 1, 4));
             } else if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_smart_id))) {
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
                         getResources().getString(R.string.signature_update_signature_chosen_method_smart_id));
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, getResources().getString(R.string.signature_update_signature_selected_method_smart_id, 2, 4));
             } else if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_id_card))) {
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
                         getResources().getString(R.string.signature_update_signature_chosen_method_id_card));
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, getResources().getString(R.string.signature_update_signature_selected_method_id_card, 3, 4));
             } else if (signatureMethod.equalsIgnoreCase(getResources().getString(R.string.signature_update_signature_add_method_nfc))) {
                 AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_WINDOW_STATE_CHANGED,
                         getResources().getString(R.string.signature_update_signature_chosen_method_nfc));
+                AccessibilityUtils.sendAccessibilityEvent(getContext(), TYPE_ANNOUNCEMENT, getResources().getString(R.string.signature_update_signature_selected_method_nfc, 4, 4));
             }
         }
     }
