@@ -63,7 +63,6 @@ import ee.ria.DigiDoc.common.DigidocContainerOpenCB;
 import ee.ria.DigiDoc.common.FileUtil;
 import ee.ria.DigiDoc.common.RoleData;
 import ee.ria.DigiDoc.common.TextUtil;
-import ee.ria.DigiDoc.common.UserAgentUtil;
 import ee.ria.DigiDoc.common.exception.InvalidProxySettingsException;
 import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
 import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
@@ -72,7 +71,6 @@ import ee.ria.DigiDoc.sign.utils.ContainerMimeTypeUtil;
 import ee.ria.DigiDoc.sign.utils.Function;
 import ee.ria.libdigidocpp.Container;
 import ee.ria.libdigidocpp.DataFiles;
-import ee.ria.libdigidocpp.ExternalSigner;
 import ee.ria.libdigidocpp.Signature.Validator;
 import ee.ria.libdigidocpp.Signatures;
 import ee.ria.libdigidocpp.StringVector;
@@ -207,28 +205,24 @@ public abstract class SignedContainer {
         return open(file(), false);
     }
 
-    public final SignedContainer sign(Context context, ByteString certificate,
+    public final SignedContainer sign(ByteString certificate,
                                       Function<ByteString, ByteString> signFunction,
                                       @Nullable RoleData roleData) throws Exception {
         try {
             Container container = container(file(), false);
 
-            ExternalSigner signer = new ExternalSigner(certificate.toByteArray());
-            signer.setProfile(signatureProfile());
-            signer.setUserAgent(UserAgentUtil.getUserAgent(context));
-
+            ee.ria.libdigidocpp.Signature signature;
             if (roleData != null) {
-                signer.setSignerRoles(new StringVector(TextUtil.removeEmptyStrings(roleData.getRoles())));
-                signer.setSignatureProductionPlace(roleData.getCity(), roleData.getState(),
-                        roleData.getZip(), roleData.getCountry());
+                signature = container.prepareWebSignature(certificate.toByteArray(), signatureProfile(),
+                        new StringVector(TextUtil.removeEmptyStrings(roleData.getRoles())), roleData.getCity(),
+                        roleData.getState(), roleData.getZip(), roleData.getCountry());
+            } else {
+                signature = container.prepareWebSignature(certificate.toByteArray(), signatureProfile());
             }
-
-            ee.ria.libdigidocpp.Signature signature = container.prepareSignature(signer);
-
             if (signature != null) {
                 ByteString signatureData = signFunction.apply(ByteString.of(signature.dataToSign()));
                 signature.setSignatureValue(signatureData.toByteArray());
-                signature.extendSignatureProfile(signer);
+                signature.extendSignatureProfile(signatureProfile());
                 container.save();
                 return open(file(), false);
             }

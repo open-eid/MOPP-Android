@@ -74,7 +74,7 @@ public final class IdCardService {
         return Single
                 .fromCallable(() -> {
                     IdCardData data = data(token);
-                    return container.sign(context, data.signCertificate().data(),
+                    return container.sign(data.signCertificate().data(),
                             signData -> ByteString.of(token.calculateSignature(pin2,
                                     signData.toByteArray(),
                                     data.signCertificate().ellipticCurve())), roleData);

@@ -242,7 +242,7 @@ public class MobileSignService extends Worker {
                     if (isResponseError(responseWrapper, response, MobileCreateSignatureCertificateResponse.class)) {
                         return Result.failure();
                     }
-                    containerWrapper = new ContainerWrapper(getApplicationContext(), request.getContainerPath());
+                    containerWrapper = new ContainerWrapper(request.getContainerPath());
                     String base64Hash = containerWrapper.prepareSignature(getCertificatePem(response.getCert()), roleDataRequest);
                     if (base64Hash != null && !base64Hash.isEmpty()) {
                         Timber.log(Log.DEBUG, "Broadcasting create signature response");

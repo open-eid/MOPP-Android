@@ -1,6 +1,5 @@
 package ee.ria.DigiDoc.android.signature.update;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -215,11 +214,11 @@ final class SignatureAddSource {
         }
     }
 
-    public Single<SignedContainer> sign(Context context, String signatureValue, byte[] dataToSign,
+    public Single<SignedContainer> sign(String signatureValue, byte[] dataToSign,
                                         SignedContainer container,
                                         @Nullable RoleData roleData) {
         return Single
-                .fromCallable(() -> container.sign(context, ByteString.of(dataToSign),
+                .fromCallable(() -> container.sign(ByteString.of(dataToSign),
                         signData -> ByteString.encodeUtf8(signatureValue), roleData))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
