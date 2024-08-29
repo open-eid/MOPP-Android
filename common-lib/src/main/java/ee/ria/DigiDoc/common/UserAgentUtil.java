@@ -27,7 +27,6 @@ public final class UserAgentUtil {
     private UserAgentUtil() {}
 
     public static String getUserAgent(Context context) {
-
         ArrayList<String> deviceProductNames = new ArrayList<>();
         StringBuilder initializingMessage = new StringBuilder();
 
@@ -48,19 +47,21 @@ public final class UserAgentUtil {
     }
 
     private static List<UsbDevice> getConnectedUsbs(Context context) {
-        UsbManager usbManager = (UsbManager)context.getSystemService(USB_SERVICE);
+        UsbManager usbManager = (UsbManager) context.getSystemService(USB_SERVICE);
         HashMap<String, UsbDevice> devices = usbManager.getDeviceList();
 
         Map<String, UsbDevice> smartDevices = devices.entrySet()
                 .stream()
-                .filter(usbDevice ->
-                        deviceNameFilters
-                                .stream()
-                                .anyMatch(usbDevice.getValue().getProductName()::contains) ||
-                        deviceNameFilters
-                                .stream()
-                                .anyMatch(usbDevice.getValue().getDeviceName()::contains)
-                )
+                .filter(usbDeviceEntry -> {
+                    UsbDevice usbDevice = usbDeviceEntry.getValue();
+                    String productName = usbDevice.getProductName();
+                    String deviceName = usbDevice.getDeviceName();
+
+                    boolean productNameExists = productName != null && deviceNameFilters.stream().anyMatch(productName::contains);
+                    boolean deviceNameExists = deviceNameFilters.stream().anyMatch(deviceName::contains);
+
+                    return productNameExists || deviceNameExists;
+                })
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         return new ArrayList<>(smartDevices.values());

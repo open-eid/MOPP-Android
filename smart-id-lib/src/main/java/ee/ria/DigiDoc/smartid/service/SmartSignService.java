@@ -37,6 +37,8 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ServiceInfo;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -158,7 +160,11 @@ public class SmartSignService extends Worker {
         Notification notification = NotificationUtil.createNotification(getApplicationContext(), NOTIFICATION_CHANNEL,
                 R.mipmap.ic_launcher, null, null, NotificationCompat.PRIORITY_MIN, true);
 
-        setForegroundAsync(new ForegroundInfo(NOTIFICATION_PERMISSION_CODE, notification));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            setForegroundAsync(new ForegroundInfo(NOTIFICATION_PERMISSION_CODE, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE));
+        } else {
+            setForegroundAsync(new ForegroundInfo(NOTIFICATION_PERMISSION_CODE, notification));
+        }
     }
 
     @NonNull

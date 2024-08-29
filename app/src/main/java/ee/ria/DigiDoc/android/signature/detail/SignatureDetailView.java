@@ -102,23 +102,27 @@ public final class SignatureDetailView extends CoordinatorLayout implements Cont
             a.recycle();
         }
 
-        if (isCertificateInExistence(signature.signingCertificate())) {
-            findViewById(R.id.signersCertificateButton).setOnClickListener(view -> navigator.execute(Transaction.push(CertificateDetailScreen.create(signature.signingCertificate()))));
+        if (signature != null) {
+            if (isCertificateInExistence(signature.signingCertificate())) {
+                findViewById(R.id.signersCertificateButton).setOnClickListener(view -> navigator.execute(Transaction.push(CertificateDetailScreen.create(signature.signingCertificate()))));
+            }
+
+            if (isCertificateInExistence(signature.tsCertificate())) {
+                findViewById(R.id.signatureDetailTimestampCertificateButton).setOnClickListener(view -> navigator.execute(Transaction.push(CertificateDetailScreen.create(signature.tsCertificate()))));
+            }
+
+            if (isCertificateInExistence(signature.ocspCertificate())) {
+                findViewById(R.id.signatureDetailOCSPCertificateButton).setOnClickListener(view -> navigator.execute(Transaction.push(CertificateDetailScreen.create(signature.ocspCertificate()))));
+            }
+
+            setExpandedState(false);
+            setWarningsData(signature);
+            setData(signature, signedContainer);
+
+            ContentView.addInvisibleElement(context, this);
+        } else {
+            navigator.execute(Transaction.pop());
         }
-
-        if (isCertificateInExistence(signature.tsCertificate())) {
-            findViewById(R.id.signatureDetailTimestampCertificateButton).setOnClickListener(view -> navigator.execute(Transaction.push(CertificateDetailScreen.create(signature.tsCertificate()))));
-        }
-
-        if (isCertificateInExistence(signature.ocspCertificate())) {
-            findViewById(R.id.signatureDetailOCSPCertificateButton).setOnClickListener(view -> navigator.execute(Transaction.push(CertificateDetailScreen.create(signature.ocspCertificate()))));
-        }
-
-        setExpandedState(false);
-        setWarningsData(signature);
-        setData(signature, signedContainer);
-
-        ContentView.addInvisibleElement(context, this);
     }
 
     private String getContainerMimeType(SignedContainer signedContainer, boolean isSivaConfirmed) {
