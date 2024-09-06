@@ -64,8 +64,18 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
                         emitter.onNext(NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.OK, navigator.activity().getString(R.string.signature_update_nfc_detected)));
                         NFCResponse response = onTagDiscovered(adapter, tag);
                         Timber.log(Log.DEBUG, "NFC::completed");
-                        emitter.onNext((response != null) ? response : NFCResponse.success(container));
-                        emitter.onComplete();
+                        if (response != null) {
+                            if (response.status() != SessionStatusResponse.ProcessStatus.OK) {
+                                Timber.log(Log.ERROR, String.format("NFC status: %s", response.status()));
+                                emitter.onError(new NFC.NFCException(response.message()));
+                            } else {
+                                emitter.onNext(response);
+                                emitter.onComplete();
+                            }
+                        } else {
+                            emitter.onNext(NFCResponse.success(container));
+                            emitter.onComplete();
+                        }
                     }, NfcAdapter.FLAG_READER_NFC_A, null);
         }
     }
@@ -94,14 +104,14 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
             byte[] certificate = nfc.readCertificate();
             if (certificate == null) {
                 Timber.log(Log.ERROR, "Failed to read certificate. Certificate is null");
-                throw new RuntimeException("Unable to read certificate for NFC");
+                throw new RuntimeException(navigator.activity().getString(R.string.signature_update_nfc_technical_error));
             }
-            Timber.log(Log.DEBUG, "CERT:%s", Hex.toHexString(certificate));
+            Timber.log(Log.DEBUG, "CERT: %s", Hex.toHexString(certificate));
             Certificate cert = Certificate.create(ByteString.of(certificate, 0, certificate.length));
 
             // Step 2 - verify PIN2
             NFC.Result r = nfc.communicateSecure(SEL_QSCD_CMD, SEL_QSCD);
-            Timber.log(Log.DEBUG, "Select QSCD AID:%x %s", r.code, Hex.toHexString(r.data));
+            Timber.log(Log.DEBUG, "Select QSCD AID: %x %s", r.code, Hex.toHexString(r.data));
 
             // pad the PIN and use the chip for verification
             byte[] paddedPIN = Hex.decode("ffffffffffffffffffffffff");
@@ -110,19 +120,20 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
             if (null != pin2 && pin2.length > 0) {
                 Arrays.fill(pin2, (byte) 0);
             }
-            Timber.log(Log.DEBUG, "Verify PIN2:%x %s", r.code, Hex.toHexString(r.data));
+            Timber.log(Log.DEBUG, "Verify PIN2: %x %s", r.code, Hex.toHexString(r.data));
             if (r.code != 0x9000) {
                 if (r.code == 0x6983) {
                     throw new RuntimeException(navigator.activity().getString(R.string.signature_update_id_card_sign_pin2_locked));
                 } else if ((r.code & 0xfff0) == 0x63c0) {
                     throw new RuntimeException(String.format(navigator.activity().getString(R.string.signature_update_id_card_sign_pin2_invalid), r.code & 0xf));
                 } else {
-                    throw new RuntimeException("Verification error");
+                    Timber.log(Log.ERROR, "PIN2 verification error");
+                    throw new RuntimeException(navigator.activity().getString(R.string.signature_update_nfc_technical_error));
                 }
             }
 
             r = nfc.communicateSecure(CMD_SET_ENV_SIGN, SET_ENV_SIGN);
-            Timber.log(Log.DEBUG, "Set ENV:%x %s", r.code, Hex.toHexString(r.data));
+            Timber.log(Log.DEBUG, "Set ENV: %x %s", r.code, Hex.toHexString(r.data));
 
             container.sign(navigator.activity(), cert.data(),
                     signData -> ByteString.of(nfc.calculateSignature(signData.toByteArray())), role);
