@@ -9,6 +9,19 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/errorDialogHeader"
+            style="@style/MaterialTypography.Regular.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/material_list_icon_first_position_margin_start"
+            android:layout_marginEnd="@dimen/material_list_icon_first_position_margin_start"
+            android:textColor="@color/signingNavigation"
+            android:paddingVertical="@dimen/material_card_media_area_framed_padding_vertical"
+            android:gravity="start"
+            android:accessibilityHeading="true"
+            android:text="@string/signature_update_signature_add_error" />
+
         <ImageView
             android:id="@+id/nfcDialogIcon"
             android:layout_width="wrap_content"
@@ -18,7 +31,7 @@
             android:paddingVertical="@dimen/material_card_media_area_framed_padding_vertical"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_icon_nfc"
-            app:tint="@color/accent"
+            app:tint="@color/error"
             android:importantForAccessibility="no"
             android:contentDescription="@string/signature_update_signature_add_method_nfc" />
 
@@ -33,6 +46,18 @@
             android:paddingBottom="@dimen/material_card_media_area_framed_padding_vertical"
             android:gravity="center_horizontal"
             android:text="@string/signature_update_nfc_hold" />
+
+        <TextView
+            android:id="@+id/dialogText"
+            style="@style/MaterialTypography.Dense.Body1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/material_list_icon_first_position_margin_start"
+            android:layout_marginEnd="@dimen/material_list_icon_first_position_margin_start"
+            android:textColor="@color/signingNavigation"
+            android:paddingBottom="@dimen/material_card_media_area_framed_padding_vertical"
+            android:gravity="start"
+            android:text="@string/signature_update_mobile_id_error_general_client" />
 
     </LinearLayout>
 </ScrollView>

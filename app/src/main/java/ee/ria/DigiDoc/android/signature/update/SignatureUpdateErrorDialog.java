@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.android.signature.update;
 
+import static android.view.View.VISIBLE;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENTS_ADD;
 import static ee.ria.DigiDoc.android.signature.update.SignatureUpdateErrorDialog.Type.DOCUMENT_REMOVE;
@@ -12,8 +13,11 @@ import android.content.DialogInterface;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,6 +43,7 @@ import ee.ria.DigiDoc.common.exception.SSLHandshakeException;
 import ee.ria.DigiDoc.common.exception.SignatureUpdateDetailError;
 import ee.ria.DigiDoc.common.exception.SignatureUpdateError;
 import ee.ria.DigiDoc.idcard.CodeVerificationException;
+import ee.ria.DigiDoc.idcard.NFC;
 import ee.ria.DigiDoc.sign.CertificateRevokedException;
 import ee.ria.DigiDoc.sign.OcspInvalidTimeSlotException;
 import ee.ria.DigiDoc.sign.TooManyRequestsException;
@@ -65,6 +70,11 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
 
     private String type;
 
+    private View dialogLayout;
+    private TextView errorDialogHeader;
+    private ImageView nfcDialogIcon;
+    private TextView nfcDialogText;
+    private TextView dialogText;
     private View view;
     private View.OnLayoutChangeListener layoutChangeListener;
 
@@ -77,6 +87,14 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                                SignatureUpdateSignatureAddDialog signatureAddDialog,
                                View view) {
         super(context, R.style.UniformDialog);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        dialogLayout = inflater.inflate(R.layout.signature_update_error_dialog, this.getListView());
+
+        errorDialogHeader = dialogLayout.findViewById(R.id.errorDialogHeader);
+        nfcDialogText = dialogLayout.findViewById(R.id.nfcDialogText);
+        nfcDialogIcon = dialogLayout.findViewById(R.id.nfcDialogIcon);
+        dialogText = dialogLayout.findViewById(R.id.dialogText);
+
         this.documentsAddIntentSubject = documentsAddIntentSubject;
         this.documentRemoveIntentSubject = documentRemoveIntentSubject;
         this.signatureAddIntentSubject = signatureAddIntentSubject;
@@ -85,6 +103,7 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
         this.signatureAddDialog = signatureAddDialog;
         this.view = view;
         setButton(BUTTON_POSITIVE, context.getString(android.R.string.ok), (dialog, which) -> {});
+        setView(dialogLayout);
         setOnDismissListener(this);
     }
 
@@ -98,6 +117,11 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
 
         SignatureUpdateError updateError = null;
         SignatureUpdateDetailError detailError = null;
+
+        errorDialogHeader.setVisibility(VISIBLE);
+        nfcDialogIcon.setVisibility(VISIBLE);
+        nfcDialogText.setVisibility(VISIBLE);
+        dialogText.setVisibility(VISIBLE);
 
         if (documentsAddError != null) {
             type = DOCUMENTS_ADD;
@@ -142,7 +166,8 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                                     getTextFromTranslation(R.string.signature_update_signature_error_message_additional_information) + "</a>",
                             Html.FROM_HTML_MODE_LEGACY));
                 } else {
-                    setTitle(R.string.signature_update_signature_add_error_title);
+                    errorDialogHeader.setVisibility(VISIBLE);
+                    errorDialogHeader.setText(R.string.signature_update_signature_add_error_title);
                     if (((DetailMessageSource) signatureAddError).getDetailMessage() != null &&
                                     !((DetailMessageSource) signatureAddError).getDetailMessage().isEmpty()) {
                         String errorMessage = getContext().getString(R.string.signature_update_signature_error_message_details) +
@@ -153,6 +178,8 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                         detailError = new DetailMessageException(signatureAddError.getMessage());
                     }
                 }
+            } else if (signatureAddError instanceof NFC.NFCException) {
+                updateError = new NFC.NFCException(signatureAddError.getMessage());
             } else if (signatureAddError instanceof TooManyRequestsException) {
                 detailError = new TooManyRequestsException(
                         Html.fromHtml(UrlMessage.withURL(
@@ -175,7 +202,8 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
             } else if (signatureAddError.getMessage() != null && signatureAddError.getMessage().startsWith("Failed to create ssl connection with host")) {
                 updateError = new SSLHandshakeException();
             } else {
-                setTitle(R.string.signature_update_signature_add_error);
+                errorDialogHeader.setVisibility(VISIBLE);
+                errorDialogHeader.setText(R.string.signature_update_signature_add_error);
                 updateError = new GeneralSignatureUpdateException(signatureAddError.getMessage());
             }
         } else if (signatureRemoveError != null) {
@@ -185,14 +213,27 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
         }
 
         if (updateError != null) {
-            String message = updateError.getMessage(getContext());
-            setMessage(message);
-        } else if (detailError != null) {
-            Spanned detailMessage = detailError.getDetailMessage(getContext());
-            if (detailMessage == null) {
-                setMessage(detailError.getMessage(getContext()));
+            if (updateError instanceof NFC.NFCException) {
+                nfcDialogText.setVisibility(View.VISIBLE);
+                nfcDialogText.setText(updateError.getMessage(getContext()));
+                dialogText.setVisibility(View.GONE);
+                errorDialogHeader.setVisibility(View.GONE);
             } else {
-                setMessage(detailMessage);
+                nfcDialogText.setVisibility(View.GONE);
+                nfcDialogIcon.setVisibility(View.GONE);
+                dialogText.setVisibility(View.VISIBLE);
+                dialogText.setText(updateError.getMessage(getContext()));
+            }
+        } else if (detailError != null) {
+            nfcDialogText.setVisibility(View.GONE);
+            nfcDialogIcon.setVisibility(View.GONE);
+            dialogText.setVisibility(View.VISIBLE);
+
+            Spanned detailMessage = detailError.getDetailMessage(getContext());
+            if (detailMessage != null) {
+                dialogText.setText(detailMessage);
+            } else {
+                dialogText.setText(detailError.getMessage(getContext()));
             }
         } else {
             dismiss();
@@ -209,7 +250,7 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        setTitle(null);
+        errorDialogHeader.setText(null);
         removeListeners();
         if (TextUtils.equals(type, DOCUMENTS_ADD)) {
             documentsAddIntentSubject.onNext(DocumentsAddIntent.clear());

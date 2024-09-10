@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
@@ -80,8 +81,8 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
         handleNFCSupportLayout();
 
         if (AccessibilityUtils.isTalkBackEnabled()) {
-            AccessibilityUtils.setSingleCharactersContentDescription(canView, "Card number");
-            AccessibilityUtils.setSingleCharactersContentDescription(pinView, "PIN code");
+            AccessibilityUtils.setSingleCharactersContentDescription(canView, getResources().getString(R.string.signature_update_nfc_can));
+            AccessibilityUtils.setSingleCharactersContentDescription(pinView, getResources().getString(R.string.signature_update_nfc_pin2));
             AccessibilityUtils.setEditTextCursorToEnd(canView);
             AccessibilityUtils.setEditTextCursorToEnd(pinView);
             AccessibilityUtils.setTextViewContentDescription(context, true, null, canLabel.getText().toString(), canView);
@@ -149,7 +150,8 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
     }
 
     private void checkCANCodeValidity() {
-        canLayout.setError(null);
+        setDefaultCANNumberDescription();
+
         Editable canCodeView = canView.getText();
         if (canCodeView != null && !canCodeView.toString().isEmpty() &&
                 !isCANLengthValid(canCodeView.toString())
@@ -157,6 +159,7 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
             canLayout.setError(getResources().getString(
                     R.string.nfc_sign_can_invalid_length,
                     Integer.toString(CAN_LENGTH)));
+            canLayout.setErrorTextColor(ContextCompat.getColorStateList(getContext(), R.color.error));
         }
     }
 
@@ -191,9 +194,16 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
         AccessibilityUtils.setEditTextCursorToEnd(canView);
     }
 
+    private void setDefaultCANNumberDescription() {
+        canLayout.setError(getResources().getString(R.string.nfc_sign_can_location));
+        canLayout.setErrorTextColor(ContextCompat.getColorStateList(getContext(), R.color.material_color_black));
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+
+        setDefaultCANNumberDescription();
 
         // Better support for Voice Assist to not delete wrong characters
         accessibilityTouchExplorationStateChangeListener = AccessibilityUtils.addAccessibilityStateChanged(enabled -> {

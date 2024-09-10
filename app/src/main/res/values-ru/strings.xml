@@ -301,6 +301,7 @@
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 заблокирован. Зайдите в Мой eID, чтобы разблокировать его.</string>
 
     <string name="nfc_sign_can_invalid_length">Номер доступа (CAN) должен состоять из %1$s-цифр</string>
+    <string name="nfc_sign_can_location">6-значный номер находится под фотографией на документе</string>
     <string name="id_card_sign_pin_invalid_length">%1$s-код должен состоять минимум из %2$s и максимум из %3$s символов</string>
 
     <string name="signature_update_nfc_message">Чтобы подписать с помощью ID-карты, введите ее номер доступа (CAN) и PIN2-код</string>

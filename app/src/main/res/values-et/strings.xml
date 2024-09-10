@@ -299,6 +299,7 @@
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 on lukus. Mine Minu eID, et avada.</string>
 
     <string name="nfc_sign_can_invalid_length">Ligipääsu number (CAN) peab olema %1$s-kohaline</string>
+    <string name="nfc_sign_can_location">6-kohaline number asub dokumendil foto all</string>
     <string name="id_card_sign_pin_invalid_length">%1$s-kood peab olema vähemalt %2$s-kohaline ja maksimaalselt %3$s-kohaline</string>
 
     <string name="signature_update_nfc_message">ID-kaardiga allkirjastamiseks sisesta oma ID-kaardi ligipääsu number (CAN) ja PIN2 kood</string>
