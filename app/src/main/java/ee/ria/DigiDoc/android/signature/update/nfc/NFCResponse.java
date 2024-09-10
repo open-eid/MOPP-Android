@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import com.google.auto.value.AutoValue;
 
 import ee.ria.DigiDoc.android.signature.update.SignatureAddResponse;
+import ee.ria.DigiDoc.idcard.NFC;
 import ee.ria.DigiDoc.sign.SignedContainer;
 import ee.ria.DigiDoc.smartid.dto.response.SessionStatusResponse;
 
@@ -45,5 +46,9 @@ public abstract class NFCResponse implements SignatureAddResponse {
 
     public static NFCResponse createWithStatus(SessionStatusResponse.ProcessStatus status, String message) {
         return create(null, status, message);
+    }
+
+    public static NFC.NFCException createException(String message) {
+        return new NFC.NFCException(message);
     }
 }

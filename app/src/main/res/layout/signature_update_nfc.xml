@@ -15,6 +15,17 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <ImageView
+                android:id="@id/signatureUpdateNFCIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/material_list_icon_first_position_margin_start"
+                android:layout_marginEnd="@dimen/material_list_icon_first_position_margin_start"
+                android:paddingBottom="@dimen/material_card_media_area_framed_padding_vertical"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_icon_nfc"
+                android:contentDescription="@string/signature_update_signature_add_method_nfc" />
+
             <TextView
                 android:id="@id/signatureUpdateNFCNotFoundMessage"
                 android:layout_width="match_parent"
@@ -78,7 +89,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="40dp"
                 android:minHeight="@dimen/material_baseline_grid_6x"
                 android:importantForAccessibility="no"
                 android:text="@string/signature_update_nfc_pin2" />

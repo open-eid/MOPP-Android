@@ -1,5 +1,6 @@
 package ee.ria.DigiDoc.idcard;
 
+import android.content.Context;
 import android.nfc.tech.IsoDep;
 import android.util.Log;
 
@@ -29,6 +30,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import ee.ria.DigiDoc.common.exception.SignatureUpdateError;
 import timber.log.Timber;
 
 public class NFC {
@@ -39,9 +41,17 @@ public class NFC {
     private byte[] keyMAC;
     private byte ssc;
 
-    public final static class NFCException extends IOException {
+    public final static class NFCException extends IOException implements SignatureUpdateError {
+        private final String message;
+
         public NFCException(String message) {
             super(message);
+            this.message = message;
+        }
+
+        @Override
+        public String getMessage(Context context) {
+            return message;
         }
     }
 

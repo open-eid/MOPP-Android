@@ -67,7 +67,8 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
                         if (response != null) {
                             if (response.status() != SessionStatusResponse.ProcessStatus.OK) {
                                 Timber.log(Log.ERROR, String.format("NFC status: %s", response.status()));
-                                emitter.onError(new NFC.NFCException(response.message()));
+                                emitter.onError(NFCResponse.createException(response.message()));
+                                emitter.onComplete();
                             } else {
                                 emitter.onNext(response);
                                 emitter.onComplete();

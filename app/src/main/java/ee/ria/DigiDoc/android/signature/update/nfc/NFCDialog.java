@@ -2,13 +2,19 @@ package ee.ria.DigiDoc.android.signature.update.nfc;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -19,15 +25,28 @@ import io.reactivex.rxjava3.subjects.Subject;
 
 public final class NFCDialog extends AlertDialog implements DialogInterface.OnClickListener {
 
+    private TextView messageView;
+    private ImageView iconView;
+
     private final Subject<Integer> buttonClicksSubject = PublishSubject.create();
 
     private final int action;
+    private final Context context;
 
     public NFCDialog(@NonNull Context context, @StringRes int message, int action) {
         super(context);
+        this.context = context;
         SecureUtil.markAsSecure(context, getWindow());
 
-        setMessage(context.getString(message));
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogLayout = inflater.inflate(R.layout.nfc_dialog, this.getListView());
+
+        messageView = dialogLayout.findViewById(R.id.nfcDialogText);
+        iconView = dialogLayout.findViewById(R.id.nfcDialogIcon);
+
+        messageView.setText(context.getString(message));
+        setView(dialogLayout);
+
         setButton(BUTTON_NEGATIVE, context.getString(android.R.string.cancel), this);
 
         this.action = action;
@@ -43,15 +62,17 @@ public final class NFCDialog extends AlertDialog implements DialogInterface.OnCl
         }
         if (response.message() != null) {
             if (response.status() == SessionStatusResponse.ProcessStatus.TECHNICAL_ERROR) {
-                setMessage(getContext().getString(R.string.signature_update_nfc_technical_error) + ":\n" + response.message());
+                messageView.setText(getContext().getString(R.string.signature_update_nfc_technical_error) + ":\n" + response.message());
+                iconView.setColorFilter(ContextCompat.getColor(context, R.color.error), PorterDuff.Mode.SRC_IN);
             } else {
-                setMessage(response.message());
+                messageView.setText(response.message());
+                iconView.setColorFilter(ContextCompat.getColor(context, R.color.accent), PorterDuff.Mode.SRC_IN);
             }
         } else {
             if (AccessibilityUtils.isTalkBackEnabled()) {
                 AccessibilityUtils.interrupt(getContext());
             }
-            setMessage(getContext().getString(R.string.signature_update_nfc_hold));
+            messageView.setText(getContext().getString(R.string.signature_update_nfc_hold));
         }
     }
 

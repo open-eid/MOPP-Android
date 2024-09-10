@@ -299,6 +299,7 @@
     <string name="signature_update_id_card_sign_pin2_locked">PIN2 blocked. Go to My eID to unblock it.</string>
 
     <string name="nfc_sign_can_invalid_length">CAN-code must be %1$s digits long</string>
+    <string name="nfc_sign_can_location">The 6-digit number is located under the document photo</string>
     <string name="id_card_sign_pin_invalid_length">%1$s code must be at least %2$s and a maximum of %3$s digits long</string>
 
     <string name="signature_update_nfc_message">Enter your ID-card access number (CAN) and PIN2 code to sign with ID-card</string>
