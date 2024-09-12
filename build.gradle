@@ -3,8 +3,7 @@ allprojects {
         repositories {
             google()
             mavenCentral()
-            //noinspection JcenterRepositoryObsolete
-            jcenter()
+            maven { url 'https://jitpack.io' }
         }
         dependencies {
             classpath 'com.android.tools.build:gradle:8.2.2'
@@ -15,8 +14,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        //noinspection JcenterRepositoryObsolete
-        jcenter()
+        maven { url 'https://jitpack.io' }
     }
 
     def buildFolder = new File("app/${buildDir}/bundle")

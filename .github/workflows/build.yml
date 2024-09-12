@@ -58,11 +58,11 @@ jobs:
           mv libdigidocpp-androidx86_64/libdigidocpp.androidx86_64.zip libdigidocpp-files/
           pwd
           ls -R -laht
-      - name: Update libdigidocpp in project
-        run: |
-          pwd
-          ./gradlew common-lib:updateLibdigidocpp --dir=libdigidocpp-files/
-          ./gradlew sign-lib:updateLibdigidocpp --dir=libdigidocpp-files/
+      #- name: Update libdigidocpp in project
+      #  run: |
+      #    pwd
+      #    ./gradlew common-lib:updateLibdigidocpp --dir=libdigidocpp-files/
+      #    ./gradlew sign-lib:updateLibdigidocpp --dir=libdigidocpp-files/
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
       - name: Test and Build with Gradle
