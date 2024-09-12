@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Needed for Android SDK 28+ -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -7,7 +8,14 @@
 
         <service
             android:name=".service.SmartSignService"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="shortService" />
+
+        <!-- Needed for Android SDK 34+ -->
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="shortService"
+            tools:node="merge" />
 
     </application>
 

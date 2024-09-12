@@ -83,13 +83,29 @@ public final class SmartIdStatusMessages {
                     .build();
 
     public static String message(Context context, ProcessStatus status) {
-        if (status.equals(ProcessStatus.TOO_MANY_REQUESTS)) {
-            Timber.log(Log.DEBUG, String.format("%s - %s", "Smart-ID", context.getString(MESSAGES.get(status), context.getString(
-                    R.string.signature_update_signature_add_method_smart_id))));
-            return context.getString(MESSAGES.get(status), context.getString(
-                            R.string.signature_update_signature_add_method_smart_id));
+        Integer resId = MESSAGES.get(status);
+
+        Timber.log(Log.DEBUG, String.format("%s - %s", "Smart-ID", context.getString(resId != null ? resId : 1, context.getString(
+                R.string.signature_update_signature_add_method_smart_id))));
+
+        if (resId == null) {
+            Timber.log(Log.DEBUG, String.format("No message found for status: %s. Using default status: ProcessStatus.GENERAL_ERROR", status));
+            resId = MESSAGES.get(ProcessStatus.GENERAL_ERROR);
+
+            if (resId == null) {
+                Timber.log(Log.ERROR, "Default status ProcessStatus.GENERAL_ERROR not found. Displaying general error message");
+                resId = R.string.signature_update_mobile_id_error_general_client;
+            }
         }
-        Timber.log(Log.DEBUG, String.format("%s - %s", "Smart-ID", context.getString(MESSAGES.get(status))));
-        return context.getString(MESSAGES.get(status));
+
+        if (status.equals(ProcessStatus.TOO_MANY_REQUESTS)) {
+            Timber.log(Log.DEBUG, String.format("%s - %s", "Smart-ID", context.getString(resId, context.getString(
+                    R.string.signature_update_signature_add_method_smart_id))));
+            return context.getString(resId, context.getString(
+                    R.string.signature_update_signature_add_method_smart_id));
+        }
+
+        Timber.log(Log.DEBUG, String.format("%s - %s", "Smart-ID", context.getString(resId)));
+        return context.getString(resId);
     }
 }

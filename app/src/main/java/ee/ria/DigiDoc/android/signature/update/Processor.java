@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -378,11 +379,19 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     .toObservable()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .map(signedContainerFile -> {
-                        Transaction transaction;
-                        transaction = Transaction.push(SignatureDetailScreen
-                                .create(action.signature(), signedContainerFile, action.isSivaConfirmed()));
-                        navigator.execute(transaction);
+                    .map(signedContainer -> {
+                        Signature signature = action.signature();
+                        if (signature != null) {
+                            Optional<Signature> signedSignature = signedContainer.signatures().stream()
+                                    .filter(obj -> obj.equals(signature))
+                                    .findFirst();
+                            if (signedSignature.isPresent()) {
+                                Transaction transaction;
+                                transaction = Transaction.push(SignatureDetailScreen
+                                        .create(signedSignature.get(), signedContainer, action.isSivaConfirmed()));
+                                navigator.execute(transaction);
+                            }
+                        }
                         return Result.SignatureViewResult.idle();
                     })
                     .onErrorReturn(ignored -> Result.SignatureViewResult.idle())
