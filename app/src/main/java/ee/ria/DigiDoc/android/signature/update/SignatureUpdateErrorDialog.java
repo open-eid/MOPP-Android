@@ -185,13 +185,15 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                         Html.fromHtml(UrlMessage.withURL(
                                 getContext(),
                                 R.string.signature_update_signature_error_message_too_many_requests,
-                                R.string.signature_update_signature_error_message_additional_information
+                                R.string.signature_update_signature_error_message_additional_information,
+                                false
                         ), Html.FROM_HTML_MODE_LEGACY));
             } else if (signatureAddError instanceof OcspInvalidTimeSlotException) {
                 detailError = new OcspInvalidTimeSlotException(Html.fromHtml(UrlMessage.withURL(
                         getContext(),
                         R.string.signature_update_signature_error_message_invalid_time_slot,
-                        R.string.signature_update_signature_error_message_additional_information
+                        R.string.signature_update_signature_error_message_additional_information,
+                        false
                 ), Html.FROM_HTML_MODE_LEGACY));
             } else if (signatureAddError instanceof CertificateRevokedException) {
                 updateError = new CertificateRevokedException(

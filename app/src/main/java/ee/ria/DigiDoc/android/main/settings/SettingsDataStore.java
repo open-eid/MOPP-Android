@@ -11,8 +11,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -129,6 +127,17 @@ public final class SettingsDataStore {
             return;
         }
         Timber.log(Log.ERROR, "Unable to save CAN");
+    }
+
+    public void setShowCanMessage(boolean showCanMessage) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(resources.getString(R.string.nfc_show_can_message), showCanMessage);
+        editor.apply();
+    }
+
+    public boolean getShowCanMessage() {
+        return preferences.getBoolean(resources.getString(R.string.nfc_show_can_message),
+                true);
     }
 
     public boolean getIsRoleAskingEnabled() {
