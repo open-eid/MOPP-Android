@@ -519,4 +519,7 @@
     <!-- SiVa Confirmation Dialog -->
     <item type="id" name="sivaConfirmationDialog" />
 
+    <!-- Notification Dialog -->
+    <item type="id" name="nfcCanNotificationDialog" />
+
 </resources>

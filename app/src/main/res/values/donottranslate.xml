@@ -173,4 +173,7 @@
     <string name="sha_256">SHA-256</string>
     <string name="sha_1">SHA-1</string>
 
+    <!-- NFC -->
+    <string name="nfc_show_can_message">nfcShowCanMessage</string>
+
 </resources>

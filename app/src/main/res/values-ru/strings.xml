@@ -110,8 +110,10 @@
     <string name="main_diagnostics_logging_switch">Активировать одноразовое создание лог-файла</string>
     <string name="main_diagnostics_save_log">Сохранить лог-файл</string>
     <string name="main_diagnostics_restart_message">Перезапустите RIA DigiDoc, чтобы активировать ведение журнала. https://www.id.ee/ru/artikkel/generirovanie-log-fajla-v-kliente-digidoc4/</string>
-    <string name="main_diagnostics_restart_message_read_more">Подробнее читайте здесь</string>
     <string name="main_diagnostics_restart_message_restart_now">Перезапустить приложение?</string>
+
+    <string name="read_more_message">Подробнее читайте здесь</string>
+    <string name="dont_show_again_message">Больше не показывать</string>
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Выберите файл для подписания или проверки</string>
@@ -312,6 +314,7 @@
     <string name="signature_update_nfc_technical_error">Что-то пошло не так. Пожалуйста, попробуйте еще раз</string>
     <string name="signature_update_nfc_hold">Удерживайте ID-карту рядом с телефоном</string>
     <string name="signature_update_nfc_detected">Создание бесконтактного соединения с ID-картой</string>
+    <string name="signature_update_nfc_can_info">При подписании через NFC используется номер CAN. NFC может заблокироваться, если CAN введен неправильно несколько раз. https://www.id.ee/ru/artikkel/czifrovoe-podpisanie-v-mobilnom-prilozhenii-ria-digidoc/</string>
 
     <!-- Signature Details -->
     <string name="signature_error_details_title">Предупреждения</string>

@@ -64,9 +64,11 @@ public final class NFCDialog extends AlertDialog implements DialogInterface.OnCl
             if (response.status() == SessionStatusResponse.ProcessStatus.TECHNICAL_ERROR) {
                 messageView.setText(getContext().getString(R.string.signature_update_nfc_technical_error) + ":\n" + response.message());
                 iconView.setColorFilter(ContextCompat.getColor(context, R.color.error), PorterDuff.Mode.SRC_IN);
+                iconView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_nfc_error));
             } else {
                 messageView.setText(response.message());
                 iconView.setColorFilter(ContextCompat.getColor(context, R.color.accent), PorterDuff.Mode.SRC_IN);
+                iconView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_nfc));
             }
         } else {
             if (AccessibilityUtils.isTalkBackEnabled()) {

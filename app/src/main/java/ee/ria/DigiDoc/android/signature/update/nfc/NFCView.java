@@ -32,6 +32,7 @@ import com.google.android.material.textview.MaterialTextView;
 import java.nio.charset.StandardCharsets;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.Activity;
 import ee.ria.DigiDoc.android.ApplicationApp;
 import ee.ria.DigiDoc.android.Constants;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
@@ -39,6 +40,7 @@ import ee.ria.DigiDoc.android.signature.update.SignatureAddView;
 import ee.ria.DigiDoc.android.signature.update.SignatureUpdateViewModel;
 import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
+import ee.ria.DigiDoc.android.utils.widget.NotificationDialog;
 import ee.ria.DigiDoc.common.PinConstants;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
@@ -59,6 +61,8 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
     private final TextInputLayout pinLayout;
     private final MaterialTextView pinLabel;
 
+    private final NotificationDialog nfcCanNotificationDialog;
+
     private AccessibilityManager.TouchExplorationStateChangeListener accessibilityTouchExplorationStateChangeListener;
 
     public NFCView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
@@ -77,6 +81,9 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
         pinView = findViewById(R.id.signatureUpdateNFCPIN2);
         pinLayout = findViewById(R.id.signatureUpdateNFCPIN2Layout);
         pinLabel = findViewById(R.id.signatureUpdateNFCPIN2Label);
+
+        nfcCanNotificationDialog = new NotificationDialog(navigator.activity(),
+                R.string.signature_update_nfc_can_info, R.id.nfcCanNotificationDialog);
 
         handleNFCSupportLayout();
 
@@ -114,6 +121,25 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
     }
 
     @Override
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+
+        if (navigator.activity() instanceof Activity) {
+            boolean shouldShowCanMessage = ((Activity) navigator.activity())
+                    .getSettingsDataStore()
+                    .getShowCanMessage();
+
+            if (shouldShowCanMessage && visibility == VISIBLE && isNFCSupported()) {
+                postDelayed(nfcCanNotificationDialog::show, 1000);
+            } else {
+                nfcCanNotificationDialog.dismiss();
+            }
+        }
+
+        handleNFCSupportLayout();
+    }
+
+    @Override
     public void reset(SignatureUpdateViewModel viewModel) {
         canView.setText(viewModel.can());
         pinView.setText("");
@@ -124,6 +150,7 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
         message.clearFocus();
         canView.clearFocus();
         pinView.clearFocus();
+        nfcCanNotificationDialog.dismiss();
     }
 
     @Override

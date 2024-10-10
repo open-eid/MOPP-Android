@@ -23,7 +23,7 @@
                 android:layout_marginEnd="@dimen/material_list_icon_first_position_margin_start"
                 android:paddingBottom="@dimen/material_card_media_area_framed_padding_vertical"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_icon_nfc"
+                android:src="@drawable/ic_icon_nfc_not_found"
                 android:contentDescription="@string/signature_update_signature_add_method_nfc" />
 
             <TextView
