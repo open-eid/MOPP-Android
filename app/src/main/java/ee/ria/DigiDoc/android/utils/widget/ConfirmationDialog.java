@@ -17,7 +17,6 @@ import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.navigator.ContentView;
 import ee.ria.DigiDoc.android.utils.rxbinding.app.RxDialog;
 import ee.ria.DigiDoc.sign.utils.UrlMessage;
-
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
@@ -48,7 +47,7 @@ public final class ConfirmationDialog extends AlertDialog implements ContentView
             setMessage(Html.fromHtml(UrlMessage.withURLAndQuestion(
                     getContext(),
                     message,
-                    R.string.main_diagnostics_restart_message_read_more,
+                    R.string.read_more_message,
                     R.string.main_diagnostics_restart_message_restart_now
             ), Html.FROM_HTML_MODE_LEGACY));
         }

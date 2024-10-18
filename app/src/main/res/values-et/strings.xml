@@ -111,8 +111,10 @@
     <string name="main_diagnostics_logging_switch">Aktiveeri ühekordne logifaili genereerimine</string>
     <string name="main_diagnostics_save_log">Salvesta logifail</string>
     <string name="main_diagnostics_restart_message">Logimise aktiveerimiseks taaskäivita RIA DigiDoc. https://www.id.ee/artikkel/logifaili-genereerimine-digidoc4-kliendis/</string>
-    <string name="main_diagnostics_restart_message_read_more">Loe täpsemalt siit</string>
     <string name="main_diagnostics_restart_message_restart_now">Taaskäivita rakendus?</string>
+
+    <string name="read_more_message">Loe täpsemalt siit</string>
+    <string name="dont_show_again_message">Ära rohkem näita</string>
 
     <!-- Signature Home -->
     <string name="signature_home_create_text">Allkirjastamiseks või kontrollimiseks vali fail</string>
@@ -310,6 +312,7 @@
     <string name="signature_update_nfc_technical_error">Midagi läks valesti. Palun proovi uuesti</string>
     <string name="signature_update_nfc_hold">Hoia ID-kaarti telefoni lähedal</string>
     <string name="signature_update_nfc_detected">ID-kaardiga kontaktivaba ühenduse loomine</string>
+    <string name="signature_update_nfc_can_info">NFC allkirjastamisel kasutatakse CAN numbrit. Mitmekordsel CANi valesti sisestamisel võib NFC lukustuda. https://www.id.ee/artikkel/digiallkirjastamine-ria-digidoc-mobiilirakenduses/</string>
 
     <!-- Signature Details -->
     <string name="signature_error_details_title">Hoiatused</string>

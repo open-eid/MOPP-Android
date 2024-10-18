@@ -12,18 +12,26 @@ import ee.ria.DigiDoc.sign.R;
 
 public class UrlMessage {
 
-    public static String withURL(Context context, @StringRes int messageTranslation, @StringRes int urlMessageTranslation) {
+    public static String withURL(Context context, @StringRes int messageTranslation, @StringRes int urlMessageTranslation, boolean linkOnNewLine) {
         String message = getTextFromTranslation(context, messageTranslation);
+        String urlText = getTextFromTranslation(context, urlMessageTranslation);
         Matcher urlMatcher = Patterns.WEB_URL.matcher(message);
         if (urlMatcher.find()) {
-            return message.replace(urlMatcher.group(),"") + "</span> <a href=" + urlMatcher.group() + ">" +
-                    getTextFromTranslation(context, urlMessageTranslation) + "</a>";
+            String url = urlMatcher.group();
+            String result = "<span>" + message.replace(url, "") + "</span>";
+            if (linkOnNewLine) {
+                result += "<br />";
+            }
+            result += " <a href=\"" + url + "\">" + urlText + "</a>";
+
+            return result;
         }
         return message;
     }
 
+
     public static String withURLAndQuestion(Context context, @StringRes int messageTranslation,
-                                            @StringRes  int urlMessageTranslation,
+                                            @StringRes int urlMessageTranslation,
                                             @StringRes int continueQuestion) {
         String message = getTextFromTranslation(context, messageTranslation);
         Matcher urlMatcher = Patterns.WEB_URL.matcher(message);
@@ -44,7 +52,7 @@ public class UrlMessage {
         return resources.getString(textId);
     }
 
-    private static String extractLink(String text) {
+    public static String extractLink(String text) {
         Matcher m = Patterns.WEB_URL.matcher(text);
         while (m.find()) {
             return m.group();
