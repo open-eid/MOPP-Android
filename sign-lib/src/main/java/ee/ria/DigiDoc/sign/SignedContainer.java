@@ -410,7 +410,7 @@ public abstract class SignedContainer {
                 Splitter.fixedLength(2).split(Hex.toHexString(bytes))).trim();
     }
 
-    private static Signature signature(ee.ria.libdigidocpp.Signature signature, boolean isTimestamp) {
+    private static Signature signature(ee.ria.libdigidocpp.Signature signature, boolean isTimestamp) throws CertificateException, IOException {
         String id = signature.id();
         String name = isTimestamp ? timestampName(signature) : signatureName(signature);
         Instant createdAt = Instant.parse(signature.trustedSigningTime());
@@ -421,9 +421,13 @@ public abstract class SignedContainer {
         String signersCertificateIssuer = "";
         X509Certificate signingCertificate = null;
 
-        if (x509Certificate(signature.signingCertificateDer()) != null) {
-            signersCertificateIssuer = getX509CertificateIssuer(x509Certificate(signature.signingCertificateDer()));
-            signingCertificate = x509Certificate(signature.signingCertificateDer());
+        byte[] encodedSigningCertificate = signature.signingCertificate().getEncoded();
+        byte[] encodedTimestampCertificate = signature.TimeStampCertificate().getEncoded();
+        byte[] encodedOcspCertificate = signature.OCSPCertificate().getEncoded();
+
+        if (x509Certificate(encodedSigningCertificate) != null) {
+            signersCertificateIssuer = getX509CertificateIssuer(x509Certificate(encodedSigningCertificate));
+            signingCertificate = x509Certificate(encodedSigningCertificate);
         }
         String signatureMethod = signature.signatureMethod();
         String signatureFormat = signature.profile();
@@ -433,8 +437,8 @@ public abstract class SignedContainer {
 
         String tsCertificateIssuer = "";
         X509Certificate tsCertificate = null;
-        if (signature.TimeStampCertificateDer() != null && signature.TimeStampCertificateDer().length > 0) {
-            tsCertificate = x509Certificate(signature.TimeStampCertificateDer());
+        if (encodedTimestampCertificate != null && encodedTimestampCertificate.length > 0) {
+            tsCertificate = x509Certificate(encodedTimestampCertificate);
             if (tsCertificate != null) {
                 tsCertificateIssuer = getX509CertificateIssuer(tsCertificate);
             }
@@ -442,8 +446,8 @@ public abstract class SignedContainer {
 
         String ocspCertificateIssuer = "";
         X509Certificate ocspCertificate = null;
-        if (signature.OCSPCertificateDer() != null && signature.OCSPCertificateDer().length > 0) {
-            ocspCertificate = x509Certificate(signature.OCSPCertificateDer());
+        if (encodedOcspCertificate != null && encodedOcspCertificate.length > 0) {
+            ocspCertificate = x509Certificate(encodedOcspCertificate);
             if (ocspCertificate != null) {
                 ocspCertificateIssuer = getX509CertificateIssuer(ocspCertificate);
             }
@@ -490,9 +494,10 @@ public abstract class SignedContainer {
     private static String signatureName(ee.ria.libdigidocpp.Signature signature) {
         String commonName;
         try {
-            commonName = Certificate.create(ByteString.of(signature.signingCertificateDer()))
+            byte[] encodedSigningCertificate = signature.signingCertificate().getEncoded();
+            commonName = Certificate.create(ByteString.of(encodedSigningCertificate))
                     .friendlyName();
-        } catch (IOException e) {
+        } catch (IOException | CertificateException e) {
             Timber.log(Log.ERROR, e, "Can't parse certificate to get CN");
             commonName = null;
         }
@@ -502,9 +507,10 @@ public abstract class SignedContainer {
     private static String timestampName(ee.ria.libdigidocpp.Signature signature) {
         String commonName;
         try {
-            commonName = Certificate.create(ByteString.of(signature.TimeStampCertificateDer()))
+            byte[] encodedTimestampCertificate = signature.TimeStampCertificate().getEncoded();
+            commonName = Certificate.create(ByteString.of(encodedTimestampCertificate))
                     .friendlyName();
-        } catch (IOException e) {
+        } catch (IOException | CertificateException e) {
             Timber.log(Log.ERROR, e, "Can't parse certificate to get CN");
             commonName = null;
         }
