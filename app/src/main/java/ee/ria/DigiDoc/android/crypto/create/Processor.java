@@ -2,7 +2,7 @@ package ee.ria.DigiDoc.android.crypto.create;
 
 import static android.app.Activity.RESULT_OK;
 import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
-import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
+import static ee.ria.DigiDoc.android.Constants.MAXIMUM_ESTONIAN_PERSONAL_CODE_LENGTH;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_DATA_FILE_ADD;
 import static ee.ria.DigiDoc.android.Constants.RC_CRYPTO_CREATE_INITIAL;
 import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
@@ -392,8 +392,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
         recipientsSearch = upstream -> upstream.switchMap(intent -> {
             if (intent.query() == null || intent.query().isEmpty()) {
                 return Observable.just(Result.RecipientsSearchResult.clear());
-            } else if (intent.query().length() >= MAXIMUM_PERSONAL_CODE_LENGTH &&
-                    StringUtils.isNumeric(intent.query()) && !PersonalCodeValidator.validatePersonalCode(intent.query())) {
+            } else if (intent.query().length() >= MAXIMUM_ESTONIAN_PERSONAL_CODE_LENGTH &&
+                    StringUtils.isNumeric(intent.query()) && !PersonalCodeValidator.validateEstonianPersonalCode(intent.query())) {
                 AccessibilityUtils.sendAccessibilityEvent(
                         application.getApplicationContext(), TYPE_ANNOUNCEMENT, R.string.crypto_recipients_search_result_invalid_personal_code);
                 return Observable.just(Result.RecipientsSearchResult.failure(

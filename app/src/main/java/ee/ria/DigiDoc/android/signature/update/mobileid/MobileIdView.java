@@ -9,7 +9,6 @@ import static ee.ria.DigiDoc.common.TextUtil.PHONE_SYMBOLS;
 import static ee.ria.DigiDoc.common.TextUtil.getSymbolsFilter;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -154,7 +153,7 @@ public final class MobileIdView extends LinearLayout implements
         Editable phoneNumber = phoneNoView.getText();
         Editable personalCode = personalCodeView.getText();
         if (phoneNumber != null && personalCode != null) {
-            PersonalCodeValidator.validatePersonalCode(personalCodeView);
+            PersonalCodeValidator.validateEstonianPersonalCode(personalCodeView);
 
             return isCountryCodeCorrect(phoneNumber.toString()) &&
                     isPhoneNumberCorrect(phoneNumber.toString()) &&
