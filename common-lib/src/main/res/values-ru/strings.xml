@@ -5,4 +5,5 @@
     <string name="signature_update_signature_error_message_too_many_requests">Ваш месячный лимит бесплатных подписей для %1$s превышен. https://www.id.ee/ru/artikkel/dlya-uchrezhdenij-v-kotoryh-v-bolshom-obeme-podpisyvayutsya-dokumenty-s-pomoshhyu-digidoc4-klienta/</string>
     <string name="id_card_conditional_speech">ID-карты</string>
     <string name="main_settings_proxy_invalid_settings">Не удалось связаться с сервером услуги. Пожалуйста, проверьте настройки сети или повторите попытку позже.</string>
+    <string name="signature_update_nfc_wrong_can">Некорректный номер доступа (CAN код)!</string>
 </resources>

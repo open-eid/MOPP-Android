@@ -51,6 +51,9 @@ public class NFC {
 
         @Override
         public String getMessage(Context context) {
+            if (message.contains("Mutual authentication: Invalid result")) {
+                return context.getString(R.string.signature_update_nfc_wrong_can);
+            }
             return message;
         }
     }
