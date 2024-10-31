@@ -96,7 +96,7 @@ public class TextUtil {
 
     public static void setTextViewSizeInContainer(TextView textView) {
         textView.setAutoSizeTextTypeUniformWithConfiguration(
-                1, 16, 1, TypedValue.COMPLEX_UNIT_DIP);
+                1, 14, 1, TypedValue.COMPLEX_UNIT_DIP);
         textView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
