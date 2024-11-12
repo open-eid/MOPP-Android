@@ -5,4 +5,5 @@
     <string name="signature_update_signature_error_message_too_many_requests">The limit for %1$s digital signatures per month has been reached. https://www.id.ee/en/article/for-organisations-that-sign-large-quantities-of-documents-using-digidoc4-client/</string>
     <string name="id_card_conditional_speech">ID-card\'s</string>
     <string name="main_settings_proxy_invalid_settings">Failed to connect with service server. Please check your network settings or try again later.</string>
+    <string name="signature_update_nfc_wrong_can">Wrong access number (CAN code)!</string>
 </resources>
