@@ -210,6 +210,8 @@ public abstract class SignedContainer {
     public final SignedContainer sign(Context context, ByteString certificate,
                                       Function<ByteString, ByteString> signFunction,
                                       @Nullable RoleData roleData) throws Exception {
+        ee.ria.libdigidocpp.Signature signature = null;
+
         try {
             Container container = container(file(), false);
 
@@ -223,7 +225,7 @@ public abstract class SignedContainer {
                         roleData.getZip(), roleData.getCountry());
             }
 
-            ee.ria.libdigidocpp.Signature signature = container.prepareSignature(signer);
+            signature = container.prepareSignature(signer);
 
             if (signature != null) {
                 ByteString signatureData = signFunction.apply(ByteString.of(signature.dataToSign()));
@@ -234,6 +236,8 @@ public abstract class SignedContainer {
             }
             throw new Exception("Empty signature value");
         } catch (Exception e) {
+            removePendingSignature(signature);
+
             if (e.getMessage() != null && e.getMessage().contains("Too Many Requests")) {
                 Timber.log(Log.ERROR, e, "Failed to sign with ID-card - Too Many Requests");
                 throw new TooManyRequestsException();
@@ -256,6 +260,17 @@ public abstract class SignedContainer {
             }
 
             throw e;
+        }
+    }
+
+    public final void removePendingSignature(ee.ria.libdigidocpp.Signature signature) throws Exception {
+        if (signature != null) {
+            Signature lastSignature = signature(signature, false);
+            boolean isLastSignatureValid = lastSignature.valid();
+
+            if (!isLastSignatureValid) {
+                removeSignature(lastSignature);
+            }
         }
     }
 
@@ -421,9 +436,25 @@ public abstract class SignedContainer {
         String signersCertificateIssuer = "";
         X509Certificate signingCertificate = null;
 
-        byte[] encodedSigningCertificate = signature.signingCertificate().getEncoded();
-        byte[] encodedTimestampCertificate = signature.TimeStampCertificate().getEncoded();
-        byte[] encodedOcspCertificate = signature.OCSPCertificate().getEncoded();
+        byte[] encodedSigningCertificate = null;
+        byte[] encodedTimestampCertificate = null;
+        byte[] encodedOcspCertificate = null;
+
+        try {
+            encodedSigningCertificate = signature.signingCertificate().getEncoded();
+        } catch (Exception e) {
+            Timber.log(Log.ERROR, String.format("Signature %s does not have signingCertificate", id));
+        }
+        try {
+            encodedTimestampCertificate = signature.TimeStampCertificate().getEncoded();
+        } catch (Exception e) {
+            Timber.log(Log.ERROR, String.format("Signature %s does not have TimeStampCertificate", id));
+        }
+        try {
+            encodedOcspCertificate = signature.OCSPCertificate().getEncoded();
+        } catch (Exception e) {
+            Timber.log(Log.ERROR, String.format("Signature %s does not have OCSPCertificate", id));
+        }
 
         if (x509Certificate(encodedSigningCertificate) != null) {
             signersCertificateIssuer = getX509CertificateIssuer(x509Certificate(encodedSigningCertificate));
