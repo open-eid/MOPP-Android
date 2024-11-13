@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:layout_marginTop="20dp"
-                android:minHeight="@dimen/material_baseline_grid_6x"
+                android:minHeight="@dimen/material_baseline_grid_2x"
                 android:importantForAccessibility="no"
                 android:text="@string/signature_update_nfc_can" />
 
@@ -90,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:layout_marginTop="40dp"
-                android:minHeight="@dimen/material_baseline_grid_6x"
+                android:minHeight="@dimen/material_baseline_grid_2x"
                 android:importantForAccessibility="no"
                 android:text="@string/signature_update_nfc_pin2" />
 
