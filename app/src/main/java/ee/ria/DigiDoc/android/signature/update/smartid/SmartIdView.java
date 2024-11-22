@@ -21,7 +21,8 @@
 package ee.ria.DigiDoc.android.signature.update.smartid;
 
 import static com.jakewharton.rxbinding4.widget.RxTextView.afterTextChangeEvents;
-import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
+import static ee.ria.DigiDoc.android.Constants.MAXIMUM_ESTONIAN_PERSONAL_CODE_LENGTH;
+import static ee.ria.DigiDoc.android.Constants.MAXIMUM_LATVIAN_PERSONAL_CODE_LENGTH;
 import static ee.ria.DigiDoc.android.accessibility.AccessibilityUtils.removeAccessibilityStateChanged;
 import static ee.ria.DigiDoc.android.utils.ErrorMessageUtil.setTextViewError;
 import static ee.ria.DigiDoc.android.utils.TextUtil.removeTextWatcher;
@@ -34,6 +35,7 @@ import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -70,6 +72,8 @@ import io.reactivex.rxjava3.subjects.Subject;
 public final class SmartIdView extends LinearLayout implements
         SignatureAddView<SmartIdRequest, SmartIdResponse> {
 
+    private SignatureUpdateViewModel viewModel;
+
     private static final List<String> COUNTRY_LIST = Arrays.asList("EE", "LT", "LV");
     private final Subject<Object> positiveButtonStateSubject = PublishSubject.create();
     private final TextView message;
@@ -81,6 +85,7 @@ public final class SmartIdView extends LinearLayout implements
     private final CheckBox rememberMeView;
 
     private final TextWatcher personalCodeTextWatcher;
+    private final TextWatcher personalCodeHandler;
     private AccessibilityManager.TouchExplorationStateChangeListener accessibilityTouchExplorationStateChangeListener;
 
     public SmartIdView(Context context) {
@@ -112,6 +117,16 @@ public final class SmartIdView extends LinearLayout implements
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 setPersonalCodeViewFilters(position);
                 countryView.setContentDescription(getCountryViewAccessibilityText());
+                personalCodeView.setHint((position == 2) ? "123456-78901" : null);
+                personalCodeView.setText(
+                        viewModel != null &&
+                                COUNTRY_LIST.indexOf(viewModel.country()) == position ?
+                                viewModel.sidPersonalCode() : "");
+                if (position != 2) {
+                    personalCodeView.removeTextChangedListener(personalCodeHandler);
+                } else {
+                    setSmartIdPersonalCodeHandler(personalCodeView, personalCodeHandler);
+                }
             }
 
             @Override
@@ -126,7 +141,12 @@ public final class SmartIdView extends LinearLayout implements
         checkInputsValidity();
 
         personalCodeTextWatcher = TextUtil.addTextWatcher(personalCodeView);
+        personalCodeHandler = TextUtil.smartIdLatvianPersonalCodeHandler();
         personalCodeView.setFilters(new InputFilter[]{getSymbolsFilter(PERSONAL_CODE_SYMBOLS)});
+
+        if (countryView.getSelectedItemPosition() == 2) {
+            setSmartIdPersonalCodeHandler(personalCodeView, personalCodeHandler);
+        }
 
         if (AccessibilityUtils.isTalkBackEnabled()) {
             setAccessibilityDescription();
@@ -136,6 +156,8 @@ public final class SmartIdView extends LinearLayout implements
 
     @Override
     public void reset(SignatureUpdateViewModel viewModel) {
+        this.viewModel = viewModel;
+
         countryView.setSelection(COUNTRY_LIST.indexOf(viewModel.country()));
         setPersonalCodeViewFilters(countryView.getSelectedItemPosition());
         personalCodeView.setText(viewModel.sidPersonalCode());
@@ -150,6 +172,7 @@ public final class SmartIdView extends LinearLayout implements
         rememberMeView.clearFocus();
 
         removeTextWatcher(personalCodeView, personalCodeTextWatcher);
+        removeTextWatcher(personalCodeView, personalCodeHandler);
         removeAccessibilityStateChanged(accessibilityTouchExplorationStateChangeListener);
     }
 
@@ -167,6 +190,17 @@ public final class SmartIdView extends LinearLayout implements
         }
     }
 
+    void setSmartIdPersonalCodeHandler(TextInputEditText personalCodeView, TextWatcher textHandler) {
+        personalCodeView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                personalCodeView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                removeTextWatcher(personalCodeView, textHandler);
+                personalCodeView.addTextChangedListener(textHandler);
+            }
+        });
+    }
+
     public Observable<Object> positiveButtonState() {
         return Observable.merge(positiveButtonStateSubject, afterTextChangeEvents(personalCodeView));
     }
@@ -174,9 +208,15 @@ public final class SmartIdView extends LinearLayout implements
     public boolean positiveButtonEnabled() {
         Editable personalCode = personalCodeView.getText();
         if (personalCode != null) {
-            PersonalCodeValidator.validatePersonalCode(personalCodeView);
-            return countryView.getSelectedItemPosition() != 0 ||
-                    isPersonalCodeCorrect(personalCode.toString());
+            if (countryView.getSelectedItemPosition() == 0) {
+                PersonalCodeValidator.validateEstonianPersonalCode(personalCodeView);
+            } else if (countryView.getSelectedItemPosition() == 2) {
+                PersonalCodeValidator.validateLatvianPersonalCode(personalCodeView);
+            }
+            return ((countryView.getSelectedItemPosition() == 0 || countryView.getSelectedItemPosition() == 1) &&
+                    personalCode.toString().length() == MAXIMUM_ESTONIAN_PERSONAL_CODE_LENGTH) ||
+                    (countryView.getSelectedItemPosition() == 2 &&
+                            personalCode.toString().length() == MAXIMUM_LATVIAN_PERSONAL_CODE_LENGTH);
         }
         return false;
     }
@@ -207,7 +247,10 @@ public final class SmartIdView extends LinearLayout implements
     }
 
     private boolean isPersonalCodeCorrect(String personalCode) {
-        return personalCode.length() == MAXIMUM_PERSONAL_CODE_LENGTH;
+        if (personalCode.contains("-")) {
+            return personalCode.length() == MAXIMUM_LATVIAN_PERSONAL_CODE_LENGTH;
+        }
+        return personalCode.length() == MAXIMUM_ESTONIAN_PERSONAL_CODE_LENGTH;
     }
 
     private void checkForDoneButtonClick() {
@@ -328,6 +371,12 @@ public final class SmartIdView extends LinearLayout implements
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
+        if (countryView.getSelectedItemPosition() == 2) {
+            setSmartIdPersonalCodeHandler(personalCodeView, personalCodeHandler);
+        } else {
+            removeTextWatcher(personalCodeView, personalCodeHandler);
+        }
+
         // Better support for Voice Assist to not delete wrong characters
         accessibilityTouchExplorationStateChangeListener = AccessibilityUtils.addAccessibilityStateChanged(enabled -> {
             boolean isTalkBackEnabled = AccessibilityUtils.isTalkBackEnabled();
@@ -344,6 +393,7 @@ public final class SmartIdView extends LinearLayout implements
         super.onDetachedFromWindow();
 
         removeTextWatcher(personalCodeView, personalCodeTextWatcher);
+        removeTextWatcher(personalCodeView, personalCodeHandler);
         removeAccessibilityStateChanged(accessibilityTouchExplorationStateChangeListener);
     }
 }

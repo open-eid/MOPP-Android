@@ -220,6 +220,47 @@ public class TextUtil {
         return textWatcher;
     }
 
+    public static TextWatcher smartIdLatvianPersonalCodeHandler() {
+        return new TextWatcher() {
+            private boolean isUpdating = false;
+            private String lastPersonalCode = "";
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                lastPersonalCode = s.toString();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (isUpdating) return;
+                isUpdating = true;
+
+                if (s != null) {
+                    String currentText = s.toString();
+                    String cleanedText = currentText.replace("-", "");
+
+                    if (lastPersonalCode.endsWith("-") && !currentText.endsWith("-")) {
+                        isUpdating = false;
+                        return;
+                    }
+
+                    String newText = (cleanedText.length() >= 6)
+                            ? cleanedText.substring(0, 6) + "-" + cleanedText.substring(6)
+                            : cleanedText;
+
+                    if (!newText.equals(currentText)) {
+                        s.replace(0, s.length(), newText);
+                    }
+                }
+
+                isUpdating = false;
+            }
+        };
+    }
+
     public static void removeTextWatcher(EditText editText, TextWatcher textWatcher) {
         if (textWatcher != null) {
             editText.removeTextChangedListener(textWatcher);

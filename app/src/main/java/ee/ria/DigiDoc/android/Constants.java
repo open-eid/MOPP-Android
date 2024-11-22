@@ -34,7 +34,8 @@ public final class Constants {
     /**
      * Personal code
      */
-    public static final int MAXIMUM_PERSONAL_CODE_LENGTH = 11;
+    public static final int MAXIMUM_ESTONIAN_PERSONAL_CODE_LENGTH = 11;
+    public static final int MAXIMUM_LATVIAN_PERSONAL_CODE_LENGTH = 12;
 
     /**
      * CAN number

@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.android.utils.validator;
 
-import static ee.ria.DigiDoc.android.Constants.MAXIMUM_PERSONAL_CODE_LENGTH;
+import static ee.ria.DigiDoc.android.Constants.MAXIMUM_ESTONIAN_PERSONAL_CODE_LENGTH;
+import static ee.ria.DigiDoc.android.Constants.MAXIMUM_LATVIAN_PERSONAL_CODE_LENGTH;
 
 import android.util.Log;
 import android.widget.EditText;
@@ -16,19 +17,39 @@ import timber.log.Timber;
 
 public class PersonalCodeValidator {
 
-    public static void validatePersonalCode(EditText personalCode) {
-        if (personalCode.getText() != null &&
-                personalCode.length() >= MAXIMUM_PERSONAL_CODE_LENGTH &&
+    public static void validateEstonianPersonalCode(EditText personalCode) {
+        if (personalCode.getText() == null) return;
+
+        int codeLength = personalCode.length();
+        int maxCodeLength = MAXIMUM_ESTONIAN_PERSONAL_CODE_LENGTH;
+
+        if (codeLength > maxCodeLength) {
+            personalCode.getText().delete(maxCodeLength, codeLength);
+            return;
+        }
+
+        if (codeLength == maxCodeLength &&
                 !isPersonalCodeValid(personalCode.getText().toString())) {
-            personalCode.getText()
-                    .delete(MAXIMUM_PERSONAL_CODE_LENGTH - 1, personalCode.length());
+            personalCode.getText().delete(maxCodeLength - 1, codeLength);
         }
     }
 
-    public static boolean validatePersonalCode(String personalCode) {
+    public static boolean validateEstonianPersonalCode(String personalCode) {
         return personalCode == null ||
-                personalCode.length() < MAXIMUM_PERSONAL_CODE_LENGTH ||
+                personalCode.length() < MAXIMUM_ESTONIAN_PERSONAL_CODE_LENGTH ||
                 isPersonalCodeValid(personalCode);
+    }
+
+    public static void validateLatvianPersonalCode(EditText personalCode) {
+        String regex = "^\\d{6}-\\d{5}$";
+
+        if (personalCode.getText() != null &&
+                personalCode.length() > MAXIMUM_LATVIAN_PERSONAL_CODE_LENGTH &&
+                !personalCode.getText().toString().matches(regex)
+        ) {
+            personalCode.getText()
+                    .delete(MAXIMUM_LATVIAN_PERSONAL_CODE_LENGTH, personalCode.length());
+        }
     }
 
     public static boolean isPersonalCodeValid(String personalCode) {
