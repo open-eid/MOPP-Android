@@ -1,6 +1,7 @@
 package ee.ria.DigiDoc.idcard;
 
 import android.content.Context;
+import android.nfc.TagLostException;
 import android.nfc.tech.IsoDep;
 import android.util.Log;
 
@@ -164,7 +165,7 @@ public class NFC {
         }
     }
 
-    public NFC(IsoDep card, byte[] can) throws NFCException {
+    public NFC(IsoDep card, byte[] can) throws IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         this.card = card;
         this.can = can;
         try {
@@ -173,6 +174,9 @@ public class NFC {
             keyMAC = keys[1];
         } catch (Exception exc) {
             Timber.log(Log.ERROR, "NFC Error: %s", exc.getMessage());
+            if (exc instanceof TagLostException) {
+                throw exc;
+            }
             throw new NFCException(exc.getMessage());
         }
     }
@@ -184,7 +188,7 @@ public class NFC {
     private static final byte[] CMD_READ_BINARY = Hex.decode("00B00000");
     private static final byte[] CMD_SIGN = Hex.decode("002A9E9A");
 
-    public byte[] calculateSignature(byte[] data) throws NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+    public byte[] calculateSignature(byte[] data) throws NFCException {
 
         Result r = communicateSecure(CMD_SIGN, data);
         Timber.log(Log.DEBUG, "SIGN:%x %s", r.code, Hex.toHexString(r.data));
@@ -202,7 +206,7 @@ public class NFC {
         return new Result(response);
     }
 
-    public Result communicateSecure(byte[] cmd, byte[] data) {
+    public Result communicateSecure(byte[] cmd, byte[] data) throws NFCException {
         byte [] response = null;
         try {
             byte[] APDU = createSecureAPDU(cmd[1], cmd[2], cmd[3], data);
@@ -237,10 +241,11 @@ public class NFC {
             return new Result(code, response);
         } catch (RuntimeException e) {
             Timber.log(Log.ERROR, "Exception in app with NFC: %s", e.getMessage());
+            throw new NFCException(e.getMessage());
         } catch (Exception exc) {
             Timber.log(Log.ERROR, "NFC Error: %s", exc.getMessage());
+            throw new NFCException(exc.getMessage());
         }
-        return new Result(response);
     }
 
     public byte[] readCertificate() {

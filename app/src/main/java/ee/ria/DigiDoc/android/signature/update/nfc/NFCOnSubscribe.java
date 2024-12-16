@@ -150,7 +150,8 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
                 Timber.log(Log.ERROR, "Wrong NFC CAN number");
                 result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.TECHNICAL_ERROR, navigator.activity().getString(R.string.signature_update_nfc_wrong_can));
             } else {
-                result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.TECHNICAL_ERROR, exc.getMessage());
+                Timber.log(Log.ERROR, exc.getMessage());
+                result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.TECHNICAL_ERROR, navigator.activity().getString(R.string.signature_update_mobile_id_error_general_client));
             }
         } finally {
             adapter.disableReaderMode(navigator.activity());

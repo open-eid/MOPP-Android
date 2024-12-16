@@ -15,7 +15,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -286,12 +289,22 @@ public class FileUtil {
     }
 
     private static File getFile(ByteSource byteSource, String filePath) throws IOException {
-        byte[] bytes = byteSource.read();
-
         File file = new File(filePath);
-        com.google.common.io.Files.write(bytes, file);
 
-        return file;
+        try (InputStream in = byteSource.openStream();
+             OutputStream outStream = new FileOutputStream(file.getCanonicalPath())) {
+
+            byte[] buffer = new byte[16384];
+            int bytesRead;
+
+            while ((bytesRead = in.read(buffer)) != -1) {
+                outStream.write(buffer, 0, bytesRead);
+            }
+
+            return file;
+        } catch (OutOfMemoryError oomf) {
+            throw new IOException("Unable to get file. Out of memory", oomf);
+        }
     }
 
     public static void logMessage(Level level, String message) {
