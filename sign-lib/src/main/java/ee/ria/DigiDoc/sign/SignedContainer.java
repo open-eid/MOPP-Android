@@ -425,7 +425,7 @@ public abstract class SignedContainer {
                 Splitter.fixedLength(2).split(Hex.toHexString(bytes))).trim();
     }
 
-    private static Signature signature(ee.ria.libdigidocpp.Signature signature, boolean isTimestamp) throws CertificateException, IOException {
+    private static Signature signature(ee.ria.libdigidocpp.Signature signature, boolean isTimestamp) {
         String id = signature.id();
         String name = isTimestamp ? timestampName(signature) : signatureName(signature);
         Instant createdAt = Instant.parse(signature.trustedSigningTime());
