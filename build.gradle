@@ -59,7 +59,7 @@ ext {
     commonsTextVersion = '1.13.0'
     timberVersion = '5.0.1'
     okhttpVersion = '4.12.0'
-    retrofitVersion = '2.9.0'
+    retrofitVersion = '2.11.0'
     bouncycastleVersion = '1.79'
     materialValuesVersion = '1.1.1'
     lombokVersion = '1.18.30'
