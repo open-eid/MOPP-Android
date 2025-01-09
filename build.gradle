@@ -36,7 +36,7 @@ ext {
     androidxVersion = '1.7.1'
     androidxAppCompatVersion = '1.6.1'
     androidxLifecycleVersion = '2.7.0'
-    androidMaterialVersion = '1.11.0'
+    androidMaterialVersion = '1.12.0'
     androidxRecyclerviewVersion = '1.3.2'
     androidxCardviewVersion = '1.0.0'
     androidxLocalBroadcastManagerVersion = '1.1.0'
