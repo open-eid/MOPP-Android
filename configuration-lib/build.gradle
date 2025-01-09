@@ -35,7 +35,7 @@ tasks.withType(Test).configureEach {
 }
 
 dependencies {
-    api "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
+    api "org.bouncycastle:bcpkix-jdk18on:${bouncycastleVersion}"
     api "com.squareup.okhttp3:okhttp:${okhttpVersion}"
     api "com.google.code.gson:gson:${gsonVersion}"
 
