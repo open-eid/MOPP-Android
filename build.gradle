@@ -81,5 +81,5 @@ ext {
     truthVersion = '1.4.2'
     mockitoVersion = '5.11.0'
     jacksonVersion = '2.15.4'
-    firebaseCrashlyticsVersion = '32.7.3'
+    firebaseCrashlyticsVersion = '33.7.0'
 }
