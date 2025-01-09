@@ -43,7 +43,7 @@ ext {
     androidxTestCoreVersion = '1.5.0'
     androidxTestVersion = '1.2.1'
     androidxTestOrchestratorVersion = '1.5.1'
-    androidxTestRulesVersion = '1.5.0'
+    androidxTestRulesVersion = '1.6.1'
     androidxTestEspressoVersion = '3.5.1'
     androidxConstraintlayoutVersion = '2.2.0'
     androidxCoreVersion = '1.12.0'
