@@ -79,7 +79,7 @@ ext {
     slf4jVersion = '2.0.7'
     junitVersion = '5.10.0'
     truthVersion = '1.4.4'
-    mockitoVersion = '5.11.0'
+    mockitoVersion = '5.15.2'
     jacksonVersion = '2.15.4'
     firebaseCrashlyticsVersion = '33.7.0'
 }
