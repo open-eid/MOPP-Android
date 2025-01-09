@@ -42,7 +42,7 @@ ext {
     androidxLocalBroadcastManagerVersion = '1.1.0'
     androidxTestCoreVersion = '1.5.0'
     androidxTestVersion = '1.1.5'
-    androidxTestOrchestratorVersion = '1.4.2'
+    androidxTestOrchestratorVersion = '1.5.1'
     androidxTestRulesVersion = '1.5.0'
     androidxTestEspressoVersion = '3.5.1'
     androidxConstraintlayoutVersion = '2.1.4'
