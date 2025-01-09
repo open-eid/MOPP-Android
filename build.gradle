@@ -76,7 +76,7 @@ ext {
     expandablelayoutVersion = '2.9.2'
     ldapSdkVersion = '7.0.2'
     cdoc4jVersion = '1.5'
-    slf4jVersion = '2.0.7'
+    slf4jVersion = '2.0.16'
     junitVersion = '5.10.0'
     truthVersion = '1.4.4'
     mockitoVersion = '5.15.2'
