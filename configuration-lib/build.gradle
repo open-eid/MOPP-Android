@@ -70,7 +70,7 @@ configurations {
 }
 
 task fetchAndPackageDefaultConfiguration(type: JavaExec, dependsOn: build) {
-    classpath files(getBuildDir().toString() + "/intermediates/javac/release/classes")
+    classpath files(getBuildDir().toString() + "/intermediates/javac/release/compileReleaseJavaWithJavac/classes")
     classpath configurations.generateMatchers
     mainClass = 'ee.ria.DigiDoc.configuration.task.FetchAndPackageDefaultConfigurationTask'
     doLast {

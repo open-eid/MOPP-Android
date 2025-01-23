@@ -2,6 +2,7 @@ package ee.ria.DigiDoc.configuration.task;
 
 import android.util.Log;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -132,7 +133,13 @@ public class FetchAndPackageDefaultConfigurationTask {
     }
 
     private static String configFileDir(String filename) {
-        return System.getProperty("user.dir") + "/src/" + buildVariant + "/assets/config/" + filename;
+        String currentDir = System.getProperty("user.dir");
+
+        if (currentDir == null) {
+            throw new IllegalStateException("System property 'user.dir' is undefined");
+        }
+
+        return new File(currentDir).getParent() + "/app/src/" + buildVariant + "/assets/config/" + filename;
     }
 
     private static void verifyConfigurationSignature(ConfigurationLoader configurationLoader) {
