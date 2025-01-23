@@ -44,7 +44,6 @@ import timber.log.Timber;
 
 final class SignatureAddSource {
 
-    private final Navigator navigator;
     private final SignatureContainerDataSource signatureContainerDataSource;
     private final SettingsDataStore settingsDataStore;
     private final IdCardService idCardService;
@@ -52,11 +51,9 @@ final class SignatureAddSource {
 
     private static final String EMPTY_VALUE = "";
 
-    @Inject SignatureAddSource(Navigator navigator,
-                               SignatureContainerDataSource signatureContainerDataSource,
+    @Inject SignatureAddSource(SignatureContainerDataSource signatureContainerDataSource,
                                SettingsDataStore settingsDataStore, IdCardService idCardService,
                                LocaleService localeService) {
-        this.navigator = navigator;
         this.signatureContainerDataSource = signatureContainerDataSource;
         this.settingsDataStore = settingsDataStore;
         this.idCardService = idCardService;
@@ -96,8 +93,7 @@ final class SignatureAddSource {
                                                     Navigator navigator,
                                                     @Nullable RoleData roleData,
                                                     boolean isSivaConfirmed) {
-        if (request instanceof MobileIdRequest) {
-            MobileIdRequest mobileIdRequest = (MobileIdRequest) request;
+        if (request instanceof MobileIdRequest mobileIdRequest) {
             if (mobileIdRequest.rememberMe()) {
                 settingsDataStore.setPhoneNo(mobileIdRequest.phoneNo());
                 settingsDataStore.setPersonalCode(mobileIdRequest.personalCode());
@@ -134,8 +130,7 @@ final class SignatureAddSource {
                     .startWithItem(MobileIdResponse
                             .status(MobileCreateSignatureSessionStatusResponse.ProcessStatus.OK))
                     .onErrorResumeNext(Observable::error);
-        } else if (request instanceof SmartIdRequest) {
-            SmartIdRequest smartIdRequest = (SmartIdRequest) request;
+        } else if (request instanceof SmartIdRequest smartIdRequest) {
             if (smartIdRequest.rememberMe()) {
                 settingsDataStore.setCountry(smartIdRequest.country());
                 settingsDataStore.setSidPersonalCode(smartIdRequest.personalCode());
@@ -171,13 +166,12 @@ final class SignatureAddSource {
                 NFCOnSubscribe nfcsub = new NFCOnSubscribe(navigator, container, nfcRequest.can(), nfcRequest.pin2(), roleData);
                 return Observable.create(nfcsub);
                 });
-            return obs.switchMap(response -> Observable.just(response))
+            return obs.switchMap(Observable::just)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .startWithItem(NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.OK, null))
                     .onErrorResumeNext(Observable::error);
-        } else if (request instanceof IdCardRequest) {
-            IdCardRequest idCardRequest = (IdCardRequest) request;
+        } else if (request instanceof IdCardRequest idCardRequest) {
             return signatureContainerDataSource
                     .get(containerFile, isSivaConfirmed)
                     .flatMap(container ->
@@ -220,7 +214,7 @@ final class SignatureAddSource {
                                         @Nullable RoleData roleData) {
         return Single
                 .fromCallable(() -> container.sign(context, ByteString.of(dataToSign),
-                        signData -> ByteString.encodeUtf8(signatureValue), roleData))
+                        signData -> ByteString.encodeUtf8(signatureValue), roleData, false))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

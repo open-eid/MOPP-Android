@@ -90,11 +90,9 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
     private static final byte[] CMD_SET_ENV_SIGN = Hex.decode("002241B6");
     private static final byte[] SET_ENV_SIGN = Hex.decode("8004FF15080084019F");
 
-    @Nullable private IsoDep card;
-
     private NFCResponse onTagDiscovered(NfcAdapter adapter, Tag tag) {
         Timber.log(Log.DEBUG, "Tag discovered: %s", tag.toString());
-        card = IsoDep.get(tag);
+        IsoDep card = IsoDep.get(tag);
         NFCResponse result = null;
         try {
             card.connect();
@@ -118,7 +116,7 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
             byte[] paddedPIN = Hex.decode("ffffffffffffffffffffffff");
             System.arraycopy(pin2, 0, paddedPIN, 0, pin2.length);
             r = nfc.communicateSecure(VER_PIN2_CMD, paddedPIN);
-            if (null != pin2 && pin2.length > 0) {
+            if (pin2.length > 0) {
                 Arrays.fill(pin2, (byte) 0);
             }
             Timber.log(Log.DEBUG, "Verify PIN2: %x %s", r.code, Hex.toHexString(r.data));
@@ -137,7 +135,7 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
             Timber.log(Log.DEBUG, "Set ENV: %x %s", r.code, Hex.toHexString(r.data));
 
             container.sign(navigator.activity(), cert.data(),
-                    signData -> ByteString.of(nfc.calculateSignature(signData.toByteArray())), role);
+                    signData -> ByteString.of(nfc.calculateSignature(signData.toByteArray())), role, false);
         } catch (TagLostException exc) {
             Timber.log(Log.ERROR, exc.getMessage());
             result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, navigator.activity().getString(R.string.signature_update_nfc_tag_lost));

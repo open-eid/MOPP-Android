@@ -26,7 +26,7 @@ public final class UserAgentUtil {
 
     private UserAgentUtil() {}
 
-    public static String getUserAgent(Context context) {
+    public static String getUserAgent(Context context, boolean shouldIncludeDevices) {
         ArrayList<String> deviceProductNames = new ArrayList<>();
         StringBuilder initializingMessage = new StringBuilder();
 
@@ -38,7 +38,7 @@ public final class UserAgentUtil {
             initializingMessage.append("riadigidoc/").append(getAppVersion(context));
             initializingMessage.append(" (Android ").append(Build.VERSION.RELEASE).append(")");
             initializingMessage.append(" Lang: ").append(Locale.getDefault().getLanguage());
-            if (!deviceProductNames.isEmpty()) {
+            if (shouldIncludeDevices && !deviceProductNames.isEmpty()) {
                 initializingMessage.append(" Devices: ").append(TextUtils.join(", ", deviceProductNames));
             }
         }

@@ -47,7 +47,7 @@ public final class IdCardService {
         this.fileSystem = fileSystem;
     }
 
-    public final Observable<IdCardDataResponse> data() {
+    public Observable<IdCardDataResponse> data() {
         return smartCardReaderManager.status()
                 .filter(duplicates())
                 .switchMap(status -> {
@@ -77,7 +77,7 @@ public final class IdCardService {
                     return container.sign(context, data.signCertificate().data(),
                             signData -> ByteString.of(token.calculateSignature(pin2,
                                     signData.toByteArray(),
-                                    data.signCertificate().ellipticCurve())), roleData);
+                                    data.signCertificate().ellipticCurve())), roleData, true);
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
