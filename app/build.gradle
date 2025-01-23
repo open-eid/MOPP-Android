@@ -81,6 +81,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             merges += "META-INF/LICENSE.md"
             merges += "META-INF/LICENSE-notice.md"
+            merges += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
         }
     }
 }
@@ -105,7 +106,7 @@ dependencies {
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation "com.github.tony19:logback-android:${logbackAndroidVersion}"
 
-    implementation "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
+    implementation "org.bouncycastle:bcpkix-jdk18on:${bouncycastleVersion}"
 
     implementation "com.github.esnaultdev:MaterialValues:${materialValuesVersion}"
 

@@ -29,7 +29,7 @@ dependencies {
 
     implementation "com.jakewharton.timber:timber:${timberVersion}"
 
-    implementation "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
+    implementation "org.bouncycastle:bcpkix-jdk18on:${bouncycastleVersion}"
 
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
 

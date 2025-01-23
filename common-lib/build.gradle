@@ -48,7 +48,7 @@ dependencies {
     implementation "com.google.auto.value:auto-value-annotations:${autoValueVersion}"
     annotationProcessor "com.google.auto.value:auto-value:${autoValueVersion}"
 
-    api "org.bouncycastle:bcpkix-jdk15on:${bouncycastleVersion}"
+    api "org.bouncycastle:bcpkix-jdk18on:${bouncycastleVersion}"
 
     api files('libs/libdigidocpp.jar')
 
