@@ -80,6 +80,7 @@ public final class Activity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.Theme_Application);
+        getTheme().applyStyle(R.style.OptOutEdgeToEdgeEnforcement, false);
         setTitle(""); // ACCESSIBILITY: prevents application name read during each activity launch
         if (isRooted()) {
             super.onCreate(null);
