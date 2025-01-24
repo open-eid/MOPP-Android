@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -20,10 +19,11 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Properties;
 
-import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 import ee.ria.DigiDoc.common.UserAgentUtil;
+import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 
 public final class ConfigurationManagerTest {
 
@@ -41,7 +41,7 @@ public final class ConfigurationManagerTest {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         configurationProperties = new ConfigurationProperties(context.getAssets());
         cacheConfHandler = new CachedConfigurationHandler(context.getCacheDir());
-        configurationManager = new ConfigurationManager(context, configurationProperties, cacheConfHandler, UserAgentUtil.getUserAgent(context));
+        configurationManager = new ConfigurationManager(context, configurationProperties, cacheConfHandler, UserAgentUtil.getUserAgent(context, false));
     }
 
     @Test
@@ -72,7 +72,7 @@ public final class ConfigurationManagerTest {
         assertConfigurationValues(configuration);
         assertNull(configuration.getConfigurationLastUpdateCheckDate());
         // Packaged default configuration download date, initialized during APK build
-        assertEquals("Mon Mar 21 19:56:08 GMT+02:00 2022", configuration.getConfigurationUpdateDate().toString());
+        assertEquals("Mon Mar 21 19:56:08 GMT+02:00 2022", Objects.requireNonNull(configuration.getConfigurationUpdateDate()).toString());
     }
 
     @Test
@@ -160,7 +160,7 @@ public final class ConfigurationManagerTest {
         assertDefaultConfigurationValues(configuration);
         assertNull(configuration.getConfigurationLastUpdateCheckDate());
         // Packaged default configuration download date, initialized during APK build
-        assertEquals("Mon Mar 21 19:56:08 GMT+02:00 2022", configuration.getConfigurationUpdateDate().toString());
+        assertEquals("Mon Mar 21 19:56:08 GMT+02:00 2022", Objects.requireNonNull(configuration.getConfigurationUpdateDate()).toString());
 
         assertTrue(cacheConfHandler.doesCachedConfigurationExist());
         assertTrue(cacheConfHandler.doesCachedConfigurationFileExists(CachedConfigurationHandler.CACHED_CONFIG_JSON));
@@ -198,8 +198,8 @@ public final class ConfigurationManagerTest {
         assertNotNull(configuration.getTslUrl());
         assertNotNull(configuration.getMetaInf().getDate());
         assertNotNull(configuration.getMetaInf().getUrl());
-        assertNotNull(configuration.getMetaInf().getSerial());
-        assertNotNull(configuration.getMetaInf().getVersion());
+        assertNotEquals(configuration.getMetaInf().getSerial(), 0);
+        assertNotEquals(configuration.getMetaInf().getVersion(), 0);
         assertFalse(configuration.getTslCerts().isEmpty());
         assertFalse(configuration.getOCSPUrls().isEmpty());
     }
@@ -238,9 +238,9 @@ public final class ConfigurationManagerTest {
     }
 
     private void deleteCachedData(File cacheDir) {
-        for (File file : cacheDir.listFiles()) {
+        for (File file : Objects.requireNonNull(cacheDir.listFiles())) {
             if (file.isDirectory() && file.getName().equals("config")) {
-                for (File configFile : file.listFiles()) {
+                for (File configFile : Objects.requireNonNull(file.listFiles())) {
                     if (!configFile.delete()) {
                         throw new IllegalStateException("Failed to delete android cached directory file/folder named " + configFile.getName());
                     }

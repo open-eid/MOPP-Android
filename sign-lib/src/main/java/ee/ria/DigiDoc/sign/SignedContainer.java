@@ -53,6 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -107,7 +108,7 @@ public abstract class SignedContainer {
     public abstract ImmutableList<DataFile> dataFiles();
 
     public final boolean dataFileAddEnabled() {
-        return !isLegacyContainer(file()) && signatures().size() == 0;
+        return !isLegacyContainer(file()) && signatures().isEmpty();
     }
 
     public final boolean dataFileRemoveEnabled() {
@@ -209,7 +210,7 @@ public abstract class SignedContainer {
 
     public final SignedContainer sign(Context context, ByteString certificate,
                                       Function<ByteString, ByteString> signFunction,
-                                      @Nullable RoleData roleData) throws Exception {
+                                      @Nullable RoleData roleData, boolean userAgentDevices) throws Exception {
         ee.ria.libdigidocpp.Signature signature = null;
 
         try {
@@ -217,7 +218,7 @@ public abstract class SignedContainer {
 
             ExternalSigner signer = new ExternalSigner(certificate.toByteArray());
             signer.setProfile(signatureProfile());
-            signer.setUserAgent(UserAgentUtil.getUserAgent(context));
+            signer.setUserAgent(UserAgentUtil.getUserAgent(context, userAgentDevices));
 
             if (roleData != null) {
                 signer.setSignerRoles(new StringVector(TextUtil.removeEmptyStrings(roleData.getRoles())));
@@ -307,7 +308,7 @@ public abstract class SignedContainer {
      * @throws ContainerDataFilesEmptyException When no data files are given.
      */
     public static SignedContainer create(File file, ImmutableList<File> dataFiles) throws Exception {
-        if (dataFiles == null || dataFiles.size() == 0) {
+        if (dataFiles == null || dataFiles.isEmpty()) {
             throw new ContainerDataFilesEmptyException();
         }
         Container container;
@@ -510,12 +511,14 @@ public abstract class SignedContainer {
 
     private static String getFormattedDateTime(String dateTimeString, boolean isUTC) {
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
             if (isUTC) {
-                return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(dateFormat.parse(dateTimeString)) + " +0000";
+                return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault())
+                        .format(Objects.requireNonNull(dateFormat.parse(dateTimeString))) + " +0000";
             }
             dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-            return new SimpleDateFormat("dd.MM.yyyy HH:mm:ssZ").format(dateFormat.parse(dateTimeString));
+            return new SimpleDateFormat("dd.MM.yyyy HH:mm:ssZ", Locale.getDefault())
+                    .format(Objects.requireNonNull(dateFormat.parse(dateTimeString)));
         } catch (ParseException | IllegalStateException e) {
             Timber.log(Log.ERROR, e, "Unable to parse date");
         }

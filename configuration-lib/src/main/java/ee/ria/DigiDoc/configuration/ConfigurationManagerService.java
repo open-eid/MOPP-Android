@@ -11,8 +11,8 @@ import androidx.core.app.PatchedJobIntentService;
 
 import java.util.Date;
 
-import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 import ee.ria.DigiDoc.common.UserAgentUtil;
+import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 import timber.log.Timber;
 
 public class ConfigurationManagerService extends PatchedJobIntentService {
@@ -33,7 +33,7 @@ public class ConfigurationManagerService extends PatchedJobIntentService {
         super.onCreate();
         CachedConfigurationHandler cachedConfigurationHandler = new CachedConfigurationHandler(getCacheDir());
         ConfigurationProperties configurationProperties = new ConfigurationProperties(getAssets());
-        configurationManager = new ConfigurationManager(this, configurationProperties, cachedConfigurationHandler, UserAgentUtil.getUserAgent(getApplicationContext()));
+        configurationManager = new ConfigurationManager(this, configurationProperties, cachedConfigurationHandler, UserAgentUtil.getUserAgent(getApplicationContext(), false));
     }
 
     private ResultReceiver getConfigurationResultReceiver(Intent intent) {

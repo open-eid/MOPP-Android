@@ -53,7 +53,7 @@ public class ContainerWrapper {
     public String prepareSignature(String cert, @Nullable RoleData roleData) throws CertificateException {
         signer = new ExternalSigner(CertificateUtil.x509Certificate(cert).getEncoded());
         signer.setProfile(SIGNATURE_PROFILE_TS);
-        signer.setUserAgent(UserAgentUtil.getUserAgent(context));
+        signer.setUserAgent(UserAgentUtil.getUserAgent(context, false));
         if (roleData != null) {
             signer.setSignerRoles(new StringVector(TextUtil.removeEmptyStrings(roleData.getRoles())));
             signer.setSignatureProductionPlace(roleData.getCity(), roleData.getState(),

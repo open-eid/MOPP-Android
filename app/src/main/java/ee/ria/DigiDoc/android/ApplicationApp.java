@@ -93,6 +93,7 @@ import ee.ria.DigiDoc.common.ManualProxy;
 import ee.ria.DigiDoc.common.ProxyConfig;
 import ee.ria.DigiDoc.common.ProxySetting;
 import ee.ria.DigiDoc.common.ProxyUtil;
+import ee.ria.DigiDoc.common.UserAgentUtil;
 import ee.ria.DigiDoc.configuration.ConfigurationConstants;
 import ee.ria.DigiDoc.configuration.ConfigurationManager;
 import ee.ria.DigiDoc.configuration.ConfigurationManagerService;
@@ -100,7 +101,6 @@ import ee.ria.DigiDoc.configuration.ConfigurationProperties;
 import ee.ria.DigiDoc.configuration.ConfigurationProvider;
 import ee.ria.DigiDoc.configuration.loader.CachedConfigurationHandler;
 import ee.ria.DigiDoc.configuration.util.FileUtils;
-import ee.ria.DigiDoc.common.UserAgentUtil;
 import ee.ria.DigiDoc.crypto.RecipientRepository;
 import ee.ria.DigiDoc.sign.SignLib;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderManager;
@@ -214,7 +214,7 @@ public class ApplicationApp extends android.app.Application {
         ProxyConfig proxyConfig = ProxyUtil.getProxy(proxySetting, manualProxy);
 
         SignLib.init(this, getString(R.string.main_settings_tsa_url_key), getConfigurationProvider(),
-                UserAgentUtil.getUserAgent(getApplicationContext()), isLoggingEnabled(getApplicationContext()),
+                UserAgentUtil.getUserAgent(getApplicationContext(), false), isLoggingEnabled(getApplicationContext()),
                 proxySetting, proxyConfig.manualProxy());
     }
 
@@ -225,7 +225,7 @@ public class ApplicationApp extends android.app.Application {
     private void setupConfiguration() {
         CachedConfigurationHandler cachedConfHandler = new CachedConfigurationHandler(getCacheDir());
         ConfigurationProperties confProperties = new ConfigurationProperties(getAssets());
-        ConfigurationManager confManager = new ConfigurationManager(this, confProperties, cachedConfHandler, UserAgentUtil.getUserAgent(getApplicationContext()));
+        ConfigurationManager confManager = new ConfigurationManager(this, confProperties, cachedConfHandler, UserAgentUtil.getUserAgent(getApplicationContext(), false));
 
         // Initially load cached configuration (if it exists and default configuration is not newer) in a blocking (synchronous)
         // manner. If default conf is newer then load default conf (case where application was updated and cache was not removed,

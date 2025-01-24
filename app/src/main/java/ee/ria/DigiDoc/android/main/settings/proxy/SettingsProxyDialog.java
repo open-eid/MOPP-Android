@@ -41,8 +41,8 @@ import ee.ria.DigiDoc.common.ManualProxy;
 import ee.ria.DigiDoc.common.ProxyConfig;
 import ee.ria.DigiDoc.common.ProxySetting;
 import ee.ria.DigiDoc.common.ProxyUtil;
-import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
 import ee.ria.DigiDoc.common.UserAgentUtil;
+import ee.ria.DigiDoc.common.exception.NoInternetConnectionException;
 import ee.ria.DigiDoc.sign.SignLib;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -205,7 +205,7 @@ public class SettingsProxyDialog extends Dialog {
                 String portNumber = port.getEditableText().toString().trim();
                 try {
                     manualProxySettings.setPort(
-                            portNumber.isEmpty() || !isValidPortNumber(portNumber) ? 80 :
+                            portNumber.isEmpty() || isNotValidPortNumber(portNumber) ? 80 :
                                     Integer.parseInt(port.getEditableText().toString().trim()));
                 } catch (NumberFormatException nfe) {
                     Timber.log(Log.ERROR, nfe, "Unable to get the port number");
@@ -332,7 +332,7 @@ public class SettingsProxyDialog extends Dialog {
 
     private void validatePortNumber(String portNumber) {
         if (!portNumber.isEmpty()) {
-            if (!isValidPortNumber(portNumber)) {
+            if (isNotValidPortNumber(portNumber)) {
                 portLayout.setError("Min 1, max 65535");
             } else {
                 portLayout.setError(null);
@@ -340,13 +340,13 @@ public class SettingsProxyDialog extends Dialog {
         }
     }
 
-    private static boolean isValidPortNumber(String portNumber) {
+    private static boolean isNotValidPortNumber(String portNumber) {
         try {
             int number = Integer.parseInt(portNumber);
-            return number >= 1 && number <= 65535;
+            return number < 1 || number > 65535;
         } catch (NumberFormatException e) {
             Timber.log(Log.ERROR, e, String.format("Invalid number: %s", portNumber));
-            return false;
+            return true;
         }
     }
 
@@ -360,7 +360,7 @@ public class SettingsProxyDialog extends Dialog {
         Request request = new Request.Builder()
                 .url("https://id.eesti.ee/config.json")
                 .addHeader("Content-Type", "application/json")
-                .addHeader("User-Agent", UserAgentUtil.getUserAgent(navigator.activity()))
+                .addHeader("User-Agent", UserAgentUtil.getUserAgent(navigator.activity(), false))
                 .build();
 
         OkHttpClient httpClient;
