@@ -13,10 +13,12 @@ import static ee.ria.DigiDoc.sign.SignedContainer.isCades;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -453,12 +455,10 @@ final class SignatureUpdateAdapter extends
             saveButton = itemView.findViewById(R.id.signatureUpdateListNameSaveButton);
             if (AccessibilityUtils.isTalkBackEnabled()) {
                 updateButton.setContentDescription(itemView.getResources()
-                        .getString(R.string.signature_update_name_update_button)
-                );
+                        .getString(R.string.signature_update_name_update_button));
             } else {
                 updateButton.setContentDescription(itemView.getResources()
-                        .getString(R.string.signature_update_name_update_voice_button)
-                );
+                        .getString(R.string.signature_update_name_update_voice_button));
             }
         }
 
@@ -535,6 +535,21 @@ final class SignatureUpdateAdapter extends
                     ((DocumentItem) adapter.getItem(getBindingAdapterPosition())).document())
                     .subscribe(adapter.documentClicksSubject);
             nameView.setText(FileUtil.sanitizeString(item.document().name(), ""));
+            nameView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    nameView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    int maxLines = nameView.getMaxLines();
+                    int lineCount = nameView.getLineCount();
+
+                    if (lineCount >= 1) {
+                        nameView.setText(TextUtils.ellipsize(nameView.getText(),
+                                nameView.getPaint(), (float) (nameView.getWidth() * (maxLines / 1.5)),
+                                TextUtils.TruncateAt.MIDDLE));
+                    }
+                }
+            });
+
             String fileNameDescription = nameView.getResources().getString(R.string.file);
             nameView.setContentDescription(fileNameDescription + " " + nameView.getText());
 
@@ -542,10 +557,8 @@ final class SignatureUpdateAdapter extends
                 String saveButtonText = saveButton.getResources().getString(R.string.signature_update_document_save_button);
                 saveButton.setContentDescription(saveButtonText + " " + nameView.getText());
             } else {
-                saveButton.setContentDescription(
-                        saveButton.getResources()
-                                .getString(R.string.signature_update_document_save_voice_button)
-                );
+                saveButton.setContentDescription(saveButton.getResources()
+                                .getString(R.string.signature_update_document_save_voice_button));
             }
             saveButton.setVisibility(View.VISIBLE);
             clicks(saveButton).map(ignored ->
@@ -556,10 +569,8 @@ final class SignatureUpdateAdapter extends
                 String removeButtonText = removeButton.getResources().getString(R.string.signature_update_document_remove_button);
                 removeButton.setContentDescription(removeButtonText + " " + nameView.getText());
             } else {
-                removeButton.setContentDescription(
-                        removeButton.getResources()
-                                .getString(R.string.signature_update_document_remove_voice_button)
-                );
+                removeButton.setContentDescription(removeButton.getResources()
+                                .getString(R.string.signature_update_document_remove_voice_button));
             }
 
             removeButton.setVisibility(item.removeButtonVisible() ? View.VISIBLE : View.GONE);

@@ -253,13 +253,11 @@ final class Processor implements ObservableTransformer<Action, Result> {
                             Transaction transaction;
                             String containerFileExtension = getFileExtension(containerFile.getName()).toLowerCase(Locale.US);
                             String documentFileExtension = getFileExtension(documentFile.getName()).toLowerCase(Locale.US);
-                            boolean isPdfInSignedPdfContainer = false;
+                            boolean isSignedPdfContainer = false;
                             if (action.document != null) {
-                                isPdfInSignedPdfContainer = containerFileExtension.equals("pdf") &&
-                                        (SivaUtil.isSivaConfirmationNeeded(containerFile, action.document) &&
-                                                documentFileExtension.equals("pdf"));
+                                isSignedPdfContainer = containerFileExtension.equals("pdf") && documentFileExtension.equals("pdf");
                             }
-                            if (!isPdfInSignedPdfContainer && SignedContainer.isContainer(navigator.activity(), documentFile)) {
+                            if (!isSignedPdfContainer && SignedContainer.isContainer(navigator.activity(), documentFile)) {
                                 transaction = Transaction.push(SignatureUpdateScreen
                                         .create(true, true, documentFile, false, false, null, true));
                             } else if (CryptoContainer.isContainerFileName(documentFile.getName())) {
