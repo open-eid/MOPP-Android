@@ -18,6 +18,7 @@ import javax.annotation.Nullable;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.signature.update.exception.PINException;
 import ee.ria.DigiDoc.android.utils.navigator.Navigator;
 import ee.ria.DigiDoc.common.Certificate;
 import ee.ria.DigiDoc.common.RoleData;
@@ -122,9 +123,9 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
             Timber.log(Log.DEBUG, "Verify PIN2: %x %s", r.code, Hex.toHexString(r.data));
             if (r.code != 0x9000) {
                 if (r.code == 0x6983) {
-                    throw new RuntimeException(navigator.activity().getString(R.string.signature_update_id_card_sign_pin2_locked));
+                    throw new PINException(navigator.activity().getString(R.string.signature_update_id_card_sign_pin2_locked));
                 } else if ((r.code & 0xfff0) == 0x63c0) {
-                    throw new RuntimeException(String.format(navigator.activity().getString(R.string.signature_update_id_card_sign_pin2_invalid), r.code & 0xf));
+                    throw new PINException(String.format(navigator.activity().getString(R.string.signature_update_id_card_sign_pin2_invalid), r.code & 0xf));
                 } else {
                     Timber.log(Log.ERROR, "PIN2 verification error");
                     throw new RuntimeException(navigator.activity().getString(R.string.signature_update_nfc_technical_error));
@@ -139,7 +140,7 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
         } catch (TagLostException exc) {
             Timber.log(Log.ERROR, exc.getMessage());
             result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, navigator.activity().getString(R.string.signature_update_nfc_tag_lost));
-        } catch (IOException exc) {
+        } catch (IOException | PINException exc) {
             Timber.log(Log.ERROR, exc.getMessage());
             result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.TECHNICAL_ERROR, exc.getMessage());
         } catch (Exception exc) {
