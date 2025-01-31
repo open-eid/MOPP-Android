@@ -31,6 +31,7 @@ import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.signature.update.exception.DocumentExistsException;
 import ee.ria.DigiDoc.android.signature.update.exception.DocumentRemoveException;
 import ee.ria.DigiDoc.android.signature.update.exception.GeneralSignatureUpdateException;
+import ee.ria.DigiDoc.android.signature.update.exception.PINException;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.ErrorMessageUtil;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
@@ -199,6 +200,8 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
                 updateError = new CertificateRevokedException(
                         getContext().getString(R.string.signature_update_signature_error_message_certificate_revoked)
                 );
+            } else if (signatureAddError instanceof PINException) {
+                updateError = new PINException(signatureAddError.getMessage());;
             } else if (signatureAddError.getMessage() != null && signatureAddError.getMessage().contains("Failed to connect")) {
                 updateError = new NoInternetConnectionException();
             } else if (signatureAddError.getMessage() != null && signatureAddError.getMessage().startsWith("Failed to create ssl connection with host")) {
