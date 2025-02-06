@@ -312,7 +312,7 @@
     <string name="signature_update_nfc_technical_error">Midagi läks valesti. Palun proovi uuesti</string>
     <string name="signature_update_nfc_hold">Hoia ID-kaarti telefoni lähedal</string>
     <string name="signature_update_nfc_detected">ID-kaardiga kontaktivaba ühenduse loomine</string>
-    <string name="signature_update_nfc_can_info">NFC allkirjastamisel kasutatakse CAN numbrit. Mitmekordsel CANi valesti sisestamisel võib NFC lukustuda. https://www.id.ee/artikkel/digiallkirjastamine-ria-digidoc-mobiilirakenduses/</string>
+    <string name="signature_update_nfc_can_info">NFC allkirjastamisel kasutatakse CAN numbrit. Mitmekordsel CANi valesti sisestamisel võib NFC lukustuda. https://www.id.ee/artikkel/digiallkirjastamine-ria-digidoc-mobiilirakenduses/#id-kaart_1</string>
 
     <!-- Signature Details -->
     <string name="signature_error_details_title">Hoiatused</string>

@@ -55,7 +55,7 @@ public final class NotificationDialog extends AlertDialog implements ContentView
                     context,
                     message,
                     R.string.read_more_message,
-                    true
+                    false
             ), Html.FROM_HTML_MODE_LEGACY);
 
             TextView messageView = new TextView(context);

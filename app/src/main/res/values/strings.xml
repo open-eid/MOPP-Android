@@ -312,7 +312,7 @@
     <string name="signature_update_nfc_technical_error">Technical error</string>
     <string name="signature_update_nfc_hold">Hold your phone near the ID-card</string>
     <string name="signature_update_nfc_detected">Authenticating with ID-card</string>
-    <string name="signature_update_nfc_can_info">NFC signing uses the CAN number. NFC may lock up if CAN is entered incorrectly multiple times. https://www.id.ee/en/article/digital-signing-in-ria-digidoc-mobile-application/</string>
+    <string name="signature_update_nfc_can_info">NFC signing uses the CAN number. NFC may lock up if CAN is entered incorrectly multiple times. https://www.id.ee/en/article/digital-signing-in-ria-digidoc-mobile-application/#id-card_1</string>
 
     <!-- Signature Details -->
     <string name="signature_error_details_title">Warnings</string>
