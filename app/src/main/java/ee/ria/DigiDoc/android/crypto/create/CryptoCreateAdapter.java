@@ -5,10 +5,12 @@ import static ee.ria.DigiDoc.android.Constants.VOID;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -443,6 +445,21 @@ final class CryptoCreateAdapter extends
                     }
                 });
             }
+
+            nameView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    nameView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    int maxLines = nameView.getMaxLines();
+                    int lineCount = nameView.getLineCount();
+
+                    if (lineCount >= 1) {
+                        nameView.setText(TextUtils.ellipsize(FileUtil.sanitizeString(item.dataFile().getName(), ""),
+                                nameView.getPaint(), (float) (nameView.getWidth() * (maxLines / 1.5)),
+                                TextUtils.TruncateAt.MIDDLE));
+                    }
+                }
+            });
         }
     }
 
