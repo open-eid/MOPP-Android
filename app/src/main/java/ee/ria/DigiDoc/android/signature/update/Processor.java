@@ -30,7 +30,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -42,7 +41,6 @@ import ee.ria.DigiDoc.android.crypto.create.CryptoCreateScreen;
 import ee.ria.DigiDoc.android.signature.data.SignatureContainerDataSource;
 import ee.ria.DigiDoc.android.signature.detail.SignatureDetailScreen;
 import ee.ria.DigiDoc.android.utils.IntentUtils;
-import ee.ria.DigiDoc.android.utils.SivaUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
 import ee.ria.DigiDoc.android.utils.container.ContainerUtil;
 import ee.ria.DigiDoc.android.utils.files.FileAlreadyExistsException;
@@ -380,15 +378,10 @@ final class Processor implements ObservableTransformer<Action, Result> {
                     .map(signedContainer -> {
                         Signature signature = action.signature();
                         if (signature != null) {
-                            Optional<Signature> signedSignature = signedContainer.signatures().stream()
-                                    .filter(obj -> obj.equals(signature))
-                                    .findFirst();
-                            if (signedSignature.isPresent()) {
-                                Transaction transaction;
-                                transaction = Transaction.push(SignatureDetailScreen
-                                        .create(signedSignature.get(), signedContainer, action.isSivaConfirmed()));
-                                navigator.execute(transaction);
-                            }
+                            Transaction transaction;
+                            transaction = Transaction.push(SignatureDetailScreen
+                                    .create(signature, signedContainer, action.isSivaConfirmed()));
+                            navigator.execute(transaction);
                         }
                         return Result.SignatureViewResult.idle();
                     })
