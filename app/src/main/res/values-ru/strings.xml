@@ -314,7 +314,7 @@
     <string name="signature_update_nfc_technical_error">Что-то пошло не так. Пожалуйста, попробуйте еще раз</string>
     <string name="signature_update_nfc_hold">Удерживайте ID-карту рядом с телефоном</string>
     <string name="signature_update_nfc_detected">Создание бесконтактного соединения с ID-картой</string>
-    <string name="signature_update_nfc_can_info">При подписании через NFC используется номер CAN. NFC может заблокироваться, если CAN введен неправильно несколько раз. https://www.id.ee/ru/artikkel/czifrovoe-podpisanie-v-mobilnom-prilozhenii-ria-digidoc/</string>
+    <string name="signature_update_nfc_can_info">При подписании через NFC используется номер CAN. NFC может заблокироваться, если CAN введен неправильно несколько раз. https://www.id.ee/ru/artikkel/czifrovoe-podpisanie-v-mobilnom-prilozhenii-ria-digidoc/#id-%d0%ba%d0%b0%d1%80%d1%82%d0%b0_1</string>
 
     <!-- Signature Details -->
     <string name="signature_error_details_title">Предупреждения</string>
