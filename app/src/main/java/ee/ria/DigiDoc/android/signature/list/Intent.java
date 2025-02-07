@@ -11,6 +11,7 @@ import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.mvi.MviIntent;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 interface Intent extends MviIntent {
     Action action();
@@ -58,7 +59,7 @@ class ContainerOpenIntent implements Intent {
                         ImmutableList.of(FileStream.create(containerFile)), context)
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(isSivaConfirmationNeeded -> new ContainerOpenIntent(containerFile, isSivaConfirmationNeeded, false))
-                .subscribeOn(AndroidSchedulers.mainThread());
+                .subscribeOn(Schedulers.io());
     }
 
     static ContainerOpenIntent open(File containerFile, boolean isSivaConfirmed) {
