@@ -7,6 +7,8 @@ import static ee.ria.DigiDoc.android.Constants.SAVE_FILE;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createActionIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
+import static ee.ria.DigiDoc.android.utils.container.ContainerUtil.getDuplicateFiles;
+import static ee.ria.DigiDoc.android.utils.container.ContainerUtil.getUniqueFileNames;
 import static ee.ria.DigiDoc.smartid.service.SmartSignConstants.NOTIFICATION_PERMISSION_CODE;
 
 import android.Manifest;
@@ -206,10 +208,15 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                         data, fileSystem.getExternallyOpenedFilesDir()));
                                         ToastUtil.handleEmptyFileError(validFiles, navigator.activity());
                                         ImmutableList<FileStream> filesNotInContainer = getFilesNotInContainer(navigator.activity(), validFiles, action.containerFile());
+                                        ImmutableList<FileStream> uniqueFiles = getUniqueFileNames(filesNotInContainer);
 
-                                        ImmutableList<FileStream> filesAlreadyInContainer = ImmutableList.copyOf(validFiles.stream()
+                                        List<FileStream> existingFiles = validFiles.stream()
                                                 .filter(file -> !filesNotInContainer.contains(file))
-                                                .collect(Collectors.toList()));
+                                                .collect(Collectors.toList());
+
+                                        existingFiles.addAll(getDuplicateFiles(validFiles));
+
+                                        ImmutableList<FileStream> filesAlreadyInContainer = ImmutableList.copyOf(existingFiles);
                                         if (!filesAlreadyInContainer.isEmpty()) {
                                             ContainerUtil.showExistingFilesMessage(
                                                     navigator.activity(),
@@ -217,9 +224,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                     R.string.signature_update_document_add_error_exists,
                                                     R.string.signature_update_documents_add_error_exists);
                                         }
-                                        announceAccessibilityFilesAddedEvent(application.getApplicationContext(), filesNotInContainer.size());
+                                        announceAccessibilityFilesAddedEvent(application.getApplicationContext(), uniqueFiles.size());
                                         return signatureContainerDataSource
-                                                .addDocuments(action.containerFile(), filesNotInContainer)
+                                                .addDocuments(action.containerFile(), uniqueFiles)
                                                 .toObservable()
                                                 .map(Result.DocumentsAddResult::success)
                                                 .onErrorReturn(Result.DocumentsAddResult::failure)
