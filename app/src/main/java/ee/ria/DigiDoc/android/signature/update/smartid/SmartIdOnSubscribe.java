@@ -120,15 +120,16 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                Configuration configuration = context.getResources().getConfiguration();
+                configuration.setLocale(locale);
+                Context configuredContext = context.createConfigurationContext(configuration);
+
                 switch (intent.getStringExtra(SID_BROADCAST_TYPE_KEY)) {
                     case SERVICE_FAULT -> {
                         NotificationManagerCompat.from(navigator.activity()).cancelAll();
                         ServiceFault serviceFault =
                                 ServiceFault.fromJson(intent.getStringExtra(SERVICE_FAULT));
                         Timber.log(Log.DEBUG, "Got SERVICE_FAULT status: %s", serviceFault.getStatus());
-                        Configuration configuration = context.getResources().getConfiguration();
-                        configuration.setLocale(locale);
-                        Context configuredContext = context.createConfigurationContext(configuration);
                         if (serviceFault.getStatus() == NO_RESPONSE) {
                             emitter.onError(SmartIdMessageException
                                     .create(configuredContext, serviceFault.getStatus()));
@@ -176,7 +177,7 @@ public final class SmartIdOnSubscribe implements ObservableOnSubscribe<SmartIdRe
                         } else {
                             Timber.log(Log.DEBUG, "Got CREATE_SIGNATURE_STATUS error status: %s", status.getStatus());
                             emitter.onError(SmartIdMessageException
-                                    .create(context, status.getStatus()));
+                                    .create(configuredContext, status.getStatus()));
                         }
                     }
                 }
