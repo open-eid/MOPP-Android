@@ -10,7 +10,10 @@ import androidx.annotation.StringRes;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.widget.ErrorDialog;
@@ -38,5 +41,28 @@ public class ContainerUtil {
                     .getString(android.R.string.ok), (dialog, which) -> dialog.cancel());
             errorDialog.show();
         });
+    }
+
+    public static ImmutableList<FileStream> getUniqueFileNames(ImmutableList<FileStream> fileStreams) {
+        return ImmutableList.copyOf(new ArrayList<>(
+                fileStreams.stream()
+                        .collect(Collectors.toMap(
+                                FileStream::displayName,
+                                file -> file,
+                                (existing, duplicate) -> existing,
+                                LinkedHashMap::new
+                        ))
+                        .values()
+        ));
+    }
+
+    public static ImmutableList<FileStream> getDuplicateFiles(ImmutableList<FileStream> fileStreams) {
+        Map<String, List<FileStream>> groupedFiles = fileStreams.stream()
+                .collect(Collectors.groupingBy(FileStream::displayName, LinkedHashMap::new, Collectors.toList()));
+
+        return ImmutableList.copyOf(groupedFiles.values().stream()
+                .filter(files -> files.size() > 1)
+                .map(files -> files.get(0))
+                .collect(Collectors.toList()));
     }
 }

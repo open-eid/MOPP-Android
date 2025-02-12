@@ -2,6 +2,8 @@ package ee.ria.DigiDoc.android.signature.create;
 
 import static android.app.Activity.RESULT_OK;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
+import static ee.ria.DigiDoc.android.utils.container.ContainerUtil.getDuplicateFiles;
+import static ee.ria.DigiDoc.android.utils.container.ContainerUtil.getUniqueFileNames;
 
 import android.app.Application;
 import android.util.Log;
@@ -22,6 +24,7 @@ import ee.ria.DigiDoc.android.signature.update.SignatureUpdateScreen;
 import ee.ria.DigiDoc.android.utils.ClickableDialogUtil;
 import ee.ria.DigiDoc.android.utils.SivaUtil;
 import ee.ria.DigiDoc.android.utils.ToastUtil;
+import ee.ria.DigiDoc.android.utils.container.ContainerUtil;
 import ee.ria.DigiDoc.android.utils.files.EmptyFileException;
 import ee.ria.DigiDoc.android.utils.files.FileStream;
 import ee.ria.DigiDoc.android.utils.files.FileSystem;
@@ -39,6 +42,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.core.ObservableTransformer;
 import io.reactivex.rxjava3.exceptions.CompositeException;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import timber.log.Timber;
 
 final class Processor implements ObservableTransformer<Action, Result> {
@@ -87,7 +91,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
 
                             return handleFiles(navigator, signatureContainerDataSource, validFiles)
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribeOn(AndroidSchedulers.mainThread())
+                                    .subscribeOn(Schedulers.io())
                                     .doOnError(throwable1 -> {
                                         Timber.log(Log.ERROR, throwable1,
                                                 String.format("Unable to add file to container. Error: %s",
@@ -140,11 +144,22 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                                      SignatureContainerDataSource signatureContainerDataSource,
                                                                      ImmutableList<FileStream> validFiles,
                                                                      boolean isSivaConfirmed) {
+        ImmutableList<FileStream> uniqueFiles = getUniqueFileNames(validFiles);
+
+        ImmutableList<FileStream> duplicateFiles = getDuplicateFiles(validFiles);
+        if (!duplicateFiles.isEmpty()) {
+            ContainerUtil.showExistingFilesMessage(
+                    navigator.activity(),
+                    duplicateFiles,
+                    R.string.signature_update_document_add_error_exists,
+                    R.string.signature_update_documents_add_error_exists);
+        }
+
         return signatureContainerDataSource
-                .addContainer(navigator.activity(), validFiles, false)
+                .addContainer(navigator.activity(), uniqueFiles, false)
                 .toObservable()
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(AndroidSchedulers.mainThread())
                 .doOnNext(containerAdd ->
                         navigator.execute(Transaction.replace(SignatureUpdateScreen
                                 .create(containerAdd.isExistingContainer(), false,
@@ -178,7 +193,7 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                                              ImmutableList<FileStream> validFiles) {
         return SivaUtil.isSivaConfirmationNeeded(validFiles, navigator.activity())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
                 .flatMap(isSivaConfirmationNeeded -> {
                     if (isSivaConfirmationNeeded) {
                         sivaConfirmationDialog.show();
@@ -188,7 +203,9 @@ final class Processor implements ObservableTransformer<Action, Result> {
                                     if (validFiles.size() == 1 && TIMESTAMP_CONTAINER_EXTENSIONS.contains(
                                             Files.getFileExtension(validFiles.get(0).displayName().toLowerCase()))) {
                                         sivaConfirmationDialog.dismiss();
-                                        return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, false);
+                                        return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, false)
+                                                .observeOn(Schedulers.io())
+                                                .subscribeOn(AndroidSchedulers.mainThread());
                                     } else {
                                         navigator.execute(Transaction.pop());
                                         return Observable.empty();
@@ -199,14 +216,20 @@ final class Processor implements ObservableTransformer<Action, Result> {
                         sivaConfirmationDialog.positiveButtonClicks()
                                 .flatMap(next -> {
                                     sivaConfirmationDialog.dismiss();
-                                    return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, true);
+                                    return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, true)
+                                            .observeOn(Schedulers.io())
+                                            .subscribeOn(AndroidSchedulers.mainThread());
                                 })
                                 .subscribeOn(AndroidSchedulers.mainThread())
                                 .subscribe();
                     } else {
-                        return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, true);
+                        return addFilesToContainer(navigator, signatureContainerDataSource, validFiles, true)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread());
                     }
-                    return Observable.just(Result.ChooseFilesResult.create());
+                    return Observable.just(Result.ChooseFilesResult.create())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread());
                 })
                 .onErrorResumeNext(throwable -> {
                     if (throwable instanceof NoInternetConnectionException) {

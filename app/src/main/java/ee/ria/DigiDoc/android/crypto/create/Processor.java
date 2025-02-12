@@ -14,6 +14,8 @@ import static ee.ria.DigiDoc.android.utils.IntentUtils.createGetContentIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.createSaveIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.parseGetContentIntent;
 import static ee.ria.DigiDoc.android.utils.IntentUtils.setIntentData;
+import static ee.ria.DigiDoc.android.utils.container.ContainerUtil.getDuplicateFiles;
+import static ee.ria.DigiDoc.android.utils.container.ContainerUtil.getUniqueFileNames;
 import static ee.ria.DigiDoc.crypto.CryptoContainer.createContainerFileName;
 import static ee.ria.DigiDoc.crypto.CryptoContainer.isContainerFileName;
 
@@ -241,10 +243,14 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                                 parseGetContentIntent(navigator.activity(), contentResolver, data, fileSystem.getExternallyOpenedFilesDir());
                                         ImmutableList.Builder<File> builder = ImmutableList.<File>builder().addAll(dataFiles);
                                         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(fileStreams);
-                                        ToastUtil.handleEmptyFileError(validFiles, navigator.activity());
+                                        ImmutableList<FileStream> uniqueFiles = getUniqueFileNames(validFiles);
+
+                                        ImmutableList<FileStream> duplicateFiles = getDuplicateFiles(validFiles);
+
+                                        ToastUtil.handleEmptyFileError(uniqueFiles, navigator.activity());
 
                                         List<FileStream> existingFiles = new ArrayList<>();
-                                        for (FileStream fileStream : validFiles) {
+                                        for (FileStream fileStream : uniqueFiles) {
                                             File dataFile = fileSystem.cache(fileStream);
                                             if (dataFiles.contains(dataFile)) {
                                                 existingFiles.add(fileStream);
@@ -252,6 +258,8 @@ final class Processor implements ObservableTransformer<Intent, Result> {
                                                 builder.add(dataFile);
                                             }
                                         }
+
+                                        existingFiles.addAll(duplicateFiles);
 
                                         if (!existingFiles.isEmpty()) {
                                             ContainerUtil.showExistingFilesMessage(
@@ -604,7 +612,19 @@ final class Processor implements ObservableTransformer<Intent, Result> {
     private Observable<Result.InitialResult> parseIntent(android.content.Intent intent, Application application, File externallyOpenedFileDir, Context configurationContext) throws IOException {
         ImmutableList<FileStream> validFiles = FileSystem.getFilesWithValidSize(
                 parseGetContentIntent(application.getApplicationContext(), contentResolver, intent, externallyOpenedFileDir));
-        return parseFiles(validFiles, application, configurationContext)
+
+        ImmutableList<FileStream> uniqueFiles = getUniqueFileNames(validFiles);
+
+        ImmutableList<FileStream> duplicateFiles = getDuplicateFiles(validFiles);
+        if (!duplicateFiles.isEmpty()) {
+            ContainerUtil.showExistingFilesMessage(
+                    application.getApplicationContext(),
+                    duplicateFiles,
+                    R.string.signature_update_document_add_error_exists,
+                    R.string.signature_update_documents_add_error_exists);
+        }
+
+        return parseFiles(uniqueFiles, application, configurationContext)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .startWithItem(Result.InitialResult.activity());
