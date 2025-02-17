@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -246,6 +247,8 @@ public final class SignatureUpdateErrorDialog extends ErrorDialog implements Dia
         }
         show();
 
+        dialogText.setMovementMethod(LinkMovementMethod.getInstance());
+        nfcDialogText.setMovementMethod(LinkMovementMethod.getInstance());
         ClickableDialogUtil.makeLinksInDialogClickable(this);
     }
 
