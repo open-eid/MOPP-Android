@@ -1,0 +1,150 @@
+scripts:
+  - &set_android_sdk_location
+    name: "Set Android SDK location"
+    script: |
+      echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+  - &get_app_version
+    name: "Get RIA DigiDoc version"
+    script: |
+      echo "APP_VERSION_NAME=$(grep 'appVersionName=' gradle.properties | cut -d'=' -f 2 | cut -d'-' -f 1)" >> $CM_ENV
+  - &get_google_services_json
+    name: "Get Google Services configuration"
+    script: |
+      echo $GOOGLE_SERVICES_JSON | base64 --decode > $CM_BUILD_DIR/app/google-services.json
+
+workflows:
+  repo-ria:
+    name: RIA DigiDoc Android (MOPP2) - Repo.ria configuration
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      java: 17
+      groups:
+        - "google_services"
+        - "repo_ria"
+    inputs:
+      defaultCentralConfigurationUrl_input:
+        description: Default Central Configuration URL
+        type: choice
+        default: https://repo.ria/config
+        options:
+          - https://repo.ria/config
+          - https://id.eesti.ee
+          - https://id.test.eesti.ee
+          - http://10.0.25.57/updater
+      defaultCentralConfigurationUpdateInterval_input:
+        description: Default Central Configuration Update Interval
+        type: number
+        default: 4
+      defaultCentralConfigurationTslUrl_input:
+        description: Default Central Configuration TSL URL
+        type: choice
+        default: https://repo.ria/tsl/trusted-test-mp.xml
+        options:
+          - https://repo.ria/tsl/trusted-test-mp.xml
+          - https://ec.europa.eu/tools/lotl/eu-lotl.xml
+          - https://open-eid.github.io/test-TL/tl-mp-test-EE.xml
+      memberTsl_input:
+        description: TSL member lists
+        type: string
+        default: "EE;EE_T"
+    scripts:
+      - *set_android_sdk_location
+      - *get_app_version
+      - *get_google_services_json
+      - name: "Setup config and TSL files"
+        script: |
+          # Create config and TSL folders
+          mkdir -p app/src/main/assets/config
+          mkdir -p app/src/main/assets/tslFiles
+
+          # Get repo.ria values from environmental variables, as CodeMagic doesn't have access to repo.ria domain
+          if [[ "${{ inputs.defaultCentralConfigurationTslUrl_input }}" == *"repo.ria"* ]]; then
+            echo "Using repo.ria configuration"
+            echo $REPO_RIA_DEFAULT_PROPERTIES | base64 --decode > app/src/main/assets/config/configuration.properties
+            echo $REPO_RIA_CONFIG | base64 --decode > app/src/main/assets/config/default-config.json
+            echo $REPO_RIA_PUB_KEY | base64 --decode > app/src/main/assets/config/default-config.pub
+            echo $REPO_RIA_RSA | base64 --decode > app/src/main/assets/config/default-config.rsa
+            echo $REPO_RIA_TRUSTED_TEST_MP | base64 --decode > app/src/main/assets/tslFiles/trusted-test-mp.xml
+            echo $REPO_RIA_EE_TSL | base64 --decode > app/src/main/assets/tslFiles/EE_T.xml
+          else
+            echo "Not using repo.ria configuration"
+          fi
+
+          # Download latest 'eu-lotl' file
+          wget -O "eu-lotl.xml" -P app/src/main/assets/tslFiles "https://ec.europa.eu/tools/lotl/eu-lotl.xml"
+          
+          if [ -f "app/src/main/assets/tslFiles/eu-lotl.xml" ]; then
+            echo "Getting TSL (local LOTL)"
+            # Repo.ria TSL files already in assets folder, doesn't need to download separately anymore
+            if [[ "${{ inputs.defaultCentralConfigurationTslUrl_input }}" == *"repo.ria"* ]]; then
+              python3 scripts/TSLXMLDownloader.py --tslFile="app/src/main/assets/tslFiles/eu-lotl.xml" --countries="${{ inputs.memberTsl_input }}" --isDevBuild="True"
+            else
+              python3 scripts/TSLXMLDownloader.py --tslFile="app/src/main/assets/tslFiles/eu-lotl.xml" --tslTestFile="app/src/main/assets/tslFiles/$(basename ${{ inputs.defaultCentralConfigurationTslUrl_input }})" --countries="${{ inputs.memberTsl_input }}" --isDevBuild="True"
+            fi
+
+            echo "Finished downloading TSL"
+          else
+            echo "Getting TSL (remote LOTL)"
+            python3 scripts/TSLXMLDownloader.py --tslTestFile="app/src/main/assets/tslFiles/$(basename 'https://ec.europa.eu/tools/lotl/eu-lotl.xml')" --countries="${{ inputs.memberTsl_input }}" --isDevBuild="True"
+            echo "Finished downloading TSL"
+          fi
+
+          echo "Moving TSLs to app's assets"
+          mv -v scripts/TSL/* app/src/main/assets/tslFiles/
+          echo "Done moving TSLs"
+      - name: Run tests
+        script: |
+          ./gradlew clean test --no-daemon
+      - name: Build RIA DigiDoc
+        script: |
+          # Not running 'fetchAndPackageDefaultConfiguration' for repo.ria as necessary files are already setup
+          if [[ "${{ inputs.defaultCentralConfigurationTslUrl_input }}" == *"repo.ria"* ]]; then
+            ./gradlew clean --no-daemon -PappVersionName=$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER assemble --debug
+          else
+            ./gradlew clean --no-daemon fetchAndPackageDefaultConfiguration --args="${{ inputs.defaultCentralConfigurationUrl_input }} ${{ inputs.defaultCentralConfigurationUpdateInterval_input }}" -PappVersionName=$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER assemble --debug
+          fi
+      - name: Rename and move APK
+        script: |
+          mkdir app/build/outputs/apk/debug/artifact/
+          mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/artifact/"RIA_DigiDoc_dev_$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER.apk"
+    artifacts:
+      - app/build/outputs/apk/debug/artifact/*.apk
+    publishing:
+      email:
+        recipients:
+          - marten.rebane@nortal.com
+        notify:
+          success: true
+          failure: true
+  live:
+    name: RIA DigiDoc Android (MOPP2) - Live configuration
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      java: 17
+      groups:
+        - "live"
+      vars:
+        PACKAGE_NAME: "ee.ria.DigiDoc"
+      android_signing:
+        - keystore_reference
+    scripts:
+      - *set_android_sdk_location
+      - *get_app_version
+      - *get_google_services_json
+      - name: Setup Gradle and Build RIA DigiDoc
+        script: |
+          ./gradlew clean --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER assembleRelease
+      - name: Rename APK
+        script: |
+          mv app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/"RIA_DigiDoc_$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER-unsigned.apk"
+    artifacts:
+      - app/build/outputs/apk/release/*.apk
+    publishing:
+      email:
+        recipients:
+          - marten.rebane@nortal.com
+        notify:
+          success: true
+          failure: true
