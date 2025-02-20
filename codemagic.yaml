@@ -123,8 +123,6 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       java: 17
-      groups:
-        - "live"
       vars:
         PACKAGE_NAME: "ee.ria.DigiDoc"
       android_signing:
