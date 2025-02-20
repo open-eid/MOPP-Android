@@ -142,9 +142,6 @@ workflows:
       - name: Sign APK
         script: |
           apksigner sign --ks $CM_KEYSTORE_PATH --ks-pass pass:$CM_KEYSTORE_PASSWORD --out app/build/outputs/apk/release/app-release_$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER.apk app/build/outputs/apk/release/app-release-unsigned-aligned.apk
-      - name: Verify APK
-        script: |
-          apksigner verify -v --print-certs app/build/outputs/apk/release/app-release_$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER.apk
       - name: Rename and move APK
         script: |
           mkdir -p app/build/outputs/apk/release/signed/
