@@ -128,7 +128,7 @@ workflows:
       vars:
         PACKAGE_NAME: "ee.ria.DigiDoc"
       android_signing:
-        - keystore_reference
+        - RIA DigiDoc (MOPP)
     scripts:
       - *set_android_sdk_location
       - *get_app_version
