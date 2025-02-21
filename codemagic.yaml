@@ -67,7 +67,7 @@ workflows:
             echo $REPO_RIA_RSA | base64 --decode > app/src/main/assets/config/default-config.rsa
             echo $REPO_RIA_TRUSTED_TEST_MP | base64 --decode > app/src/main/assets/tslFiles/trusted-test-mp.xml
             # EE_T.xml is too large to use in environmental variable. Using compressed variant
-            echo $REPO_RIA_EE_TSL | base64 --decode | gunzip > config-lib/src/main/assets/tslFiles/EE_T.xml
+            echo $REPO_RIA_EE_TSL | base64 --decode | gunzip > app/src/main/assets/tslFiles/EE_T.xml
           else
             echo "Not using repo.ria configuration"
           fi
