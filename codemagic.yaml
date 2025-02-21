@@ -59,9 +59,9 @@ workflows:
           mkdir -p app/src/main/assets/tslFiles
 
           # Remove current eu-lotl.xml if it exists
-          rm -f config-lib/src/main/assets/tslFiles/eu-lotl.xml
+          rm -f app/src/main/assets/tslFiles/eu-lotl.xml
 
-          # Download latest 'eu-lotl' file
+          # Download latest 'eu-lotl.xml' file"
           echo "Downloading latest 'eu-lotl.xml' file
           wget "https://ec.europa.eu/tools/lotl/eu-lotl.xml" -P app/src/main/assets/tslFiles
 
