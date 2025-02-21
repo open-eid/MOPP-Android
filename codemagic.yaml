@@ -75,6 +75,8 @@ workflows:
           # Download latest 'eu-lotl' file         
           wget "https://ec.europa.eu/tools/lotl/eu-lotl.xml" -P app/src/main/assets/tslFiles
           
+          ls -lahtR app/src/main/assets
+          
           if [ -f "app/src/main/assets/tslFiles/eu-lotl.xml" ]; then
             echo "Getting TSL (local LOTL)"
             # Repo.ria TSL files already in assets folder, doesn't need to download separately anymore
