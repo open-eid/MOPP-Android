@@ -57,8 +57,12 @@ workflows:
           # Create config and TSL folders
           mkdir -p app/src/main/assets/config
           mkdir -p app/src/main/assets/tslFiles
-          
-          # Download latest 'eu-lotl' file         
+
+          # Remove current eu-lotl.xml if it exists
+          rm -f config-lib/src/main/assets/tslFiles/eu-lotl.xml
+
+          # Download latest 'eu-lotl' file
+          echo "Downloading latest 'eu-lotl.xml' file
           wget "https://ec.europa.eu/tools/lotl/eu-lotl.xml" -P app/src/main/assets/tslFiles
 
           # Get repo.ria values from environmental variables, as CodeMagic doesn't have access to repo.ria domain
