@@ -57,6 +57,9 @@ workflows:
           # Create config and TSL folders
           mkdir -p app/src/main/assets/config
           mkdir -p app/src/main/assets/tslFiles
+          
+          # Download latest 'eu-lotl' file         
+          wget "https://ec.europa.eu/tools/lotl/eu-lotl.xml" -P app/src/main/assets/tslFiles
 
           # Get repo.ria values from environmental variables, as CodeMagic doesn't have access to repo.ria domain
           if [[ "${{ inputs.defaultCentralConfigurationTslUrl_input }}" == *"repo.ria"* ]]; then
@@ -71,9 +74,6 @@ workflows:
           else
             echo "Not using repo.ria configuration"
           fi
-
-          # Download latest 'eu-lotl' file         
-          wget "https://ec.europa.eu/tools/lotl/eu-lotl.xml" -P app/src/main/assets/tslFiles
           
           ls -lahtR app/src/main/assets
           
