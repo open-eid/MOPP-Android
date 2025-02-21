@@ -13,8 +13,8 @@ scripts:
       echo $GOOGLE_SERVICES_JSON | base64 --decode > $CM_BUILD_DIR/app/google-services.json
 
 workflows:
-  repo-ria:
-    name: RIA DigiDoc Android (MOPP2) - Repo.ria configuration
+  debug:
+    name: RIA DigiDoc Android (MOPP2) - Debug configuration
     max_build_duration: 30
     instance_type: linux_x2
     environment:
