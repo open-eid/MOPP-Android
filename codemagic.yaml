@@ -72,8 +72,8 @@ workflows:
             echo "Not using repo.ria configuration"
           fi
 
-          # Download latest 'eu-lotl' file
-          wget -O "eu-lotl.xml" -P app/src/main/assets/tslFiles "https://ec.europa.eu/tools/lotl/eu-lotl.xml"
+          # Download latest 'eu-lotl' file         
+          wget "https://ec.europa.eu/tools/lotl/eu-lotl.xml" -P app/src/main/assets/tslFiles
           
           if [ -f "app/src/main/assets/tslFiles/eu-lotl.xml" ]; then
             echo "Getting TSL (local LOTL)"
