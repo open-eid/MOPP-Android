@@ -11,6 +11,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import ee.ria.DigiDoc.R;
+import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
 import ee.ria.DigiDoc.common.FileUtil;
 
@@ -35,6 +36,11 @@ public final class NameUpdateView extends TextInputLayout {
         editText.setId(R.id.nameUpdateName);
         editText.setInputType(InputType.TYPE_CLASS_TEXT);
         editText.setMinHeight(minimumHeightDp);
+        AccessibilityUtils.setEditTextCursorToEnd(editText);
+
+        AccessibilityUtils.setTextViewContentDescription(context, false,
+                getResources().getString(R.string.signature_update_name_update_name),
+                getResources().getString(R.string.signature_update_name_update_name), editText);
         addView(editText, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     }
 

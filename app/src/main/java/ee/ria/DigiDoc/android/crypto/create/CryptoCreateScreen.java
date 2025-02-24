@@ -334,7 +334,7 @@ public final class CryptoCreateScreen extends Controller implements Screen, Cont
 
         encryptButton.setVisibility(state.encryptButtonVisible() ? View.VISIBLE : View.GONE);
         decryptButton.setVisibility(state.decryptButtonVisible() ? View.VISIBLE : View.GONE);
-        signButton.setVisibility(state.decryptButtonVisible() && !isFromSignatureView ? View.VISIBLE : View.GONE);
+        signButton.setVisibility(state.decryptButtonVisible() ? View.VISIBLE : View.GONE);
         sendButton.setVisibility(state.sendButtonVisible() ? View.VISIBLE : View.GONE);
         cryptoButtonSpaceView.setVisibility(state.sendButtonVisible() &&
                 (state.encryptButtonVisible() || state.decryptButtonVisible())
