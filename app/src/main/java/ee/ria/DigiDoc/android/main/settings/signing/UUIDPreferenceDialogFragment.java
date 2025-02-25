@@ -24,6 +24,7 @@ import static android.view.accessibility.AccessibilityEvent.TYPE_ANNOUNCEMENT;
 import static ee.ria.DigiDoc.android.Constants.SETTINGS_DEFAULT_RELYING_PARTY_UUID;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -33,6 +34,8 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
@@ -42,6 +45,7 @@ import androidx.preference.EditTextPreferenceDialogFragmentCompat;
 
 import ee.ria.DigiDoc.R;
 import ee.ria.DigiDoc.android.accessibility.AccessibilityUtils;
+import ee.ria.DigiDoc.android.utils.InputMethodUtils;
 import ee.ria.DigiDoc.android.utils.SecureUtil;
 import ee.ria.DigiDoc.android.utils.TextUtil;
 import ee.ria.DigiDoc.android.utils.display.DisplayUtil;
@@ -81,6 +85,7 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
             });
 
             if (appCompatEditText != null) {
+                appCompatEditText.clearFocus();
                 setAccessibilityForEditText(uuidPreference, appCompatEditText, appCompatTextView);
                 if (AccessibilityUtils.isTalkBackEnabled()) {
                     AccessibilityUtils.setTextViewContentDescription(getContext(), true, SETTINGS_DEFAULT_RELYING_PARTY_UUID, appCompatTextView.getText().toString(), appCompatEditText);
@@ -88,6 +93,7 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
             }
 
             if (summary != null) {
+                summary.clearFocus();
                 checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     summary.setEnabled(!isChecked);
                     if (isChecked) {
@@ -112,6 +118,7 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
                 }
 
                 summary.setSingleLine(true);
+                summary.setImeOptions(EditorInfo.IME_ACTION_DONE);
                 summary.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 summary.setSelection(summary.getText() != null ?
                         summary.getText().length() : 0);
@@ -147,6 +154,7 @@ public class UUIDPreferenceDialogFragment extends EditTextPreferenceDialogFragme
             AppCompatEditText appCompatEditText,
             AppCompatTextView appCompatTextView
     ) {
+        appCompatEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
         AccessibilityUtils.setEditTextCursorToEnd(appCompatEditText);
         appCompatTextView.setText(uuidPreference.getTitle());
         appCompatTextView.setLabelFor(appCompatEditText.getId());
