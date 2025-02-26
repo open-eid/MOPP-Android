@@ -139,6 +139,9 @@ workflows:
       - *set_android_sdk_location
       - *get_app_version
       - *get_google_services_json
+      - name: Run tests
+        script: |
+          ./gradlew clean test --no-daemon
       - name: Setup Gradle and Build RIA DigiDoc
         script: |
           ./gradlew clean --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER assembleRelease
