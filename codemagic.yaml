@@ -148,6 +148,7 @@ workflows:
           if [ -z $LATEST_GOOGLE_PLAY_BUILD_NUMBER ]
             then
               LATEST_BUILD_NUMBER="$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER"
+              echo LATEST_BUILD_NUMBER=$LATEST_BUILD_NUMBER >> $CM_ENV
             else
               LATEST_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
               echo LATEST_BUILD_NUMBER=$LATEST_BUILD_NUMBER >> $CM_ENV
