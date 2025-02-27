@@ -160,6 +160,8 @@ workflows:
           # Change the build number in Gradle properties
           perl -pi -e 's/^appVersionCode=[0-9]+/appVersionCode=$LATEST_BUILD_NUMBER/' gradle.properties
           
+          cat -v gradle.properties
+          
           # Build app
           ./gradlew clean --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=$APP_NAME assembleRelease
       - name: Align APK
@@ -172,6 +174,8 @@ workflows:
         script: |
           mkdir -p app/build/outputs/apk/release/signed/
           mv app/build/outputs/apk/release/app-release_$APP_NAME.apk app/build/outputs/apk/release/signed/RIA_DigiDoc_$APP_NAME.apk
+
+          aapt dump badging app/build/outputs/apk/release/signed/RIA_DigiDoc_$APP_NAME | grep versionCode
     artifacts:
       - app/build/outputs/apk/release/signed/*.apk
     publishing:
@@ -181,7 +185,7 @@ workflows:
         notify:
           success: true
           failure: true
-      google_play:
-        credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
-        track: internal
-        release_name: RIA DigiDoc
+      #google_play:
+        #credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
+        #track: internal
+        #release_name: RIA DigiDoc
