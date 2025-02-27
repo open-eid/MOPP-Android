@@ -27,7 +27,7 @@ jobs:
           distribution: zulu
           java-version: 17
       - name: Download Libdigidocpp Android (androidarm) artifact
-        uses: dawidd6/action-download-artifact@v6
+        uses: dawidd6/action-download-artifact@v8
         with:
           workflow: build.yml
           branch: master
@@ -35,7 +35,7 @@ jobs:
           path: libdigidocpp-androidarm
           repo: open-eid/libdigidocpp
       - name: Download Libdigidocpp Android (androidarm64) artifact
-        uses: dawidd6/action-download-artifact@v6
+        uses: dawidd6/action-download-artifact@v8
         with:
           workflow: build.yml
           branch: master
@@ -43,7 +43,7 @@ jobs:
           path: libdigidocpp-androidarm64
           repo: open-eid/libdigidocpp
       - name: Download Libdigidocpp Android (androidx86_64) artifact
-        uses: dawidd6/action-download-artifact@v6
+        uses: dawidd6/action-download-artifact@v8
         with:
           workflow: build.yml
           branch: master
@@ -58,15 +58,14 @@ jobs:
           mv libdigidocpp-androidx86_64/libdigidocpp.androidx86_64.zip libdigidocpp-files/
           pwd
           ls -R -laht
-      #- name: Update libdigidocpp in project
-      #  run: |
-      #    pwd
-      #    ./gradlew common-lib:updateLibdigidocpp --dir=libdigidocpp-files/
-      #    ./gradlew sign-lib:updateLibdigidocpp --dir=libdigidocpp-files/
+      - name: Update libdigidocpp in project
+        run: |
+          ./gradlew common-lib:updateLibdigidocpp --dir=libdigidocpp-files/
+          ./gradlew sign-lib:updateLibdigidocpp --dir=libdigidocpp-files/
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Test and Build with Gradle
-        run: ./gradlew clean test --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=${{ env.APP_VERSION_NAME }}.${{ env.BUILD_NUMBER }} assembleRelease --info
+        run: ./gradlew clean test --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=${{ env.APP_VERSION_NAME }}.${{ env.BUILD_NUMBER }} assembleRelease --info --quiet
       - name: Sign app APK
         uses: r0adkll/sign-android-release@v1
         id: signed_apk
