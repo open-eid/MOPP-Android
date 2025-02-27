@@ -158,7 +158,7 @@ workflows:
           echo APP_NAME=$APP_VERSION_NAME.$LATEST_BUILD_NUMBER >> $CM_ENV
 
           # Change the build number in Gradle properties
-          sed -i '' '/^appVersionCode=[0-9]\+/s/[0-9]\+/$LATEST_BUILD_NUMBER/' gradle.properties
+          sed "s/^appVersionCode=[0-9]\+/appVersionCode=$LATEST_BUILD_NUMBER/" gradle.properties
           
           cat -v gradle.properties
           
