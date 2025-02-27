@@ -147,7 +147,7 @@ workflows:
           LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME")
           if [ -z $LATEST_GOOGLE_PLAY_BUILD_NUMBER ]
             then
-              LATEST_BUILD_NUMBER=$BUILD_NUMBER
+              LATEST_BUILD_NUMBER="$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER"
             else
               LATEST_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
               echo LATEST_BUILD_NUMBER=$LATEST_BUILD_NUMBER >> $CM_ENV
@@ -163,7 +163,7 @@ workflows:
       - name: Rename and move APK
         script: |
           mkdir -p app/build/outputs/apk/release/signed/
-          mv app/build/outputs/apk/release/app-release_$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER.apk app/build/outputs/apk/release/signed/RIA_DigiDoc_$LATEST_BUILD_NUMBER.apk
+          mv app/build/outputs/apk/release/app-release_$LATEST_BUILD_NUMBER.apk app/build/outputs/apk/release/signed/RIA_DigiDoc_$LATEST_BUILD_NUMBER.apk
     artifacts:
       - app/build/outputs/apk/release/signed/*.apk
     publishing:
