@@ -173,9 +173,8 @@ workflows:
         notify:
           success: true
           failure: true
-      publishing:
-        #google_play:
-          #credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-          #track: internal
-          #release_name: Custom release name
-          #changes_not_sent_for_review: true
+      #google_play:
+        #credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        #track: internal
+        #release_name: Custom release name
+        #changes_not_sent_for_review: true
