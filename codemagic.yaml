@@ -154,7 +154,7 @@ workflows:
               echo LATEST_BUILD_NUMBER=$LATEST_BUILD_NUMBER >> $CM_ENV
           fi
           echo APP_NAME=$APP_VERSION_NAME.$LATEST_BUILD_NUMBER >> $CM_ENV
-          sed -i "s/appVersionCode=[0-9]\+/appVersionCode=$LATEST_BUILD_NUMBER/" android/gradle.properties
+          sed -i "s/appVersionCode=[0-9]\+/appVersionCode=$LATEST_BUILD_NUMBER/" gradle.properties
           ./gradlew clean --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=$APP_NAME assembleRelease
       - name: Align APK
         script: |
