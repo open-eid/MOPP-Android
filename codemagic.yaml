@@ -186,4 +186,3 @@ workflows:
       google_play:
         credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
         track: internal
-        release_name: RIA DigiDoc
