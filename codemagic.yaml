@@ -153,18 +153,18 @@ workflows:
               LATEST_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
               echo LATEST_BUILD_NUMBER=$LATEST_BUILD_NUMBER >> $CM_ENV
           fi
-          echo APP_NAME=$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER >> $CM_ENV
-          ./gradlew clean --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=$LATEST_BUILD_NUMBER assembleRelease
+          echo APP_NAME=$APP_VERSION_NAME.$LATEST_BUILD_NUMBER >> $CM_ENV
+          ./gradlew clean --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=$APP_NAME assembleRelease
       - name: Align APK
         script: |
           zipalign -v -p 4 app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/app-release-unsigned-aligned.apk
       - name: Sign APK
         script: |
-          apksigner sign --ks $CM_KEYSTORE_PATH --ks-pass pass:$CM_KEYSTORE_PASSWORD --out app/build/outputs/apk/release/app-release_$LATEST_BUILD_NUMBER.apk app/build/outputs/apk/release/app-release-unsigned-aligned.apk
+          apksigner sign --ks $CM_KEYSTORE_PATH --ks-pass pass:$CM_KEYSTORE_PASSWORD --out app/build/outputs/apk/release/app-release_$APP_NAME.apk app/build/outputs/apk/release/app-release-unsigned-aligned.apk
       - name: Rename and move APK
         script: |
           mkdir -p app/build/outputs/apk/release/signed/
-          mv app/build/outputs/apk/release/app-release_$LATEST_BUILD_NUMBER.apk app/build/outputs/apk/release/signed/RIA_DigiDoc_$LATEST_BUILD_NUMBER.apk
+          mv app/build/outputs/apk/release/app-release_$APP_NAME.apk app/build/outputs/apk/release/signed/RIA_DigiDoc_$APP_NAME.apk
     artifacts:
       - app/build/outputs/apk/release/signed/*.apk
     publishing:
