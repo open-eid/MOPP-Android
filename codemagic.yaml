@@ -160,7 +160,7 @@ workflows:
           APP_NAME=$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER
           echo $APP_NAME >> $CM_ENV
           
-          RELEASE_NAME=$LATEST_BUILD_NUMBER ($APP_NAME)
+          RELEASE_NAME="$LATEST_BUILD_NUMBER ($APP_NAME)"
           echo $RELEASE_NAME >> $CM_ENV
           
           echo "RELEASE NAME: "
@@ -192,4 +192,4 @@ workflows:
       google_play:
         credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
         track: internal
-        release_name: "${RELEASE_NAME}"
+        release_name: "$RELEASE_NAME"
