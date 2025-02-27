@@ -179,4 +179,3 @@ workflows:
         credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
         track: internal
         release_name: RIA_DigiDoc_$APP_NAME
-        changes_not_sent_for_review: true
