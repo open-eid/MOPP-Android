@@ -156,7 +156,10 @@ workflows:
 
           # Make latest build number be available in all build steps
           echo APP_NAME=$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER >> $CM_ENV
-          
+
+          APP_NAME=$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER
+          echo $APP_NAME >> $CM_ENV
+
           # Build app
           ./gradlew clean --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=$APP_NAME -PappVersionCode=$LATEST_BUILD_NUMBER assembleRelease
       - name: Align APK
@@ -180,7 +183,7 @@ workflows:
         notify:
           success: true
           failure: true
-      google_play:
-        credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
-        track: internal
-        release_name: RIA DigiDoc
+      #google_play:
+        #credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
+        #track: internal
+        #release_name: RIA DigiDoc
