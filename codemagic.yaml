@@ -175,7 +175,7 @@ workflows:
           mkdir -p app/build/outputs/apk/release/signed/
           mv app/build/outputs/apk/release/app-release_$APP_NAME.apk app/build/outputs/apk/release/signed/RIA_DigiDoc_$APP_NAME.apk
 
-          aapt dump badging app/build/outputs/apk/release/signed/RIA_DigiDoc_$APP_NAME | grep versionCode
+          aapt dump badging app/build/outputs/apk/release/signed/RIA_DigiDoc_$APP_NAME.apk | grep versionCode
     artifacts:
       - app/build/outputs/apk/release/signed/*.apk
     publishing:
