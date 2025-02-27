@@ -144,7 +144,7 @@ workflows:
           ./gradlew clean test --no-daemon
       - name: Setup Gradle and Build RIA DigiDoc
         script: |
-          LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks production,internal,beta,alpha)
+          LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks internal)
           if [ -z $LATEST_GOOGLE_PLAY_BUILD_NUMBER ]
             then
               LATEST_BUILD_NUMBER="$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER"
