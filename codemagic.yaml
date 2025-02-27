@@ -193,4 +193,4 @@ workflows:
       google_play:
         credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
         track: internal
-        release_name: "$RELEASE_NAME"
+        release_name: "$RELEASE_NAME.$APP_NAME"
