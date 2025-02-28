@@ -4,7 +4,7 @@ on: [push, pull_request]
 jobs:
   coverity:
     name: Run Coverity tests
-    if: contains(github.repository, 'open-eid/MOPP-Android') && contains(github.ref, 'coverity_scan')
+    if: contains(github.repository, ${{ github.repository }}) && contains(github.ref, 'coverity_scan')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,23 +19,33 @@ jobs:
           cd ${{ github.workspace }}/app
           echo -n "$GOOGLE_SERVICES_JSON" | base64 --decode > "google-services.json"
           cd ${{ github.workspace }}
-
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
           distribution: zulu
           java-version: 17
 
-      - name: Build and send to Coverity
-        continue-on-error: true
+      - name: Install Coverity Scan Tool
         run: |
-          export TRAVIS_BRANCH=${GITHUB_REF##*/}
-          wget https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh
-          chmod +x travisci_build_coverity_scan.sh
-          bash travisci_build_coverity_scan.sh
-        env:
-          COVERITY_SCAN_PROJECT_NAME: 'open-eid/MOPP-Android'
-          COVERITY_SCAN_NOTIFICATION_EMAIL: 'eid-teenusehaldus@ria.ee'
-          COVERITY_SCAN_BRANCH_PATTERN: 'coverity_scan'
-          COVERITY_SCAN_BUILD_COMMAND: './gradlew clean --no-daemon fetchAndPackageDefaultConfiguration assemble --debug'
-          COVERITY_SCAN_TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
+          curl https://scan.coverity.com/download/java/linux64 \
+            --output coverity_tool.tar.gz \
+            --data "token=${{ secrets.COVERITY_SCAN_TOKEN }}&project=${{ github.repository }}"
+          mkdir coverity-tool
+          tar -xzf coverity_tool.tar.gz --strip 1 -C coverity-tool
+
+      - name: Build and analyze
+        run: |
+          coverity-tool/bin/cov-build --dir cov-int ./gradlew clean --no-daemon fetchAndPackageDefaultConfiguration assemble --quiet
+
+      - name: Package results
+        run: tar czvf coverity_results.tgz cov-int
+
+      - name: Upload to Coverity Scan
+        run: |
+          curl \
+            --form token=${{ secrets.COVERITY_SCAN_TOKEN }} \
+            --form email=eid-teenusehaldus@ria.ee \
+            --form file=@coverity_results.tgz \
+            --form version="${{ github.sha }}" \
+            --form description="${{ github.repository }}" \
+            https://scan.coverity.com/builds?project=${{ github.repository }}
