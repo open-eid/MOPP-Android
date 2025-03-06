@@ -457,9 +457,12 @@ public abstract class SignedContainer {
             Timber.log(Log.ERROR, String.format("Signature %s does not have OCSPCertificate", id));
         }
 
-        if (x509Certificate(encodedSigningCertificate) != null) {
-            signersCertificateIssuer = getX509CertificateIssuer(x509Certificate(encodedSigningCertificate));
-            signingCertificate = x509Certificate(encodedSigningCertificate);
+        if (encodedSigningCertificate != null) {
+            X509Certificate cert = x509Certificate(encodedSigningCertificate);
+            if (cert != null) {
+                signersCertificateIssuer = getX509CertificateIssuer(cert);
+                signingCertificate = cert;
+            }
         }
         String signatureMethod = signature.signatureMethod();
         String signatureFormat = signature.profile();
