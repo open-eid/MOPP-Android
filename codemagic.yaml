@@ -1,0 +1,258 @@
+scripts:
+  - &set_android_sdk_location
+    name: "Set Android SDK location"
+    script: |
+      echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+  - &get_app_version
+    name: "Get RIA DigiDoc version"
+    script: |
+      echo "APP_VERSION_NAME=$(grep 'appVersionName=' gradle.properties | cut -d'=' -f 2 | cut -d'-' -f 1)" >> $CM_ENV
+  - &get_google_services_json
+    name: "Get Google Services configuration"
+    script: |
+      echo $GOOGLE_SERVICES_JSON | base64 --decode > $CM_BUILD_DIR/app/google-services.json
+
+workflows:
+  debug:
+    name: RIA DigiDoc Android (MOPP2) - Debug configuration
+    max_build_duration: 30
+    instance_type: linux_x2
+    environment:
+      ubuntu: 24.04
+      java: 17
+      groups:
+        - "google_services"
+        - "repo_ria"
+      vars:
+        PACKAGE_NAME: "ee.ria.DigiDoc"
+      android_signing:
+        - RIA DigiDoc (MOPP)
+    inputs:
+      defaultCentralConfigurationUrl_input:
+        description: Default Central Configuration URL
+        type: choice
+        default: http://10.0.25.57/config
+        options:
+          - http://10.0.25.57/config
+          - https://repo.ria/config
+          - https://id.eesti.ee
+          - https://id.test.eesti.ee
+          - http://10.0.25.57/updater
+      defaultCentralConfigurationUpdateInterval_input:
+        description: Default Central Configuration Update Interval
+        type: number
+        default: 4
+      defaultCentralConfigurationTslUrl_input:
+        description: Default Central Configuration TSL URL
+        type: choice
+        default: https://repo.ria/tsl/trusted-test-mp.xml
+        options:
+          - https://repo.ria/tsl/trusted-test-mp.xml
+          - https://ec.europa.eu/tools/lotl/eu-lotl.xml
+          - https://open-eid.github.io/test-TL/tl-mp-test-EE.xml
+      memberTsl_input:
+        description: TSL member lists
+        type: string
+        default: "EE;EE_T"
+    scripts:
+      - *set_android_sdk_location
+      - *get_app_version
+      - *get_google_services_json
+      - name: "Setup config and TSL files"
+        script: |
+          CONFIG_DIR=app/src/main/assets/config
+          TSL_FILES_DIR=app/src/main/assets/tslFiles
+
+          # Create config and TSL folders
+          mkdir -p $CONFIG_DIR
+          mkdir -p $TSL_FILES_DIR
+
+          # Remove current eu-lotl.xml if it exists
+          rm -f $TSL_FILES_DIR/eu-lotl.xml
+
+          # Download latest 'eu-lotl.xml' file"
+          echo "Downloading latest 'eu-lotl.xml' file"
+          wget "https://ec.europa.eu/tools/lotl/eu-lotl.xml" -P $TSL_FILES_DIR
+
+          # Get repo.ria values from environmental variables, as CodeMagic doesn't have access to repo.ria domain
+          if [[ "${{ inputs.defaultCentralConfigurationTslUrl_input }}" == *"repo.ria"* ]]; then
+            echo "Using repo.ria configuration"
+            echo $REPO_RIA_DEFAULT_PROPERTIES | base64 --decode > $CONFIG_DIR/configuration.properties
+            echo $REPO_RIA_CONFIG | base64 --decode > $CONFIG_DIR/default-config.json
+            echo $REPO_RIA_PUB_KEY | base64 --decode > $CONFIG_DIR/default-config.pub
+            echo $REPO_RIA_RSA | base64 --decode > $CONFIG_DIR/default-config.rsa
+            echo $REPO_RIA_TRUSTED_TEST_MP | base64 --decode > $TSL_FILES_DIR/trusted-test-mp.xml
+            echo $REPO_RIA_TL_MP_TEST_EE | base64 --decode > $TSL_FILES_DIR/tl-mp-test-EE.xml
+            # EE_T.xml is too large to use in environmental variable. Using compressed variant
+            echo $REPO_RIA_EE_TSL | base64 --decode | gunzip > $TSL_FILES_DIR/EE_T.xml
+          else
+            echo "Not using repo.ria configuration"
+          fi
+
+          if [ -f "$TSL_FILES_DIR/eu-lotl.xml" ]; then
+            echo "Getting TSL (local LOTL)"
+            # Repo.ria TSL files already in assets folder, doesn't need to download separately anymore
+            if [[ "${{ inputs.defaultCentralConfigurationTslUrl_input }}" == *"repo.ria"* ]]; then
+              python3 scripts/TSLXMLDownloader.py --tslFile="$TSL_FILES_DIR/eu-lotl.xml" --countries="${{ inputs.memberTsl_input }}" --isDevBuild="True"
+            else
+              python3 scripts/TSLXMLDownloader.py --tslFile="$TSL_FILES_DIR/eu-lotl.xml" --tslTestFile="$TSL_FILES_DIR/$(basename ${{ inputs.defaultCentralConfigurationTslUrl_input }})" --countries="${{ inputs.memberTsl_input }}" --isDevBuild="True"
+            fi
+
+            echo "Finished downloading TSL"
+          else
+            echo "Getting TSL (remote LOTL)"
+            python3 scripts/TSLXMLDownloader.py --tslTestFile="$TSL_FILES_DIR/$(basename 'https://ec.europa.eu/tools/lotl/eu-lotl.xml')" --countries="${{ inputs.memberTsl_input }}" --isDevBuild="True"
+            echo "Finished downloading TSL"
+          fi
+
+          echo "Moving TSLs to app's assets"
+          mv -v scripts/TSL/* $TSL_FILES_DIR/
+          echo "Done moving TSLs"
+      - name: Run tests
+        script: |
+          ./gradlew clean test --no-daemon
+      - name: Build RIA DigiDoc
+        script: |
+          # Get latest build numbers from "internal" and "production" tracks
+          LATEST_GOOGLE_PLAY_INTERNAL_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks internal)
+          LATEST_GOOGLE_PLAY_PRODUCTION_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks production)
+          
+          # Check that both tracks have valid build numbers (over 0) and select the highest.
+          # Add +1 to the highest build number to submit to Google Play
+          # If any are 0, use build number
+          if [ "$LATEST_GOOGLE_PLAY_INTERNAL_BUILD_NUMBER" -gt 0 ] && [ "$LATEST_GOOGLE_PLAY_PRODUCTION_BUILD_NUMBER" -gt 0 ]; then
+            if [ "$LATEST_GOOGLE_PLAY_INTERNAL_BUILD_NUMBER" -gt "$LATEST_GOOGLE_PLAY_PRODUCTION_BUILD_NUMBER" ]; then
+              LATEST_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_INTERNAL_BUILD_NUMBER + 1))
+              echo "New build number for this build: $LATEST_BUILD_NUMBER"
+              echo LATEST_BUILD_NUMBER=$LATEST_BUILD_NUMBER >> $CM_ENV
+            else
+              LATEST_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_PRODUCTION_BUILD_NUMBER + 1))
+              echo "New build number for this build: $LATEST_BUILD_NUMBER"
+              echo LATEST_BUILD_NUMBER=$LATEST_BUILD_NUMBER >> $CM_ENV
+            fi
+          else
+            # Display error and exit
+            echo "One or both Google Play build numbers are 0" >&2
+            exit 1
+          fi
+
+          # Make latest build number be available in all build steps
+          APP_VERSION="$APP_VERSION_NAME.$LATEST_BUILD_NUMBER"
+          echo "APP_VERSION=$APP_VERSION" >> $CM_ENV
+          echo "Using app version: $APP_VERSION"
+
+          # Build app
+          # Not running 'fetchAndPackageDefaultConfiguration' for repo.ria as necessary files are already setup
+          if [[ "${{ inputs.defaultCentralConfigurationTslUrl_input }}" == *"repo.ria"* ]]; then
+            ./gradlew clean --no-daemon -PappVersionName=$APP_VERSION -PappVersionCode=$LATEST_BUILD_NUMBER assemble --debug --quiet
+          else
+            ./gradlew clean --no-daemon fetchAndPackageDefaultConfiguration --args="${{ inputs.defaultCentralConfigurationUrl_input }} ${{ inputs.defaultCentralConfigurationUpdateInterval_input }}" -PappVersionName=$APP_VERSION -PappVersionCode=$LATEST_BUILD_NUMBER assemble --debug --quiet
+          fi
+      - name: Align APK
+        script: |
+          OUTPUT_DIR="app/build/outputs/apk/release"
+          zipalign -v -p 4 $OUTPUT_DIR/app-release-unsigned.apk $OUTPUT_DIR/app-release-unsigned-aligned.apk
+      - name: Sign APK
+        script: |
+          OUTPUT_DIR="app/build/outputs/apk/release"
+          apksigner sign --ks $CM_KEYSTORE_PATH --ks-pass pass:$CM_KEYSTORE_PASSWORD --out $OUTPUT_DIR/app-release_$APP_VERSION.apk $OUTPUT_DIR/app-release-unsigned-aligned.apk
+      - name: Rename and move APK
+        script: |
+          OUTPUT_DIR="app/build/outputs/apk/release"
+          SIGNED_DEBUG_DIR="$OUTPUT_DIR/signed-debug"
+
+          mkdir -p "$SIGNED_DEBUG_DIR"
+  
+          mv "$OUTPUT_DIR/app-release_$APP_VERSION.apk" "$SIGNED_DEBUG_DIR/RIA_DigiDoc_dev_$APP_VERSION.apk"
+    artifacts:
+      - app/build/outputs/apk/release/signed-debug/*.apk
+    publishing:
+      email:
+        recipients:
+          - marten.rebane@nortal.com
+        notify:
+          success: true
+          failure: true
+      google_play:
+        credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+  live:
+    name: RIA DigiDoc Android (MOPP2) - Live configuration
+    max_build_duration: 30
+    instance_type: linux_x2
+    environment:
+      java: 17
+      groups:
+        - "google_services"
+      vars:
+        PACKAGE_NAME: "ee.ria.DigiDoc"
+      android_signing:
+        - RIA DigiDoc (MOPP)
+    scripts:
+      - *set_android_sdk_location
+      - *get_app_version
+      - *get_google_services_json
+      - name: Run tests
+        script: |
+          ./gradlew clean test --no-daemon
+      - name: Build RIA DigiDoc
+        script: |
+          # Get latest build numbers from "internal" and "production" tracks
+          LATEST_GOOGLE_PLAY_INTERNAL_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks internal)
+          LATEST_GOOGLE_PLAY_PRODUCTION_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks production)
+          
+          # Check that both tracks have valid build numbers (over 0) and select the highest.
+          # Add +1 to the highest build number to submit to Google Play
+          # If any are 0, use build number
+          if [ "$LATEST_GOOGLE_PLAY_INTERNAL_BUILD_NUMBER" -gt 0 ] && [ "$LATEST_GOOGLE_PLAY_PRODUCTION_BUILD_NUMBER" -gt 0 ]; then
+            if [ "$LATEST_GOOGLE_PLAY_INTERNAL_BUILD_NUMBER" -gt "$LATEST_GOOGLE_PLAY_PRODUCTION_BUILD_NUMBER" ]; then
+              LATEST_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_INTERNAL_BUILD_NUMBER + 1))
+              echo "New build number for this build: $LATEST_BUILD_NUMBER"
+              echo LATEST_BUILD_NUMBER=$LATEST_BUILD_NUMBER >> $CM_ENV
+            else
+              LATEST_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_PRODUCTION_BUILD_NUMBER + 1))
+              echo "New build number for this build: $LATEST_BUILD_NUMBER"
+              echo LATEST_BUILD_NUMBER=$LATEST_BUILD_NUMBER >> $CM_ENV
+            fi
+          else
+            # Display error and exit
+            echo "One or both build numbers are 0" >&2
+            exit 1
+          fi
+
+          # Make latest build number be available in all build steps
+          APP_VERSION="$APP_VERSION_NAME.$LATEST_BUILD_NUMBER"
+          echo "APP_VERSION=$APP_VERSION" >> $CM_ENV
+          echo "Using app version: $APP_VERSION"
+
+          # Build app
+          ./gradlew clean --no-daemon fetchAndPackageDefaultConfiguration -PappVersionName=$APP_VERSION -PappVersionCode=$LATEST_BUILD_NUMBER assembleRelease --quiet
+      - name: Align APK
+        script: |
+          OUTPUT_DIR="app/build/outputs/apk/release"
+          zipalign -v -p 4 $OUTPUT_DIR/app-release-unsigned.apk $OUTPUT_DIR/app-release-unsigned-aligned.apk
+      - name: Sign APK
+        script: |
+          OUTPUT_DIR="app/build/outputs/apk/release"
+          apksigner sign --ks $CM_KEYSTORE_PATH --ks-pass pass:$CM_KEYSTORE_PASSWORD --out $OUTPUT_DIR/app-release_$APP_VERSION.apk $OUTPUT_DIR/app-release-unsigned-aligned.apk
+      - name: Rename and move APK
+        script: |
+          OUTPUT_DIR="app/build/outputs/apk/release"
+          SIGNED_DIR="$OUTPUT_DIR/signed"
+
+          mkdir -p "$SIGNED_DIR"
+          
+          mv "$OUTPUT_DIR/app-release_$APP_VERSION.apk" "$SIGNED_DIR/RIA_DigiDoc_$APP_VERSION.apk"
+    artifacts:
+      - app/build/outputs/apk/release/signed/*.apk
+      - /tmp/codemagic-*
+    publishing:
+      email:
+        recipients:
+          - marten.rebane@nortal.com
+        notify:
+          success: true
+          failure: true
+      google_play:
+        credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
