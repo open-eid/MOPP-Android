@@ -214,7 +214,7 @@ final class SignatureAddSource {
                                         @Nullable RoleData roleData) {
         return Single
                 .fromCallable(() -> container.sign(context, ByteString.of(dataToSign),
-                        signData -> ByteString.encodeUtf8(signatureValue), roleData, false))
+                        signData -> ByteString.encodeUtf8(signatureValue), roleData, false, false))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

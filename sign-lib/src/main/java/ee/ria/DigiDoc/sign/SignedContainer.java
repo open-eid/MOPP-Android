@@ -210,7 +210,8 @@ public abstract class SignedContainer {
 
     public final SignedContainer sign(Context context, ByteString certificate,
                                       Function<ByteString, ByteString> signFunction,
-                                      @Nullable RoleData roleData, boolean userAgentDevices) throws Exception {
+                                      @Nullable RoleData roleData, boolean userAgentDevices,
+                                      boolean isNFCSignature) throws Exception {
         ee.ria.libdigidocpp.Signature signature = null;
 
         try {
@@ -218,7 +219,7 @@ public abstract class SignedContainer {
 
             ExternalSigner signer = new ExternalSigner(certificate.toByteArray());
             signer.setProfile(signatureProfile());
-            signer.setUserAgent(UserAgentUtil.getUserAgent(context, userAgentDevices));
+            signer.setUserAgent(UserAgentUtil.getUserAgent(context, userAgentDevices, isNFCSignature));
 
             if (roleData != null) {
                 signer.setSignerRoles(new StringVector(TextUtil.removeEmptyStrings(roleData.getRoles())));

@@ -77,7 +77,7 @@ public final class IdCardService {
                     return container.sign(context, data.signCertificate().data(),
                             signData -> ByteString.of(token.calculateSignature(pin2,
                                     signData.toByteArray(),
-                                    data.signCertificate().ellipticCurve())), roleData, true);
+                                    data.signCertificate().ellipticCurve())), roleData, true, false);
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
