@@ -27,6 +27,11 @@ public final class UserAgentUtil {
     private UserAgentUtil() {}
 
     public static String getUserAgent(Context context, boolean shouldIncludeDevices) {
+        return getUserAgent(context, shouldIncludeDevices, false);
+    }
+
+    public static String getUserAgent(Context context, boolean shouldIncludeDevices,
+                                      boolean isNFCSignature) {
         ArrayList<String> deviceProductNames = new ArrayList<>();
         StringBuilder initializingMessage = new StringBuilder();
 
@@ -40,6 +45,9 @@ public final class UserAgentUtil {
             initializingMessage.append(" Lang: ").append(Locale.getDefault().getLanguage());
             if (shouldIncludeDevices && !deviceProductNames.isEmpty()) {
                 initializingMessage.append(" Devices: ").append(TextUtils.join(", ", deviceProductNames));
+            }
+            if (isNFCSignature) {
+                initializingMessage.append(" NFC: true");
             }
         }
 

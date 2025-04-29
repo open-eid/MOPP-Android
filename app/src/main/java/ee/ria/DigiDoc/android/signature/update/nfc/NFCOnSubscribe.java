@@ -136,7 +136,7 @@ public class NFCOnSubscribe implements ObservableOnSubscribe<NFCResponse> {
             Timber.log(Log.DEBUG, "Set ENV: %x %s", r.code, Hex.toHexString(r.data));
 
             container.sign(navigator.activity(), cert.data(),
-                    signData -> ByteString.of(nfc.calculateSignature(signData.toByteArray())), role, false);
+                    signData -> ByteString.of(nfc.calculateSignature(signData.toByteArray())), role, false, true);
         } catch (TagLostException exc) {
             Timber.log(Log.ERROR, exc.getMessage());
             result = NFCResponse.createWithStatus(SessionStatusResponse.ProcessStatus.GENERAL_ERROR, navigator.activity().getString(R.string.signature_update_nfc_tag_lost));
