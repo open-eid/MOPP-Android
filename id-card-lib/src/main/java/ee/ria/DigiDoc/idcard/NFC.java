@@ -151,7 +151,7 @@ public class NFC {
 
         public static TLV decodeResult(String context, byte[] data, int... tags) throws NFCException {
             int code = (((int) data[data.length - 2] & 0xff) << 8) | ((int) data[data.length - 1] & 0xff);
-            if (code != 0x9000) throw new NFCException(context + String.format(": Invalid result %x", code));
+            if (code != 0x9000 && code != 0x6985) throw new NFCException(context + String.format(": Invalid result %x", code));
             int start = 0;
             int end = data.length - 2;
             TLV tlv = null;
