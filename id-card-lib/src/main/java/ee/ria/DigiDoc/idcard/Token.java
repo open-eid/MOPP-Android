@@ -19,6 +19,8 @@
 
 package ee.ria.DigiDoc.idcard;
 
+import android.util.Log;
+
 import org.bouncycastle.util.encoders.Hex;
 
 import java.nio.charset.StandardCharsets;
@@ -26,7 +28,7 @@ import java.util.Arrays;
 
 import ee.ria.DigiDoc.smartcardreader.SmartCardReader;
 import ee.ria.DigiDoc.smartcardreader.SmartCardReaderException;
-
+import timber.log.Timber;
 /**
  * EstEID token interface.
  */
@@ -54,7 +56,6 @@ public interface Token {
 
     /**
      * Unblock PIN1/PIN2 via PUK code and change it to a new value.
-     *
      * When PIN1/PIN2 is not blocked yet it will be blocked before unblocking.
      *
      * @param pukCode PUK code.
@@ -121,7 +122,10 @@ public interface Token {
         if (atr == null) {
             throw new SmartCardReaderException("ATR cannot be null");
         }
-        if (Arrays.equals(Hex.decode("3bdb960080b1fe451f830012233f536549440f9000f1"), atr)) {
+        Timber.log(Log.DEBUG, "ATR: " + Hex.toHexString(atr));
+
+        if (Arrays.equals(Hex.decode("3bdb960080b1fe451f830012233f536549440f9000f1"), atr) ||
+                Arrays.equals(Hex.decode("3bdc960080b1fe451f830012233f54654944320f9000c3"), atr)) {
             return new ID1(reader);
         } else if (Arrays.equals(Hex.decode("3bfa1800008031fe45fe654944202f20504b4903"), atr) ||
                 Arrays.equals(Hex.decode("3bfe1800008031fe45803180664090a4162a00830f9000ef"), atr)
@@ -132,6 +136,10 @@ public interface Token {
                 // TODO check for 3.0 card
         ) {
             return new EstEIDv3d4(reader);
+        /* TODO: Add Thales card
+        } else if (Arrays.equals(Hex.decode("3bff9600008031fe438031b85365494464b085051012233f1d"), atr)) {
+            return new Thales(reader);
+         */
         }
 
         throw new SmartCardReaderException("Unsupported card ATR: " + new String(Hex.encode(atr), StandardCharsets.UTF_8));
