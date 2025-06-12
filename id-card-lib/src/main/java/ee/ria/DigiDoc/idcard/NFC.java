@@ -288,7 +288,7 @@ public class NFC {
     }
 
     private static final byte[] MSE_SET_AT_PACE = Hex.decode("0022c1a4");
-    private static final byte[] MSE_SET_AT_PACE_DATA = Hex.decode("800a04007f00070202040204830102");
+    private static final byte[] MSE_SET_AT_PACE_DATA = Hex.decode("800a04007f0007020204020483010284010C");
 
     private static final byte[] GA_GET_NONCE = Hex.decode("10860000");
     private static final byte[] GA_GET_NONCE_DATA = Hex.decode("7c00");
