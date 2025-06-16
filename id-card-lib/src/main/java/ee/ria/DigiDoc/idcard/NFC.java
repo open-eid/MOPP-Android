@@ -185,6 +185,8 @@ public class NFC {
     private static final byte[] SEL_MAIN_AID = Hex.decode("a000000077010800070000fe00000100");
 
     private static final byte[] CMD_SELECT_DF = Hex.decode("00a4010c");
+    private static final byte[] CMD_SELECT_EF = Hex.decode("00a4020c");
+
     private static final byte[] CMD_READ_BINARY = Hex.decode("00B00000");
     private static final byte[] CMD_SIGN = Hex.decode("002A9E9A");
 
@@ -288,7 +290,7 @@ public class NFC {
     }
 
     private static final byte[] MSE_SET_AT_PACE = Hex.decode("0022c1a4");
-    private static final byte[] MSE_SET_AT_PACE_DATA = Hex.decode("800a04007f00070202040204830102");
+    private static final byte[] MSE_SET_AT_PACE_DATA = Hex.decode("800a04007f0007020204020483010284010C");
 
     private static final byte[] GA_GET_NONCE = Hex.decode("10860000");
     private static final byte[] GA_GET_NONCE_DATA = Hex.decode("7c00");
@@ -468,7 +470,7 @@ public class NFC {
         communicateSecure(CMD_SELECT_DF, authOrSign ? AWP : QSCD);
 
         // selectFile(authOrSign ? authCert : signCert, "the certificate");
-        communicateSecure(CMD_SELECT_DF, authOrSign ? authCert : signCert);
+        communicateSecure(CMD_SELECT_EF, authOrSign ? authCert : signCert);
 
         byte[] certificate = new byte[0];
         byte[] readCert = Arrays.copyOf(readFile, readFile.length);
