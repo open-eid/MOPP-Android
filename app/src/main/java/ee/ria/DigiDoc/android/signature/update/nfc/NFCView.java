@@ -61,7 +61,7 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
     private final TextInputLayout pinLayout;
     private final MaterialTextView pinLabel;
 
-    private final NotificationDialog nfcCanNotificationDialog;
+    private NotificationDialog nfcCanNotificationDialog;
 
     private AccessibilityManager.TouchExplorationStateChangeListener accessibilityTouchExplorationStateChangeListener;
 
@@ -82,20 +82,26 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
         pinLayout = findViewById(R.id.signatureUpdateNFCPIN2Layout);
         pinLabel = findViewById(R.id.signatureUpdateNFCPIN2Label);
 
-        nfcCanNotificationDialog = new NotificationDialog(navigator.activity(),
-                R.string.signature_update_nfc_can_info, R.id.nfcCanNotificationDialog);
+        post(() -> {
+            android.app.Activity activity = navigator.activity();
+            if (activity != null) {
+                nfcCanNotificationDialog = new NotificationDialog(navigator.activity(),
+                        R.string.signature_update_nfc_can_info, R.id.nfcCanNotificationDialog);
 
-        handleNFCSupportLayout();
+            }
 
-        if (AccessibilityUtils.isTalkBackEnabled()) {
-            AccessibilityUtils.setSingleCharactersContentDescription(canView, getResources().getString(R.string.signature_update_nfc_can));
-            AccessibilityUtils.setSingleCharactersContentDescription(pinView, getResources().getString(R.string.signature_update_nfc_pin2));
-            AccessibilityUtils.setEditTextCursorToEnd(canView);
-            AccessibilityUtils.setEditTextCursorToEnd(pinView);
-            AccessibilityUtils.setTextViewContentDescription(context, true, null, canLabel.getText().toString(), canView);
-            AccessibilityUtils.setTextViewContentDescription(context, true, null, pinLabel.getText().toString(), pinView);
-        }
-        checkInputsValidity();
+            handleNFCSupportLayout();
+
+            if (AccessibilityUtils.isTalkBackEnabled()) {
+                AccessibilityUtils.setSingleCharactersContentDescription(canView, getResources().getString(R.string.signature_update_nfc_can));
+                AccessibilityUtils.setSingleCharactersContentDescription(pinView, getResources().getString(R.string.signature_update_nfc_pin2));
+                AccessibilityUtils.setEditTextCursorToEnd(canView);
+                AccessibilityUtils.setEditTextCursorToEnd(pinView);
+                AccessibilityUtils.setTextViewContentDescription(context, true, null, canLabel.getText().toString(), canView);
+                AccessibilityUtils.setTextViewContentDescription(context, true, null, pinLabel.getText().toString(), pinView);
+            }
+            checkInputsValidity();
+        });
     }
 
     public NFCView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
