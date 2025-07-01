@@ -85,7 +85,7 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
         post(() -> {
             android.app.Activity activity = navigator.activity();
             if (activity != null) {
-                nfcCanNotificationDialog = new NotificationDialog(navigator.activity(),
+                nfcCanNotificationDialog = new NotificationDialog(activity,
                         R.string.signature_update_nfc_can_info, R.id.nfcCanNotificationDialog);
 
             }
@@ -129,16 +129,18 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
     @Override
     protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
         super.onVisibilityChanged(changedView, visibility);
-
-        if (navigator.activity() instanceof Activity) {
-            boolean shouldShowCanMessage = ((Activity) navigator.activity())
+        android.app.Activity activity = navigator.activity();
+        if (activity instanceof Activity) {
+            boolean shouldShowCanMessage = ((Activity) activity)
                     .getSettingsDataStore()
                     .getShowCanMessage();
 
             if (shouldShowCanMessage && visibility == VISIBLE && isNFCSupported()) {
                 postDelayed(nfcCanNotificationDialog::show, 1000);
             } else {
-                nfcCanNotificationDialog.dismiss();
+                if (nfcCanNotificationDialog != null) {
+                    nfcCanNotificationDialog.dismiss();
+                }
             }
         }
 
@@ -156,7 +158,9 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
         message.clearFocus();
         canView.clearFocus();
         pinView.clearFocus();
-        nfcCanNotificationDialog.dismiss();
+        if (nfcCanNotificationDialog != null) {
+            nfcCanNotificationDialog.dismiss();
+        }
     }
 
     @Override
@@ -257,7 +261,8 @@ public class NFCView extends LinearLayout implements SignatureAddView<NFCRequest
     }
 
     private boolean isNFCSupported() {
-        NfcManager manager = (NfcManager) navigator.activity().getSystemService(Context.NFC_SERVICE);
+        android.app.Activity activity = navigator.activity();
+        NfcManager manager = (NfcManager) activity.getSystemService(Context.NFC_SERVICE);
         NfcAdapter adapter = manager.getDefaultAdapter();
         if (adapter == null || !adapter.isEnabled()) {
             Timber.log(Log.ERROR, "NFC is not supported on this device");
