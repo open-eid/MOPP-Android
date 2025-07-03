@@ -31,13 +31,11 @@ workflows:
       defaultCentralConfigurationUrl_input:
         description: Default Central Configuration URL
         type: choice
-        default: http://10.0.25.57/config
+        default: http://10.1.24.31/config/mobile
         options:
-          - http://10.0.25.57/config
-          - https://repo.ria/config
+          - http://10.1.24.31/config/mobile
           - https://id.eesti.ee
           - https://id.test.eesti.ee
-          - http://10.0.25.57/updater
       defaultCentralConfigurationUpdateInterval_input:
         description: Default Central Configuration Update Interval
         type: number
@@ -45,9 +43,9 @@ workflows:
       defaultCentralConfigurationTslUrl_input:
         description: Default Central Configuration TSL URL
         type: choice
-        default: https://repo.ria/tsl/trusted-test-mp.xml
+        default: http://10.1.24.31/tsl/trusted-test-mp.xml
         options:
-          - https://repo.ria/tsl/trusted-test-mp.xml
+          - http://10.1.24.31/tsl/trusted-test-mp.xml
           - https://ec.europa.eu/tools/lotl/eu-lotl.xml
           - https://open-eid.github.io/test-TL/tl-mp-test-EE.xml
       memberTsl_input:
@@ -75,7 +73,7 @@ workflows:
           wget "https://ec.europa.eu/tools/lotl/eu-lotl.xml" -P $TSL_FILES_DIR
 
           # Get repo.ria values from environmental variables, as CodeMagic doesn't have access to repo.ria domain
-          if [[ "${{ inputs.defaultCentralConfigurationTslUrl_input }}" == *"repo.ria"* ]]; then
+          if [[ "${{ inputs.defaultCentralConfigurationTslUrl_input }}" == *"10.1.24.31"* ]]; then
             echo "Using repo.ria configuration"
             echo $REPO_RIA_DEFAULT_PROPERTIES | base64 --decode > $CONFIG_DIR/configuration.properties
             echo $REPO_RIA_CONFIG | base64 --decode > $CONFIG_DIR/default-config.json
@@ -92,7 +90,7 @@ workflows:
           if [ -f "$TSL_FILES_DIR/eu-lotl.xml" ]; then
             echo "Getting TSL (local LOTL)"
             # Repo.ria TSL files already in assets folder, doesn't need to download separately anymore
-            if [[ "${{ inputs.defaultCentralConfigurationTslUrl_input }}" == *"repo.ria"* ]]; then
+            if [[ "${{ inputs.defaultCentralConfigurationTslUrl_input }}" == *"10.1.24.31"* ]]; then
               python3 scripts/TSLXMLDownloader.py --tslFile="$TSL_FILES_DIR/eu-lotl.xml" --countries="${{ inputs.memberTsl_input }}" --isDevBuild="True"
             else
               python3 scripts/TSLXMLDownloader.py --tslFile="$TSL_FILES_DIR/eu-lotl.xml" --tslTestFile="$TSL_FILES_DIR/$(basename ${{ inputs.defaultCentralConfigurationTslUrl_input }})" --countries="${{ inputs.memberTsl_input }}" --isDevBuild="True"
@@ -113,59 +111,36 @@ workflows:
           ./gradlew clean test --no-daemon
       - name: Build RIA DigiDoc
         script: |
-          # Get latest build numbers from "internal" and "production" tracks
-          LATEST_GOOGLE_PLAY_INTERNAL_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks internal)
-          LATEST_GOOGLE_PLAY_PRODUCTION_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks production)
-          
-          # Check that both tracks have valid build numbers (over 0) and select the highest.
-          # Add +1 to the highest build number to submit to Google Play
-          # If any are 0, use build number
-          if [ "$LATEST_GOOGLE_PLAY_INTERNAL_BUILD_NUMBER" -gt 0 ] && [ "$LATEST_GOOGLE_PLAY_PRODUCTION_BUILD_NUMBER" -gt 0 ]; then
-            if [ "$LATEST_GOOGLE_PLAY_INTERNAL_BUILD_NUMBER" -gt "$LATEST_GOOGLE_PLAY_PRODUCTION_BUILD_NUMBER" ]; then
-              LATEST_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_INTERNAL_BUILD_NUMBER + 1))
-              echo "New build number for this build: $LATEST_BUILD_NUMBER"
-              echo LATEST_BUILD_NUMBER=$LATEST_BUILD_NUMBER >> $CM_ENV
-            else
-              LATEST_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_PRODUCTION_BUILD_NUMBER + 1))
-              echo "New build number for this build: $LATEST_BUILD_NUMBER"
-              echo LATEST_BUILD_NUMBER=$LATEST_BUILD_NUMBER >> $CM_ENV
-            fi
-          else
-            # Display error and exit
-            echo "One or both Google Play build numbers are 0" >&2
-            exit 1
-          fi
-
-          # Make latest build number be available in all build steps
-          APP_VERSION="$APP_VERSION_NAME.$LATEST_BUILD_NUMBER"
+          # Make latest app version be available in all build steps
+          APP_VERSION="$APP_VERSION_NAME.$PROJECT_BUILD_NUMBER"
           echo "APP_VERSION=$APP_VERSION" >> $CM_ENV
           echo "Using app version: $APP_VERSION"
 
           # Build app
           # Not running 'fetchAndPackageDefaultConfiguration' for repo.ria as necessary files are already setup
-          if [[ "${{ inputs.defaultCentralConfigurationTslUrl_input }}" == *"repo.ria"* ]]; then
-            ./gradlew clean --no-daemon -PappVersionName=$APP_VERSION -PappVersionCode=$LATEST_BUILD_NUMBER assemble --debug --quiet
+          if [[ "${{ inputs.defaultCentralConfigurationTslUrl_input }}" == *"10.1.24.31"* ]]; then
+            ./gradlew clean --no-daemon -PappVersionName=$APP_VERSION -PappVersionCode=$PROJECT_BUILD_NUMBER assembleDebug --quiet
           else
-            ./gradlew clean --no-daemon fetchAndPackageDefaultConfiguration --args="${{ inputs.defaultCentralConfigurationUrl_input }} ${{ inputs.defaultCentralConfigurationUpdateInterval_input }}" -PappVersionName=$APP_VERSION -PappVersionCode=$LATEST_BUILD_NUMBER assemble --debug --quiet
+            ./gradlew clean --no-daemon fetchAndPackageDefaultConfiguration --args="${{ inputs.defaultCentralConfigurationUrl_input }} ${{ inputs.defaultCentralConfigurationUpdateInterval_input }}" -PappVersionName=$APP_VERSION -PappVersionCode=$LATEST_BUILD_NUMBER assembleDebug --quiet
           fi
       - name: Align APK
         script: |
-          OUTPUT_DIR="app/build/outputs/apk/release"
-          zipalign -v -p 4 $OUTPUT_DIR/app-release-unsigned.apk $OUTPUT_DIR/app-release-unsigned-aligned.apk
+          OUTPUT_DIR="app/build/outputs/apk/debug"
+          zipalign -v -p 4 $OUTPUT_DIR/app-debug.apk $OUTPUT_DIR/app-debug-aligned.apk
       - name: Sign APK
         script: |
-          OUTPUT_DIR="app/build/outputs/apk/release"
-          apksigner sign --ks $CM_KEYSTORE_PATH --ks-pass pass:$CM_KEYSTORE_PASSWORD --out $OUTPUT_DIR/app-release_$APP_VERSION.apk $OUTPUT_DIR/app-release-unsigned-aligned.apk
+          OUTPUT_DIR="app/build/outputs/apk/debug"
+          apksigner sign --ks $CM_KEYSTORE_PATH --ks-pass pass:$CM_KEYSTORE_PASSWORD --out $OUTPUT_DIR/app-debug_$APP_VERSION.apk $OUTPUT_DIR/app-debug-aligned.apk
       - name: Rename and move APK
         script: |
-          OUTPUT_DIR="app/build/outputs/apk/release"
+          OUTPUT_DIR="app/build/outputs/apk/debug"
           SIGNED_DEBUG_DIR="$OUTPUT_DIR/signed-debug"
 
           mkdir -p "$SIGNED_DEBUG_DIR"
   
-          mv "$OUTPUT_DIR/app-release_$APP_VERSION.apk" "$SIGNED_DEBUG_DIR/RIA_DigiDoc_dev_$APP_VERSION.apk"
+          mv "$OUTPUT_DIR/app-debug_$APP_VERSION.apk" "$SIGNED_DEBUG_DIR/RIA_DigiDoc_dev_$APP_VERSION.apk"
     artifacts:
-      - app/build/outputs/apk/release/signed-debug/*.apk
+      - app/build/outputs/apk/debug/signed-debug/*.apk
     publishing:
       email:
         recipients:
