@@ -5,6 +5,8 @@
 
 # MOPP-Android
 
+**NB! Please note that the active development and management of the MOPP-Android has ended due to transition to the upgraded RIA-DigiDoc-Android. We won't be accepting pull requests or responding to issues for this project anymore.
+**
 Android application that allows signing containers with ID-card, Mobile-ID and Smart-ID.
 
 # Features
