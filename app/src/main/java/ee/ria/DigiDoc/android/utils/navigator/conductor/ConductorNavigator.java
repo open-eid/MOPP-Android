@@ -163,6 +163,9 @@ public final class ConductorNavigator implements Navigator {
 
     @Override
     public Activity activity() {
+        if (router == null) {
+            throw new IllegalStateException("Router is null");
+        }
         Activity activity = router.getActivity();
         if (activity == null) {
             throw new IllegalStateException("Activity is null");
